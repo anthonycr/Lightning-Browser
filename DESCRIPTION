@@ -1,0 +1,12 @@
+This is an open source webkit based browser. 
+
+I make money of a similar paid version which currently has unlimited tabs and unlimited bookmarks. Modifiying two values at the top of the main activity "barbones" will turn this into the paid version.
+
+Current issues:
+- html 5 videos do not play or do not play well
+- issues with android 2.2 and 2.3 have forced me to disable zooming in order to allow for fullscreen mode, I can't publish an update until this is fixed
+- websites requesting authentification don't always work well
+- you can't view history
+- it doesn't open apps that belong to links like market:// youtube:// etc...
+- 4.2.2 is having issues, probably will be fixed when they update the sdk to 4.2.2
+- not sure what I want to do with translations. all i have is spanish, paid has italian, others want more.
