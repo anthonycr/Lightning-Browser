@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/refresh" android:orderInCategory="1" android:title="Actualizar" android:titleCondensed="Actualizar" />
+    <item android:id="@id/bookmark" android:orderInCategory="2" android:title="Anadir a Marcadores" android:titleCondensed="Anadir a Marcadores" />
+    <item android:id="@id/allBookmarks" android:orderInCategory="3" android:title="Marcadores" android:titleCondensed="Marcadores" />
+    <item android:id="@id/share" android:orderInCategory="4" android:title="Compartir" android:titleCondensed="Compartir" />
+    <item android:id="@id/settings" android:orderInCategory="5" android:title="Ajustes" android:titleCondensed="Ajustes" /> 
+    <item android:id="@+id/tabs" android:title="Mostrar/ocultar pestanas" android:orderInCategory="5" android:titleCondensed="Mostrar/ocultar"></item>
+    <item android:id="@+id/forward" android:title="Adelante" android:orderInCategory="7" android:titleCondensed="Adelante"></item>
+</menu>

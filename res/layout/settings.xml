@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/bar" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/settings"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:src="@drawable/back" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/relativeLayout1" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:textColor="#ffffffff"
+                android:layout_height="56dp"
+                android:layout_below="@+id/relativeLayout1"
+                android:layout_centerHorizontal="true"
+                android:background="#ff0099cc"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/settingshelp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <CheckBox
+                android:id="@+id/password"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignLeft="@+id/location"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/location"
+                android:paddingRight="20dp" />
+
+            <EditText
+                android:id="@+id/agent"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/textView2"
+                android:layout_toRightOf="@+id/textView2"
+                android:ems="10"
+                android:inputType="textUri"
+                android:paddingRight="10dp"
+                android:singleLine="true" >
+
+            </EditText>
+
+            <CheckBox
+                android:id="@+id/flash"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/password"
+                android:paddingRight="20dp" />
+
+            <CheckBox
+                android:id="@+id/historyClear"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/flash"
+                android:paddingRight="20dp" />
+
+                <RadioButton
+                    android:id="@+id/radioMobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_alignLeft="@+id/java"
+                    android:layout_below="@+id/java"
+                    android:marqueeRepeatLimit="20"
+                    android:onClick="radioAgent" />
+
+                <RadioButton
+                    android:id="@+id/radioDesktop"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_alignLeft="@+id/radioMobile"
+                    android:layout_below="@+id/radioMobile"
+                    android:onClick="radioAgent"
+                    android:paddingRight="20dp" />
+
+                <RadioButton
+                    android:id="@+id/radioCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_alignLeft="@+id/radioDesktop"
+                    android:layout_below="@+id/radioDesktop"
+                    android:onClick="radioAgent"
+                    android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/radioCustom"
+                android:gravity="center_vertical|center_horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:text="@string/agent" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/textView2"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:text="@string/home" />
+
+            <EditText
+                android:id="@+id/homePage"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignLeft="@+id/agent"
+                android:layout_alignRight="@+id/agent"
+                android:layout_below="@+id/agent"
+                android:ems="10"
+                android:inputType="textUri"
+                android:paddingRight="10dp" />
+
+            <Button
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_below="@+id/homePage"
+                android:layout_centerHorizontal="true"
+                android:gravity="center_vertical|center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/email"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/fullScreen"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignLeft="@+id/historyClear"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/historyClear"
+                android:paddingRight="20dp" />
+
+            <CheckBox
+                android:id="@+id/java"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/fullScreen"
+                android:paddingRight="20dp" />
+
+            <CheckBox
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/textView4"
+                android:paddingRight="20dp" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/location"
+                android:layout_toLeftOf="@+id/location"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/location"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/textView5"
+                android:layout_toLeftOf="@+id/password"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/password"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/flash"
+                android:layout_toLeftOf="@+id/flash"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/flash"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/textView7"
+                android:layout_alignTop="@+id/historyClear"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/history"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/textView8"
+                android:layout_alignTop="@+id/fullScreen"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/fullscreen"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/textView9"
+                android:layout_alignTop="@+id/java"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/java"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/textView10"
+                android:layout_alignTop="@+id/radioMobile"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/mobile"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/textView11"
+                android:layout_below="@+id/textView11"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/desk"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_above="@+id/agent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/textView12"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="@string/custom"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    
+
+</RelativeLayout>

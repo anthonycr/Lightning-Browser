@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Lightning</string>
+    <string name="google">Google</string>
+    <string name="settings">Browser Settings</string>
+    <string name="location">Allow sites to access your location</string>
+    <string name="password">Save your passwords</string>
+    <string name="agent">User Agent</string>
+    <string name="history">Clear history on exit (cache is auto-cleared)</string>
+    <string name="email">Email me</string>
+    <string name="flash">Enable Adobe Flash (if it\'s installed)</string>
+    <string name="mobile">View as Mobile</string>
+    <string name="desk">View as Desktop</string>
+    <string name="custom">View as custom user agent</string>
+    <string name="home">Homepage</string>
+    <string name="settingshelp">Settings only apply to new tabs</string>
+    <string name="fullscreen">Enable fullscreen mode</string>
+    <string name="java">Enable JavaScript</string>
+
+</resources>
