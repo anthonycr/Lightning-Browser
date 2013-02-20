@@ -113,7 +113,7 @@ public class Settings extends Activity {
 					String home;
 					home = h.getText().toString();
 					if(!home.contains("about:blank")&&!home.contains("about:home")){
-					if(home.contains("http://")==false){
+					if(home.contains("http://")==false&&home.contains("https://")==false){
 						home = "http://"+home;
 					}}
 					edit.putString("home", home);
@@ -137,7 +137,7 @@ public class Settings extends Activity {
 						|| actionId == EditorInfo.IME_ACTION_SEND||actionId==EditorInfo.IME_ACTION_SEARCH||event.getAction()==KeyEvent.KEYCODE_ENTER) {
 					String home = h.getText().toString();
 					if(!h.getText().toString().contains("about:blank")&&!h.getText().toString().contains("about:home")){
-					if(h.getText().toString().contains("http://")==false){
+					if(h.getText().toString().contains("http://")==false&&h.getText().toString().contains("https://")==false){
 						home = "http://"+h.getText().toString();
 						}}
 					edit.putString("home", home);
@@ -193,7 +193,7 @@ public class Settings extends Activity {
 				}
 				String home = h.getText().toString();
 				if(!h.getText().toString().contains("about:blank")&&!h.getText().toString().contains("about:home")){
-				if(h.getText().toString().contains("http://")==false){
+				if(h.getText().toString().contains("http://")==false&&h.getText().toString().contains("https://")==false){
 					home = "http://"+h.getText().toString();
 					}}
 				edit.putString("home", home);
@@ -463,7 +463,7 @@ public void full(){
 		}
 		String home = h.getText().toString();
 		if(!h.getText().toString().contains("about:blank")&&!h.getText().toString().contains("about:home")){
-		if(h.getText().toString().contains("http://")==false){
+		if(h.getText().toString().contains("http://")==false&&h.getText().toString().contains("https://")==false){
 			home = "http://"+h.getText().toString();
 			}}
 		edit.putString("home", home);
