@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -16,27 +15,24 @@ import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 public class Settings extends Activity {
 	public static final String preferences = "settings";
-	boolean allowLocation, deleteHistory;
-	int enableFlash;
-	boolean savePasswords, fullScreen,java;
-	String userAgent, homepage;
-	EditText agent,h;
-	SharedPreferences.Editor edit;
-	int agentPicker;
+	static boolean allowLocation, deleteHistory;
+	static int enableFlash;
+	static boolean savePasswords, fullScreen,java;
+	static String userAgent, homepage;
+	static EditText agent,h;
+	static SharedPreferences.Editor edit;
+	static int agentPicker;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,26 +62,67 @@ public class Settings extends Activity {
 
 		agent.setText(userAgent);
 		edit = settings.edit();
-		RadioButton m = (RadioButton) findViewById(R.id.radioMobile);
-		RadioButton d = (RadioButton) findViewById(R.id.radioDesktop);
-		RadioButton c = (RadioButton) findViewById(R.id.radioCustom);
+		final RadioButton m = (RadioButton) findViewById(R.id.radioMobile);
+		final RadioButton d = (RadioButton) findViewById(R.id.radioDesktop);
+		final RadioButton c = (RadioButton) findViewById(R.id.radioCustom);
+		m.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				d.setChecked(false);
+				c.setChecked(false);
+				edit.putInt("agentchoose", 1);
+				edit.commit();
+			}
+			
+		});
+		d.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				m.setChecked(false);
+				c.setChecked(false);
+				edit.putInt("agentchoose", 2);
+				edit.commit();
+			}
+			
+		});
+		c.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				m.setChecked(false);
+				d.setChecked(false);
+				edit.putInt("agentchoose", 3);
+				edit.commit();
+			}
+			
+		});
 		switch (agentPicker) {
 		case 1:
 			m.setChecked(true);
+			d.setChecked(false);
+			c.setChecked(false);
 			break;
 		case 2:
+			m.setChecked(false);
 			d.setChecked(true);
+			c.setChecked(false);
 			break;
 		case 3:
+			
+			m.setChecked(false);
+			d.setChecked(false);
 			c.setChecked(true);
 			break;
 		}
 		back();
 		location();
-		userAgent();
 		passwords();
 		clearHistory();
-		emailMe();
 		getText();
 		flash();
 		getHome();
@@ -160,18 +197,21 @@ public class Settings extends Activity {
 			if (checked) {
 				edit.putInt("agentchoose", 1);
 				edit.commit();
+				
 			}
 			break;
 		case (R.id.radioDesktop):
 			if (checked) {
 				edit.putInt("agentchoose", 2);
 				edit.commit();
+				
 			}
 			break;
 		case (R.id.radioCustom):
 			if (checked) {
 				edit.putInt("agentchoose", 3);
 				edit.commit();
+				
 			}
 			break;
 		}
@@ -341,8 +381,6 @@ public void full(){
 		});
 	}
 
-	public void userAgent() {
-	}
 
 	public void getText() {
 		agent.setOnKeyListener(new OnKeyListener(){
@@ -435,23 +473,6 @@ public void full(){
 		});
 	}
 
-	public void emailMe() {
-		Button mailMe = (Button) findViewById(R.id.email);
-		mailMe.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("plain/text");
-				intent.putExtra(Intent.EXTRA_EMAIL,
-						new String[] { "anthonyrestaino11@gmail.com" });
-				intent.putExtra(Intent.EXTRA_SUBJECT, "Lightning Browser");
-				startActivity(Intent.createChooser(intent, ""));
-			}
-
-		});
-	}
 
 	@Override
 	public void onBackPressed() {

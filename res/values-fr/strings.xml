@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">Lightning</string>
@@ -7,8 +6,7 @@
     <string name="location">Autoriser les sites à accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">User Agent</string>
-<<<<<<< HEAD
-    <string name="history">Effacer l\'historique à la sortie (le cache sera vidé)</string>
+    <string name="history">Effacer l\'historique à la sortie</string>
     <string name="email">Contactez moi</string>
     <string name="flash">Activer Adobe Flash Player (s\'il est installé)</string>
     <string name="mobile">Voir la version Mobile</string>
@@ -18,17 +16,5 @@
     <string name="settingshelp">Les paramètres ne s\'appliquerons qu\'au nouveaux onglets</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
-=======
-    <string name="history">Clear history on exit</string>
-    <string name="email">Email me</string>
-    <string name="flash">Enable Adobe Flash (if it\'s installed)</string>
-    <string name="mobile">View as Mobile</string>
-    <string name="desk">View as Desktop</string>
-    <string name="custom">View as custom user agent</string>
-    <string name="home">Homepage</string>
-    <string name="settingshelp">Settings only apply to new tabs</string>
-    <string name="fullscreen">Enable fullscreen mode</string>
-    <string name="java">Enable JavaScript</string>
->>>>>>> 2.3.0 changes added see below
 
 </resources>

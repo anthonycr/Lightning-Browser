@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/refresh" android:title="Actualiser" android:titleCondensed="Actualiser" android:orderInCategory="1"></item>
+    <item android:id="@+id/bookmark" android:title="Ajouter aux favoris" android:titleCondensed="Aj. Favoris" android:orderInCategory="2"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="Favoris" android:title="Favoris" android:orderInCategory="3"></item>
+    <item android:id="@+id/share" android:title="Partager..." android:titleCondensed="Partager" android:orderInCategory="4"></item>
+    <item android:id="@+id/settings" android:title="Paramètres" android:titleCondensed="Paramètres" android:orderInCategory="6"></item>
+    <item android:id="@+id/forward" android:title="Suivant" android:orderInCategory="5" android:titleCondensed="Suivant"></item>
+    
+
+</menu>

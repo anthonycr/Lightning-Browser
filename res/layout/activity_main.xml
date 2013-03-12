@@ -1,23 +1,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-<ScrollView
-    android:id="@+id/backgroundScroll"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbars="none" >
-    
     <RelativeLayout
-        android:id="@+id/background"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    android:id="@+id/urlBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+     android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    >
     
 <HorizontalScrollView
     android:id="@+id/tabScroll"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="32dp"
     android:layout_alignParentLeft="true"
     android:layout_alignParentRight="true"
@@ -111,7 +110,7 @@
             android:paddingTop="10dp"
             android:src="@drawable/refresh" />
 </RelativeLayout>
-        <EditText
+        <MultiAutoCompleteTextView
             android:id="@+id/enterUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -125,18 +124,13 @@
             android:singleLine="true" />
 
     </RelativeLayout>
-    <RelativeLayout
+    </RelativeLayout>
+
+    <FrameLayout
         android:id="@+id/holder"
         android:layout_width="match_parent"
-            android:layout_height="wrap_content" 
-            android:layout_below="@+id/relativeLayout1">
-<FrameLayout
-            android:id="@+id/webFrame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" 
-            android:layout_below="@+id/relativeLayout1">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/urlBar" >
         </FrameLayout>
-        </RelativeLayout>
-    </RelativeLayout>
-    </ScrollView>
+    
 </RelativeLayout>

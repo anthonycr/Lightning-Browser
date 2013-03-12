@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/refresh" android:title="Rinfrescare" android:titleCondensed="Rinfrescare" android:orderInCategory="1"></item>
+    <item android:id="@+id/bookmark" android:title="Aggiungi ai preferiti" android:titleCondensed="Aggiungi ai preferiti" android:orderInCategory="2"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="Segnalibri" android:title="Segnalibri" android:orderInCategory="3"></item>
+    <item android:id="@+id/share" android:title="Azione" android:titleCondensed="Azione" android:orderInCategory="4"></item>
+    <item android:id="@+id/settings" android:title="Impostazioni" android:titleCondensed="Impostazioni" android:orderInCategory="6"></item>
+    <item android:id="@+id/forward" android:title="Avanti" android:orderInCategory="5" android:titleCondensed="Avanti"></item>
+    
+
+</menu>

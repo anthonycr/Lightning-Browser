@@ -6,7 +6,7 @@
     <string name="location">Permitir a webs acceder a tu ubicacion</string>
     <string name="password">Guardar contrasenas</string>
     <string name="agent">Agente de usuario</string>
-    <string name="history">Borrar historial al salir (Auto-borrado de cache)</string>
+    <string name="history">Borrar historial al salir</string>
     <string name="email">Enviame un Email</string>
     <string name="flash">Habilitar Adobe Flash (por demanda)</string>
     <string name="mobile">Ver como movil</string>

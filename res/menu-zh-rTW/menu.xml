@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/refresh" android:titleCondensed="刷新頁面" android:title="刷新" android:orderInCategory="1"></item>
+    <item android:id="@+id/bookmark" android:titleCondensed="添加書簽" android:title="添加書簽" android:orderInCategory="2"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="書簽列表" android:title="書簽" android:orderInCategory="3"></item>
+    <item android:id="@+id/share" android:titleCondensed="分享頁面" android:title="分享" android:orderInCategory="4"></item>
+    <item android:id="@+id/settings" android:titleCondensed="應用設置" android:title="設置" android:orderInCategory="6"></item>
+    <item android:id="@+id/tabs" android:titleCondensed="顯示以及隱藏標簽" android:title="顯示/隱藏標簽" android:orderInCategory="5"></item>
+    <item android:id="@+id/forward" android:titleCondensed="前進頁面" android:title="前進" android:orderInCategory="7"></item>
+    
+
+</menu>

@@ -155,18 +155,6 @@
                 android:inputType="textUri"
                 android:paddingRight="10dp" />
 
-            <Button
-                android:id="@+id/email"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_below="@+id/homePage"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_vertical|center_horizontal"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:text="@string/email"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
             <CheckBox
                 android:id="@+id/fullScreen"
                 android:layout_width="match_parent"
