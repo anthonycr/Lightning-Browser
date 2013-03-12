@@ -194,7 +194,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 					}
 				}
-			};
+			}; //click listener is useless and useless code without comment is bad.  remove it 
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					Barebones.this); // dialog
@@ -209,7 +209,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 	}
 
-	public void init() {
+	public void init() { //probably set static final Strings for easier (and less error prone) reuse of preference tags
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		if (isPhone) {
@@ -330,10 +330,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 																	// overscroll
 																	// (only
 																	// available
-																	// in 2.3
-																	// and up)
+																	// in 2.3																	// and up)
 		}
-
+		// split it into a new method
 		// image dimensions and initialization
 		final int dps = 175;
 		final float scale = getApplicationContext().getResources()
@@ -856,7 +855,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	}
 
-	public static final class AnthonyWebView extends WebView {
+	public static final class AnthonyWebView extends WebView { 
 
 		public AnthonyWebView(Context context) {
 			super(context);
@@ -1192,7 +1191,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 			view.getSettings().setJavaScriptEnabled(true);
 			view.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 		}
-
+// do not use the getter method so often
+// use: SomeViewSettingsClass settings = view.getSettings() to get a reference to the settings object.
 		view.getSettings().setAllowFileAccess(true);
 		view.getSettings().setLightTouchEnabled(true);
 		view.setAnimationCacheEnabled(false);
@@ -1357,7 +1357,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 						} catch (IOException e) {
 
 							e.printStackTrace();
-						}
+						} //IO streams are usually closed in the finally clause to ensure they will always get closeda
 						for (int p = 0; p < MAX_BOOKMARKS; p++) {
 							bUrl[p] = null;
 							bTitle[p] = null;
@@ -1416,7 +1416,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	}
 
-	static class bookmarkListener implements OnClickListener {
+	static class bookmarkListener implements OnClickListener { //classname = capital first char
 
 		@Override
 		public void onClick(View arg0) {
