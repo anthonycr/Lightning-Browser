@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/refresh" android:title="Actualiser" android:titleCondensed="Actualiser" android:orderInCategory="1"></item>
-    <item android:id="@+id/bookmark" android:title="Ajouter aux favoris" android:titleCondensed="Aj. Favoris" android:orderInCategory="2"></item>
-    <item android:id="@+id/allBookmarks" android:titleCondensed="Favoris" android:title="Favoris" android:orderInCategory="3"></item>
-    <item android:id="@+id/share" android:title="Partager..." android:titleCondensed="Partager" android:orderInCategory="4"></item>
-    <item android:id="@+id/settings" android:title="Paramètres" android:titleCondensed="Paramètres" android:orderInCategory="6"></item>
-    <item android:id="@+id/forward" android:title="Suivant" android:orderInCategory="5" android:titleCondensed="Suivant"></item>
+    <item android:id="@+id/refresh" android:title="Refresh" android:titleCondensed="Refresh" android:orderInCategory="1"></item>
+    <item android:id="@+id/bookmark" android:title="Add to bookmarks" android:titleCondensed="Add bookmark" android:orderInCategory="2"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="Bookmarks" android:title="Bookmarks" android:orderInCategory="3"></item>
+    <item android:id="@+id/share" android:title="Share" android:titleCondensed="Share" android:orderInCategory="4"></item>
+    <item android:id="@+id/settings" android:title="Settings" android:titleCondensed="Settings" android:orderInCategory="6"></item>
+    <item android:id="@+id/forward" android:title="Forward" android:orderInCategory="5" android:titleCondensed="Forward"></item>
     
 
 </menu>
