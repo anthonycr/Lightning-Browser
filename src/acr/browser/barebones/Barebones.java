@@ -17,12 +17,16 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
@@ -39,6 +43,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Browser;
+import android.provider.Browser.BookmarkColumns;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -105,7 +110,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static final boolean PAID_VERSION = false;
 
 	// variable declaration
-	static int crap;
+	
+	static Rect edge;
 	static SimpleAdapter adapter;
 	static MultiAutoCompleteTextView getUrl;
 	static TextView[] urlTitle = new TextView[MAX_TABS];
@@ -127,9 +133,12 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static int height, width, pixels, leftPad, rightPad, pixelHeight;
 	static int bookHeight, API;
 	static int mShortAnimationDuration;
+	static int id;
+	static int hitTest;
 	static int urlColumn, titleColumn;
 	static View mCustomView = null;
 	static CustomViewCallback mCustomViewCallback;
+	static boolean xPress;
 	static boolean tabsAreDisplayed = true, isPhone = false;
 	static boolean pageIsLoading = false, java;
 	static boolean allowLocation, savePasswords, deleteHistory;
@@ -167,6 +176,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static List<Map<String, String>> list;
 	static Map<String, String> map;
 	static Handler handler;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -349,8 +359,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 		pixelHeight = (int) (36 * scale + 0.5f);
 		bookHeight = (int) (48 * scale + 0.5f);
 		height56 = (int) (56 * scale + 0.5f);
-		leftPad = (int) (10 * scale + 0.5f);
-		rightPad = (int) (10 * scale + 0.5f);
+		leftPad = (int) (15 * scale + 0.5f);
+		rightPad = (int) (15 * scale + 0.5f);
 		height32 = (int) (32 * scale + 0.5f);
 		statusBar = (int) (25 * scale + 0.5f);
 		number = 0;
@@ -361,7 +371,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		webpage.setBounds(0, 0, width * 2 / 3, height * 2 / 3);
 		webpageOther.setBounds(0, 0, width * 1 / 2, height * 1 / 2);
 		exitTab.setBounds(0, 0, width * 2 / 3, height * 2 / 3);
-		Intent url = getIntent().addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		Intent url = getIntent();
 		String URL = null; // that opens the browser
 		// gets the string passed into the browser
 		URL = url.getDataString();
@@ -496,7 +506,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 								new String[] { "title", "url" }, new int[] { R.id.title,
 										R.id.url });
 						getUrl.setAdapter(adapter);
-		                break;}
+						
+		                break;
+		                }
 		            case 2:{
 		            	
 		                break;	
@@ -512,18 +524,21 @@ public class Barebones extends Activity implements OnLongClickListener,
 				
 				
 				bookmarks = Browser.BOOKMARKS_URI;
+				 
 				columns = new String[] { Browser.BookmarkColumns.URL,
 						Browser.BookmarkColumns.TITLE };
-				Context con = Barebones.this;
+				
 				try{
+					
 				managedCursor = null;
-				managedCursor = con.getContentResolver().query(bookmarks, // URI of
+				managedCursor = getContentResolver().query(bookmarks, // URI of
 						columns, // Which columns to return
 						null, // Which rows to return (all rows)
 						null, // Selection arguments (none)
 						null);
 				Log.i("Lightning: ","SQLite success!!!");
 				handler.sendEmptyMessage(1);
+				Log.i("Lightning: ","SQLite success!!!");
 				
 				}
 				catch(SQLiteException e){
@@ -681,6 +696,74 @@ public class Barebones extends Activity implements OnLongClickListener,
 				Drawable[] drawables = title.getCompoundDrawables();
 				bounds[number] = drawables[2].getBounds();
 				title.setOnLongClickListener(Barebones.this);
+				title.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View arg0) {
+						id = arg0.getId();
+						if (API < 16) {
+							urlTitle[pageId].setBackgroundDrawable(getResources()
+									.getDrawable(R.drawable.bg_inactive));
+						} else if (API > 15) {
+							urlTitle[pageId].setBackground(getResources()
+									.getDrawable(R.drawable.bg_inactive));
+						}
+						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
+
+						if (isBookmarkShowing) {
+
+							background.addView(main[id]);
+							main[id].startAnimation(fadeIn);
+							scrollBookmarks.startAnimation(fadeOut);
+							background.removeView(scrollBookmarks);
+							isBookmarkShowing = false;
+							uBar.bringToFront();
+						} else if (!isBookmarkShowing) {
+							if (!showFullScreen) {
+								background.addView(main[id]);
+								main[id].startAnimation(fadeIn);
+								main[pageId].startAnimation(fadeOut);
+								pageIdIsVisible = false;
+								background.removeView(main[pageId]);
+								uBar.bringToFront();
+							} else if (API >= 12) {
+								pageIdIsVisible = false;
+								main[id].setAlpha(0f);
+								main[id].clearAnimation();
+								background.addView(main[id]);
+								main[id].animate().alpha(1f)
+										.setDuration(mShortAnimationDuration);
+								main[pageId].clearAnimation();
+							//	main[pageId].animate().alpha(0f)
+							//			.setDuration(mShortAnimationDuration);
+								
+							//	main[pageId].setAlpha(1f);
+								background.removeView(main[pageId]);
+								
+								
+								uBar.bringToFront();
+							} else {
+								pageIdIsVisible = false;
+								background.removeView(main[pageId]);
+								background.addView(main[id]);
+							}
+							uBar.bringToFront();
+						}
+						pageId = id;
+						pageIdIsVisible = true;
+						getUrl.setText(urlToLoad[pageId][0]);
+						
+						if (API < 16) {
+							urlTitle[pageId].setBackgroundDrawable(getResources()
+									.getDrawable(R.drawable.bg_press));
+						} else if (API > 15) {
+							urlTitle[pageId].setBackground(getResources().getDrawable(
+									R.drawable.bg_press));
+						}
+						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
+					}
+					
+				});
 				title.setOnTouchListener(Barebones.this);
 				tabLayout.addView(title);
 				urlTitle[number] = title;
@@ -897,7 +980,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			super(context);
 
 		}
-
+		
 		@Override
 		protected void onDraw(Canvas canvas) {
 			if(!showFullScreen){
@@ -924,12 +1007,11 @@ public class Barebones extends Activity implements OnLongClickListener,
 			}
 			case MotionEvent.ACTION_UP: {
 				try{
-					crap = getHitTestResult().getType();
+					hitTest = getHitTestResult().getType();
 					}
 					catch(NullPointerException e){
-						Log.e("Lightning","Touch was invalid");
 					}
-				if (showFullScreen&&crap!=9) {
+				if (showFullScreen&&hitTest!=9) {
 					if (System.currentTimeMillis() - timeBetweenDownPress < 500
 							&& !move) {
 						if (!uBarShows) {
@@ -961,8 +1043,16 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 
 	}
-
+	
 	private class AnthonyWebViewClient extends WebViewClient {
+
+		@Override
+		public void doUpdateVisitedHistory(WebView view, String url,
+				boolean isReload) {
+			
+			
+			return;
+		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -1004,22 +1094,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 
 		@Override
-		public void onPageStarted(WebView view, final String url, Bitmap favicon) {
+		public void onPageStarted(WebView view,String url, Bitmap favicon) {
 			int num = view.getId();
-			Thread hist = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					if(!noStockBrowser){
-					Browser.updateVisitedHistory(getContentResolver(), url,
-							true);
-					
-				}
 				
-				}
-
-			});
-			hist.start();
 			pageIsLoading = true;
 			refresh.startAnimation(anim);
 			getUrl.setText(url);
@@ -1034,8 +1111,18 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 
 		@Override
-		public void onPageFinished(WebView view, String url) {
-
+		public void onPageFinished(WebView view, final String url) {
+			if(!noStockBrowser){
+				Thread history = new Thread( new Runnable(){
+					@Override
+					public void run(){
+						Browser.updateVisitedHistory(getContentResolver(),url,true);
+						//Log.i("Lightning",view.getTitle()+" "+url);
+					}
+				
+				});
+				history.start();
+			}
 			pageIsLoading = false;
 			anim.cancel();
 			anim.reset();
@@ -1169,7 +1256,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 		@Override
 		public void onReceivedTitle(WebView view, String title) {
-
+			
 			int num = view.getId();
 			urlTitle[num].setText(title);
 			urlToLoad[num][1] = title;
@@ -1973,6 +2060,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			main[pageId].goBack();
 		} else {
 			deleteTab(pageId);
+			uBar.bringToFront();
 		}
 
 	}
@@ -1990,6 +2078,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 	@Override
 	public void finish() {
 		pageIdIsVisible = false;
+		this.onPause();
 		super.finish();
 	}
 
@@ -1999,8 +2088,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 			deleteHistory = settings.getBoolean("history", false);
 			if (deleteHistory == true) {
-				
-					if(noStockBrowser){
+					if(!noStockBrowser){
 					Browser.clearHistory(getContentResolver());
 					}
 			}
@@ -2038,14 +2126,16 @@ public class Barebones extends Activity implements OnLongClickListener,
 		return dir.delete();
 	}
 
+	
+	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		pageIdIsVisible = false;
-		final int id = v.getId();
-		boolean xPress = false;
+		id = v.getId();
+		xPress = false;
 		x = (int) event.getX();
 		y = (int) event.getY();
-		final Rect edge = new Rect();
+		edge = new Rect();
 		v.getLocalVisibleRect(edge);
 
 		if (x >= (edge.right - bounds[id].width() - fuzz)
@@ -2143,5 +2233,38 @@ public class Barebones extends Activity implements OnLongClickListener,
 		pageIdIsVisible = true;
 		return true;
 	}
+
+	@Override
+	protected void onPause() {
+		if(API>=11){
+		main[pageId].onPause();
+		}
+		main[pageId].pauseTimers();
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		if(API>=11){
+		main[pageId].onResume();
+		}
+		main[pageId].resumeTimers();
+		super.onResume();
+		
+		
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		
+		String url = null;
+		url = intent.getDataString();
+		if(url!=null){
+		newTab(number,url);
+		}
+		super.onNewIntent(intent);
+	}
+	
+	
 
 }

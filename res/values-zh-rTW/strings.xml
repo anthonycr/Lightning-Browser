@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Lightning</string>
     <string name="google">Google</string>
-    <string name="settings">浏覽器設置</string>
-    <string name="location">允許站點訪問您地理位置</string>
-    <string name="password">保存密碼</string>
-    <string name="agent">User Agent</string>
-    <string name="history">退出時清空曆史記錄（緩存將被自動清理）</string>
-    <string name="email">郵件開發者</string>
+    <string name="settings">瀏覽器設定</string>
+    <string name="location">允許網頁存取您的位置資訊</string>
+    <string name="password">儲存密碼</string>
+    <string name="agent">使用者代理</string>
+    <string name="history">退出時清除歷史記錄（自動清理緩存）</string>
+    <string name="email">電郵給開發者</string>
     <string name="flash">啓用 Adobe Flash（若已安裝）</string>
-    <string name="mobile">作爲移動設備訪問</string>
-    <string name="desk">作爲桌面設備訪問</string>
-    <string name="custom">自定義 User Agent</string>
+    <string name="mobile">以手機版檢視</string>
+    <string name="desk">以電腦桌面版檢視</string>
+    <string name="custom">自定義使用者代理</string>
     <string name="home">首頁</string>
-    <string name="settingshelp">設置僅將應用于新標簽頁</string>
-    <string name="fullscreen">啓用全屏模式</string>
+    <string name="settingshelp">設定僅套用於新的標簽頁</string>
+    <string name="fullscreen">啓用全螢幕模式</string>
     <string name="java">啓用 JavaScript</string>
-
 </resources>

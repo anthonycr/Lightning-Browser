@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/refresh" android:titleCondensed="刷新頁面" android:title="刷新" android:orderInCategory="1"></item>
-    <item android:id="@+id/bookmark" android:titleCondensed="添加書簽" android:title="添加書簽" android:orderInCategory="2"></item>
-    <item android:id="@+id/allBookmarks" android:titleCondensed="書簽列表" android:title="書簽" android:orderInCategory="3"></item>
-    <item android:id="@+id/share" android:titleCondensed="分享頁面" android:title="分享" android:orderInCategory="4"></item>
-    <item android:id="@+id/settings" android:titleCondensed="應用設置" android:title="設置" android:orderInCategory="6"></item>
-    <item android:id="@+id/tabs" android:titleCondensed="顯示以及隱藏標簽" android:title="顯示/隱藏標簽" android:orderInCategory="5"></item>
-    <item android:id="@+id/forward" android:titleCondensed="前進頁面" android:title="前進" android:orderInCategory="7"></item>
-    
-
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/refresh" android:orderInCategory="1" android:title="重新載入" android:titleCondensed="重新載入頁面" />
+    <item android:id="@id/bookmark" android:orderInCategory="2" android:title="加入到書簽" android:titleCondensed="加入書簽" />
+    <item android:id="@id/allBookmarks" android:orderInCategory="3" android:title="我的書簽" android:titleCondensed="我的書簽清單" />
+    <item android:id="@id/share" android:orderInCategory="4" android:title="分享頁面" android:titleCondensed="分享頁面" />
+    <item android:id="@id/settings" android:orderInCategory="6" android:title="設定" android:titleCondensed="瀏覽器設定" />
+    <item android:id="@id/forward" android:orderInCategory="5" android:title="前往下個頁面" android:titleCondensed="前往下個頁面" />
 </menu>
