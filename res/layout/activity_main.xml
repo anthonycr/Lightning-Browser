@@ -110,17 +110,22 @@
             android:paddingTop="10dp"
             android:src="@drawable/refresh" />
 </RelativeLayout>
+
         <MultiAutoCompleteTextView
             android:id="@+id/enterUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/options"
             android:layout_toRightOf="@+id/refreshLayout"
+            android:background="@drawable/bookmark"
             android:ems="10"
             android:hint="@string/google"
             android:imeOptions="actionGo"
             android:inputType="textUri"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:singleLine="true" />
 
     </RelativeLayout>

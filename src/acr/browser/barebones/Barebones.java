@@ -49,6 +49,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -93,6 +94,7 @@ import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -110,7 +112,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static final boolean PAID_VERSION = false;
 
 	// variable declaration
-	
+
 	static Rect edge;
 	static SimpleAdapter adapter;
 	static MultiAutoCompleteTextView getUrl;
@@ -133,7 +135,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static int height, width, pixels, leftPad, rightPad, pixelHeight;
 	static int bookHeight, API;
 	static int mShortAnimationDuration;
-	static int id;
+	static int id, tenPad;
 	static int hitTest;
 	static int urlColumn, titleColumn;
 	static View mCustomView = null;
@@ -176,7 +178,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static List<Map<String, String>> list;
 	static Map<String, String> map;
 	static Handler handler;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -229,11 +230,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 	public void init() {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		if (isPhone) {
-			showFullScreen = settings.getBoolean("fullscreen", true);
-		} else {
-			showFullScreen = settings.getBoolean("fullscreen", false);
-		}
+
+		showFullScreen = settings.getBoolean("fullscreen", false);
 		uBar = (RelativeLayout) findViewById(R.id.urlBar);
 		bg = (RelativeLayout) findViewById(R.id.background);
 		slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
@@ -359,9 +357,10 @@ public class Barebones extends Activity implements OnLongClickListener,
 		pixelHeight = (int) (36 * scale + 0.5f);
 		bookHeight = (int) (48 * scale + 0.5f);
 		height56 = (int) (56 * scale + 0.5f);
-		leftPad = (int) (15 * scale + 0.5f);
+		leftPad = (int) (17 * scale + 0.5f);
 		rightPad = (int) (15 * scale + 0.5f);
 		height32 = (int) (32 * scale + 0.5f);
+		tenPad = (int) (10 * scale + 0.5f);
 		statusBar = (int) (25 * scale + 0.5f);
 		number = 0;
 		loading = getResources().getDrawable(R.drawable.loading);
@@ -406,17 +405,17 @@ public class Barebones extends Activity implements OnLongClickListener,
 			}
 
 		});
-		
+
 		enterUrl();
 		updateUI();
 		if (showFullScreen) {
 			bg.removeView(uBar);
 			background.addView(uBar);
 		}
-		
+
 	}
-	
-	public static void updateUI(){
+
+	public static void updateUI() {
 		clock = System.currentTimeMillis();
 
 		Thread uiUpdate = new Thread(new Runnable() {
@@ -424,7 +423,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 			public void run() {
 				long clock = System.currentTimeMillis();
 				while (true) {
-					while (!(System.currentTimeMillis() - clock > 20 && pageIdIsVisible));
+					while (!(System.currentTimeMillis() - clock > 20 && pageIdIsVisible))
+						;
 					main[pageId].postInvalidate();
 					clock = System.currentTimeMillis();
 
@@ -435,7 +435,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			pageIdIsVisible = true;
 			uiUpdate.setDaemon(true);
 			uiUpdate.setPriority(Thread.MIN_PRIORITY);
-			//uiUpdate.start();
+			// uiUpdate.start();
 		}
 	}
 
@@ -491,95 +491,94 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 	}
 
-	void enterUrl(){
+	void enterUrl() {
 		getUrl = (MultiAutoCompleteTextView) findViewById(R.id.enterUrl);
+		getUrl.setPadding(tenPad, 0, tenPad, 0);
 		getUrl.setTextColor(getResources().getColor(android.R.color.black));
-		
+		getUrl.setPadding(tenPad, 0, tenPad, 0);
+		getUrl.setBackgroundResource(R.drawable.book);
+		getUrl.setPadding(tenPad, 0, tenPad, 0);
 		handler = new Handler() {
 
-		    @Override
-		    public void handleMessage(Message msg) {
-		        switch (msg.what) {
-		            case 1:{
-		            	adapter = new SimpleAdapter(Barebones.this, list,
-								R.layout.two_line_autocomplete,
-								new String[] { "title", "url" }, new int[] { R.id.title,
-										R.id.url });
-						getUrl.setAdapter(adapter);
-						
-		                break;
-		                }
-		            case 2:{
-		            	
-		                break;	
-		                }
-		            }
-		        }
-		    };
-		
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 1: {
+					adapter = new SimpleAdapter(Barebones.this, list,
+							R.layout.two_line_autocomplete, new String[] {
+									"title", "url" }, new int[] { R.id.title,
+									R.id.url });
+					getUrl.setAdapter(adapter);
+
+					break;
+				}
+				case 2: {
+
+					break;
+				}
+				}
+			}
+		};
+
 		Thread updateAutoComplete = new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				
-				
+
 				bookmarks = Browser.BOOKMARKS_URI;
-				 
+
 				columns = new String[] { Browser.BookmarkColumns.URL,
 						Browser.BookmarkColumns.TITLE };
-				
-				try{
-					
-				managedCursor = null;
-				managedCursor = getContentResolver().query(bookmarks, // URI of
-						columns, // Which columns to return
-						null, // Which rows to return (all rows)
-						null, // Selection arguments (none)
-						null);
-				Log.i("Lightning: ","SQLite success!!!");
-				handler.sendEmptyMessage(1);
-				Log.i("Lightning: ","SQLite success!!!");
-				
-				}
-				catch(SQLiteException e){
+
+				try {
+
+					managedCursor = null;
+					managedCursor = getContentResolver().query(bookmarks, // URI
+																			// of
+							columns, // Which columns to return
+							null, // Which rows to return (all rows)
+							null, // Selection arguments (none)
+							null);
+					Log.i("Barebones: ", "SQLite success!!!");
+					handler.sendEmptyMessage(1);
+					Log.i("Barebones: ", "SQLite success!!!");
+
+				} catch (SQLiteException e) {
 					handler.sendEmptyMessage(2);
-					Log.e("Lightning: ","SQLite Error!!! "+e);
+					Log.e("Barebones: ", "SQLite Error!!! " + e);
 				}
-				
+
 				list = new ArrayList<Map<String, String>>();
 				noStockBrowser = true;
-				if(managedCursor!=null){
+				if (managedCursor != null) {
 					noStockBrowser = false;
-					
-				if (managedCursor.moveToFirst()) {
-					
-					// Variable for holding the retrieved URL
 
-					urlColumn = managedCursor
-							.getColumnIndex(Browser.BookmarkColumns.URL);
-					titleColumn = managedCursor
-							.getColumnIndex(Browser.BookmarkColumns.TITLE);
-					// Reference to the the column containing the URL
-					do {
-						urlA = managedCursor.getString(urlColumn);
-						title = managedCursor.getString(titleColumn);
-						map = new HashMap<String, String>();
-						map.put("title", title);
-						map.put("url", urlA);
-						list.add(map);
-					} while (managedCursor.moveToNext());
+					if (managedCursor.moveToFirst()) {
+
+						// Variable for holding the retrieved URL
+
+						urlColumn = managedCursor
+								.getColumnIndex(Browser.BookmarkColumns.URL);
+						titleColumn = managedCursor
+								.getColumnIndex(Browser.BookmarkColumns.TITLE);
+						// Reference to the the column containing the URL
+						do {
+							urlA = managedCursor.getString(urlColumn);
+							title = managedCursor.getString(titleColumn);
+							map = new HashMap<String, String>();
+							map.put("title", title);
+							map.put("url", urlA);
+							list.add(map);
+						} while (managedCursor.moveToNext());
+					}
 				}
-				}
-				
-				
+
 			}
-			
+
 		});
-		
-		
-		
+
 		updateAutoComplete.start();
-		
+
 		getUrl.setThreshold(2);
 
 		getUrl.setTokenizer(new SpaceTokenizer());
@@ -588,9 +587,10 @@ public class Barebones extends Activity implements OnLongClickListener,
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				try{
 				txt = (TextView) arg1.findViewById(R.id.url);
 				str = txt.getText().toString();
-				if(!pageIdIsVisible && isBookmarkShowing){
+				if (!pageIdIsVisible && isBookmarkShowing) {
 					scrollBookmarks.startAnimation(fadeOut);
 					background.removeView(scrollBookmarks);
 					background.addView(main[pageId]);
@@ -599,9 +599,14 @@ public class Barebones extends Activity implements OnLongClickListener,
 				}
 				main[pageId].loadUrl(str);
 				getUrl.setText(str);
+				getUrl.setPadding(tenPad, 0, tenPad, 0);
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
-				
+				}
+				catch(NullPointerException e){
+					
+					Log.e("Barebones Error: ","NullPointerException on item click");
+				}
 			}
 
 		});
@@ -609,7 +614,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		getUrl.setSelectAllOnFocus(true); // allows edittext to select all when
 											// clicked
 	}
-	
+
 	// new tab method, takes the id of the tab to be created and the url to load
 	void newTab(int theId, String theUrl) {
 		lastVisibleWebView = pageId;
@@ -647,7 +652,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 							R.drawable.bg_inactive));
 				}
 				urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-
 				background.addView(main[num]);
 				background.removeView(main[pageId]);
 
@@ -696,14 +700,15 @@ public class Barebones extends Activity implements OnLongClickListener,
 				Drawable[] drawables = title.getCompoundDrawables();
 				bounds[number] = drawables[2].getBounds();
 				title.setOnLongClickListener(Barebones.this);
-				title.setOnClickListener(new OnClickListener(){
+				title.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View arg0) {
 						id = arg0.getId();
 						if (API < 16) {
-							urlTitle[pageId].setBackgroundDrawable(getResources()
-									.getDrawable(R.drawable.bg_inactive));
+							urlTitle[pageId]
+									.setBackgroundDrawable(getResources()
+											.getDrawable(R.drawable.bg_inactive));
 						} else if (API > 15) {
 							urlTitle[pageId].setBackground(getResources()
 									.getDrawable(R.drawable.bg_inactive));
@@ -734,13 +739,12 @@ public class Barebones extends Activity implements OnLongClickListener,
 								main[id].animate().alpha(1f)
 										.setDuration(mShortAnimationDuration);
 								main[pageId].clearAnimation();
-							//	main[pageId].animate().alpha(0f)
-							//			.setDuration(mShortAnimationDuration);
-								
-							//	main[pageId].setAlpha(1f);
+								// main[pageId].animate().alpha(0f)
+								// .setDuration(mShortAnimationDuration);
+
+								// main[pageId].setAlpha(1f);
 								background.removeView(main[pageId]);
-								
-								
+
 								uBar.bringToFront();
 							} else {
 								pageIdIsVisible = false;
@@ -752,17 +756,18 @@ public class Barebones extends Activity implements OnLongClickListener,
 						pageId = id;
 						pageIdIsVisible = true;
 						getUrl.setText(urlToLoad[pageId][0]);
-						
+						getUrl.setPadding(tenPad, 0, tenPad, 0);
 						if (API < 16) {
-							urlTitle[pageId].setBackgroundDrawable(getResources()
-									.getDrawable(R.drawable.bg_press));
+							urlTitle[pageId]
+									.setBackgroundDrawable(getResources()
+											.getDrawable(R.drawable.bg_press));
 						} else if (API > 15) {
-							urlTitle[pageId].setBackground(getResources().getDrawable(
-									R.drawable.bg_press));
+							urlTitle[pageId].setBackground(getResources()
+									.getDrawable(R.drawable.bg_press));
 						}
 						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 					}
-					
+
 				});
 				title.setOnTouchListener(Barebones.this);
 				tabLayout.addView(title);
@@ -780,7 +785,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 			Toast.makeText(Barebones.this, "Maximum number of tabs reached...",
 					Toast.LENGTH_SHORT).show();
 		}
-		
 
 	}
 
@@ -933,16 +937,16 @@ public class Barebones extends Activity implements OnLongClickListener,
 		switch (agentPicker) {
 		case 1:
 			main[pageToView].getSettings().setUserAgentString(mobile);
-			Log.i("lightning", mobile);
+			Log.i("barebones", mobile);
 			break;
 		case 2:
 			main[pageToView].getSettings().setUserAgentString(desktop);
-			Log.i("lightning", desktop);
+			Log.i("barebones", desktop);
 			break;
 		case 3:
 			userAgent = settings.getString("agent", user);
 			main[pageToView].getSettings().setUserAgentString(userAgent);
-			Log.i("lightning", userAgent);
+			Log.i("barebones", userAgent);
 			break;
 		}
 		background.addView(main[pageToView]);
@@ -953,23 +957,21 @@ public class Barebones extends Activity implements OnLongClickListener,
 			background.removeView(main[lastVisibleWebView]);
 		}
 		uBar.bringToFront();
-		if(Url.contains("about:home")&&!showFullScreen){
+		if (Url.contains("about:home") && !showFullScreen) {
 			pageIdIsVisible = false;
 			goBookmarks();
-		}
-		else if (Url.contains("about:home")) {
+		} else if (Url.contains("about:home")) {
 			pageIdIsVisible = true;
 			main[pageToView].loadUrl("about:blank");
-			
-		}
-		else if (Url.contains("about:blank")) {
+
+		} else if (Url.contains("about:blank")) {
 			pageIdIsVisible = true;
 			main[pageToView].loadUrl("about:blank");
-			
+
 		} else {
 			pageIdIsVisible = true;
 			main[pageToView].loadUrl(Url);
-			
+
 		}
 
 	}
@@ -980,19 +982,19 @@ public class Barebones extends Activity implements OnLongClickListener,
 			super(context);
 
 		}
-		
+
 		@Override
 		protected void onDraw(Canvas canvas) {
-			if(!showFullScreen){
-			main[pageId].invalidate();
+			if (!showFullScreen) {
+				main[pageId].invalidate();
 			}
 			super.onDraw(canvas);
 		}
 
 		@Override
 		public boolean onTouchEvent(MotionEvent event) {
-			//final HitTestResult poop;
-			
+			// final HitTestResult poop;
+
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN: {
 				move = false;
@@ -1006,12 +1008,11 @@ public class Barebones extends Activity implements OnLongClickListener,
 				move = true;
 			}
 			case MotionEvent.ACTION_UP: {
-				try{
+				try {
 					hitTest = getHitTestResult().getType();
-					}
-					catch(NullPointerException e){
-					}
-				if (showFullScreen&&hitTest!=9) {
+				} catch (NullPointerException e) {
+				}
+				if (showFullScreen && hitTest != 9) {
 					if (System.currentTimeMillis() - timeBetweenDownPress < 500
 							&& !move) {
 						if (!uBarShows) {
@@ -1043,14 +1044,13 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 
 	}
-	
+
 	private class AnthonyWebViewClient extends WebViewClient {
 
 		@Override
 		public void doUpdateVisitedHistory(WebView view, String url,
 				boolean isReload) {
-			
-			
+
 			return;
 		}
 
@@ -1059,7 +1059,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 			pageIdIsVisible = true;
 			return super.shouldOverrideUrlLoading(view, url);
-			
+
 		}
 
 		@Override
@@ -1073,8 +1073,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 		public void onReceivedError(WebView view, int errorCode,
 				String description, String failingUrl) {
 
-			Log.e("Lightning: ","Error: " + description);
-			
+			Log.e("Barebones: ", "Error: " + description);
+
 			super.onReceivedError(view, errorCode, description, failingUrl);
 		}
 
@@ -1094,12 +1094,13 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 
 		@Override
-		public void onPageStarted(WebView view,String url, Bitmap favicon) {
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			int num = view.getId();
-				
+
 			pageIsLoading = true;
 			refresh.startAnimation(anim);
 			getUrl.setText(url);
+			getUrl.setPadding(tenPad, 0, tenPad, 0);
 			urlToLoad[num][0] = url;
 			urlTitle[num].setCompoundDrawables(webpageOther, null, exitTab,
 					null);
@@ -1112,14 +1113,15 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 		@Override
 		public void onPageFinished(WebView view, final String url) {
-			if(!noStockBrowser){
-				Thread history = new Thread( new Runnable(){
+			if (!noStockBrowser) {
+				Thread history = new Thread(new Runnable() {
 					@Override
-					public void run(){
-						Browser.updateVisitedHistory(getContentResolver(),url,true);
-						//Log.i("Lightning",view.getTitle()+" "+url);
+					public void run() {
+						Browser.updateVisitedHistory(getContentResolver(), url,
+								true);
+						// Log.i("Barebones",view.getTitle()+" "+url);
 					}
-				
+
 				});
 				history.start();
 			}
@@ -1222,7 +1224,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			if (allowLocation == true) {
 				callback.invoke(origin, true, false);
 			} else {
-				Log.i("Lightning: ", "onGeolocationPermissionsShowPrompt()");
+				Log.i("Barebones: ", "onGeolocationPermissionsShowPrompt()");
 
 				final boolean remember = true;
 				AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -1256,14 +1258,13 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 		@Override
 		public void onReceivedTitle(WebView view, String title) {
-			
+
 			int num = view.getId();
 			urlTitle[num].setText(title);
 			urlToLoad[num][1] = title;
 			super.onReceivedTitle(view, title);
 		}
 
-		
 		@Override
 		public void onShowCustomView(View view,
 				WebChromeClient.CustomViewCallback callback) {
@@ -1346,18 +1347,16 @@ public class Barebones extends Activity implements OnLongClickListener,
 		view.setSaveEnabled(true);
 		webViewSettings.setDomStorageEnabled(true);
 		webViewSettings.setAppCacheEnabled(true);
-		webViewSettings.setAppCachePath(
-				getApplicationContext().getFilesDir().getAbsolutePath()
-						+ "/cache");
+		webViewSettings.setAppCachePath(getApplicationContext().getFilesDir()
+				.getAbsolutePath() + "/cache");
 		webViewSettings.setRenderPriority(RenderPriority.HIGH);
 		webViewSettings.setGeolocationEnabled(true);
-		webViewSettings.setGeolocationDatabasePath(
-				getApplicationContext().getFilesDir().getAbsolutePath());
+		webViewSettings.setGeolocationDatabasePath(getApplicationContext()
+				.getFilesDir().getAbsolutePath());
 
 		webViewSettings.setDatabaseEnabled(true);
-		webViewSettings.setDatabasePath(
-				getApplicationContext().getFilesDir().getAbsolutePath()
-						+ "/databases");
+		webViewSettings.setDatabasePath(getApplicationContext().getFilesDir()
+				.getAbsolutePath() + "/databases");
 		enableFlash = settings.getInt("enableflash", 0);
 		switch (enableFlash) {
 		case 0:
@@ -1384,8 +1383,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 		webViewSettings.setSupportZoom(true);
 		webViewSettings.setUseWideViewPort(true);
 		webViewSettings.setLoadWithOverviewMode(true); // Seems to be causing
-															// the performance
-															// to drop
+														// the performance
+														// to drop
 		if (API >= 11) {
 			webViewSettings.setDisplayZoomControls(false);
 			webViewSettings.setAllowContentAccess(true);
@@ -1410,9 +1409,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 		bookmarkLayout.setOrientation(LinearLayout.VERTICAL);
 		TextView description = new TextView(Barebones.this);
 		description.setHeight(height56);
-		description.setBackgroundColor(0xff0099cc);
+		description.setBackgroundColor(0xff33b5e5);
 		description.setTextColor(0xffffffff);
-		description.setText("Bookmarks (long-press to remove)");
+		description.setText("Bookmarks");
 		description.setGravity(Gravity.CENTER_VERTICAL
 				| Gravity.CENTER_HORIZONTAL);
 		description.setTextSize(bookHeight / 3);
@@ -1441,13 +1440,14 @@ public class Barebones extends Activity implements OnLongClickListener,
 		if (uBar.isShown()) {
 			urlTitle[pageId].setText("Bookmarks");
 			getUrl.setText("Bookmarks");
+			getUrl.setPadding(tenPad, 0, tenPad, 0);
 		}
 
-		//main[pageId].startAnimation(fadeOut);
+		// main[pageId].startAnimation(fadeOut);
 		background.removeView(main[pageId]);
 
 		if (showFullScreen) {
-			//uBar.startAnimation(fadeOut);
+			// uBar.startAnimation(fadeOut);
 			background.removeView(uBar);
 		}
 		scrollBookmarks.addView(bookmarkLayout);
@@ -1477,9 +1477,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 									new FileWriter(book));
 							BufferedWriter urlWriter = new BufferedWriter(
 									new FileWriter(bookUrl));
-							Log.i("lightning", "makes to here");
+							Log.i("barebones", "makes to here");
 							while (bUrl[n] != null && n < (MAX_BOOKMARKS - 1)) {
-								Log.i("lightning", "makes to here " + n);
+								Log.i("barebones", "makes to here " + n);
 								if (delete != n) {
 									bookWriter.write(bTitle[n]);
 									urlWriter.write(bUrl[n]);
@@ -1487,7 +1487,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 									urlWriter.newLine();
 								}
 								n++;
-								Log.i("lightning", "makes to here " + n);
+								Log.i("barebones", "makes to here " + n);
 							}
 							bookWriter.close();
 							urlWriter.close();
@@ -1571,7 +1571,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			scrollBookmarks.startAnimation(fadeOut);
 			background.removeView(scrollBookmarks);
 			isBookmarkShowing = false;
-			
+
 			uBar.bringToFront();
 			main[pageId].loadUrl(bUrl[number]);
 		}
@@ -1597,6 +1597,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 			e.printStackTrace();
 		} catch (IOException e) {
 
+			e.printStackTrace();
+		} catch (NullPointerException e){
 			e.printStackTrace();
 		}
 	}
@@ -1654,8 +1656,10 @@ public class Barebones extends Activity implements OnLongClickListener,
 	public void deleteTab(int id) {
 		int leftId = id;
 		pageIdIsVisible = false;
+		main[id].stopLoading();
+		main[id].clearView();
 		boolean right = false, left = false;
-		//background.clearDisappearingChildren();
+		// background.clearDisappearingChildren();
 		if (API < 16) {
 			urlTitle[id].setBackgroundDrawable(getResources().getDrawable(
 					R.drawable.bg_press));
@@ -1696,6 +1700,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 					urlTitle[id].setPadding(leftPad, 0, rightPad, 0);
 					pageId = id;
 					getUrl.setText(urlToLoad[pageId][0]);
+					getUrl.setPadding(tenPad, 0, tenPad, 0);
 					right = true;
 					break;
 				}
@@ -1707,7 +1712,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 					if (urlTitle[leftId].isShown()) {
 						background.addView(main[leftId]);
 						main[leftId].setVisibility(View.VISIBLE);
-						//uBar.bringToFront();
+						// uBar.bringToFront();
 						if (API < 16) {
 							urlTitle[leftId]
 									.setBackgroundDrawable(getResources()
@@ -1719,6 +1724,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 						urlTitle[leftId].setPadding(leftPad, 0, rightPad, 0);
 						pageId = leftId;
 						getUrl.setText(urlToLoad[pageId][0]);
+						getUrl.setPadding(tenPad, 0, tenPad, 0);
 						left = true;
 						break;
 					}
@@ -1727,12 +1733,10 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 			}
 
-			
-		}
-		else{
+		} else {
 			right = left = true;
 		}
-		
+
 		if (right == false && left == false) {
 			finish();
 		} else {
@@ -1881,6 +1885,21 @@ public class Barebones extends Activity implements OnLongClickListener,
 					});
 					menu.show();
 				} else if (API < 11) {
+					/*
+					LayoutInflater inflater=(LayoutInflater)Barebones.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				    Display display=getWindowManager().getDefaultDisplay();
+
+				    int width=display.getWidth()/2;
+				    int height=display.getHeight()/2;
+
+				    View pop = inflater.inflate(R.layout.menu,null,false);
+				    pop.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
+				    height=pop.getMeasuredHeight();
+				    width=pop.getMeasuredWidth();
+				    PopupWindow pu = new PopupWindow(pop,width,height,true);
+				    pu.showAtLocation(findViewById(v.getId()),Gravity.NO_GRAVITY,v.getRight(),v.getBottom()+80);
+					*/
+					
 					openOptionsMenu();
 				}
 			}
@@ -1944,20 +1963,19 @@ public class Barebones extends Activity implements OnLongClickListener,
 		String fixedQuery = query.trim();
 		boolean period = fixedQuery.contains(".");
 		if (isBookmarkShowing) {
-			Log.i("Lightning", " is executing");
+			Log.i("Barebones", " is executing");
 			scrollBookmarks.startAnimation(fadeOut);
 			background.removeView(scrollBookmarks);
+			isBookmarkShowing = false;
 			background.addView(main[pageId]);
 			main[pageId].startAnimation(fadeIn);
 			uBar.bringToFront();
-			
-			
+
 		}
 		pageIdIsVisible = true;
-		if(fixedQuery.contains("about:home")){
+		if (fixedQuery.contains("about:home")) {
 			goBookmarks();
-		}
-		else if (fixedQuery.contains(" ") || period == false) {
+		} else if (fixedQuery.contains(" ") || period == false) {
 			fixedQuery.replaceAll(" ", "+");
 			main[pageId]
 					.loadUrl("http://www.google.com/search?q=" + fixedQuery);
@@ -1993,6 +2011,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 					uBar.bringToFront();
 					urlTitle[pageId].setText(urlToLoad[pageId][1]);
 					getUrl.setText(urlToLoad[pageId][0]);
+					getUrl.setPadding(tenPad, 0, tenPad, 0);
 					pageIdIsVisible = true;
 					isBookmarkShowing = false;
 				} else {
@@ -2053,6 +2072,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			background.removeView(scrollBookmarks);
 			urlTitle[pageId].setText(urlToLoad[pageId][1]);
 			getUrl.setText(urlToLoad[pageId][0]);
+			getUrl.setPadding(tenPad, 0, tenPad, 0);
 			pageIdIsVisible = true;
 			isBookmarkShowing = false;
 			uBar.bringToFront();
@@ -2088,9 +2108,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 			deleteHistory = settings.getBoolean("history", false);
 			if (deleteHistory == true) {
-					if(!noStockBrowser){
+				if (!noStockBrowser) {
 					Browser.clearHistory(getContentResolver());
-					}
+				}
 			}
 			// trimCache(this);
 		} catch (Exception e) {
@@ -2126,8 +2146,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 		return dir.delete();
 	}
 
-	
-	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		pageIdIsVisible = false;
@@ -2198,13 +2216,12 @@ public class Barebones extends Activity implements OnLongClickListener,
 							main[id].animate().alpha(1f)
 									.setDuration(mShortAnimationDuration);
 							main[pageId].clearAnimation();
-						//	main[pageId].animate().alpha(0f)
-						//			.setDuration(mShortAnimationDuration);
-							
-						//	main[pageId].setAlpha(1f);
+							// main[pageId].animate().alpha(0f)
+							// .setDuration(mShortAnimationDuration);
+
+							// main[pageId].setAlpha(1f);
 							background.removeView(main[pageId]);
-							
-							
+
 							uBar.bringToFront();
 						} else {
 							pageIdIsVisible = false;
@@ -2216,6 +2233,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 					pageId = id;
 					pageIdIsVisible = true;
 					getUrl.setText(urlToLoad[pageId][0]);
+					getUrl.setPadding(tenPad, 0, tenPad, 0);
 				}
 			}
 
@@ -2236,8 +2254,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	@Override
 	protected void onPause() {
-		if(API>=11){
-		main[pageId].onPause();
+		if (API >= 11) {
+			main[pageId].onPause();
 		}
 		main[pageId].pauseTimers();
 		super.onPause();
@@ -2245,26 +2263,23 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	@Override
 	protected void onResume() {
-		if(API>=11){
-		main[pageId].onResume();
+		if (API >= 11) {
+			main[pageId].onResume();
 		}
 		main[pageId].resumeTimers();
 		super.onResume();
-		
-		
+
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		
+
 		String url = null;
 		url = intent.getDataString();
-		if(url!=null){
-		newTab(number,url);
+		if (url != null) {
+			newTab(number, url);
 		}
 		super.onNewIntent(intent);
 	}
-	
-	
 
 }

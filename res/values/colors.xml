@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="clear">#00000000</color>
-    <color name="blue">#b40099cc</color>
-    <color name="press">#330099cc</color>
+    <color name="blue">#b433b5e5</color>
+    <color name="press">#3333b5e5</color>
     <color name="black">#ff000000</color>
     <color name="dark">#ff3f3f3f</color>
     

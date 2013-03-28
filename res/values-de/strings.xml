@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Lightning+</string>
+    <string name="google">Google</string>
+    <string name="settings">Browser Einstellungen</string>
+    <string name="location">Webseiten erlauben auf Standort zu zugreifen</string>
+    <string name="password">Passworter speichern</string>
+    <string name="agent">Ansicht</string>
+    <string name="history">Beim Schlie�en Verlauf l�schen</string>
+    <string name="email">kontaktiere mich</string>
+    <string name="flash">Adobe Flash aktivieren (fals es installiert ist)</string>
+    <string name="mobile">Mobile Ansicht</string>
+    <string name="desk">Computer Ansicht</string>
+    <string name="custom">personalisierte Nutzeransicht</string>
+    <string name="home">Startseite</string>
+    <string name="settingshelp">Einstellungen werden erst g�ltig wenn ein neuer ab ge�ffnet wird</string>
+    <string name="fullscreen">Vollansicht aktivieren</string>
+    <string name="java">JavaScript aktivieren</string>
+
+</resources>
