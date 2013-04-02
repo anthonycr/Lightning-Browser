@@ -125,7 +125,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static Drawable loading, webpage, webpageOther;
 	static Drawable exitTab;
 	final static int FILECHOOSER_RESULTCODE = 1;
-	static int num, x, y;
+	static int numberPage, x, y;
 	static final int fuzz = 10;
 	static int statusBar;
 	static int number, pageId = 0, agentPicker;
@@ -177,6 +177,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static Map<String, String> map;
 	static Handler handler;
 	static DatabaseHandler historyHandler;
+	static StringBuilder sb;
+	static SQLiteDatabase s;
+	static Cursor cursor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -388,7 +391,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			// otherwise it opens the homepage
 			newTab(number, homepage);
 		}
-
+		
 		// new tab button
 		ImageView newTab = (ImageView) findViewById(R.id.newTab);
 		newTab.setBackgroundResource(R.drawable.button);
@@ -506,10 +509,23 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 			@Override
 			public void run() {
-
-				// bookmarks = Browser.BOOKMARKS_URI;
-
+				Cursor c = null;
 				columns = new String[] { "url", "title" };
+				try{
+					
+					bookmarks = Browser.BOOKMARKS_URI;
+					c = getContentResolver().query(bookmarks, columns, null, null, null);
+				}
+				catch(SQLiteException e){}
+				noStockBrowser = true;
+				if(c!=null){
+					noStockBrowser = false;
+					Log.i("Barebones","detected AOSP browser");
+				}
+				else{
+					Log.e("Barebones","did not detect AOSP browser");
+				}
+				
 
 				try {
 
@@ -521,6 +537,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 							null, // Which rows to return (all rows)
 							null, // Selection arguments (none)
 							null, null, null);
+					
 					handler.sendEmptyMessage(1);
 
 				} catch (SQLiteException e) {
@@ -529,9 +546,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 				}
 
 				list = new ArrayList<Map<String, String>>();
-				noStockBrowser = true;
+				
 				if (managedCursor != null) {
-					noStockBrowser = false;
+					
 
 					if (managedCursor.moveToFirst()) {
 
@@ -958,9 +975,19 @@ public class Barebones extends Activity implements OnLongClickListener,
 	private class AnthonyWebViewClient extends WebViewClient {
 
 		@Override
-		public void doUpdateVisitedHistory(WebView view, String url,
-				boolean isReload) {
+		public void doUpdateVisitedHistory(WebView view, final String url,
+				final boolean isReload) {
+			if (!noStockBrowser) {
+				Thread history = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						Browser.updateVisitedHistory(getContentResolver(), url,
+								isReload);
+					}
 
+				});
+				history.start();
+			}
 			return;
 		}
 
@@ -1005,15 +1032,14 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
-			int num = view.getId();
-
+			numberPage = view.getId();
 			pageIsLoading = true;
 			getUrl.setText(url);
 			refresh.setVisibility(View.INVISIBLE);
 			progressBar.setVisibility(View.VISIBLE);
 			getUrl.setPadding(tenPad, 0, tenPad, 0);
-			urlToLoad[num][0] = url;
-			urlTitle[num].setCompoundDrawables(webpageOther, null, exitTab,
+			urlToLoad[numberPage][0] = url;
+			urlTitle[numberPage].setCompoundDrawables(webpageOther, null, exitTab,
 					null);
 
 			if (uBarShows == false) {
@@ -1026,17 +1052,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		public void onPageFinished(WebView view, final String url) {
 			progressBar.setVisibility(View.GONE);
 			refresh.setVisibility(View.VISIBLE);
-			if (!noStockBrowser) {
-				Thread history = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						Browser.updateVisitedHistory(getContentResolver(), url,
-								true);
-					}
-
-				});
-				history.start();
-			}
+			
 			pageIsLoading = false;
 
 		}
@@ -1215,24 +1231,23 @@ public class Barebones extends Activity implements OnLongClickListener,
 		@Override
 		public void onReceivedTitle(final WebView view, final String title) {
 
-			int num = view.getId();
-			urlTitle[num].setText(title);
-			urlToLoad[num][1] = title;
+			numberPage = view.getId();
+			urlTitle[numberPage].setText(title);
+			urlToLoad[numberPage][1] = title;
 			Thread up = new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						StringBuilder sb = new StringBuilder("url" + " = ");
+						sb = new StringBuilder("url" + " = ");
 						DatabaseUtils.appendEscapedSQLString(sb, view.getUrl());
-						SQLiteDatabase s = historyHandler.getReadableDatabase();
-						Cursor c = s.query("history", new String[] { "id",
+						s = historyHandler.getReadableDatabase();
+						cursor = s.query("history", new String[] { "id",
 								"url", "title" }, sb.toString(), null, null,
 								null, null);
-						if (c.moveToFirst()) {
+						if (cursor.moveToFirst()) {
 
 						} else {
-							historyHandler.addHistoryItem(new HistoryItem(view
-									.getUrl(), title));
+							historyHandler.addHistoryItem(new HistoryItem(urlToLoad[numberPage][0], title));
 						}
 
 					} catch (IllegalStateException e) {
