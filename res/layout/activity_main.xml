@@ -109,6 +109,16 @@
             android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:src="@drawable/refresh" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+           />
+
 </RelativeLayout>
 
         <MultiAutoCompleteTextView
