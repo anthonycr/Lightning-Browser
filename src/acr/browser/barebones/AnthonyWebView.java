@@ -17,7 +17,7 @@ public final class AnthonyWebView extends WebView {
 	boolean uBarShows = Barebones.uBarShows;
 	Animation slideUp = Barebones.slideUp;
 	Animation slideDown = Barebones.slideDown;
-	
+
 	public AnthonyWebView(Context context) {
 		super(context);
 	}
@@ -27,45 +27,28 @@ public final class AnthonyWebView extends WebView {
 
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
-			move = false;
-			if (API <= 10 && !Barebones.main[Barebones.pageId].hasFocus()) {
-				Barebones.main[Barebones.pageId].requestFocus();
-			}
-			timeBetweenDownPress = System.currentTimeMillis();
-			break;
-		}
-		case MotionEvent.ACTION_MOVE: {
-			move = true;
-		}
-		case MotionEvent.ACTION_UP: {
-			
 			try {
 				hitTest = getHitTestResult().getType();
 			} catch (NullPointerException e) {
 			}
-			if (showFullScreen && hitTest != 9) {
-				if (System.currentTimeMillis() - timeBetweenDownPress < 500
-						&& !move) {
-					if (!uBarShows) {
-						uBar.startAnimation(slideDown);
-						uBarShows = true;
-					} else if (uBarShows) {
-						uBar.startAnimation(slideUp);
-						uBarShows = false;
-					}
-					break;
-
-				} else if (Barebones.main[Barebones.pageId].getScrollY() > 5 && uBarShows) {
+			if (API <= 10 && !Barebones.main[Barebones.pageId].hasFocus()) {
+				Barebones.main[Barebones.pageId].requestFocus();
+			}
+			timeBetweenDownPress = System.currentTimeMillis();
+			if (showFullScreen) {
+				if (uBarShows) {
 					uBar.startAnimation(slideUp);
 					uBarShows = false;
 					break;
-				} else if (Barebones.main[Barebones.pageId].getScrollY() < 5 && !uBarShows) {
+				} else if (Barebones.main[Barebones.pageId].getScrollY() <= 5
+						&& !uBarShows && hitTest != 9) {
 
 					uBar.startAnimation(slideDown);
 					uBarShows = true;
 					break;
 				}
 			}
+			break;
 		}
 		default:
 			break;

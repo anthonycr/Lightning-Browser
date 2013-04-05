@@ -18,7 +18,7 @@
     <item>
         <rotate
              android:drawable="@drawable/spinner"
-             android:fromDegrees="720"
+             android:fromDegrees="1080"
              android:pivotX="50%"
              android:pivotY="50%"
              android:toDegrees="0" />
