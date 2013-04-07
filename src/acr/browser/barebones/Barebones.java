@@ -7,11 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.Math;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -19,7 +19,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,7 +33,6 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteMisuseException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -75,30 +73,28 @@ import android.webkit.GeolocationPermissions;
 import android.webkit.HttpAuthHandler;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
-import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebSettings.RenderPriority;
-import android.webkit.WebStorage;
 import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -110,8 +106,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-public class Barebones extends Activity implements OnLongClickListener,
-		OnTouchListener {
+public class Barebones extends Activity {
 
 	// variables to differentiate free from paid
 	static final int MAX_TABS = 5;
@@ -123,16 +118,16 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static Rect edge;
 	static SimpleAdapter adapter;
 	static MultiAutoCompleteTextView getUrl;
-	static TextView[] urlTitle = new TextView[MAX_TABS];
-	static AnthonyWebView[] main = new AnthonyWebView[MAX_TABS];
-	static Rect[] bounds = new Rect[MAX_TABS];
+	static final TextView[] urlTitle = new TextView[MAX_TABS];
+	static final AnthonyWebView[] main = new AnthonyWebView[MAX_TABS];
+	static final Rect[] bounds = new Rect[MAX_TABS];
 	static private ValueCallback<Uri> mUploadMessage;
 	static ImageView refresh;
 	static ProgressBar progressBar;
 	static Drawable icon;
 	static Drawable loading, webpage, webpageOther;
 	static Drawable exitTab;
-	final static int FILECHOOSER_RESULTCODE = 1;
+	static final int FILECHOOSER_RESULTCODE = 1;
 	static int numberPage, x, y;
 	static final int fuzz = 10;
 	static int statusBar;
@@ -160,13 +155,13 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static SharedPreferences.Editor edit;
 	static String desktop, mobile, user;
 	static String urlA, title;
-	static String[] bUrl = new String[MAX_BOOKMARKS];
-	static String[] bTitle = new String[MAX_BOOKMARKS];
+	static final String[] bUrl = new String[MAX_BOOKMARKS];
+	static final String[] bTitle = new String[MAX_BOOKMARKS];
 	static String[] columns;
 	static String homepage, str;
 	static final String preferences = "settings";
 	static String query, userAgent;
-	static String[][] urlToLoad = new String[MAX_TABS][2];
+	static final String[][] urlToLoad = new String[MAX_TABS][2];
 	static FrameLayout background;
 	static ScrollView scrollBookmarks;
 	static RelativeLayout uBar, bg;
@@ -188,6 +183,12 @@ public class Barebones extends Activity implements OnLongClickListener,
 	static StringBuilder sb;
 	static SQLiteDatabase s;
 	static Cursor cursor;
+	static float widthInInches, heightInInches;
+	static double sizeInInches;
+
+	public static Drawable inactive;
+	public static Drawable active;
+	public static LinearLayout tabLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -195,24 +196,25 @@ public class Barebones extends Activity implements OnLongClickListener,
 		setContentView(R.layout.activity_main); // displays main xml layout
 		settings = getSharedPreferences(preferences, 0);
 		edit = settings.edit();
+		inactive = this.getResources().getDrawable(R.drawable.bg_inactive);
+		active = this.getResources().getDrawable(R.drawable.bg_press);
 		init(); // sets up random stuff
 		options(); // allows options to be opened
 		enter();// enter url bar
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-		float widthInInches = metrics.widthPixels / metrics.xdpi;
-		float heightInInches = metrics.heightPixels / metrics.ydpi;
-		double sizeInInches = Math.sqrt(Math.pow(widthInInches, 2)
+		widthInInches = metrics.widthPixels / metrics.xdpi;
+		heightInInches = metrics.heightPixels / metrics.ydpi;
+		sizeInInches = Math.sqrt(Math.pow(widthInInches, 2)
 				+ Math.pow(heightInInches, 2));
 		// 0.5" buffer for 7" devices
 		isPhone = sizeInInches < 6.5;
-
 		forward();// forward button
 		exit();
 		int first = settings.getInt("first", 0);
 
-		if (first == 0) {
+		if (first == 0) { // This dialog alerts the user to some navigation
+							// techniques
 			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -226,11 +228,13 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					Barebones.this); // dialog
+			builder.setTitle("Browser Tips");
 			builder.setMessage(
-					"TIPS:\n"
-							+ "\nLong-press a tab to close it\n\nLong-press back button to exit browser"
-							+ "\n\nSet your homepage in settings to about:blank to set a blank page as your default\n"
-							+ "\nSet the homepage to about:home to set bookmarks as your homepage")
+					"\nLong-press back button to exit browser"
+							+ "\n\nSet your homepage in settings to about:blank to set a blank page as your default"
+							+ "\n\nSet the homepage to about:home to set bookmarks as your homepage"
+							+ "\n\nLong-press a link to open in a new tab"
+							+ "\n\nCheck out the settings for more stuff!")
 					.setPositiveButton("Ok", dialogClickListener).show();
 			edit.putInt("first", 1);
 			edit.commit();
@@ -310,7 +314,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		background = (FrameLayout) findViewById(R.id.holder);
 		mobile = user; // setting mobile user
 						// agent
-		desktop = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17"; // setting
+		desktop = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/20 Safari/537.17"; // setting
 		// desktop user agent
 		exitTab = getResources().getDrawable(R.drawable.stop); // user
 		// agent
@@ -356,6 +360,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 				getDir("icons", MODE_PRIVATE).getPath());
 
 		// scroll view containing tabs
+		tabLayout = (LinearLayout) findViewById(R.id.tabLayout);
 		tabScroll = (HorizontalScrollView) findViewById(R.id.tabScroll);
 		tabScroll.setBackgroundColor(getResources().getColor(R.color.black));
 		tabScroll.setHorizontalScrollBarEnabled(false);
@@ -395,10 +400,10 @@ public class Barebones extends Activity implements OnLongClickListener,
 		URL = url.getDataString();
 		if (URL != null) {
 			// opens a new tab with the url if its there
-			newTab(number, URL);
+			newTab(number, URL, true);
 		} else {
 			// otherwise it opens the homepage
-			newTab(number, homepage);
+			newTab(number, homepage, true);
 		}
 
 		// new tab button
@@ -407,7 +412,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		newTab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newTab(number, homepage);
+				newTab(number, homepage, true);
 			}
 		});
 		refresh = (ImageView) findViewById(R.id.refresh);
@@ -435,6 +440,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	public class SpaceTokenizer implements Tokenizer {
 
+		@Override
 		public int findTokenStart(CharSequence text, int cursor) {
 			int i = cursor;
 
@@ -448,6 +454,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			return i;
 		}
 
+		@Override
 		public int findTokenEnd(CharSequence text, int cursor) {
 			int i = cursor;
 			int len = text.length();
@@ -463,6 +470,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 			return len;
 		}
 
+		@Override
 		public CharSequence terminateToken(CharSequence text) {
 			int i = text.length();
 
@@ -485,7 +493,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 	}
 
-	void enterUrl() {
+	public void enterUrl() {
 		getUrl = (MultiAutoCompleteTextView) findViewById(R.id.enterUrl);
 		getUrl.setPadding(tenPad, 0, tenPad, 0);
 		getUrl.setTextColor(getResources().getColor(android.R.color.black));
@@ -575,7 +583,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 					}
 				}
-				
+
 			}
 
 		});
@@ -619,7 +627,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 	}
 
 	// new tab method, takes the id of the tab to be created and the url to load
-	void newTab(int theId, String theUrl) {
+	public void newTab(int theId, final String theUrl, final boolean display) {
 		lastVisibleWebView = pageId;
 		if (isBookmarkShowing) {
 			background.addView(main[pageId]);
@@ -632,38 +640,47 @@ public class Barebones extends Activity implements OnLongClickListener,
 		pageIdIsVisible = false;
 		homepage = settings.getString("home", "http://www.google.com");
 		allowLocation = settings.getBoolean("location", false);
-		final LinearLayout tabLayout = (LinearLayout) findViewById(R.id.tabLayout);
 		boolean isEmptyWebViewAvailable = false;
 
 		for (int num = 0; num < number; num++) {
 			if (urlTitle[num].getVisibility() == View.GONE) {
 				urlTitle[num].setVisibility(View.VISIBLE);
 				urlTitle[num].setText("Google");
-				if (API < 16) {
-					urlTitle[num].setBackgroundDrawable(getResources()
-							.getDrawable(R.drawable.bg_press));
+				if (display) {
+					if (API < 16) {
+						urlTitle[num].setBackgroundDrawable(active);
+					} else {
+						urlTitle[num].setBackground(active);
+					}
 				} else {
-					urlTitle[num].setBackground(getResources().getDrawable(
-							R.drawable.bg_press));
+					if (API < 16) {
+						urlTitle[num].setBackgroundDrawable(inactive);
+					} else {
+						urlTitle[num].setBackground(inactive);
+					}
 				}
 				urlTitle[num].setPadding(leftPad, 0, rightPad, 0);
-				if (API < 16) {
-					urlTitle[pageId].setBackgroundDrawable(getResources()
-							.getDrawable(R.drawable.bg_inactive));
-				} else {
-					urlTitle[pageId].setBackground(getResources().getDrawable(
-							R.drawable.bg_inactive));
+				if (display) {
+					if (API < 16) {
+						urlTitle[pageId].setBackgroundDrawable(inactive);
+					} else {
+						urlTitle[pageId].setBackground(inactive);
+					}
 				}
 				urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-				background.addView(main[num]);
-				background.removeView(main[pageId]);
+				if (display) {
+					background.addView(main[num]);
+					background.removeView(main[pageId]);
+					pageId = num;
+				}
+
 				uBar.bringToFront();
-				main[num] = settings(main[num]);
+				main[num] = BrowserSettings(main[num]);
 				if (API >= 11) {
 					main[num].onResume();
 				}
 				main[num].loadUrl(theUrl);
-				pageId = num;
+
 				pageIdIsVisible = true;
 				isEmptyWebViewAvailable = true;
 				break;
@@ -672,28 +689,32 @@ public class Barebones extends Activity implements OnLongClickListener,
 		if (isEmptyWebViewAvailable == false) {
 			if (number < MAX_TABS) {
 				pageIdIsVisible = false;
-				background.removeView(main[pageId]);
-
 				if (number > 0) {
-					if (API < 16) {
-						urlTitle[pageId].setBackgroundDrawable(getResources()
-								.getDrawable(R.drawable.bg_inactive));
-					} else {
-						urlTitle[pageId].setBackground(getResources()
-								.getDrawable(R.drawable.bg_inactive));
+					if (display) {
+						if (API < 16) {
+							urlTitle[pageId].setBackgroundDrawable(inactive);
+						} else {
+							urlTitle[pageId].setBackground(inactive);
+						}
+
+						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 					}
-					urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 				}
 				final TextView title = new TextView(Barebones.this);
 				title.setText("Google");
-				if (API < 16) {
-					title.setBackgroundDrawable(getResources().getDrawable(
-							R.drawable.bg_press));
+				if (display) {
+					if (API < 16) {
+						title.setBackgroundDrawable(active);
+					} else {
+						title.setBackground(active);
+					}
 				} else {
-					title.setBackground(getResources().getDrawable(
-							R.drawable.bg_press));
+					if (API < 16) {
+						title.setBackgroundDrawable(inactive);
+					} else {
+						title.setBackground(inactive);
+					}
 				}
-
 				title.setSingleLine(true);
 				title.setGravity(Gravity.CENTER_VERTICAL);
 				title.setHeight(height32);
@@ -704,19 +725,97 @@ public class Barebones extends Activity implements OnLongClickListener,
 				title.setCompoundDrawables(null, null, exitTab, null);
 				Drawable[] drawables = title.getCompoundDrawables();
 				bounds[number] = drawables[2].getBounds();
-				title.setOnLongClickListener(Barebones.this);
-				title.setOnClickListener(new OnClickListener() {
+				title.setOnLongClickListener(new TabLongClick());
+				title.setOnClickListener(new TabClick());
+				title.setOnTouchListener(new TabTouch());
+				tabLayout.addView(title);
+				urlTitle[number] = title;
+				if (theUrl != null) {
+					makeTab(number, theUrl, display);
+				} else {
+					makeTab(number, homepage, display);
+				}
+				number = number + 1;
+			}
+		}
+		if (isEmptyWebViewAvailable == false && number >= MAX_TABS) {
+			Toast.makeText(Barebones.this, "Maximum number of tabs reached...",
+					Toast.LENGTH_SHORT).show();
+		}
 
-					@Override
-					public void onClick(View arg0) {
-						id = arg0.getId();
+	}
+
+	public class TabLongClick implements OnLongClickListener {
+
+		@Override
+		public boolean onLongClick(View v) {
+			int id = v.getId();
+			if (pageId == id && isBookmarkShowing) {
+
+				background.addView(main[pageId]);
+				// main[pageId].startAnimation(fadeIn);
+				if (showFullScreen) {
+					background.addView(uBar);
+					// uBar.startAnimation(fadeIn);
+				}
+				// scrollBookmarks.startAnimation(fadeOut);
+				background.removeView(scrollBookmarks);
+				uBar.bringToFront();
+				isBookmarkShowing = false;
+			}
+			pageIdIsVisible = true;
+			deleteTab(id);
+
+			return true;
+		}
+
+	}
+
+	public class TabTouch implements OnTouchListener {
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			pageIdIsVisible = false;
+			id = v.getId();
+			main[id].clearAnimation();
+			main[pageId].clearAnimation();
+			xPress = false;
+			x = (int) event.getX();
+			y = (int) event.getY();
+			edge = new Rect();
+			v.getLocalVisibleRect(edge);
+
+			if (x >= (edge.right - bounds[id].width() - fuzz)
+					&& x <= (edge.right - v.getPaddingRight() + fuzz)
+					&& y >= (v.getPaddingTop() - fuzz)
+					&& y <= (v.getHeight() - v.getPaddingBottom()) + fuzz) {
+				xPress = true;
+			}
+
+			urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
+			if (event.getAction() == MotionEvent.ACTION_UP) {
+				if (id == pageId) {
+					if (xPress) {
+						if (isBookmarkShowing) {
+							background.removeView(scrollBookmarks);
+							isBookmarkShowing = false;
+
+						} else if (!isBookmarkShowing) {
+
+						}
+						deleteTab(id);
+						uBar.bringToFront();
+					} else if (!xPress) {
+
+					}
+				} else if (id != pageId) {
+					if (xPress) {
+						deleteTab(id);
+					} else if (!xPress) {
 						if (API < 16) {
-							urlTitle[pageId]
-									.setBackgroundDrawable(getResources()
-											.getDrawable(R.drawable.bg_inactive));
+							urlTitle[pageId].setBackgroundDrawable(inactive);
 						} else if (API > 15) {
-							urlTitle[pageId].setBackground(getResources()
-									.getDrawable(R.drawable.bg_inactive));
+							urlTitle[pageId].setBackground(inactive);
 						}
 						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 
@@ -744,10 +843,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 								main[id].animate().alpha(1f)
 										.setDuration(mShortAnimationDuration);
 								main[pageId].clearAnimation();
-								// main[pageId].animate().alpha(0f)
-								// .setDuration(mShortAnimationDuration);
-
-								// main[pageId].setAlpha(1f);
 								background.removeView(main[pageId]);
 
 								uBar.bringToFront();
@@ -762,33 +857,79 @@ public class Barebones extends Activity implements OnLongClickListener,
 						pageIdIsVisible = true;
 						getUrl.setText(urlToLoad[pageId][0]);
 						getUrl.setPadding(tenPad, 0, tenPad, 0);
-						if (API < 16) {
-							urlTitle[pageId]
-									.setBackgroundDrawable(getResources()
-											.getDrawable(R.drawable.bg_press));
-						} else if (API > 15) {
-							urlTitle[pageId].setBackground(getResources()
-									.getDrawable(R.drawable.bg_press));
-						}
-						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 					}
-
-				});
-				title.setOnTouchListener(Barebones.this);
-				tabLayout.addView(title);
-				urlTitle[number] = title;
-				pageId = number;
-				if (theUrl != null) {
-					makeTab(number, theUrl);
-				} else {
-					makeTab(number, homepage);
 				}
-				number = number + 1;
+
+				if (API < 16) {
+					urlTitle[pageId].setBackgroundDrawable(active);
+				} else if (API > 15) {
+					urlTitle[pageId].setBackground(active);
+				}
 			}
+			uBar.bringToFront();
+			urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
+
+			pageIdIsVisible = true;
+			return true;
 		}
-		if (isEmptyWebViewAvailable == false && number >= MAX_TABS) {
-			Toast.makeText(Barebones.this, "Maximum number of tabs reached...",
-					Toast.LENGTH_SHORT).show();
+
+	}
+
+	public class TabClick implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			id = v.getId();
+			if (API < 16) {
+				urlTitle[pageId].setBackgroundDrawable(inactive);
+			} else if (API > 15) {
+				urlTitle[pageId].setBackground(inactive);
+			}
+			urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
+
+			if (isBookmarkShowing) {
+
+				background.addView(main[id]);
+				main[id].startAnimation(fadeIn);
+				scrollBookmarks.startAnimation(fadeOut);
+				background.removeView(scrollBookmarks);
+				isBookmarkShowing = false;
+				uBar.bringToFront();
+			} else if (!isBookmarkShowing) {
+				if (!showFullScreen) {
+					background.addView(main[id]);
+					main[id].startAnimation(fadeIn);
+					main[pageId].startAnimation(fadeOut);
+					pageIdIsVisible = false;
+					background.removeView(main[pageId]);
+					uBar.bringToFront();
+				} else if (API >= 12) {
+					pageIdIsVisible = false;
+					main[id].setAlpha(0f);
+					main[id].clearAnimation();
+					background.addView(main[id]);
+					main[id].animate().alpha(1f)
+							.setDuration(mShortAnimationDuration);
+					main[id].clearAnimation();
+					background.removeView(main[pageId]);
+					uBar.bringToFront();
+				} else {
+					pageIdIsVisible = false;
+					background.removeView(main[pageId]);
+					background.addView(main[id]);
+				}
+				uBar.bringToFront();
+			}
+			pageId = id;
+			pageIdIsVisible = true;
+			getUrl.setText(urlToLoad[pageId][0]);
+			getUrl.setPadding(tenPad, 0, tenPad, 0);
+			if (API < 16) {
+				urlTitle[pageId].setBackgroundDrawable(active);
+			} else if (API > 15) {
+				urlTitle[pageId].setBackground(active);
+			}
+			urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 		}
 
 	}
@@ -801,172 +942,19 @@ public class Barebones extends Activity implements OnLongClickListener,
 		// main[pageId].invalidate();
 	}
 
-	public void makeTab(final int pageToView, String Url) {
-		AnthonyWebView newTab = new AnthonyWebView(Barebones.this);
-		main[pageToView] = newTab;
+	public void makeTab(final int pageToView, final String Url,
+			final boolean display) {
+		main[pageToView] = new AnthonyWebView(Barebones.this);
 		main[pageToView].setId(pageToView);
-
 		allowLocation = settings.getBoolean("location", false);
 		main[pageToView].setWebViewClient(new AnthonyWebViewClient());
 		main[pageToView].setWebChromeClient(new AnthonyChromeClient());
 		if (API > 8) {
 			main[pageToView].setDownloadListener(new AnthonyDownload());
 		}
-		main[pageToView].requestFocus();
-		// main[pageToView].setFocusable(true);
-		main[pageToView].setOnLongClickListener(new OnLongClickListener() {
 
-			@Override
-			public boolean onLongClick(View arg0) {
-
-				final HitTestResult result = main[pageId].getHitTestResult();
-				boolean image = false;
-				if (result.getType() == HitTestResult.IMAGE_TYPE && API > 8) {
-					image = true;
-				}
-
-				if (result.getExtra() != null) {
-					if (image) {
-						DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								switch (which) {
-								case DialogInterface.BUTTON_POSITIVE: {
-									int num;
-									num = pageId;
-									newTab(number, result.getExtra());
-
-									urlTitle[num].performClick();
-									pageId = num;
-									break;
-								}
-								case DialogInterface.BUTTON_NEGATIVE: {
-									main[pageId].loadUrl(result.getExtra());
-									break;
-								}
-								case DialogInterface.BUTTON_NEUTRAL: {
-									if (API > 8) {
-										try {
-											Thread down = new Thread(
-													new Runnable() {
-														@Override
-														public void run() {
-
-															DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-															Uri nice = Uri
-																	.parse(result
-																			.getExtra());
-															DownloadManager.Request it = new DownloadManager.Request(
-																	nice);
-															String fileName = URLUtil
-																	.guessFileName(
-																			result.getExtra(),
-																			null,
-																			null);
-
-															if (API >= 11) {
-																it.allowScanningByMediaScanner();
-																it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-															}
-
-															it.setDestinationInExternalPublicDir(
-																	Environment.DIRECTORY_DOWNLOADS,
-																	fileName);
-															Log.i("Barebones",
-																	"Downloading"
-																			+ fileName);
-															download.enqueue(it);
-														}
-													});
-											down.run();
-										} catch (NullPointerException e) {
-											Log.e("Barebones",
-													"Problem downloading");
-											Toast.makeText(Barebones.this,
-													"Error Downloading File",
-													Toast.LENGTH_SHORT).show();
-										} catch (IllegalArgumentException e) {
-											Log.e("Barebones",
-													"Problem downloading");
-											Toast.makeText(Barebones.this,
-													"Error Downloading File",
-													Toast.LENGTH_SHORT).show();
-										}
-									}
-									break;
-								}
-								}
-							}
-						};
-
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								Barebones.this); // dialog
-						builder.setMessage(
-								"What would you like to do with this link?")
-								.setPositiveButton("Open in New Tab",
-										dialogClickListener)
-								.setNegativeButton("Open Normally",
-										dialogClickListener)
-								.setNeutralButton("Download Image",
-										dialogClickListener).show();
-
-					} else {
-						DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								switch (which) {
-								case DialogInterface.BUTTON_POSITIVE: {
-									int num = pageId;
-									newTab(number, result.getExtra());
-
-									urlTitle[num].performClick();
-									pageId = num;
-									break;
-								}
-								case DialogInterface.BUTTON_NEGATIVE: {
-									main[pageId].loadUrl(result.getExtra());
-									break;
-								}
-								case DialogInterface.BUTTON_NEUTRAL: {
-
-									if (API < 11) {
-										android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-										clipboard.setText(main[pageId].getUrl());
-									} else {
-										ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-										ClipData clip = ClipData.newPlainText(
-												"label", main[pageId].getUrl());
-										clipboard.setPrimaryClip(clip);
-									}
-									break;
-								}
-								}
-							}
-						};
-
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								Barebones.this); // dialog
-						builder.setMessage(
-								"What would you like to do with this link?")
-								.setPositiveButton("Open in New Tab",
-										dialogClickListener)
-								.setNegativeButton("Open Normally",
-										dialogClickListener)
-								.setNeutralButton("Copy link",
-										dialogClickListener).show();
-					}
-					return true;
-				} else {
-					return false;
-				}
-
-			}
-
-		});
-
-		main[pageToView] = settings(main[pageToView]);
+		main[pageToView].setOnLongClickListener(new WebPageLongClick());
+		main[pageToView] = BrowserSettings(main[pageToView]);
 		agentPicker = settings.getInt("agentchoose", 1);
 		switch (agentPicker) {
 		case 1:
@@ -980,12 +968,11 @@ public class Barebones extends Activity implements OnLongClickListener,
 			main[pageToView].getSettings().setUserAgentString(userAgent);
 			break;
 		}
-		background.addView(main[pageToView]);
-		// main[pageToView].startAnimation(fadeIn);
-		if (lastVisibleWebView != pageToView) {
-			// main[lastVisibleWebView].startAnimation(fadeOut);
-			pageIdIsVisible = false;
-			background.removeView(main[lastVisibleWebView]);
+		if (display) {
+			background.removeView(main[pageId]);
+			background.addView(main[pageToView]);
+			main[pageToView].requestFocus();
+			pageId = pageToView;
 		}
 		uBar.bringToFront();
 		if (Url.contains("about:home") && !showFullScreen) {
@@ -1007,7 +994,149 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	}
 
-	protected class AnthonyWebViewClient extends WebViewClient {
+	public class WebPageLongClick implements OnLongClickListener {
+
+		@Override
+		public boolean onLongClick(View v) {
+			final HitTestResult result = main[pageId].getHitTestResult();
+			boolean image = false;
+			if (result.getType() == HitTestResult.IMAGE_TYPE && API > 8) {
+				image = true;
+			}
+
+			if (result.getExtra() != null) {
+				if (image) {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case DialogInterface.BUTTON_POSITIVE: {
+								int num = pageId;
+								newTab(number, result.getExtra(), false);
+								// urlTitle[num].performClick();
+								pageId = num;
+								break;
+							}
+							case DialogInterface.BUTTON_NEGATIVE: {
+								main[pageId].loadUrl(result.getExtra());
+								break;
+							}
+							case DialogInterface.BUTTON_NEUTRAL: {
+								if (API > 8) {
+									try {
+										Thread down = new Thread(
+												new Runnable() {
+													@Override
+													public void run() {
+
+														DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+														Uri nice = Uri.parse(result
+																.getExtra());
+														DownloadManager.Request it = new DownloadManager.Request(
+																nice);
+														String fileName = URLUtil.guessFileName(
+																result.getExtra(),
+																null, null);
+
+														if (API >= 11) {
+															it.allowScanningByMediaScanner();
+															it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+														}
+
+														it.setDestinationInExternalPublicDir(
+																Environment.DIRECTORY_DOWNLOADS,
+																fileName);
+														Log.i("Barebones",
+																"Downloading"
+																		+ fileName);
+														download.enqueue(it);
+													}
+												});
+										down.run();
+									} catch (NullPointerException e) {
+										Log.e("Barebones",
+												"Problem downloading");
+										Toast.makeText(Barebones.this,
+												"Error Downloading File",
+												Toast.LENGTH_SHORT).show();
+									} catch (IllegalArgumentException e) {
+										Log.e("Barebones",
+												"Problem downloading");
+										Toast.makeText(Barebones.this,
+												"Error Downloading File",
+												Toast.LENGTH_SHORT).show();
+									}
+								}
+								break;
+							}
+							}
+						}
+					};
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							Barebones.this); // dialog
+					builder.setMessage(
+							"What would you like to do with this link?")
+							.setPositiveButton("Open in New Tab",
+									dialogClickListener)
+							.setNegativeButton("Open Normally",
+									dialogClickListener)
+							.setNeutralButton("Download Image",
+									dialogClickListener).show();
+
+				} else {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case DialogInterface.BUTTON_POSITIVE: {
+								int num = pageId;
+								newTab(number, result.getExtra(), false);
+								// urlTitle[num].performClick();
+								pageId = num;
+								break;
+							}
+							case DialogInterface.BUTTON_NEGATIVE: {
+								main[pageId].loadUrl(result.getExtra());
+								break;
+							}
+							case DialogInterface.BUTTON_NEUTRAL: {
+
+								if (API < 11) {
+									android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+									clipboard.setText(result.getExtra());
+								} else {
+									ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+									ClipData clip = ClipData.newPlainText(
+											"label", result.getExtra());
+									clipboard.setPrimaryClip(clip);
+								}
+								break;
+							}
+							}
+						}
+					};
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							Barebones.this); // dialog
+					builder.setMessage(
+							"What would you like to do with this link?")
+							.setPositiveButton("Open in New Tab",
+									dialogClickListener)
+							.setNegativeButton("Open Normally",
+									dialogClickListener)
+							.setNeutralButton("Copy link", dialogClickListener)
+							.show();
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	}
+
+	public class AnthonyWebViewClient extends WebViewClient {
 
 		@Override
 		public void onFormResubmission(WebView view, Message dontResend,
@@ -1026,6 +1155,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 		public void onScaleChanged(WebView view, float oldScale, float newScale) {
 			// TODO Auto-generated method stub
 			// view.invalidate();
+			main[pageId].getSettings().setLayoutAlgorithm(
+					LayoutAlgorithm.NARROW_COLUMNS);
 			super.onScaleChanged(view, oldScale, newScale);
 		}
 
@@ -1127,81 +1258,69 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 	}
 
-	private class AnthonyDownload implements DownloadListener {
+	public class AnthonyDownload implements DownloadListener {
 
 		@Override
 		public void onDownloadStart(final String url, String userAgent,
 				final String contentDisposition, final String mimetype,
 				long contentLength) {
-			if (contentDisposition == null
-					|| !contentDisposition.regionMatches(true, 0, "attachment",
-							0, 10)) {
-				// query the package manager to see if there's a registered
-				// handler
-				// that matches.
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setDataAndType(Uri.parse(url), mimetype);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				ResolveInfo info = getPackageManager().resolveActivity(intent,
-						PackageManager.MATCH_DEFAULT_ONLY);
-				if (info != null) {
-					ComponentName myName = getComponentName();
-					// If we resolved to ourselves, we don't want to attempt to
-					// load the url only to try and download it again.
-					if (!myName.getPackageName().equals(
-							info.activityInfo.packageName)
-							|| !myName.getClassName().equals(
-									info.activityInfo.name)) {
-						// someone (other than us) knows how to handle this mime
-						// type with this scheme, don't download.
-						try {
-							startActivity(intent);
-							return;
-						} catch (ActivityNotFoundException ex) {
+			/*
+			 * if (contentDisposition == null ||
+			 * !contentDisposition.regionMatches(true, 0, "attachment", 0, 10))
+			 * { // query the package manager to see if there's a registered //
+			 * handler // that matches. Intent intent = new
+			 * Intent(Intent.ACTION_VIEW); intent.setDataAndType(Uri.parse(url),
+			 * mimetype); intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			 * ResolveInfo info = getPackageManager().resolveActivity(intent,
+			 * PackageManager.MATCH_DEFAULT_ONLY); if (info != null) {
+			 * ComponentName myName = getComponentName(); // If we resolved to
+			 * ourselves, we don't want to attempt to // load the url only to
+			 * try and download it again. if (!myName.getPackageName().equals(
+			 * info.activityInfo.packageName) || !myName.getClassName().equals(
+			 * info.activityInfo.name)) { // someone (other than us) knows how
+			 * to handle this mime // type with this scheme, don't download. try
+			 * { startActivity(intent); return; } catch
+			 * (ActivityNotFoundException ex) {
+			 * 
+			 * // Best behavior is to fall back to a download in // this // case
+			 * } } } } else {
+			 */
+			try {
+				Thread downloader = new Thread(new Runnable() {
+					@Override
+					public void run() {
 
-							// Best behavior is to fall back to a download in
-							// this
-							// case
+						DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+						Uri nice = Uri.parse(url);
+						DownloadManager.Request it = new DownloadManager.Request(
+								nice);
+						String fileName = URLUtil.guessFileName(url,
+								contentDisposition, mimetype);
+
+						if (API >= 11) {
+							it.allowScanningByMediaScanner();
+							it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 						}
+
+						it.setDestinationInExternalPublicDir(
+								Environment.DIRECTORY_DOWNLOADS, fileName);
+						Log.i("Barebones", "Downloading" + fileName);
+						download.enqueue(it);
 					}
-				}
-			} else {
-				try {
-					Thread downloader = new Thread(new Runnable() {
-						@Override
-						public void run() {
-
-							DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-							Uri nice = Uri.parse(url);
-							DownloadManager.Request it = new DownloadManager.Request(
-									nice);
-							String fileName = URLUtil.guessFileName(url,
-									contentDisposition, mimetype);
-
-							if (API >= 11) {
-								it.allowScanningByMediaScanner();
-								it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-							}
-
-							it.setDestinationInExternalPublicDir(
-									Environment.DIRECTORY_DOWNLOADS, fileName);
-							Log.i("Barebones", "Downloading" + fileName);
-							download.enqueue(it);
-						}
-					});
-					downloader.run();
-				} catch (NullPointerException e) {
-					Log.e("Barebones", "Problem downloading");
-					Toast.makeText(Barebones.this, "Error Downloading File",
-							Toast.LENGTH_SHORT).show();
-				} catch (IllegalArgumentException e) {
-					Log.e("Barebones", "Problem downloading");
-					Toast.makeText(Barebones.this, "Error Downloading File",
-							Toast.LENGTH_SHORT).show();
-				}
+				});
+				downloader.run();
+			} catch (NullPointerException e) {
+				Log.e("Barebones", "Problem downloading");
+				Toast.makeText(Barebones.this, "Error Downloading File",
+						Toast.LENGTH_SHORT).show();
+			} catch (IllegalArgumentException e) {
+				Log.e("Barebones", "Problem downloading");
+				Toast.makeText(Barebones.this, "Error Downloading File",
+						Toast.LENGTH_SHORT).show();
 			}
-
 		}
+
+		// }
 
 	}
 
@@ -1219,7 +1338,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 	}
 
-	protected class AnthonyChromeClient extends WebChromeClient {
+	public class AnthonyChromeClient extends WebChromeClient {
 		private Bitmap mDefaultVideoPoster;
 		private View mVideoProgressView;
 
@@ -1444,13 +1563,13 @@ public class Barebones extends Activity implements OnLongClickListener,
 								"title" }, sb.toString(), null, null, null,
 								null);
 						if (cursor.moveToFirst()) {
-							
+
 						} else {
 							historyHandler.addHistoryItem(new HistoryItem(
 									urlToLoad[numberPage][0], title));
-							
+
 						}
-						
+
 					} catch (IllegalStateException e) {
 						Log.e("Barebones", "ERRRRROOORRRR 1");
 					} catch (NullPointerException e) {
@@ -1467,7 +1586,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 				WebChromeClient.CustomViewCallback callback) {
 			// Log.i(LOGTAG, "here in on ShowCustomView");
 			main[pageId].setVisibility(View.GONE);
-
 			// if a view already exists then immediately terminate the new one
 			if (mCustomView != null) {
 				callback.onCustomViewHidden();
@@ -1523,7 +1641,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 		}
 	}
 
-	private AnthonyWebView settings(AnthonyWebView view) {
+	public AnthonyWebView BrowserSettings(AnthonyWebView view) {
 		WebSettings webViewSettings = view.getSettings();
 		java = settings.getBoolean("java", true);
 		if (java) {
@@ -1604,6 +1722,8 @@ public class Barebones extends Activity implements OnLongClickListener,
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT));
 		bookmarkLayout.setOrientation(LinearLayout.VERTICAL);
+		bookmarkLayout.setBackgroundColor(getResources().getColor(
+				android.R.color.darker_gray));
 		TextView description = new TextView(Barebones.this);
 		description.setHeight(height56);
 		description.setBackgroundColor(0xff33b5e5);
@@ -1654,7 +1774,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	}
 
-	class BookmarkLongClick implements OnLongClickListener {
+	public class BookmarkLongClick implements OnLongClickListener {
 
 		@Override
 		public boolean onLongClick(final View arg0) {
@@ -1741,7 +1861,7 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	}
 
-	static class BookmarkListener implements OnClickListener {
+	static public class BookmarkListener implements OnClickListener {
 
 		@Override
 		public void onClick(View arg0) {
@@ -1805,29 +1925,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 		openBookmarks();
 	}
 
-	@Override
-	public boolean onLongClick(View v) {
-		int id = v.getId();
-		if (pageId == id && isBookmarkShowing) {
-
-			background.addView(main[pageId]);
-			// main[pageId].startAnimation(fadeIn);
-			if (showFullScreen) {
-				background.addView(uBar);
-				// uBar.startAnimation(fadeIn);
-			}
-			// scrollBookmarks.startAnimation(fadeOut);
-			background.removeView(scrollBookmarks);
-			uBar.bringToFront();
-			isBookmarkShowing = false;
-		}
-		pageIdIsVisible = true;
-		deleteTab(id);
-
-		return true;
-
-	}
-
 	public void deleteTab(int id) {
 		int leftId = id;
 		pageIdIsVisible = false;
@@ -1840,11 +1937,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 		boolean right = false, left = false;
 		// background.clearDisappearingChildren();
 		if (API < 16) {
-			urlTitle[id].setBackgroundDrawable(getResources().getDrawable(
-					R.drawable.bg_press));
+			urlTitle[id].setBackgroundDrawable(active);
 		} else {
-			urlTitle[id].setBackground(getResources().getDrawable(
-					R.drawable.bg_press));
+			urlTitle[id].setBackground(active);
 		}
 		urlTitle[id].setPadding(leftPad, 0, rightPad, 0);
 		urlTitle[id].setVisibility(View.GONE);
@@ -1870,11 +1965,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 					main[id].setVisibility(View.VISIBLE);
 					uBar.bringToFront();
 					if (API < 16) {
-						urlTitle[id].setBackgroundDrawable(getResources()
-								.getDrawable(R.drawable.bg_press));
+						urlTitle[id].setBackgroundDrawable(active);
 					} else {
-						urlTitle[id].setBackground(getResources().getDrawable(
-								R.drawable.bg_press));
+						urlTitle[id].setBackground(active);
 					}
 					urlTitle[id].setPadding(leftPad, 0, rightPad, 0);
 					pageId = id;
@@ -1893,12 +1986,9 @@ public class Barebones extends Activity implements OnLongClickListener,
 						main[leftId].setVisibility(View.VISIBLE);
 						// uBar.bringToFront();
 						if (API < 16) {
-							urlTitle[leftId]
-									.setBackgroundDrawable(getResources()
-											.getDrawable(R.drawable.bg_press));
+							urlTitle[leftId].setBackgroundDrawable(active);
 						} else {
-							urlTitle[leftId].setBackground(getResources()
-									.getDrawable(R.drawable.bg_press));
+							urlTitle[leftId].setBackground(active);
 						}
 						urlTitle[leftId].setPadding(leftPad, 0, rightPad, 0);
 						pageId = leftId;
@@ -2293,7 +2383,10 @@ public class Barebones extends Activity implements OnLongClickListener,
 			trimCache(this);
 		} catch (Exception e) {
 		}
-		this.onPause();
+		main[pageId].pauseTimers();
+		if (API >= 11) {
+			main[pageId].onPause();
+		}
 		super.finish();
 	}
 
@@ -2331,112 +2424,6 @@ public class Barebones extends Activity implements OnLongClickListener,
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		pageIdIsVisible = false;
-		id = v.getId();
-		xPress = false;
-		x = (int) event.getX();
-		y = (int) event.getY();
-		edge = new Rect();
-		v.getLocalVisibleRect(edge);
-
-		if (x >= (edge.right - bounds[id].width() - fuzz)
-				&& x <= (edge.right - v.getPaddingRight() + fuzz)
-				&& y >= (v.getPaddingTop() - fuzz)
-				&& y <= (v.getHeight() - v.getPaddingBottom()) + fuzz) {
-			xPress = true;
-		}
-
-		urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-		if (event.getAction() == MotionEvent.ACTION_UP) {
-			if (id == pageId) {
-				if (xPress) {
-					if (isBookmarkShowing) {
-						background.removeView(scrollBookmarks);
-						isBookmarkShowing = false;
-
-					} else if (!isBookmarkShowing) {
-
-					}
-					deleteTab(id);
-					uBar.bringToFront();
-				} else if (!xPress) {
-
-				}
-			} else if (id != pageId) {
-				if (xPress) {
-					deleteTab(id);
-				} else if (!xPress) {
-					if (API < 16) {
-						urlTitle[pageId].setBackgroundDrawable(getResources()
-								.getDrawable(R.drawable.bg_inactive));
-					} else if (API > 15) {
-						urlTitle[pageId].setBackground(getResources()
-								.getDrawable(R.drawable.bg_inactive));
-					}
-					urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-
-					if (isBookmarkShowing) {
-
-						background.addView(main[id]);
-						main[id].startAnimation(fadeIn);
-						scrollBookmarks.startAnimation(fadeOut);
-						background.removeView(scrollBookmarks);
-						isBookmarkShowing = false;
-						uBar.bringToFront();
-					} else if (!isBookmarkShowing) {
-						if (!showFullScreen) {
-							background.addView(main[id]);
-							main[id].startAnimation(fadeIn);
-							main[pageId].startAnimation(fadeOut);
-							pageIdIsVisible = false;
-							background.removeView(main[pageId]);
-							uBar.bringToFront();
-						} else if (API >= 12) {
-							pageIdIsVisible = false;
-							main[id].setAlpha(0f);
-							main[id].clearAnimation();
-							background.addView(main[id]);
-							main[id].animate().alpha(1f)
-									.setDuration(mShortAnimationDuration);
-							main[pageId].clearAnimation();
-							// main[pageId].animate().alpha(0f)
-							// .setDuration(mShortAnimationDuration);
-
-							// main[pageId].setAlpha(1f);
-							background.removeView(main[pageId]);
-
-							uBar.bringToFront();
-						} else {
-							pageIdIsVisible = false;
-							background.removeView(main[pageId]);
-							background.addView(main[id]);
-						}
-						uBar.bringToFront();
-					}
-					pageId = id;
-					pageIdIsVisible = true;
-					getUrl.setText(urlToLoad[pageId][0]);
-					getUrl.setPadding(tenPad, 0, tenPad, 0);
-				}
-			}
-
-			if (API < 16) {
-				urlTitle[pageId].setBackgroundDrawable(getResources()
-						.getDrawable(R.drawable.bg_press));
-			} else if (API > 15) {
-				urlTitle[pageId].setBackground(getResources().getDrawable(
-						R.drawable.bg_press));
-			}
-		}
-		uBar.bringToFront();
-		urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-
-		pageIdIsVisible = true;
-		return true;
-	}
-
-	@Override
 	protected void onPause() {
 		if (API >= 11) {
 			main[pageId].onPause();
@@ -2455,13 +2442,18 @@ public class Barebones extends Activity implements OnLongClickListener,
 
 	}
 
+	public Barebones() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 
 		String url = null;
 		url = intent.getDataString();
 		if (url != null) {
-			newTab(number, url);
+			newTab(number, url, true);
 		}
 		super.onNewIntent(intent);
 	}
