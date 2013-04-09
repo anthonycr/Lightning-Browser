@@ -18,4 +18,5 @@
     <string name="fullscreen">Vollbildmodus aktivieren</string>
     <string name="java">JavaScript aktivieren</string>
     <string name="saveTab">Geschlossene Tabs wiederherstellen</string>
+	
 </resources>
