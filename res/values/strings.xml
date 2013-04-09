@@ -17,5 +17,6 @@
     <string name="settingshelp">Settings only apply to new tabs</string>
     <string name="fullscreen">Enable fullscreen mode</string>
     <string name="java">Enable JavaScript</string>
+    <string name="saveTab">Restore your tabs if they\'re lost</string>
 
 </resources>

@@ -47,23 +47,26 @@
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
-                android:textColor="#ffffffff"
                 android:layout_height="56dp"
                 android:layout_below="@+id/relativeLayout1"
                 android:layout_centerHorizontal="true"
                 android:background="#ff0099cc"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/settingshelp"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#ffffffff" />
 
             <CheckBox
                 android:id="@+id/password"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
-                android:layout_alignLeft="@+id/location"
+                android:layout_alignLeft="@+id/flash"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/location"
-                android:paddingRight="20dp" />
+                android:layout_below="@+id/saveTabs"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/blueback"
+                android:paddingRight="20dp"
+                android:text="@string/password" />
 
             <EditText
                 android:id="@+id/agent"
@@ -74,53 +77,64 @@
                 android:layout_toRightOf="@+id/textView2"
                 android:ems="10"
                 android:inputType="textUri"
-                android:paddingRight="10dp"
+                
+            android:background="@drawable/bookmark"
+                android:layout_marginRight="20dp"
+                android:paddingLeft="10dp"
+            android:paddingRight="10dp"
                 android:singleLine="true" >
-
             </EditText>
 
             <CheckBox
                 android:id="@+id/flash"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/blueback"
                 android:layout_below="@+id/password"
-                android:paddingRight="20dp" />
+                android:paddingRight="20dp"
+                android:text="@string/flash" />
 
             <CheckBox
                 android:id="@+id/historyClear"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/flash"
-                android:paddingRight="20dp" />
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/flash"
+                android:paddingRight="20dp"
+                android:background="@drawable/blueback"
+                android:text="@string/history" />
 
-                <RadioButton
-                    android:id="@+id/radioMobile"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_alignLeft="@+id/java"
-                    android:layout_below="@+id/java"
-                    android:marqueeRepeatLimit="20"
-                    android:onClick="radioAgent" />
+            <RadioButton
+                android:id="@+id/radioDesktop"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignLeft="@+id/radioMobile"
+                android:layout_below="@+id/radioMobile"
+                android:layout_marginRight="20dp"
+                android:onClick="radioAgent"
+                android:paddingRight="20dp"
+                android:background="@drawable/blueback"
+                android:text="@string/desk" />
 
-                <RadioButton
-                    android:id="@+id/radioDesktop"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_alignLeft="@+id/radioMobile"
-                    android:layout_below="@+id/radioMobile"
-                    android:onClick="radioAgent"
-                    android:paddingRight="20dp" />
-
-                <RadioButton
-                    android:id="@+id/radioCustom"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_alignLeft="@+id/radioDesktop"
-                    android:layout_below="@+id/radioDesktop"
-                    android:onClick="radioAgent"
-                    android:paddingRight="20dp" />
+            <RadioButton
+                android:id="@+id/radioCustom"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignLeft="@+id/radioDesktop"
+                android:layout_below="@+id/radioDesktop"
+                android:background="@drawable/blueback"
+                android:layout_marginRight="20dp"
+                android:onClick="radioAgent"
+                android:paddingRight="20dp"
+                android:text="@string/custom" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -131,6 +145,8 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="5dp"
+                android:layout_marginLeft="20dp"
+                
                 android:text="@string/agent" />
 
             <TextView
@@ -141,6 +157,7 @@
                 android:layout_below="@+id/textView2"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
+                android:layout_marginLeft="20dp"
                 android:paddingRight="5dp"
                 android:text="@string/home" />
 
@@ -150,10 +167,13 @@
                 android:layout_height="56dp"
                 android:layout_alignLeft="@+id/agent"
                 android:layout_alignRight="@+id/agent"
+                
+            android:background="@drawable/bookmark"
                 android:layout_below="@+id/agent"
                 android:ems="10"
                 android:inputType="textUri"
-                android:paddingRight="10dp" />
+android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
 
             <CheckBox
                 android:id="@+id/fullScreen"
@@ -162,133 +182,64 @@
                 android:layout_alignLeft="@+id/historyClear"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/historyClear"
-                android:paddingRight="20dp" />
+                android:layout_marginRight="20dp"
+                android:paddingRight="20dp"
+                android:background="@drawable/blueback"
+                android:text="@string/fullscreen" />
 
             <CheckBox
                 android:id="@+id/java"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/fullScreen"
-                android:paddingRight="20dp" />
+                android:layout_toLeftOf="@+id/flash"
+                android:paddingRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/blueback"
+                android:text="@string/java" />
 
             <CheckBox
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/textView4"
-                android:paddingRight="20dp" />
+                android:paddingRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/blueback"
+                android:text="@string/location" />
 
-            <TextView
-                android:id="@+id/textView5"
+            <RadioButton
+                android:id="@+id/radioMobile"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
                 android:layout_alignParentLeft="true"
-                android:layout_alignTop="@+id/location"
-                android:layout_toLeftOf="@+id/location"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/location"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/java"
+                android:marqueeRepeatLimit="20"
+                android:onClick="radioAgent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/blueback"
+                android:text="@string/mobile" />
 
-            <TextView
-                android:id="@+id/textView6"
+            <CheckBox
+                android:id="@+id/saveTabs"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/textView5"
-                android:layout_toLeftOf="@+id/password"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/password"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignTop="@+id/flash"
-                android:layout_toLeftOf="@+id/flash"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/flash"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/textView7"
-                android:layout_alignTop="@+id/historyClear"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/history"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/textView8"
-                android:layout_alignTop="@+id/fullScreen"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/fullscreen"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/textView9"
-                android:layout_alignTop="@+id/java"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/java"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/textView10"
-                android:layout_alignTop="@+id/radioMobile"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/mobile"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/textView11"
-                android:layout_below="@+id/textView11"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/desk"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_above="@+id/agent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/textView12"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:text="@string/custom"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_alignLeft="@+id/password"
+                android:layout_alignRight="@+id/password"
+                android:layout_below="@+id/location"
+                android:background="@drawable/blueback"
+                android:text="@string/saveTab" />
 
         </RelativeLayout>
+
     </ScrollView>
 
     

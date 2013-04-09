@@ -12,19 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -67,19 +64,15 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.ConsoleMessage;
 import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions;
 import android.webkit.HttpAuthHandler;
-import android.webkit.JsPromptResult;
-import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
@@ -114,7 +107,6 @@ public class Barebones extends Activity {
 	static final boolean PAID_VERSION = false;
 
 	// variable declaration
-
 	static Rect edge;
 	static SimpleAdapter adapter;
 	static MultiAutoCompleteTextView getUrl;
@@ -145,7 +137,7 @@ public class Barebones extends Activity {
 	static boolean xPress;
 	static boolean tabsAreDisplayed = true, isPhone = false;
 	static boolean pageIsLoading = false, java;
-	static boolean allowLocation, savePasswords, deleteHistory;
+	static boolean allowLocation, savePasswords, deleteHistory, saveTabs;
 	static boolean showFullScreen, pageIdIsVisible = true;
 	static boolean urlBarShows = true, move = false;
 	static boolean isBookmarkShowing = false;
@@ -155,6 +147,7 @@ public class Barebones extends Activity {
 	static SharedPreferences.Editor edit;
 	static String desktop, mobile, user;
 	static String urlA, title;
+	static String[] memoryURL = new String[MAX_TABS];
 	static final String[] bUrl = new String[MAX_BOOKMARKS];
 	static final String[] bTitle = new String[MAX_BOOKMARKS];
 	static String[] columns;
@@ -195,7 +188,15 @@ public class Barebones extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main); // displays main xml layout
 		settings = getSharedPreferences(preferences, 0);
+
 		edit = settings.edit();
+		saveTabs = settings.getBoolean("savetabs", true);
+		if (saveTabs) {
+			String mem = settings.getString("memory", "");
+			memoryURL = null;
+			memoryURL = GetArray(mem, "\\|\\$\\|SEPARATOR\\|\\$\\|");
+		}
+
 		inactive = this.getResources().getDrawable(R.drawable.bg_inactive);
 		active = this.getResources().getDrawable(R.drawable.bg_press);
 		init(); // sets up random stuff
@@ -241,10 +242,12 @@ public class Barebones extends Activity {
 		}
 	}
 
+	@SuppressLint("InlinedApi")
 	public void init() {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		historyHandler = new DatabaseHandler(this);
+
 		API = Integer.valueOf(android.os.Build.VERSION.SDK_INT); // gets the sdk
 		// level
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
@@ -255,6 +258,7 @@ public class Barebones extends Activity {
 			progressBar.setIndeterminateDrawable(getResources().getDrawable(
 					R.drawable.ginger_animation));
 		}
+
 		showFullScreen = settings.getBoolean("fullscreen", false);
 		uBar = (RelativeLayout) findViewById(R.id.urlBar);
 		bg = (RelativeLayout) findViewById(R.id.background);
@@ -311,6 +315,7 @@ public class Barebones extends Activity {
 
 		// user agent
 		user = test.getSettings().getUserAgentString();
+
 		background = (FrameLayout) findViewById(R.id.holder);
 		mobile = user; // setting mobile user
 						// agent
@@ -398,13 +403,46 @@ public class Barebones extends Activity {
 		String URL = null; // that opens the browser
 		// gets the string passed into the browser
 		URL = url.getDataString();
-		if (URL != null) {
-			// opens a new tab with the url if its there
-			newTab(number, URL, true);
+		boolean oldTabs = false;
+
+		if (saveTabs) {
+			if (URL != null) {
+				// opens a new tab with the url if its there
+				newTab(number, URL, true);
+				main[0].resumeTimers();
+				oldTabs = true;
+
+			}
+			for (int num = 0; num < memoryURL.length; num++) {
+
+				if (memoryURL[num].length() > 0) {
+					if (number == 0) {
+						newTab(number, memoryURL[num], !oldTabs);
+						main[0].resumeTimers();
+					} else {
+						newTab(number, memoryURL[num], false);
+					}
+					oldTabs = true;
+				}
+
+			}
+			if (!oldTabs) {
+				newTab(number, homepage, true);
+			}
 		} else {
-			// otherwise it opens the homepage
-			newTab(number, homepage, true);
+			if (URL != null) {
+				// opens a new tab with the url if its there
+				newTab(number, URL, true);
+				main[0].resumeTimers();
+
+			} else {
+				// otherwise it opens the homepage
+				newTab(number, homepage, true);
+				main[0].resumeTimers();
+
+			}
 		}
+		main[0].resumeTimers();
 
 		// new tab button
 		ImageView newTab = (ImageView) findViewById(R.id.newTab);
@@ -493,6 +531,7 @@ public class Barebones extends Activity {
 		}
 	}
 
+	@SuppressLint("HandlerLeak")
 	public void enterUrl() {
 		getUrl = (MultiAutoCompleteTextView) findViewById(R.id.enterUrl);
 		getUrl.setPadding(tenPad, 0, tenPad, 0);
@@ -534,6 +573,7 @@ public class Barebones extends Activity {
 					c = getContentResolver().query(bookmarks, columns, null,
 							null, null);
 				} catch (SQLiteException e) {
+				} catch (IllegalStateException e) {
 				}
 				noStockBrowser = true;
 				if (c != null) {
@@ -627,6 +667,7 @@ public class Barebones extends Activity {
 	}
 
 	// new tab method, takes the id of the tab to be created and the url to load
+	@SuppressWarnings("deprecation")
 	public void newTab(int theId, final String theUrl, final boolean display) {
 		lastVisibleWebView = pageId;
 		if (isBookmarkShowing) {
@@ -773,6 +814,7 @@ public class Barebones extends Activity {
 
 	public class TabTouch implements OnTouchListener {
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			pageIdIsVisible = false;
@@ -877,6 +919,7 @@ public class Barebones extends Activity {
 
 	public class TabClick implements OnClickListener {
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public void onClick(View v) {
 			id = v.getId();
@@ -1026,6 +1069,7 @@ public class Barebones extends Activity {
 									try {
 										Thread down = new Thread(
 												new Runnable() {
+													@SuppressLint("InlinedApi")
 													@Override
 													public void run() {
 
@@ -1065,6 +1109,8 @@ public class Barebones extends Activity {
 										Toast.makeText(Barebones.this,
 												"Error Downloading File",
 												Toast.LENGTH_SHORT).show();
+									} catch (SecurityException e) {
+
 									}
 								}
 								break;
@@ -1086,6 +1132,7 @@ public class Barebones extends Activity {
 
 				} else {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
@@ -1139,44 +1186,12 @@ public class Barebones extends Activity {
 	public class AnthonyWebViewClient extends WebViewClient {
 
 		@Override
-		public void onFormResubmission(WebView view, Message dontResend,
-				Message resend) {
-			// TODO Auto-generated method stub
-			super.onFormResubmission(view, dontResend, resend);
-		}
-
-		@Override
-		public void onLoadResource(WebView view, String url) {
-			// TODO Auto-generated method stub
-			super.onLoadResource(view, url);
-		}
-
-		@Override
 		public void onScaleChanged(WebView view, float oldScale, float newScale) {
 			// TODO Auto-generated method stub
 			// view.invalidate();
 			main[pageId].getSettings().setLayoutAlgorithm(
 					LayoutAlgorithm.NARROW_COLUMNS);
 			super.onScaleChanged(view, oldScale, newScale);
-		}
-
-		@Override
-		public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
-			// TODO Auto-generated method stub
-			super.onUnhandledKeyEvent(view, event);
-		}
-
-		@Override
-		public WebResourceResponse shouldInterceptRequest(WebView view,
-				String url) {
-			// TODO Auto-generated method stub
-			return super.shouldInterceptRequest(view, url);
-		}
-
-		@Override
-		public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-			// TODO Auto-generated method stub
-			return super.shouldOverrideKeyEvent(view, event);
 		}
 
 		@Override
@@ -1197,23 +1212,10 @@ public class Barebones extends Activity {
 		}
 
 		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			return super.shouldOverrideUrlLoading(view, url);
-
-		}
-
-		@Override
 		public void onReceivedHttpAuthRequest(WebView view,
 				HttpAuthHandler handler, String host, String realm) {
 			// handler.proceed(username, password);
 			super.onReceivedHttpAuthRequest(view, handler, host, realm);
-		}
-
-		@Override
-		public void onReceivedError(WebView view, int errorCode,
-				String description, String failingUrl) {
-
-			super.onReceivedError(view, errorCode, description, failingUrl);
 		}
 
 		@Override
@@ -1235,9 +1237,11 @@ public class Barebones extends Activity {
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			numberPage = view.getId();
 			pageIsLoading = true;
-			getUrl.setText(url);
 			refresh.setVisibility(View.INVISIBLE);
 			progressBar.setVisibility(View.VISIBLE);
+			if (main[numberPage].isShown()) {
+				getUrl.setText(url);
+			}
 			getUrl.setPadding(tenPad, 0, tenPad, 0);
 			urlToLoad[numberPage][0] = url;
 			urlTitle[numberPage].setCompoundDrawables(webpageOther, null,
@@ -1264,32 +1268,11 @@ public class Barebones extends Activity {
 		public void onDownloadStart(final String url, String userAgent,
 				final String contentDisposition, final String mimetype,
 				long contentLength) {
-			/*
-			 * if (contentDisposition == null ||
-			 * !contentDisposition.regionMatches(true, 0, "attachment", 0, 10))
-			 * { // query the package manager to see if there's a registered //
-			 * handler // that matches. Intent intent = new
-			 * Intent(Intent.ACTION_VIEW); intent.setDataAndType(Uri.parse(url),
-			 * mimetype); intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			 * ResolveInfo info = getPackageManager().resolveActivity(intent,
-			 * PackageManager.MATCH_DEFAULT_ONLY); if (info != null) {
-			 * ComponentName myName = getComponentName(); // If we resolved to
-			 * ourselves, we don't want to attempt to // load the url only to
-			 * try and download it again. if (!myName.getPackageName().equals(
-			 * info.activityInfo.packageName) || !myName.getClassName().equals(
-			 * info.activityInfo.name)) { // someone (other than us) knows how
-			 * to handle this mime // type with this scheme, don't download. try
-			 * { startActivity(intent); return; } catch
-			 * (ActivityNotFoundException ex) {
-			 * 
-			 * // Best behavior is to fall back to a download in // this // case
-			 * } } } } else {
-			 */
 			try {
 				Thread downloader = new Thread(new Runnable() {
+					@SuppressLint("InlinedApi")
 					@Override
 					public void run() {
-
 						DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 						Uri nice = Uri.parse(url);
 						DownloadManager.Request it = new DownloadManager.Request(
@@ -1317,6 +1300,8 @@ public class Barebones extends Activity {
 				Log.e("Barebones", "Problem downloading");
 				Toast.makeText(Barebones.this, "Error Downloading File",
 						Toast.LENGTH_SHORT).show();
+			} catch (SecurityException e) {
+
 			}
 		}
 
@@ -1338,26 +1323,15 @@ public class Barebones extends Activity {
 		}
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	public class AnthonyChromeClient extends WebChromeClient {
 		private Bitmap mDefaultVideoPoster;
 		private View mVideoProgressView;
 
 		@Override
-		public void getVisitedHistory(ValueCallback<String[]> callback) {
-			// TODO Auto-generated method stub
-			super.getVisitedHistory(callback);
-		}
-
-		@Override
 		public void onCloseWindow(WebView window) {
 			// TODO Auto-generated method stub
 			super.onCloseWindow(window);
-		}
-
-		@Override
-		public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-			// Log.i("Barebones",consoleMessage.toString());
-			return super.onConsoleMessage(consoleMessage);
 		}
 
 		@Override
@@ -1369,75 +1343,11 @@ public class Barebones extends Activity {
 		}
 
 		@Override
-		public void onExceededDatabaseQuota(String url,
-				String databaseIdentifier, long quota,
-				long estimatedDatabaseSize, long totalQuota,
-				QuotaUpdater quotaUpdater) {
-			// TODO Auto-generated method stub
-			super.onExceededDatabaseQuota(url, databaseIdentifier, quota,
-					estimatedDatabaseSize, totalQuota, quotaUpdater);
-		}
-
-		@Override
-		public void onGeolocationPermissionsHidePrompt() {
-			// TODO Auto-generated method stub
-			super.onGeolocationPermissionsHidePrompt();
-		}
-
-		@Override
-		public boolean onJsAlert(WebView view, String url, String message,
-				JsResult result) {
-			// TODO Auto-generated method stub
-			return super.onJsAlert(view, url, message, result);
-		}
-
-		@Override
-		public boolean onJsBeforeUnload(WebView view, String url,
-				String message, JsResult result) {
-
-			return super.onJsBeforeUnload(view, url, message, result);
-		}
-
-		@Override
-		public boolean onJsConfirm(WebView view, String url, String message,
-				JsResult result) {
-			// TODO Auto-generated method stub
-			return super.onJsConfirm(view, url, message, result);
-		}
-
-		@Override
-		public boolean onJsPrompt(WebView view, String url, String message,
-				String defaultValue, JsPromptResult result) {
-			// TODO Auto-generated method stub
-			return super.onJsPrompt(view, url, message, defaultValue, result);
-		}
-
-		@Override
-		public void onProgressChanged(WebView view, int newProgress) {
-			// TODO Auto-generated method stub
-
-			super.onProgressChanged(view, newProgress);
-		}
-
-		@Override
 		public void onReachedMaxAppCacheSize(long requiredStorage, long quota,
 				QuotaUpdater quotaUpdater) {
 			// TODO Auto-generated method stub
 			main[pageId].freeMemory();
 			super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
-		}
-
-		@Override
-		public void onReceivedTouchIconUrl(WebView view, String url,
-				boolean precomposed) {
-			// TODO Auto-generated method stub
-			super.onReceivedTouchIconUrl(view, url, precomposed);
-		}
-
-		@Override
-		public void onRequestFocus(WebView view) {
-			// TODO Auto-generated method stub
-			super.onRequestFocus(view);
 		}
 
 		@Override
@@ -1513,7 +1423,10 @@ public class Barebones extends Activity {
 
 			if (allowLocation == true) {
 				callback.invoke(origin, true, false);
+			} else if (allowLocation == false) {
+				callback.invoke(origin, false, false);
 			} else {
+
 				Log.i("Barebones: ", "onGeolocationPermissionsShowPrompt()");
 
 				final boolean remember = true;
@@ -1574,6 +1487,8 @@ public class Barebones extends Activity {
 						Log.e("Barebones", "ERRRRROOORRRR 1");
 					} catch (NullPointerException e) {
 						Log.e("Barebones", "ERRRRROOORRRR 2");
+					} catch (SQLiteException e) {
+						Log.e("Barebones", "SQLiteException");
 					}
 				}
 			});
@@ -1641,6 +1556,7 @@ public class Barebones extends Activity {
 		}
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	public AnthonyWebView BrowserSettings(AnthonyWebView view) {
 		WebSettings webViewSettings = view.getSettings();
 		java = settings.getBoolean("java", true);
@@ -1925,11 +1841,14 @@ public class Barebones extends Activity {
 		openBookmarks();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void deleteTab(int id) {
 		int leftId = id;
 		pageIdIsVisible = false;
 		main[id].stopLoading();
 		main[id].clearHistory();
+		urlToLoad[id][0] = null;
+		urlToLoad[id][1] = null;
 		if (API >= 11) {
 			main[id].onPause();
 		}
@@ -2390,12 +2309,6 @@ public class Barebones extends Activity {
 		super.finish();
 	}
 
-	@Override
-	protected void onDestroy() {
-
-		super.onDestroy();
-	}
-
 	public void trimCache(Context context) {
 		try {
 			File dir = context.getCacheDir();
@@ -2429,22 +2342,30 @@ public class Barebones extends Activity {
 			main[pageId].onPause();
 		}
 		main[pageId].pauseTimers();
+
+		String s = "";
+		for (int n = 0; n < MAX_TABS; n++) {
+			if (urlToLoad[n][0] != null) {
+				s = s + urlToLoad[n][0] + "|$|SEPARATOR|$|";
+			}
+		}
+		edit.putString("memory", s);
+		edit.commit();
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		if (API >= 11) {
 			main[pageId].onResume();
 		}
-		main[pageId].resumeTimers();
-		super.onResume();
+		main[0].resumeTimers();
 
 	}
 
 	public Barebones() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -2458,4 +2379,7 @@ public class Barebones extends Activity {
 		super.onNewIntent(intent);
 	}
 
+	public static String[] GetArray(String input, String delimiter) {
+		return input.split(delimiter);
+	}
 }

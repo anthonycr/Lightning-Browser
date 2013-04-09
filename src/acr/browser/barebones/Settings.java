@@ -28,7 +28,7 @@ public class Settings extends Activity {
 	public static final String preferences = "settings";
 	static boolean allowLocation, deleteHistory;
 	static int enableFlash;
-	static boolean savePasswords, fullScreen,java;
+	static boolean savePasswords, fullScreen, java, saveTabs;
 	static String userAgent, homepage;
 	static EditText agent,h;
 	static SharedPreferences.Editor edit;
@@ -51,7 +51,8 @@ public class Settings extends Activity {
 		test.destroy();
 		it.requestFocus();
 		allowLocation = settings.getBoolean("location", false);
-		savePasswords = settings.getBoolean("passwords", false);
+		saveTabs = settings.getBoolean("savetabs", true);
+		savePasswords = settings.getBoolean("passwords", true);
 		deleteHistory = settings.getBoolean("history", false);
 		fullScreen = settings.getBoolean("fullscreen", false);
 		enableFlash = settings.getInt("enableflash", 0);
@@ -123,11 +124,37 @@ public class Settings extends Activity {
 		location();
 		passwords();
 		clearHistory();
+		saveTabs();
 		getText();
 		flash();
 		getHome();
 		full();
 		java();
+	}
+	
+	public void saveTabs(){
+		final CheckBox tab = (CheckBox)findViewById(R.id.saveTabs);
+		if(saveTabs){
+			tab.setChecked(true);
+			
+		}else{
+			tab.setChecked(false);
+		}
+		tab.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				// TODO Auto-generated method stub
+				if(arg1){
+					edit.putBoolean("savetabs", true);
+					edit.commit();
+				}else{
+					edit.putBoolean("savetabs", false);
+					edit.commit();
+				}
+			}
+			
+		});
 	}
 
 	public void getHome() {
