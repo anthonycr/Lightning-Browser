@@ -33,10 +33,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_HISTORY + "("
+        String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_URL + " TEXT,"
                 + KEY_TITLE + " TEXT" +")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
+        db.execSQL(CREATE_HISTORY_TABLE);
     }
  
     // Upgrading database

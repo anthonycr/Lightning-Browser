@@ -1,247 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+	android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/bar" >
+	<RelativeLayout android:id="@+id/relativeLayout1"
+		android:layout_width="match_parent" android:layout_height="48dp"
+		android:layout_alignParentLeft="true" android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true" android:background="@drawable/bar">
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/settings"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+		<TextView android:id="@+id/textView1" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+			android:layout_centerVertical="true" android:text="@string/settings"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp"
-            android:src="@drawable/back" />
-    </RelativeLayout>
+		<ImageView android:id="@+id/back" android:layout_width="48dp"
+			android:layout_height="48dp" android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true" android:paddingBottom="5dp"
+			android:paddingLeft="5dp" android:paddingRight="5dp"
+			android:paddingTop="5dp" android:src="@drawable/back" />
+	</RelativeLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/relativeLayout1" >
+	<ScrollView android:id="@+id/scrollView1"
+		android:layout_width="match_parent" android:layout_height="match_parent"
+		android:layout_below="@+id/relativeLayout1">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+		<RelativeLayout android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_below="@+id/relativeLayout1"
-                android:layout_centerHorizontal="true"
-                android:background="#ff0099cc"
-                android:gravity="center_vertical|center_horizontal"
-                android:text="@string/settingshelp"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#ffffffff" />
+			<TextView android:id="@+id/textView4" android:layout_width="match_parent"
+				android:layout_height="56dp" android:layout_below="@+id/relativeLayout1"
+				android:layout_centerHorizontal="true" android:background="#ff0099cc"
+				android:gravity="center_vertical|center_horizontal" android:text="@string/settingshelp"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textColor="#ffffffff" />
 
-            <CheckBox
-                android:id="@+id/password"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignLeft="@+id/flash"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/saveTabs"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/blueback"
-                android:paddingRight="20dp"
-                android:text="@string/password" />
+			<CheckBox android:id="@+id/password" android:layout_width="match_parent"
+			    android:layout_marginRight="20dp"
+				android:layout_height="56dp" android:layout_below="@+id/saveTabs"
+				 android:text="@string/password" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <EditText
-                android:id="@+id/agent"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/textView2"
-                android:layout_toRightOf="@+id/textView2"
-                android:ems="10"
-                android:inputType="textUri"
-                
-            android:background="@drawable/bookmark"
-                android:layout_marginRight="20dp"
-                android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-                android:singleLine="true" >
-            </EditText>
+			<EditText android:id="@+id/agent" android:layout_width="wrap_content"
+				android:layout_height="56dp" android:layout_alignParentRight="true"
+				android:layout_marginRight="20dp"
+				android:layout_alignTop="@+id/textView2" android:layout_toRightOf="@+id/textView2"
+				android:ems="10" android:inputType="textUri" android:background="@drawable/book"
+				android:paddingLeft="10dp" android:paddingRight="10dp"
+				android:singleLine="true" />
 
-            <CheckBox
-                android:id="@+id/flash"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/blueback"
-                android:layout_below="@+id/password"
-                android:paddingRight="20dp"
-                android:text="@string/flash" />
 
-            <CheckBox
-                android:id="@+id/historyClear"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/flash"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_toLeftOf="@+id/flash"
-                android:paddingRight="20dp"
-                android:background="@drawable/blueback"
-                android:text="@string/history" />
+			<CheckBox android:id="@+id/flash" android:layout_width="match_parent"
+			    android:layout_marginRight="20dp"
+				android:layout_height="56dp" android:layout_below="@+id/password"
+				 android:text="@string/flash" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <RadioButton
-                android:id="@+id/radioDesktop"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_alignLeft="@+id/radioMobile"
-                android:layout_below="@+id/radioMobile"
-                android:layout_marginRight="20dp"
-                android:onClick="radioAgent"
-                android:paddingRight="20dp"
-                android:background="@drawable/blueback"
-                android:text="@string/desk" />
+			<CheckBox android:id="@+id/historyClear"
+			    android:layout_marginRight="20dp"
+				android:layout_width="match_parent" android:layout_height="56dp"
+				android:layout_below="@+id/flash" 
+				android:text="@string/history" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <RadioButton
-                android:id="@+id/radioCustom"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_alignLeft="@+id/radioDesktop"
-                android:layout_below="@+id/radioDesktop"
-                android:background="@drawable/blueback"
-                android:layout_marginRight="20dp"
-                android:onClick="radioAgent"
-                android:paddingRight="20dp"
-                android:text="@string/custom" />
+			<RadioButton android:id="@+id/radioDesktop"
+				android:layout_width="match_parent" android:layout_height="56dp"
+				android:layout_marginRight="20dp"
+				android:layout_below="@+id/radioMobile" 
+				android:onClick="radioAgent" android:text="@string/desk" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/radioCustom"
-                android:gravity="center_vertical|center_horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:layout_marginLeft="20dp"
-                
-                android:text="@string/agent" />
+			<RadioButton android:id="@+id/radioCustom"
+				android:layout_width="match_parent" android:layout_height="56dp"
+				android:layout_below="@+id/radioDesktop" 
+				android:onClick="radioAgent" android:text="@string/custom" 
+				android:layout_marginRight="20dp"
+				android:layout_marginLeft="20dp"
+			    />
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/textView2"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:layout_marginLeft="20dp"
-                android:paddingRight="5dp"
-                android:text="@string/home" />
+			<TextView android:id="@+id/textView2" android:layout_width="wrap_content"
+				android:layout_height="56dp" android:layout_alignParentLeft="true"
+				android:layout_below="@+id/radioCustom" android:gravity="center_vertical|center_horizontal"
+				android:paddingLeft="10dp" android:paddingRight="5dp" android:text="@string/agent" 
+				android:layout_marginLeft="20dp"/>
 
-            <EditText
-                android:id="@+id/homePage"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignLeft="@+id/agent"
-                android:layout_alignRight="@+id/agent"
-                
-            android:background="@drawable/bookmark"
-                android:layout_below="@+id/agent"
-                android:ems="10"
-                android:inputType="textUri"
-android:paddingLeft="10dp"
-            android:paddingRight="10dp"/>
+			<TextView
+			    android:id="@+id/textView3"
+			    android:layout_width="wrap_content"
+			    android:layout_height="56dp"
+			    android:layout_alignParentLeft="true"
+			    android:layout_below="@+id/textView2"
+			    android:gravity="center_vertical|center_horizontal"
+			    android:paddingLeft="10dp"
+			    android:paddingRight="5dp"
+			    android:text="@string/home" 
+			    android:layout_marginLeft="20dp"/>
 
-            <CheckBox
-                android:id="@+id/fullScreen"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_alignLeft="@+id/historyClear"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/historyClear"
-                android:layout_marginRight="20dp"
-                android:paddingRight="20dp"
-                android:background="@drawable/blueback"
-                android:text="@string/fullscreen" />
+			<CheckBox android:id="@+id/fullScreen" android:layout_width="match_parent"
+			    android:layout_marginRight="20dp"
+				android:layout_height="56dp" android:layout_below="@+id/historyClear"
+				 android:text="@string/fullscreen" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <CheckBox
-                android:id="@+id/java"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/fullScreen"
-                android:layout_toLeftOf="@+id/flash"
-                android:paddingRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/blueback"
-                android:text="@string/java" />
+			<CheckBox android:id="@+id/java" android:layout_width="match_parent"
+				android:layout_height="56dp" android:layout_below="@+id/fullScreen"
+				android:layout_marginRight="20dp"
+				 android:text="@string/java" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <CheckBox
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/textView4"
-                android:paddingRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/blueback"
-                android:text="@string/location" />
+			
 
-            <RadioButton
-                android:id="@+id/radioMobile"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/java"
-                android:marqueeRepeatLimit="20"
-                android:onClick="radioAgent"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/blueback"
-                android:text="@string/mobile" />
+			<RadioButton android:id="@+id/radioMobile"
+				android:layout_width="match_parent" android:layout_height="56dp"
+				android:layout_marginRight="20dp"
+				android:layout_below="@+id/java" 
+				android:marqueeRepeatLimit="20" android:onClick="radioAgent"
+				android:text="@string/mobile" 
+				android:layout_marginLeft="20dp"
+			    />
 
-            <CheckBox
-                android:id="@+id/saveTabs"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_alignLeft="@+id/password"
-                android:layout_alignRight="@+id/password"
-                android:layout_below="@+id/location"
-                android:background="@drawable/blueback"
-                android:text="@string/saveTab" />
+			<CheckBox android:id="@+id/saveTabs" android:layout_width="match_parent"
+				android:layout_height="56dp" android:layout_below="@+id/location"
+				android:layout_marginRight="20dp"
+				 android:text="@string/saveTab" 
+				android:layout_marginLeft="20dp"
+			    />
 
-        </RelativeLayout>
+			<EditText android:id="@+id/homePage" android:layout_width="wrap_content"
+				android:layout_height="56dp" android:layout_alignBaseline="@+id/textView3"
+				android:layout_alignBottom="@+id/textView3"
+				android:layout_alignLeft="@+id/agent"
+				android:layout_alignParentRight="true" android:background="@drawable/book"
+				android:ems="10" android:inputType="textUri" android:paddingLeft="10dp"
+				android:layout_marginRight="20dp"
+				android:paddingRight="10dp">
 
-    </ScrollView>
+				
+			</EditText>
 
-    
+			<CheckBox
+			    android:id="@+id/location"
+			    android:layout_marginLeft="20dp"
+			    
+			    android:layout_width="match_parent"
+			    android:layout_height="56dp"
+			    android:layout_below="@+id/textView4"
+			    
+			    android:layout_marginRight="20dp"
+			    android:text="@string/location"/>
+
+		</RelativeLayout>
+
+	</ScrollView>
+
+
 
 </RelativeLayout>

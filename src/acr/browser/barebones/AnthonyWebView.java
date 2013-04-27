@@ -9,7 +9,7 @@ import android.webkit.WebView;
 public final class AnthonyWebView extends WebView {
 
 	boolean move;
-	int API = Barebones.API;
+	int API = FinalVars.API;
 	int hitTest;
 	boolean showFullScreen = Barebones.showFullScreen;
 	View uBar = Barebones.uBar;

@@ -130,7 +130,7 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/options"
             android:layout_toRightOf="@+id/refreshLayout"
-            android:background="@drawable/bookmark"
+            android:background="@drawable/book"
             android:ems="10"
             android:hint="@string/google"
             android:imeOptions="actionGo"

@@ -59,7 +59,7 @@ public class Settings extends Activity {
 		agentPicker = settings.getInt("agentchoose", 1);
 		userAgent = settings.getString("agent", user);
 		java = settings.getBoolean("java", true);
-		homepage = settings.getString("home", "http://www.google.com");
+		homepage = settings.getString("home", FinalVars.HOMEPAGE);
 
 		agent.setText(userAgent);
 		edit = settings.edit();
