@@ -8,8 +8,8 @@
     <string name="history">Effacer l\'historique à la sortie</string>
     <string name="email">Contactez moi</string>
     <string name="flash">Activer Adobe Flash Player (s\'il est installé)</string>
-    <string name="mobile">Voir la version Mobile</string>
-    <string name="desk">Voir la version Ordinateur</string>
+    <string name="mobile">Voir la version mobile</string>
+    <string name="desk">Voir la version ordinateur</string>
     <string name="custom">Utiliser un User Agent personnalisé</string>
     <string name="home">Au démarrage</string>
     <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
