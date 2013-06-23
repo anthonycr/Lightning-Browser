@@ -25,14 +25,20 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 public class Settings extends Activity {
-	public static final String preferences = "settings";
-	static boolean allowLocation, deleteHistory;
-	static int enableFlash;
-	static boolean savePasswords, fullScreen, java, saveTabs;
-	static String userAgent, homepage;
-	static EditText agent,h;
-	static SharedPreferences.Editor edit;
-	static int agentPicker;
+	private static final String preferences = "settings";
+	private static boolean allowLocation;
+    private static boolean deleteHistory;
+	private static int enableFlash;
+	private static boolean savePasswords;
+    private static boolean fullScreen;
+    private static boolean java;
+    private static boolean saveTabs;
+	private static String userAgent;
+    private static String homepage;
+	private static EditText agent;
+    private static EditText h;
+	private static SharedPreferences.Editor edit;
+	private static int agentPicker;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -132,7 +138,7 @@ public class Settings extends Activity {
 		java();
 	}
 	
-	public void saveTabs(){
+	void saveTabs(){
 		final CheckBox tab = (CheckBox)findViewById(R.id.saveTabs);
 		if(saveTabs){
 			tab.setChecked(true);
@@ -157,7 +163,7 @@ public class Settings extends Activity {
 		});
 	}
 
-	public void getHome() {
+	void getHome() {
 		h = (EditText) findViewById(R.id.homePage);
 		
 		TextView t = (TextView) findViewById(R.id.textView3);
@@ -177,7 +183,7 @@ public class Settings extends Activity {
 					String home;
 					home = h.getText().toString();
 					if(!home.contains("about:blank")&&!home.contains("about:home")){
-					if(home.contains("http://")==false&&home.contains("https://")==false){
+					if(!home.contains("http://") && !home.contains("https://")){
 						home = "http://"+home;
 					}}
 					edit.putString("home", home);
@@ -201,7 +207,7 @@ public class Settings extends Activity {
 						|| actionId == EditorInfo.IME_ACTION_SEND||actionId==EditorInfo.IME_ACTION_SEARCH||event.getAction()==KeyEvent.KEYCODE_ENTER) {
 					String home = h.getText().toString();
 					if(!h.getText().toString().contains("about:blank")&&!h.getText().toString().contains("about:home")){
-					if(h.getText().toString().contains("http://")==false&&h.getText().toString().contains("https://")==false){
+					if(!h.getText().toString().contains("http://") && !h.getText().toString().contains("https://")){
 						home = "http://"+h.getText().toString();
 						}}
 					edit.putString("home", home);
@@ -245,7 +251,7 @@ public class Settings extends Activity {
 
 	}
 
-	public void back() {
+	void back() {
 		ImageView back = (ImageView) findViewById(R.id.back);
 		back.setBackgroundResource(R.drawable.button);
 		back.setOnClickListener(new OnClickListener() {
@@ -260,7 +266,7 @@ public class Settings extends Activity {
 				}
 				String home = h.getText().toString();
 				if(!h.getText().toString().contains("about:blank")&&!h.getText().toString().contains("about:home")){
-				if(h.getText().toString().contains("http://")==false&&h.getText().toString().contains("https://")==false){
+				if(!h.getText().toString().contains("http://") && !h.getText().toString().contains("https://")){
 					home = "http://"+h.getText().toString();
 					}}
 				edit.putString("home", home);
@@ -270,7 +276,7 @@ public class Settings extends Activity {
 
 		});
 	}
-	public void java(){
+	void java(){
 		final CheckBox full = (CheckBox)findViewById(R.id.java);
 		if(java){
 			full.setChecked(true);
@@ -294,7 +300,7 @@ public class Settings extends Activity {
 			
 		});
 	}
-public void full(){
+void full(){
 	final CheckBox full = (CheckBox)findViewById(R.id.fullScreen);
 	if(fullScreen){
 		full.setChecked(true);
@@ -318,7 +324,7 @@ public void full(){
 		
 	});
 }
-	public void flash() {
+	void flash() {
 		final CheckBox fla = (CheckBox) findViewById(R.id.flash);
 		if (enableFlash == 1||enableFlash==2) {
 			fla.setChecked(true);
@@ -384,9 +390,9 @@ public void full(){
 		});
 	}
 
-	public void location() {
+	void location() {
 		CheckBox loc = (CheckBox) findViewById(R.id.location);
-		if (allowLocation == true) {
+		if (allowLocation) {
 			loc.setChecked(true);
 		} else {
 			loc.setChecked(false);
@@ -409,7 +415,7 @@ public void full(){
 	}
 
 
-	public void getText() {
+	void getText() {
 		agent.setOnKeyListener(new OnKeyListener(){
 
 			@Override
@@ -452,9 +458,9 @@ public void full(){
 		});
 	}
 
-	public void passwords() {
+	void passwords() {
 		CheckBox pass = (CheckBox) findViewById(R.id.password);
-		if (savePasswords == true) {
+		if (savePasswords) {
 			pass.setChecked(true);
 		} else {
 			pass.setChecked(false);
@@ -476,9 +482,9 @@ public void full(){
 		});
 	}
 
-	public void clearHistory() {
+	void clearHistory() {
 		CheckBox clearHist = (CheckBox) findViewById(R.id.historyClear);
-		if (deleteHistory == true) {
+		if (deleteHistory) {
 			clearHist.setChecked(true);
 		} else {
 			clearHist.setChecked(false);
@@ -511,7 +517,7 @@ public void full(){
 		}
 		String home = h.getText().toString();
 		if(!h.getText().toString().contains("about:blank")&&!h.getText().toString().contains("about:home")){
-		if(h.getText().toString().contains("http://")==false&&h.getText().toString().contains("https://")==false){
+		if(!h.getText().toString().contains("http://") && !h.getText().toString().contains("https://")){
 			home = "http://"+h.getText().toString();
 			}}
 		edit.putString("home", home);

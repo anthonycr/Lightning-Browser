@@ -33,7 +33,8 @@
         <LinearLayout
             android:id="@+id/tabLayout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+                android:orientation="horizontal">
 
         </LinearLayout>
 
@@ -103,7 +104,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/forward"
             android:paddingBottom="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

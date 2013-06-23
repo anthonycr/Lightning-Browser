@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/refresh" android:titleCondensed="刷新页面" android:title="刷新" android:orderInCategory="1"></item>
+    <item android:id="@+id/history" android:titleCondensed="History" android:title="History" android:orderInCategory="1"></item>
     <item android:id="@+id/bookmark" android:titleCondensed="添加书签" android:title="添加书签" android:orderInCategory="2"></item>
     <item android:id="@+id/allBookmarks" android:titleCondensed="书签列表" android:title="书签" android:orderInCategory="3"></item>
     <item android:id="@+id/share" android:titleCondensed="分享页面" android:title="分享" android:orderInCategory="4"></item>

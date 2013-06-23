@@ -27,7 +27,7 @@
 			android:layout_height="wrap_content">
 
 			<TextView android:id="@+id/textView4" android:layout_width="match_parent"
-				android:layout_height="56dp" android:layout_below="@+id/relativeLayout1"
+				android:layout_height="56dp"
 				android:layout_centerHorizontal="true" android:background="#ff0099cc"
 				android:gravity="center_vertical|center_horizontal" android:text="@string/settingshelp"
 				android:textAppearance="?android:attr/textAppearanceLarge"

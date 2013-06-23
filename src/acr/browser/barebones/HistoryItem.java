@@ -1,12 +1,12 @@
 package acr.browser.barebones;
 
-public class HistoryItem {
+class HistoryItem {
 	
 
 		//private variables
-		int _id;
-		String _url;
-		String _title;
+        private int _id;
+		private String _url;
+		private String _title;
 
 		// Empty constructor
 		public HistoryItem(){

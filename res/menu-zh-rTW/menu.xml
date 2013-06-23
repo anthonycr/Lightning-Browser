@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@id/refresh" android:orderInCategory="1" android:title="重新載入" android:titleCondensed="重新載入頁面" />
+    <item android:id="@id/history" android:orderInCategory="1" android:title="History" android:titleCondensed="History" />
     <item android:id="@id/bookmark" android:orderInCategory="2" android:title="加入到書簽" android:titleCondensed="加入書簽" />
     <item android:id="@id/allBookmarks" android:orderInCategory="3" android:title="我的書簽" android:titleCondensed="我的書簽清單" />
     <item android:id="@id/share" android:orderInCategory="4" android:title="分享頁面" android:titleCondensed="分享頁面" />

@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteMisuseException;
@@ -38,7 +37,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Browser;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -60,6 +58,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions;
 import android.webkit.SslErrorHandler;
@@ -76,7 +75,6 @@ import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.webkit.WebViewClient;
-import android.webkit.WebViewDatabase;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
@@ -93,7 +91,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-public class Barebones extends Activity {
+public class IncognitoMode extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public class CustomChromeClient extends WebChromeClient {
@@ -105,6 +103,7 @@ public class Barebones extends Activity {
 				String databaseIdentifier, long quota,
 				long estimatedDatabaseSize, long totalQuota,
 				QuotaUpdater quotaUpdater) {
+			// TODO Auto-generated method stub
 			quotaUpdater.updateQuota(totalQuota + estimatedDatabaseSize);
 			super.onExceededDatabaseQuota(url, databaseIdentifier, quota,
 					estimatedDatabaseSize, totalQuota, quotaUpdater);
@@ -113,27 +112,25 @@ public class Barebones extends Activity {
 		@Override
 		public void onReachedMaxAppCacheSize(long requiredStorage, long quota,
 				QuotaUpdater quotaUpdater) {
+			// TODO Auto-generated method stub
 			quotaUpdater.updateQuota(quota+requiredStorage);
 			super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
 		}
 
 		@Override
-		public void onCloseWindow(WebView window) {
-			browserHandler.sendEmptyMessage(2);
-			super.onCloseWindow(window);
-		}
-
-		@Override
 		public Bitmap getDefaultVideoPoster() {
+			// Log.i(LOGTAG, "here in on getDefaultVideoPoster");
 			if (mDefaultVideoPoster == null) {
 				mDefaultVideoPoster = BitmapFactory.decodeResource(
 						getResources(), android.R.color.black);
 			}
 			return mDefaultVideoPoster;
-		}		
+		}
 
 		@Override
 		public View getVideoLoadingProgressView() {
+			// Log.i(LOGTAG, "here in on getVideoLoadingPregressView");
+
 			if (mVideoProgressView == null) {
 				LayoutInflater inflater = LayoutInflater.from(getBaseContext());
 				mVideoProgressView = inflater.inflate(
@@ -145,17 +142,29 @@ public class Barebones extends Activity {
 		@Override
 		public boolean onCreateWindow(WebView view, boolean isDialog,
 				boolean isUserGesture, final Message resultMsg) {
-			
-				newTab(number,"",true,false);
+			if (isUserGesture) {
 				WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
 				transport.setWebView(main[pageId]);
 				resultMsg.sendToTarget();
-				browserHandler.postDelayed(new Runnable() { 
-			         public void run() { 
-			            main[pageId].loadUrl(getUrl.getText().toString());
-			         } 
-			    }, 500); 
+				Thread get = new Thread(new Runnable(){
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							Thread.sleep(200);
+							main[pageId].loadUrl(getUrl.getText().toString());
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+				});
+				get.start();
 				return true;
+			}
+			return false;
 		}
 
 		@Override
@@ -167,7 +176,7 @@ public class Barebones extends Activity {
 			}
 			if (allowLocation) {
 
-				Log.i("Barebones: ", "onGeolocationPermissionsShowPrompt()");
+				Log.i("IncognitoMode: ", "onGeolocationPermissionsShowPrompt()");
 
 				final boolean remember = true;
 				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
@@ -180,6 +189,7 @@ public class Barebones extends Activity {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int id) {
+										// origin, allow, remember
 										callback.invoke(origin, true, remember);
 									}
 								})
@@ -188,6 +198,7 @@ public class Barebones extends Activity {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int id) {
+										// origin, allow, remember
 										callback.invoke(origin, false, remember);
 									}
 								});
@@ -217,22 +228,12 @@ public class Barebones extends Activity {
 			// Log.i(LOGTAG, "set it to webVew");
 		}
 
-		@Override
-		public void onReceivedIcon(WebView view, Bitmap favicon) {
-			if (!incognito[view.getId()]) {
-				setFavicon(view.getId(), favicon);
-			}
-			super.onReceivedIcon(view, favicon);
-		}
 
 		@Override
 		public void onReceivedTitle(final WebView view, final String title) {
 			numberPage = view.getId();
 			urlTitle[numberPage].setText(title);
 			urlToLoad[numberPage][1] = title;
-			if (title != null && !incognito[numberPage]) {
-				updateHistory(urlToLoad[numberPage][0], title);
-			}
 			super.onReceivedTitle(view, title);
 		}
 
@@ -277,7 +278,7 @@ public class Barebones extends Activity {
 			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 			i.addCategory(Intent.CATEGORY_OPENABLE);
 			i.setType("image/*");
-			Barebones.this.startActivityForResult(
+			IncognitoMode.this.startActivityForResult(
 					Intent.createChooser(i, "Image Browser"),
 					1);
 		}
@@ -288,7 +289,7 @@ public class Barebones extends Activity {
 			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 			i.addCategory(Intent.CATEGORY_OPENABLE);
 			i.setType("image/*");
-			Barebones.this.startActivityForResult(
+			IncognitoMode.this.startActivityForResult(
 					Intent.createChooser(i, "Image Browser"),
 					1);
 		}
@@ -299,7 +300,7 @@ public class Barebones extends Activity {
 			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
 			i.addCategory(Intent.CATEGORY_OPENABLE);
 			i.setType("image/*");
-			Barebones.this.startActivityForResult(
+			IncognitoMode.this.startActivityForResult(
 					Intent.createChooser(i, "Image Browser"),
 					1);
 		}
@@ -329,17 +330,17 @@ public class Barebones extends Activity {
 
 						it.setDestinationInExternalPublicDir(
 								Environment.DIRECTORY_DOWNLOADS, fileName);
-						Log.i("Barebones", "Downloading" + fileName);
+						Log.i("IncognitoMode", "Downloading" + fileName);
 						download.enqueue(it);
 					}
 				});
 				downloader.run();
 			} catch (NullPointerException e) {
-				Log.e("Barebones", "Problem downloading");
+				Log.e("IncognitoMode", "Problem downloading");
 				Toast.makeText(CONTEXT, "Error Downloading File",
 						Toast.LENGTH_SHORT).show();
 			} catch (IllegalArgumentException e) {
-				Log.e("Barebones", "Problem downloading");
+				Log.e("IncognitoMode", "Problem downloading");
 				Toast.makeText(CONTEXT, "Error Downloading File",
 						Toast.LENGTH_SHORT).show();
 			} catch (SecurityException ignored) {
@@ -356,7 +357,10 @@ public class Barebones extends Activity {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-			if (url.contains("market://")
+			if (url.contains("plus.google.com")) {
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+				return true;
+			} else if (url.contains("market://")
 					|| url.contains("play.google.com")) {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 				return true;
@@ -367,13 +371,14 @@ public class Barebones extends Activity {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 				return true;
 			}
+
 			return false;
 		}
 
 		@Override
 		public void onPageFinished(WebView view, final String url) {
 			if (view.isShown()) {
-				view.invalidate();
+				view.postInvalidate();
 				progressBar.setVisibility(View.GONE);
 				refresh.setVisibility(View.VISIBLE);
 				if(showFullScreen&&uBar.isShown()){
@@ -397,16 +402,9 @@ public class Barebones extends Activity {
 				setUrlText(url);
 				pageIsLoading = true;
 			}
-			if (incognito[numberPage]) {
 				urlTitle[numberPage].setCompoundDrawables(incognitoPage, null,
 						exitTab, null);
-			} else {
-				urlTitle[numberPage].setCompoundDrawables(webpageOther, null,
-						exitTab, null);
-				if (favicon != null) {
-					setFavicon(view.getId(), favicon);
-				}
-			}
+			
 			getUrl.setPadding(tenPad, 0, tenPad, 0);
 			urlToLoad[numberPage][0] = url;
 
@@ -416,31 +414,9 @@ public class Barebones extends Activity {
 		}
 
 		@Override
-		public void onReceivedSslError(WebView view, final SslErrorHandler handler,
+		public void onReceivedSslError(WebView view, SslErrorHandler handler,
 				SslError error) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
-			builder.setTitle("Warning");
-			builder.setMessage(
-					"The certificate of the site is not trusted. Proceed anyway?")
-					.setCancelable(true)
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									handler.proceed();
-								}
-							})
-					.setNegativeButton("No",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									handler.cancel();
-								}
-							});
-			AlertDialog alert = builder.create();
-			alert.show();
+			handler.proceed();
 			super.onReceivedSslError(view, handler, error);
 		}
 
@@ -450,37 +426,6 @@ public class Barebones extends Activity {
 			view.getSettings().setLayoutAlgorithm(
 					LayoutAlgorithm.NORMAL);
 			super.onScaleChanged(view, oldScale, newScale);
-		}
-
-		@Override
-		public void onFormResubmission(WebView view, final Message dontResend,
-				final Message resend) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
-			builder.setTitle("Resend Data");
-			builder.setMessage(
-					"Would you like to resend data?")
-					.setCancelable(true)
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									
-									resend.sendToTarget();
-								}
-							})
-					.setNegativeButton("No",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									
-									dontResend.sendToTarget();
-								}
-							});
-			AlertDialog alert = builder.create();
-			alert.show();
-			super.onFormResubmission(view, dontResend, resend);
 		}
 	}
 
@@ -717,7 +662,7 @@ public class Barebones extends Activity {
 							switch (which) {
 							case DialogInterface.BUTTON_POSITIVE: {
 								int num = pageId;
-								newTab(number, result.getExtra(), false, false);
+								newTab(number, result.getExtra(), false, true);
 								// urlTitle[num].performClick();
 								pageId = num;
 								break;
@@ -755,7 +700,7 @@ public class Barebones extends Activity {
 							switch (which) {
 							case DialogInterface.BUTTON_POSITIVE: {
 								int num = pageId;
-								newTab(number, result.getExtra(), false, false);
+								newTab(number, result.getExtra(), false, true);
 								// urlTitle[num].performClick();
 								pageId = num;
 								break;
@@ -790,7 +735,7 @@ public class Barebones extends Activity {
 														it.setDestinationInExternalPublicDir(
 																Environment.DIRECTORY_DOWNLOADS,
 																fileName);
-														Log.i("Barebones",
+														Log.i("IncognitoMode",
 																"Downloading"
 																		+ fileName);
 														download.enqueue(it);
@@ -798,13 +743,13 @@ public class Barebones extends Activity {
 												});
 										down.run();
 									} catch (NullPointerException e) {
-										Log.e("Barebones",
+										Log.e("IncognitoMode",
 												"Problem downloading");
 										Toast.makeText(CONTEXT,
 												"Error Downloading File",
 												Toast.LENGTH_SHORT).show();
 									} catch (IllegalArgumentException e) {
-										Log.e("Barebones",
+										Log.e("IncognitoMode",
 												"Problem downloading");
 										Toast.makeText(CONTEXT,
 												"Error Downloading File",
@@ -838,7 +783,7 @@ public class Barebones extends Activity {
 							switch (which) {
 							case DialogInterface.BUTTON_POSITIVE: {
 								int num = pageId;
-								newTab(number, result.getExtra(), false, false);
+								newTab(number, result.getExtra(), false, true);
 								// urlTitle[num].performClick();
 								pageId = num;
 								break;
@@ -887,7 +832,7 @@ public class Barebones extends Activity {
 	private static final int MAX_TABS = FinalVars.MAX_TABS;
 	private static final int MAX_BOOKMARKS = FinalVars.MAX_BOOKMARKS;
 	private static final boolean PAID_VERSION = FinalVars.PAID_VERSION;
-	private final Context CONTEXT = Barebones.this;
+	private final Context CONTEXT = IncognitoMode.this;
 	private static final String HOMEPAGE = FinalVars.HOMEPAGE;
 	private static final String SEARCH = FinalVars.GOOGLE_SEARCH;
 	private static SimpleAdapter adapter;
@@ -919,18 +864,12 @@ public class Barebones extends Activity {
 	private static int tenPad;
 	private static int urlColumn;
 	private static int titleColumn;
-	private static int closeWindow;
 	private static View mCustomView = null;
 	private static CustomViewCallback mCustomViewCallback;
-	private static final boolean[] incognito = new boolean[MAX_TABS];
 	private static boolean isPhone = false;
 	private static boolean pageIsLoading = false;
 	private static boolean allowLocation;
-	private static boolean savePasswords;
-	private static boolean deleteHistory;
-	private static boolean saveTabs;
 	static boolean showFullScreen;
-	private static boolean noStockBrowser = true;
 	private static SharedPreferences settings;
 	private static SharedPreferences.Editor edit;
 	private static String desktop;
@@ -938,7 +877,6 @@ public class Barebones extends Activity {
 	private static String user;
 	private static String urlA;
 	private static String title;
-	private static String[] memoryURL = new String[MAX_TABS];
 	private static final String[] bUrl = new String[MAX_BOOKMARKS];
 	private static final String[] bTitle = new String[MAX_BOOKMARKS];
 	private static String[] columns;
@@ -959,29 +897,18 @@ public class Barebones extends Activity {
 
 	private static CookieManager cookieManager;
 
-	private static Uri bookmarks;
 	private static List<Map<String, String>> list;
 	private static Map<String, String> map;
 
-	private static Handler handler, browserHandler;
+	private static Handler handler;
 
 	private static DatabaseHandler historyHandler;
-
-	private static StringBuilder sb;
-
-	private static Runnable update;
-
-	private static SQLiteDatabase s;
 
 	private static Drawable inactive;
 
 	private static Drawable active;
 
 	private static LinearLayout tabLayout;
-
-	private static String[] GetArray(String input) {
-		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
-	}
 
 	@SuppressWarnings("unused")
 	private static void setFavicon(int id, Bitmap favicon) {
@@ -993,42 +920,6 @@ public class Barebones extends Activity {
 		} else {
 			urlTitle[id]
 					.setCompoundDrawables(webpageOther, null, exitTab, null);
-		}
-	}
-
-	void addBookmark() {
-		File book = new File(getBaseContext().getFilesDir(), "bookmarks");
-		File bookUrl = new File(getBaseContext().getFilesDir(), "bookurl");
-		try {
-			BufferedReader readUrlRead = new BufferedReader(new FileReader(bookUrl));
-			String  u;
-			int n = 0;
-			while ((u = readUrlRead.readLine()) != null && n < MAX_BOOKMARKS) {
-				if(u.contentEquals(urlToLoad[pageId][0])){
-					
-					readUrlRead.close();
-					return;
-				}
-				n++;
-			}
-			readUrlRead.close();
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		}
-		try {
-			BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book,
-					true));
-			BufferedWriter urlWriter = new BufferedWriter(new FileWriter(
-					bookUrl, true));
-			bookWriter.write(urlToLoad[pageId][1]);
-			urlWriter.write(urlToLoad[pageId][0]);
-			bookWriter.newLine();
-			urlWriter.newLine();
-			bookWriter.close();
-			urlWriter.close();
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
 		}
 	}
 
@@ -1055,18 +946,18 @@ public class Barebones extends Activity {
 		webViewSettings.setBlockNetworkImage(false);
 		webViewSettings.setAllowFileAccess(true);
 		webViewSettings.setLightTouchEnabled(true);
-		webViewSettings.setSupportMultipleWindows(true);
+		webViewSettings.setSupportMultipleWindows(false);
 		webViewSettings.setDomStorageEnabled(true);
 		webViewSettings.setAppCacheEnabled(true);
 		webViewSettings.setAppCachePath(getApplicationContext().getFilesDir()
-				.getAbsolutePath() + "/cache");
+				.getAbsolutePath() + "/incognito_cache");
 		webViewSettings.setRenderPriority(RenderPriority.HIGH);
 		webViewSettings.setGeolocationEnabled(true);
 		webViewSettings.setGeolocationDatabasePath(getApplicationContext()
-				.getFilesDir().getAbsolutePath());
+				.getFilesDir().getAbsolutePath()+"/incognito_geolocation");
 		webViewSettings.setDatabaseEnabled(true);
 		webViewSettings.setDatabasePath(getApplicationContext().getFilesDir()
-				.getAbsolutePath() + "/databases");
+				.getAbsolutePath() + "/incognito_databases");
 		enableFlash = settings.getInt("enableflash", 0);
 		switch (enableFlash) {
 		case 0:
@@ -1084,11 +975,8 @@ public class Barebones extends Activity {
 		}
 
 		webViewSettings.setUserAgentString(userAgent);
-		savePasswords = settings.getBoolean("passwords", false);
-		if (savePasswords) {
-			webViewSettings.setSavePassword(true);
-			webViewSettings.setSaveFormData(true);
-		}
+		webViewSettings.setSavePassword(false);
+		webViewSettings.setSaveFormData(false);
 
 		webViewSettings.setBuiltInZoomControls(true);
 		webViewSettings.setSupportZoom(true);
@@ -1303,27 +1191,8 @@ public class Barebones extends Activity {
 			@Override
 			public void run() {
 
-				Cursor c = null;
 				Cursor managedCursor = null;
 				columns = new String[] { "url", "title" };
-				try {
-
-					bookmarks = Browser.BOOKMARKS_URI;
-					c = getContentResolver().query(bookmarks, columns, null,
-							null, null);
-				} catch (SQLiteException ignored) {
-				} catch (IllegalStateException ignored) {
-				} catch (NullPointerException ignored) {
-				}
-
-				if (c != null) {
-					noStockBrowser = false;
-					Log.i("Barebones", "detected AOSP browser");
-				} else {
-					noStockBrowser = true;
-					Log.e("Barebones", "did not detect AOSP browser");
-				}
-				c.close();
 				try {
 
 					managedCursor = null;
@@ -1396,7 +1265,7 @@ public class Barebones extends Activity {
 					imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
 				} catch (NullPointerException e) {
 
-					Log.e("Barebones Error: ",
+					Log.e("IncognitoMode Error: ",
 							"NullPointerException on item click");
 				}
 			}
@@ -1444,29 +1313,8 @@ public class Barebones extends Activity {
 	public void finish() {
 		background.clearDisappearingChildren();
 		tabScroll.clearDisappearingChildren();
-		try {
-			deleteHistory = settings.getBoolean("history", false);
-			if (deleteHistory) {
-				cookieManager.removeAllCookie();
-				main[0].clearCache(true);
-				WebViewDatabase m = WebViewDatabase.getInstance(this);
-				m.clearFormData();
-				m.clearHttpAuthUsernamePassword();
-				m.clearUsernamePassword();
-				CONTEXT.deleteDatabase("historyManager");
-				if (!noStockBrowser) {
-					try {
-						Browser.clearHistory(getContentResolver());
-					} catch (NullPointerException ignored) {
-					}
-				}
-				trimCache(CONTEXT);
-			}
-
-		} catch (Exception e) {
-			Log.e("Lightning", "Error Clearing data");
-		}
-
+		main[0].clearCache(true);
+		cookieManager.setAcceptCookie(true);
 		super.finish();
 	}
 
@@ -1517,7 +1365,9 @@ public class Barebones extends Activity {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		historyHandler = new DatabaseHandler(this);
+		CookieSyncManager.createInstance(CONTEXT);
 		cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(false);
 		
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		if (API >= 11) {
@@ -1600,10 +1450,7 @@ public class Barebones extends Activity {
 		allowLocation = settings.getBoolean("location", false); // initializing
 																// location
 																// variable
-		savePasswords = settings.getBoolean("passwords", false); // initializing
-																	// save
-																	// passwords
-																	// variable
+		
 		enableFlash = settings.getInt("enableflash", 0); // enable flash
 															// boolean
 		agentPicker = settings.getInt("agentchoose", 1); // which user agent to
@@ -1611,9 +1458,7 @@ public class Barebones extends Activity {
 															// 2=desktop,
 															// 3=custom
 
-		deleteHistory = settings.getBoolean("history", false); // delete history
-																// on exit
-																// boolean
+		
 		// initializing variables declared
 
 		height = getResources().getDrawable(R.drawable.loading)
@@ -1674,7 +1519,7 @@ public class Barebones extends Activity {
 		newTab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newTab(number, homepage, true, false);
+				newTab(number, homepage, true, true);
 				tabScroll.postDelayed(new Runnable() {
 					public void run() {
 						tabScroll.smoothScrollTo(urlTitle[pageId].getLeft(), 0);
@@ -1703,76 +1548,24 @@ public class Barebones extends Activity {
 			bg.removeView(uBar);
 			background.addView(uBar);
 		}
-		browserHandler = new Handler(){
-			@Override
-			public void handleMessage(Message msg) {
-				switch(msg.what){
-				case 1:{
-					main[pageId].loadUrl(getUrl.getText().toString());
-					break;
-				}
-				case 2:{
-					deleteTab(closeWindow);
-					break;
-				}
-				case 3:{
-					main[pageId].invalidate();
-					break;
-				}
-			}
-			}
-		};
+
 	}
 
 	void initializeTabs() {
 		Intent url = getIntent();
 		String URL = url.getDataString();
-		boolean oldTabs = false;
-
-		if (saveTabs) {
 			if (URL != null) {
 				// opens a new tab with the url if its there
-				newTab(number, URL, true, false);
-				main[number - 1].resumeTimers();
-				oldTabs = true;
-
-			}
-			for (String aMemoryURL : memoryURL) {
-				if (aMemoryURL.length() > 0) {
-					if (number == 0) {
-						newTab(number, "", !oldTabs, false);
-						main[number - 1].resumeTimers();
-						main[number - 1].getSettings().setCacheMode(
-								WebSettings.LOAD_CACHE_ELSE_NETWORK);
-						main[number - 1].loadUrl(aMemoryURL);
-					} else {
-						newTab(number, "", false, false);
-						main[number - 1].getSettings().setCacheMode(
-								WebSettings.LOAD_CACHE_ELSE_NETWORK);
-						main[number - 1].loadUrl(aMemoryURL);
-					}
-					oldTabs = true;
-				}
-
-			}
-
-			if (!oldTabs) {
-				newTab(number, homepage, true, false);
-				main[number - 1].resumeTimers();
-			}
-		} else {
-			if (URL != null) {
-				// opens a new tab with the url if its there
-				newTab(number, URL, true, false);
+				newTab(number, URL, true, true);
 				main[number - 1].resumeTimers();
 
 			} else {
 				// otherwise it opens the homepage
-				newTab(number, homepage, true, false);
+				newTab(number, homepage, true, true);
 				main[number - 1].resumeTimers();
 
 			}
-		}
+		
 	}
 
 	private CustomWebView makeTab(final int pageToView, final String Url,
@@ -1819,7 +1612,7 @@ public class Barebones extends Activity {
 			view.loadUrl(Url);
 
 		}
-		Log.i("Barebones", "tab complete");
+		Log.i("IncognitoMode", "tab complete");
 		return view;
 	}
 
@@ -1832,7 +1625,7 @@ public class Barebones extends Activity {
 	@SuppressWarnings("deprecation")
 	int newTab(int theId, final String theUrl, final boolean display,
 			final boolean incognito_mode) {
-		Log.i("Barebones", "making tab");
+		Log.i("IncognitoMode", "making tab");
 
 		int finalID = 0;
 		homepage = settings.getString("home", HOMEPAGE);
@@ -1862,7 +1655,6 @@ public class Barebones extends Activity {
 				});
 				urlTitle[n].startAnimation(holo);
 				urlTitle[num].setText("New Tab");
-				incognito[num] = incognito_mode;
 				if (display) {
 					if (API < 16) {
 						urlTitle[num].setBackgroundDrawable(active);
@@ -1903,7 +1695,6 @@ public class Barebones extends Activity {
 		}
 		if (!isEmptyWebViewAvailable) {
 			if (number < MAX_TABS) {
-				incognito[number] = incognito_mode;
 				if (number > 0) {
 					if (display) {
 						if (API < 16) {
@@ -1937,13 +1728,10 @@ public class Barebones extends Activity {
 				title.setPadding(leftPad, 0, rightPad, 0);
 				title.setId(number);
 				title.setGravity(Gravity.CENTER_VERTICAL);
-				if (incognito[number]) {
+				
 					title.setCompoundDrawables(incognitoPage, null, exitTab,
 							null);
-				} else {
-					title.setCompoundDrawables(webpageOther, null, exitTab,
-							null);
-				}
+				
 				Drawable[] drawables = title.getCompoundDrawables();
 				bounds = drawables[2].getBounds();
 				title.setOnTouchListener(new TabTouchListener());
@@ -1968,10 +1756,10 @@ public class Barebones extends Activity {
 				});
 				title.startAnimation(holo);
 				urlTitle[number] = title;
-				if (incognito[number]) {
-					urlTitle[number].setText("Incognito");
+				
+				urlTitle[number].setText("Incognito");
 
-				}
+				
 				if (theUrl != null) {
 					main[number] = makeTab(number, theUrl, display);
 				} else {
@@ -2005,7 +1793,6 @@ public class Barebones extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		main[pageId].stopLoading();
 		if (main[pageId].canGoBack()) {
 			main[pageId].goBack();
 		} else {
@@ -2029,12 +1816,7 @@ public class Barebones extends Activity {
 		setContentView(R.layout.activity_main); // displays main xml layout
 		settings = getSharedPreferences(preferences, 0);
 		edit = settings.edit();
-		saveTabs = settings.getBoolean("savetabs", true);
-		if (saveTabs) {
-			String mem = settings.getString("memory", "");
-			memoryURL = null;
-			memoryURL = GetArray(mem);
-		}
+		
 
 		inactive = getResources().getDrawable(R.drawable.bg_inactive);
 		active = getResources().getDrawable(R.drawable.bg_press);
@@ -2084,7 +1866,7 @@ public class Barebones extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
+		inflater.inflate(R.menu.incognito_menu, menu);
 
 		return true;
 	}
@@ -2104,9 +1886,7 @@ public class Barebones extends Activity {
 
 		String url = intent.getDataString();
 		if (url != null) {
-			for(int n=0;n<MAX_TABS;n++){
-			newTab(number, url, true, false);
-			}
+			newTab(number, url, true, true);
 		}
 		super.onNewIntent(intent);
 	}
@@ -2119,12 +1899,8 @@ public class Barebones extends Activity {
 			generateHistory(main[pageId]);
 			return true;
 		case R.id.bookmark:
-			if (!urlToLoad[pageId][1].equals("Bookmarks")) {
-				addBookmark();
-			}
 			return true;
 		case R.id.settings:
-			newSettings();
 			return true;
 		case R.id.allBookmarks:
 			if (!urlToLoad[pageId][1].equals("Bookmarks")) {
@@ -2132,11 +1908,9 @@ public class Barebones extends Activity {
 			}
 			return true;
 		case R.id.share:
-			share();
 			return true;
 		case R.id.incognito:
-			startActivity(new Intent(FinalVars.INCOGNITO_INTENT));
-			//newTab(number, homepage, true, true);
+			newTab(number, homepage, true, true);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -2151,22 +1925,6 @@ public class Barebones extends Activity {
 			}
 			main[pageId].pauseTimers();
 		}
-		Thread remember = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				String s = "";
-				for (int n = 0; n < MAX_TABS; n++) {
-					if (urlToLoad[n][0] != null) {
-						s = s + urlToLoad[n][0] + "|$|SEPARATOR|$|";
-					}
-				}
-				edit.putString("memory", s);
-				edit.commit();
-			}
-		});
-		// remember.setPriority(10);
-		remember.start();
 		super.onPause();
 	}
 
@@ -2220,7 +1978,7 @@ public class Barebones extends Activity {
 				if (API >= 11) {
 					PopupMenu menu = new PopupMenu(CONTEXT, v);
 					MenuInflater inflate = menu.getMenuInflater();
-					inflate.inflate(R.menu.menu, menu.getMenu());
+					inflate.inflate(R.menu.incognito_menu, menu.getMenu());
 					menu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 						@Override
@@ -2231,12 +1989,8 @@ public class Barebones extends Activity {
 								generateHistory(main[pageId]);
 								return true;
 							case R.id.bookmark:
-								if (!urlToLoad[pageId][1].equals("Bookmarks")) {
-									addBookmark();
-								}
 								return true;
 							case R.id.settings:
-								newSettings();
 								return true;
 							case R.id.allBookmarks:
 								if (!urlToLoad[pageId][1].equals("Bookmarks")) {
@@ -2244,11 +1998,9 @@ public class Barebones extends Activity {
 								}
 								return true;
 							case R.id.share:
-								share();
 								return true;
 							case R.id.incognito:
-								startActivity(new Intent(FinalVars.INCOGNITO_INTENT));
-								//newTab(number, homepage, true, true);
+								newTab(number, homepage, true, true);
 								return true;
 							default:
 								return false;
@@ -2273,26 +2025,6 @@ public class Barebones extends Activity {
 			}
 
 		});
-	}
-
-	void share() {
-		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-
-		// set the type
-		shareIntent.setType("text/plain");
-
-		// add a subject
-		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-				urlToLoad[pageId][1]);
-
-		// build the body of the message to be shared
-		String shareMessage = urlToLoad[pageId][0];
-
-		// add the message
-		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
-
-		// start the chooser for sharing
-		startActivity(Intent.createChooser(shareIntent, "Share this page"));
 	}
 
 	void testForSearch() {
@@ -2330,48 +2062,6 @@ public class Barebones extends Activity {
 			}
 		} catch (Exception ignored) {
 
-		}
-	}
-
-	void updateHistory(final String url, final String pageTitle) {
-		update = new Runnable() {
-			@Override
-			public void run() {
-				if (!noStockBrowser) {
-					try {
-						Browser.updateVisitedHistory(getContentResolver(), url,
-								false);
-					} catch (NullPointerException ignored) {
-					}
-				}
-				try {
-					sb = new StringBuilder("url" + " = ");
-					DatabaseUtils.appendEscapedSQLString(sb, url);
-					s = historyHandler.getReadableDatabase();
-					Cursor cursor = s.query("history", new String[] { "id",
-							"url", "title" }, sb.toString(), null, null, null,
-							null);
-					if (!cursor.moveToFirst()) {
-						historyHandler.addHistoryItem(new HistoryItem(url,
-								pageTitle));
-					}
-					cursor.close();
-					s.close();
-				} catch (IllegalStateException e) {
-					Log.e("Barebones", "ERRRRROOORRRR 1");
-				} catch (NullPointerException e) {
-					Log.e("Barebones", "ERRRRROOORRRR 2");
-				} catch (SQLiteException e) {
-					Log.e("Barebones", "SQLiteException");
-				}
-			}
-		};
-		if (!url.contains("file:///" + getBaseContext().getFilesDir()
-				+ "/bookmarks.html")
-				&& !url.contains("file:///" + getBaseContext().getFilesDir()
-						+ "/history.html")) {
-
-			new Thread(update).start();
 		}
 	}
 }

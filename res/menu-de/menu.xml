@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/refresh" android:title="Aktualisieren" android:titleCondensed="Aktualisieren" android:orderInCategory="1"></item>
+    <item android:id="@+id/history" android:title="History" android:titleCondensed="History" android:orderInCategory="1"></item>
     <item android:id="@+id/bookmark" android:title="Zu Lesezeichen hinzufügen" android:titleCondensed="Zu Lesezeichen hinzufügen" android:orderInCategory="2"></item>
     <item android:id="@+id/allBookmarks" android:titleCondensed="Lesezeichen" android:title="Lesezeichen" android:orderInCategory="3"></item>
     <item android:id="@+id/share" android:title="Teilen" android:titleCondensed="Teilen" android:orderInCategory="4"></item>

@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
  
-public class DatabaseHandler extends SQLiteOpenHelper {
+class DatabaseHandler extends SQLiteOpenHelper {
  
     // All Static variables
     // Database Version
@@ -75,10 +75,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
  
-        HistoryItem item = new HistoryItem(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2));
+
         // return item
-        return item;
+        return  new HistoryItem(Integer.parseInt(cursor.getString(0)),
+                cursor.getString(1), cursor.getString(2));
     }
  
     // Getting All HistoryItems
