@@ -12,14 +12,14 @@ public class SpaceTokenizer implements Tokenizer {
 		int i = cursor;
 		int len = text.length();
 
-		while (i < len) {
+		/*while (i < len) {
 			if (text.charAt(i) == ' ') {
 				return i;
 			} else {
 				i++;
 			}
 		}
-
+*/
 		return len;
 	}
 
@@ -40,8 +40,8 @@ public class SpaceTokenizer implements Tokenizer {
 	@Override
 	public CharSequence terminateToken(CharSequence text) {
 		int i = text.length();
-
-		while (i > 0 && text.charAt(i - 1) == ' ') {
+		return text;
+		/*while (i > 0 && text.charAt(i - 1) == ' ') {
 			i--;
 		}
 
@@ -56,6 +56,6 @@ public class SpaceTokenizer implements Tokenizer {
 			} else {
 				return text + " ";
 			}
-		}
+		}*/
 	}
 }

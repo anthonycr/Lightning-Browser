@@ -9,16 +9,16 @@ import android.view.animation.Animation;
 import android.webkit.WebView;
 import android.widget.ZoomButtonsController;
 
-public final class CustomWebView extends WebView {
+public final class IncognitoWebView extends WebView {
 	private float location;
 	private boolean first = false;
     private final int API = FinalVars.API;
-	private final boolean showFullScreen = Barebones.showFullScreen;
-	private final View uBar = Barebones.uBar;
-	private final Animation slideUp = Barebones.slideUp;
-	private final Animation slideDown = Barebones.slideDown;
+	private final boolean showFullScreen = IncognitoMode.showFullScreen;
+	private final View uBar = IncognitoMode.uBar;
+	private final Animation slideUp = IncognitoMode.slideUp;
+	private final Animation slideDown = IncognitoMode.slideDown;
 	private ZoomButtonsController zoomControl;
-	public CustomWebView(Context context) {
+	public IncognitoWebView(Context context) {
 		super(context);
 		getControls();
 	}

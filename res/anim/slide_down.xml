@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<set xmlns:android="http://schemas.android.com/apk/res/android">
-
-<translate android:fromYDelta="-50%p"   
-          android:interpolator="@android:anim/linear_interpolator"      
-    android:toYDelta="0%p" android:duration="500" />  
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+		android:shareInterpolator="false">
+    <translate android:fromYDelta="-50%" android:toYDelta="0"
+	        android:interpolator="@android:anim/decelerate_interpolator"
+            android:duration="@android:integer/config_shortAnimTime"/>
+    <alpha android:fromAlpha="0.25" android:toAlpha="1.0"
+			android:interpolator="@android:anim/linear_interpolator"
+            android:duration="@android:integer/config_shortAnimTime" />
 </set>

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,6 +52,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -97,13 +99,14 @@ public class IncognitoMode extends Activity {
 	public class CustomChromeClient extends WebChromeClient {
 		private Bitmap mDefaultVideoPoster;
 		private View mVideoProgressView;
+		private FrameLayout fullScreenContainer;
+		private int orientation;
 
 		@Override
 		public void onExceededDatabaseQuota(String url,
 				String databaseIdentifier, long quota,
 				long estimatedDatabaseSize, long totalQuota,
 				QuotaUpdater quotaUpdater) {
-			// TODO Auto-generated method stub
 			quotaUpdater.updateQuota(totalQuota + estimatedDatabaseSize);
 			super.onExceededDatabaseQuota(url, databaseIdentifier, quota,
 					estimatedDatabaseSize, totalQuota, quotaUpdater);
@@ -112,14 +115,19 @@ public class IncognitoMode extends Activity {
 		@Override
 		public void onReachedMaxAppCacheSize(long requiredStorage, long quota,
 				QuotaUpdater quotaUpdater) {
-			// TODO Auto-generated method stub
-			quotaUpdater.updateQuota(quota+requiredStorage);
+			quotaUpdater.updateQuota(quota + requiredStorage);
 			super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
 		}
 
 		@Override
+		public void onCloseWindow(WebView window) {
+			closeWindow = window.getId();
+			browserHandler.sendEmptyMessage(2);
+			super.onCloseWindow(window);
+		}
+
+		@Override
 		public Bitmap getDefaultVideoPoster() {
-			// Log.i(LOGTAG, "here in on getDefaultVideoPoster");
 			if (mDefaultVideoPoster == null) {
 				mDefaultVideoPoster = BitmapFactory.decodeResource(
 						getResources(), android.R.color.black);
@@ -129,8 +137,6 @@ public class IncognitoMode extends Activity {
 
 		@Override
 		public View getVideoLoadingProgressView() {
-			// Log.i(LOGTAG, "here in on getVideoLoadingPregressView");
-
 			if (mVideoProgressView == null) {
 				LayoutInflater inflater = LayoutInflater.from(getBaseContext());
 				mVideoProgressView = inflater.inflate(
@@ -142,29 +148,18 @@ public class IncognitoMode extends Activity {
 		@Override
 		public boolean onCreateWindow(WebView view, boolean isDialog,
 				boolean isUserGesture, final Message resultMsg) {
-			if (isUserGesture) {
-				WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-				transport.setWebView(main[pageId]);
-				resultMsg.sendToTarget();
-				Thread get = new Thread(new Runnable(){
 
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						try {
-							Thread.sleep(200);
-							main[pageId].loadUrl(getUrl.getText().toString());
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					
-				});
-				get.start();
-				return true;
-			}
-			return false;
+			newTab(number, "", true);
+			WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+			transport.setWebView(main[pageId]);
+			resultMsg.sendToTarget();
+			browserHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					main[pageId].loadUrl(getUrl.getText().toString());
+				}
+			}, 500);
+			return true;
 		}
 
 		@Override
@@ -175,21 +170,18 @@ public class IncognitoMode extends Activity {
 				callback.invoke(origin, false, false);
 			}
 			if (allowLocation) {
-
-				Log.i("IncognitoMode: ", "onGeolocationPermissionsShowPrompt()");
-
 				final boolean remember = true;
 				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
 				builder.setTitle("Locations");
+				String org = (String) origin.subSequence(0, 50);
 				builder.setMessage(
-						origin + " Would like to use your Current Location ")
+						org + " Would like to use your Current Location ")
 						.setCancelable(true)
 						.setPositiveButton("Allow",
 								new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int id) {
-										// origin, allow, remember
 										callback.invoke(origin, true, remember);
 									}
 								})
@@ -198,7 +190,6 @@ public class IncognitoMode extends Activity {
 									@Override
 									public void onClick(DialogInterface dialog,
 											int id) {
-										// origin, allow, remember
 										callback.invoke(origin, false, remember);
 									}
 								});
@@ -209,25 +200,20 @@ public class IncognitoMode extends Activity {
 
 		@Override
 		public void onHideCustomView() {
-
-			if (mCustomView == null)
+			if (mCustomView == null && mCustomViewCallback == null) {
 				return;
-
-			// Hide the custom view.
-			mCustomView.setVisibility(View.GONE);
-
-			// Remove the custom view from its container.
-			background.removeView(mCustomView);
+			}
+			mCustomView.setKeepScreenOn(false);
+			FrameLayout screen = (FrameLayout) getWindow().getDecorView();
+			screen.removeView(fullScreenContainer);
+			fullScreenContainer = null;
 			mCustomView = null;
-			background.setVisibility(View.VISIBLE);
-			uBar.setVisibility(View.VISIBLE);
 			mCustomViewCallback.onCustomViewHidden();
-
-			main[pageId].setVisibility(View.VISIBLE);
-
-			// Log.i(LOGTAG, "set it to webVew");
+			setRequestedOrientation(orientation);
+			background.addView(main[pageId]);
+			uBar.setVisibility(View.VISIBLE);
+			uBar.bringToFront();
 		}
-
 
 		@Override
 		public void onReceivedTitle(final WebView view, final String title) {
@@ -240,36 +226,50 @@ public class IncognitoMode extends Activity {
 		@Override
 		public void onShowCustomView(View view, int requestedOrientation,
 				CustomViewCallback callback) {
-			// Log.i(LOGTAG, "here in on ShowCustomView");
-			main[pageId].setVisibility(View.GONE);
-			uBar.setVisibility(View.GONE);
-			// if a view already exists then immediately terminate the new one
 			if (mCustomView != null) {
 				callback.onCustomViewHidden();
 				return;
 			}
-
-			background.addView(view);
+			view.setKeepScreenOn(true);
+			orientation = getRequestedOrientation();
+			FrameLayout screen = (FrameLayout) getWindow().getDecorView();
+			fullScreenContainer = new FrameLayout(getBaseContext());
+			fullScreenContainer.setBackgroundColor(getResources().getColor(
+					R.color.black));
+			background.removeView(main[pageId]);
+			uBar.setVisibility(View.GONE);
+			fullScreenContainer.addView(view,
+					ViewGroup.LayoutParams.MATCH_PARENT);
+			screen.addView(fullScreenContainer,
+					ViewGroup.LayoutParams.MATCH_PARENT);
 			mCustomView = view;
 			mCustomViewCallback = callback;
-			background.setVisibility(View.VISIBLE);
+			setRequestedOrientation(requestedOrientation);
+
 		}
 
 		@Override
 		public void onShowCustomView(View view,
 				WebChromeClient.CustomViewCallback callback) {
-			// Log.i(LOGTAG, "here in on ShowCustomView");
-			main[pageId].setVisibility(View.GONE);
-			uBar.setVisibility(View.GONE);
-			// if a view already exists then immediately terminate the new one
 			if (mCustomView != null) {
 				callback.onCustomViewHidden();
 				return;
 			}
-			background.addView(view);
+			view.setKeepScreenOn(true);
+			orientation = getRequestedOrientation();
+			FrameLayout screen = (FrameLayout) getWindow().getDecorView();
+			fullScreenContainer = new FrameLayout(getBaseContext());
+			fullScreenContainer.setBackgroundColor(getResources().getColor(
+					R.color.black));
+			background.removeView(main[pageId]);
+			uBar.setVisibility(View.GONE);
+			fullScreenContainer.addView(view,
+					ViewGroup.LayoutParams.MATCH_PARENT);
+			screen.addView(fullScreenContainer,
+					ViewGroup.LayoutParams.MATCH_PARENT);
 			mCustomView = view;
 			mCustomViewCallback = callback;
-			background.setVisibility(View.VISIBLE);
+			setRequestedOrientation(getRequestedOrientation());
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg) {
@@ -279,8 +279,7 @@ public class IncognitoMode extends Activity {
 			i.addCategory(Intent.CATEGORY_OPENABLE);
 			i.setType("image/*");
 			IncognitoMode.this.startActivityForResult(
-					Intent.createChooser(i, "Image Browser"),
-					1);
+					Intent.createChooser(i, "File Browser"), 1);
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg,
@@ -290,8 +289,7 @@ public class IncognitoMode extends Activity {
 			i.addCategory(Intent.CATEGORY_OPENABLE);
 			i.setType("image/*");
 			IncognitoMode.this.startActivityForResult(
-					Intent.createChooser(i, "Image Browser"),
-					1);
+					Intent.createChooser(i, "File Browser"), 1);
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg,
@@ -301,8 +299,7 @@ public class IncognitoMode extends Activity {
 			i.addCategory(Intent.CATEGORY_OPENABLE);
 			i.setType("image/*");
 			IncognitoMode.this.startActivityForResult(
-					Intent.createChooser(i, "Image Browser"),
-					1);
+					Intent.createChooser(i, "File Browser"), 1);
 		}
 	}
 
@@ -352,16 +349,12 @@ public class IncognitoMode extends Activity {
 
 	}
 
-	private class CustomWebViewClient extends WebViewClient {
+	private class IncognitoWebViewClient extends WebViewClient {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-			if (url.contains("plus.google.com")) {
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-				return true;
-			} else if (url.contains("market://")
-					|| url.contains("play.google.com")) {
+			if (url.contains("market://") || url.contains("play.google.com")) {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 				return true;
 			} else if (url.contains("youtube.com")) {
@@ -371,19 +364,27 @@ public class IncognitoMode extends Activity {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 				return true;
 			}
-
 			return false;
 		}
 
 		@Override
+		public void onScaleChanged(WebView view, float oldScale, float newScale) {
+			if (view != null) {
+				view.invalidate();
+			}
+			super.onScaleChanged(view, oldScale, newScale);
+		}
+
+		@Override
 		public void onPageFinished(WebView view, final String url) {
+			if (view != null) {
+				view.invalidate();
+			}
 			if (view.isShown()) {
-				view.postInvalidate();
 				progressBar.setVisibility(View.GONE);
 				refresh.setVisibility(View.VISIBLE);
-				if(showFullScreen&&uBar.isShown()){
+				if (showFullScreen && uBar.isShown()) {
 					uBar.startAnimation(slideUp);
-					
 				}
 			}
 			view.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -402,34 +403,79 @@ public class IncognitoMode extends Activity {
 				setUrlText(url);
 				pageIsLoading = true;
 			}
-				urlTitle[numberPage].setCompoundDrawables(incognitoPage, null,
-						exitTab, null);
-			
+
+			urlTitle[numberPage].setCompoundDrawables(incognitoPage, null,
+					exitTab, null);
+
 			getUrl.setPadding(tenPad, 0, tenPad, 0);
 			urlToLoad[numberPage][0] = url;
 
-			if (!uBar.isShown()&&showFullScreen) {
+			if (!uBar.isShown() && showFullScreen) {
 				uBar.startAnimation(slideDown);
 			}
 		}
 
 		@Override
-		public void onReceivedSslError(WebView view, SslErrorHandler handler,
-				SslError error) {
-			handler.proceed();
+		public void onReceivedSslError(WebView view,
+				final SslErrorHandler handler, SslError error) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
+			builder.setTitle("Warning");
+			builder.setMessage(
+					"The certificate of the site is not trusted. Proceed anyway?")
+					.setCancelable(true)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									handler.proceed();
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									handler.cancel();
+								}
+							});
+			AlertDialog alert = builder.create();
+			alert.show();
 			super.onReceivedSslError(view, handler, error);
 		}
 
 		@Override
-		public void onScaleChanged(WebView view, float oldScale, float newScale) {
+		public void onFormResubmission(WebView view, final Message dontResend,
+				final Message resend) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
+			builder.setTitle("Form Resubmission");
+			builder.setMessage("Would you like to resend the data?")
+					.setCancelable(true)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
 
-			view.getSettings().setLayoutAlgorithm(
-					LayoutAlgorithm.NORMAL);
-			super.onScaleChanged(view, oldScale, newScale);
+									resend.sendToTarget();
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+
+									dontResend.sendToTarget();
+								}
+							});
+			AlertDialog alert = builder.create();
+			alert.show();
+			super.onFormResubmission(view, dontResend, resend);
 		}
 	}
 
-	private void generateHistory(final CustomWebView view) {
+	private void generateHistory(final IncognitoWebView view) {
 
 		Thread history = new Thread(new Runnable() {
 
@@ -603,6 +649,14 @@ public class IncognitoMode extends Activity {
 
 	}
 
+	private void removeView(WebView view) {
+		if (!showFullScreen) {
+			view.startAnimation(fadeOut);
+		}
+		background.removeView(view);
+		uBar.bringToFront();
+	}
+
 	private void deleteBookmark(String url) {
 		File book = new File(getBaseContext().getFilesDir(), "bookmarks");
 		File bookUrl = new File(getBaseContext().getFilesDir(), "bookurl");
@@ -662,7 +716,7 @@ public class IncognitoMode extends Activity {
 							switch (which) {
 							case DialogInterface.BUTTON_POSITIVE: {
 								int num = pageId;
-								newTab(number, result.getExtra(), false, true);
+								newTab(number, result.getExtra(), false);
 								// urlTitle[num].performClick();
 								pageId = num;
 								break;
@@ -700,7 +754,7 @@ public class IncognitoMode extends Activity {
 							switch (which) {
 							case DialogInterface.BUTTON_POSITIVE: {
 								int num = pageId;
-								newTab(number, result.getExtra(), false, true);
+								newTab(number, result.getExtra(), false);
 								// urlTitle[num].performClick();
 								pageId = num;
 								break;
@@ -783,7 +837,7 @@ public class IncognitoMode extends Activity {
 							switch (which) {
 							case DialogInterface.BUTTON_POSITIVE: {
 								int num = pageId;
-								newTab(number, result.getExtra(), false, true);
+								newTab(number, result.getExtra(), false);
 								// urlTitle[num].performClick();
 								pageId = num;
 								break;
@@ -838,7 +892,7 @@ public class IncognitoMode extends Activity {
 	private static SimpleAdapter adapter;
 	private static MultiAutoCompleteTextView getUrl;
 	private static final TextView[] urlTitle = new TextView[MAX_TABS];
-	private static final CustomWebView[] main = new CustomWebView[MAX_TABS];
+	private static final IncognitoWebView[] main = new IncognitoWebView[MAX_TABS];
 	private static Rect bounds;
 	private static ValueCallback<Uri> mUploadMessage;
 	private static ImageView refresh;
@@ -864,6 +918,7 @@ public class IncognitoMode extends Activity {
 	private static int tenPad;
 	private static int urlColumn;
 	private static int titleColumn;
+	private static int closeWindow;
 	private static View mCustomView = null;
 	private static CustomViewCallback mCustomViewCallback;
 	private static boolean isPhone = false;
@@ -900,7 +955,7 @@ public class IncognitoMode extends Activity {
 	private static List<Map<String, String>> list;
 	private static Map<String, String> map;
 
-	private static Handler handler;
+	private static Handler handler, browserHandler;
 
 	private static DatabaseHandler historyHandler;
 
@@ -923,14 +978,51 @@ public class IncognitoMode extends Activity {
 		}
 	}
 
+	void addBookmark() {
+		File book = new File(getBaseContext().getFilesDir(), "bookmarks");
+		File bookUrl = new File(getBaseContext().getFilesDir(), "bookurl");
+		try {
+			BufferedReader readUrlRead = new BufferedReader(new FileReader(
+					bookUrl));
+			String u;
+			int n = 0;
+			while ((u = readUrlRead.readLine()) != null && n < MAX_BOOKMARKS) {
+				if (u.contentEquals(urlToLoad[pageId][0])) {
+
+					readUrlRead.close();
+					return;
+				}
+				n++;
+			}
+			readUrlRead.close();
+		} catch (FileNotFoundException ignored) {
+		} catch (IOException ignored) {
+		}
+		try {
+			BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book,
+					true));
+			BufferedWriter urlWriter = new BufferedWriter(new FileWriter(
+					bookUrl, true));
+			bookWriter.write(urlToLoad[pageId][1]);
+			urlWriter.write(urlToLoad[pageId][0]);
+			bookWriter.newLine();
+			urlWriter.newLine();
+			bookWriter.close();
+			urlWriter.close();
+		} catch (FileNotFoundException ignored) {
+		} catch (IOException ignored) {
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 	@SuppressLint("SetJavaScriptEnabled")
-	CustomWebView browserSettings(CustomWebView view) {
+	IncognitoWebView browserSettings(IncognitoWebView view) {
 		view.setAnimationCacheEnabled(false);
 		view.setDrawingCacheEnabled(false);
 		view.setDrawingCacheBackgroundColor(getResources().getColor(
 				android.R.color.background_light));
 		// view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-		
+
 		view.setWillNotCacheDrawing(true);
 		view.setFocusable(true);
 		view.setFocusableInTouchMode(true);
@@ -946,18 +1038,18 @@ public class IncognitoMode extends Activity {
 		webViewSettings.setBlockNetworkImage(false);
 		webViewSettings.setAllowFileAccess(true);
 		webViewSettings.setLightTouchEnabled(true);
-		webViewSettings.setSupportMultipleWindows(false);
+		webViewSettings.setSupportMultipleWindows(true);
 		webViewSettings.setDomStorageEnabled(true);
 		webViewSettings.setAppCacheEnabled(true);
 		webViewSettings.setAppCachePath(getApplicationContext().getFilesDir()
-				.getAbsolutePath() + "/incognito_cache");
+				.getAbsolutePath() + "/cache");
 		webViewSettings.setRenderPriority(RenderPriority.HIGH);
 		webViewSettings.setGeolocationEnabled(true);
 		webViewSettings.setGeolocationDatabasePath(getApplicationContext()
-				.getFilesDir().getAbsolutePath()+"/incognito_geolocation");
+				.getFilesDir().getAbsolutePath());
 		webViewSettings.setDatabaseEnabled(true);
 		webViewSettings.setDatabasePath(getApplicationContext().getFilesDir()
-				.getAbsolutePath() + "/incognito_databases");
+				.getAbsolutePath() + "/databases");
 		enableFlash = settings.getInt("enableflash", 0);
 		switch (enableFlash) {
 		case 0:
@@ -977,7 +1069,6 @@ public class IncognitoMode extends Activity {
 		webViewSettings.setUserAgentString(userAgent);
 		webViewSettings.setSavePassword(false);
 		webViewSettings.setSaveFormData(false);
-
 		webViewSettings.setBuiltInZoomControls(true);
 		webViewSettings.setSupportZoom(true);
 		webViewSettings.setUseWideViewPort(true);
@@ -1012,7 +1103,7 @@ public class IncognitoMode extends Activity {
 	void deleteTab(final int del) {
 		main[del].stopLoading();
 		main[del].clearHistory();
-		main[del].clearView();
+		// main[del].clearView();
 		urlToLoad[del][0] = null;
 		urlToLoad[del][1] = null;
 		if (API >= 11) {
@@ -1027,7 +1118,6 @@ public class IncognitoMode extends Activity {
 		}
 		urlTitle[del].setPadding(leftPad, 0, rightPad, 0);
 		Animation yolo = AnimationUtils.loadAnimation(this, R.anim.down);
-
 		yolo.setAnimationListener(new AnimationListener() {
 
 			@Override
@@ -1047,7 +1137,7 @@ public class IncognitoMode extends Activity {
 
 		});
 		urlTitle[del].startAnimation(yolo);
-
+		uBar.bringToFront();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1057,7 +1147,8 @@ public class IncognitoMode extends Activity {
 		if (id == pageId) {
 
 			if (main[id].isShown()) {
-				background.removeView(main[id]);
+				// background.removeView(main[id]);
+				removeView(main[id]);
 			}
 			for (; id <= (number - 1); id++) {
 				if (urlTitle[id].isShown()) {
@@ -1074,6 +1165,13 @@ public class IncognitoMode extends Activity {
 					setUrlText(urlToLoad[pageId][0]);
 					getUrl.setPadding(tenPad, 0, tenPad, 0);
 					right = true;
+					if (main[id].getProgress() < 100) {
+						refresh.setVisibility(View.INVISIBLE);
+						progressBar.setVisibility(View.VISIBLE);
+					} else {
+						progressBar.setVisibility(View.GONE);
+						refresh.setVisibility(View.VISIBLE);
+					}
 					break;
 				}
 
@@ -1095,6 +1193,13 @@ public class IncognitoMode extends Activity {
 						setUrlText(urlToLoad[pageId][0]);
 						getUrl.setPadding(tenPad, 0, tenPad, 0);
 						left = true;
+						if (main[leftId].getProgress() < 100) {
+							refresh.setVisibility(View.INVISIBLE);
+							progressBar.setVisibility(View.VISIBLE);
+						} else {
+							progressBar.setVisibility(View.GONE);
+							refresh.setVisibility(View.VISIBLE);
+						}
 						break;
 					}
 
@@ -1109,6 +1214,7 @@ public class IncognitoMode extends Activity {
 		if (!(right || left)) {
 			finish();
 		}
+		uBar.bringToFront();
 		tabScroll.smoothScrollTo(urlTitle[pageId].getLeft(), 0);
 	}
 
@@ -1248,7 +1354,7 @@ public class IncognitoMode extends Activity {
 		} catch (IllegalStateException ignored) {
 		}
 
-		getUrl.setThreshold(2);
+		getUrl.setThreshold(1);
 		getUrl.setTokenizer(new SpaceTokenizer());
 		getUrl.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1264,7 +1370,6 @@ public class IncognitoMode extends Activity {
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
 				} catch (NullPointerException e) {
-
 					Log.e("IncognitoMode Error: ",
 							"NullPointerException on item click");
 				}
@@ -1313,8 +1418,6 @@ public class IncognitoMode extends Activity {
 	public void finish() {
 		background.clearDisappearingChildren();
 		tabScroll.clearDisappearingChildren();
-		main[0].clearCache(true);
-		cookieManager.setAcceptCookie(true);
 		super.finish();
 	}
 
@@ -1337,7 +1440,7 @@ public class IncognitoMode extends Activity {
 		});
 	}
 
-	void goBookmarks(CustomWebView view) {
+	void goBookmarks(IncognitoWebView view) {
 		File book = new File(getBaseContext().getFilesDir(), "bookmarks");
 		File bookUrl = new File(getBaseContext().getFilesDir(), "bookurl");
 		try {
@@ -1349,7 +1452,7 @@ public class IncognitoMode extends Activity {
 					&& (u = readUrl.readLine()) != null && n < MAX_BOOKMARKS) {
 				bUrl[n] = u;
 				bTitle[n] = t;
-				
+
 				n++;
 			}
 			readBook.close();
@@ -1365,10 +1468,7 @@ public class IncognitoMode extends Activity {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		historyHandler = new DatabaseHandler(this);
-		CookieSyncManager.createInstance(CONTEXT);
-		cookieManager = CookieManager.getInstance();
-		cookieManager.setAcceptCookie(false);
-		
+
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		if (API >= 11) {
 			progressBar.setIndeterminateDrawable(getResources().getDrawable(
@@ -1428,10 +1528,10 @@ public class IncognitoMode extends Activity {
 
 		RelativeLayout refreshLayout = (RelativeLayout) findViewById(R.id.refreshLayout);
 		refreshLayout.setBackgroundResource(R.drawable.button);
-		
+
 		// user agent
 		user = new WebView(CONTEXT).getSettings().getUserAgentString();
-		
+
 		background = (FrameLayout) findViewById(R.id.holder);
 		mobile = user; // setting mobile user
 						// agent
@@ -1450,7 +1550,6 @@ public class IncognitoMode extends Activity {
 		allowLocation = settings.getBoolean("location", false); // initializing
 																// location
 																// variable
-		
 		enableFlash = settings.getInt("enableflash", 0); // enable flash
 															// boolean
 		agentPicker = settings.getInt("agentchoose", 1); // which user agent to
@@ -1458,7 +1557,6 @@ public class IncognitoMode extends Activity {
 															// 2=desktop,
 															// 3=custom
 
-		
 		// initializing variables declared
 
 		height = getResources().getDrawable(R.drawable.loading)
@@ -1481,7 +1579,7 @@ public class IncognitoMode extends Activity {
 		tabScroll.setHorizontalScrollBarEnabled(false);
 		if (API > 8) {
 			tabScroll.setOverScrollMode(View.OVER_SCROLL_NEVER); // disallow
-																	//overscroll
+																	// overscroll
 		}
 
 		// image dimensions and initialization
@@ -1495,7 +1593,6 @@ public class IncognitoMode extends Activity {
 		tenPad = (int) (10 * scale + 0.5f);
 		number = 0;
 
-		
 		webpageOther = getResources().getDrawable(R.drawable.webpage);
 		incognitoPage = getResources().getDrawable(R.drawable.incognito);
 		webpageOther.setBounds(0, 0, width / 2, height / 2);
@@ -1519,8 +1616,9 @@ public class IncognitoMode extends Activity {
 		newTab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newTab(number, homepage, true, true);
+				newTab(number, homepage, true);
 				tabScroll.postDelayed(new Runnable() {
+					@Override
 					public void run() {
 						tabScroll.smoothScrollTo(urlTitle[pageId].getLeft(), 0);
 					}
@@ -1548,32 +1646,50 @@ public class IncognitoMode extends Activity {
 			bg.removeView(uBar);
 			background.addView(uBar);
 		}
-
+		browserHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 1: {
+					main[pageId].loadUrl(getUrl.getText().toString());
+					break;
+				}
+				case 2: {
+					deleteTab(closeWindow);
+					break;
+				}
+				case 3: {
+					main[pageId].invalidate();
+					break;
+				}
+				}
+			}
+		};
 	}
 
 	void initializeTabs() {
 		Intent url = getIntent();
 		String URL = url.getDataString();
-			if (URL != null) {
-				// opens a new tab with the url if its there
-				newTab(number, URL, true, true);
-				main[number - 1].resumeTimers();
+		if (URL != null) {
+			// opens a new tab with the url if its there
+			newTab(number, URL, true);
+			main[number - 1].resumeTimers();
 
-			} else {
-				// otherwise it opens the homepage
-				newTab(number, homepage, true, true);
-				main[number - 1].resumeTimers();
+		} else {
+			// otherwise it opens the homepage
+			newTab(number, homepage, true);
+			main[number - 1].resumeTimers();
 
-			}
-		
+		}
+
 	}
 
-	private CustomWebView makeTab(final int pageToView, final String Url,
+	private IncognitoWebView makeTab(final int pageToView, final String Url,
 			final boolean display) {
-		CustomWebView view = new CustomWebView(CONTEXT);
+		IncognitoWebView view = new IncognitoWebView(CONTEXT);
 		view.setId(pageToView);
 		allowLocation = settings.getBoolean("location", false);
-		view.setWebViewClient(new CustomWebViewClient());
+		view.setWebViewClient(new IncognitoWebViewClient());
 		view.setWebChromeClient(new CustomChromeClient());
 		if (API > 8) {
 			view.setDownloadListener(new CustomDownloadListener());
@@ -1623,8 +1739,7 @@ public class IncognitoMode extends Activity {
 
 	// new tab method, takes the id of the tab to be created and the url to load
 	@SuppressWarnings("deprecation")
-	int newTab(int theId, final String theUrl, final boolean display,
-			final boolean incognito_mode) {
+	int newTab(int theId, final String theUrl, final boolean display) {
 		Log.i("IncognitoMode", "making tab");
 
 		int finalID = 0;
@@ -1655,6 +1770,7 @@ public class IncognitoMode extends Activity {
 				});
 				urlTitle[n].startAnimation(holo);
 				urlTitle[num].setText("New Tab");
+
 				if (display) {
 					if (API < 16) {
 						urlTitle[num].setBackgroundDrawable(active);
@@ -1728,10 +1844,9 @@ public class IncognitoMode extends Activity {
 				title.setPadding(leftPad, 0, rightPad, 0);
 				title.setId(number);
 				title.setGravity(Gravity.CENTER_VERTICAL);
-				
-					title.setCompoundDrawables(incognitoPage, null, exitTab,
-							null);
-				
+
+				title.setCompoundDrawables(incognitoPage, null, exitTab, null);
+
 				Drawable[] drawables = title.getCompoundDrawables();
 				bounds = drawables[2].getBounds();
 				title.setOnTouchListener(new TabTouchListener());
@@ -1756,10 +1871,9 @@ public class IncognitoMode extends Activity {
 				});
 				title.startAnimation(holo);
 				urlTitle[number] = title;
-				
+
 				urlTitle[number].setText("Incognito");
 
-				
 				if (theUrl != null) {
 					main[number] = makeTab(number, theUrl, display);
 				} else {
@@ -1793,11 +1907,19 @@ public class IncognitoMode extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		if (main[pageId].canGoBack()) {
-			main[pageId].goBack();
-		} else {
-			deleteTab(pageId);
-			uBar.bringToFront();
+
+		if (main[pageId] != null) {
+			main[pageId].stopLoading();
+
+			if (showFullScreen && !uBar.isShown()) {
+				uBar.startAnimation(slideDown);
+			}
+			if (main[pageId].canGoBack()) {
+				main[pageId].goBack();
+			} else {
+				deleteTab(pageId);
+				uBar.bringToFront();
+			}
 		}
 
 	}
@@ -1805,19 +1927,18 @@ public class IncognitoMode extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		main[pageId].getSettings().setLayoutAlgorithm(
-				LayoutAlgorithm.NORMAL);
-		// main[pageId].invalidate();
+		main[pageId].getSettings().setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main); // displays main xml layout
 		settings = getSharedPreferences(preferences, 0);
 		edit = settings.edit();
-		
-
+		CookieSyncManager.createInstance(CONTEXT);
+		cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(false);
 		inactive = getResources().getDrawable(R.drawable.bg_inactive);
 		active = getResources().getDrawable(R.drawable.bg_press);
 		init(); // sets up random stuff
@@ -1886,7 +2007,7 @@ public class IncognitoMode extends Activity {
 
 		String url = intent.getDataString();
 		if (url != null) {
-			newTab(number, url, true, true);
+			newTab(number, url, true);
 		}
 		super.onNewIntent(intent);
 	}
@@ -1898,22 +2019,16 @@ public class IncognitoMode extends Activity {
 		case R.id.history:
 			generateHistory(main[pageId]);
 			return true;
-		case R.id.bookmark:
-			return true;
-		case R.id.settings:
-			return true;
 		case R.id.allBookmarks:
 			if (!urlToLoad[pageId][1].equals("Bookmarks")) {
 				goBookmarks(main[pageId]);
 			}
 			return true;
-		case R.id.share:
-			return true;
 		case R.id.incognito:
-			newTab(number, homepage, true, true);
+			newTab(number, homepage, true);
 			return true;
 		default:
-			return super.onOptionsItemSelected(item);
+			return false;
 		}
 	}
 
@@ -1938,7 +2053,7 @@ public class IncognitoMode extends Activity {
 
 	}
 
-	void openBookmarks(CustomWebView view) {
+	void openBookmarks(IncognitoWebView view) {
 		String bookmarkHtml = BookmarkPage.Heading;
 		for (int n = 0; n < MAX_BOOKMARKS; n++) {
 			if (bUrl[n] != null) {
@@ -1988,19 +2103,13 @@ public class IncognitoMode extends Activity {
 							case R.id.history:
 								generateHistory(main[pageId]);
 								return true;
-							case R.id.bookmark:
-								return true;
-							case R.id.settings:
-								return true;
 							case R.id.allBookmarks:
 								if (!urlToLoad[pageId][1].equals("Bookmarks")) {
 									goBookmarks(main[pageId]);
 								}
 								return true;
-							case R.id.share:
-								return true;
 							case R.id.incognito:
-								newTab(number, homepage, true, true);
+								newTab(number, homepage, true);
 								return true;
 							default:
 								return false;
@@ -2025,6 +2134,26 @@ public class IncognitoMode extends Activity {
 			}
 
 		});
+	}
+
+	void share() {
+		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+		// set the type
+		shareIntent.setType("text/plain");
+
+		// add a subject
+		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+				urlToLoad[pageId][1]);
+
+		// build the body of the message to be shared
+		String shareMessage = urlToLoad[pageId][0];
+
+		// add the message
+		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
+
+		// start the chooser for sharing
+		startActivity(Intent.createChooser(shareIntent, "Share this page"));
 	}
 
 	void testForSearch() {

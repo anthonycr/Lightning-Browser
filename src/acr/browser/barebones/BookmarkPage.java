@@ -8,7 +8,7 @@ class BookmarkPage {
 			+ "body{color: gray;}"
 			+ "div	{vertical-align: middle;background-color: #ffffff;}"
 			+ "div.clickable {position:relative;}"
-			+ "p.font{font-size: 60px;font-family: \"Lucida Console\"}"
+			+ "p.font{font-size: xx-large;font-family: \"Lucida Console\"}"
 			+ "div.clickable a {position:absolute;width:100%;height:100%;top:0;left:0;text-decoration:none; z-index:10; background-color:white;opacity: 0; filter: alpha(opacity=1);}"
 			+ "div.space {height: 10px;}"
 			+ "p{padding-top: 3mm;padding-bottom: 3mm;padding-right: 2mm;padding-left: 2mm;}"
@@ -17,7 +17,7 @@ class BookmarkPage {
 	public static final String Part1 = "<div class=\"clickable\">"
 			+ "<div class=\"shadow\">" + "<p class=\"font\">" + "<a href=\"";
 	public static final String Part2 = "\"></a>"+
-					 "<img height=\"32\" width=\"32\" src='http://getfavicon.appspot.com/";
+					 "<img height=\"25\" width=\"25\" src='http://getfavicon.appspot.com/";
 	public static final String Part3 = "'/>";
 	public static final String Part4 = "</p></div></div>";
 	public static final String End = "</body></html>";
