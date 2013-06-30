@@ -12,11 +12,11 @@ import android.widget.ZoomButtonsController;
 public final class IncognitoWebView extends WebView {
 	private float location;
 	private boolean first = false;
-    private final int API = FinalVars.API;
-	private final boolean showFullScreen = IncognitoMode.showFullScreen;
-	private final View uBar = IncognitoMode.uBar;
-	private final Animation slideUp = IncognitoMode.slideUp;
-	private final Animation slideDown = IncognitoMode.slideDown;
+    final int API = FinalVars.API;
+	final boolean showFullScreen = IncognitoMode.showFullScreen;
+	final View uBar = IncognitoMode.uBar;
+	final Animation slideUp = IncognitoMode.slideUp;
+	final Animation slideDown = IncognitoMode.slideDown;
 	private ZoomButtonsController zoomControl;
 	public IncognitoWebView(Context context) {
 		super(context);

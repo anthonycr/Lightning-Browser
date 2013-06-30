@@ -12,11 +12,11 @@ import android.widget.ZoomButtonsController;
 public final class CustomWebView extends WebView {
 	private float location;
 	private boolean first = false;
-    private final int API = FinalVars.API;
-	private final boolean showFullScreen = Barebones.showFullScreen;
-	private final View uBar = Barebones.uBar;
-	private final Animation slideUp = Barebones.slideUp;
-	private final Animation slideDown = Barebones.slideDown;
+    final int API = FinalVars.API;
+	final boolean showFullScreen = Barebones.showFullScreen;
+	final View uBar = Barebones.uBar;
+	final Animation slideUp = Barebones.slideUp;
+	final Animation slideDown = Barebones.slideDown;
 	private ZoomButtonsController zoomControl;
 	public CustomWebView(Context context) {
 		super(context);

@@ -97,10 +97,10 @@ public class IncognitoMode extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public class CustomChromeClient extends WebChromeClient {
-		private Bitmap mDefaultVideoPoster;
-		private View mVideoProgressView;
-		private FrameLayout fullScreenContainer;
-		private int orientation;
+		public Bitmap mDefaultVideoPoster;
+		public View mVideoProgressView;
+		public FrameLayout fullScreenContainer;
+		public int orientation;
 
 		@Override
 		public void onExceededDatabaseQuota(String url,
@@ -303,7 +303,7 @@ public class IncognitoMode extends Activity {
 		}
 	}
 
-	private class CustomDownloadListener implements DownloadListener {
+	public class CustomDownloadListener implements DownloadListener {
 
 		@Override
 		public void onDownloadStart(final String url, String userAgent,
@@ -349,7 +349,7 @@ public class IncognitoMode extends Activity {
 
 	}
 
-	private class IncognitoWebViewClient extends WebViewClient {
+	public class IncognitoWebViewClient extends WebViewClient {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -475,7 +475,7 @@ public class IncognitoMode extends Activity {
 		}
 	}
 
-	private void generateHistory(final IncognitoWebView view) {
+	public void generateHistory(final IncognitoWebView view) {
 
 		Thread history = new Thread(new Runnable() {
 
@@ -552,7 +552,7 @@ public class IncognitoMode extends Activity {
 		history.run();
 	}
 
-	private void setUrlText(String url) {
+	public void setUrlText(String url) {
 		if (!url.contains("file:///" + getBaseContext().getFilesDir()
 				+ "/bookmarks.html")
 				&& !url.contains("file:///" + getBaseContext().getFilesDir()
@@ -563,7 +563,7 @@ public class IncognitoMode extends Activity {
 		}
 	}
 
-	private class TabTouchListener implements OnTouchListener {
+	public class TabTouchListener implements OnTouchListener {
 
 		@SuppressWarnings("deprecation")
 		@Override
@@ -649,7 +649,7 @@ public class IncognitoMode extends Activity {
 
 	}
 
-	private void removeView(WebView view) {
+	public void removeView(WebView view) {
 		if (!showFullScreen) {
 			view.startAnimation(fadeOut);
 		}
@@ -657,7 +657,7 @@ public class IncognitoMode extends Activity {
 		uBar.bringToFront();
 	}
 
-	private void deleteBookmark(String url) {
+	public void deleteBookmark(String url) {
 		File book = new File(getBaseContext().getFilesDir(), "bookmarks");
 		File bookUrl = new File(getBaseContext().getFilesDir(), "bookurl");
 		int n = 0;
@@ -701,7 +701,7 @@ public class IncognitoMode extends Activity {
 		openBookmarks(main[pageId]);
 	}
 
-	private class WebPageLongClickListener implements OnLongClickListener {
+	public class WebPageLongClickListener implements OnLongClickListener {
 
 		@Override
 		public boolean onLongClick(View v) {
@@ -883,90 +883,90 @@ public class IncognitoMode extends Activity {
 	}
 
 	// variables to differentiate free from paid
-	private static final int MAX_TABS = FinalVars.MAX_TABS;
-	private static final int MAX_BOOKMARKS = FinalVars.MAX_BOOKMARKS;
-	private static final boolean PAID_VERSION = FinalVars.PAID_VERSION;
-	private final Context CONTEXT = IncognitoMode.this;
-	private static final String HOMEPAGE = FinalVars.HOMEPAGE;
-	private static final String SEARCH = FinalVars.GOOGLE_SEARCH;
-	private static SimpleAdapter adapter;
-	private static MultiAutoCompleteTextView getUrl;
-	private static final TextView[] urlTitle = new TextView[MAX_TABS];
-	private static final IncognitoWebView[] main = new IncognitoWebView[MAX_TABS];
-	private static Rect bounds;
-	private static ValueCallback<Uri> mUploadMessage;
-	private static ImageView refresh;
-	private static ProgressBar progressBar;
-	private static Drawable webpageOther;
-	private static Drawable incognitoPage;
-	private static Drawable exitTab;
-	private static int numberPage;
-	private static final int fuzz = 10;
-	private static int number;
-	private static int pageId = 0;
-	private static int agentPicker;
-	private static int enableFlash;
-	private static int height32;
-	private static int height;
-	private static int width;
-	private static int pixels;
-	private static int leftPad;
-	private static int rightPad;
-	private static final int API = FinalVars.API;
-	private static int mShortAnimationDuration;
-	private static int id;
-	private static int tenPad;
-	private static int urlColumn;
-	private static int titleColumn;
-	private static int closeWindow;
-	private static View mCustomView = null;
-	private static CustomViewCallback mCustomViewCallback;
-	private static boolean isPhone = false;
-	private static boolean pageIsLoading = false;
-	private static boolean allowLocation;
+	public static final int MAX_TABS = FinalVars.MAX_TABS;
+	public static final int MAX_BOOKMARKS = FinalVars.MAX_BOOKMARKS;
+	public static final boolean PAID_VERSION = FinalVars.PAID_VERSION;
+	public final Context CONTEXT = IncognitoMode.this;
+	public static final String HOMEPAGE = FinalVars.HOMEPAGE;
+	public static final String SEARCH = FinalVars.GOOGLE_SEARCH;
+	public static SimpleAdapter adapter;
+	public static MultiAutoCompleteTextView getUrl;
+	public static final TextView[] urlTitle = new TextView[MAX_TABS];
+	public static final IncognitoWebView[] main = new IncognitoWebView[MAX_TABS];
+	public static Rect bounds;
+	public static ValueCallback<Uri> mUploadMessage;
+	public static ImageView refresh;
+	public static ProgressBar progressBar;
+	public static Drawable webpageOther;
+	public static Drawable incognitoPage;
+	public static Drawable exitTab;
+	public static int numberPage;
+	public static final int fuzz = 10;
+	public static int number;
+	public static int pageId = 0;
+	public static int agentPicker;
+	public static int enableFlash;
+	public static int height32;
+	public static int height;
+	public static int width;
+	public static int pixels;
+	public static int leftPad;
+	public static int rightPad;
+	public static final int API = FinalVars.API;
+	public static int mShortAnimationDuration;
+	public static int id;
+	public static int tenPad;
+	public static int urlColumn;
+	public static int titleColumn;
+	public static int closeWindow;
+	public static View mCustomView = null;
+	public static CustomViewCallback mCustomViewCallback;
+	public static boolean isPhone = false;
+	public static boolean pageIsLoading = false;
+	public static boolean allowLocation;
 	static boolean showFullScreen;
-	private static SharedPreferences settings;
-	private static SharedPreferences.Editor edit;
-	private static String desktop;
-	private static String mobile;
-	private static String user;
-	private static String urlA;
-	private static String title;
-	private static final String[] bUrl = new String[MAX_BOOKMARKS];
-	private static final String[] bTitle = new String[MAX_BOOKMARKS];
-	private static String[] columns;
-	private static String homepage;
-	private static String str;
-	private static final String preferences = "settings";
-	private static String query;
-	private static String userAgent;
-	private static final String[][] urlToLoad = new String[MAX_TABS][2];
-	private static FrameLayout background;
+	public static SharedPreferences settings;
+	public static SharedPreferences.Editor edit;
+	public static String desktop;
+	public static String mobile;
+	public static String user;
+	public static String urlA;
+	public static String title;
+	public static final String[] bUrl = new String[MAX_BOOKMARKS];
+	public static final String[] bTitle = new String[MAX_BOOKMARKS];
+	public static String[] columns;
+	public static String homepage;
+	public static String str;
+	public static final String preferences = "settings";
+	public static String query;
+	public static String userAgent;
+	public static final String[][] urlToLoad = new String[MAX_TABS][2];
+	public static FrameLayout background;
 	static RelativeLayout uBar;
-	private static HorizontalScrollView tabScroll;
+	public static HorizontalScrollView tabScroll;
 	static Animation slideUp;
 	static Animation slideDown;
-	private static Animation fadeOut;
-	private static Animation fadeIn;
-	private static TextView txt;
+	public static Animation fadeOut;
+	public static Animation fadeIn;
+	public static TextView txt;
 
-	private static CookieManager cookieManager;
+	public static CookieManager cookieManager;
 
-	private static List<Map<String, String>> list;
-	private static Map<String, String> map;
+	public static List<Map<String, String>> list;
+	public static Map<String, String> map;
 
-	private static Handler handler, browserHandler;
+	public static Handler handler, browserHandler;
 
-	private static DatabaseHandler historyHandler;
+	public static DatabaseHandler historyHandler;
 
-	private static Drawable inactive;
+	public static Drawable inactive;
 
-	private static Drawable active;
+	public static Drawable active;
 
-	private static LinearLayout tabLayout;
+	public static LinearLayout tabLayout;
 
 	@SuppressWarnings("unused")
-	private static void setFavicon(int id, Bitmap favicon) {
+	public static void setFavicon(int id, Bitmap favicon) {
 		Drawable icon = null;
 		icon = new BitmapDrawable(null, favicon);
 		icon.setBounds(0, 0, width / 2, height / 2);
@@ -1684,7 +1684,7 @@ public class IncognitoMode extends Activity {
 
 	}
 
-	private IncognitoWebView makeTab(final int pageToView, final String Url,
+	public IncognitoWebView makeTab(final int pageToView, final String Url,
 			final boolean display) {
 		IncognitoWebView view = new IncognitoWebView(CONTEXT);
 		view.setId(pageToView);
