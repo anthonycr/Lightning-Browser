@@ -7,15 +7,15 @@
     <string name="location">Consenti ai siti di accedere alla tua posizione</string>
     <string name="password">Salva le tue password</string>
     <string name="agent">User Agent</string>
-    <string name="history">Clear history on exit</string>
+    <string name="history">Cancella cronologia all'uscita</string>
     <string name="email">Email me</string>
     <string name="flash">Abilita Adobe Flash</string>
     <string name="mobile">Visualizza come mobile</string>
     <string name="desk">Visualizza come desktop</string>
-    <string name="custom">Visualizza come agente utente personalizzata</string>
+    <string name="custom">Visualizza come User Agent personalizzata</string>
     <string name="home">Homepage</string>
-    <string name="settingshelp">Impostazioni valgono solo per le nuove schede</string>
-    <string name="fullscreen">Enable fullscreen mode</string>
-    <string name="java">Enable JavaScript</string>
+    <string name="settingshelp">Le impostazioni valgono solo per le nuove schede</string>
+    <string name="fullscreen">Abilità schermo intero</string>
+    <string name="java">Abilita JavaScript</string>
 
 </resources>
