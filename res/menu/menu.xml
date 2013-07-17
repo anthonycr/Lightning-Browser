@@ -5,6 +5,7 @@
     <item android:id="@+id/allBookmarks" android:titleCondensed="Bookmarks" android:title="Bookmarks" android:orderInCategory="4"></item>
     <item android:id="@+id/share" android:title="Share" android:titleCondensed="Share" android:orderInCategory="5"></item>
     <item android:id="@+id/settings" android:title="Settings" android:titleCondensed="Settings" android:orderInCategory="7"></item>
+    <item android:id="@+id/forward" android:title="Forward" android:orderInCategory="1" android:titleCondensed="Forward"></item>
     <item android:id="@+id/incognito" android:title="Incognito Tab" android:orderInCategory="6" android:titleCondensed="Incognito Tab"></item>
     
 
