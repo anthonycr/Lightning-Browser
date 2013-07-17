@@ -17,5 +17,6 @@
     <string name="settingshelp">Le impostazioni saranno valide solo per le nuove schede</string>
     <string name="fullscreen">Abilità schermo intero</string>
     <string name="java">Abilita JavaScript</string>
-
+	<string name="saveTab">Recupera le tab in caso di crash</string>
+	
 </resources>
