@@ -15,7 +15,7 @@
     <string name="custom">Visualizza come User Agent personalizzato</string>
     <string name="home">Homepage</string>
     <string name="settingshelp">Le impostazioni saranno valide solo per le nuove Tabs</string>
-    <string name="fullscreen">Abilità schermo intero</string>
+    <string name="fullscreen">Abilita schermo intero</string>
     <string name="java">Abilita JavaScript</string>
     <string name="saveTab">Recupera le Tabs in caso di chiusura imprevista</string>
 	
