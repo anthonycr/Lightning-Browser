@@ -6,6 +6,6 @@
     <item android:id="@+id/share" android:title="Condividi" android:titleCondensed="Condividi" android:orderInCategory="5"></item>
     <item android:id="@+id/settings" android:title="Impostazioni" android:titleCondensed="Impostazioni" android:orderInCategory="7"></item>
     <item android:id="@+id/forward" android:title="Avanti" android:orderInCategory="1" android:titleCondensed="Avanti"></item>
-    <item android:id="@+id/incognito" android:title="Apri tab in Incognito" android:orderInCategory="6" android:titleCondensed="Apri tab in Incognito"></item>
+    <item android:id="@+id/incognito" android:title="Apri Tab in Incognito" android:orderInCategory="6" android:titleCondensed="Apri Tab in Incognito"></item>
 
 </menu>
