@@ -10,8 +10,8 @@
     <string name="history">Cancella cronologia all\'uscita</string>
     <string name="email">Scrivi allo sviluppatore</string>
     <string name="flash">Abilita Adobe Flash</string>
-    <string name="mobile">Visualizza come mobile</string>
-    <string name="desk">Visualizza come desktop</string>
+    <string name="mobile">Visualizza come Mobile</string>
+    <string name="desk">Visualizza come Desktop</string>
     <string name="custom">Visualizza come User Agent personalizzato</string>
     <string name="home">Homepage</string>
     <string name="settingshelp">Le impostazioni saranno valide solo per le nuove Tabs</string>
