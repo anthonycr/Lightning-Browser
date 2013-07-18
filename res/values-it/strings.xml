@@ -8,15 +8,15 @@
     <string name="password">Salva le tue password</string>
     <string name="agent">User Agent</string>
     <string name="history">Cancella cronologia all\'uscita</string>
-    <string name="email">Email me</string>
+    <string name="email">Scrivi allo sviluppatore</string>
     <string name="flash">Abilita Adobe Flash</string>
     <string name="mobile">Visualizza come mobile</string>
     <string name="desk">Visualizza come desktop</string>
     <string name="custom">Visualizza come User Agent personalizzato</string>
     <string name="home">Homepage</string>
-    <string name="settingshelp">Le impostazioni saranno valide solo per le nuove schede</string>
+    <string name="settingshelp">Le impostazioni saranno valide solo per le nuove Tabs</string>
     <string name="fullscreen">Abilità schermo intero</string>
     <string name="java">Abilita JavaScript</string>
-	<string name="saveTab">Recupera le tab in caso di crash</string>
+    <string name="saveTab">Recupera le Tabs in caso di chiusura imprevista</string>
 	
 </resources>
