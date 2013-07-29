@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/history" android:title="Cronologia" android:titleCondensed="Cronologia" android:orderInCategory="1"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="Segnalibri" android:title="Segnalibri" android:orderInCategory="3"></item>
+    <item android:id="@+id/incognito" android:title="Nuova tab" android:orderInCategory="5" android:titleCondensed="Nuova tab"></item>
+    
+
+</menu>
