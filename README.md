@@ -23,7 +23,7 @@
 
 ####Permissions Requested and Explained
 
-* INTERNET: For accessing the web
+* ````INTERNET````: For accessing the web
 
 * ````WRITE_EXTERNAL_STORAGE````: For downloading files from the browser
 
