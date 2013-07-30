@@ -19,7 +19,7 @@
 
 * Privacy Aware
 
-* ````#YOLOHOLO````
+* YOLOHOLO
 
 ####Permissions Requested and Explained
 
