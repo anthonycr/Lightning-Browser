@@ -1,4 +1,4 @@
-package acr.browser.barebones;
+package acr.browser.barebones.databases;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
  
-class DatabaseHandler extends SQLiteOpenHelper {
+public class DatabaseHandler extends SQLiteOpenHelper {
  
     // All Static variables
     // Database Version
@@ -52,9 +52,14 @@ class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * All CRUD(Create, Read, Update, Delete) Operations
      */
+    
+    public void delete(String url){
+    	String n = getHistoryItem(url);
+    	deleteHistoryItem(n);
+    }
  
     // Adding new item
-    void addHistoryItem(HistoryItem item) {
+    public void addHistoryItem(HistoryItem item) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -66,19 +71,18 @@ class DatabaseHandler extends SQLiteOpenHelper {
     }
  
     // Getting single item
-    HistoryItem getHistoryItem(int id) {
+    String getHistoryItem(String url) {
         SQLiteDatabase db = this.getReadableDatabase();
  
         Cursor cursor = db.query(TABLE_HISTORY, new String[] { KEY_ID,
-                KEY_URL, KEY_TITLE}, KEY_ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+                KEY_URL, KEY_TITLE}, KEY_URL + "=?",
+                new String[] { url }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
- 
-
+        String m = cursor.getString(0);
+        cursor.close();
         // return item
-        return  new HistoryItem(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2));
+        return  m;
     }
  
     // Getting All HistoryItems
@@ -101,7 +105,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
                 itemList.add(item);
             } while (cursor.moveToNext());
         }
- 
+        cursor.close();
         // return item list
         return itemList;
     }
@@ -120,10 +124,10 @@ class DatabaseHandler extends SQLiteOpenHelper {
     }
  
     // Deleting single item
-    public void deleteHistoryItem(HistoryItem item) {
+    public void deleteHistoryItem(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_HISTORY, KEY_ID + " = ?",
-                new String[] { String.valueOf(item.getID()) });
+                new String[] { String.valueOf(id) });
         db.close();
     }
  

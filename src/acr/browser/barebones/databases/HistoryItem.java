@@ -1,6 +1,6 @@
-package acr.browser.barebones;
+package acr.browser.barebones.databases;
 
-class HistoryItem {
+public class HistoryItem {
 	
 
 		//private variables

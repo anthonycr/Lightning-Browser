@@ -1,4 +1,0 @@
-This is an open source webkit based browser. 
-
-I make money off a similar paid version which currently has unlimited tabs and unlimited bookmarks. Modifiying two values at the top of the main activity "barebones" will turn this into the paid version.
-Change static public int MAX_TABS and MAX_BOOKMARKS from 5 to 50 and you have the paid version.

@@ -2,32 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="acr.browser.barebones"
     android:versionCode="44"
-    android:versionName="2.5.0.1" >
+    android:versionName="2.5.0.2" >
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="18" />
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" />
+
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="acr.browser.barebones.Barebones"
-            android:label="@string/app_name" 
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:name="acr.browser.barebones.activities.BarebonesActivity"
             android:alwaysRetainTaskState="true"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true"
-            >
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard|screenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -35,53 +37,62 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:scheme="about" />
                 <data android:scheme="javascript" />
             </intent-filter>
-            <!--  For these schemes where any of these particular MIME types
-                  have been supplied, we are a good candidate. -->
+            <!--
+                  For these schemes where any of these particular MIME types
+                  have been supplied, we are a good candidate.
+            -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:scheme="inline" />
-                <data android:mimeType="text/html"/>
-                <data android:mimeType="text/plain"/>
-                <data android:mimeType="application/xhtml+xml"/>
-                <data android:mimeType="application/vnd.wap.xhtml+xml"/>
+                <data android:mimeType="text/html" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="application/xhtml+xml" />
+                <data android:mimeType="application/vnd.wap.xhtml+xml" />
             </intent-filter>
             <!-- For viewing saved web archives. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:scheme="file" />
-                <data android:mimeType="application/x-webarchive-xml"/>
+                <data android:mimeType="application/x-webarchive-xml" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.WEB_SEARCH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.barebones.IncognitoMode"
-            android:label="@string/app_name" 
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:name="acr.browser.barebones.activities.IncognitoModeActivity"
             android:alwaysRetainTaskState="true"
-            android:launchMode="singleTask"
-            android:hardwareAccelerated="true">
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/app_name"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.BAREBONESINCOGNITO" />
 
@@ -89,11 +100,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.barebones.Settings"
-            android:configChanges="orientation|screenSize|keyboard"
+            android:name="acr.browser.barebones.activities.SettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.action.BAREBONESSETTINGS" />
+                <action android:name="android.intent.action.SETTINGS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="acr.browser.barebones.activities.AdvancedSettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/title_activity_advanced_settings" >
+            <intent-filter>
+                <action android:name="android.intent.action.ADVANCEDSETTINGS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -5,5 +5,6 @@
     <color name="press">#3333b5e5</color>
     <color name="black">#ff000000</color>
     <color name="dark">#ff3f3f3f</color>
+    <color name="light">#ffa0a0a0</color>
     
 </resources>

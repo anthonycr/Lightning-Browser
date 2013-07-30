@@ -1,16 +1,13 @@
-package acr.browser.barebones;
+package acr.browser.barebones.databases;
 
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextUtils;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 
 public class SpaceTokenizer implements Tokenizer {
 
 	@Override
 	public int findTokenEnd(CharSequence text, int cursor) {
-		int i = cursor;
-		int len = text.length();
+		//int i = cursor;
+		//int len = text.length();
 
 		/*while (i < len) {
 			if (text.charAt(i) == ' ') {
@@ -20,7 +17,7 @@ public class SpaceTokenizer implements Tokenizer {
 			}
 		}
 */
-		return len;
+		return text.length();
 	}
 
 	@Override
@@ -39,7 +36,10 @@ public class SpaceTokenizer implements Tokenizer {
 
 	@Override
 	public CharSequence terminateToken(CharSequence text) {
-		int i = text.length();
+		//int i = text.length();
+		if(text.charAt(text.length()-1) != ' '){
+			text = text + " ";
+		}
 		return text;
 		/*while (i > 0 && text.charAt(i - 1) == ' ') {
 			i--;
