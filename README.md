@@ -11,7 +11,7 @@
 
 * History
 
-* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo
+* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo)
 
 * Incognito Mode
 
