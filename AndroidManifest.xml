@@ -24,7 +24,7 @@
         <activity
             android:name="acr.browser.barebones.activities.BarebonesActivity"
             android:alwaysRetainTaskState="true"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard|screenSize"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTask" >
             <intent-filter>
@@ -48,7 +48,11 @@
             </intent-filter>
             <!--
                   For these schemes where any of these particular MIME types
-                  have been supplied, we are a good candidate.
+                  have been supplied, we are a good candidate.
+
+
+
+
             -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

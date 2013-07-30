@@ -1,7 +1,7 @@
 #Lightning Browser
 #![](https://lh3.ggpht.com/HLSuHvg80_HMmgZ8GkmxMkHvovFu0_QcBqK-omS-JLGe8s-ChPQPYZZFXBRHEtHoQZQ=w150-rw)
 ####Download
-* [APK File](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
+* [Most Recent APK](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
 
 * [Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
 
@@ -11,7 +11,7 @@
 
 * History
 
-* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo
+* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo)
 
 * Incognito Mode
 
@@ -19,11 +19,11 @@
 
 * Privacy Aware
 
-* ````#YOLOHOLO````
+* YOLOHOLO
 
 ####Permissions Requested and Explained
 
-* INTERNET: For accessing the web
+* ````INTERNET````: For accessing the web
 
 * ````WRITE_EXTERNAL_STORAGE````: For downloading files from the browser
 
