@@ -1,5 +1,5 @@
 #Lightning Browser
-#![](https://github.com/anthonycr/Lightning-Browser/blob/master/ic_launcher_small.png)
+#![](ic_launcher_small.png)
 ####Download
 * [Most Recent APK](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
 
