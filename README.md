@@ -1,5 +1,5 @@
 #Lightning Browser
-#![](https://lh3.ggpht.com/HLSuHvg80_HMmgZ8GkmxMkHvovFu0_QcBqK-omS-JLGe8s-ChPQPYZZFXBRHEtHoQZQ=w150-rw)
+#![](https://github.com/anthonycr/Lightning-Browser/blob/master/ic_launcher_small.png)
 ####Download
 * [Most Recent APK](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
 
@@ -19,7 +19,7 @@
 
 * Privacy Aware
 
-* YOLOHOLO
+* HOLOYOLO
 
 ####Permissions Requested and Explained
 
