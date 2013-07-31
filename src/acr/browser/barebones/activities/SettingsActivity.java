@@ -5,6 +5,7 @@ import acr.browser.barebones.R.drawable;
 import acr.browser.barebones.R.id;
 import acr.browser.barebones.R.layout;
 import acr.browser.barebones.variables.FinalVariables;
+import acr.browser.barebones.variables.Utils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,11 +15,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -27,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -321,7 +327,7 @@ public class SettingsActivity extends Activity {
 							Toast.LENGTH_SHORT).show();
 				}
 				if (egg == 15) {
-					Toast.makeText(SettingsActivity.this, "Easter Egg",
+					Toast.makeText(SettingsActivity.this, "Easter Egg goes here",
 							Toast.LENGTH_SHORT).show();
 					egg = 0;
 				}
@@ -354,7 +360,22 @@ public class SettingsActivity extends Activity {
 				}
 				edit.putInt("enableflash", n);
 				edit.commit();
-
+				boolean flashInstalled = false;
+				try {
+				  PackageManager pm = getPackageManager();
+				  ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
+				  if (ai != null)
+				    flashInstalled = true;
+				} catch (NameNotFoundException e) {
+				  flashInstalled = false;
+				}
+				if(!flashInstalled){
+					Utils.createInformativeDialog(SettingsActivity.this, "Warning", "Adobe Flash Player was not detected.\n" +
+							"Please install Flash Player.");
+					buttonView.setChecked(false);
+					edit.putInt("enableflash", 0);
+					edit.commit();
+				}
 			}
 
 		});
@@ -394,6 +415,22 @@ public class SettingsActivity extends Activity {
 				}
 				edit.putInt("enableflash", n);
 				edit.commit();
+				boolean flashInstalled = false;
+				try {
+				  PackageManager pm = getPackageManager();
+				  ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
+				  if (ai != null)
+				    flashInstalled = true;
+				} catch (NameNotFoundException e) {
+				  flashInstalled = false;
+				}
+				if(!flashInstalled){
+					Utils.createInformativeDialog(SettingsActivity.this, "Warning", "Adobe Flash Player was not detected.\n" +
+							"Please install Flash Player.");
+					buttonView.setChecked(false);
+					edit.putInt("enableflash", 0);
+					edit.commit();
+				}
 
 			}
 

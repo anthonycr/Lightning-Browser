@@ -48,11 +48,7 @@
             </intent-filter>
             <!--
                   For these schemes where any of these particular MIME types
-                  have been supplied, we are a good candidate.
-
-
-
-
+                  have been supplied, we are a good candidate.
             -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

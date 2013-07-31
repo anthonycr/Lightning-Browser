@@ -128,7 +128,7 @@ public class BarebonesActivity extends Activity {
 				QuotaUpdater quotaUpdater) {
 			quotaUpdater.updateQuota(quota + requiredStorage);
 		}
-		
+
 		@Override
 		public Bitmap getDefaultVideoPoster() {
 			if (mDefaultVideoPoster == null) {
@@ -244,7 +244,8 @@ public class BarebonesActivity extends Activity {
 			if (title != null && title.length() != 0) {
 				urlTitle[numberPage].setText(title);
 				urlToLoad[numberPage][1] = title;
-				Utils.updateHistory(CONTEXT, getContentResolver(), noStockBrowser, urlToLoad[numberPage][0], title);
+				Utils.updateHistory(CONTEXT, getContentResolver(),
+						noStockBrowser, urlToLoad[numberPage][0], title);
 			}
 			super.onReceivedTitle(view, title);
 		}
@@ -335,7 +336,36 @@ public class BarebonesActivity extends Activity {
 		public void onDownloadStart(final String url, String userAgent,
 				final String contentDisposition, final String mimetype,
 				long contentLength) {
-		Utils.downloadFile(CONTEXT, url, contentDisposition, mimetype);
+			if (url.endsWith(".mp4")) {
+				
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
+				builder.setTitle("Open as...");
+				builder.setMessage("Do you want to download this video or watch it in an app?")
+						.setCancelable(true)
+						.setPositiveButton("Download",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										Utils.downloadFile(CONTEXT, url, contentDisposition, mimetype);
+									}
+								}).setNegativeButton("Watch",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int id) {
+										Intent intent = new Intent(Intent.ACTION_VIEW);
+										intent.setDataAndType(Uri.parse(url),"video/mp4");
+										intent.putExtra("acr.browser.barebones.Download", 1);
+										startActivity(intent);
+									}
+								});
+				AlertDialog alert = builder.create();
+				alert.show();
+				
+				
+			} else {
+				Utils.downloadFile(CONTEXT, url, contentDisposition, mimetype);
+			}
 		}
 
 	}
@@ -828,9 +858,9 @@ public class BarebonesActivity extends Activity {
 							case DialogInterface.BUTTON_NEUTRAL: {
 								if (API > 8) {
 									String url = result.getExtra();
-									
+
 									Utils.downloadFile(CONTEXT, url, null, null);
-									
+
 								}
 								break;
 							}
@@ -1014,8 +1044,6 @@ public class BarebonesActivity extends Activity {
 
 	}
 
-	
-
 	@SuppressLint("SetJavaScriptEnabled")
 	CustomWebView browserSettings(CustomWebView view) {
 		view.setAnimationCacheEnabled(false);
@@ -1044,10 +1072,10 @@ public class BarebonesActivity extends Activity {
 																			// or
 																			// disable
 		}
-		
+
 		webViewSettings.setAllowFileAccess(true);
-		if(API<14){
-			switch(settings.getInt("textsize", 3)){
+		if (API < 14) {
+			switch (settings.getInt("textsize", 3)) {
 			case 1:
 				webViewSettings.setTextSize(WebSettings.TextSize.LARGEST);
 				break;
@@ -1064,10 +1092,9 @@ public class BarebonesActivity extends Activity {
 				webViewSettings.setTextSize(WebSettings.TextSize.SMALLEST);
 				break;
 			}
-		
-		}
-		else{
-			switch(settings.getInt("textsize", 3)){
+
+		} else {
+			switch (settings.getInt("textsize", 3)) {
 			case 1:
 				webViewSettings.setTextZoom(200);
 				break;
@@ -1106,7 +1133,6 @@ public class BarebonesActivity extends Activity {
 		default:
 			break;
 		}
-		
 
 		if (API < 18) {
 			if (settings.getBoolean("passwords", false)) {
@@ -1136,8 +1162,10 @@ public class BarebonesActivity extends Activity {
 
 		webViewSettings.setBuiltInZoomControls(true);
 		webViewSettings.setSupportZoom(true);
-		webViewSettings.setUseWideViewPort(true);
-		webViewSettings.setLoadWithOverviewMode(true);
+		webViewSettings.setUseWideViewPort(settings.getBoolean("wideviewport",
+				true));
+		webViewSettings.setLoadWithOverviewMode(settings.getBoolean(
+				"overviewmode", true));
 		if (API >= 11) {
 			webViewSettings.setDisplayZoomControls(false);
 			webViewSettings.setAllowContentAccess(true);
@@ -1147,8 +1175,9 @@ public class BarebonesActivity extends Activity {
 		} else {
 			webViewSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 		}
-		
-		webViewSettings.setBlockNetworkImage(settings.getBoolean("blockimages", false));
+
+		webViewSettings.setBlockNetworkImage(settings.getBoolean("blockimages",
+				false));
 		webViewSettings.setLoadsImagesAutomatically(true);
 		return view;
 	}
@@ -1570,7 +1599,7 @@ public class BarebonesActivity extends Activity {
 		historyHandler = new DatabaseHandler(this);
 		cookieManager = CookieManager.getInstance();
 		CookieSyncManager.createInstance(CONTEXT);
-		cookieManager.setAcceptCookie(true);
+		cookieManager.setAcceptCookie(settings.getBoolean("cookies", true));
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		if (API >= 11) {
@@ -1587,9 +1616,11 @@ public class BarebonesActivity extends Activity {
 		slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
 		slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
 		fadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+		fadeOut.setDuration(250);
 		fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-		mShortAnimationDuration = getResources().getInteger(
-				android.R.integer.config_mediumAnimTime);
+		// mShortAnimationDuration = getResources().getInteger(
+		// android.R.integer.config_mediumAnimTime);
+		mShortAnimationDuration = 250;
 		slideUp.setAnimationListener(new AnimationListener() {
 
 			@Override
@@ -2179,14 +2210,22 @@ public class BarebonesActivity extends Activity {
 
 		String url = intent.getDataString();
 		int id = -1;
+		int download = -1;
 		try {
 			id = intent.getExtras().getInt("acr.browser.barebones.Origin") - 1;
 		} catch (NullPointerException e) {
 			id = -1;
 		}
+		try {
+			download = intent.getExtras().getInt("acr.browser.barebones.Download");
+		} catch (NullPointerException e) {
+			download = -1;
+		}
 		if (id >= 0) {
 			main[id].loadUrl(url);
-		} else if (url != null) {
+		} else if (download == 1){
+			Utils.downloadFile(CONTEXT, url, null, null);
+		} else if(url != null) {
 			newTab(number, url, true, false);
 		}
 
@@ -2203,7 +2242,8 @@ public class BarebonesActivity extends Activity {
 		case R.id.bookmark:
 			if (urlToLoad[pageId][1] != null) {
 				if (!urlToLoad[pageId][1].equals("Bookmarks")) {
-					Utils.addBookmark(CONTEXT, urlToLoad[pageId][1],urlToLoad[pageId][0]);
+					Utils.addBookmark(CONTEXT, urlToLoad[pageId][1],
+							urlToLoad[pageId][0]);
 				}
 			}
 			return true;
@@ -2273,9 +2313,7 @@ public class BarebonesActivity extends Activity {
 
 	void openBookmarks(CustomWebView view) {
 		String bookmarkHtml = BookmarkPageVariables.Heading;
-		
-		
-		
+
 		for (int n = 0; n < MAX_BOOKMARKS; n++) {
 			if (bUrl[n] != null) {
 				bookmarkHtml += (BookmarkPageVariables.Part1 + bUrl[n]
@@ -2328,7 +2366,9 @@ public class BarebonesActivity extends Activity {
 								if (urlToLoad[pageId][1] != null) {
 									if (!urlToLoad[pageId][1]
 											.equals("Bookmarks")) {
-										Utils.addBookmark(CONTEXT, urlToLoad[pageId][1],urlToLoad[pageId][0]);
+										Utils.addBookmark(CONTEXT,
+												urlToLoad[pageId][1],
+												urlToLoad[pageId][0]);
 									}
 								}
 								return true;

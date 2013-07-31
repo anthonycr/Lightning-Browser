@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class AdvancedSettingsActivity extends Activity {
 
@@ -38,8 +40,8 @@ public class AdvancedSettingsActivity extends Activity {
 	static final String preferences = "settings";
 	static SharedPreferences settings;
 	static SharedPreferences.Editor edit;
-	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10;
-	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7;
+	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12;
+	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,8 @@ public class AdvancedSettingsActivity extends Activity {
 		r8 = (RelativeLayout) findViewById(R.id.r8);
 		r9 = (RelativeLayout) findViewById(R.id.r9);
 		r10 = (RelativeLayout) findViewById(R.id.r10);
+		r11 = (RelativeLayout) findViewById(R.id.r11);
+		r12 = (RelativeLayout) findViewById(R.id.r12);
 
 		cb1 = (CheckBox) findViewById(R.id.cb1);
 		cb2 = (CheckBox) findViewById(R.id.cb2);
@@ -70,6 +74,8 @@ public class AdvancedSettingsActivity extends Activity {
 		cb5 = (CheckBox) findViewById(R.id.cb5);
 		cb6 = (CheckBox) findViewById(R.id.cb6);
 		cb7 = (CheckBox) findViewById(R.id.cb7);
+		cb8 = (CheckBox) findViewById(R.id.cb8);
+		cb9 = (CheckBox) findViewById(R.id.cb9);
 
 		cb1.setChecked(settings.getBoolean("passwords", true));
 		cb2.setChecked(settings.getBoolean("cache", false));
@@ -77,7 +83,9 @@ public class AdvancedSettingsActivity extends Activity {
 		cb4.setChecked(settings.getBoolean("textreflow", false));
 		cb5.setChecked(settings.getBoolean("blockimages", false));
 		cb6.setChecked(settings.getBoolean("newwindows", true));
-		cb7.setChecked(settings.getBoolean("alwaysincognito", false));
+		cb7.setChecked(settings.getBoolean("cookies", true));
+		cb8.setChecked(settings.getBoolean("wideviewport", true));
+		cb9.setChecked(settings.getBoolean("overviewmode", true));
 
 		r1(r1);
 		r2(r2);
@@ -89,6 +97,8 @@ public class AdvancedSettingsActivity extends Activity {
 		r8(r8);
 		r9(r9);
 		r10(r10);
+		r11(r11);
+		r12(r12);
 		cb1(cb1);
 		cb2(cb2);
 		cb3(cb3);
@@ -96,7 +106,18 @@ public class AdvancedSettingsActivity extends Activity {
 		cb5(cb5);
 		cb6(cb6);
 		cb7(cb7);
+		cb8(cb8);
+		cb9(cb9);
 		back();
+		
+		TextView importBookmarks = (TextView)findViewById(R.id.isImportAvailable);
+		
+		if(BarebonesActivity.noStockBrowser){
+			importBookmarks.setText("(No Browser Available)");
+		}
+		else{
+			importBookmarks.setText("(Supported Browser Detected)");
+		}
 	}
 
 	void back() {
@@ -195,7 +216,32 @@ public class AdvancedSettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				edit.putBoolean("alwaysincognito", isChecked);
+				edit.putBoolean("cookies", isChecked);
+				edit.commit();
+			}
+
+		});
+	}
+	
+	void cb8(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				edit.putBoolean("wideviewport", isChecked);
+				edit.commit();
+			}
+
+		});
+	}
+	void cb9(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				edit.putBoolean("overviewmode", isChecked);
 				edit.commit();
 			}
 
@@ -331,6 +377,31 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
+	void r11(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				cb8.setChecked(!cb8.isChecked());
+			}
+
+		});
+		
+	}
+	
+	void r12(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				cb9.setChecked(!cb9.isChecked());
+			}
+
+		});
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void clearHistory() {
 		CookieManager c = CookieManager.getInstance();
@@ -356,11 +427,14 @@ public class AdvancedSettingsActivity extends Activity {
 	}
 
 	void r9(RelativeLayout view) {
+		
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+				
 				importFromStockBrowser();
+				
 			}
 
 		});
@@ -373,7 +447,7 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(
 						AdvancedSettingsActivity.this);
-				picker.setTitle("Search Engine");
+				picker.setTitle("Text Size");
 				CharSequence[] chars = { "Largest", "Large", "Normal", "Small", "Smallest"};
 			
 				int n = settings.getInt("textsize", 3);
