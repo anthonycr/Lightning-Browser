@@ -337,32 +337,39 @@ public class BarebonesActivity extends Activity {
 				final String contentDisposition, final String mimetype,
 				long contentLength) {
 			if (url.endsWith(".mp4")) {
-				
-				
+
 				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
 				builder.setTitle("Open as...");
-				builder.setMessage("Do you want to download this video or watch it in an app?")
+				builder.setMessage(
+						"Do you want to download this video or watch it in an app?")
 						.setCancelable(true)
 						.setPositiveButton("Download",
 								new DialogInterface.OnClickListener() {
 									@Override
-									public void onClick(DialogInterface dialog, int id) {
-										Utils.downloadFile(CONTEXT, url, contentDisposition, mimetype);
+									public void onClick(DialogInterface dialog,
+											int id) {
+										Utils.downloadFile(CONTEXT, url,
+												contentDisposition, mimetype);
 									}
-								}).setNegativeButton("Watch",
+								})
+						.setNegativeButton("Watch",
 								new DialogInterface.OnClickListener() {
 									@Override
-									public void onClick(DialogInterface dialog, int id) {
-										Intent intent = new Intent(Intent.ACTION_VIEW);
-										intent.setDataAndType(Uri.parse(url),"video/mp4");
-										intent.putExtra("acr.browser.barebones.Download", 1);
+									public void onClick(DialogInterface dialog,
+											int id) {
+										Intent intent = new Intent(
+												Intent.ACTION_VIEW);
+										intent.setDataAndType(Uri.parse(url),
+												"video/mp4");
+										intent.putExtra(
+												"acr.browser.barebones.Download",
+												1);
 										startActivity(intent);
 									}
 								});
 				AlertDialog alert = builder.create();
 				alert.show();
-				
-				
+
 			} else {
 				Utils.downloadFile(CONTEXT, url, contentDisposition, mimetype);
 			}
@@ -1182,27 +1189,14 @@ public class BarebonesActivity extends Activity {
 		return view;
 	}
 
-	boolean deleteDir(File dir) {
-		if (dir != null && dir.isDirectory()) {
-			String[] children = dir.list();
-			for (String aChildren : children) {
-				boolean success = deleteDir(new File(dir, aChildren));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-
-		// The directory is now empty so delete it
-		return dir.delete();
-	}
-
 	void deleteTab(final int del) {
 		if (API >= 11) {
 			main[del].onPause();
 		}
 		main[del].stopLoading();
 		main[del].clearHistory();
+		edit.putString("oldPage", urlToLoad[del][0]);
+		edit.commit();
 		urlToLoad[del][0] = null;
 		urlToLoad[del][1] = null;
 		if (API < 16) {
@@ -1792,6 +1786,27 @@ public class BarebonesActivity extends Activity {
 
 			}
 		});
+		newTab.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				if (settings.getString("oldPage", "").length() > 0) {
+					newTab(number, settings.getString("oldPage", ""), true,
+							false);
+					edit.putString("oldPage", "");
+					edit.commit();
+					tabScroll.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							tabScroll.smoothScrollTo(
+									urlTitle[pageId].getLeft(), 0);
+						}
+					}, 100L);
+				}
+				return true;
+			}
+
+		});
 		refresh = (ImageView) findViewById(R.id.refresh);
 		refreshLayout.setOnClickListener(new OnClickListener() {
 
@@ -2217,15 +2232,16 @@ public class BarebonesActivity extends Activity {
 			id = -1;
 		}
 		try {
-			download = intent.getExtras().getInt("acr.browser.barebones.Download");
+			download = intent.getExtras().getInt(
+					"acr.browser.barebones.Download");
 		} catch (NullPointerException e) {
 			download = -1;
 		}
 		if (id >= 0) {
 			main[id].loadUrl(url);
-		} else if (download == 1){
+		} else if (download == 1) {
 			Utils.downloadFile(CONTEXT, url, null, null);
-		} else if(url != null) {
+		} else if (url != null) {
 			newTab(number, url, true, false);
 		}
 
@@ -2466,18 +2482,6 @@ public class BarebonesActivity extends Activity {
 			main[pageId].loadUrl("http://" + query);
 		} else {
 			main[pageId].loadUrl(query);
-		}
-	}
-
-	void trimCache(Context context) {
-		try {
-			File dir = context.getCacheDir();
-
-			if (dir != null && dir.isDirectory()) {
-				deleteDir(dir);
-			}
-		} catch (Exception ignored) {
-
 		}
 	}
 }

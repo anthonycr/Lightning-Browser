@@ -139,15 +139,14 @@ public class SettingsActivity extends Activity {
 			break;
 		}
 		RelativeLayout r1, r2, r3;
-		r1 = (RelativeLayout)findViewById(R.id.setR1);
-		r2 = (RelativeLayout)findViewById(R.id.setR2);
-		r3 = (RelativeLayout)findViewById(R.id.setR3);
+		r1 = (RelativeLayout) findViewById(R.id.setR1);
+		r2 = (RelativeLayout) findViewById(R.id.setR2);
+		r3 = (RelativeLayout) findViewById(R.id.setR3);
 		if (API >= 14) {
 			Switch location = new Switch(this);
 			Switch fullScreen = new Switch(this);
 			Switch flash = new Switch(this);
 
-			
 			r1.addView(location);
 			r2.addView(fullScreen);
 			r3.addView(flash);
@@ -158,10 +157,10 @@ public class SettingsActivity extends Activity {
 			} else {
 				flash.setChecked(false);
 			}
-			
+
 			initSwitch(location, fullScreen, flash);
-			clickListenerForSwitches(
-					layoutLocation, layoutFullScreen, layoutFlash, location, fullScreen, flash);
+			clickListenerForSwitches(layoutLocation, layoutFullScreen,
+					layoutFlash, location, fullScreen, flash);
 
 		} else {
 			CheckBox location = new CheckBox(this);
@@ -180,8 +179,8 @@ public class SettingsActivity extends Activity {
 				flash.setChecked(false);
 			}
 			initCheckBox(location, fullScreen, flash);
-			clickListenerForCheckBoxes(
-					layoutLocation, layoutFullScreen, layoutFlash, location, fullScreen, flash);
+			clickListenerForCheckBoxes(layoutLocation, layoutFullScreen,
+					layoutFlash, location, fullScreen, flash);
 		}
 
 		RelativeLayout agent = (RelativeLayout) findViewById(R.id.layoutUserAgent);
@@ -202,17 +201,18 @@ public class SettingsActivity extends Activity {
 		easterEgg();
 	}
 
-	public void search(){
-		RelativeLayout search = (RelativeLayout)findViewById(R.id.layoutSearch);
-		search.setOnClickListener(new OnClickListener(){
+	public void search() {
+		RelativeLayout search = (RelativeLayout) findViewById(R.id.layoutSearch);
+		search.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(
 						SettingsActivity.this);
 				picker.setTitle("Search Engine");
-				CharSequence[] chars = { "Google (Suggested)", "Bing", "Yahoo", "StartPage", "DuckDuckGo (Privacy)" };
-			
+				CharSequence[] chars = { "Google (Suggested)", "Bing", "Yahoo",
+						"StartPage", "DuckDuckGo (Privacy)" };
+
 				int n = settings.getInt("search", 1);
 
 				picker.setSingleChoiceItems(chars, n - 1,
@@ -221,9 +221,9 @@ public class SettingsActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								edit.putInt("search", which+1);
+								edit.putInt("search", which + 1);
 								edit.commit();
-								switch (which+1) {
+								switch (which + 1) {
 								case 1:
 									searchText.setText("Google");
 									break;
@@ -240,7 +240,7 @@ public class SettingsActivity extends Activity {
 									searchText.setText("DuckDuckGo");
 									break;
 								}
-								}
+							}
 						});
 				picker.setNeutralButton("OK",
 						new DialogInterface.OnClickListener() {
@@ -253,65 +253,65 @@ public class SettingsActivity extends Activity {
 						});
 				picker.show();
 			}
-			
+
 		});
 	}
-	
-	public void clickListenerForCheckBoxes(
-			RelativeLayout one, RelativeLayout two, RelativeLayout three, final CheckBox loc,
+
+	public void clickListenerForCheckBoxes(RelativeLayout one,
+			RelativeLayout two, RelativeLayout three, final CheckBox loc,
 			final CheckBox full, final CheckBox flash) {
-		one.setOnClickListener(new OnClickListener(){
+		one.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				loc.setChecked(!loc.isChecked());
 			}
-			
+
 		});
-		two.setOnClickListener(new OnClickListener(){
+		two.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				full.setChecked(!full.isChecked());
 			}
-			
+
 		});
-		three.setOnClickListener(new OnClickListener(){
+		three.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				flash.setChecked(!flash.isChecked());
 			}
-			
+
 		});
 	}
-	
-	public void clickListenerForSwitches(
-			RelativeLayout one, RelativeLayout two, RelativeLayout three, final Switch loc,
+
+	public void clickListenerForSwitches(RelativeLayout one,
+			RelativeLayout two, RelativeLayout three, final Switch loc,
 			final Switch full, final Switch flash) {
-		one.setOnClickListener(new OnClickListener(){
+		one.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				loc.setChecked(!loc.isChecked());
 			}
-			
+
 		});
-		two.setOnClickListener(new OnClickListener(){
+		two.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				full.setChecked(!full.isChecked());
 			}
-			
+
 		});
-		three.setOnClickListener(new OnClickListener(){
+		three.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				flash.setChecked(!flash.isChecked());
 			}
-			
+
 		});
 	}
 
@@ -327,8 +327,8 @@ public class SettingsActivity extends Activity {
 							Toast.LENGTH_SHORT).show();
 				}
 				if (egg == 15) {
-					Toast.makeText(SettingsActivity.this, "Easter Egg goes here",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(SettingsActivity.this,
+							"Easter Egg goes here", Toast.LENGTH_SHORT).show();
 					egg = 0;
 				}
 
@@ -362,19 +362,28 @@ public class SettingsActivity extends Activity {
 				edit.commit();
 				boolean flashInstalled = false;
 				try {
-				  PackageManager pm = getPackageManager();
-				  ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
-				  if (ai != null)
-				    flashInstalled = true;
+					PackageManager pm = getPackageManager();
+					ApplicationInfo ai = pm.getApplicationInfo(
+							"com.adobe.flashplayer", 0);
+					if (ai != null)
+						flashInstalled = true;
 				} catch (NameNotFoundException e) {
-				  flashInstalled = false;
+					flashInstalled = false;
 				}
-				if(!flashInstalled){
-					Utils.createInformativeDialog(SettingsActivity.this, "Warning", "Adobe Flash Player was not detected.\n" +
-							"Please install Flash Player.");
+				if (!flashInstalled && isChecked) {
+					Utils.createInformativeDialog(SettingsActivity.this,
+							"Warning", "Adobe Flash Player was not detected.\n"
+									+ "Please install Flash Player.");
 					buttonView.setChecked(false);
 					edit.putInt("enableflash", 0);
 					edit.commit();
+
+				} else if ((API > 17) && isChecked) {
+					Utils.createInformativeDialog(
+							SettingsActivity.this,
+							"Warning",
+							"Adobe Flash does not support Android 4.3 and will"
+									+ "crash the browser, please do not report crashes that occur if you enable flash.");
 				}
 			}
 
@@ -391,8 +400,9 @@ public class SettingsActivity extends Activity {
 
 		});
 	}
-	
-	public void initCheckBox(CheckBox location, CheckBox fullscreen, CheckBox flash) {
+
+	public void initCheckBox(CheckBox location, CheckBox fullscreen,
+			CheckBox flash) {
 		location.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -417,19 +427,28 @@ public class SettingsActivity extends Activity {
 				edit.commit();
 				boolean flashInstalled = false;
 				try {
-				  PackageManager pm = getPackageManager();
-				  ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
-				  if (ai != null)
-				    flashInstalled = true;
+					PackageManager pm = getPackageManager();
+					ApplicationInfo ai = pm.getApplicationInfo(
+							"com.adobe.flashplayer", 0);
+					if (ai != null)
+						flashInstalled = true;
 				} catch (NameNotFoundException e) {
-				  flashInstalled = false;
+					flashInstalled = false;
 				}
-				if(!flashInstalled){
-					Utils.createInformativeDialog(SettingsActivity.this, "Warning", "Adobe Flash Player was not detected.\n" +
-							"Please install Flash Player.");
+				if (!flashInstalled && isChecked) {
+					Utils.createInformativeDialog(SettingsActivity.this,
+							"Warning", "Adobe Flash Player was not detected.\n"
+									+ "Please install Flash Player.");
 					buttonView.setChecked(false);
 					edit.putInt("enableflash", 0);
 					edit.commit();
+
+				} else if ((API > 17) && isChecked) {
+					Utils.createInformativeDialog(
+							SettingsActivity.this,
+							"Warning",
+							"Adobe Flash does not support Android 4.3 and will"
+									+ "crash the browser, please do not report crashes that occur if you enable flash.");
 				}
 
 			}
