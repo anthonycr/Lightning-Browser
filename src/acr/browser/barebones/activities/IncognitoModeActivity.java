@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +20,10 @@ import acr.browser.barebones.databases.SpaceTokenizer;
 import acr.browser.barebones.utilities.BookmarkPageVariables;
 import acr.browser.barebones.utilities.FinalVariables;
 import acr.browser.barebones.utilities.HistoryPageVariables;
+import acr.browser.barebones.utilities.Utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -42,9 +43,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Browser;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
@@ -75,7 +76,6 @@ import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
-import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebChromeClient.CustomViewCallback;
@@ -105,6 +105,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class IncognitoModeActivity extends Activity {
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -120,22 +121,19 @@ public class IncognitoModeActivity extends Activity {
 				long estimatedDatabaseSize, long totalQuota,
 				QuotaUpdater quotaUpdater) {
 			quotaUpdater.updateQuota(totalQuota + estimatedDatabaseSize);
-			super.onExceededDatabaseQuota(url, databaseIdentifier, quota,
-					estimatedDatabaseSize, totalQuota, quotaUpdater);
+
+		}
+
+		@Override
+		public void onProgressChanged(WebView view, int newProgress) {
+
+			super.onProgressChanged(view, newProgress);
 		}
 
 		@Override
 		public void onReachedMaxAppCacheSize(long requiredStorage, long quota,
 				QuotaUpdater quotaUpdater) {
 			quotaUpdater.updateQuota(quota + requiredStorage);
-			super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
-		}
-
-		@Override
-		public void onCloseWindow(WebView window) {
-			closeWindow = window.getId();
-			browserHandler.sendEmptyMessage(2);
-			super.onCloseWindow(window);
 		}
 
 		@Override
@@ -155,6 +153,15 @@ public class IncognitoModeActivity extends Activity {
 						android.R.layout.simple_spinner_item, null);
 			}
 			return mVideoProgressView;
+		}
+
+		@Override
+		public void onCloseWindow(WebView window) {
+			Message msg = Message.obtain();
+			msg.what = 3;
+			msg.arg1 = window.getId();
+			browserHandler.sendMessage(msg);
+			super.onCloseWindow(window);
 		}
 
 		@Override
@@ -241,7 +248,6 @@ public class IncognitoModeActivity extends Activity {
 		@Override
 		public void onReceivedTitle(final WebView view, final String title) {
 			numberPage = view.getId();
-
 			if (title != null && title.length() != 0) {
 				urlTitle[numberPage].setText(title);
 				urlToLoad[numberPage][1] = title;
@@ -335,45 +341,76 @@ public class IncognitoModeActivity extends Activity {
 		public void onDownloadStart(final String url, String userAgent,
 				final String contentDisposition, final String mimetype,
 				long contentLength) {
-			try {
-				Thread downloader = new Thread(new Runnable() {
-					@SuppressLint("InlinedApi")
-					@Override
-					public void run() {
-						DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-						Uri nice = Uri.parse(url);
-						DownloadManager.Request it = new DownloadManager.Request(
-								nice);
-						String fileName = URLUtil.guessFileName(url,
-								contentDisposition, mimetype);
-						if (API >= 11) {
-							it.allowScanningByMediaScanner();
-							it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-						}
+			if (url.endsWith(".mp4") || url.endsWith(".m4a")) {
 
-						it.setDestinationInExternalPublicDir(
-								Environment.DIRECTORY_DOWNLOADS, fileName);
-						Log.i("IncognitoMode", "Downloading" + fileName);
-						download.enqueue(it);
-					}
-				});
-				downloader.run();
-			} catch (NullPointerException e) {
-				Log.e("IncognitoMode", "Problem downloading");
-				Toast.makeText(CONTEXT, "Error Downloading File",
-						Toast.LENGTH_SHORT).show();
-			} catch (IllegalArgumentException e) {
-				Log.e("IncognitoMode", "Problem downloading");
-				Toast.makeText(CONTEXT, "Error Downloading File",
-						Toast.LENGTH_SHORT).show();
-			} catch (SecurityException ignored) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
+				builder.setTitle("Open as...");
+				builder.setMessage(
+						"Do you want to download this video or watch it in an app?")
+						.setCancelable(true)
+						.setPositiveButton("Download",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int id) {
+										Utils.downloadFile(CONTEXT, url,
+												contentDisposition, mimetype);
+									}
+								})
+						.setNegativeButton("Watch",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int id) {
+										Intent intent = new Intent(
+												Intent.ACTION_VIEW);
+										intent.setDataAndType(Uri.parse(url),
+												"video/mp4");
+										intent.putExtra(
+												"acr.browser.barebones.Download",
+												1);
+										startActivity(intent);
+									}
+								});
+				AlertDialog alert = builder.create();
+				alert.show();
 
+			} else {
+				Utils.downloadFile(CONTEXT, url, contentDisposition, mimetype);
 			}
 		}
 
 	}
 
-	public class CustomWebViewClient extends WebViewClient {
+	public class IncognitoWebViewClient extends WebViewClient {
+
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+			urlIntent
+					.putExtra("acr.browser.barebones.Origin", view.getId() + 1);
+			if (url.startsWith("market://")
+					|| url.startsWith("http://play.google.com")
+					|| url.startsWith("https://play.google.com")) {
+				startActivity(urlIntent);
+				return true;
+			} else if (url.startsWith("http://www.youtube.com")
+					|| url.startsWith("https://www.youtube.com")) {
+				startActivity(urlIntent);
+				return true;
+			} else if (url.startsWith("http://maps.google.com")
+					|| url.startsWith("https://maps.google.com")) {
+				startActivity(urlIntent);
+				return true;
+			} else if (url.contains("tel:") || TextUtils.isDigitsOnly(url)) {
+				startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(url)));
+				return true;
+			} else if (url.contains("mailto:")) {
+				startActivity(new Intent(Intent.ACTION_SEND, Uri.parse(url)));
+				return true;
+			}
+			return false;
+		}
 
 		@Override
 		public void onReceivedHttpAuthRequest(final WebView view,
@@ -432,20 +469,19 @@ public class IncognitoModeActivity extends Activity {
 
 		@Override
 		public void onPageFinished(WebView view, final String url) {
-
 			if (view.isShown()) {
 				view.invalidate();
 				progressBar.setVisibility(View.GONE);
 				refresh.setVisibility(View.VISIBLE);
+
 				if (showFullScreen && uBar.isShown()) {
 					uBar.startAnimation(slideUp);
 				}
 			}
-			view.getSettings()
-					.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+			view.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
 			Log.i("Lightning", "Page Finished");
 			loadTime = System.currentTimeMillis() - loadTime;
-			Log.i("Lightning", "Load Time: "+loadTime);
+			Log.i("Lightning", "Load Time: " + loadTime);
 			super.onPageFinished(view, url);
 		}
 
@@ -464,7 +500,6 @@ public class IncognitoModeActivity extends Activity {
 			if (view.isShown()) {
 				refresh.setVisibility(View.INVISIBLE);
 				progressBar.setVisibility(View.VISIBLE);
-
 				setUrlText(url);
 			}
 
@@ -626,16 +661,17 @@ public class IncognitoModeActivity extends Activity {
 	}
 
 	public void setUrlText(String url) {
-		if (!url.startsWith("file:///")) {
-			getUrl.setText(url);
-		} else {
-			getUrl.setText("");
+		if (url != null) {
+			if (!url.startsWith("file://")) {
+				getUrl.setText(url);
+			} else {
+				getUrl.setText("");
+			}
 		}
 	}
 
 	public class TabTouchListener implements OnTouchListener {
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			id = v.getId();
@@ -835,52 +871,10 @@ public class IncognitoModeActivity extends Activity {
 							}
 							case DialogInterface.BUTTON_NEUTRAL: {
 								if (API > 8) {
-									try {
-										Thread down = new Thread(
-												new Runnable() {
-													@SuppressLint("InlinedApi")
-													@Override
-													public void run() {
+									String url = result.getExtra();
 
-														DownloadManager download = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-														Uri nice = Uri.parse(result
-																.getExtra());
-														DownloadManager.Request it = new DownloadManager.Request(
-																nice);
-														String fileName = URLUtil.guessFileName(
-																result.getExtra(),
-																null, null);
+									Utils.downloadFile(CONTEXT, url, null, null);
 
-														if (API >= 11) {
-															it.allowScanningByMediaScanner();
-															it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-														}
-
-														it.setDestinationInExternalPublicDir(
-																Environment.DIRECTORY_DOWNLOADS,
-																fileName);
-														Log.i("IncognitoMode",
-																"Downloading"
-																		+ fileName);
-														download.enqueue(it);
-													}
-												});
-										down.run();
-									} catch (NullPointerException e) {
-										Log.e("IncognitoMode",
-												"Problem downloading");
-										Toast.makeText(CONTEXT,
-												"Error Downloading File",
-												Toast.LENGTH_SHORT).show();
-									} catch (IllegalArgumentException e) {
-										Log.e("IncognitoMode",
-												"Problem downloading");
-										Toast.makeText(CONTEXT,
-												"Error Downloading File",
-												Toast.LENGTH_SHORT).show();
-									} catch (SecurityException ignored) {
-
-									}
 								}
 								break;
 							}
@@ -901,7 +895,6 @@ public class IncognitoModeActivity extends Activity {
 
 				} else {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
@@ -970,9 +963,11 @@ public class IncognitoModeActivity extends Activity {
 	public static ImageView refresh;
 	public static ProgressBar progressBar;
 	public static String defaultUser;
+	public static Drawable webpageOther;
 	public static Drawable incognitoPage;
 	public static Drawable exitTab;
 	public static int numberPage;
+	public static long loadTime = 0;
 	public static int number;
 	public static int pageId = 0;
 	public static int agentPicker;
@@ -990,7 +985,6 @@ public class IncognitoModeActivity extends Activity {
 	public static int urlColumn;
 	public static int titleColumn;
 	public static int closeWindow;
-	public static long loadTime = 0;
 	public static View mCustomView = null;
 	public static CustomViewCallback mCustomViewCallback;
 	public static boolean isPhone = false;
@@ -999,6 +993,7 @@ public class IncognitoModeActivity extends Activity {
 	public static boolean deleteHistory;
 	public static boolean saveTabs;
 	public static boolean showFullScreen;
+	public static boolean noStockBrowser = true;
 	public static SharedPreferences settings;
 	public static SharedPreferences.Editor edit;
 	public static String desktop;
@@ -1006,6 +1001,7 @@ public class IncognitoModeActivity extends Activity {
 	public static String user;
 	public static String urlA;
 	public static String title;
+	public static String[] memoryURL = new String[MAX_TABS];
 	public static final String[] bUrl = new String[MAX_BOOKMARKS];
 	public static final String[] bTitle = new String[MAX_BOOKMARKS];
 	public static String[] columns;
@@ -1043,10 +1039,6 @@ public class IncognitoModeActivity extends Activity {
 
 	public static LinearLayout tabLayout;
 
-	public static String[] GetArray(String input) {
-		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
-	}
-
 	@SuppressWarnings("unused")
 	public static void setFavicon(int id, Bitmap favicon) {
 		Drawable icon = null;
@@ -1068,13 +1060,13 @@ public class IncognitoModeActivity extends Activity {
 				android.R.color.white));
 		view.setWillNotCacheDrawing(false);
 		view.setLongClickable(true);
+		view.setAlwaysDrawnWithCacheEnabled(true);
 		view.setScrollbarFadingEnabled(true);
 		view.setFocusable(true);
 		view.setFocusableInTouchMode(true);
 		view.setSaveEnabled(true);
 		view.setBackgroundColor(0xFFFFFFFF);
 		WebSettings webViewSettings = view.getSettings();
-		
 		if (settings.getBoolean("java", true)) {
 			webViewSettings.setJavaScriptEnabled(true);
 			webViewSettings.setJavaScriptCanOpenWindowsAutomatically(true); // TODO
@@ -1086,30 +1078,53 @@ public class IncognitoModeActivity extends Activity {
 																			// or
 																			// disable
 		}
-		webViewSettings.setBlockNetworkImage(false);
+
 		webViewSettings.setAllowFileAccess(true);
-		webViewSettings.setLightTouchEnabled(true);
+		if (API < 14) {
+			switch (settings.getInt("textsize", 3)) {
+			case 1:
+				webViewSettings.setTextSize(WebSettings.TextSize.LARGEST);
+				break;
+			case 2:
+				webViewSettings.setTextSize(WebSettings.TextSize.LARGER);
+				break;
+			case 3:
+				webViewSettings.setTextSize(WebSettings.TextSize.NORMAL);
+				break;
+			case 4:
+				webViewSettings.setTextSize(WebSettings.TextSize.SMALLER);
+				break;
+			case 5:
+				webViewSettings.setTextSize(WebSettings.TextSize.SMALLEST);
+				break;
+			}
+
+		} else {
+			switch (settings.getInt("textsize", 3)) {
+			case 1:
+				webViewSettings.setTextZoom(200);
+				break;
+			case 2:
+				webViewSettings.setTextZoom(150);
+				break;
+			case 3:
+				webViewSettings.setTextZoom(100);
+				break;
+			case 4:
+				webViewSettings.setTextZoom(75);
+				break;
+			case 5:
+				webViewSettings.setTextZoom(50);
+				break;
+			}
+		}
 		webViewSettings.setSupportMultipleWindows(settings.getBoolean(
 				"newwindow", true));
 		webViewSettings.setDomStorageEnabled(true);
 		webViewSettings.setAppCacheEnabled(true);
 		webViewSettings.setAppCachePath(getApplicationContext().getFilesDir()
-				.getAbsolutePath() + "/incognito_cache");
-		try {
-			webViewSettings.setRenderPriority(RenderPriority.HIGH); // TODO do I
-																	// want this
-																	// here or
-																	// at normal
-		} catch (SecurityException ignored) {
+				.getAbsolutePath() + "/cache");
 
-		}
-		webViewSettings.setGeolocationEnabled(false);
-		webViewSettings.setGeolocationDatabasePath(getApplicationContext()
-				.getFilesDir().getAbsolutePath());
-		webViewSettings.setDatabaseEnabled(true);
-		webViewSettings.setDatabasePath(getApplicationContext().getFilesDir()
-				.getAbsolutePath() + "/databases");
-		
 		switch (settings.getInt("enableflash", 0)) {
 		case 0:
 			break;
@@ -1125,15 +1140,37 @@ public class IncognitoModeActivity extends Activity {
 			break;
 		}
 
+		if (API < 18) {
+			if (settings.getBoolean("passwords", false)) {
+				webViewSettings.setSavePassword(true);
+				webViewSettings.setSaveFormData(true);
+			}
+			try {
+				webViewSettings.setLightTouchEnabled(true);
+				webViewSettings.setRenderPriority(RenderPriority.HIGH);
+
+			} catch (SecurityException ignored) {
+
+			}
+		} else {
+			if (settings.getBoolean("passwords", false)) {
+				webViewSettings.setSaveFormData(true);
+			}
+		}
+		webViewSettings.setGeolocationEnabled(true);
+		webViewSettings.setGeolocationDatabasePath(getApplicationContext()
+				.getFilesDir().getAbsolutePath());
+		webViewSettings.setDatabaseEnabled(true);
+		webViewSettings.setDatabasePath(getApplicationContext().getFilesDir()
+				.getAbsolutePath() + "/databases");
+
 		webViewSettings.setUserAgentString(userAgent);
-		
-			webViewSettings.setSavePassword(false);
-			webViewSettings.setSaveFormData(false);
-		
-		webViewSettings.setBuiltInZoomControls(true);
 		webViewSettings.setSupportZoom(true);
-		webViewSettings.setUseWideViewPort(true);
-		webViewSettings.setLoadWithOverviewMode(true);
+		webViewSettings.setBuiltInZoomControls(true);
+		webViewSettings.setUseWideViewPort(settings.getBoolean("wideviewport",
+				true));
+		webViewSettings.setLoadWithOverviewMode(settings.getBoolean(
+				"overviewmode", true));
 		if (API >= 11) {
 			webViewSettings.setDisplayZoomControls(false);
 			webViewSettings.setAllowContentAccess(true);
@@ -1144,41 +1181,28 @@ public class IncognitoModeActivity extends Activity {
 			webViewSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 		}
 
+		webViewSettings.setBlockNetworkImage(settings.getBoolean("blockimages",
+				false));
 		webViewSettings.setLoadsImagesAutomatically(true);
 		return view;
 	}
 
-	boolean deleteDir(File dir) {
-		if (dir != null && dir.isDirectory()) {
-			String[] children = dir.list();
-			for (String aChildren : children) {
-				boolean success = deleteDir(new File(dir, aChildren));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-
-		// The directory is now empty so delete it
-		return dir.delete();
-	}
-
-	@SuppressWarnings("deprecation")
 	void deleteTab(final int del) {
 		if (API >= 11) {
 			main[del].onPause();
 		}
 		main[del].stopLoading();
 		main[del].clearHistory();
-		main[del].freeMemory();
+		edit.putString("oldPage", urlToLoad[del][0]);
+		edit.commit();
 		urlToLoad[del][0] = null;
 		urlToLoad[del][1] = null;
-
 		if (API < 16) {
 			urlTitle[del].setBackgroundDrawable(active);
 		} else {
 			urlTitle[del].setBackground(active);
 		}
+
 		urlTitle[del].setPadding(leftPad, 0, rightPad, 0);
 		Animation yolo = AnimationUtils.loadAnimation(this, R.anim.down);
 		yolo.setAnimationListener(new AnimationListener() {
@@ -1203,7 +1227,6 @@ public class IncognitoModeActivity extends Activity {
 		uBar.bringToFront();
 	}
 
-	@SuppressWarnings("deprecation")
 	void findNewView(int id) {
 		int leftId = id;
 		boolean right = false, left = false;
@@ -1369,9 +1392,29 @@ public class IncognitoModeActivity extends Activity {
 			@Override
 			public void run() {
 
-				
+				Cursor c = null;
 				Cursor managedCursor = null;
 				columns = new String[] { "url", "title" };
+				try {
+
+					bookmarks = Browser.BOOKMARKS_URI;
+					c = getContentResolver().query(bookmarks, columns, null,
+							null, null);
+				} catch (SQLiteException ignored) {
+				} catch (IllegalStateException ignored) {
+				} catch (NullPointerException ignored) {
+				}
+
+				if (c != null) {
+					noStockBrowser = false;
+					Log.i("Barebones", "detected AOSP browser");
+				} else {
+					noStockBrowser = true;
+					Log.e("Barebones", "did not detect AOSP browser");
+				}
+				if (c != null) {
+					c.close();
+				}
 				try {
 
 					managedCursor = null;
@@ -1438,14 +1481,13 @@ public class IncognitoModeActivity extends Activity {
 					String url;
 					url = ((TextView) arg1.findViewById(R.id.url)).getText()
 							.toString();
-					main[pageId].loadUrl(url);
-					setUrlText(url);
+					searchTheWeb(url);
 					url = null;
 					getUrl.setPadding(tenPad, 0, tenPad, 0);
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
 				} catch (NullPointerException e) {
-					Log.e("IncognitoMode Error: ",
+					Log.e("Barebones Error: ",
 							"NullPointerException on item click");
 				}
 			}
@@ -1493,9 +1535,9 @@ public class IncognitoModeActivity extends Activity {
 	public void finish() {
 		background.clearDisappearingChildren();
 		tabScroll.clearDisappearingChildren();
+		main[pageId].clearCache(true);
+		Log.i("Lightning", "Cache Cleared");
 		super.finish();
-		main[0].clearCache(true);
-
 	}
 
 	void forward() {
@@ -1550,6 +1592,7 @@ public class IncognitoModeActivity extends Activity {
 		cookieManager.setAcceptCookie(false);
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+
 		if (API >= 11) {
 			progressBar.setIndeterminateDrawable(getResources().getDrawable(
 					R.drawable.ics_animation));
@@ -1564,9 +1607,11 @@ public class IncognitoModeActivity extends Activity {
 		slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
 		slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
 		fadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+		fadeOut.setDuration(250);
 		fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-		mShortAnimationDuration = getResources().getInteger(
-				android.R.integer.config_mediumAnimTime);
+		// mShortAnimationDuration = getResources().getInteger(
+		// android.R.integer.config_mediumAnimTime);
+		mShortAnimationDuration = 250;
 		slideUp.setAnimationListener(new AnimationListener() {
 
 			@Override
@@ -1610,7 +1655,11 @@ public class IncognitoModeActivity extends Activity {
 		refreshLayout.setBackgroundResource(R.drawable.button);
 
 		// user agent
-		user = new WebView(CONTEXT).getSettings().getUserAgentString();
+		if (API < 17) {
+			user = new WebView(CONTEXT).getSettings().getUserAgentString();
+		} else {
+			user = WebSettings.getDefaultUserAgent(this);
+		}
 
 		background = (FrameLayout) findViewById(R.id.holder);
 		defaultUser = user; // setting mobile user
@@ -1676,6 +1725,7 @@ public class IncognitoModeActivity extends Activity {
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 		// opens icondatabase so that favicons can be stored
+
 		WebIconDatabase.getInstance().open(
 				getDir("icons", MODE_PRIVATE).getPath());
 
@@ -1700,9 +1750,9 @@ public class IncognitoModeActivity extends Activity {
 		tenPad = (int) (10 * scale + 0.5f);
 		number = 0;
 
-		
+		webpageOther = getResources().getDrawable(R.drawable.webpage);
 		incognitoPage = getResources().getDrawable(R.drawable.incognito);
-		
+		webpageOther.setBounds(0, 0, width / 2, height / 2);
 		incognitoPage.setBounds(0, 0, width / 2, height / 2);
 		exitTab.setBounds(0, 0, width * 2 / 3, height * 2 / 3);
 
@@ -1710,7 +1760,7 @@ public class IncognitoModeActivity extends Activity {
 
 			@Override
 			public void run() {
-				initializeTabs(); // restores old tabs or creates a new one
+				reopenOldTabs(); // restores old tabs or creates a new one
 
 			}
 
@@ -1733,6 +1783,27 @@ public class IncognitoModeActivity extends Activity {
 
 			}
 		});
+		newTab.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				if (settings.getString("oldPage", "").length() > 0) {
+					newTab(number, settings.getString("oldPage", ""), true,
+							false);
+					edit.putString("oldPage", "");
+					edit.commit();
+					tabScroll.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							tabScroll.smoothScrollTo(
+									urlTitle[pageId].getLeft(), 0);
+						}
+					}, 100L);
+				}
+				return true;
+			}
+
+		});
 		refresh = (ImageView) findViewById(R.id.refresh);
 		refreshLayout.setOnClickListener(new OnClickListener() {
 
@@ -1753,41 +1824,38 @@ public class IncognitoModeActivity extends Activity {
 			bg.removeView(uBar);
 			background.addView(uBar);
 		}
-		browserHandler = new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				switch (msg.what) {
-				case 1: {
-					main[pageId].loadUrl(getUrl.getText().toString());
-					break;
-				}
-				case 2: {
-					deleteTab(closeWindow);
-					break;
-				}
-				case 3: {
-					main[pageId].invalidate();
-					break;
-				}
-				}
-			}
-		};
+		browserHandler = new Handle();
+
 	}
 
-	void initializeTabs() {
-		Intent url = getIntent();
-		String URL = url.getDataString();
-		if (URL != null) {
-			// opens a new tab with the URL if its there
-			newTab(number, URL, true, false);
-			main[number - 1].resumeTimers();
+	class Handle extends Handler {
 
-		} else {
-			// otherwise it opens the home-page
-			newTab(number, homepage, true, false);
-			main[number - 1].resumeTimers();
-
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 1: {
+				main[pageId].loadUrl(getUrl.getText().toString());
+				break;
+			}
+			case 2: {
+				deleteTab(msg.arg1);
+				break;
+			}
+			case 3: {
+				main[pageId].invalidate();
+				break;
+			}
+			}
+			super.handleMessage(msg);
 		}
+
+	}
+
+	void reopenOldTabs() {
+		// it opens the home-page
+		newTab(number, homepage, true, false);
+		main[number - 1].resumeTimers();
+
 	}
 
 	public IncognitoWebView makeTab(final int pageToView, String Url,
@@ -1795,7 +1863,7 @@ public class IncognitoModeActivity extends Activity {
 		IncognitoWebView view = new IncognitoWebView(CONTEXT);
 		view.setId(pageToView);
 		allowLocation = settings.getBoolean("location", false);
-		view.setWebViewClient(new CustomWebViewClient());
+		view.setWebViewClient(new IncognitoWebViewClient());
 		view.setWebChromeClient(new CustomChromeClient());
 		if (API > 8) {
 			view.setDownloadListener(new CustomDownloadListener());
@@ -1833,7 +1901,7 @@ public class IncognitoModeActivity extends Activity {
 			view.loadUrl(Url);
 
 		}
-		Log.i("IncognitoMode", "tab complete");
+		Log.i("Barebones", "tab complete");
 		return view;
 	}
 
@@ -1842,10 +1910,9 @@ public class IncognitoModeActivity extends Activity {
 	}
 
 	// new tab method, takes the id of the tab to be created and the url to load
-	@SuppressWarnings("deprecation")
 	int newTab(int theId, final String theUrl, final boolean display,
 			final boolean incognito_mode) {
-		Log.i("IncognitoMode", "making tab");
+		Log.i("Barebones", "making tab");
 
 		int finalID = 0;
 		homepage = settings.getString("home", HOMEPAGE);
@@ -1897,8 +1964,8 @@ public class IncognitoModeActivity extends Activity {
 						urlTitle[pageId].setBackground(inactive);
 					}
 				}
-				urlTitle[num].setCompoundDrawables(incognitoPage, null, exitTab,
-						null);
+				urlTitle[num].setCompoundDrawables(incognitoPage, null,
+						exitTab, null);
 				urlTitle[num].setPadding(leftPad, 0, rightPad, 0);
 				urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
 				main[num] = makeTab(num, theUrl, display);
@@ -1951,7 +2018,7 @@ public class IncognitoModeActivity extends Activity {
 				title.setId(number);
 				title.setGravity(Gravity.CENTER_VERTICAL);
 
-				title.setCompoundDrawables(incognitoPage, null, exitTab, null);
+				title.setCompoundDrawables(webpageOther, null, exitTab, null);
 
 				Drawable[] drawables = title.getCompoundDrawables();
 				bounds = drawables[2].getBounds();
@@ -2013,13 +2080,12 @@ public class IncognitoModeActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-
+		if (showFullScreen && !uBar.isShown()) {
+			uBar.startAnimation(slideDown);
+		}
 		if (main[pageId] != null && main[pageId].canGoBack()) {
 			main[pageId].stopLoading();
 			main[pageId].goBack();
-			if (showFullScreen && !uBar.isShown()) {
-				uBar.startAnimation(slideDown);
-			}
 		} else {
 			deleteTab(pageId);
 			uBar.bringToFront();
@@ -2030,8 +2096,7 @@ public class IncognitoModeActivity extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		// TODO
-
-		main[pageId].getSettings().setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
+		super.onConfigurationChanged(newConfig);
 		if (settings.getBoolean("textreflow", false)) {
 			main[pageId].getSettings().setLayoutAlgorithm(
 					LayoutAlgorithm.NARROW_COLUMNS);
@@ -2039,7 +2104,7 @@ public class IncognitoModeActivity extends Activity {
 			main[pageId].getSettings().setLayoutAlgorithm(
 					LayoutAlgorithm.NORMAL);
 		}
-		super.onConfigurationChanged(newConfig);
+
 	}
 
 	@Override
@@ -2065,33 +2130,6 @@ public class IncognitoModeActivity extends Activity {
 		isPhone = sizeInInches < 6.5;
 		forward();// forward button
 		back();
-		int first = settings.getInt("first", 0);
-
-		if (first == 0) { // This dialog alerts the user to some navigation
-							// techniques
-			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-					case DialogInterface.BUTTON_POSITIVE:
-						break;
-
-					}
-				}
-			};
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT); // dialog
-			builder.setTitle("Browser Tips");
-			builder.setMessage(
-					"\nLong-press back button to exit browser"
-							+ "\n\nSet your homepage in settings to about:blank to set a blank page as your default"
-							+ "\n\nSet the homepage to about:home to set bookmarks as your homepage"
-							+ "\n\nLong-press a link to open in a new tab"
-							+ "\n\nCheck out the settings for more stuff!")
-					.setPositiveButton("Ok", dialogClickListener).show();
-			edit.putInt("first", 1);
-			edit.commit();
-		}
 	}
 
 	@Override
@@ -2107,6 +2145,11 @@ public class IncognitoModeActivity extends Activity {
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (!settings.getBoolean("restoreclosed", true)) {
+				for (int n = 0; n < MAX_TABS; n++) {
+					urlToLoad[n][0] = null;
+				}
+			}
 			finish();
 			return true;
 		} else
@@ -2120,17 +2163,24 @@ public class IncognitoModeActivity extends Activity {
 		case R.id.history:
 			generateHistory(main[pageId]);
 			return true;
+		case R.id.settings:
+			newSettings();
+			return true;
 		case R.id.allBookmarks:
-			if (!urlToLoad[pageId][1].equals("Bookmarks")) {
+			if (urlToLoad[pageId][1] == null) {
+				goBookmarks(main[pageId]);
+			} else if (!urlToLoad[pageId][1].equals("Bookmarks")) {
 				goBookmarks(main[pageId]);
 			}
+
 			return true;
+
 		case R.id.incognito:
-			newTab(number,homepage,true,true);
+			startActivity(new Intent(FinalVariables.INCOGNITO_INTENT));
 			// newTab(number, homepage, true, true);
 			return true;
 		default:
-			return false;
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -2143,20 +2193,26 @@ public class IncognitoModeActivity extends Activity {
 			}
 			main[pageId].pauseTimers();
 		}
+
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (main[pageId].getProgress() == 100) {
+			progressBar.setVisibility(View.GONE);
+			refresh.setVisibility(View.VISIBLE);
+		}
 		if (API >= 11) {
 			main[pageId].onResume();
 		}
-		main[0].resumeTimers();
+		main[pageId].resumeTimers();
 
 	}
 
 	void openBookmarks(IncognitoWebView view) {
 		String bookmarkHtml = BookmarkPageVariables.Heading;
+
 		for (int n = 0; n < MAX_BOOKMARKS; n++) {
 			if (bUrl[n] != null) {
 				bookmarkHtml += (BookmarkPageVariables.Part1 + bUrl[n]
@@ -2205,13 +2261,21 @@ public class IncognitoModeActivity extends Activity {
 							case R.id.history:
 								generateHistory(main[pageId]);
 								return true;
+							case R.id.settings:
+								newSettings();
+								return true;
 							case R.id.allBookmarks:
-								if (!urlToLoad[pageId][1].equals("Bookmarks")) {
+								if (urlToLoad[pageId][1] == null) {
+									goBookmarks(main[pageId]);
+								} else if (!urlToLoad[pageId][1]
+										.equals("Bookmarks")) {
 									goBookmarks(main[pageId]);
 								}
 								return true;
+
 							case R.id.incognito:
-								newTab(number,homepage,true,true);
+								startActivity(new Intent(
+										FinalVariables.INCOGNITO_INTENT));
 								// newTab(number, homepage, true, true);
 								return true;
 							default:
@@ -2242,26 +2306,23 @@ public class IncognitoModeActivity extends Activity {
 	void searchTheWeb(String query) {
 		query = query.trim();
 		main[pageId].stopLoading();
-		
-		if(query.startsWith("www.")){
+
+		if (query.startsWith("www.")) {
 			query = "http://" + query;
-		}
-		else if(query.startsWith("ftp.")){
+		} else if (query.startsWith("ftp.")) {
 			query = "ftp://" + query;
 		}
-		
+
 		boolean containsPeriod = query.contains(".");
-		boolean isIPAddress = (TextUtils.isDigitsOnly(query.replace(".", ""))&&(query.replace(".", "").length()>=4));
+		boolean isIPAddress = (TextUtils.isDigitsOnly(query.replace(".", "")) && (query
+				.replace(".", "").length() >= 4));
 		boolean aboutScheme = query.contains("about:");
-		boolean validURL = (query.startsWith("ftp://")||
-				query.startsWith("http://")||
-				query.startsWith("file://")||
-				query.startsWith("https://"))||
-				isIPAddress;
+		boolean validURL = (query.startsWith("ftp://")
+				|| query.startsWith("http://") || query.startsWith("file://") || query
+					.startsWith("https://")) || isIPAddress;
 		boolean isSearch = ((query.contains(" ") || !containsPeriod) && !aboutScheme);
-				
-		if (query.contains("about:home")
-				|| query.contains("about:bookmarks")) {
+
+		if (query.contains("about:home") || query.contains("about:bookmarks")) {
 			goBookmarks(main[pageId]);
 		} else if (query.contains("about:history")) {
 			generateHistory(main[pageId]);
@@ -2272,18 +2333,6 @@ public class IncognitoModeActivity extends Activity {
 			main[pageId].loadUrl("http://" + query);
 		} else {
 			main[pageId].loadUrl(query);
-		}
-	}
-
-	void trimCache(Context context) {
-		try {
-			File dir = context.getCacheDir();
-
-			if (dir != null && dir.isDirectory()) {
-				deleteDir(dir);
-			}
-		} catch (Exception ignored) {
-
 		}
 	}
 }

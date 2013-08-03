@@ -8,6 +8,8 @@ import acr.browser.barebones.utilities.FinalVariables;
 import acr.browser.barebones.utilities.Utils;
 import acr.browser.barebones.activities.BarebonesActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Browser;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,6 +31,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AdvancedSettingsActivity extends Activity {
 
@@ -42,6 +45,8 @@ public class AdvancedSettingsActivity extends Activity {
 	static SharedPreferences.Editor edit;
 	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13;
 	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10;
+	static Context CONTEXT;
+	Handler messageHandler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +54,9 @@ public class AdvancedSettingsActivity extends Activity {
 		setContentView(R.layout.advanced_settings);
 		settings = getSharedPreferences(preferences, 0);
 		edit = settings.edit();
+		CONTEXT = this;
 		initialize();
+		
 	}
 
 	void initialize() {
@@ -118,13 +125,29 @@ public class AdvancedSettingsActivity extends Activity {
 		TextView importBookmarks = (TextView)findViewById(R.id.isImportAvailable);
 		
 		if(BarebonesActivity.noStockBrowser){
-			importBookmarks.setText("(No Browser Available)");
+			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
 		}
 		else{
-			importBookmarks.setText("(Supported Browser Detected)");
+			importBookmarks.setText(getResources().getString(R.string.stock_browser_available));
 		}
+		
+		messageHandler = new MessageHandler();
 	}
 
+	static class MessageHandler extends Handler{
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what){
+			case 1:
+				Utils.showToast(CONTEXT, "History Cleared");
+				break;
+			}
+			super.handleMessage(msg);
+		}
+		
+	}
+	
 	void back() {
 		ImageView back = (ImageView) findViewById(R.id.advanced_back);
 		back.setBackgroundResource(R.drawable.button);
@@ -454,8 +477,11 @@ public class AdvancedSettingsActivity extends Activity {
 			}
 		}
 		trimCache(AdvancedSettingsActivity.this);
+		messageHandler.sendEmptyMessage(1);
 	}
 
+	
+	
 	void r9(RelativeLayout view) {
 		
 		view.setOnClickListener(new OnClickListener() {
@@ -550,23 +576,24 @@ public class AdvancedSettingsActivity extends Activity {
 
 				String title = "";
 				String url = "";
-
+				int number = 0;
 				if (mCur.moveToFirst() && mCur.getCount() > 0) {
 					while (mCur.isAfterLast() == false) {
-
+						number++;
 						title = mCur.getString(mCur
 								.getColumnIndex(Browser.BookmarkColumns.TITLE));
 						url = mCur.getString(mCur
 								.getColumnIndex(Browser.BookmarkColumns.URL));
-						Utils.addBookmark(getBaseContext(),title,url);
+						Utils.addBookmark(CONTEXT,title,url);
 						mCur.moveToNext();
 					}
 				}
+				Utils.showToast(CONTEXT, number + " Bookmarks were imported");
 			} catch (NullPointerException ignored) {
 			}
 		}
 		else{
-			Utils.createInformativeDialog(getBaseContext(), "Error", "No browser was detected to import bookmarks from.");
+			Utils.createInformativeDialog(CONTEXT, "Error", "No browser was detected to import bookmarks from.");
 		}
 	}
 	

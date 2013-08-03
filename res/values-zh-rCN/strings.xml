@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning+</string>
+    <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">浏览器设置</string>
     <string name="location">允许站点访问您地理位置</string>
@@ -17,5 +17,12 @@
     <string name="settingshelp">设置仅将应用于新标签页</string>
     <string name="fullscreen">启用全屏模式</string>
     <string name="java">启用 JavaScript</string>
+    <string name="menu_history">History</string>
+    <string name="menu_add">添加书签</string>
+    <string name="menu_bookmarks">书签列表</string>
+    <string name="menu_share">分享页面</string>
+    <string name="menu_settings">应用设置</string>
+    <string name="menu_incognito">Incognito tab</string>
+    <string name="menu_new_tab">New tab</string>
 
 </resources>

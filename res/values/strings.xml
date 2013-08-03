@@ -33,7 +33,7 @@
     <string name="block">Block Images</string>
     <string name="window">Allow sites to open new windows</string>
     <string name="cookies">Enable Cookies</string>
-    <string name="importbookmarks">Import bookmarks from Stock Browser</string>
+    <string name="importbookmarks">Import bookmarks from Browser</string>
     <string name="size">Text size</string>
     <string name="title_activity_advanced_settings">AdvancedSettings</string>
     <string name="hello_world">Hello world!</string>
@@ -44,5 +44,14 @@
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>
+    <string name="menu_history">History</string>
+    <string name="menu_add">Add bookmark</string>
+    <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_incognito">Incognito tab</string>
+    <string name="menu_new_tab">New tab</string>
+    <string name="stock_browser_unavailable">(No stock browser detected)</string>
+    <string name="stock_browser_available">(Supported stock browser detected)</string>
 
 </resources>

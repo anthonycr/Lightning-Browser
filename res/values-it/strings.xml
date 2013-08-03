@@ -4,7 +4,7 @@
     <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">Impostazioni del browser</string>
-    <string name="location">Consenti ai siti di accedere alla tua posizione</string>
+    <string name="location">Accedere alla tua posizione</string>
     <string name="password">Salva le tue password</string>
     <string name="agent">User Agent</string>
     <string name="history">Clear history on exit</string>
@@ -17,5 +17,12 @@
     <string name="settingshelp">Impostazioni valgono solo per le nuove schede</string>
     <string name="fullscreen">Enable fullscreen mode</string>
     <string name="java">Enable JavaScript</string>
+    <string name="menu_history">History</string>
+    <string name="menu_add">Aggiungi ai preferiti</string>
+    <string name="menu_bookmarks">Segnalibri</string>
+    <string name="menu_share">Azione</string>
+    <string name="menu_settings">Impostazioni</string>
+    <string name="menu_incognito">Incognito tab</string>
+    <string name="menu_new_tab">New tab</string>
 
 </resources>

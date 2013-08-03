@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import acr.browser.barebones.activities.AdvancedSettingsActivity;
 import acr.browser.barebones.databases.DatabaseHandler;
 import acr.browser.barebones.databases.HistoryItem;
 import android.annotation.SuppressLint;
@@ -175,6 +176,10 @@ public class Utils {
 		} catch (SecurityException ignored) {
 
 		}
+	}
+	
+	public static void showToast(Context context, String message){
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 	
 }

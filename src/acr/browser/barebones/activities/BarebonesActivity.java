@@ -664,10 +664,12 @@ public class BarebonesActivity extends Activity {
 	}
 
 	public void setUrlText(String url) {
-		if (!url.startsWith("file://")) {
-			getUrl.setText(url);
-		} else {
-			getUrl.setText("");
+		if (url != null) {
+			if (!url.startsWith("file://")) {
+				getUrl.setText(url);
+			} else {
+				getUrl.setText("");
+			}
 		}
 	}
 
@@ -2134,13 +2136,12 @@ public class BarebonesActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-
+		if (showFullScreen && !uBar.isShown()) {
+			uBar.startAnimation(slideDown);
+		}
 		if (main[pageId] != null && main[pageId].canGoBack()) {
 			main[pageId].stopLoading();
 			main[pageId].goBack();
-			if (showFullScreen && !uBar.isShown()) {
-				uBar.startAnimation(slideDown);
-			}
 		} else {
 			deleteTab(pageId);
 			uBar.bringToFront();

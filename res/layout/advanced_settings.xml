@@ -402,7 +402,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/importbookmarks"
                     android:paddingLeft="10dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearance" />
 
                 <TextView
                     android:id="@+id/isImportAvailable"

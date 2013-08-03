@@ -2,12 +2,12 @@
     <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">Paramètres</string>
-    <string name="location">Autoriser les sites à accéder à ma position</string>
+    <string name="location">Accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">User Agent</string>
     <string name="history">Effacer l\'historique à la sortie</string>
     <string name="email">Contactez moi</string>
-    <string name="flash">Activer Adobe Flash Player (s\'il est installé)</string>
+    <string name="flash">Activer Adobe Flash Player</string>
     <string name="mobile">Voir la version mobile</string>
     <string name="desk">Voir la version ordinateur</string>
     <string name="custom">Utiliser un User Agent personnalisé</string>
@@ -15,4 +15,11 @@
     <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
+    <string name="menu_history">History</string>
+    <string name="menu_add">Aj. Favoris</string>
+    <string name="menu_bookmarks">Favoris</string>
+    <string name="menu_share">Partager</string>
+    <string name="menu_settings">Paramètres</string>
+    <string name="menu_incognito">Incognito tab</string>
+    <string name="menu_new_tab">New tab</string>
 </resources>

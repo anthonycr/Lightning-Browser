@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Lightning+</string>
+    <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">瀏覽器設定</string>
     <string name="location">允許網頁存取您的位置資訊</string>
@@ -16,4 +16,11 @@
     <string name="settingshelp">設定僅套用於新的標簽頁</string>
     <string name="fullscreen">啓用全螢幕模式</string>
     <string name="java">啓用 JavaScript</string>
+    <string name="menu_history">History</string>
+    <string name="menu_add">加入到書簽</string>
+    <string name="menu_bookmarks">我的書簽</string>
+    <string name="menu_share">分享頁面</string>
+    <string name="menu_settings">設定</string>
+    <string name="menu_incognito">Incognito tab</string>
+    <string name="menu_new_tab">New tab</string>
 </resources>
