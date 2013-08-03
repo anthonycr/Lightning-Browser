@@ -3,7 +3,7 @@ package acr.browser.barebones.customwebview;
 import java.lang.reflect.Method;
 
 import acr.browser.barebones.activities.IncognitoModeActivity;
-import acr.browser.barebones.variables.FinalVariables;
+import acr.browser.barebones.utilities.FinalVariables;
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;

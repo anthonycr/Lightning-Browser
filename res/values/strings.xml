@@ -43,5 +43,6 @@
     <string name="search_hint">Search</string>
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
+    <string name="restore">Restore lost tabs on start</string>
 
 </resources>

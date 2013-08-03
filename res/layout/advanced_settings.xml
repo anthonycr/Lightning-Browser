@@ -348,13 +348,37 @@
 
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/r13"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/blueback" 
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/restore"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/cb10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+            <RelativeLayout
                 android:id="@+id/r8"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:background="@drawable/blueback" >
 
                 <TextView
-                    android:id="@+id/textView9"
+                   
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -372,7 +396,6 @@
                 android:background="@drawable/blueback" >
 
                 <TextView
-                    android:id="@+id/textView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -401,7 +424,6 @@
                 android:background="@drawable/blueback" >
 
                 <TextView
-                    android:id="@+id/textView11"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"

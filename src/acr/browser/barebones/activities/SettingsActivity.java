@@ -4,8 +4,8 @@ import acr.browser.barebones.R;
 import acr.browser.barebones.R.drawable;
 import acr.browser.barebones.R.id;
 import acr.browser.barebones.R.layout;
-import acr.browser.barebones.variables.FinalVariables;
-import acr.browser.barebones.variables.Utils;
+import acr.browser.barebones.utilities.FinalVariables;
+import acr.browser.barebones.utilities.Utils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -382,7 +382,7 @@ public class SettingsActivity extends Activity {
 					Utils.createInformativeDialog(
 							SettingsActivity.this,
 							"Warning",
-							"Adobe Flash does not support Android 4.3 and will"
+							"Adobe Flash does not support Android 4.3 and will "
 									+ "crash the browser, please do not report crashes that occur if you enable flash.");
 				}
 			}

@@ -17,7 +17,7 @@
 <HorizontalScrollView
     android:id="@+id/tabScroll"
     android:layout_width="match_parent"
-    android:layout_height="32dp"
+    android:layout_height="30dp"
     android:layout_alignParentLeft="true"
     android:layout_alignParentRight="true"
     android:layout_alignParentTop="true"
@@ -44,8 +44,8 @@
 
             <ImageView
                 android:id="@+id/newTab"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/new_tab" />
 
         </LinearLayout>
@@ -119,7 +119,6 @@
             android:layout_centerVertical="true"
             android:indeterminate="true"
            />
-
 </RelativeLayout>
 
         <MultiAutoCompleteTextView
@@ -137,6 +136,8 @@
             android:inputType="textUri"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
             android:singleLine="true"
             android:textColor="@color/dark" />
 
@@ -148,6 +149,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/urlBar" >
+    
         </FrameLayout>
     
 </RelativeLayout>

@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,10 @@ import acr.browser.barebones.R;
 import acr.browser.barebones.customwebview.CustomWebView;
 import acr.browser.barebones.databases.DatabaseHandler;
 import acr.browser.barebones.databases.SpaceTokenizer;
-import acr.browser.barebones.variables.BookmarkPageVariables;
-import acr.browser.barebones.variables.FinalVariables;
-import acr.browser.barebones.variables.HistoryPageVariables;
-import acr.browser.barebones.variables.Utils;
+import acr.browser.barebones.utilities.BookmarkPageVariables;
+import acr.browser.barebones.utilities.FinalVariables;
+import acr.browser.barebones.utilities.HistoryPageVariables;
+import acr.browser.barebones.utilities.Utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -121,6 +122,13 @@ public class BarebonesActivity extends Activity {
 				QuotaUpdater quotaUpdater) {
 			quotaUpdater.updateQuota(totalQuota + estimatedDatabaseSize);
 
+		}
+
+		@Override
+		public void onProgressChanged(WebView view, int newProgress) {
+			
+			
+			super.onProgressChanged(view, newProgress);
 		}
 
 		@Override
@@ -336,7 +344,7 @@ public class BarebonesActivity extends Activity {
 		public void onDownloadStart(final String url, String userAgent,
 				final String contentDisposition, final String mimetype,
 				long contentLength) {
-			if (url.endsWith(".mp4")) {
+			if (url.endsWith(".mp4")||url.endsWith(".m4a")) {
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT);
 				builder.setTitle("Open as...");
@@ -468,6 +476,7 @@ public class BarebonesActivity extends Activity {
 				view.invalidate();
 				progressBar.setVisibility(View.GONE);
 				refresh.setVisibility(View.VISIBLE);
+		
 				if (showFullScreen && uBar.isShown()) {
 					uBar.startAnimation(slideUp);
 				}
@@ -494,7 +503,6 @@ public class BarebonesActivity extends Activity {
 			if (view.isShown()) {
 				refresh.setVisibility(View.INVISIBLE);
 				progressBar.setVisibility(View.VISIBLE);
-
 				setUrlText(url);
 			}
 
@@ -1031,7 +1039,7 @@ public class BarebonesActivity extends Activity {
 	public static Drawable active;
 
 	public static LinearLayout tabLayout;
-
+	
 	public static String[] GetArray(String input) {
 		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
 	}
@@ -1055,7 +1063,6 @@ public class BarebonesActivity extends Activity {
 	CustomWebView browserSettings(CustomWebView view) {
 		view.setAnimationCacheEnabled(false);
 		view.setDrawingCacheEnabled(true);
-
 		view.setBackgroundColor(getResources().getColor(android.R.color.white));
 		view.setDrawingCacheBackgroundColor(getResources().getColor(
 				android.R.color.white));
@@ -1079,7 +1086,7 @@ public class BarebonesActivity extends Activity {
 																			// or
 																			// disable
 		}
-
+		
 		webViewSettings.setAllowFileAccess(true);
 		if (API < 14) {
 			switch (settings.getInt("textsize", 3)) {
@@ -1166,9 +1173,8 @@ public class BarebonesActivity extends Activity {
 				.getAbsolutePath() + "/databases");
 
 		webViewSettings.setUserAgentString(userAgent);
-
-		webViewSettings.setBuiltInZoomControls(true);
 		webViewSettings.setSupportZoom(true);
+		webViewSettings.setBuiltInZoomControls(true);
 		webViewSettings.setUseWideViewPort(settings.getBoolean("wideviewport",
 				true));
 		webViewSettings.setLoadWithOverviewMode(settings.getBoolean(
@@ -1596,6 +1602,7 @@ public class BarebonesActivity extends Activity {
 		cookieManager.setAcceptCookie(settings.getBoolean("cookies", true));
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+		
 		if (API >= 11) {
 			progressBar.setIndeterminateDrawable(getResources().getDrawable(
 					R.drawable.ics_animation));
@@ -2214,6 +2221,11 @@ public class BarebonesActivity extends Activity {
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if(!settings.getBoolean("restoreclosed", true)){
+				for(int n = 0; n<MAX_TABS; n++){
+					urlToLoad[n][0] = null;
+				}
+			}
 			finish();
 			return true;
 		} else

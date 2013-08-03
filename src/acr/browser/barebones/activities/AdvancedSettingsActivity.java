@@ -3,9 +3,9 @@ package acr.browser.barebones.activities;
 import java.io.File;
 
 import acr.browser.barebones.R;
-import acr.browser.barebones.variables.BookmarkPageVariables;
-import acr.browser.barebones.variables.FinalVariables;
-import acr.browser.barebones.variables.Utils;
+import acr.browser.barebones.utilities.BookmarkPageVariables;
+import acr.browser.barebones.utilities.FinalVariables;
+import acr.browser.barebones.utilities.Utils;
 import acr.browser.barebones.activities.BarebonesActivity;
 import android.os.Bundle;
 import android.provider.Browser;
@@ -40,8 +40,8 @@ public class AdvancedSettingsActivity extends Activity {
 	static final String preferences = "settings";
 	static SharedPreferences settings;
 	static SharedPreferences.Editor edit;
-	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12;
-	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9;
+	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13;
+	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +66,7 @@ public class AdvancedSettingsActivity extends Activity {
 		r10 = (RelativeLayout) findViewById(R.id.r10);
 		r11 = (RelativeLayout) findViewById(R.id.r11);
 		r12 = (RelativeLayout) findViewById(R.id.r12);
+		r13 = (RelativeLayout) findViewById(R.id.r13);
 
 		cb1 = (CheckBox) findViewById(R.id.cb1);
 		cb2 = (CheckBox) findViewById(R.id.cb2);
@@ -76,6 +77,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb7 = (CheckBox) findViewById(R.id.cb7);
 		cb8 = (CheckBox) findViewById(R.id.cb8);
 		cb9 = (CheckBox) findViewById(R.id.cb9);
+		cb10 = (CheckBox) findViewById(R.id.cb10);
 
 		cb1.setChecked(settings.getBoolean("passwords", true));
 		cb2.setChecked(settings.getBoolean("cache", false));
@@ -86,6 +88,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb7.setChecked(settings.getBoolean("cookies", true));
 		cb8.setChecked(settings.getBoolean("wideviewport", true));
 		cb9.setChecked(settings.getBoolean("overviewmode", true));
+		cb10.setChecked(settings.getBoolean("restoreclosed", true));
 
 		r1(r1);
 		r2(r2);
@@ -99,6 +102,7 @@ public class AdvancedSettingsActivity extends Activity {
 		r10(r10);
 		r11(r11);
 		r12(r12);
+		r13(r13);
 		cb1(cb1);
 		cb2(cb2);
 		cb3(cb3);
@@ -108,6 +112,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb7(cb7);
 		cb8(cb8);
 		cb9(cb9);
+		cb10(cb10);
 		back();
 		
 		TextView importBookmarks = (TextView)findViewById(R.id.isImportAvailable);
@@ -242,6 +247,19 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				edit.putBoolean("overviewmode", isChecked);
+				edit.commit();
+			}
+
+		});
+	}
+	
+	void cb10(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				edit.putBoolean("restoreclosed", isChecked);
 				edit.commit();
 			}
 
@@ -397,6 +415,18 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				cb9.setChecked(!cb9.isChecked());
+			}
+
+		});
+	}
+	
+	void r13(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				cb10.setChecked(!cb10.isChecked());
 			}
 
 		});

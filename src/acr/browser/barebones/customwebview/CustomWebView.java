@@ -2,7 +2,7 @@ package acr.browser.barebones.customwebview;
 
 import java.lang.reflect.Method;
 import acr.browser.barebones.activities.BarebonesActivity;
-import acr.browser.barebones.variables.FinalVariables;
+import acr.browser.barebones.utilities.FinalVariables;
 import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,18 +26,18 @@ public final class CustomWebView extends WebView {
 		super(context);
 		this.setBackgroundResource(0);
 		
-		getControls();
+		//getControls();
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		
-		if (zoomShouldDie) {
+		/*if (zoomShouldDie) {
 			try {
 				zoomControl.getZoomControls().setVisibility(View.INVISIBLE);
 			} catch (IllegalArgumentException ignored) {
 			}
-		}
+		}*/
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN: {
 			first = true;
@@ -73,13 +73,14 @@ public final class CustomWebView extends WebView {
 		}
 		super.onWindowVisibilityChanged(visibility);
 	}
-
+/*
 	private void getControls() {
 		if (API < 11) {
 			try {
 				Class<?> webview = Class.forName("android.webkit.WebView");
 				Method method = webview.getMethod("getZoomButtonsController");
-				zoomControl = (ZoomButtonsController) method.invoke(this, (Object) null);
+				
+				zoomControl = (ZoomButtonsController) method.invoke(this, (Object[])null);
 				if (zoomControl != null) {
 					zoomShouldDie = true;
 				}
@@ -88,5 +89,5 @@ public final class CustomWebView extends WebView {
 			}
 		}
 	}
-
+*/
 }
