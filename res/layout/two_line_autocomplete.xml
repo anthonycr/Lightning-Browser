@@ -8,10 +8,11 @@
  >
     <TextView
         android:id="@+id/title"
-       android:clickable="false"
+        android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:maxLines="1"
         android:textColor="#000000"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="6dip"
@@ -24,6 +25,7 @@
         android:layout_weight="1"
         android:textColor="@color/dark" 
         android:paddingLeft="6dip"
-        android:paddingTop="5dip"
+        android:maxLines="1"
+        android:paddingTop="2dip"
         android:paddingBottom="10dip"/>
 </LinearLayout>

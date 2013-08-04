@@ -305,33 +305,26 @@ public class IncognitoModeActivity extends Activity {
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-
-			mUploadMessage = uploadMsg;
-			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-			i.addCategory(Intent.CATEGORY_OPENABLE);
-			i.setType("image/*");
-			IncognitoModeActivity.this.startActivityForResult(
-					Intent.createChooser(i, "File Browser"), 1);
+			mUploadMessage = uploadMsg;  
+            Intent i = new Intent(Intent.ACTION_GET_CONTENT);  
+            i.addCategory(Intent.CATEGORY_OPENABLE);  
+            i.setType("image/*");  
+            startActivityForResult(Intent.createChooser(i,"File Chooser"), 1);  
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg,
 				String acceptType) {
 			mUploadMessage = uploadMsg;
-			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-			i.addCategory(Intent.CATEGORY_OPENABLE);
-			i.setType("image/*");
-			IncognitoModeActivity.this.startActivityForResult(
-					Intent.createChooser(i, "File Browser"), 1);
+	           Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+	           i.addCategory(Intent.CATEGORY_OPENABLE);
+	           i.setType("*/*");
+	           startActivityForResult(
+	           Intent.createChooser(i, "File Browser"),1);
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg,
 				String acceptType, String capture) {
-			mUploadMessage = uploadMsg;
-			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-			i.addCategory(Intent.CATEGORY_OPENABLE);
-			i.setType("image/*");
-			IncognitoModeActivity.this.startActivityForResult(
-					Intent.createChooser(i, "File Browser"), 1);
+			openFileChooser(uploadMsg);
 		}
 	}
 
@@ -386,29 +379,6 @@ public class IncognitoModeActivity extends Activity {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-			urlIntent
-					.putExtra("acr.browser.barebones.Origin", view.getId() + 1);
-			if (url.startsWith("market://")
-					|| url.startsWith("http://play.google.com")
-					|| url.startsWith("https://play.google.com")) {
-				startActivity(urlIntent);
-				return true;
-			} else if (url.startsWith("http://www.youtube.com")
-					|| url.startsWith("https://www.youtube.com")) {
-				startActivity(urlIntent);
-				return true;
-			} else if (url.startsWith("http://maps.google.com")
-					|| url.startsWith("https://maps.google.com")) {
-				startActivity(urlIntent);
-				return true;
-			} else if (url.contains("tel:") || TextUtils.isDigitsOnly(url)) {
-				startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(url)));
-				return true;
-			} else if (url.contains("mailto:")) {
-				startActivity(new Intent(Intent.ACTION_SEND, Uri.parse(url)));
-				return true;
-			}
 			return false;
 		}
 
@@ -2083,8 +2053,7 @@ public class IncognitoModeActivity extends Activity {
 		if (showFullScreen && !uBar.isShown()) {
 			uBar.startAnimation(slideDown);
 		}
-		if (main[pageId] != null && main[pageId].canGoBack()) {
-			main[pageId].stopLoading();
+		if (main[pageId].isShown() && main[pageId].canGoBack()) {
 			main[pageId].goBack();
 		} else {
 			deleteTab(pageId);

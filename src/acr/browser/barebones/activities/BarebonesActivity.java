@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.MailTo;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -308,33 +308,26 @@ public class BarebonesActivity extends Activity {
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-
-			mUploadMessage = uploadMsg;
-			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-			i.addCategory(Intent.CATEGORY_OPENABLE);
-			i.setType("image/*");
-			BarebonesActivity.this.startActivityForResult(
-					Intent.createChooser(i, "File Browser"), 1);
+			mUploadMessage = uploadMsg;  
+            Intent i = new Intent(Intent.ACTION_GET_CONTENT);  
+            i.addCategory(Intent.CATEGORY_OPENABLE);  
+            i.setType("image/*");  
+            startActivityForResult(Intent.createChooser(i,"File Chooser"), 1);  
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg,
 				String acceptType) {
-			mUploadMessage = uploadMsg;
-			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-			i.addCategory(Intent.CATEGORY_OPENABLE);
-			i.setType("image/*");
-			BarebonesActivity.this.startActivityForResult(
-					Intent.createChooser(i, "File Browser"), 1);
+			   mUploadMessage = uploadMsg;
+	           Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+	           i.addCategory(Intent.CATEGORY_OPENABLE);
+	           i.setType("*/*");
+	           startActivityForResult(
+	           Intent.createChooser(i, "File Browser"),1);
 		}
 
 		public void openFileChooser(ValueCallback<Uri> uploadMsg,
 				String acceptType, String capture) {
-			mUploadMessage = uploadMsg;
-			Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-			i.addCategory(Intent.CATEGORY_OPENABLE);
-			i.setType("image/*");
-			BarebonesActivity.this.startActivityForResult(
-					Intent.createChooser(i, "File Browser"), 1);
+			openFileChooser(uploadMsg);
 		}
 	}
 
@@ -409,7 +402,10 @@ public class BarebonesActivity extends Activity {
 				startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(url)));
 				return true;
 			} else if (url.contains("mailto:")) {
-				startActivity(new Intent(Intent.ACTION_SEND, Uri.parse(url)));
+				MailTo mailTo = MailTo.parse(url);
+                Intent i = Utils.newEmailIntent(BarebonesActivity.this, mailTo.getTo(), mailTo.getSubject(), mailTo.getBody(), mailTo.getCc());
+                startActivity(i);
+                view.reload();
 				return true;
 			}
 			return false;
@@ -2139,8 +2135,7 @@ public class BarebonesActivity extends Activity {
 		if (showFullScreen && !uBar.isShown()) {
 			uBar.startAnimation(slideDown);
 		}
-		if (main[pageId] != null && main[pageId].canGoBack()) {
-			main[pageId].stopLoading();
+		if (main[pageId].isShown() && main[pageId].canGoBack()) {
 			main[pageId].goBack();
 		} else {
 			deleteTab(pageId);
