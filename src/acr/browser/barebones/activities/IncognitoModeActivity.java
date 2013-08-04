@@ -494,7 +494,7 @@ public class IncognitoModeActivity extends Activity {
 			if (url.startsWith("file:///")) {
 				view.getSettings().setUseWideViewPort(false);
 			} else {
-				view.getSettings().setUseWideViewPort(true);
+				view.getSettings().setUseWideViewPort(settings.getBoolean("wideviewport", true));
 			}
 
 			if (view.isShown()) {

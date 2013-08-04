@@ -36,8 +36,6 @@ import android.widget.Toast;
 public class AdvancedSettingsActivity extends Activity {
 
 	// settings variables
-	static boolean savePasswords, clearCache, enableJavaScript,
-			enableTextReflow, blockImages, newWindow, incognitoAlways;
 	static int defaultZoom, textSize;
 	static final int API = FinalVariables.API;
 	static final String preferences = "settings";

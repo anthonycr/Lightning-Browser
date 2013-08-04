@@ -105,12 +105,12 @@ public class SettingsActivity extends Activity {
 
 		download.setText(downloadLocation);
 
-		int code = 0;
+		String code = "HOLO";
 
 		try {
 			PackageInfo p = getPackageManager().getPackageInfo(
 					getPackageName(), 0);
-			code = p.versionCode;
+			code = p.versionName;
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -323,15 +323,12 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				egg++;
 				if (egg == 10) {
-					Toast.makeText(SettingsActivity.this, "Almost There",
-							Toast.LENGTH_SHORT).show();
-				}
-				if (egg == 15) {
-					Toast.makeText(SettingsActivity.this,
-							"Easter Egg goes here", Toast.LENGTH_SHORT).show();
+					startActivity(new Intent(
+							Intent.ACTION_VIEW,
+							Uri.parse("http://imgs.xkcd.com/comics/compiling.png")));
+					finish();
 					egg = 0;
 				}
-
 			}
 
 		});
