@@ -19,7 +19,7 @@ public class FinalVariables {
 	public static final String HOMEPAGE = "https://www.google.com/";
 	public static final String SETTINGS_INTENT = "android.intent.action.SETTINGS";
 	public static final String INCOGNITO_INTENT = "android.intent.action.BAREBONESINCOGNITO";
-	public static final String DOWNLOAD_LOCATION = Environment.getExternalStorageDirectory().toString()+Environment.DIRECTORY_DOWNLOADS;
+	public static final String DOWNLOAD_LOCATION = Environment.getExternalStorageDirectory().toString()+"/"+Environment.DIRECTORY_DOWNLOADS;
 	
 	
 	
