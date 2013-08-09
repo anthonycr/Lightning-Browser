@@ -88,6 +88,9 @@ public class SettingsActivity extends Activity {
 		case 5:
 			searchText.setText("DuckDuckGo");
 			break;
+		case 6:
+			searchText.setText("Baidu");
+			break;
 		}
 
 		back.setBackgroundResource(R.drawable.button);
@@ -211,7 +214,7 @@ public class SettingsActivity extends Activity {
 						SettingsActivity.this);
 				picker.setTitle("Search Engine");
 				CharSequence[] chars = { "Google (Suggested)", "Bing", "Yahoo",
-						"StartPage", "DuckDuckGo (Privacy)" };
+						"StartPage", "DuckDuckGo (Privacy)" ,"Baidu"};
 
 				int n = settings.getInt("search", 1);
 
@@ -238,6 +241,9 @@ public class SettingsActivity extends Activity {
 									break;
 								case 5:
 									searchText.setText("DuckDuckGo");
+									break;
+								case 6:
+									searchText.setText("Baidu");
 									break;
 								}
 							}

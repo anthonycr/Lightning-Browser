@@ -1692,6 +1692,9 @@ public class BarebonesActivity extends Activity {
 		case 5:
 			SEARCH = FinalVariables.DUCK_SEARCH;
 			break;
+		case 6:
+			SEARCH = FinalVariables.BAIDU_SEARCH;
+			break;
 		}
 
 		exitTab = getResources().getDrawable(R.drawable.stop); // user
