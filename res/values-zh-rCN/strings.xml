@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">闪电浏览器</string>
     <string name="google">Google</string>
     <string name="settings">浏览器设置</string>
-    <string name="location">允许站点访问您地理位置</string>
+    <string name="location">允许站点访问您的地理位置</string>
     <string name="password">保存密码</string>
-    <string name="agent">User Agent</string>
+    <string name="agent">用户代理</string>
     <string name="history">退出时清空历史记录（缓存将被自动清理）</string>
     <string name="email">邮件开发者</string>
     <string name="flash">启用 Adobe Flash（若已安装）</string>
@@ -17,12 +17,12 @@
     <string name="settingshelp">设置仅将应用于新标签页</string>
     <string name="fullscreen">启用全屏模式</string>
     <string name="java">启用 JavaScript</string>
-    <string name="menu_history">History</string>
+    <string name="menu_history">历史记录</string>
     <string name="menu_add">添加书签</string>
     <string name="menu_bookmarks">书签列表</string>
     <string name="menu_share">分享页面</string>
     <string name="menu_settings">应用设置</string>
-    <string name="menu_incognito">Incognito tab</string>
-    <string name="menu_new_tab">New tab</string>
+    <string name="menu_incognito">隐身标签</string>
+    <string name="menu_new_tab">新建标签</string>
 
 </resources>
