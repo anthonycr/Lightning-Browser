@@ -1,9 +1,9 @@
 #Lightning Browser
 #![](ic_launcher_small.png)
 ####Download
-* [Most Recent APK](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
+* [Download APK from here](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
 
-* [Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
+* [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
 
 
 ####Features
