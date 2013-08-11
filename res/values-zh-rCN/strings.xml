@@ -6,13 +6,13 @@
     <string name="settings">浏览器设置</string>
     <string name="location">允许定位</string>
     <string name="password">保存密码</string>
-    <string name="agent">User Agent</string>
+    <string name="agent">用户代理</string>
     <string name="history">清除历史记录</string>
-    <string name="email">给我邮件</string>
+    <string name="email">给我发邮件</string>
     <string name="flash">启用 Adobe Flash</string>
     <string name="mobile">手机模式查看</string>
     <string name="desk">桌面模式查看</string>
-    <string name="custom">使用自定义的 user agent</string>
+    <string name="custom">使用自定义用户代理</string>
     <string name="home">主页</string>
     <string name="settingshelp">配置仅在新标签上生效</string>
     <string name="fullscreen">全屏模式</string>
@@ -22,7 +22,7 @@
     <string name="download">下载目录</string>
     <string name="advanced">高级配置</string>
     <string name="source">源代码</string>
-    <string name="license">License</string>
+    <string name="license">许可</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">新设置</string>
@@ -41,7 +41,7 @@
     <string name="weird_look">(可能会破坏网页排版)</string>
     <string name="search">搜索引擎</string>
     <string name="search_hint">搜索</string>
-    <string name="wideViewPort">使用 wide viewport</string>
+    <string name="wideViewPort">自动缩放</string>
     <string name="overViewMode">完整显示加载页面</string>
     <string name="restore">启动时还原标签</string>
     <string name="menu_history">历史记录</string>
