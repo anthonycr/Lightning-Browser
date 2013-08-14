@@ -39,4 +39,4 @@
 * Code additions are always welcome
 * Please add translations/translation fixes as you see need
 * Change ````FinalVariables.MAX_TABS```` from 5 to 50 to change the Lightning to the paid version
-* DO NOT USE PROGUARD WHEN COMPILING. Hidden methods used will be obfuscated and things like file uploading will not work.
+* Beware when using proguard while compiling. Some methods should not be obfuscated. Use the proguard settings file I provided for best results.
