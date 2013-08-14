@@ -151,5 +151,18 @@
         android:layout_below="@+id/urlBar" >
     
         </FrameLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:indeterminate="false"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@drawable/progress"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" 
+        android:maxHeight="5dp"
+        android:minHeight="5dp"/>
     
 </RelativeLayout>

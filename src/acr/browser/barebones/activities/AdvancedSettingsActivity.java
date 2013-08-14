@@ -3,10 +3,9 @@ package acr.browser.barebones.activities;
 import java.io.File;
 
 import acr.browser.barebones.R;
-import acr.browser.barebones.utilities.BookmarkPageVariables;
 import acr.browser.barebones.utilities.FinalVariables;
 import acr.browser.barebones.utilities.Utils;
-import acr.browser.barebones.activities.BarebonesActivity;
+import acr.browser.barebones.activities.BrowserActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,9 +16,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.util.Log;
-import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -31,8 +29,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+@SuppressWarnings("deprecation")
 public class AdvancedSettingsActivity extends Activity {
 
 	// settings variables
@@ -41,8 +39,8 @@ public class AdvancedSettingsActivity extends Activity {
 	static final String preferences = "settings";
 	static SharedPreferences settings;
 	static SharedPreferences.Editor edit;
-	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13;
-	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10;
+	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
+	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11;
 	static Context CONTEXT;
 	Handler messageHandler;
 
@@ -51,6 +49,10 @@ public class AdvancedSettingsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.advanced_settings);
 		settings = getSharedPreferences(preferences, 0);
+		if (settings.getBoolean("hidestatus", false)) {
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
 		edit = settings.edit();
 		CONTEXT = this;
 		initialize();
@@ -72,6 +74,8 @@ public class AdvancedSettingsActivity extends Activity {
 		r11 = (RelativeLayout) findViewById(R.id.r11);
 		r12 = (RelativeLayout) findViewById(R.id.r12);
 		r13 = (RelativeLayout) findViewById(R.id.r13);
+		r14 = (RelativeLayout) findViewById(R.id.r14);
+		r15 = (RelativeLayout) findViewById(R.id.r15);
 
 		cb1 = (CheckBox) findViewById(R.id.cb1);
 		cb2 = (CheckBox) findViewById(R.id.cb2);
@@ -83,6 +87,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb8 = (CheckBox) findViewById(R.id.cb8);
 		cb9 = (CheckBox) findViewById(R.id.cb9);
 		cb10 = (CheckBox) findViewById(R.id.cb10);
+		cb11 = (CheckBox) findViewById(R.id.cb11);
 
 		cb1.setChecked(settings.getBoolean("passwords", true));
 		cb2.setChecked(settings.getBoolean("cache", false));
@@ -94,6 +99,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb8.setChecked(settings.getBoolean("wideviewport", true));
 		cb9.setChecked(settings.getBoolean("overviewmode", true));
 		cb10.setChecked(settings.getBoolean("restoreclosed", true));
+		cb11.setChecked(settings.getBoolean("hidestatus", false));
 
 		r1(r1);
 		r2(r2);
@@ -108,6 +114,8 @@ public class AdvancedSettingsActivity extends Activity {
 		r11(r11);
 		r12(r12);
 		r13(r13);
+		r14(r14);
+		r15(r15);
 		cb1(cb1);
 		cb2(cb2);
 		cb3(cb3);
@@ -118,11 +126,12 @@ public class AdvancedSettingsActivity extends Activity {
 		cb8(cb8);
 		cb9(cb9);
 		cb10(cb10);
+		cb11(cb11);
 		back();
 		
 		TextView importBookmarks = (TextView)findViewById(R.id.isImportAvailable);
 		
-		if(BarebonesActivity.noStockBrowser){
+		if(BrowserActivity.noStockBrowser){
 			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
 		}
 		else{
@@ -139,6 +148,9 @@ public class AdvancedSettingsActivity extends Activity {
 			switch(msg.what){
 			case 1:
 				Utils.showToast(CONTEXT, "History Cleared");
+				break;
+			case 2:
+				Utils.showToast(CONTEXT, "Cookies Cleared");
 				break;
 			}
 			super.handleMessage(msg);
@@ -281,6 +293,19 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				edit.putBoolean("restoreclosed", isChecked);
+				edit.commit();
+			}
+
+		});
+	}
+	
+	void cb11(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				edit.putBoolean("hidestatus", isChecked);
 				edit.commit();
 			}
 
@@ -446,20 +471,71 @@ public class AdvancedSettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				cb10.setChecked(!cb10.isChecked());
 			}
 
 		});
 	}
+	void r14(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cb11.setChecked(!cb11.isChecked());
+			}
+
+		});
+	}
 	
-	@SuppressWarnings("deprecation")
+	void r15(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						AdvancedSettingsActivity.this); // dialog
+				builder.setTitle("Clear Cookies");
+				builder.setMessage(
+						"Would you like to clear all browser cookies?")
+						.setPositiveButton("Yes",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface arg0,
+											int arg1) {
+										Thread clear = new Thread(
+												new Runnable() {
+
+													@Override
+													public void run() {
+														clearCookies();
+													}
+
+												});
+										clear.start();
+									}
+
+								})
+						.setNegativeButton("No",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface arg0,
+											int arg1) {
+										
+									}
+
+								}).show();
+			}
+
+		});
+	}
+	
 	public void clearHistory() {
 		CookieManager c = CookieManager.getInstance();
 		CookieSyncManager.createInstance(this);
 		c.removeAllCookie();
 		AdvancedSettingsActivity.this.deleteDatabase("historyManager");
-		BarebonesActivity.main[0].clearCache(true);
 		WebViewDatabase m = WebViewDatabase
 				.getInstance(AdvancedSettingsActivity.this);
 		m.clearFormData();
@@ -468,7 +544,7 @@ public class AdvancedSettingsActivity extends Activity {
 			m.clearUsernamePassword();
 			WebIconDatabase.getInstance().removeAllIcons();
 		}
-		if (!BarebonesActivity.noStockBrowser) {
+		if (!BrowserActivity.noStockBrowser) {
 			try {
 				Browser.clearHistory(getContentResolver());
 			} catch (NullPointerException ignored) {
@@ -478,7 +554,12 @@ public class AdvancedSettingsActivity extends Activity {
 		messageHandler.sendEmptyMessage(1);
 	}
 
-	
+	public void clearCookies(){
+		CookieManager c = CookieManager.getInstance();
+		CookieSyncManager.createInstance(this);
+		c.removeAllCookie();
+		messageHandler.sendEmptyMessage(2);
+	}
 	
 	void r9(RelativeLayout view) {
 		
@@ -559,7 +640,7 @@ public class AdvancedSettingsActivity extends Activity {
 	}
 
 	public void importFromStockBrowser() {
-		if (!BarebonesActivity.noStockBrowser) {
+		if (!BrowserActivity.noStockBrowser) {
 			try {
 				String[] proj = new String[] { Browser.BookmarkColumns.TITLE,
 						Browser.BookmarkColumns.URL };

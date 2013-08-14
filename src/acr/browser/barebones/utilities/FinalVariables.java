@@ -15,13 +15,13 @@ public class FinalVariables {
 	public static final String GOOGLE_SEARCH = "https://www.google.com/search?client=lightning&q=";
 	public static final String BING_SEARCH = "http://www.bing.com/search?q=";
 	public static final String DUCK_SEARCH = "https://duckduckgo.com/?t=lightning&q=";
-	public static final String BAIDU_SEARCH = "http://www.baidu.com/s?wd=";
 	public static final String STARTPAGE_SEARCH = "https://startpage.com/do/metasearch.pl?language=english&cat=web&query=";
 	public static final String HOMEPAGE = "https://www.google.com/";
+	public static final String BAIDU_SEARCH = "http://www.baidu.com/s?wd=";
+	public static final String YANDEX_SEARCH = "http://yandex.ru/yandsearch?lr=21411&text=";
+	public static final String ADVANCED_SETTINGS_INTENT = "android.intent.action.ADVANCED_SETTINGS";
 	public static final String SETTINGS_INTENT = "android.intent.action.SETTINGS";
-	public static final String INCOGNITO_INTENT = "android.intent.action.BAREBONESINCOGNITO";
-	public static final String DOWNLOAD_LOCATION = Environment.getExternalStorageDirectory().toString()+"/"+Environment.DIRECTORY_DOWNLOADS;
-	
-	
+	public static final String INCOGNITO_INTENT = "android.intent.action.BROWSER_INCOGNITO";	
+	public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().toString();
 	
 }

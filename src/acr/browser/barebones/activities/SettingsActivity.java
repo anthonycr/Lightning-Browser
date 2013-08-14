@@ -1,9 +1,6 @@
 package acr.browser.barebones.activities;
 
 import acr.browser.barebones.R;
-import acr.browser.barebones.R.drawable;
-import acr.browser.barebones.R.id;
-import acr.browser.barebones.R.layout;
 import acr.browser.barebones.utilities.FinalVariables;
 import acr.browser.barebones.utilities.Utils;
 import android.net.Uri;
@@ -19,23 +16,21 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SettingsActivity extends Activity {
 	static int API = FinalVariables.API;
@@ -44,6 +39,7 @@ public class SettingsActivity extends Activity {
 	static int agentChoice;
 	static String homepage;
 	static TextView agentText;
+	static String agent;
 	static TextView download;
 	static int egg = 0;
 	static String downloadLocation;
@@ -55,6 +51,7 @@ public class SettingsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
+		
 		init();
 	}
 
@@ -62,6 +59,10 @@ public class SettingsActivity extends Activity {
 	public void init() {
 		// settings storage
 		settings = getSharedPreferences(preferences, 0);
+		if (settings.getBoolean("hidestatus", false)) {
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
 		edit = settings.edit();
 
 		// initialize UI
@@ -91,6 +92,9 @@ public class SettingsActivity extends Activity {
 		case 6:
 			searchText.setText("Baidu");
 			break;
+		case 7:
+			searchText.setText("Yandex");
+			break;
 		}
 
 		back.setBackgroundResource(R.drawable.button);
@@ -104,9 +108,10 @@ public class SettingsActivity extends Activity {
 		agentChoice = settings.getInt("agentchoose", 1);
 		homepage = settings.getString("home", FinalVariables.HOMEPAGE);
 		downloadLocation = settings.getString("download",
-				FinalVariables.DOWNLOAD_LOCATION);
+				Environment.DIRECTORY_DOWNLOADS);
 
-		download.setText(downloadLocation);
+		download.setText(FinalVariables.EXTERNAL_STORAGE + "/"
+				+ downloadLocation);
 
 		String code = "HOLO";
 
@@ -133,13 +138,19 @@ public class SettingsActivity extends Activity {
 		switch (agentChoice) {
 		case 1:
 			agentText.setText("Default");
+			agent = BrowserActivity.defaultUser;
 			break;
 		case 2:
 			agentText.setText("Desktop");
+			agent = FinalVariables.DESKTOP_USER_AGENT;
 			break;
 		case 3:
 			agentText.setText("Mobile");
+			agent = FinalVariables.MOBILE_USER_AGENT;
 			break;
+		case 4:
+			agentText.setText("Custom");
+			agent = settings.getString("userAgentString", BrowserActivity.defaultUser);
 		}
 		RelativeLayout r1, r2, r3;
 		r1 = (RelativeLayout) findViewById(R.id.setR1);
@@ -214,7 +225,7 @@ public class SettingsActivity extends Activity {
 						SettingsActivity.this);
 				picker.setTitle("Search Engine");
 				CharSequence[] chars = { "Google (Suggested)", "Bing", "Yahoo",
-						"StartPage", "DuckDuckGo (Privacy)" ,"Baidu"};
+						"StartPage", "DuckDuckGo (Privacy)" , "Baidu (Chinese)", "Yandex (Russian)"};
 
 				int n = settings.getInt("search", 1);
 
@@ -244,6 +255,9 @@ public class SettingsActivity extends Activity {
 									break;
 								case 6:
 									searchText.setText("Baidu");
+									break;
+								case 7:
+									searchText.setText("Yandex");
 									break;
 								}
 							}
@@ -329,9 +343,8 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				egg++;
 				if (egg == 10) {
-					startActivity(new Intent(
-							Intent.ACTION_VIEW,
-							Uri.parse("http://imgs.xkcd.com/comics/compiling.png")));
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri
+							.parse("http://imgs.xkcd.com/comics/compiling.png")));
 					finish();
 					egg = 0;
 				}
@@ -502,12 +515,20 @@ public class SettingsActivity extends Activity {
 								switch (which + 1) {
 								case 1:
 									agentText.setText("Default");
+									agent = BrowserActivity.defaultUser;
 									break;
 								case 2:
 									agentText.setText("Desktop");
+									agent = FinalVariables.DESKTOP_USER_AGENT;
 									break;
 								case 3:
 									agentText.setText("Mobile");
+									agent = FinalVariables.MOBILE_USER_AGENT;
+									break;
+								case 4:
+									agentText.setText("Custom");
+									agent = settings.getString("userAgentString", BrowserActivity.defaultUser);
+									agentPicker();
 									break;
 								}
 							}
@@ -538,6 +559,27 @@ public class SettingsActivity extends Activity {
 
 		});
 	}
+	
+	public void agentPicker() {
+		final AlertDialog.Builder agentStringPicker = new AlertDialog.Builder(
+				SettingsActivity.this);
+		
+		agentStringPicker.setTitle("Custom Agent");
+		final EditText getAgent = new EditText(SettingsActivity.this);
+		agentStringPicker.setView(getAgent);
+		agentStringPicker.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String text = getAgent.getText().toString();
+						edit.putString("userAgentString", text);
+						edit.commit();
+						agentText.setText("Custom");
+					}
+				});
+		agentStringPicker.show();
+	}
 
 	public void download(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
@@ -550,9 +592,9 @@ public class SettingsActivity extends Activity {
 				picker.setTitle("Download Location");
 				CharSequence[] chars = { "Default", "Custom" };
 				downloadLocation = settings.getString("download",
-						FinalVariables.DOWNLOAD_LOCATION);
+						Environment.DIRECTORY_DOWNLOADS);
 				int n = -1;
-				if (downloadLocation.contains(FinalVariables.DOWNLOAD_LOCATION)) {
+				if (downloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
 					n = 1;
 				} else {
 					n = 2;
@@ -568,9 +610,11 @@ public class SettingsActivity extends Activity {
 								switch (which + 1) {
 								case 1:
 									edit.putString("download",
-											FinalVariables.DOWNLOAD_LOCATION);
+											Environment.DIRECTORY_DOWNLOADS);
 									edit.commit();
-									download.setText(FinalVariables.DOWNLOAD_LOCATION);
+									download.setText(FinalVariables.EXTERNAL_STORAGE
+											+ "/"
+											+ Environment.DIRECTORY_DOWNLOADS);
 									break;
 								case 2:
 									downPicker();
@@ -620,15 +664,42 @@ public class SettingsActivity extends Activity {
 		homePicker.show();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void downPicker() {
 		final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(
 				SettingsActivity.this);
+		LinearLayout layout = new LinearLayout(this);
 		downLocationPicker.setTitle("Custom Location");
 		final EditText getDownload = new EditText(SettingsActivity.this);
+		getDownload.setBackgroundResource(0);
 		downloadLocation = settings.getString("download",
-				FinalVariables.DOWNLOAD_LOCATION);
+				Environment.DIRECTORY_DOWNLOADS);
+		int padding = Utils.convertDensityPixesl(this, 10);
+
+		LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				LinearLayout.LayoutParams.MATCH_PARENT);
+
+		getDownload.setLayoutParams(lparams);
+		getDownload.setTextColor(Color.DKGRAY);
 		getDownload.setText(downloadLocation);
-		downLocationPicker.setView(getDownload);
+		getDownload.setPadding(0, padding, padding, padding);
+
+		TextView v = new TextView(this);
+		v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+		v.setTextColor(Color.DKGRAY);
+		v.setText(FinalVariables.EXTERNAL_STORAGE + "/");
+		v.setPadding(padding, padding, 0, padding);
+		layout.addView(v);
+		layout.addView(getDownload);
+		if (API < 16) {
+			layout.setBackgroundDrawable(getResources().getDrawable(
+					android.R.drawable.edit_text));
+		} else {
+			layout.setBackground(getResources().getDrawable(
+					android.R.drawable.edit_text));
+		}
+		downLocationPicker.setView(layout);
 		downLocationPicker.setPositiveButton("OK",
 				new DialogInterface.OnClickListener() {
 
@@ -637,7 +708,8 @@ public class SettingsActivity extends Activity {
 						String text = getDownload.getText().toString();
 						edit.putString("download", text);
 						edit.commit();
-						download.setText(text);
+						download.setText(FinalVariables.EXTERNAL_STORAGE + "/"
+								+ text);
 					}
 				});
 		downLocationPicker.show();
@@ -708,7 +780,7 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(
-						"android.intent.action.ADVANCEDSETTINGS"));
+						FinalVariables.ADVANCED_SETTINGS_INTENT));
 			}
 
 		});

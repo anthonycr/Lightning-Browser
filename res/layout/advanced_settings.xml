@@ -372,6 +372,30 @@
 
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/r14"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/blueback" 
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/fullScreenOption"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/cb11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+            <RelativeLayout
                 android:id="@+id/r8"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -385,6 +409,23 @@
                     android:layout_centerVertical="true"
                     android:text="@string/history"
                     android:paddingLeft="10dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </RelativeLayout>
+            
+            <RelativeLayout
+                android:id="@+id/r15"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/blueback" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/clear_cookies"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </RelativeLayout>
@@ -402,7 +443,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/importbookmarks"
                     android:paddingLeft="10dp"
-                    android:textAppearance="?android:attr/textAppearance" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:id="@+id/isImportAvailable"

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Lightning</string>
+    <string name="google">Google</string>
+    <string name="settings">Taray�c� ayarlar�</string>
+    <string name="location">Konum eri�imi</string>
+    <string name="password">Parolar�n�z� kaydetme</string>
+    <string name="agent">Kullan�c� aray�z�</string>
+    <string name="history">Ge�mi�i temizle</string>
+    <string name="email">Bana e-posta</string>
+    <string name="flash">Adobe Flash aktif</string>
+    <string name="mobile">Mobil G�r�n�m</string>
+    <string name="desk">Masa�st� G�r�n�m</string>
+    <string name="custom">�zel kullan�c� arac�s� olarak g�r�nt�leme</string>
+    <string name="home">Ana sayfa</string>
+    <string name="settingshelp">Ayarlar sadece yeni sekmeler i�in ge�erli</string>
+    <string name="fullscreen">Tam ekran modu</string>
+    <string name="java">JavaScript aktif</string>
+    <string name="saveTab">Kaybedilen sekmeleri geri y�kle</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="download">Y�kleme Yeri</string>
+    <string name="advanced">Geli�mi� Ayarlar</string>
+    <string name="source">Kaynak kodu</string>
+    <string name="license">Lisans</string>
+    <string name="github">github.com/anthonycr/Lightning-Browser</string>
+    <string name="apache">Apache License 2.0</string>
+    <string name="title_activity_new_settings">YeniAyarlar</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="version">Uygulama Versiyonu</string>
+    <string name="cache">��k��ta �nbelle�i temizleme</string>
+    <string name="reflow">Metin ak���n� etkinle�tirme</string>
+    <string name="block">Resimleri engelleme</string>
+    <string name="window">Siteleri yeni pencerede a�ma</string>
+    <string name="cookies">�erezleri etkinle�tirme</string>
+    <string name="importbookmarks">Taray�c� yer imlerini i�e aktarma</string>
+    <string name="size">Metin boyutu</string>
+    <string name="title_activity_advanced_settings">Geli�mi�Ayarlar</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="recommended">(�nerilen)</string>
+    <string name="weird_look">(Web siteleri garip g�r�nebilir)</string>
+    <string name="search">Arama Motoru</string>
+    <string name="search_hint">Arama</string>
+    <string name="wideViewPort">Geni� g�r�n�m kullanma</string>
+    <string name="overViewMode">Genel bak�� modunda sayfalar� y�kleme</string>
+    <string name="restore">Kaybolan pencereleri ba�lang��ta y�kleme</string>
+    <string name="menu_history">Ge�mi�</string>
+    <string name="menu_add">Yer imi ekle</string>
+    <string name="menu_bookmarks">Yer imleri</string>
+    <string name="menu_share">Payla�</string>
+    <string name="menu_settings">Ayarlar</string>
+    <string name="menu_incognito">Gizli sekme</string>
+    <string name="menu_new_tab">Yeni pencere</string>
+    <string name="stock_browser_unavailable">(Hi�bir stok taray�c� tespit edilemedi)</string>
+    <string name="stock_browser_available">(Desteklenen stok taray�c� tespit edildi)</string>
+
+</resources>

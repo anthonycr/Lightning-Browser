@@ -17,7 +17,7 @@ public class BookmarkPageVariables {
 	public static final String Part1 = "<div class=\"clickable\">"
 			+ "<div class=\"shadow\">" + "<p class=\"font\">" + "<a href=\"";
 	public static final String Part2 = "\"></a>"+
-					 "<img height=\"15px\" width=\"15px\" src='https://www.google.com/s2/favicons?domain=";
+					 "<img height=\"15px\" width=\"15px\" src='https://www.google.com/s2/favicons?domain_url=";
 	public static final String Part3 = "'/>";
 	public static final String Part4 = "</p></div></div>";
 	public static final String End = "</body></html>";

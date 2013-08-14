@@ -53,5 +53,7 @@
     <string name="menu_new_tab">New tab</string>
     <string name="stock_browser_unavailable">(No stock browser detected)</string>
     <string name="stock_browser_available">(Supported stock browser detected)</string>
+    <string name="fullScreenOption">Hide status bar while browsing</string>
+    <string name="clear_cookies">Clear browser cookies</string>
 
 </resources>

@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import acr.browser.barebones.activities.AdvancedSettingsActivity;
 import acr.browser.barebones.databases.DatabaseHandler;
 import acr.browser.barebones.databases.HistoryItem;
 import android.annotation.SuppressLint;
@@ -31,25 +29,21 @@ import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
-
-
 public class Utils {
-	
+
 	public static DatabaseHandler historyHandler;
 	public static SQLiteDatabase history;
-	
+
 	public static void createInformativeDialog(Context context, String title,
 			String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(title);
-		builder.setMessage(message)
-				.setCancelable(true)
-				.setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-							}
-						});
+		builder.setMessage(message).setCancelable(true)
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -108,12 +102,11 @@ public class Utils {
 				try {
 					StringBuilder sb = new StringBuilder("url" + " = ");
 					DatabaseUtils.appendEscapedSQLString(sb, url);
-					historyHandler = new DatabaseHandler(
-							context);
+					historyHandler = new DatabaseHandler(context);
 					history = historyHandler.getReadableDatabase();
-					Cursor cursor = history.query("history", new String[] { "id",
-							"url", "title" }, sb.toString(), null, null, null,
-							null);
+					Cursor cursor = history.query("history", new String[] {
+							"id", "url", "title" }, sb.toString(), null, null,
+							null, null);
 					if (!cursor.moveToFirst()) {
 						historyHandler.addHistoryItem(new HistoryItem(url,
 								title));
@@ -140,15 +133,17 @@ public class Utils {
 			}
 		}
 	}
-	
+
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	public static void downloadFile(final Context context, final String url, final String contentDisposition, final String mimetype){
+	public static void downloadFile(final Context context, final String url,
+			final String contentDisposition, final String mimetype) {
 		try {
 			Thread downloader = new Thread(new Runnable() {
 				@SuppressLint("InlinedApi")
 				@Override
 				public void run() {
-					DownloadManager download = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+					DownloadManager download = (DownloadManager) context
+							.getSystemService(Context.DOWNLOAD_SERVICE);
 					Uri nice = Uri.parse(url);
 					DownloadManager.Request it = new DownloadManager.Request(
 							nice);
@@ -158,9 +153,10 @@ public class Utils {
 						it.allowScanningByMediaScanner();
 						it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 					}
-
-					it.setDestinationInExternalPublicDir(
-							Environment.DIRECTORY_DOWNLOADS, fileName);
+					String location = context.getSharedPreferences("settings",
+							0).getString("download",
+							Environment.DIRECTORY_DOWNLOADS);
+					it.setDestinationInExternalPublicDir(location, fileName);
 					Log.i("Barebones", "Downloading" + fileName);
 					download.enqueue(it);
 				}
@@ -178,18 +174,26 @@ public class Utils {
 
 		}
 	}
-	
-	public static void showToast(Context context, String message){
+
+	public static void showToast(Context context, String message) {
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
-	
-	 public static Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {
-	      Intent intent = new Intent(Intent.ACTION_SEND);
-	      intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
-	      intent.putExtra(Intent.EXTRA_TEXT, body);
-	      intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-	      intent.putExtra(Intent.EXTRA_CC, cc);
-	      intent.setType("message/rfc822");
-	      return intent;
+
+	public static Intent newEmailIntent(Context context, String address,
+			String subject, String body, String cc) {
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+		intent.putExtra(Intent.EXTRA_TEXT, body);
+		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		intent.putExtra(Intent.EXTRA_CC, cc);
+		intent.setType("message/rfc822");
+		return intent;
 	}
+
+	public static int convertDensityPixesl(Context context, int densityPixels) {
+		float scale = context.getResources().getDisplayMetrics().density;
+		int pixels = (int) (densityPixels * scale + 0.5f);
+		return pixels;
+	}
+	
 }
