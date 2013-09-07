@@ -15,6 +15,7 @@ public class FinalVariables {
 	public static final String GOOGLE_SEARCH = "https://www.google.com/search?client=lightning&q=";
 	public static final String BING_SEARCH = "http://www.bing.com/search?q=";
 	public static final String DUCK_SEARCH = "https://duckduckgo.com/?t=lightning&q=";
+	public static final String DUCK_LITE_SEARCH = "https://duckduckgo.com/lite/?q=";
 	public static final String STARTPAGE_SEARCH = "https://startpage.com/do/metasearch.pl?language=english&cat=web&query=";
 	public static final String HOMEPAGE = "https://www.google.com/";
 	public static final String BAIDU_SEARCH = "http://www.baidu.com/s?wd=";

@@ -8,7 +8,7 @@ public class WebPageLongClickListener implements OnLongClickListener{
 
 	@Override
 	public boolean onLongClick(View v) {
-		return BrowserActivity.onLongClick(v.getId());
+		return BrowserActivity.onLongClick();
 	}
 
 }

@@ -136,8 +136,9 @@ public class CustomChromeClient extends WebChromeClient {
 		if (mCustomView == null && mCustomViewCallback == null) {
 			return;
 		}
-		mCustomView = null;
+		
 		mCustomView.setKeepScreenOn(false);
+		mCustomView = null;
 		BrowserActivity.onHideCustomView(fullScreenContainer, mCustomViewCallback, orientation);
 	}
 

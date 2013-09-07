@@ -16,7 +16,7 @@
         android:textColor="#000000"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="6dip"
-        android:paddingTop="10dip"/>
+        android:paddingTop="2dip"/>
      <TextView
         android:id="@+id/url"
         android:clickable="false"
@@ -27,5 +27,5 @@
         android:paddingLeft="6dip"
         android:maxLines="1"
         android:paddingTop="2dip"
-        android:paddingBottom="10dip"/>
+        android:paddingBottom="2dip"/>
 </LinearLayout>

@@ -8,7 +8,7 @@ public class IncognitoLongClickListener implements OnLongClickListener{
 
 	@Override
 	public boolean onLongClick(View v) {
-		return IncognitoModeActivity.onLongClick(v.getId());
+		return IncognitoModeActivity.onLongClick();
 	}
 
 }

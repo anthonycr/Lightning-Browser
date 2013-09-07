@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import acr.browser.barebones.databases.DatabaseHandler;
 import acr.browser.barebones.databases.HistoryItem;
 import android.annotation.SuppressLint;
@@ -27,6 +28,7 @@ import android.os.Environment;
 import android.provider.Browser;
 import android.util.Log;
 import android.webkit.URLUtil;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class Utils {

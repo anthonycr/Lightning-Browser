@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import acr.browser.barebones.R;
 import acr.browser.barebones.customwebview.CustomWebView;
@@ -23,7 +24,6 @@ import acr.browser.barebones.utilities.Utils;
 import acr.browser.barebones.webviewclasses.CustomChromeClient;
 import acr.browser.barebones.webviewclasses.CustomDownloadListener;
 import acr.browser.barebones.webviewclasses.CustomWebViewClient;
-import acr.browser.barebones.webviewclasses.WebPageLongClickListener;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -74,12 +74,11 @@ import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
-import android.webkit.WebSettings.PluginState;
-import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -92,7 +91,6 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public class BrowserActivity extends Activity implements OnTouchListener {
@@ -124,13 +122,13 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 				} catch (IllegalStateException ignored) {
 				}
 
-				list = new ArrayList<Map<String, String>>();
 				try {
 					if (historyCursor != null) {
 						if (historyCursor.moveToLast()) {
 							// Variable for holding the retrieved URL
-							urlColumn = historyCursor.getColumnIndex("url");
-							titleColumn = historyCursor.getColumnIndex("title");
+							int urlColumn = historyCursor.getColumnIndex("url");
+							int titleColumn = historyCursor
+									.getColumnIndex("title");
 							// Reference to the the column containing the URL
 							int n = 0;
 							do {
@@ -164,7 +162,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 					e.printStackTrace();
 				}
 				if (uBar.isShown()) {
-					urlTitle[pageId].setText("History");
+					currentTabTitle.setText("History");
 					setUrlText("");
 					getUrl.setPadding(tenPad, 0, tenPad, 0);
 				}
@@ -186,7 +184,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		}
 	}
 
-	public static void removeView(WebView view) {
+	public static void removeView(CustomWebView view) {
 		if (!showFullScreen) {
 			view.startAnimation(fadeOut);
 		}
@@ -195,7 +193,80 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	}
 
 	private static BrowserActivity ACTIVITY;
+	
+	
+	private static int index = 0;
+	public static void renameBookmark(String url){
+		index = 0;
+		for(int n = 0; n<MAX_BOOKMARKS; n++){
+			if(bUrl[n]!= null){
+				if(bUrl[n].equalsIgnoreCase(url)){
+					index = n;
+					break;
+				}
+			}
+		}
+		
+		
+		final AlertDialog.Builder homePicker = new AlertDialog.Builder(
+				CONTEXT);
+		homePicker.setTitle("Rename Bookmark");
+		final EditText getText = new EditText(CONTEXT);
+		getText.setText(bTitle[index]);
+		
+		homePicker.setView(getText);
+		homePicker.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
 
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						bTitle[index] = getText.getText().toString();
+						File book = new File(CONTEXT.getFilesDir(), "bookmarks");
+						File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
+						int n = 0;
+						try {
+							BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book));
+							BufferedWriter urlWriter = new BufferedWriter(new FileWriter(
+									bookUrl));
+							while (bUrl[n] != null && n < (MAX_BOOKMARKS - 1)) {
+								bookWriter.write(bTitle[n]);
+								urlWriter.write(bUrl[n]);
+								bookWriter.newLine();
+								urlWriter.newLine();			
+								n++;
+							}
+							bookWriter.close();
+							urlWriter.close();
+						} catch (FileNotFoundException e) {
+						} catch (IOException e) {
+						}
+						for (int p = 0; p < MAX_BOOKMARKS; p++) {
+							bUrl[p] = null;
+							bTitle[p] = null;
+						}
+						try {
+							BufferedReader readBook = new BufferedReader(new FileReader(book));
+							BufferedReader readUrl = new BufferedReader(new FileReader(bookUrl));
+							String t, u;
+							int z = 0;
+							while ((t = readBook.readLine()) != null
+									&& (u = readUrl.readLine()) != null && z < MAX_BOOKMARKS) {
+								bUrl[z] = u;
+								bTitle[z] = t;
+								z++;
+							}
+							readBook.close();
+							readUrl.close();
+						} catch (IOException ignored) {
+						}
+						openBookmarks(CONTEXT, currentTab);
+					}
+				});
+		homePicker.show();
+		
+		
+	}
+	
 	public static void deleteBookmark(String url) {
 		File book = new File(CONTEXT.getFilesDir(), "bookmarks");
 		File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
@@ -237,26 +308,34 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			readUrl.close();
 		} catch (IOException ignored) {
 		}
-		openBookmarks(CONTEXT, main[pageId]);
+		openBookmarks(CONTEXT, currentTab);
 	}
 
-	// variables to differentiate free from paid
+	// variables
+
+	// constants
 	public static final int MAX_TABS = FinalVariables.MAX_TABS;
 	public static final int MAX_BOOKMARKS = FinalVariables.MAX_BOOKMARKS;
 	public static final boolean PAID_VERSION = FinalVariables.PAID_VERSION;
-
-	public static Context CONTEXT;
-
 	public static final String HOMEPAGE = FinalVariables.HOMEPAGE;
-	public static String SEARCH;
+	public static final int API = FinalVariables.API;
+	public static final String SEPARATOR = "\\|\\$\\|SEPARATOR\\|\\$\\|";
 
-	public static SimpleAdapter adapter;
+	// semi constants
+	public static Context CONTEXT;
+	public static String SEARCH;
+	public static List<Integer> tabList;
+
+	// variables
+	public static CustomWebView currentTab;
+	public static TextView currentTabTitle;
 	public static MultiAutoCompleteTextView getUrl;
-	public static TextView[] urlTitle = new TextView[MAX_TABS];
+	public static TextView[] urlTitle;
 	public static ProgressBar browserProgress;
-	public static final CustomWebView[] main = new CustomWebView[MAX_TABS];
+	public static CustomWebView[] main;
 	public static Rect bounds;
 	public static long timeTabPressed;
+	public static boolean fullScreen;
 	public static int[] tabOrder = new int[MAX_TABS];
 	public static ValueCallback<Uri> mUploadMessage;
 	public static ImageView refresh;
@@ -266,82 +345,61 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	public static Drawable incognitoPage;
 	public static Drawable exitTab;
 	public static long loadTime = 0;
-	public static int number;
-	public static int pageId = 0;
-	public static int agentPicker;
-	public static int enableFlash;
+	public static int currentId = 0;
 	public static int height32;
 	public static int height;
 	public static int width;
 	public static int pixels;
 	public static int leftPad;
 	public static int rightPad;
-	public static final int API = FinalVariables.API;
-	public static int mShortAnimationDuration;
 	public static int id;
 	public static int tenPad;
-	public static int urlColumn;
-	public static int titleColumn;
-	public static int closeWindow;
 	public static boolean isPhone = false;
-	public static boolean allowLocation;
-	public static boolean savePasswords;
-	public static boolean deleteHistory;
-	public static boolean saveTabs;
-	public static boolean showFullScreen;
+	public static boolean showFullScreen = false;
 	public static boolean noStockBrowser = true;
 	public static SharedPreferences settings;
 	public static SharedPreferences.Editor edit;
-	public static String desktop;
-	public static String mobile;
 	public static String user;
-	public static String urlA;
-	public static String title;
-	public static String[] memoryURL = new String[MAX_TABS];
-	public static String[] bUrl = new String[MAX_BOOKMARKS];
-	public static String[] bTitle = new String[MAX_BOOKMARKS];
+	public static String[] memoryURL;
+	public static String[] bUrl;
+	public static String[] bTitle;
 	public static String[] columns;
 	public static String homepage;
-	public static final String preferences = "settings";
-
-	public static String[][] urlToLoad = new String[MAX_TABS][2];
+	public static String[][] urlToLoad;
 	public static FrameLayout background;
 	public static RelativeLayout uBar;
+	public static RelativeLayout screen;
 	public static HorizontalScrollView tabScroll;
 	public static Animation slideUp;
 	public static Animation slideDown;
 	public static Animation fadeOut;
 	public static Animation fadeIn;
-
 	public static CookieManager cookieManager;
-
 	public static Uri bookmarks;
-	public static List<Map<String, String>> list;
-	public static Map<String, String> map;
-
 	public static Handler handler, browserHandler;
-
 	public static DatabaseHandler historyHandler;
-
-	public static StringBuilder sb;
-
-	public static Runnable update;
-
-	public static SQLiteDatabase s;
-
 	public static Drawable inactive;
-
 	public static Drawable active;
-
 	public static LinearLayout tabLayout;
 
-	public static String[] GetArray(String input) {
-		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
+	public static String[] getArray(String input) {
+		return input.split(SEPARATOR);
+	}
+
+	public static int newId() {
+
+		Random n = new Random();
+		int id = n.nextInt();
+
+		while (tabList.contains(id)) {
+			id = n.nextInt();
+		}
+		return id;
 	}
 
 	@SuppressWarnings("unused")
 	public static void setFavicon(int id, Bitmap favicon) {
-		Drawable icon = null;
+		Drawable icon;
 		icon = new BitmapDrawable(null, favicon);
 		icon.setBounds(0, 0, width / 2, height / 2);
 		if (icon != null) {
@@ -350,104 +408,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			urlTitle[id]
 					.setCompoundDrawables(webpageOther, null, exitTab, null);
 		}
-		icon = null;
-
-	}
-
-	@SuppressLint("SetJavaScriptEnabled")
-	public static void browserSettings(Context context, CustomWebView view) {
-		WebSettings webViewSettings = view.getSettings();
-		if (settings.getBoolean("java", true)) {
-			webViewSettings.setJavaScriptEnabled(true);
-			webViewSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-		}
-
-		if (API < 14) {
-			switch (settings.getInt("textsize", 3)) {
-			case 1:
-				webViewSettings.setTextSize(WebSettings.TextSize.LARGEST);
-				break;
-			case 2:
-				webViewSettings.setTextSize(WebSettings.TextSize.LARGER);
-				break;
-			case 3:
-				webViewSettings.setTextSize(WebSettings.TextSize.NORMAL);
-				break;
-			case 4:
-				webViewSettings.setTextSize(WebSettings.TextSize.SMALLER);
-				break;
-			case 5:
-				webViewSettings.setTextSize(WebSettings.TextSize.SMALLEST);
-				break;
-			}
-
-		} else {
-			switch (settings.getInt("textsize", 3)) {
-			case 1:
-				webViewSettings.setTextZoom(200);
-				break;
-			case 2:
-				webViewSettings.setTextZoom(150);
-				break;
-			case 3:
-				webViewSettings.setTextZoom(100);
-				break;
-			case 4:
-				webViewSettings.setTextZoom(75);
-				break;
-			case 5:
-				webViewSettings.setTextZoom(50);
-				break;
-			}
-		}
-		webViewSettings.setSupportMultipleWindows(settings.getBoolean(
-				"newwindow", true));
-
-		switch (settings.getInt("enableflash", 0)) {
-		case 0:
-			break;
-		case 1: {
-			webViewSettings.setPluginState(PluginState.ON_DEMAND);
-			break;
-		}
-		case 2: {
-			webViewSettings.setPluginState(PluginState.ON);
-			break;
-		}
-		default:
-			break;
-		}
-		if (settings.getBoolean("passwords", false)) {
-			if (API < 18) {
-				webViewSettings.setSavePassword(true);
-			}
-			webViewSettings.setSaveFormData(true);
-		}
-		if (API < 18) {
-			try {
-				webViewSettings.setRenderPriority(RenderPriority.HIGH);
-			} catch (SecurityException ignored) {
-
-			}
-		}
-		webViewSettings.setGeolocationEnabled(settings.getBoolean("location",
-				false));
-		webViewSettings.setGeolocationDatabasePath(context.getFilesDir()
-				.getAbsolutePath());
-		webViewSettings.setUseWideViewPort(settings.getBoolean("wideviewport",
-				true));
-		webViewSettings.setLoadWithOverviewMode(settings.getBoolean(
-				"overviewmode", true));
-
-		if (settings.getBoolean("textreflow", false)) {
-			webViewSettings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
-		} else {
-			webViewSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
-		}
-
-		webViewSettings.setBlockNetworkImage(settings.getBoolean("blockimages",
-				false));
-		webViewSettings.setLoadsImagesAutomatically(true);
 
 	}
 
@@ -473,7 +433,15 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				urlTitle[del].setVisibility(View.GONE);
+				// urlTitle[del].setVisibility(View.GONE);
+				tabLayout.post(new Runnable() {
+
+					@Override
+					public void run() {
+						tabLayout.removeView(urlTitle[del]);
+					}
+
+				});
 				findNewView(del);
 				main[del] = null;
 			}
@@ -492,15 +460,17 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	}
 
 	void findNewView(int id) {
+		int delete = tabList.indexOf(id);
 		int leftId = id;
 		boolean right = false, left = false;
-		if (id == pageId) {
+		if (id == currentId) {
 
 			if (main[id].isShown()) {
-				// background.removeView(main[id]);
 				removeView(main[id]);
 			}
-			for (; id <= (number - 1); id++) {
+
+			if (tabList.size() > delete + 1) {
+				id = tabList.get(delete + 1);
 				if (urlTitle[id].isShown()) {
 					background.addView(main[id]);
 					main[id].setVisibility(View.VISIBLE);
@@ -511,8 +481,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 						urlTitle[id].setBackground(active);
 					}
 					urlTitle[id].setPadding(leftPad, 0, rightPad, 0);
-					pageId = id;
-					setUrlText(urlToLoad[pageId][0]);
+					currentId = id;
+					currentTab = main[id];
+					currentTabTitle = urlTitle[id];
+					setUrlText(urlToLoad[currentId][0]);
 					getUrl.setPadding(tenPad, 0, tenPad, 0);
 					right = true;
 					if (main[id].getProgress() < 100) {
@@ -524,13 +496,13 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 						progressBar.setVisibility(View.GONE);
 						refresh.setVisibility(View.VISIBLE);
 					}
-					break;
+					// break;
 				}
 
 			}
 			if (!right) {
-				for (; leftId >= 0; leftId--) {
-
+				if (delete > 0) {
+					leftId = tabList.get(delete - 1);
 					if (urlTitle[leftId].isShown()) {
 						background.addView(main[leftId]);
 						main[leftId].setVisibility(View.VISIBLE);
@@ -541,20 +513,24 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 							urlTitle[leftId].setBackground(active);
 						}
 						urlTitle[leftId].setPadding(leftPad, 0, rightPad, 0);
-						pageId = leftId;
-						setUrlText(urlToLoad[pageId][0]);
+						currentId = leftId;
+						currentTab = main[leftId];
+						currentTabTitle = urlTitle[leftId];
+						setUrlText(urlToLoad[currentId][0]);
 						getUrl.setPadding(tenPad, 0, tenPad, 0);
 						left = true;
 						if (main[leftId].getProgress() < 100) {
 							refresh.setVisibility(View.INVISIBLE);
 							progressBar.setVisibility(View.VISIBLE);
-							onProgressChanged(leftId, main[leftId].getProgress());
+							onProgressChanged(leftId,
+									main[leftId].getProgress());
 						} else {
 							progressBar.setVisibility(View.GONE);
 							refresh.setVisibility(View.VISIBLE);
-							onProgressChanged(leftId, main[leftId].getProgress());
+							onProgressChanged(leftId,
+									main[leftId].getProgress());
 						}
-						break;
+						// break;
 					}
 
 				}
@@ -564,18 +540,18 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		} else {
 			right = left = true;
 		}
-
+		tabList.remove(delete);
 		if (!(right || left)) {
 			finish();
 		}
 		uBar.bringToFront();
-		tabScroll.smoothScrollTo(urlTitle[pageId].getLeft(), 0);
+		tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
 	}
 
 	@Override
 	public void onLowMemory() {
 		for (int n = 0; n < MAX_TABS; n++) {
-			if (n != pageId && main[n] != null) {
+			if (n != currentId && main[n] != null) {
 				main[n].freeMemory();
 			}
 		}
@@ -631,6 +607,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		getUrl.setPadding(tenPad, 0, tenPad, 0);
 		getUrl.setBackgroundResource(R.drawable.book);
 		getUrl.setPadding(tenPad, 0, tenPad, 0);
+		final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		handler = new Handler() {
 
 			@Override
@@ -638,7 +615,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 				switch (msg.what) {
 				case 1: {
-					adapter = new SimpleAdapter(CONTEXT, list,
+					SimpleAdapter adapter = new SimpleAdapter(CONTEXT, list,
 							R.layout.two_line_autocomplete, new String[] {
 									"title", "url" }, new int[] { R.id.title,
 									R.id.url });
@@ -699,7 +676,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 				} catch (IllegalStateException ignored) {
 				}
 
-				list = new ArrayList<Map<String, String>>();
 				try {
 					if (managedCursor != null) {
 
@@ -707,13 +683,16 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 							// Variable for holding the retrieved URL
 
-							urlColumn = managedCursor.getColumnIndex("url");
-							titleColumn = managedCursor.getColumnIndex("title");
+							int urlColumn = managedCursor.getColumnIndex("url");
+							int titleColumn = managedCursor
+									.getColumnIndex("title");
 							// Reference to the the column containing the URL
 							do {
-								urlA = managedCursor.getString(urlColumn);
-								title = managedCursor.getString(titleColumn);
-								map = new HashMap<String, String>();
+								String urlA = managedCursor
+										.getString(urlColumn);
+								String title = managedCursor
+										.getString(titleColumn);
+								Map<String, String> map = new HashMap<String, String>();
 								map.put("title", title);
 								map.put("url", urlA);
 								list.add(map);
@@ -777,10 +756,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			@Override
 			public void onClick(View v) {
 
-				if (main[pageId].canGoBack()) {
-					main[pageId].goBack();
+				if (currentTab.canGoBack()) {
+					currentTab.goBack();
 				} else {
-					deleteTab(pageId);
+					deleteTab(currentId);
 				}
 
 			}
@@ -801,9 +780,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	@Override
 	public void finish() {
 		background.clearDisappearingChildren();
+		background.removeView(currentTab);
 		tabScroll.clearDisappearingChildren();
 		if (settings.getBoolean("cache", false)) {
-			main[pageId].clearCache(true);
+			currentTab.clearCache(true);
 			Log.i("Lightning", "Cache Cleared");
 		}
 		super.finish();
@@ -820,8 +800,8 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			@Override
 			public void onClick(View v) {
-				if (main[pageId].canGoForward()) {
-					main[pageId].goForward();
+				if (currentTab.canGoForward()) {
+					currentTab.goForward();
 				}
 			}
 
@@ -854,6 +834,13 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	@SuppressLint("InlinedApi")
 	private void initialize() {
 
+		tabList = new ArrayList<Integer>();
+		bUrl = new String[MAX_BOOKMARKS];
+		bTitle = new String[MAX_BOOKMARKS];
+		main = new CustomWebView[MAX_TABS];
+		urlTitle = new TextView[MAX_TABS];
+		urlToLoad = new String[MAX_TABS][2];
+		fullScreen = false;
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		historyHandler = new DatabaseHandler(this);
@@ -875,7 +862,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 		showFullScreen = settings.getBoolean("fullscreen", false);
 		uBar = (RelativeLayout) findViewById(R.id.urlBar);
-		RelativeLayout bg = (RelativeLayout) findViewById(R.id.background);
+		screen = (RelativeLayout) findViewById(R.id.background);
 		slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
 		slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
 		fadeOut = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
@@ -883,12 +870,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
 		// mShortAnimationDuration = getResources().getInteger(
 		// android.R.integer.config_mediumAnimTime);
-		mShortAnimationDuration = 250;
 		slideUp.setAnimationListener(new AnimationListener() {
 
 			@Override
 			public void onAnimationEnd(Animation arg0) {
-
 				uBar.setVisibility(View.GONE);
 			}
 
@@ -917,7 +902,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-
 				uBar.setVisibility(View.VISIBLE);
 			}
 
@@ -936,10 +920,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		background = (FrameLayout) findViewById(R.id.holder);
 		defaultUser = user; // setting mobile user
 		// agent
-		mobile = FinalVariables.MOBILE_USER_AGENT;
-		desktop = FinalVariables.DESKTOP_USER_AGENT; // setting
-		// desktop user agent
-
 		switch (settings.getInt("search", 1)) {
 		case 1:
 			SEARCH = FinalVariables.GOOGLE_SEARCH;
@@ -962,6 +942,9 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		case 7:
 			SEARCH = FinalVariables.YANDEX_SEARCH;
 			break;
+		case 8:
+			SEARCH = FinalVariables.DUCK_LITE_SEARCH;
+			break;
 		}
 
 		exitTab = getResources().getDrawable(R.drawable.stop); // user
@@ -971,23 +954,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 															// stored
 															// homepage
 															// variable
-		allowLocation = settings.getBoolean("location", false); // initializing
-																// location
-																// variable
-		savePasswords = settings.getBoolean("passwords", false); // initializing
-																	// save
-																	// passwords
-																	// variable
-		enableFlash = settings.getInt("enableflash", 0); // enable flash
-															// boolean
-		agentPicker = settings.getInt("agentchoose", 1); // which user agent to
-															// use, 1=mobile,
-															// 2=desktop,
-															// 3=custom
 
-		deleteHistory = settings.getBoolean("history", false); // delete history
-																// on exit
-																// boolean
 		// initializing variables declared
 
 		height = getResources().getDrawable(R.drawable.loading)
@@ -1022,7 +989,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		rightPad = (int) (15 * scale + 0.5f);
 		height32 = (int) (32 * scale + 0.5f);
 		tenPad = (int) (10 * scale + 0.5f);
-		number = 0;
 
 		webpageOther = getResources().getDrawable(R.drawable.webpage);
 		incognitoPage = getResources().getDrawable(R.drawable.incognito);
@@ -1046,11 +1012,11 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		newTab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				newTab(number, homepage, true);
+				newTab(homepage, true);
 				tabScroll.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						tabScroll.smoothScrollTo(urlTitle[pageId].getLeft(), 0);
+						tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
 					}
 				}, 100L);
 
@@ -1061,14 +1027,14 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			@Override
 			public boolean onLongClick(View v) {
 				if (settings.getString("oldPage", "").length() > 0) {
-					newTab(number, settings.getString("oldPage", ""), true);
+					newTab(settings.getString("oldPage", ""), true);
 					edit.putString("oldPage", "");
 					edit.commit();
 					tabScroll.postDelayed(new Runnable() {
 						@Override
 						public void run() {
-							tabScroll.smoothScrollTo(
-									urlTitle[pageId].getLeft(), 0);
+							tabScroll.smoothScrollTo(currentTabTitle.getLeft(),
+									0);
 						}
 					}, 100L);
 				}
@@ -1082,10 +1048,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			@Override
 			public void onClick(View arg0) {
 
-				if (main[pageId].getProgress() < 100) {
-					main[pageId].stopLoading();
+				if (currentTab.getProgress() < 100) {
+					currentTab.stopLoading();
 				} else {
-					main[pageId].reload();
+					currentTab.reload();
 				}
 			}
 
@@ -1093,8 +1059,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 		enterUrl();
 		if (showFullScreen) {
-			bg.removeView(uBar);
-			background.addView(uBar);
+			toggleFullScreen();
 		}
 		browserHandler = new Handle();
 
@@ -1106,7 +1071,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 1: {
-				main[pageId].loadUrl(getUrl.getText().toString());
+				currentTab.loadUrl(getUrl.getText().toString());
 				break;
 			}
 			case 2: {
@@ -1114,7 +1079,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 				break;
 			}
 			case 3: {
-				main[pageId].invalidate();
+				currentTab.invalidate();
 				break;
 			}
 			}
@@ -1128,27 +1093,28 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		String URL = url.getDataString();
 		boolean oldTabs = false;
 
-		if (saveTabs) {
+		if (settings.getBoolean("savetabs", true)) {
 			if (URL != null) {
 				// opens a new tab with the url if its there
-				newTab(number, URL, true);
-				main[number - 1].resumeTimers();
+				int n = newTab(URL, true);
+				main[n].resumeTimers();
 				oldTabs = true;
 
 			}
+			boolean first = false;
 			for (String aMemoryURL : memoryURL) {
 				if (aMemoryURL.length() > 0) {
-					if (number == 0) {
-						newTab(number, "", !oldTabs);
-						main[pageId].resumeTimers();
-						main[pageId].getSettings().setCacheMode(
+					if (!first) {
+						int n = newTab("", !oldTabs);
+						main[n].resumeTimers();
+						main[n].getSettings().setCacheMode(
 								WebSettings.LOAD_CACHE_ELSE_NETWORK);
-						main[pageId].loadUrl(aMemoryURL);
+						main[n].loadUrl(aMemoryURL);
 					} else {
-						newTab(number, "", false);
-						main[number - 1].getSettings().setCacheMode(
+						int n = newTab("", false);
+						main[n].getSettings().setCacheMode(
 								WebSettings.LOAD_CACHE_ELSE_NETWORK);
-						main[number - 1].loadUrl(aMemoryURL);
+						main[n].loadUrl(aMemoryURL);
 					}
 					oldTabs = true;
 				}
@@ -1156,59 +1122,43 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			}
 
 			if (!oldTabs) {
-				newTab(number, homepage, true);
-				main[number - 1].resumeTimers();
+				int n = newTab(homepage, true);
+				main[n].resumeTimers();
 			}
 		} else {
 			if (URL != null) {
 				// opens a new tab with the URL if its there
-				newTab(number, URL, true);
-				main[number - 1].resumeTimers();
+				int n = newTab(URL, true);
+				main[n].resumeTimers();
 
 			} else {
 				// otherwise it opens the home-page
-				newTab(number, homepage, true);
-				main[number - 1].resumeTimers();
+				int n = newTab(homepage, true);
+				main[n].resumeTimers();
 
 			}
 		}
 	}
 
-	public static CustomWebView makeTab(final int pageToView, String Url,
+	public static CustomWebView generateTab(final int pageToView, String Url,
 			final boolean display) {
 		CustomWebView view = new CustomWebView(CONTEXT);
 		view.setId(pageToView);
-		allowLocation = settings.getBoolean("location", false);
-		browserSettings(CONTEXT, view);
 		view.setWebViewClient(new CustomWebViewClient(ACTIVITY));
 		view.setWebChromeClient(new CustomChromeClient(ACTIVITY));
 		if (API > 8) {
 			view.setDownloadListener(new CustomDownloadListener(ACTIVITY));
 		}
 
-		view.setOnLongClickListener(new WebPageLongClickListener());
-
-		agentPicker = settings.getInt("agentchoose", 1);
-		switch (agentPicker) {
-		case 1:
-			view.getSettings().setUserAgentString(defaultUser);
-			break;
-		case 2:
-			view.getSettings().setUserAgentString(desktop);
-			break;
-		case 3:
-			view.getSettings().setUserAgentString(mobile);
-			break;
-		case 4:
-			view.getSettings().setUserAgentString(
-					settings.getString("userAgentString", defaultUser));
-			break;
-		}
 		if (display) {
-			background.removeView(main[pageId]);
+			if (currentId != -1) {
+				background.removeView(currentTab);
+			}
 			background.addView(view);
 			view.requestFocus();
-			pageId = pageToView;
+			currentId = pageToView;
+			currentTab = main[pageToView];
+			currentTabTitle = urlTitle[pageToView];
 		}
 		uBar.bringToFront();
 		if (Url.contains("about:home")) {
@@ -1231,159 +1181,106 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	}
 
 	// new tab method, takes the id of the tab to be created and the url to load
-	public static int newTab(int theId, final String theUrl,
-			final boolean display) {
+	public static int newTab(final String theUrl, final boolean display) {
 		Log.i("Browser", "making tab");
-		int finalID = 0;
 		homepage = settings.getString("home", HOMEPAGE);
-		allowLocation = settings.getBoolean("location", false);
-		boolean reuseWebView = false;
+		int finalID = createTab(theUrl, display);
+		if (finalID != -1) {
+			tabList.add(finalID);
+			if (display) {
+				currentId = finalID;
+				currentTab = main[finalID];
+				currentTabTitle = urlTitle[finalID];
+			}
 
-		for (int num = 0; num < number; num++) {
-			if (urlTitle[num].getVisibility() == View.GONE) {
-				final int n = num;
-				Animation holo = AnimationUtils.loadAnimation(CONTEXT,
-						R.anim.up);
-				holo.setAnimationListener(new AnimationListener() {
+			return finalID;
+		} else {
+			return 0;
+		}
+	}
 
-					@Override
-					public void onAnimationEnd(Animation animation) {
-					}
-
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
-
-					@Override
-					public void onAnimationStart(Animation animation) {
-						urlTitle[n].setVisibility(View.VISIBLE);
-					}
-
-				});
-				urlTitle[n].startAnimation(holo);
-				urlTitle[num].setText("New Tab");
-
-				if (display) {
-					if (API < 16) {
-						urlTitle[num].setBackgroundDrawable(active);
-					} else {
-						urlTitle[num].setBackground(active);
-					}
-				} else {
-					if (API < 16) {
-						urlTitle[num].setBackgroundDrawable(inactive);
-					} else {
-						urlTitle[num].setBackground(inactive);
-					}
-				}
-				urlTitle[num].setPadding(leftPad, 0, rightPad, 0);
-				if (display) {
-					if (API < 16) {
-						urlTitle[pageId].setBackgroundDrawable(inactive);
-					} else {
-						urlTitle[pageId].setBackground(inactive);
-					}
-				}
-				urlTitle[num].setCompoundDrawables(webpageOther, null, exitTab,
-						null);
-				urlTitle[num].setPadding(leftPad, 0, rightPad, 0);
-				urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-
-				main[num] = makeTab(num, theUrl, display);
-				finalID = num;
-				pageId = num;
-
-				uBar.bringToFront();
-
-				if (API >= 11) {
-					main[num].onResume();
-				}
-
-				reuseWebView = true;
+	// creates the tab and returns the ID of the view
+	public static int createTab(String theUrl, boolean display) {
+		int id = -1;
+		for (int n = 0; n < MAX_TABS; n++) {
+			if (main[n] == null) {
+				id = n;
 				break;
 			}
 		}
-		if (!reuseWebView) {
-			if (number < MAX_TABS) {
-				if (number > 0) {
-					if (display) {
-						if (API < 16) {
-							urlTitle[pageId].setBackgroundDrawable(inactive);
-						} else {
-							urlTitle[pageId].setBackground(inactive);
-						}
-
-						urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-					}
-				}
-				final TextView title = new TextView(CONTEXT);
-				title.setText("New Tab");
+		if (id != -1) {
+			if (id > 0) {
 				if (display) {
 					if (API < 16) {
-						title.setBackgroundDrawable(active);
+						currentTabTitle.setBackgroundDrawable(inactive);
 					} else {
-						title.setBackground(active);
+						currentTabTitle.setBackground(inactive);
 					}
-				} else {
-					if (API < 16) {
-						title.setBackgroundDrawable(inactive);
-					} else {
-						title.setBackground(inactive);
-					}
+					currentTabTitle.setPadding(leftPad, 0, rightPad, 0);
 				}
-				title.setSingleLine(true);
-				title.setGravity(Gravity.CENTER_VERTICAL);
-				title.setHeight(height32);
-				title.setWidth(pixels);
-				title.setPadding(leftPad, 0, rightPad, 0);
-				title.setId(number);
-				title.setGravity(Gravity.CENTER_VERTICAL);
-
-				title.setCompoundDrawables(webpageOther, null, exitTab, null);
-
-				Drawable[] drawables = title.getCompoundDrawables();
-				bounds = drawables[2].getBounds();
-				title.setOnTouchListener(ACTIVITY);
-				Animation holo = AnimationUtils.loadAnimation(CONTEXT,
-						R.anim.up);
-				tabLayout.addView(title);
-				title.setVisibility(View.INVISIBLE);
-				holo.setAnimationListener(new AnimationListener() {
-
-					@Override
-					public void onAnimationEnd(Animation animation) {
-					}
-
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
-
-					@Override
-					public void onAnimationStart(Animation animation) {
-						title.setVisibility(View.VISIBLE);
-					}
-
-				});
-				title.startAnimation(holo);
-				urlTitle[number] = title;
-
-				urlTitle[number].setText("New Tab");
-
-				if (theUrl != null) {
-					main[number] = makeTab(number, theUrl, display);
-				} else {
-					main[number] = makeTab(number, homepage, display);
-				}
-				finalID = number;
-				number = number + 1;
 			}
-		}
-		if (!reuseWebView && number >= MAX_TABS) {
-			Toast.makeText(CONTEXT, "Maximum number of tabs reached...",
-					Toast.LENGTH_SHORT).show();
-		}
-		return finalID;
+			final TextView title = new TextView(CONTEXT);
+			title.setText("New Tab");
+			if (display) {
+				if (API < 16) {
+					title.setBackgroundDrawable(active);
+				} else {
+					title.setBackground(active);
+				}
+			} else {
+				if (API < 16) {
+					title.setBackgroundDrawable(inactive);
+				} else {
+					title.setBackground(inactive);
+				}
+			}
+			title.setSingleLine(true);
+			title.setGravity(Gravity.CENTER_VERTICAL);
+			title.setHeight(height32);
+			title.setWidth(pixels);
+			title.setPadding(leftPad, 0, rightPad, 0);
+			title.setId(id);
+			title.setGravity(Gravity.CENTER_VERTICAL);
 
+			title.setCompoundDrawables(webpageOther, null, exitTab, null);
+
+			Drawable[] drawables = title.getCompoundDrawables();
+			bounds = drawables[2].getBounds();
+			title.setOnTouchListener(ACTIVITY);
+			Animation holo = AnimationUtils.loadAnimation(CONTEXT, R.anim.up);
+			tabLayout.addView(title);
+			title.setVisibility(View.INVISIBLE);
+			holo.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+					title.setVisibility(View.VISIBLE);
+				}
+
+			});
+			title.startAnimation(holo);
+			urlTitle[id] = title;
+
+			urlTitle[id].setText("New Tab");
+
+			if (theUrl != null) {
+				main[id] = generateTab(id, theUrl, display);
+			} else {
+				main[id] = generateTab(id, homepage, display);
+			}
+
+		} else {
+			Utils.showToast(CONTEXT, "Max number of tabs reached");
+		}
+		return id;
 	}
 
 	@Override
@@ -1406,10 +1303,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			if (showFullScreen && !uBar.isShown()) {
 				uBar.startAnimation(slideDown);
 			}
-			if (main[pageId].isShown() && main[pageId].canGoBack()) {
-				main[pageId].goBack();
+			if (currentTab.isShown() && currentTab.canGoBack()) {
+				currentTab.goBack();
 			} else {
-				deleteTab(pageId);
+				deleteTab(currentId);
 				uBar.bringToFront();
 			}
 		} catch (NullPointerException ignored) {
@@ -1421,11 +1318,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		if (settings.getBoolean("textreflow", false)) {
-			main[pageId].getSettings().setLayoutAlgorithm(
+			currentTab.getSettings().setLayoutAlgorithm(
 					LayoutAlgorithm.NARROW_COLUMNS);
 		} else {
-			main[pageId].getSettings().setLayoutAlgorithm(
-					LayoutAlgorithm.NORMAL);
+			currentTab.getSettings().setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 		}
 
 	}
@@ -1436,18 +1332,18 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		setContentView(R.layout.activity_main); // displays main xml layout
 		CONTEXT = this;
 		ACTIVITY = this;
-		settings = getSharedPreferences(preferences, 0);
+		settings = getSharedPreferences("settings", 0);
 		edit = settings.edit();
 
 		if (settings.getBoolean("hidestatus", false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
-		saveTabs = settings.getBoolean("savetabs", true);
-		if (saveTabs) {
+		if (settings.getBoolean("savetabs", true)) {
 			String mem = settings.getString("memory", "");
 			edit.putString("memory", "");
-			memoryURL = GetArray(mem);
+			memoryURL = new String[MAX_TABS];
+			memoryURL = getArray(mem);
 		}
 
 		inactive = getResources().getDrawable(R.drawable.bg_inactive);
@@ -1472,13 +1368,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			String message = "1. Long-press back button to exit browser\n\n"
 					+ "2. Swipe from left edge toward the right (---->) to go back\n\n"
 					+ "3. Swipe from right edge toward the left (<----)to go forward\n\n"
-					+ "4. Visit settings and advanced settings to change options";
+					+ "4. Visit settings and advanced settings to change options\n\n"
+					+ "5. Long-press on the new tab button to open the last closed tab";
 
 			Utils.createInformativeDialog(CONTEXT, "Browser Tips", message);
-			String sorry = "I have changed back to the old icon because it has been"
-					+ " brought to my attention that another app had a very similar icon to the new one."
-					+ " I apologize if you liked the new one.";
-			Utils.createInformativeDialog(CONTEXT, "New Icon", sorry);
 			edit.putInt("first", 1);
 			edit.commit();
 		}
@@ -1501,10 +1394,45 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_SEARCH: {
 			getUrl.requestFocus();
 			InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			manager.showSoftInput(getUrl, 0);
+
+			break;
+		}
+		case KeyEvent.KEYCODE_F5: {
+			currentTab.reload();
+		}
+		case KeyEvent.KEYCODE_ESCAPE: {
+			currentTab.stopLoading();
+		}
+		case KeyEvent.KEYCODE_TAB: {
+			InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (!manager.isActive()) {
+				newTab(homepage, true);
+			}
+
+		}
+		case KeyEvent.KEYCODE_F12: {
+			finish();
+		}
+		case KeyEvent.KEYCODE_F6: {
+			getUrl.selectAll();
+		}
+		case KeyEvent.KEYCODE_F10: {
+			startActivity(new Intent(FinalVariables.SETTINGS_INTENT));
+		}
+		case KeyEvent.KEYCODE_F11: {
+			toggleFullScreen();
+		}
+		case KeyEvent.KEYCODE_DEL: {
+			InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (!manager.isActive()) {
+				currentTab.goBack();
+			}
+		}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -1546,7 +1474,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		} else if (download == 1) {
 			Utils.downloadFile(CONTEXT, url, null, null);
 		} else if (url != null) {
-			newTab(number, url, true);
+			newTab(url, true);
 		}
 
 		super.onNewIntent(intent);
@@ -1557,13 +1485,13 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 		switch (item.getItemId()) {
 		case R.id.history:
-			generateHistory(main[pageId], CONTEXT);
+			generateHistory(currentTab, CONTEXT);
 			return true;
 		case R.id.bookmark:
-			if (urlToLoad[pageId][1] != null) {
-				if (!urlToLoad[pageId][1].equals("Bookmarks")) {
-					Utils.addBookmark(CONTEXT, urlToLoad[pageId][1],
-							urlToLoad[pageId][0]);
+			if (urlToLoad[currentId][1] != null) {
+				if (!urlToLoad[currentId][1].equals("Bookmarks")) {
+					Utils.addBookmark(CONTEXT, urlToLoad[currentId][1],
+							urlToLoad[currentId][0]);
 				}
 			}
 			return true;
@@ -1571,10 +1499,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			newSettings();
 			return true;
 		case R.id.allBookmarks:
-			if (urlToLoad[pageId][1] == null) {
-				goBookmarks(CONTEXT, main[pageId]);
-			} else if (!urlToLoad[pageId][1].equals("Bookmarks")) {
-				goBookmarks(CONTEXT, main[pageId]);
+			if (urlToLoad[currentId][1] == null) {
+				goBookmarks(CONTEXT, currentTab);
+			} else if (!urlToLoad[currentId][1].equals("Bookmarks")) {
+				goBookmarks(CONTEXT, currentTab);
 			}
 
 			return true;
@@ -1593,11 +1521,11 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	@Override
 	protected void onPause() {
 
-		if (main[pageId] != null) {
+		if (currentTab != null) {
 			if (API >= 11) {
-				main[pageId].onPause();
+				currentTab.onPause();
 			}
-			main[pageId].pauseTimers();
+			currentTab.pauseTimers();
 		}
 		Thread remember = new Thread(new Runnable() {
 
@@ -1619,16 +1547,20 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	@Override
 	protected void onResume() {
-		onProgressChanged(pageId, main[pageId].getProgress());
-		if (main[pageId].getProgress() == 100) {
+		onProgressChanged(currentId, currentTab.getProgress());
+		if (currentTab.getProgress() == 100) {
 			progressBar.setVisibility(View.GONE);
 			refresh.setVisibility(View.VISIBLE);
-			
+
 		}
 		if (API >= 11) {
-			main[pageId].onResume();
+			currentTab.onResume();
 		}
-		main[pageId].resumeTimers();
+		reinitializeSettings();
+		currentTab.resumeTimers();
+		if (settings.getBoolean("fullscreen", false) != fullScreen) {
+			toggleFullScreen();
+		}
 		super.onResume();
 	}
 
@@ -1654,7 +1586,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		view.loadUrl("file://" + bookmarkWebPage);
 
 		if (uBar.isShown()) {
-			urlTitle[pageId].setText("Bookmarks");
+			currentTabTitle.setText("Bookmarks");
 			setUrlText("");
 			getUrl.setPadding(tenPad, 0, tenPad, 0);
 		}
@@ -1680,15 +1612,15 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 							switch (item.getItemId()) {
 							case R.id.history:
-								generateHistory(main[pageId], CONTEXT);
+								generateHistory(currentTab, CONTEXT);
 								return true;
 							case R.id.bookmark:
-								if (urlToLoad[pageId][1] != null) {
-									if (!urlToLoad[pageId][1]
+								if (urlToLoad[currentId][1] != null) {
+									if (!urlToLoad[currentId][1]
 											.equals("Bookmarks")) {
 										Utils.addBookmark(CONTEXT,
-												urlToLoad[pageId][1],
-												urlToLoad[pageId][0]);
+												urlToLoad[currentId][1],
+												urlToLoad[currentId][0]);
 									}
 								}
 								return true;
@@ -1696,11 +1628,11 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 								newSettings();
 								return true;
 							case R.id.allBookmarks:
-								if (urlToLoad[pageId][1] == null) {
-									goBookmarks(CONTEXT, main[pageId]);
-								} else if (!urlToLoad[pageId][1]
+								if (urlToLoad[currentId][1] == null) {
+									goBookmarks(CONTEXT, currentTab);
+								} else if (!urlToLoad[currentId][1]
 										.equals("Bookmarks")) {
-									goBookmarks(CONTEXT, main[pageId]);
+									goBookmarks(CONTEXT, currentTab);
 								}
 								return true;
 							case R.id.share:
@@ -1726,14 +1658,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			}
 
 		});
-		options.setOnLongClickListener(new OnLongClickListener() {
-
-			@Override
-			public boolean onLongClick(View arg0) {
-				return true;
-			}
-
-		});
 	}
 
 	static void share() {
@@ -1744,10 +1668,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 		// add a subject
 		shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-				urlToLoad[pageId][1]);
+				urlToLoad[currentId][1]);
 
 		// build the body of the message to be shared
-		String shareMessage = urlToLoad[pageId][0];
+		String shareMessage = urlToLoad[currentId][0];
 
 		// add the message
 		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
@@ -1759,7 +1683,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	static void searchTheWeb(String query, Context context) {
 		query = query.trim();
-		main[pageId].stopLoading();
+		currentTab.stopLoading();
 
 		if (query.startsWith("www.")) {
 			query = "http://" + query;
@@ -1777,16 +1701,16 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		boolean isSearch = ((query.contains(" ") || !containsPeriod) && !aboutScheme);
 
 		if (query.contains("about:home") || query.contains("about:bookmarks")) {
-			goBookmarks(context, main[pageId]);
+			goBookmarks(context, currentTab);
 		} else if (query.contains("about:history")) {
-			generateHistory(main[pageId], context);
+			generateHistory(currentTab, context);
 		} else if (isSearch) {
 			query.replaceAll(" ", "+");
-			main[pageId].loadUrl(SEARCH + query);
+			currentTab.loadUrl(SEARCH + query);
 		} else if (!validURL) {
-			main[pageId].loadUrl("http://" + query);
+			currentTab.loadUrl("http://" + query);
 		} else {
-			main[pageId].loadUrl(query);
+			currentTab.loadUrl(query);
 		}
 	}
 
@@ -1839,20 +1763,20 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	}
 
 	public static void onCreateWindow(Message resultMsg) {
-		newTab(number, "", true);
+		newTab("", true);
 		WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-		transport.setWebView(main[pageId]);
+		transport.setWebView(currentTab);
 		resultMsg.sendToTarget();
 		browserHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				main[pageId].loadUrl(getUrl.getText().toString());
+				currentTab.loadUrl(getUrl.getText().toString());
 			}
 		}, 500);
 	}
 
 	public static void onShowCustomView() {
-		background.removeView(main[pageId]);
+		background.removeView(currentTab);
 		uBar.setVisibility(View.GONE);
 	}
 
@@ -1863,7 +1787,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		fullScreenContainer = null;
 		mCustomViewCallback.onCustomViewHidden();
 		ACTIVITY.setRequestedOrientation(orientation);
-		background.addView(main[pageId]);
+		background.addView(currentTab);
 		uBar.setVisibility(View.VISIBLE);
 		uBar.bringToFront();
 	}
@@ -1888,91 +1812,97 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		id = v.getId();
-		background.clearDisappearingChildren();
-		boolean xPress = false;
-		int x = (int) event.getX();
-		int y = (int) event.getY();
-		Rect edge = new Rect();
-		v.getLocalVisibleRect(edge);
-		urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			timeTabPressed = System.currentTimeMillis();
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+		try {
+			id = v.getId();
+			background.clearDisappearingChildren();
+			boolean xPress = false;
+			int x = (int) event.getX();
+			int y = (int) event.getY();
+			Rect edge = new Rect();
+			v.getDrawingRect(edge);
+			currentTabTitle.setPadding(leftPad, 0, rightPad, 0);
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				timeTabPressed = System.currentTimeMillis();
+			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
-			if ((System.currentTimeMillis() - timeTabPressed) > 1000) {
-				xPress = true;
-			}
-
-			if (x >= (edge.right - bounds.width() - v.getPaddingRight() - 10 * 3 / 2)
-					&& x <= (edge.right - v.getPaddingRight() + 10 * 3 / 2)
-					&& y >= (v.getPaddingTop() - 10 / 2)
-					&& y <= (v.getHeight() - v.getPaddingBottom() + 10 / 2)) {
-				xPress = true;
-			}
-			if (id == pageId) {
-				if (xPress) {
-					deleteTab(id);
-					uBar.bringToFront();
+				if ((System.currentTimeMillis() - timeTabPressed) > 1000) {
+					xPress = true;
 				}
-			} else if (id != pageId) {
-				if (xPress) {
-					deleteTab(id);
-				} else {
-					if (API < 16) {
-						urlTitle[pageId].setBackgroundDrawable(inactive);
-					} else if (API > 15) {
-						urlTitle[pageId].setBackground(inactive);
-					}
-					urlTitle[pageId].setPadding(leftPad, 0, rightPad, 0);
-					if (!showFullScreen) {
-						background.addView(main[id]);
-						main[id].startAnimation(fadeIn);
-						main[pageId].startAnimation(fadeOut);
-						background.removeView(main[pageId]);
+
+				if (x >= (edge.right - bounds.width() - v.getPaddingRight() - 10 * 3 / 2)
+						&& x <= (edge.right - v.getPaddingRight() + 10 * 3 / 2)
+						&& y >= (v.getPaddingTop() - 10 / 2)
+						&& y <= (v.getHeight() - v.getPaddingBottom() + 10 / 2)) {
+					xPress = true;
+				}
+				if (id == currentId) {
+					if (xPress) {
+						deleteTab(id);
 						uBar.bringToFront();
-					} else if (API >= 12) {
-						main[id].setAlpha(0f);
-						background.addView(main[id]);
-						try {
-							main[id].animate().alpha(1f)
-									.setDuration(mShortAnimationDuration);
-						} catch (NullPointerException ignored) {
+					}
+				} else if (id != currentId) {
+					if (xPress) {
+						deleteTab(id);
+					} else {
+						if (API < 16) {
+							currentTabTitle.setBackgroundDrawable(inactive);
+						} else if (API > 15) {
+							currentTabTitle.setBackground(inactive);
 						}
-						background.removeView(main[pageId]);
+						currentTabTitle.setPadding(leftPad, 0, rightPad, 0);
+						if (!showFullScreen) {
+							background.addView(main[id]);
+							main[id].startAnimation(fadeIn);
+							currentTab.startAnimation(fadeOut);
+							background.removeView(currentTab);
+							uBar.bringToFront();
+						} else if (API >= 12) {
+							main[id].setAlpha(0f);
+							background.addView(main[id]);
+							try {
+								main[id].animate().alpha(1f).setDuration(250);
+							} catch (NullPointerException ignored) {
+							}
+							background.removeView(currentTab);
+							uBar.bringToFront();
+						} else {
+							background.removeView(currentTab);
+							background.addView(main[id]);
+						}
 						uBar.bringToFront();
-					} else {
-						background.removeView(main[pageId]);
-						background.addView(main[id]);
-					}
-					uBar.bringToFront();
 
-					pageId = id;
-					setUrlText(urlToLoad[pageId][0]);
-					getUrl.setPadding(tenPad, 0, tenPad, 0);
-					if (API < 16) {
-						urlTitle[pageId].setBackgroundDrawable(active);
-					} else if (API > 15) {
-						urlTitle[pageId].setBackground(active);
+						currentId = id;
+						currentTab = main[id];
+						currentTabTitle = urlTitle[id];
+						setUrlText(urlToLoad[currentId][0]);
+						getUrl.setPadding(tenPad, 0, tenPad, 0);
+						if (API < 16) {
+							currentTabTitle.setBackgroundDrawable(active);
+						} else if (API > 15) {
+							currentTabTitle.setBackground(active);
+						}
+						if (currentTab.getProgress() < 100) {
+							refresh.setVisibility(View.INVISIBLE);
+
+							progressBar.setVisibility(View.VISIBLE);
+
+						} else {
+							progressBar.setVisibility(View.GONE);
+							refresh.setVisibility(View.VISIBLE);
+						}
+						onProgressChanged(currentId, currentTab.getProgress());
+						tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
+						currentTab.invalidate();
 					}
-					if (main[pageId].getProgress() < 100) {
-						refresh.setVisibility(View.INVISIBLE);
-						
-						progressBar.setVisibility(View.VISIBLE);
-						
-					} else {
-						progressBar.setVisibility(View.GONE);
-						refresh.setVisibility(View.VISIBLE);
-					}
-					onProgressChanged(pageId, main[pageId].getProgress());
-					tabScroll.smoothScrollTo(urlTitle[pageId].getLeft(), 0);
-					main[pageId].invalidate();
 				}
-			}
 
+			}
+			uBar.bringToFront();
+			v.setPadding(leftPad, 0, rightPad, 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("Lightning Error", "Well we dun messed up");
 		}
-		uBar.bringToFront();
-		v.setPadding(leftPad, 0, rightPad, 0);
 		return true;
 	}
 
@@ -1993,99 +1923,113 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	}
 
-	public static boolean onLongClick(final int n) {
-		final HitTestResult result = main[n].getHitTestResult();
+	public static boolean onLongClick() {
+		int n = currentId;
+		final HitTestResult result = currentTab.getHitTestResult();
 
-		if (main[n].getUrl().contains(
+		if (currentTab.getUrl().contains(
 				"file://" + CONTEXT.getFilesDir() + "/bookmarks.html")) {
-
 			Message message = new Message();
 			message.arg1 = n;
 			message.setTarget(new ClickHandler());
-			main[n].requestFocusNodeHref(message);
+			currentTab.requestFocusNodeHref(message);
 
 			return true;
-		} else if (result.getExtra() != null) {
-			if (result.getType() == 5 && API > 8) {
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case DialogInterface.BUTTON_POSITIVE: {
-							int num = pageId;
-							newTab(number, result.getExtra(), false);
-							// urlTitle[num].performClick();
-							pageId = num;
-							break;
-						}
-						case DialogInterface.BUTTON_NEGATIVE: {
-							main[n].loadUrl(result.getExtra());
-							break;
-						}
-						case DialogInterface.BUTTON_NEUTRAL: {
-							if (API > 8) {
-								String url = result.getExtra();
-
-								Utils.downloadFile(CONTEXT, url, null, null);
-
+		} else if (result != null) {
+			if (result.getExtra() != null) {
+				if (result.getType() == 5 && API > 8) {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case DialogInterface.BUTTON_POSITIVE: {
+								int num = currentId;
+								newTab(result.getExtra(), false);
+								// urlTitle[num].performClick();
+								currentId = num;
+								currentTab = main[num];
+								currentTabTitle = urlTitle[num];
+								break;
 							}
-							break;
-						}
-						}
-					}
-				};
-
-				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT); // dialog
-				builder.setMessage("What would you like to do with this image?")
-						.setPositiveButton("Open in New Tab",
-								dialogClickListener)
-						.setNegativeButton("Open Normally", dialogClickListener)
-						.setNeutralButton("Download Image", dialogClickListener)
-						.show();
-
-			} else {
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case DialogInterface.BUTTON_POSITIVE: {
-							int num = pageId;
-							newTab(number, result.getExtra(), false);
-							pageId = num;
-							break;
-						}
-						case DialogInterface.BUTTON_NEGATIVE: {
-							main[n].loadUrl(result.getExtra());
-							break;
-						}
-						case DialogInterface.BUTTON_NEUTRAL: {
-
-							if (API < 11) {
-								android.text.ClipboardManager clipboard = (android.text.ClipboardManager) ACTIVITY
-										.getSystemService(Context.CLIPBOARD_SERVICE);
-								clipboard.setText(result.getExtra());
-							} else {
-								ClipboardManager clipboard = (ClipboardManager) ACTIVITY
-										.getSystemService(CLIPBOARD_SERVICE);
-								ClipData clip = ClipData.newPlainText("label",
-										result.getExtra());
-								clipboard.setPrimaryClip(clip);
+							case DialogInterface.BUTTON_NEGATIVE: {
+								currentTab.loadUrl(result.getExtra());
+								break;
 							}
-							break;
-						}
-						}
-					}
-				};
+							case DialogInterface.BUTTON_NEUTRAL: {
+								if (API > 8) {
+									String url = result.getExtra();
 
-				AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT); // dialog
-				builder.setTitle(result.getExtra()).setMessage("What do you want to do with this link?")
-						.setPositiveButton("Open in New Tab",
-								dialogClickListener)
-						.setNegativeButton("Open Normally", dialogClickListener)
-						.setNeutralButton("Copy link", dialogClickListener)
-						.show();
+									Utils.downloadFile(CONTEXT, url, null, null);
+
+								}
+								break;
+							}
+							}
+						}
+					};
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							CONTEXT); // dialog
+					builder.setMessage(
+							"What would you like to do with this image?")
+							.setPositiveButton("Open in New Tab",
+									dialogClickListener)
+							.setNegativeButton("Open Normally",
+									dialogClickListener)
+							.setNeutralButton("Download Image",
+									dialogClickListener).show();
+
+				} else {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case DialogInterface.BUTTON_POSITIVE: {
+								int num = currentId;
+								newTab(result.getExtra(), false);
+								currentId = num;
+								currentTab = main[num];
+								currentTabTitle = urlTitle[num];
+								break;
+							}
+							case DialogInterface.BUTTON_NEGATIVE: {
+								currentTab.loadUrl(result.getExtra());
+								break;
+							}
+							case DialogInterface.BUTTON_NEUTRAL: {
+
+								if (API < 11) {
+									android.text.ClipboardManager clipboard = (android.text.ClipboardManager) ACTIVITY
+											.getSystemService(Context.CLIPBOARD_SERVICE);
+									clipboard.setText(result.getExtra());
+								} else {
+									ClipboardManager clipboard = (ClipboardManager) ACTIVITY
+											.getSystemService(CLIPBOARD_SERVICE);
+									ClipData clip = ClipData.newPlainText(
+											"label", result.getExtra());
+									clipboard.setPrimaryClip(clip);
+								}
+								break;
+							}
+							}
+						}
+					};
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							CONTEXT); // dialog
+					builder.setTitle(result.getExtra())
+							.setMessage(
+									"What do you want to do with this link?")
+							.setPositiveButton("Open in New Tab",
+									dialogClickListener)
+							.setNegativeButton("Open Normally",
+									dialogClickListener)
+							.setNeutralButton("Copy link", dialogClickListener)
+							.show();
+				}
 			}
 			return true;
+
 		} else {
 			return false;
 		}
@@ -2100,9 +2044,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 				public void onClick(DialogInterface dialog, int which) {
 					switch (which) {
 					case DialogInterface.BUTTON_POSITIVE: {
-						int num = pageId;
-						newTab(number, clickedURL, false);
-						pageId = num;
+						renameBookmark(clickedURL);
 						break;
 					}
 					case DialogInterface.BUTTON_NEGATIVE: {
@@ -2119,32 +2061,58 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT); // dialog
 			builder.setMessage("What would you like to do with this bookmark?")
-					.setPositiveButton("Open in New Tab", dialogClickListener)
-					.setNegativeButton("Open Normally", dialogClickListener)
+					.setPositiveButton("Rename", dialogClickListener)
+					.setNegativeButton("Open", dialogClickListener)
 					.setNeutralButton("Delete", dialogClickListener).show();
 		}
 	}
 
-	public static void goBack() {
-		if (main[pageId].isShown() && main[pageId].canGoBack()) {
-			main[pageId].goBack();
+	public static void goBack(CustomWebView view) {
+		if (view.isShown() && view.canGoBack()) {
+			view.goBack();
 		}
+		Animation left = AnimationUtils.loadAnimation(CONTEXT, R.anim.left);
+		background.startAnimation(left);
+
 	}
 
-	public static void goForward() {
-		if (main[pageId].isShown() && main[pageId].canGoForward()) {
-			main[pageId].goForward();
+	public static void goForward(CustomWebView view) {
+		if (view.isShown() && view.canGoForward()) {
+			view.goForward();
 		}
+		Animation right = AnimationUtils.loadAnimation(CONTEXT, R.anim.right);
+		background.startAnimation(right);
 	}
 
 	public static void onProgressChanged(int id, int progress) {
-		if (id == pageId) {
+		if (id == currentId) {
 			browserProgress.setProgress(progress);
 			if (progress < 100) {
 				browserProgress.setVisibility(View.VISIBLE);
 			} else {
 				browserProgress.setVisibility(View.GONE);
 			}
+		}
+	}
+
+	public static void reinitializeSettings() {
+		int size = tabList.size();
+		for (int n = 0; n < size; n++) {
+			main[tabList.get(n)].settingsInitialization(CONTEXT);
+		}
+	}
+
+	public static void toggleFullScreen() {
+		showFullScreen = settings.getBoolean("fullscreen", false);
+		CustomWebView.showFullScreen = showFullScreen;
+		if (fullScreen) {
+			background.removeView(uBar);
+			screen.addView(uBar);
+			fullScreen = false;
+		} else {
+			screen.removeView(uBar);
+			background.addView(uBar);
+			fullScreen = true;
 		}
 	}
 }

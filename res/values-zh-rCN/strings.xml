@@ -53,7 +53,5 @@
     <string name="menu_new_tab">新建标签</string>
     <string name="stock_browser_unavailable">(没有检测到系统自带浏览器)</string>
     <string name="stock_browser_available">(检测到系统自带浏览器)</string>
-    <string name="fullScreenOption">浏览网页时隐藏状态栏</string>
-    <string name="clear_cookies">清除 cookies</string>
 
 </resources>

@@ -136,8 +136,9 @@ public class IncognitoChromeClient extends WebChromeClient {
 		if (mCustomView == null && mCustomViewCallback == null) {
 			return;
 		}
-		mCustomView = null;
+		
 		mCustomView.setKeepScreenOn(false);
+		mCustomView = null;
 		IncognitoModeActivity.onHideCustomView(fullScreenContainer, mCustomViewCallback, orientation);
 	}
 

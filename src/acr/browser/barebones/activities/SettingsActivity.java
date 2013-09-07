@@ -95,6 +95,9 @@ public class SettingsActivity extends Activity {
 		case 7:
 			searchText.setText("Yandex");
 			break;
+		case 8:
+			searchText.setText("DuckDuckGo Lite");
+			break;
 		}
 
 		back.setBackgroundResource(R.drawable.button);
@@ -224,8 +227,8 @@ public class SettingsActivity extends Activity {
 				AlertDialog.Builder picker = new AlertDialog.Builder(
 						SettingsActivity.this);
 				picker.setTitle("Search Engine");
-				CharSequence[] chars = { "Google (Suggested)", "Bing", "Yahoo",
-						"StartPage", "DuckDuckGo (Privacy)" , "Baidu (Chinese)", "Yandex (Russian)"};
+				CharSequence[] chars = { "Google", "Bing", "Yahoo",
+						"StartPage", "DuckDuckGo (Privacy)" , "Baidu (Chinese)", "Yandex (Russian)", "DuckDuckGo Lite (Privacy)"};
 
 				int n = settings.getInt("search", 1);
 
@@ -258,6 +261,9 @@ public class SettingsActivity extends Activity {
 									break;
 								case 7:
 									searchText.setText("Yandex");
+									break;
+								case 8:
+									searchText.setText("DuckDuckGo Lite");
 									break;
 								}
 							}
@@ -463,10 +469,9 @@ public class SettingsActivity extends Activity {
 					Utils.createInformativeDialog(
 							SettingsActivity.this,
 							"Warning",
-							"Adobe Flash does not support Android 4.3 and will"
+							"Adobe Flash does not support Android 4.3 and will "
 									+ "crash the browser, please do not report crashes that occur if you enable flash.");
 				}
-
 			}
 
 		});
