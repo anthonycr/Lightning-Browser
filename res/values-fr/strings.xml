@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">Paramètres</string>
@@ -11,15 +13,47 @@
     <string name="mobile">Voir la version mobile</string>
     <string name="desk">Voir la version ordinateur</string>
     <string name="custom">Utiliser un User Agent personnalisé</string>
-    <string name="home">Au démarrage</string>
+    <string name="home">Page d\'accueil</string>
     <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
-    <string name="menu_history">History</string>
-    <string name="menu_add">Aj. Favoris</string>
+    <string name="saveTab">Restaurer les onglets si ils sont perdus</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="download">Dossier de téléchargement</string>
+    <string name="advanced">Paramètres avancés</string>
+    <string name="source">Code source</string>
+    <string name="license">Licence</string>
+    <string name="github">github.com/anthonycr/Lightning-Browser</string>
+    <string name="apache">Apache License 2.0</string>
+    <string name="title_activity_new_settings">NewSettings</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="version">Version de l\'application</string>
+    <string name="cache">Effacer le cache en quittant</string>
+    <string name="reflow">Activer la redistribution du texte</string>
+    <string name="block">Bloquer les images</string>
+    <string name="window">Permettre aux sites d\'ouvrir dans de nouvelles fenêtres</string>
+    <string name="cookies">Activer les témoins</string>
+    <string name="importbookmarks">Importer les favoris du Navigateur Internet</string>
+    <string name="size">Taille du texte</string>
+    <string name="title_activity_advanced_settings">AdvancedSettings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="recommended">(Recommandé)</string>
+    <string name="weird_look">(Les sites peuvent paraître  étranges)</string>
+    <string name="search">Moteur de recherche</string>
+    <string name="search_hint">Rechercher</string>
+    <string name="wideViewPort">Modifer l\'échelle de l\'écran</string>
+    <string name="overViewMode">Charger les pages dans une vue d\'ensemble</string>
+    <string name="restore">Restorer les onglets perdus au démarrage</string>
+    <string name="menu_history">Historique</string>
+    <string name="menu_add">Ajouter favoris</string>
     <string name="menu_bookmarks">Favoris</string>
     <string name="menu_share">Partager</string>
     <string name="menu_settings">Paramètres</string>
-    <string name="menu_incognito">Incognito tab</string>
-    <string name="menu_new_tab">New tab</string>
+    <string name="menu_incognito">Onglet privé</string>
+    <string name="menu_new_tab">Nouvel onglet</string>
+    <string name="stock_browser_unavailable">(Navigateur d\'origine introuvable)</string>
+    <string name="stock_browser_available">(Navigateur d\'origine trouvé)</string>
+    <string name="fullScreenOption">Cacher la barre de status en naviguant</string>
+    <string name="clear_cookies">Effacer lex témoins</string>
+
 </resources>
