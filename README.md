@@ -11,7 +11,7 @@
 
 * History
 
-* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo)
+* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo, etc.)
 
 * Incognito Mode
 
@@ -38,5 +38,5 @@
 ####The Code
 * Code additions are always welcome
 * Please add translations/translation fixes as you see need
-* Change ````FinalVariables.MAX_TABS```` from 5 to 50 to change the Lightning to the paid version
+* Change ````FinalVariables.MAX_TABS```` from 5 to 100 to change the Lightning to the paid version
 * Beware when using proguard while compiling. Some methods should not be obfuscated. Use the proguard settings file I provided for best results.
