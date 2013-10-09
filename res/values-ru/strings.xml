@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Браузер</string>
-    <string name="google">Google</string>
+    <string name="app_name">Молния</string>
     <string name="settings">Настройки браузера</string>
     <string name="location">Местоположение</string>
     <string name="password">Сохранять пароли</string>
@@ -22,8 +21,6 @@
     <string name="advanced">Дополнительно</string>
     <string name="source">Исходный код</string>
     <string name="license">Лицензия</string>
-    <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">Новые настройки</string>
     <string name="action_settings">Настройки</string>
     <string name="version">Версия</string>
     <string name="cache">Очищать кэш при выходе</string>
