@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import acr.browser.barebones.databases.DatabaseHandler;
 import acr.browser.barebones.databases.HistoryItem;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -28,13 +27,15 @@ import android.os.Environment;
 import android.provider.Browser;
 import android.util.Log;
 import android.webkit.URLUtil;
-import android.widget.EditText;
 import android.widget.Toast;
 
 public class Utils {
 
 	public static DatabaseHandler historyHandler;
 	public static SQLiteDatabase history;
+	public static Cursor cursor;
+	public static StringBuilder sb;
+	public static Runnable update;
 
 	public static void createInformativeDialog(Context context, String title,
 			String message) {
@@ -92,7 +93,7 @@ public class Utils {
 	public static void updateHistory(final Context context,
 			final ContentResolver content, final boolean noStockBrowser,
 			final String url, final String title) {
-		Runnable update = new Runnable() {
+		update = new Runnable() {
 			@Override
 			public void run() {
 				if (!noStockBrowser) {
@@ -102,11 +103,11 @@ public class Utils {
 					}
 				}
 				try {
-					StringBuilder sb = new StringBuilder("url" + " = ");
+					sb = new StringBuilder("url" + " = ");
 					DatabaseUtils.appendEscapedSQLString(sb, url);
 					historyHandler = new DatabaseHandler(context);
 					history = historyHandler.getReadableDatabase();
-					Cursor cursor = history.query("history", new String[] {
+					cursor = history.query("history", new String[] {
 							"id", "url", "title" }, sb.toString(), null, null,
 							null, null);
 					if (!cursor.moveToFirst()) {
@@ -140,30 +141,26 @@ public class Utils {
 	public static void downloadFile(final Context context, final String url,
 			final String contentDisposition, final String mimetype) {
 		try {
-			Thread downloader = new Thread(new Runnable() {
-				@SuppressLint("InlinedApi")
-				@Override
-				public void run() {
-					DownloadManager download = (DownloadManager) context
-							.getSystemService(Context.DOWNLOAD_SERVICE);
-					Uri nice = Uri.parse(url);
-					DownloadManager.Request it = new DownloadManager.Request(
-							nice);
-					String fileName = URLUtil.guessFileName(url,
-							contentDisposition, mimetype);
-					if (FinalVariables.API >= 11) {
-						it.allowScanningByMediaScanner();
-						it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-					}
-					String location = context.getSharedPreferences("settings",
-							0).getString("download",
-							Environment.DIRECTORY_DOWNLOADS);
-					it.setDestinationInExternalPublicDir(location, fileName);
-					Log.i("Barebones", "Downloading" + fileName);
-					download.enqueue(it);
-				}
-			});
-			downloader.run();
+			DownloadManager download = (DownloadManager) context
+					.getSystemService(Context.DOWNLOAD_SERVICE);
+			Uri nice = Uri.parse(url);
+			DownloadManager.Request it = new DownloadManager.Request(
+					nice);
+			String fileName = URLUtil.guessFileName(url,
+					contentDisposition, mimetype);
+			it.setTitle(fileName);
+			it.setDescription(url);
+			if (FinalVariables.API >= 11) {
+				it.allowScanningByMediaScanner();
+				it.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+			}
+			String location = context.getSharedPreferences("settings",
+					0).getString("download",
+					Environment.DIRECTORY_DOWNLOADS);
+			it.setDestinationInExternalPublicDir(location, fileName);
+			Log.i("Barebones", "Downloading" + fileName);
+			download.enqueue(it);
+			
 		} catch (NullPointerException e) {
 			Log.e("Barebones", "Problem downloading");
 			Toast.makeText(context, "Error Downloading File",

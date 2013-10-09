@@ -81,6 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
         String m = cursor.getString(0);
         cursor.close();
+        db.close();
         // return item
         return  m;
     }
@@ -117,10 +118,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_URL, item.getUrl());
         values.put(KEY_TITLE, item.getTitle());
- 
-        // updating row
-        return db.update(TABLE_HISTORY, values, KEY_ID + " = ?",
+        int n = db.update(TABLE_HISTORY, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(item.getID()) });
+        // updating row
+        db.close();
+        return n;
     }
  
     // Deleting single item

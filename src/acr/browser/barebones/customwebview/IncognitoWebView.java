@@ -21,7 +21,6 @@ import android.webkit.WebSettings.PluginState;
 import android.webkit.WebSettings.RenderPriority;
 
 public final class IncognitoWebView extends WebView {
-	private boolean first = false;
 	static final int API = FinalVariables.API;
 	public static boolean showFullScreen;;
 	final View uBar = IncognitoModeActivity.uBar;
@@ -157,10 +156,7 @@ public final class IncognitoWebView extends WebView {
 
 			}
 		}
-		settings.setGeolocationEnabled(preferences
-				.getBoolean("location", false));
-		settings.setGeolocationDatabasePath(context.getFilesDir()
-				.getAbsolutePath());
+		settings.setGeolocationEnabled(false);
 		settings.setUseWideViewPort(preferences
 				.getBoolean("wideviewport", true));
 		settings.setLoadWithOverviewMode(preferences.getBoolean("overviewmode",
@@ -175,18 +171,16 @@ public final class IncognitoWebView extends WebView {
 		settings.setBlockNetworkImage(preferences.getBoolean("blockimages",
 				false));
 		settings.setLoadsImagesAutomatically(true);
-		
+
 		switch (preferences.getInt("agentchoose", 1)) {
 		case 1:
 			getSettings().setUserAgentString(defaultUser);
 			break;
 		case 2:
-			getSettings().setUserAgentString(
-					FinalVariables.DESKTOP_USER_AGENT);
+			getSettings().setUserAgentString(FinalVariables.DESKTOP_USER_AGENT);
 			break;
 		case 3:
-			getSettings().setUserAgentString(
-					FinalVariables.MOBILE_USER_AGENT);
+			getSettings().setUserAgentString(FinalVariables.MOBILE_USER_AGENT);
 			break;
 		case 4:
 			getSettings().setUserAgentString(
@@ -215,6 +209,14 @@ public final class IncognitoWebView extends WebView {
 	private class CustomGestureListener extends SimpleOnGestureListener {
 		final int SWIPE_THRESHOLD = 100;
 		final int SWIPE_VELOCITY_THRESHOLD = 100;
+		DisplayMetrics metrics;
+		WindowManager wm;
+		Display display;
+		Point size;
+		int width;
+		float diffY;
+		float diffX;
+		boolean first = false;
 
 		@Override
 		public boolean onDown(MotionEvent e) {
@@ -225,7 +227,11 @@ public final class IncognitoWebView extends WebView {
 		@Override
 		public void onLongPress(MotionEvent e) {
 			if (IncognitoModeActivity.currentId != -1) {
-				IncognitoModeActivity.onLongClick();
+				try {
+					IncognitoModeActivity.onLongClick();
+				} catch (NullPointerException ig) {
+					ig.printStackTrace();
+				}
 			}
 			super.onLongPress(e);
 		}
@@ -251,31 +257,32 @@ public final class IncognitoWebView extends WebView {
 				float velocityY) {
 			try {
 
-				int width;
 				if (API < 13) {
-					DisplayMetrics metrics = CONTEXT.getResources()
+					metrics = CONTEXT.getResources()
 							.getDisplayMetrics();
 					width = metrics.widthPixels;
 				} else {
-					WindowManager wm = (WindowManager) CONTEXT
+					wm = (WindowManager) CONTEXT
 							.getSystemService(Context.WINDOW_SERVICE);
-					Display display = wm.getDefaultDisplay();
-					Point size = new Point();
+					display = wm.getDefaultDisplay();
+					size = new Point();
 					display.getSize(size);
 					width = size.x;
 				}
 
-				if ((width - e1.getX() < width / 12)
-						|| (e1.getX() < width / 12)) {
-					float diffY = e2.getY() - e1.getY();
-					float diffX = e2.getX() - e1.getX();
+				if ((width - e1.getX() <= width / 15)
+						|| (e1.getX() <= width / 15)) {
+					diffY = e2.getY() - e1.getY();
+					diffX = e2.getX() - e1.getX();
 					if (Math.abs(diffX) > Math.abs(diffY)) {
 						if (Math.abs(diffX) > SWIPE_THRESHOLD
 								&& Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
 							if (diffX > 0) {
-								IncognitoModeActivity.goBack(IncognitoWebView.this);
+								IncognitoModeActivity
+										.goBack(IncognitoWebView.this);
 							} else {
-								IncognitoModeActivity.goForward(IncognitoWebView.this);
+								IncognitoModeActivity
+										.goForward(IncognitoWebView.this);
 							}
 						}
 					}

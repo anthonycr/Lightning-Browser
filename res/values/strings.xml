@@ -55,5 +55,6 @@
     <string name="stock_browser_available">(Supported stock browser detected)</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
     <string name="clear_cookies">Clear browser cookies</string>
+    <string name="gestures">Enable back and foward gestures</string>
 
 </resources>

@@ -396,6 +396,30 @@
 
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/r16"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/blueback" 
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/gestures"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/cb12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+            <RelativeLayout
                 android:id="@+id/r8"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"

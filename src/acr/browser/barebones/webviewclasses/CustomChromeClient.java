@@ -140,6 +140,7 @@ public class CustomChromeClient extends WebChromeClient {
 		mCustomView.setKeepScreenOn(false);
 		mCustomView = null;
 		BrowserActivity.onHideCustomView(fullScreenContainer, mCustomViewCallback, orientation);
+		super.onHideCustomView();
 	}
 
 	@Override
@@ -174,7 +175,7 @@ public class CustomChromeClient extends WebChromeClient {
 		mCustomView = view;
 		mCustomViewCallback = callback;
 		browserActivity.setRequestedOrientation(requestedOrientation);
-
+		super.onShowCustomView(view, requestedOrientation, callback);
 	}
 
 	@Override
@@ -198,6 +199,7 @@ public class CustomChromeClient extends WebChromeClient {
 		mCustomView = view;
 		mCustomViewCallback = callback;
 		browserActivity.setRequestedOrientation(browserActivity.getRequestedOrientation());
+		super.onShowCustomView(view, callback);
 	}
 
 	public void openFileChooser(ValueCallback<Uri> uploadMsg) {

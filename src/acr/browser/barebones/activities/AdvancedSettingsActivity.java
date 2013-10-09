@@ -39,8 +39,8 @@ public class AdvancedSettingsActivity extends Activity {
 	static final String preferences = "settings";
 	static SharedPreferences settings;
 	static SharedPreferences.Editor edit;
-	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
-	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11;
+	static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16;
+	static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11, cb12;
 	static Context CONTEXT;
 	Handler messageHandler;
 
@@ -76,6 +76,8 @@ public class AdvancedSettingsActivity extends Activity {
 		r13 = (RelativeLayout) findViewById(R.id.r13);
 		r14 = (RelativeLayout) findViewById(R.id.r14);
 		r15 = (RelativeLayout) findViewById(R.id.r15);
+		r16 = (RelativeLayout) findViewById(R.id.r16);
+		
 
 		cb1 = (CheckBox) findViewById(R.id.cb1);
 		cb2 = (CheckBox) findViewById(R.id.cb2);
@@ -88,6 +90,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb9 = (CheckBox) findViewById(R.id.cb9);
 		cb10 = (CheckBox) findViewById(R.id.cb10);
 		cb11 = (CheckBox) findViewById(R.id.cb11);
+		cb12 = (CheckBox) findViewById(R.id.cb12);
 
 		cb1.setChecked(settings.getBoolean("passwords", true));
 		cb2.setChecked(settings.getBoolean("cache", false));
@@ -100,6 +103,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb9.setChecked(settings.getBoolean("overviewmode", true));
 		cb10.setChecked(settings.getBoolean("restoreclosed", true));
 		cb11.setChecked(settings.getBoolean("hidestatus", false));
+		cb12.setChecked(settings.getBoolean("gestures", true));
 
 		r1(r1);
 		r2(r2);
@@ -116,6 +120,7 @@ public class AdvancedSettingsActivity extends Activity {
 		r13(r13);
 		r14(r14);
 		r15(r15);
+		r16(r16);
 		cb1(cb1);
 		cb2(cb2);
 		cb3(cb3);
@@ -127,6 +132,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb9(cb9);
 		cb10(cb10);
 		cb11(cb11);
+		cb12(cb12);
 		back();
 		
 		TextView importBookmarks = (TextView)findViewById(R.id.isImportAvailable);
@@ -306,6 +312,19 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				edit.putBoolean("hidestatus", isChecked);
+				edit.commit();
+			}
+
+		});
+	}
+	
+	void cb12(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				edit.putBoolean("gestures", isChecked);
 				edit.commit();
 			}
 
@@ -526,6 +545,17 @@ public class AdvancedSettingsActivity extends Activity {
 									}
 
 								}).show();
+			}
+
+		});
+	}
+	
+	void r16(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cb12.setChecked(!cb12.isChecked());
 			}
 
 		});
