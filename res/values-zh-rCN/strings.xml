@@ -51,9 +51,10 @@
     <string name="menu_settings">应用设置</string>
     <string name="menu_incognito">隐身标签</string>
     <string name="menu_new_tab">新建标签</string>
-    <string name="stock_browser_unavailable">（尚未检测到原生浏览器）</string>
-    <string name="stock_browser_available">（检测到已支持的原生浏览器）</string>
+    <string name="stock_browser_unavailable">（尚未检测到已支持原生浏览器）</string>
+    <string name="stock_browser_available">（已检测到受支持的原生浏览器）</string>
     <string name="fullScreenOption">浏览时隐藏状态栏</string>
     <string name="clear_cookies">清除浏览器 Cookies</string>
+    <string name="gestures">启用前进后退手势控制</string>
 
 </resources>
