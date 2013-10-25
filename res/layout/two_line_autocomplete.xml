@@ -17,15 +17,17 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="6dip"
         android:paddingTop="2dip"/>
+
      <TextView
-        android:id="@+id/url"
-        android:clickable="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="@color/dark" 
-        android:paddingLeft="6dip"
-        android:maxLines="1"
-        android:paddingTop="2dip"
-        android:paddingBottom="2dip"/>
+         android:id="@+id/url"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_weight="1"
+         android:clickable="false"
+         android:maxLines="1"
+         android:paddingBottom="2dip"
+         android:paddingLeft="6dip"
+         android:paddingTop="2dip"
+         android:textColor="@color/light" />
+
 </LinearLayout>

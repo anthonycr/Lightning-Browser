@@ -69,6 +69,9 @@ public final class CustomWebView extends WebView {
 	public void settingsInitialization(Context context) {
 		SharedPreferences preferences = context.getSharedPreferences(
 				"settings", 0);
+		if(API < 11){
+			settings.setLightTouchEnabled(true);
+		}
 		settings.setDomStorageEnabled(true);
 		settings.setAppCacheEnabled(true);
 		settings.setAppCachePath(context.getFilesDir().getAbsolutePath()
@@ -199,6 +202,10 @@ public final class CustomWebView extends WebView {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if(API < 11){
+			if(!hasFocus())
+				requestFocus();
+		}
 		mGestureDetector.onTouchEvent(event);
 		return super.onTouchEvent(event);
 	}

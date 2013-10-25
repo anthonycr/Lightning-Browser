@@ -681,7 +681,6 @@ public class AdvancedSettingsActivity extends Activity {
 				Cursor mCur;
 				mCur = getContentResolver().query(Browser.BOOKMARKS_URI, proj,
 						sel, null, null);
-				mCur.moveToFirst();
 
 				String title = "";
 				String url = "";

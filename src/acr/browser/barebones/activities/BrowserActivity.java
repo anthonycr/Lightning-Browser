@@ -7,8 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -33,6 +36,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -51,6 +56,7 @@ import android.provider.Browser;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -58,6 +64,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
@@ -158,6 +165,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	public static final String HOMEPAGE = FinalVariables.HOMEPAGE;
 	public static final int API = FinalVariables.API;
 	public static final String SEPARATOR = "\\|\\$\\|SEPARATOR\\|\\$\\|";
+
 	public static boolean DEVICE_HAS_GPS = false;
 	// semi constants
 	public static Context CONTEXT;
@@ -438,7 +446,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		if (API > 8) {
 			view.setDownloadListener(new CustomDownloadListener(ACTIVITY));
 		}
-
+		main[pageToView] = view;
 		if (display) {
 			if (currentId != -1) {
 				background.removeView(currentTab);
@@ -455,8 +463,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		} else if (Url.contains("about:blank")) {
 			view.loadUrl("");
 		} else {
-			searchTheWeb(Url, CONTEXT);
-
+			view.loadUrl(Url);
 		}
 		Log.i("Browser", "tab complete");
 		return view;
@@ -473,6 +480,29 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		Animation left = AnimationUtils.loadAnimation(CONTEXT, R.anim.left);
 		background.startAnimation(left);
 
+	}
+
+	static List<Map<String, String>> getBookmarks() {
+		List<Map<String, String>> bookmarks = new ArrayList<Map<String, String>>();
+		File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
+		File book = new File(CONTEXT.getFilesDir(), "bookmarks");
+		try {
+			BufferedReader readUrl = new BufferedReader(new FileReader(bookUrl));
+			BufferedReader readBook = new BufferedReader(new FileReader(book));
+			String u, t;
+			while ((u = readUrl.readLine()) != null
+					&& (t = readBook.readLine()) != null) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("title", '\u2605' + " " + t);
+				map.put("url", u);
+				bookmarks.add(map);
+			}
+			readBook.close();
+			readUrl.close();
+		} catch (FileNotFoundException ignored) {
+		} catch (IOException ignored) {
+		}
+		return bookmarks;
 	}
 
 	static void goBookmarks(Context context, CustomWebView view) {
@@ -583,6 +613,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	public static void onHideCustomView(FrameLayout fullScreenContainer,
 			CustomViewCallback mCustomViewCallback, int orientation) {
+		if (!settings.getBoolean("hidestatus", false)) {
+			ACTIVITY.getWindow().clearFlags(
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
 		FrameLayout screen = (FrameLayout) ACTIVITY.getWindow().getDecorView();
 		screen.removeView(fullScreenContainer);
 		fullScreenContainer = null;
@@ -593,11 +627,11 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		uBar.bringToFront();
 	}
 
-	
 	private static Message click;
+
 	public static boolean onLongClick() {
 		int n = currentId;
-		if(currentId == -1 || currentTab == null){
+		if (currentId == -1 || currentTab == null) {
 			return true;
 		}
 		final HitTestResult result = currentTab.getHitTestResult();
@@ -724,8 +758,8 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		Log.i("Lightning", "Load Time: " + loadTime);
 	}
 
-	
 	private static int numberPage;
+
 	public static void onPageStarted(WebView view, String url, Bitmap favicon) {
 		Log.i("Lightning", "Page Started");
 		loadTime = System.currentTimeMillis();
@@ -779,6 +813,9 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	}
 
 	public static void onShowCustomView() {
+		ACTIVITY.getWindow().setFlags(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		background.removeView(currentTab);
 		uBar.setVisibility(View.GONE);
 	}
@@ -830,7 +867,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			main[tabList.get(n)].settingsInitialization(CONTEXT);
 		}
 	}
-
 
 	public static void renameBookmark(String url) {
 		index = 0;
@@ -929,7 +965,12 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		} else if (query.contains("about:history")) {
 			generateHistory(currentTab, context);
 		} else if (isSearch) {
-			query.replaceAll(" ", "+");
+			try {
+				URLEncoder.encode(query, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			currentTab.loadUrl(SEARCH + query);
 		} else if (!validURL) {
 			currentTab.loadUrl("http://" + query);
@@ -1022,6 +1063,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			@Override
 			public boolean onLongClick(View v) {
+				clearCache();
 				finish();
 				return true;
 			}
@@ -1063,7 +1105,16 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 				});
 				findNewView(del);
-				main[del] = null;
+				if (main[del] != null) {
+					if (API > 11) {
+						main[del].onPause();
+					}
+					if (main[del].isShown()) {
+						background.removeView(main[del]);
+					}
+					main[del].removeAllViews();
+					main[del] = null;
+				}
 			}
 
 			@Override
@@ -1129,6 +1180,11 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		getUrl.setBackgroundResource(R.drawable.book);
 		getUrl.setPadding(tenPad, 0, tenPad, 0);
 		final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> books = getBookmarks();
+		Iterator<Map<String, String>> it = books.iterator();
+		while (it.hasNext()) {
+			list.add(it.next());
+		}
 		handler = new Handler() {
 
 			@Override
@@ -1350,10 +1406,30 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		}
 		tabList.remove(delete);
 		if (!(right || left)) {
+			if (API > 11) {
+				currentTab.onPause();
+			}
+			currentTab.pauseTimers();
+			clearCache();
+			currentTab = null;
 			finish();
 		}
 		uBar.bringToFront();
 		tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
+	}
+
+	public void clearCache() {
+		if (settings.getBoolean("cache", false) && currentTab != null) {
+			currentTab.clearCache(true);
+			Log.i("Lightning", "Cache Cleared");
+
+		}
+		for (int n = 0; n < MAX_TABS; n++) {
+			if (main[n] != null) {
+				main[n].removeAllViews();
+				main[n] = null;
+			}
+		}
 	}
 
 	@Override
@@ -1361,11 +1437,21 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		background.clearDisappearingChildren();
 		background.removeView(currentTab);
 		tabScroll.clearDisappearingChildren();
-		if (settings.getBoolean("cache", false)) {
-			currentTab.clearCache(true);
-			Log.i("Lightning", "Cache Cleared");
-		}
 		super.finish();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+
+		super.onStop();
 	}
 
 	void forward() {
@@ -1558,12 +1644,12 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			@Override
 			public void run() {
-				reopenOldTabs(); // restores old tabs or creates a new one
+				// restores old tabs or creates a new one
 			}
 
 		});
 		startup.run();
-
+		reopenOldTabs();
 		// new tab button
 		ImageView newTab = (ImageView) findViewById(R.id.newTab);
 		newTab.setBackgroundResource(R.drawable.button);
@@ -1717,6 +1803,16 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		isPhone = sizeInInches < 6.5;
 		forward();// forward button
 		back();
+		PackageInfo p;
+		int code = 0;
+		try {
+			p = getPackageManager().getPackageInfo(getPackageName(), 0);
+			code = p.versionCode;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		if (settings.getInt("first", 0) == 0) {
 			// navigation tips
 			String message = "1. Long-press back button to exit browser\n\n"
@@ -1727,6 +1823,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 			Utils.createInformativeDialog(CONTEXT, "Browser Tips", message);
 			edit.putInt("first", 1);
+			edit.putInt("version", code);
+			edit.commit();
+		} else if (settings.getInt("version", code - 1) != code) {
+			edit.putInt("version", code);
 			edit.commit();
 		}
 	}
@@ -1769,6 +1869,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 		}
 		case KeyEvent.KEYCODE_F12: {
+			clearCache();
 			finish();
 		}
 		case KeyEvent.KEYCODE_F6: {
@@ -1799,6 +1900,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 					urlToLoad[n][0] = null;
 				}
 			}
+			clearCache();
 			finish();
 			return true;
 		} else
@@ -1883,13 +1985,17 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	@Override
 	protected void onPause() {
-
 		if (currentTab != null) {
 			if (API >= 11) {
 				currentTab.onPause();
+				for (int n = 0; n < MAX_TABS; n++) {
+					if (main[n] != null)
+						main[n].onPause();
+				}
 			}
 			currentTab.pauseTimers();
 		}
+
 		Thread remember = new Thread(new Runnable() {
 
 			@Override
@@ -1920,26 +2026,40 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			}
 			if (API >= 11) {
 				currentTab.onResume();
+				for (int n = 0; n < MAX_TABS; n++) {
+					if (main[n] != null)
+						main[n].onResume();
+				}
 			}
 		}
 		gestures = settings.getBoolean("gestures", true);
-		reinitializeSettings();
 		currentTab.resumeTimers();
+		reinitializeSettings();
 		if (settings.getBoolean("fullscreen", false) != fullScreen) {
 			toggleFullScreen();
 		}
-		
+
 	}
 
 	private int x;
 	private int y;
 	private boolean xPress;
 	private Rect edge;
-	
+	private final GestureDetector mGestureDetector = new GestureDetector(
+			CONTEXT, new CustomGestureListener());
+
+	private class CustomGestureListener extends SimpleOnGestureListener {
+		@Override
+		public void onLongPress(MotionEvent e) {
+			deleteTab(id);
+			super.onLongPress(e);
+		}
+	}
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		id = v.getId();
 		try {
-			id = v.getId();
 			background.clearDisappearingChildren();
 			xPress = false;
 			x = (int) event.getX();
@@ -1948,12 +2068,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			v.getDrawingRect(edge);
 			currentTabTitle.setPadding(leftPad, 0, rightPad, 0);
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				timeTabPressed = System.currentTimeMillis();
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-
-				if ((System.currentTimeMillis() - timeTabPressed) > 1000) {
-					xPress = true;
-				}
 
 				if (x >= (edge.right - bounds.width() - v.getPaddingRight() - 10 * 3 / 2)
 						&& x <= (edge.right - v.getPaddingRight() + 10 * 3 / 2)
@@ -2029,6 +2144,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			e.printStackTrace();
 			Log.e("Lightning Error", "Well we dun messed up");
 		}
+		mGestureDetector.onTouchEvent(event);
 		return true;
 	}
 

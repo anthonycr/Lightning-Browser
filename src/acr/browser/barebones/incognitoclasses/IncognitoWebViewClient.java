@@ -31,8 +31,8 @@ public class IncognitoWebViewClient extends WebViewClient {
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {
 		if (url.startsWith("market://")
-				|| url.startsWith("http://play.google.com")
-				|| url.startsWith("https://play.google.com")) {
+				|| url.startsWith("http://play.google.com/store/apps")
+				|| url.startsWith("https://play.google.com/store/apps")) {
 			Intent urlIntent = new Intent(Intent.ACTION_VIEW,
 					Uri.parse(url));
 			urlIntent.putExtra("acr.browser.barebones.Origin",

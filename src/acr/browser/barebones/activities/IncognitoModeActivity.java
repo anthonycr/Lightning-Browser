@@ -7,8 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -50,6 +53,7 @@ import android.provider.Browser;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -57,6 +61,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
@@ -216,6 +221,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	public static Drawable inactive;
 	public static Drawable active;
 	public static LinearLayout tabLayout;
+
 	// creates the tab and returns the ID of the view
 	public static int createTab(String theUrl, boolean display) {
 		int id = -1;
@@ -299,6 +305,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		}
 		return id;
 	}
+
 	public static void deleteBookmark(String url) {
 		File book = new File(CONTEXT.getFilesDir(), "bookmarks");
 		File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
@@ -422,8 +429,8 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		history.run();
 	}
 
-	public static IncognitoWebView generateTab(final int pageToView, String Url,
-			final boolean display) {
+	public static IncognitoWebView generateTab(final int pageToView,
+			String Url, final boolean display) {
 		IncognitoWebView view = new IncognitoWebView(CONTEXT);
 		view.setId(pageToView);
 		view.setWebViewClient(new IncognitoWebViewClient(ACTIVITY));
@@ -431,7 +438,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		if (API > 8) {
 			view.setDownloadListener(new IncognitoDownloadListener(ACTIVITY));
 		}
-
+		main[pageToView] = view;
 		if (display) {
 			if (currentId != -1) {
 				background.removeView(currentTab);
@@ -448,7 +455,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		} else if (Url.contains("about:blank")) {
 			view.loadUrl("");
 		} else {
-			searchTheWeb(Url, CONTEXT);
+			view.loadUrl(Url);
 		}
 		Log.i("Browser", "tab complete");
 		return view;
@@ -571,6 +578,10 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 	public static void onHideCustomView(FrameLayout fullScreenContainer,
 			CustomViewCallback mCustomViewCallback, int orientation) {
+		if (!settings.getBoolean("hidestatus", false)) {
+			ACTIVITY.getWindow().clearFlags(
+					WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		}
 		FrameLayout screen = (FrameLayout) ACTIVITY.getWindow().getDecorView();
 		screen.removeView(fullScreenContainer);
 		fullScreenContainer = null;
@@ -582,9 +593,10 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	}
 
 	private static Message click;
+
 	public static boolean onLongClick() {
 		int n = currentId;
-		if(currentId == -1 || currentTab == null){
+		if (currentId == -1 || currentTab == null) {
 			return true;
 		}
 		final HitTestResult result = currentTab.getHitTestResult();
@@ -713,6 +725,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	}
 
 	private static int numberPage;
+
 	public static void onPageStarted(WebView view, String url, Bitmap favicon) {
 		Log.i("Lightning", "Page Started");
 		loadTime = System.currentTimeMillis();
@@ -764,6 +777,9 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	}
 
 	public static void onShowCustomView() {
+		ACTIVITY.getWindow().setFlags(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		background.removeView(currentTab);
 		uBar.setVisibility(View.GONE);
 	}
@@ -812,7 +828,6 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			main[tabList.get(n)].settingsInitialization(CONTEXT);
 		}
 	}
-
 
 	public static void renameBookmark(String url) {
 		index = 0;
@@ -911,7 +926,12 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		} else if (query.contains("about:history")) {
 			generateHistory(currentTab, context);
 		} else if (isSearch) {
-			query.replaceAll(" ", "+");
+			try {
+				URLEncoder.encode(query, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			currentTab.loadUrl(SEARCH + query);
 		} else if (!validURL) {
 			currentTab.loadUrl("http://" + query);
@@ -924,9 +944,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		Drawable icon;
 		icon = new BitmapDrawable(null, favicon);
 		icon.setBounds(0, 0, width / 2, height / 2);
-		urlTitle[id]
-				.setCompoundDrawables(incognitoPage, null, exitTab, null);
-		
+		urlTitle[id].setCompoundDrawables(incognitoPage, null, exitTab, null);
 
 	}
 
@@ -1000,6 +1018,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 			@Override
 			public boolean onLongClick(View v) {
+				clearCache();
 				finish();
 				return true;
 			}
@@ -1041,7 +1060,16 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 				});
 				findNewView(del);
-				main[del] = null;
+				if (main[del] != null) {
+					if (API > 11) {
+						main[del].onPause();
+					}
+					if (main[del].isShown()) {
+						background.removeView(main[del]);
+					}
+					main[del].removeAllViews();
+					main[del] = null;
+				}
 			}
 
 			@Override
@@ -1098,6 +1126,29 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		});
 	}
 
+	static List<Map<String, String>> getBookmarks() {
+		List<Map<String, String>> bookmarks = new ArrayList<Map<String, String>>();
+		File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
+		File book = new File(CONTEXT.getFilesDir(), "bookmarks");
+		try {
+			BufferedReader readUrl = new BufferedReader(new FileReader(bookUrl));
+			BufferedReader readBook = new BufferedReader(new FileReader(book));
+			String u, t;
+			while ((u = readUrl.readLine()) != null
+					&& (t = readBook.readLine()) != null) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("title", '\u2605' + " " + t);
+				map.put("url", u);
+				bookmarks.add(map);
+			}
+			readBook.close();
+			readUrl.close();
+		} catch (FileNotFoundException ignored) {
+		} catch (IOException ignored) {
+		}
+		return bookmarks;
+	}
+
 	@SuppressLint("HandlerLeak")
 	void enterUrl() {
 		getUrl = (MultiAutoCompleteTextView) findViewById(R.id.enterUrl);
@@ -1107,6 +1158,11 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		getUrl.setBackgroundResource(R.drawable.book);
 		getUrl.setPadding(tenPad, 0, tenPad, 0);
 		final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> books = getBookmarks();
+		Iterator<Map<String, String>> it = books.iterator();
+		while (it.hasNext()) {
+			list.add(it.next());
+		}
 		handler = new Handler() {
 
 			@Override
@@ -1328,10 +1384,30 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		}
 		tabList.remove(delete);
 		if (!(right || left)) {
+			if (API > 11) {
+				currentTab.onPause();
+			}
+			currentTab.pauseTimers();
+			clearCache();
+			currentTab = null;
 			finish();
 		}
 		uBar.bringToFront();
 		tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
+	}
+
+	public void clearCache() {
+		if (settings.getBoolean("cache", false) && currentTab != null) {
+			currentTab.clearCache(true);
+			Log.i("Lightning", "Cache Cleared");
+
+		}
+		for (int n = 0; n < MAX_TABS; n++) {
+			if (main[n] != null) {
+				main[n].removeAllViews();
+				main[n] = null;
+			}
+		}
 	}
 
 	@Override
@@ -1339,11 +1415,14 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		background.clearDisappearingChildren();
 		background.removeView(currentTab);
 		tabScroll.clearDisappearingChildren();
-		if (settings.getBoolean("cache", false)) {
-			currentTab.clearCache(true);
-			Log.i("Lightning", "Cache Cleared");
-		}
 		super.finish();
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+
+		super.onStop();
 	}
 
 	void forward() {
@@ -1676,10 +1755,10 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		back();
 		if (settings.getInt("firstIncognito", 0) == 0) {
 			// navigation tips
-			String message = "Incognito Mode keeps you safe while browsing the internet." +
-					" History is not saved, Cookies are disabled, and Location access is " +
-					"disabled to ensure as best we can that you are not being tracked. " +
-					"Happy Browsing!";
+			String message = "Incognito Mode keeps you safe while browsing the internet."
+					+ " History is not saved, Cookies are disabled, and Location access is "
+					+ "disabled to ensure as best we can that you are not being tracked. "
+					+ "Happy Browsing!";
 
 			Utils.createInformativeDialog(CONTEXT, "About Incognito", message);
 			edit.putInt("first", 1);
@@ -1725,6 +1804,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 		}
 		case KeyEvent.KEYCODE_F12: {
+			clearCache();
 			finish();
 		}
 		case KeyEvent.KEYCODE_F6: {
@@ -1755,6 +1835,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 					urlToLoad[n][0] = null;
 				}
 			}
+			clearCache();
 			finish();
 			return true;
 		} else
@@ -1842,6 +1923,10 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		if (currentTab != null) {
 			if (API >= 11) {
 				currentTab.onPause();
+				for (int n = 0; n < MAX_TABS; n++) {
+					if (main[n] != null)
+						main[n].onPause();
+				}
 			}
 			currentTab.pauseTimers();
 		}
@@ -1865,14 +1950,24 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		if (settings.getBoolean("fullscreen", false) != fullScreen) {
 			toggleFullScreen();
 		}
-		
+
 	}
 
 	private int x;
 	private int y;
 	private Rect edge;
 	private boolean xPress;
-	
+	private final GestureDetector mGestureDetector = new GestureDetector(
+			CONTEXT, new CustomGestureListener());
+
+	private class CustomGestureListener extends SimpleOnGestureListener {
+		@Override
+		public void onLongPress(MotionEvent e) {
+			deleteTab(id);
+			super.onLongPress(e);
+		}
+	}
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		try {
@@ -1885,12 +1980,8 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			v.getDrawingRect(edge);
 			currentTabTitle.setPadding(leftPad, 0, rightPad, 0);
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				timeTabPressed = System.currentTimeMillis();
-			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
-				if ((System.currentTimeMillis() - timeTabPressed) > 1000) {
-					xPress = true;
-				}
+			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 
 				if (x >= (edge.right - bounds.width() - v.getPaddingRight() - 10 * 3 / 2)
 						&& x <= (edge.right - v.getPaddingRight() + 10 * 3 / 2)
@@ -1966,6 +2057,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			e.printStackTrace();
 			Log.e("Lightning Error", "Well we dun messed up");
 		}
+		mGestureDetector.onTouchEvent(event);
 		return true;
 	}
 
@@ -2046,6 +2138,6 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			int n = newTab(homepage, true);
 			main[n].resumeTimers();
 		}
-		
+
 	}
 }
