@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">Lightweight Browser</string>
     <string name="google">Google</string>
     <string name="settings">Einstellungen</string>
     <string name="location">Standortzugriff erlauben</string>

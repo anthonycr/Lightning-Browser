@@ -3,7 +3,10 @@ package acr.browser.barebones.activities;
 import acr.browser.barebones.R;
 import acr.browser.barebones.utilities.FinalVariables;
 import acr.browser.barebones.utilities.Utils;
+
+import android.annotation.TargetApi;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.annotation.SuppressLint;
@@ -41,7 +44,6 @@ public class SettingsActivity extends Activity {
 	static TextView agentText;
 	static String agent;
 	static TextView download;
-	static int egg = 0;
 	static String downloadLocation;
 	static TextView homepageText;
 	static SharedPreferences settings;
@@ -215,7 +217,6 @@ public class SettingsActivity extends Activity {
 		source(source);
 		license(license);
 		search();
-		easterEgg();
 	}
 
 	public void search() {
@@ -336,24 +337,6 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				flash.setChecked(!flash.isChecked());
-			}
-
-		});
-	}
-
-	public void easterEgg() {
-		RelativeLayout easter = (RelativeLayout) findViewById(R.id.layoutVersion);
-		easter.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				egg++;
-				if (egg == 10) {
-					startActivity(new Intent(Intent.ACTION_VIEW, Uri
-							.parse("http://imgs.xkcd.com/comics/compiling.png")));
-					finish();
-					egg = 0;
-				}
 			}
 
 		});
@@ -669,7 +652,6 @@ public class SettingsActivity extends Activity {
 		homePicker.show();
 	}
 
-	@SuppressWarnings("deprecation")
 	public void downPicker() {
 		final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(
 				SettingsActivity.this);
@@ -701,9 +683,9 @@ public class SettingsActivity extends Activity {
 			layout.setBackgroundDrawable(getResources().getDrawable(
 					android.R.drawable.edit_text));
 		} else {
-			layout.setBackground(getResources().getDrawable(
-					android.R.drawable.edit_text));
-		}
+            layout.setBackground(getResources().getDrawable(
+                    android.R.drawable.edit_text));
+        }
 		downLocationPicker.setView(layout);
 		downLocationPicker.setPositiveButton("OK",
 				new DialogInterface.OnClickListener() {

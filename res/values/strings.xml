@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">Lightweight Browser</string>
     <string name="google">Google</string>
     <string name="settings">Browser Settings</string>
     <string name="location">Location Access</string>
@@ -23,7 +23,7 @@
     <string name="advanced">Advanced Settings</string>
     <string name="source">Source Code</string>
     <string name="license">License</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
+    <string name="github">github.com/Dark98/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">NewSettings</string>
     <string name="action_settings">Settings</string>
