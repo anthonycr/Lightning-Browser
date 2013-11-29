@@ -1,10 +1,9 @@
-#Lightning Browser
-#![](ic_launcher_small.png)
+#LightWeight Browser
 ####Download
-* [Download APK from here](https://github.com/anthonycr/Lightning-Browser/blob/master/BrowserActivity.apk?raw=true)
+* [Download APK from here]()
 
-* [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
-
+##About
+* LightWeight Browser is based on Lightning Browser (https://github.com/anthonycr/Lightning-Browser)
 
 ####Features
 * Bookmarks
@@ -31,12 +30,12 @@
 
 * ````ACCESS_FINE_LOCATION````: For sites like Google Maps, it is disabled by default in settings and displays a pop-up asking if a site may use your location when it is enabled
 
-* ````READ_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and Lightning
+* ````READ_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and LightWeight
 
-* ````WRITE_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and Lightning
+* ````WRITE_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and LightWeight
 
 ####The Code
 * Code additions are always welcome
 * Please add translations/translation fixes as you see need
-* Change ````FinalVariables.MAX_TABS```` from 5 to 100 to change the Lightning to the paid version
+* Change ````FinalVariables.MAX_TABS```` from 5 to 100 to change the LightWeight to the paid version
 * Beware when using proguard while compiling. Some methods should not be obfuscated. Use the proguard settings file I provided for best results.
