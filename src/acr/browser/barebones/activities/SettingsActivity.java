@@ -798,7 +798,7 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				startActivity(new Intent(
 						Intent.ACTION_VIEW,
-						Uri.parse("https://github.com/anthonycr/Lightning-Browser")));
+						Uri.parse("https://github.com/Dark98/Lightning-Browser")));
 				finish();
 			}
 
