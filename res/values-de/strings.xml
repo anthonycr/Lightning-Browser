@@ -21,7 +21,7 @@
     <string name="settings_title">Einstellungen</string>
     <string name="download">Downloadverzeichnis</string>
     <string name="advanced">Erweiterte Einstellungen</string>
-    <string name="source">Quelltext</string>
+    <string name="source">https://github.com/Dark98/LightWeight-Browser</string>
     <string name="license">Lizenz</string>
     <string name="action_settings">Einstellungen</string>
     <string name="version">Programmversion</string>

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">LightWeight Browser</string>
     <string name="google">Google</string>
     <string name="settings">瀏覽器設置</string>
     <string name="location">允許站點訪問地理位置</string>
@@ -23,7 +23,7 @@
     <string name="advanced">高級設置</string>
     <string name="source">源碼</string>
     <string name="license">許可證</string>
-    <string name="github">github.com/Dark98/Lightning-Browser</string>
+    <string name="github">https://github.com/Dark98/LightWeight-Browser</string>
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">NewSettings</string>
     <string name="action_settings">設置</string>

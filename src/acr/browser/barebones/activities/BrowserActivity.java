@@ -155,8 +155,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	private static int index = 0;
 
 	// constants
-	public static final int MAX_TABS = FinalVariables.MAX_TABS;
-
+    public static final int MAX_TABS = FinalVariables.MAX_TABS;
 	public static final int MAX_BOOKMARKS = FinalVariables.MAX_BOOKMARKS;
 
 	// variables
@@ -753,15 +752,15 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			}
 		}
 		view.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-		Log.i("Lightning", "Page Finished");
+		Log.i("LightWeight", "Page Finished");
 		loadTime = System.currentTimeMillis() - loadTime;
-		Log.i("Lightning", "Load Time: " + loadTime);
+		Log.i("LightWeight", "Load Time: " + loadTime);
 	}
 
 	private static int numberPage;
 
 	public static void onPageStarted(WebView view, String url, Bitmap favicon) {
-		Log.i("Lightning", "Page Started");
+		Log.i("LightWeight", "Page Started");
 		loadTime = System.currentTimeMillis();
 		numberPage = view.getId();
 
@@ -987,8 +986,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		if (icon != null) {
 			urlTitle[id].setCompoundDrawables(icon, null, exitTab, null);
 		} else {
-			urlTitle[id]
-					.setCompoundDrawables(webpageOther, null, exitTab, null);
+			urlTitle[id].setCompoundDrawables(webpageOther, null, exitTab, null);
 		}
 
 	}
@@ -1020,8 +1018,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
 
 		// start the chooser for sharing
-		CONTEXT.startActivity(Intent.createChooser(shareIntent,
-				"Share this page"));
+		CONTEXT.startActivity(Intent.createChooser(shareIntent, "Share this page"));
 	}
 
 	public static void toggleFullScreen() {
@@ -1421,7 +1418,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	public void clearCache() {
 		if (settings.getBoolean("cache", false) && currentTab != null) {
 			currentTab.clearCache(true);
-			Log.i("Lightning", "Cache Cleared");
+			Log.i("LightWeight", "Cache Cleared");
 
 		}
 		for (int n = 0; n < MAX_TABS; n++) {
@@ -2142,7 +2139,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 			v.setPadding(leftPad, 0, rightPad, 0);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.e("Lightning Error", "Well we dun messed up");
+			Log.e("LightWeight Error", "Well we dun messed up");
 		}
 		mGestureDetector.onTouchEvent(event);
 		return true;

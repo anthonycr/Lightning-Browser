@@ -3,10 +3,7 @@ package acr.browser.barebones.activities;
 import acr.browser.barebones.R;
 import acr.browser.barebones.utilities.FinalVariables;
 import acr.browser.barebones.utilities.Utils;
-
-import android.annotation.TargetApi;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.annotation.SuppressLint;
@@ -652,7 +649,8 @@ public class SettingsActivity extends Activity {
 		homePicker.show();
 	}
 
-	public void downPicker() {
+	@SuppressLint("NewApi")
+    public void downPicker() {
 		final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(
 				SettingsActivity.this);
 		LinearLayout layout = new LinearLayout(this);
@@ -780,7 +778,7 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				startActivity(new Intent(
 						Intent.ACTION_VIEW,
-						Uri.parse("https://github.com/Dark98/Lightning-Browser")));
+						Uri.parse("https://github.com/Dark98/LightWeight-Browser")));
 				finish();
 			}
 

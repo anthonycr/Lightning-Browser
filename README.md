@@ -1,6 +1,6 @@
 #LightWeight Browser
 ####Download
-* [Download APK from here]()
+* [Download APK from here](https://github.com/Dark98/LightWeight-Browser/blob/master/out/production/LightWeight-Browser/LightWeight-Browser.apk)
 
 ##About
 * LightWeight Browser is based on Lightning Browser (https://github.com/anthonycr/Lightning-Browser)
