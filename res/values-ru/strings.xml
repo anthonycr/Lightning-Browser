@@ -37,7 +37,7 @@
     <string name="wideViewPort">Широкий вид</string>
     <string name="overViewMode">Загружать обзор</string>
     <string name="restore">Предыдущая сессия</string>
-    <string name="menu_history">Журнал</string>
+    <string name="menu_history">История</string>
     <string name="menu_add">Закладка</string>
     <string name="menu_bookmarks">Все закладки</string>
     <string name="menu_share">Отправить</string>
