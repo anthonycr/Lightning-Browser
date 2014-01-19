@@ -59,7 +59,7 @@
     <string name="dialog_image">您希望对此图片进行什么操作？</string>
     <string name="action_download">下载</string>
     <string name="action_open">打开</string>
-    <string name="dialog_link">您希望对此链接进行什么操作？/string>
+    <string name="dialog_link">您希望对此链接进行什么操作？</string>
     <string name="dialog_title_share">分享此页面</string>
     <string name="dialog_bookmark">What would you like to do with this bookmark?</string>
     <string name="action_delete">删除</string>
