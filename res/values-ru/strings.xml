@@ -106,5 +106,5 @@
     <string name="download_no_sdcard_dlg_title">Нет карты памяти</string>
     <string name="download_no_sdcard_dlg_msg">Для загрузки файла необходима карта памяти</string>
     <string name="download_sdcard_busy_dlg_title">Карта памяти недоступна</string>
-    <string name="download_sdcard_busy_dlg_msg">Карта памяти используется. Для начала загрузки нажмите на уведомление \"Отключить карту памяти\"</string>
+    <string name="download_sdcard_busy_dlg_msg">Карта памяти подключена к ПК. Для начала загрузки отключите её от ПК, нажав на уведомление</string>
 </resources>
