@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Молния+</string>
+    <string name="app_name">Молния</string>
     <string name="drawer_open">Открыть панель</string>
     <string name="drawer_close">Закрыть панель</string>
     <string name="action_websearch">Поиск в Интернете</string>
