@@ -14,10 +14,10 @@
     <string name="desk">Desktop Ansicht</string>
     <string name="custom">Benutzerdefinierte Ansicht</string>
     <string name="home">Startseite</string>
-    <string name="settingshelp">Einstellungen nur für neue Reiter gültig</string>
+    <string name="settingshelp">Einstellungen nur für neue Tabs gültig</string>
     <string name="fullscreen">Vollbildmodus aktivieren</string>
     <string name="java">JavaScript aktivieren</string>
-    <string name="saveTab">Geschlossene Reiter wiederherstellen</string>
+    <string name="saveTab">Geschlossene Tabs wiederherstellen</string>
     <string name="settings_title">Einstellungen</string>
     <string name="download">Downloadverzeichnis</string>
     <string name="advanced">Erweiterte Einstellungen</string>
@@ -38,23 +38,23 @@
     <string name="title_activity_advanced_settings">Erweiterte Einstellungen</string>
     <string name="hello_world">Hallo Welt!</string>
     <string name="recommended">(Empfohlen)</string>
-    <string name="weird_look">(Wbseiten sehen womöglich seltsam aus)</string>
+    <string name="weird_look">(Webseiten sehen womöglich seltsam aus)</string>
     <string name="search">Suchdienst</string>
     <string name="search_hint">Suche</string>
     <string name="wideViewPort">Breiten Anzeigebereich verwenden</string>
     <string name="overViewMode">Seiten in der Übersicht öffnen</string>
-    <string name="restore">Reiter beim Start wiederherstellen</string>
+    <string name="restore">Tabs beim Start wiederherstellen</string>
     <string name="menu_history">Verlauf</string>
     <string name="menu_add">Lesezeichen hinzufügen</string>
     <string name="menu_bookmarks">Lesezeichen</string>
     <string name="menu_share">Teilen</string>
     <string name="menu_settings">Einstellungen</string>
-    <string name="menu_incognito">Inkognito-Reiter</string>
-    <string name="menu_new_tab">Neuer Reiter</string>
+    <string name="menu_incognito">Inkognito-Tab</string>
+    <string name="menu_new_tab">Neuer Tab</string>
     <string name="stock_browser_unavailable">(Kein unterstützter Standardbrowser gefunden)</string>
     <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
     <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
     <string name="clear_cookies">Cookies löschen</string>
-    <string name="gestures">Gesten für 'Vor' und 'Zurück' aktivieren</string>
+    <string name="gestures">Vor- und Zurückgesten aktivieren</string>
 
 </resources>
