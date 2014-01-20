@@ -35,7 +35,7 @@ import android.widget.TextView;
 public class SettingsActivity extends Activity {
 	static int API = FinalVariables.API;
 	static final String preferences = "settings";
-	static SharedPreferences.Editor edit;
+	static SharedPreferences.Editor mEditPrefs;
 	static int agentChoice;
 	static String homepage;
 	static TextView agentText;
@@ -63,7 +63,7 @@ public class SettingsActivity extends Activity {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
-		edit = settings.edit();
+		mEditPrefs= settings.edit();
 
 		// initialize UI
 		RelativeLayout layoutLocation = (RelativeLayout) findViewById(R.id.layoutLocation);
@@ -131,29 +131,27 @@ public class SettingsActivity extends Activity {
 		version.setText(code + "");
 
 		if (homepage.contains("about:home")) {
-			homepageText.setText("Bookmarks");
+			homepageText.setText(getResources().getString(
+					R.string.action_homepage));
 		} else if (homepage.contains("about:blank")) {
-			homepageText.setText("Blank Page");
+			homepageText.setText(getResources()
+					.getString(R.string.action_blank));
 		} else {
 			homepageText.setText(homepage);
 		}
 
 		switch (agentChoice) {
 		case 1:
-			agentText.setText("Default");
-			agent = BrowserActivity.defaultUser;
+			agentText.setText(getResources().getString(R.string.agent_default));
 			break;
 		case 2:
-			agentText.setText("Desktop");
-			agent = FinalVariables.DESKTOP_USER_AGENT;
+			agentText.setText(getResources().getString(R.string.agent_desktop));
 			break;
 		case 3:
-			agentText.setText("Mobile");
-			agent = FinalVariables.MOBILE_USER_AGENT;
+			agentText.setText(getResources().getString(R.string.agent_mobile));
 			break;
 		case 4:
-			agentText.setText("Custom");
-			agent = settings.getString("userAgentString", BrowserActivity.defaultUser);
+			agentText.setText(getResources().getString(R.string.agent_custom));
 		}
 		RelativeLayout r1, r2, r3;
 		r1 = (RelativeLayout) findViewById(R.id.setR1);
@@ -226,7 +224,8 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(
 						SettingsActivity.this);
-				picker.setTitle("Search Engine");
+				picker.setTitle(getResources().getString(
+						R.string.title_search_engine));
 				CharSequence[] chars = { "Google", "Bing", "Yahoo",
 						"StartPage", "DuckDuckGo (Privacy)" , "Baidu (Chinese)", "Yandex (Russian)", "DuckDuckGo Lite (Privacy)"};
 
@@ -238,8 +237,8 @@ public class SettingsActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								edit.putInt("search", which + 1);
-								edit.commit();
+								mEditPrefs.putInt("search", which + 1);
+								mEditPrefs.commit();
 								switch (which + 1) {
 								case 1:
 									searchText.setText("Google");
@@ -268,7 +267,7 @@ public class SettingsActivity extends Activity {
 								}
 							}
 						});
-				picker.setNeutralButton("OK",
+				picker.setNeutralButton(getResources().getString(R.string.action_ok),
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -365,8 +364,8 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				edit.putBoolean("location", isChecked);
-				edit.commit();
+				mEditPrefs.putBoolean("location", isChecked);
+				mEditPrefs.commit();
 
 			}
 
@@ -380,8 +379,8 @@ public class SettingsActivity extends Activity {
 				if (isChecked) {
 					n = 1;
 				}
-				edit.putInt("enableflash", n);
-				edit.commit();
+				mEditPrefs.putInt("enableflash", n);
+				mEditPrefs.commit();
 				boolean flashInstalled = false;
 				try {
 					PackageManager pm = getPackageManager();
@@ -393,19 +392,21 @@ public class SettingsActivity extends Activity {
 					flashInstalled = false;
 				}
 				if (!flashInstalled && isChecked) {
-					Utils.createInformativeDialog(SettingsActivity.this,
-							"Warning", "Adobe Flash Player was not detected.\n"
-									+ "Please install Flash Player.");
-					buttonView.setChecked(false);
-					edit.putInt("enableflash", 0);
-					edit.commit();
-
-				} else if ((API > 17) && isChecked) {
 					Utils.createInformativeDialog(
 							SettingsActivity.this,
-							"Warning",
-							"Adobe Flash does not support Android 4.3 and will "
-									+ "crash the browser, please do not report crashes that occur if you enable flash.");
+							getResources().getString(R.string.title_warning),
+							getResources().getString(
+									R.string.dialog_adobe_not_installed));
+					buttonView.setChecked(false);
+					mEditPrefs.putInt("enableflash", 0);
+					mEditPrefs.commit();
+
+				} else if ((API >= 17) && isChecked) {
+					Utils.createInformativeDialog(
+							SettingsActivity.this,
+							getResources().getString(R.string.title_warning),
+							getResources().getString(
+									R.string.dialog_adobe_unsupported));
 				}
 			}
 
@@ -415,8 +416,8 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				edit.putBoolean("fullscreen", isChecked);
-				edit.commit();
+				mEditPrefs.putBoolean("fullscreen", isChecked);
+				mEditPrefs.commit();
 
 			}
 
@@ -430,8 +431,8 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				edit.putBoolean("location", isChecked);
-				edit.commit();
+				mEditPrefs.putBoolean("location", isChecked);
+				mEditPrefs.commit();
 
 			}
 
@@ -445,8 +446,8 @@ public class SettingsActivity extends Activity {
 				if (isChecked) {
 					n = 1;
 				}
-				edit.putInt("enableflash", n);
-				edit.commit();
+				mEditPrefs.putInt("enableflash", n);
+				mEditPrefs.commit();
 				boolean flashInstalled = false;
 				try {
 					PackageManager pm = getPackageManager();
@@ -458,19 +459,21 @@ public class SettingsActivity extends Activity {
 					flashInstalled = false;
 				}
 				if (!flashInstalled && isChecked) {
-					Utils.createInformativeDialog(SettingsActivity.this,
-							"Warning", "Adobe Flash Player was not detected.\n"
-									+ "Please install Flash Player.");
+					Utils.createInformativeDialog(
+							SettingsActivity.this,
+							getResources().getString(R.string.title_warning),
+							getResources().getString(
+									R.string.dialog_adobe_not_installed));
 					buttonView.setChecked(false);
-					edit.putInt("enableflash", 0);
-					edit.commit();
+					mEditPrefs.putInt("enableflash", 0);
+					mEditPrefs.commit();
 
 				} else if ((API > 17) && isChecked) {
 					Utils.createInformativeDialog(
 							SettingsActivity.this,
-							"Warning",
-							"Adobe Flash does not support Android 4.3 and will "
-									+ "crash the browser, please do not report crashes that occur if you enable flash.");
+							getResources().getString(R.string.title_warning),
+							getResources().getString(
+									R.string.dialog_adobe_unsupported));
 				}
 			}
 
@@ -480,8 +483,8 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				edit.putBoolean("fullscreen", isChecked);
-				edit.commit();
+				mEditPrefs.putBoolean("fullscreen", isChecked);
+				mEditPrefs.commit();
 
 			}
 
@@ -506,8 +509,13 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder agentPicker = new AlertDialog.Builder(
 						SettingsActivity.this);
-				agentPicker.setTitle("User Agent");
-				CharSequence[] chars = { "Default", "Desktop", "Mobile" };
+				agentPicker.setTitle(getResources().getString(
+						R.string.title_user_agent));
+				CharSequence[] chars = {
+						getResources().getString(R.string.agent_default),
+						getResources().getString(R.string.agent_desktop),
+						getResources().getString(R.string.agent_mobile),
+						getResources().getString(R.string.agent_custom) };
 				agentChoice = settings.getInt("agentchoose", 1);
 				agentPicker.setSingleChoiceItems(chars, agentChoice - 1,
 						new DialogInterface.OnClickListener() {
@@ -515,30 +523,31 @@ public class SettingsActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								edit.putInt("agentchoose", which + 1);
-								edit.commit();
+								mEditPrefs.putInt("agentchoose", which + 1);
+								mEditPrefs.commit();
 								switch (which + 1) {
 								case 1:
-									agentText.setText("Default");
-									agent = BrowserActivity.defaultUser;
+									agentText.setText(getResources().getString(
+											R.string.agent_default));
 									break;
 								case 2:
-									agentText.setText("Desktop");
-									agent = FinalVariables.DESKTOP_USER_AGENT;
+									agentText.setText(getResources().getString(
+											R.string.agent_desktop));
 									break;
 								case 3:
-									agentText.setText("Mobile");
-									agent = FinalVariables.MOBILE_USER_AGENT;
+									agentText.setText(getResources().getString(
+											R.string.agent_mobile));
 									break;
 								case 4:
-									agentText.setText("Custom");
-									agent = settings.getString("userAgentString", BrowserActivity.defaultUser);
+									agentText.setText(getResources().getString(
+											R.string.agent_custom));
 									agentPicker();
 									break;
 								}
 							}
 						});
-				agentPicker.setNeutralButton("OK",
+				agentPicker.setNeutralButton(
+						getResources().getString(R.string.action_ok),
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -569,18 +578,21 @@ public class SettingsActivity extends Activity {
 		final AlertDialog.Builder agentStringPicker = new AlertDialog.Builder(
 				SettingsActivity.this);
 		
-		agentStringPicker.setTitle("Custom Agent");
+		agentStringPicker.setTitle(getResources().getString(
+				R.string.title_user_agent));
 		final EditText getAgent = new EditText(SettingsActivity.this);
 		agentStringPicker.setView(getAgent);
-		agentStringPicker.setPositiveButton("OK",
+		agentStringPicker.setPositiveButton(
+				getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getAgent.getText().toString();
-						edit.putString("userAgentString", text);
-						edit.commit();
-						agentText.setText("Custom");
+						mEditPrefs.putString("userAgentString", text);
+						mEditPrefs.commit();
+						agentText.setText(getResources().getString(
+								R.string.agent_custom));
 					}
 				});
 		agentStringPicker.show();
@@ -594,8 +606,11 @@ public class SettingsActivity extends Activity {
 
 				AlertDialog.Builder picker = new AlertDialog.Builder(
 						SettingsActivity.this);
-				picker.setTitle("Download Location");
-				CharSequence[] chars = { "Default", "Custom" };
+				picker.setTitle(getResources().getString(
+						R.string.title_download_location));
+				CharSequence[] chars = {
+						getResources().getString(R.string.agent_default),
+						getResources().getString(R.string.agent_custom) };
 				downloadLocation = settings.getString("download",
 						Environment.DIRECTORY_DOWNLOADS);
 				int n = -1;
@@ -614,9 +629,9 @@ public class SettingsActivity extends Activity {
 
 								switch (which + 1) {
 								case 1:
-									edit.putString("download",
+									mEditPrefs.putString("download",
 											Environment.DIRECTORY_DOWNLOADS);
-									edit.commit();
+									mEditPrefs.commit();
 									download.setText(FinalVariables.EXTERNAL_STORAGE
 											+ "/"
 											+ Environment.DIRECTORY_DOWNLOADS);
@@ -628,7 +643,8 @@ public class SettingsActivity extends Activity {
 								}
 							}
 						});
-				picker.setNeutralButton("OK",
+				picker.setNeutralButton(
+						getResources().getString(R.string.action_ok),
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -645,8 +661,9 @@ public class SettingsActivity extends Activity {
 
 	public void homePicker() {
 		final AlertDialog.Builder homePicker = new AlertDialog.Builder(
-				SettingsActivity.this);
-		homePicker.setTitle("Custom Homepage");
+				this);
+		homePicker.setTitle(getResources().getString(
+				R.string.title_custom_homepage));
 		final EditText getHome = new EditText(SettingsActivity.this);
 		homepage = settings.getString("home", FinalVariables.HOMEPAGE);
 		if (!homepage.startsWith("about:")) {
@@ -655,14 +672,14 @@ public class SettingsActivity extends Activity {
 			getHome.setText("http://www.google.com");
 		}
 		homePicker.setView(getHome);
-		homePicker.setPositiveButton("OK",
+		homePicker.setPositiveButton(getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getHome.getText().toString();
-						edit.putString("home", text);
-						edit.commit();
+						mEditPrefs.putString("home", text);
+						mEditPrefs.commit();
 						homepageText.setText(text);
 					}
 				});
@@ -672,14 +689,15 @@ public class SettingsActivity extends Activity {
 	@SuppressWarnings("deprecation")
 	public void downPicker() {
 		final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(
-				SettingsActivity.this);
+				this);
 		LinearLayout layout = new LinearLayout(this);
-		downLocationPicker.setTitle("Custom Location");
+		downLocationPicker.setTitle(getResources().getString(
+				R.string.title_download_location));
 		final EditText getDownload = new EditText(SettingsActivity.this);
 		getDownload.setBackgroundResource(0);
 		downloadLocation = settings.getString("download",
 				Environment.DIRECTORY_DOWNLOADS);
-		int padding = Utils.convertDensityPixesl(this, 10);
+		int padding = Utils.convertDensityPixels(this, 10);
 
 		LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT,
@@ -705,14 +723,15 @@ public class SettingsActivity extends Activity {
 					android.R.drawable.edit_text));
 		}
 		downLocationPicker.setView(layout);
-		downLocationPicker.setPositiveButton("OK",
+		downLocationPicker.setPositiveButton(
+				getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getDownload.getText().toString();
-						edit.putString("download", text);
-						edit.commit();
+						mEditPrefs.putString("download", text);
+						mEditPrefs.commit();
 						download.setText(FinalVariables.EXTERNAL_STORAGE + "/"
 								+ text);
 					}
@@ -748,13 +767,13 @@ public class SettingsActivity extends Activity {
 
 								switch (which + 1) {
 								case 1:
-									edit.putString("home", "about:home");
-									edit.commit();
+									mEditPrefs.putString("home", "about:home");
+									mEditPrefs.commit();
 									homepageText.setText("Bookmarks");
 									break;
 								case 2:
-									edit.putString("home", "about:blank");
-									edit.commit();
+									mEditPrefs.putString("home", "about:blank");
+									mEditPrefs.commit();
 									homepageText.setText("Blank Page");
 									break;
 								case 3:

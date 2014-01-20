@@ -422,10 +422,10 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						AdvancedSettingsActivity.this); // dialog
-				builder.setTitle("Clear History");
+				builder.setTitle(CONTEXT.getResources().getString(R.string.title_clear_history));
 				builder.setMessage(
-						"Would you like to clear all browser history?")
-						.setPositiveButton("Yes",
+						CONTEXT.getResources().getString(R.string.dialog_history))
+						.setPositiveButton(CONTEXT.getResources().getString(R.string.action_yes),
 								new DialogInterface.OnClickListener() {
 
 									@Override
@@ -444,7 +444,7 @@ public class AdvancedSettingsActivity extends Activity {
 									}
 
 								})
-						.setNegativeButton("No",
+						.setNegativeButton(CONTEXT.getResources().getString(R.string.action_no),
 								new DialogInterface.OnClickListener() {
 
 									@Override
@@ -513,10 +513,10 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						AdvancedSettingsActivity.this); // dialog
-				builder.setTitle("Clear Cookies");
+				builder.setTitle(CONTEXT.getResources().getString(R.string.title_clear_cookies));
 				builder.setMessage(
-						"Would you like to clear all browser cookies?")
-						.setPositiveButton("Yes",
+						CONTEXT.getResources().getString(R.string.dialog_cookies))
+						.setPositiveButton(CONTEXT.getResources().getString(R.string.action_yes),
 								new DialogInterface.OnClickListener() {
 
 									@Override
@@ -535,7 +535,7 @@ public class AdvancedSettingsActivity extends Activity {
 									}
 
 								})
-						.setNegativeButton("No",
+						.setNegativeButton(CONTEXT.getResources().getString(R.string.action_no),
 								new DialogInterface.OnClickListener() {
 
 									@Override
@@ -612,8 +612,14 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(
 						AdvancedSettingsActivity.this);
-				picker.setTitle("Text Size");
-				CharSequence[] chars = { "Largest", "Large", "Normal", "Small", "Smallest"};
+				picker.setTitle(getResources().getString(
+						R.string.title_text_size));
+				CharSequence[] chars = {
+						getResources().getString(R.string.size_largest),
+						getResources().getString(R.string.size_large),
+						getResources().getString(R.string.size_normal),
+						getResources().getString(R.string.size_small),
+						getResources().getString(R.string.size_smallest) };
 			
 				int n = settings.getInt("textsize", 3);
 
@@ -628,7 +634,7 @@ public class AdvancedSettingsActivity extends Activity {
 								
 								}
 						});
-				picker.setNeutralButton("OK",
+				picker.setNeutralButton(CONTEXT.getResources().getString(R.string.action_ok),
 						new DialogInterface.OnClickListener() {
 
 							@Override

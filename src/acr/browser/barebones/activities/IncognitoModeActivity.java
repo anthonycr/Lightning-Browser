@@ -163,7 +163,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	public static final int API = FinalVariables.API;
 	public static final String SEPARATOR = "\\|\\$\\|SEPARATOR\\|\\$\\|";
 	// semi constants
-	public static Context CONTEXT;
+	public static Context mContext;
 	public static String SEARCH;
 
 	public static List<Integer> tabList;
@@ -242,8 +242,8 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 					currentTabTitle.setPadding(leftPad, 0, rightPad, 0);
 				}
 			}
-			final TextView title = new TextView(CONTEXT);
-			title.setText("New Tab");
+			final TextView title = new TextView(mContext);
+			title.setText(mContext.getResources().getString(R.string.action_new_tab));
 			if (display) {
 				if (API < 16) {
 					title.setBackgroundDrawable(active);
@@ -270,7 +270,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			Drawable[] drawables = title.getCompoundDrawables();
 			bounds = drawables[2].getBounds();
 			title.setOnTouchListener(ACTIVITY);
-			Animation holo = AnimationUtils.loadAnimation(CONTEXT, R.anim.up);
+			Animation holo = AnimationUtils.loadAnimation(mContext, R.anim.up);
 			tabLayout.addView(title);
 			title.setVisibility(View.INVISIBLE);
 			holo.setAnimationListener(new AnimationListener() {
@@ -292,7 +292,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			title.startAnimation(holo);
 			urlTitle[id] = title;
 
-			urlTitle[id].setText("New Tab");
+			urlTitle[id].setText(mContext.getResources().getString(R.string.action_new_tab));
 
 			if (theUrl != null) {
 				main[id] = generateTab(id, theUrl, display);
@@ -301,14 +301,14 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			}
 
 		} else {
-			Utils.showToast(CONTEXT, "Max number of tabs reached");
+			Utils.showToast(mContext, "Max number of tabs reached");
 		}
 		return id;
 	}
 
 	public static void deleteBookmark(String url) {
-		File book = new File(CONTEXT.getFilesDir(), "bookmarks");
-		File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
+		File book = new File(mContext.getFilesDir(), "bookmarks");
+		File bookUrl = new File(mContext.getFilesDir(), "bookurl");
 		int n = 0;
 		try {
 			BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book));
@@ -347,7 +347,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			readUrl.close();
 		} catch (IOException ignored) {
 		}
-		openBookmarks(CONTEXT, currentTab);
+		openBookmarks(mContext, currentTab);
 	}
 
 	public static void generateHistory(final IncognitoWebView view,
@@ -431,7 +431,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 	public static IncognitoWebView generateTab(final int pageToView,
 			String Url, final boolean display) {
-		IncognitoWebView view = new IncognitoWebView(CONTEXT);
+		IncognitoWebView view = new IncognitoWebView(mContext);
 		view.setId(pageToView);
 		view.setWebViewClient(new IncognitoWebViewClient(ACTIVITY));
 		view.setWebChromeClient(new IncognitoChromeClient(ACTIVITY));
@@ -451,7 +451,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		}
 		uBar.bringToFront();
 		if (Url.contains("about:home")) {
-			goBookmarks(CONTEXT, view);
+			goBookmarks(mContext, view);
 		} else if (Url.contains("about:blank")) {
 			view.loadUrl("");
 		} else {
@@ -465,7 +465,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		if (view.isShown() && view.canGoBack()) {
 			view.goBack();
 		}
-		Animation left = AnimationUtils.loadAnimation(CONTEXT, R.anim.left);
+		Animation left = AnimationUtils.loadAnimation(mContext, R.anim.left);
 		background.startAnimation(left);
 
 	}
@@ -497,7 +497,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		if (view.isShown() && view.canGoForward()) {
 			view.goForward();
 		}
-		Animation right = AnimationUtils.loadAnimation(CONTEXT, R.anim.right);
+		Animation right = AnimationUtils.loadAnimation(mContext, R.anim.right);
 		background.startAnimation(right);
 	}
 
@@ -525,11 +525,11 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 				}
 			};
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(CONTEXT); // dialog
-			builder.setMessage("What would you like to do with this bookmark?")
-					.setPositiveButton("Rename", dialogClickListener)
-					.setNegativeButton("Open", dialogClickListener)
-					.setNeutralButton("Delete", dialogClickListener).show();
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext); // dialog
+			builder.setMessage(mContext.getResources().getString(R.string.dialog_bookmark))
+					.setPositiveButton(mContext.getResources().getString(R.string.action_edit), dialogClickListener)
+					.setNegativeButton(mContext.getResources().getString(R.string.action_open), dialogClickListener)
+					.setNeutralButton(mContext.getResources().getString(R.string.action_delete), dialogClickListener).show();
 		}
 	}
 
@@ -585,7 +585,8 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		FrameLayout screen = (FrameLayout) ACTIVITY.getWindow().getDecorView();
 		screen.removeView(fullScreenContainer);
 		fullScreenContainer = null;
-		mCustomViewCallback.onCustomViewHidden();
+		//causing video crashes
+		//mCustomViewCallback.onCustomViewHidden();
 		ACTIVITY.setRequestedOrientation(orientation);
 		background.addView(currentTab);
 		uBar.setVisibility(View.VISIBLE);
@@ -602,7 +603,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		final HitTestResult result = currentTab.getHitTestResult();
 
 		if (currentTab.getUrl().contains(
-				"file://" + CONTEXT.getFilesDir() + "/bookmarks.html")) {
+				"file://" + mContext.getFilesDir() + "/bookmarks.html")) {
 			click = new Message();
 			click.arg1 = n;
 			click.setTarget(new ClickHandler());
@@ -633,7 +634,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 								if (API > 8) {
 									String url = result.getExtra();
 
-									Utils.downloadFile(CONTEXT, url, null, null);
+									Utils.downloadFile(mContext, url, null, null);
 
 								}
 								break;
@@ -643,14 +644,14 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 					};
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(
-							CONTEXT); // dialog
+							mContext); // dialog
 					builder.setMessage(
-							"What would you like to do with this image?")
-							.setPositiveButton("Open in New Tab",
+							mContext.getResources().getString(R.string.dialog_image))
+							.setPositiveButton(mContext.getResources().getString(R.string.action_new_tab),
 									dialogClickListener)
-							.setNegativeButton("Open Normally",
+							.setNegativeButton(mContext.getResources().getString(R.string.action_open),
 									dialogClickListener)
-							.setNeutralButton("Download Image",
+							.setNeutralButton(mContext.getResources().getString(R.string.action_download),
 									dialogClickListener).show();
 
 				} else {
@@ -689,15 +690,15 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 					};
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(
-							CONTEXT); // dialog
+							mContext); // dialog
 					builder.setTitle(result.getExtra())
 							.setMessage(
-									"What do you want to do with this link?")
-							.setPositiveButton("Open in New Tab",
+									mContext.getResources().getString(R.string.dialog_link))
+							.setPositiveButton(mContext.getResources().getString(R.string.action_new_tab),
 									dialogClickListener)
-							.setNegativeButton("Open Normally",
+							.setNegativeButton(mContext.getResources().getString(R.string.action_open),
 									dialogClickListener)
-							.setNeutralButton("Copy link", dialogClickListener)
+							.setNeutralButton(mContext.getResources().getString(R.string.action_copy), dialogClickListener)
 							.show();
 				}
 			}
@@ -825,7 +826,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	public static void reinitializeSettings() {
 		int size = tabList.size();
 		for (int n = 0; n < size; n++) {
-			main[tabList.get(n)].settingsInitialization(CONTEXT);
+			main[tabList.get(n)].settingsInitialization(mContext);
 		}
 	}
 
@@ -840,20 +841,20 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			}
 		}
 
-		final AlertDialog.Builder homePicker = new AlertDialog.Builder(CONTEXT);
-		homePicker.setTitle("Rename Bookmark");
-		final EditText getText = new EditText(CONTEXT);
+		final AlertDialog.Builder homePicker = new AlertDialog.Builder(mContext);
+		homePicker.setTitle(mContext.getResources().getString(R.string.title_edit_bookmark));
+		final EditText getText = new EditText(mContext);
 		getText.setText(bTitle[index]);
 
 		homePicker.setView(getText);
-		homePicker.setPositiveButton("OK",
+		homePicker.setPositiveButton(mContext.getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						bTitle[index] = getText.getText().toString();
-						File book = new File(CONTEXT.getFilesDir(), "bookmarks");
-						File bookUrl = new File(CONTEXT.getFilesDir(),
+						File book = new File(mContext.getFilesDir(), "bookmarks");
+						File bookUrl = new File(mContext.getFilesDir(),
 								"bookurl");
 						int n = 0;
 						try {
@@ -895,7 +896,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 							readUrl.close();
 						} catch (IOException ignored) {
 						}
-						openBookmarks(CONTEXT, currentTab);
+						openBookmarks(mContext, currentTab);
 					}
 				});
 		homePicker.show();
@@ -975,8 +976,8 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
 
 		// start the chooser for sharing
-		CONTEXT.startActivity(Intent.createChooser(shareIntent,
-				"Share this page"));
+		mContext.startActivity(Intent.createChooser(shareIntent,
+				mContext.getResources().getString(R.string.dialog_title_share)));
 	}
 
 	public static void toggleFullScreen() {
@@ -1095,7 +1096,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 				case KeyEvent.KEYCODE_ENTER:
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
-					searchTheWeb(getUrl.getText().toString(), CONTEXT);
+					searchTheWeb(getUrl.getText().toString(), mContext);
 					return true;
 				default:
 					break;
@@ -1117,7 +1118,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 						|| (arg2.getAction() == KeyEvent.KEYCODE_ENTER)) {
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
-					searchTheWeb(getUrl.getText().toString(), CONTEXT);
+					searchTheWeb(getUrl.getText().toString(), mContext);
 					return true;
 				}
 				return false;
@@ -1128,8 +1129,8 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 	static List<Map<String, String>> getBookmarks() {
 		List<Map<String, String>> bookmarks = new ArrayList<Map<String, String>>();
-		File bookUrl = new File(CONTEXT.getFilesDir(), "bookurl");
-		File book = new File(CONTEXT.getFilesDir(), "bookmarks");
+		File bookUrl = new File(mContext.getFilesDir(), "bookurl");
+		File book = new File(mContext.getFilesDir(), "bookmarks");
 		try {
 			BufferedReader readUrl = new BufferedReader(new FileReader(bookUrl));
 			BufferedReader readBook = new BufferedReader(new FileReader(book));
@@ -1170,7 +1171,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 				switch (msg.what) {
 				case 1: {
-					SimpleAdapter adapter = new SimpleAdapter(CONTEXT, list,
+					SimpleAdapter adapter = new SimpleAdapter(mContext, list,
 							R.layout.two_line_autocomplete, new String[] {
 									"title", "url" }, new int[] { R.id.title,
 									R.id.url });
@@ -1282,7 +1283,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 					url = ((TextView) arg1.findViewById(R.id.url)).getText()
 							.toString();
 					getUrl.setText(url);
-					searchTheWeb(url, CONTEXT);
+					searchTheWeb(url, mContext);
 					url = null;
 					getUrl.setPadding(tenPad, 0, tenPad, 0);
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1458,7 +1459,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		historyHandler = new DatabaseHandler(this);
 		cookieManager = CookieManager.getInstance();
-		CookieSyncManager.createInstance(CONTEXT);
+		CookieSyncManager.createInstance(mContext);
 		cookieManager.setAcceptCookie(false);
 
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
@@ -1525,7 +1526,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 		// user agent
 		if (API < 17) {
-			user = new WebView(CONTEXT).getSettings().getUserAgentString();
+			user = new WebView(mContext).getSettings().getUserAgentString();
 		} else {
 			user = WebSettings.getDefaultUserAgent(this);
 		}
@@ -1728,7 +1729,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main); // displays main xml layout
-		CONTEXT = this;
+		mContext = this;
 		ACTIVITY = this;
 		settings = getSharedPreferences("settings", 0);
 		edit = settings.edit();
@@ -1760,7 +1761,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 					+ "disabled to ensure as best we can that you are not being tracked. "
 					+ "Happy Browsing!";
 
-			Utils.createInformativeDialog(CONTEXT, "About Incognito", message);
+			Utils.createInformativeDialog(mContext, "About Incognito", message);
 			edit.putInt("first", 1);
 			edit.commit();
 		}
@@ -1872,7 +1873,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		if (id >= 0) {
 			main[id].loadUrl(url);
 		} else if (download == 1) {
-			Utils.downloadFile(CONTEXT, url, null, null);
+			Utils.downloadFile(mContext, url, null, null);
 		} else if (url != null) {
 			newTab(url, true);
 		}
@@ -1885,12 +1886,12 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 		switch (item.getItemId()) {
 		case R.id.history:
-			generateHistory(currentTab, CONTEXT);
+			generateHistory(currentTab, mContext);
 			return true;
 		case R.id.bookmark:
 			if (urlToLoad[currentId][1] != null) {
 				if (!urlToLoad[currentId][1].equals("Bookmarks")) {
-					Utils.addBookmark(CONTEXT, urlToLoad[currentId][1],
+					Utils.addBookmark(mContext, urlToLoad[currentId][1],
 							urlToLoad[currentId][0]);
 				}
 			}
@@ -1900,9 +1901,9 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			return true;
 		case R.id.allBookmarks:
 			if (urlToLoad[currentId][1] == null) {
-				goBookmarks(CONTEXT, currentTab);
+				goBookmarks(mContext, currentTab);
 			} else if (!urlToLoad[currentId][1].equals("Bookmarks")) {
-				goBookmarks(CONTEXT, currentTab);
+				goBookmarks(mContext, currentTab);
 			}
 
 			return true;
@@ -1958,7 +1959,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	private Rect edge;
 	private boolean xPress;
 	private final GestureDetector mGestureDetector = new GestureDetector(
-			CONTEXT, new CustomGestureListener());
+			mContext, new CustomGestureListener());
 
 	private class CustomGestureListener extends SimpleOnGestureListener {
 		@Override
@@ -2070,7 +2071,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 			public void onClick(View v) {
 
 				if (API >= 11) {
-					PopupMenu menu = new PopupMenu(CONTEXT, v);
+					PopupMenu menu = new PopupMenu(mContext, v);
 					MenuInflater inflate = menu.getMenuInflater();
 					inflate.inflate(R.menu.incognito_menu, menu.getMenu());
 					menu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
@@ -2080,13 +2081,13 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 							switch (item.getItemId()) {
 							case R.id.history:
-								generateHistory(currentTab, CONTEXT);
+								generateHistory(currentTab, mContext);
 								return true;
 							case R.id.bookmark:
 								if (urlToLoad[currentId][1] != null) {
 									if (!urlToLoad[currentId][1]
 											.equals("Bookmarks")) {
-										Utils.addBookmark(CONTEXT,
+										Utils.addBookmark(mContext,
 												urlToLoad[currentId][1],
 												urlToLoad[currentId][0]);
 									}
@@ -2097,10 +2098,10 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 								return true;
 							case R.id.allBookmarks:
 								if (urlToLoad[currentId][1] == null) {
-									goBookmarks(CONTEXT, currentTab);
+									goBookmarks(mContext, currentTab);
 								} else if (!urlToLoad[currentId][1]
 										.equals("Bookmarks")) {
-									goBookmarks(CONTEXT, currentTab);
+									goBookmarks(mContext, currentTab);
 								}
 								return true;
 							case R.id.share:

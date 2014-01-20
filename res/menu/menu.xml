@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/history" android:title="@string/menu_history" android:titleCondensed="@string/menu_history" android:orderInCategory="1"></item>
-    <item android:id="@+id/bookmark" android:title="@string/menu_add" android:titleCondensed="@string/menu_add" android:orderInCategory="2"></item>
-    <item android:id="@+id/allBookmarks" android:titleCondensed="@string/menu_bookmarks" android:title="@string/menu_bookmarks" android:orderInCategory="3"></item>
-    <item android:id="@+id/share" android:title="@string/menu_share" android:titleCondensed="@string/menu_share" android:orderInCategory="4"></item>
-    <item android:id="@+id/settings" android:title="@string/menu_settings" android:titleCondensed="@string/menu_settings" android:orderInCategory="6"></item>
-    <item android:id="@+id/incognito" android:title="@string/menu_incognito" android:orderInCategory="5" android:titleCondensed="@string/menu_incognito"></item>
+    <item android:id="@+id/history" android:title="@string/action_history" android:titleCondensed="@string/action_history" android:orderInCategory="1"></item>
+    <item android:id="@+id/bookmark" android:title="@string/action_add_bookmark" android:titleCondensed="@string/action_add_bookmark" android:orderInCategory="2"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="@string/action_bookmarks" android:title="@string/action_bookmarks" android:orderInCategory="3"></item>
+    <item android:id="@+id/share" android:title="@string/action_share" android:titleCondensed="@string/action_share" android:orderInCategory="4"></item>
+    <item android:id="@+id/settings" android:title="@string/action_settings" android:titleCondensed="@string/action_settings" android:orderInCategory="6"></item>
+    <item android:id="@+id/incognito" android:title="@string/action_incognito" android:orderInCategory="5" android:titleCondensed="@string/action_incognito"></item>
     
 
 </menu>

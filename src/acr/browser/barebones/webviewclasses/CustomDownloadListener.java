@@ -1,6 +1,5 @@
 package acr.browser.barebones.webviewclasses;
 
-import acr.browser.barebones.activities.BrowserActivity;
 import acr.browser.barebones.utilities.Utils;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,9 +9,9 @@ import android.net.Uri;
 import android.webkit.DownloadListener;
 
 public class CustomDownloadListener implements DownloadListener {
-	private static Context context;
-	public CustomDownloadListener(BrowserActivity activity){
-		context = activity;
+	private static Context mContext;
+	public CustomDownloadListener(Context context){
+		mContext = context;
 	}
 	
 	
@@ -22,7 +21,7 @@ public class CustomDownloadListener implements DownloadListener {
 			long contentLength) {
 		if (url.endsWith(".mp4") || url.endsWith(".m4a")) {
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 			builder.setTitle("Open as...");
 			builder.setMessage(
 					"Do you want to download this video or watch it in an app?")
@@ -32,7 +31,7 @@ public class CustomDownloadListener implements DownloadListener {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int id) {
-									Utils.downloadFile(context, url,
+									Utils.downloadFile(mContext, url,
 											contentDisposition, mimetype);
 								}
 							})
@@ -48,14 +47,14 @@ public class CustomDownloadListener implements DownloadListener {
 									intent.putExtra(
 											"acr.browser.barebones.Download",
 											1);
-									context.startActivity(intent);
+									mContext.startActivity(intent);
 								}
 							});
 			AlertDialog alert = builder.create();
 			alert.show();
 
 		} else {
-			Utils.downloadFile(context, url, contentDisposition, mimetype);
+			Utils.downloadFile(mContext, url, contentDisposition, mimetype);
 		}
 	}
 

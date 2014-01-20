@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/history" android:title="@string/menu_history" android:titleCondensed="@string/menu_history" android:orderInCategory="1"></item>
-    <item android:id="@+id/allBookmarks" android:titleCondensed="@string/menu_bookmarks" android:title="@string/menu_bookmarks" android:orderInCategory="3"></item>
-    <item android:id="@+id/incognito" android:title="@string/menu_new_tab" android:orderInCategory="5" android:titleCondensed="@string/menu_new_tab"></item>
+    <item android:id="@+id/history" android:title="@string/action_history" android:titleCondensed="@string/action_history" android:orderInCategory="1"></item>
+    <item android:id="@+id/allBookmarks" android:titleCondensed="@string/action_bookmarks" android:title="@string/action_bookmarks" android:orderInCategory="3"></item>
+    <item android:id="@+id/incognito" android:title="@string/action_new_tab" android:orderInCategory="5" android:titleCondensed="@string/action_new_tab"></item>
     
 
 </menu>

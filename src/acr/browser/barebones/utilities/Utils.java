@@ -189,7 +189,7 @@ public class Utils {
 		return intent;
 	}
 
-	public static int convertDensityPixesl(Context context, int densityPixels) {
+	public static int convertDensityPixels(Context context, int densityPixels) {
 		float scale = context.getResources().getDisplayMetrics().density;
 		int pixels = (int) (densityPixels * scale + 0.5f);
 		return pixels;

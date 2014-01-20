@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Lightning</string>
+        <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">Ajustes del navegador</string>
     <string name="location">Acceder a tu ubicación</string>
