@@ -38,7 +38,7 @@
 * ````WRITE_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and Lightning
 
 ####The Code
-* Code additions are always welcome
+* Please contribute code back if you can. The code isn't perfect.
 * Please add translations/translation fixes as you see need
 * Change ````FinalVariables.MAX_TABS```` from 5 to 100 to change the Lightning to the paid version
 * Beware when using proguard while compiling. Some methods should not be obfuscated. Use the proguard settings file I provided for best results.
