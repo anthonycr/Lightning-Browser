@@ -76,7 +76,7 @@
     <string name="dialog_adobe_unsupported">Adobe Flash не поддерживает Andoid 4.2 и новее, вызывая сбой браузера. Пожалуйста, не сообщайте о сбоях при включённом Flash</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Папка загрузок</string>
-    <string name="title_custom_homepage">Своя домашняя страница</string>
+    <string name="title_custom_homepage">Введите адрес</string>
     <string name="action_webpage">Открыть адрес</string>
     <string name="dialog_reflow_warning">"К сожалению, перекомпоновка текста не работает на Android 4.4+ из-за изменений, внесённых Google"</string>
     <string name="title_clear_history">Очистка истории</string>
