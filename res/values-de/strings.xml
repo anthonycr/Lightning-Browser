@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014 A.C.R. Development
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
 <resources>
 
     <string name="app_name">Lightning</string>
+    <string name="drawer_open">Navigation-Drawer öffnen</string>
+    <string name="drawer_close">Navigation-Drawer schliessen</string>
+    <string name="action_websearch">Websuche</string>
+    <string name="action_refresh">Aktualisieren</string>
+    <string name="action_new_tab">Neuer Tab</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_history">Verlauf</string>
+    <string name="action_bookmarks">Lesezeichen</string>
+    <string name="action_add_bookmark">Lesezeichen hinzufügen</string>
+    <string name="action_copy">Link kopieren</string>
+    <string name="action_forward">Weiter</string>
     <string name="google">Google</string>
     <string name="settings">Einstellungen</string>
     <string name="location">Standortzugriff erlauben</string>
@@ -14,13 +41,14 @@
     <string name="desk">Desktop Ansicht</string>
     <string name="custom">Benutzerdefinierte Ansicht</string>
     <string name="home">Startseite</string>
-    <string name="settingshelp">Einstellungen nur für neue Tabs gültig</string>
+    <string name="settingshelp">Einstellungen nur für neue Tab gültig</string>
     <string name="fullscreen">Vollbildmodus aktivieren</string>
     <string name="java">JavaScript aktivieren</string>
-    <string name="saveTab">Geschlossene Tabs wiederherstellen</string>
+    <string name="saveTab">Geschlossene Tab wiederherstellen</string>
     <string name="settings_title">Einstellungen</string>
-    <string name="download">Downloadverzeichnis</string>
+    <string name="download">Download-Verzeichnis</string>
     <string name="advanced">Erweiterte Einstellungen</string>
+    <string name="gestures">'Vor'- und 'Zurück'-Gesten aktivieren</string>
     <string name="source">Quelltext</string>
     <string name="license">Lizenz</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -35,26 +63,70 @@
     <string name="cookies">Cookies erlauben</string>
     <string name="importbookmarks">Lesezeichen vom Standardbrowser importieren</string>
     <string name="size">Textgröße</string>
-    <string name="title_activity_advanced_settings">Erweiterte Einstellungen</string>
-    <string name="hello_world">Hallo Welt!</string>
     <string name="recommended">(Empfohlen)</string>
     <string name="weird_look">(Webseiten sehen womöglich seltsam aus)</string>
     <string name="search">Suchdienst</string>
     <string name="search_hint">Suche</string>
     <string name="wideViewPort">Breiten Anzeigebereich verwenden</string>
     <string name="overViewMode">Seiten in der Übersicht öffnen</string>
-    <string name="restore">Tabs beim Start wiederherstellen</string>
-    <string name="menu_history">Verlauf</string>
-    <string name="menu_add">Lesezeichen hinzufügen</string>
-    <string name="menu_bookmarks">Lesezeichen</string>
-    <string name="menu_share">Teilen</string>
-    <string name="menu_settings">Einstellungen</string>
-    <string name="menu_incognito">Inkognito-Tab</string>
-    <string name="menu_new_tab">Neuer Tab</string>
+    <string name="restore">Tab beim Start wiederherstellen</string>
     <string name="stock_browser_unavailable">(Kein unterstützter Standardbrowser gefunden)</string>
     <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
     <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
     <string name="clear_cookies">Cookies löschen</string>
-    <string name="gestures">Vor- und Zurückgesten aktivieren</string>
+    <string name="dialog_image">Was möchten Sie mit diesem Bild tun?</string>
+    <string name="action_download">Herunterladen</string>
+    <string name="action_open">Öffnen</string>
+    <string name="dialog_link">Was möchten Sie mit diesem Link tun?</string>
+    <string name="dialog_title_share">Diese Webseite teilen</string>
+    <string name="dialog_bookmark">Was möchten Sie mit diesem Lesezeichen tun?</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_blank">Leere Seite</string>
+    <string name="agent_default">Standard</string>
+    <string name="agent_desktop">Desktop</string>
+    <string name="agent_mobile">Mobile</string>
+    <string name="agent_custom">Andere</string>
+    <string name="title_search_engine">Suchmaschine</string>
+    <string name="action_ok">Ok</string>
+    <string name="dialog_download">Möchten Sie diese Datei herunterladen?</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="title_warning">Warnung</string>
+    <string name="dialog_adobe_dead">Hinweis: Google hat einige Änderungen in Android 4.4+ eingeführt und Adobe Flash ist dadurch nicht mehr möglich!</string>
+    <string name="dialog_adobe_not_installed">Adobe Flash Player wurde erkannt.\nBitte installieren Sie den Flash Player.</string>
+    <string name="dialog_adobe_unsupported">Adobe Flash unterstützt Andoid 4.2 und höher nicht mehr und kann zu Abstürzen führen. Bitte melden Sie keine Probleme, wenn Sie Flash aktiviert haben!</string>
+    <string name="title_user_agent">User-Agent</string>
+    <string name="title_download_location">Ort herunterladen</string>
+    <string name="title_custom_homepage">Benutzerdefinierte Startseite</string>
+    <string name="action_webpage">Webseite</string>
+    <string name="dialog_reflow_warning">Hinweis: Google hat einige Änderungen in Android 4.4+ eingeführt und eine Textumformierung ist nicht mehr möglich!</string>
+    <string name="title_clear_history">Verlauf löschen</string>
+    <string name="title_clear_cookies">Cookies löschen</string>
+    <string name="dialog_history">Möchten Sie den gesamten Verlauf sicher löschen?</string>
+    <string name="dialog_cookies">Möchten Sie alle Cookies sicher löschen?</string>
+    <string name="action_yes">Ja</string>
+    <string name="action_no">Nein</string>
+    <string name="title_text_size">Textgröße</string>
+    <string name="size_largest">Sehr groß</string>
+    <string name="size_large">Groß</string>
+    <string name="size_normal">Standard</string>
+    <string name="size_small">Klein</string>
+    <string name="size_smallest">Sehr klein</string>
+    <string name="title_error">Fehler</string>
+    <string name="dialog_import_error">Kein Browser zum Importieren der Lesezeichen vorhanden!</string>
+    <string name="hint_title">Titel</string>
+    <string name="hint_url">URL</string>
+    <string name="title_edit_bookmark">Lesezeichen bearbeiten</string>
+    <string name="action_edit">Bearbeiten</string>
+    <string name="action_incognito">Inkognito-Tab</string>
+    <string name="hello_world">Hallo Welt!</string>
+    <string name="action_homepage">Standard</string>
+    <string name="action_back">Zurück</string>
+    <string name="action_find">Auf Seite suchen</string>
+    <string name="download_pending">Herunterladen läuft\u2026</string>
+    <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
+    <string name="download_no_sdcard_dlg_title" >Keine SD-Karte</string>
+    <string name="download_no_sdcard_dlg_msg" >USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
+    <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar!</string>
+    <string name="download_sdcard_busy_dlg_msg" >Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
 
 </resources>
