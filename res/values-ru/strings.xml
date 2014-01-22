@@ -53,6 +53,7 @@
     <string name="stock_browser_available">браузер обнаружен</string>
     <string name="fullScreenOption">Без строки состояния</string>
     <string name="clear_cookies">Очистить cookies</string>
+    <string name="gestures">Жесты назад и вперёд</string>
     <string name="dialog_image">Выберите действие для изображения</string>
     <string name="action_download">Загрузить</string>
     <string name="action_open">Открыть</string>
