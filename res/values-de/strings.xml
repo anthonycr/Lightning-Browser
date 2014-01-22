@@ -48,7 +48,7 @@
     <string name="settings_title">Einstellungen</string>
     <string name="download">Download-Verzeichnis</string>
     <string name="advanced">Erweiterte Einstellungen</string>
-    <string name="gestures">'Vor'- und 'Zurück'-Gesten aktivieren</string>
+    <string name="gestures">\'Vor\'- und \'Zurück\'-Gesten aktivieren</string>
     <string name="source">Quelltext</string>
     <string name="license">Lizenz</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>

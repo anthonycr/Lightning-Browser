@@ -169,7 +169,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	public static boolean DEVICE_HAS_GPS = false;
 	// semi constants
 	public static Context mContext;
-	public static String SEARCH;
+	public static String mSearch;
 
 	public static List<Integer> tabList;
 	// variables
@@ -379,7 +379,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 							null, null, null);
 
 					handler.sendEmptyMessage(1);
-
 				} catch (SQLiteException ignored) {
 				} catch (NullPointerException ignored) {
 				} catch (IllegalStateException ignored) {
@@ -425,7 +424,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 					e.printStackTrace();
 				}
 				if (uBar.isShown()) {
-					currentTabTitle.setText(mContext.getResources().getString(R.string.menu_history));
+					currentTabTitle.setText(mContext.getResources().getString(R.string.action_history));
 					setUrlText("");
 					getUrl.setPadding(tenPad, 0, tenPad, 0);
 				}
@@ -972,7 +971,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			currentTab.loadUrl(SEARCH + query);
+			currentTab.loadUrl(mSearch + query);
 		} else if (!validURL) {
 			currentTab.loadUrl("http://" + query);
 		} else {
@@ -1079,6 +1078,7 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		}
 		main[del].stopLoading();
 		main[del].clearHistory();
+		main[del].setVisibility(View.GONE);
 		tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
 		edit.putString("oldPage", urlToLoad[del][0]);
 		edit.commit();
@@ -1248,7 +1248,6 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 							null, // Which rows to return (all rows)
 							null, // Selection arguments (none)
 							null, null, null);
-
 				} catch (SQLiteException ignored) {
 				} catch (NullPointerException ignored) {
 				} catch (IllegalStateException ignored) {
@@ -1565,28 +1564,28 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		// agent
 		switch (settings.getInt("search", 1)) {
 		case 1:
-			SEARCH = FinalVariables.GOOGLE_SEARCH;
+			mSearch = FinalVariables.GOOGLE_SEARCH;
 			break;
 		case 2:
-			SEARCH = FinalVariables.BING_SEARCH;
+			mSearch = FinalVariables.BING_SEARCH;
 			break;
 		case 3:
-			SEARCH = FinalVariables.YAHOO_SEARCH;
+			mSearch = FinalVariables.YAHOO_SEARCH;
 			break;
 		case 4:
-			SEARCH = FinalVariables.STARTPAGE_SEARCH;
+			mSearch = FinalVariables.STARTPAGE_SEARCH;
 			break;
 		case 5:
-			SEARCH = FinalVariables.DUCK_SEARCH;
+			mSearch = FinalVariables.DUCK_SEARCH;
 			break;
 		case 6:
-			SEARCH = FinalVariables.BAIDU_SEARCH;
+			mSearch = FinalVariables.BAIDU_SEARCH;
 			break;
 		case 7:
-			SEARCH = FinalVariables.YANDEX_SEARCH;
+			mSearch = FinalVariables.YANDEX_SEARCH;
 			break;
 		case 8:
-			SEARCH = FinalVariables.DUCK_LITE_SEARCH;
+			mSearch = FinalVariables.DUCK_LITE_SEARCH;
 			break;
 		}
 
@@ -1986,6 +1985,10 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 
 	@Override
 	protected void onPause() {
+		if(historyHandler != null){
+			historyHandler.close();
+			historyHandler = null;
+		}
 		if (currentTab != null) {
 			if (API >= 11) {
 				currentTab.onPause();
@@ -2018,6 +2021,9 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if(historyHandler == null){
+			historyHandler = new DatabaseHandler(this);
+		}
 		if (currentTab != null) {
 			onProgressChanged(currentId, currentTab.getProgress());
 			if (currentTab.getProgress() == 100) {

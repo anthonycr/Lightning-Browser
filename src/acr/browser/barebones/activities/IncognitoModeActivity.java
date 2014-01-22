@@ -371,7 +371,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 							null, null, null);
 
 					handler.sendEmptyMessage(1);
-
+					
 				} catch (SQLiteException ignored) {
 				} catch (NullPointerException ignored) {
 				} catch (IllegalStateException ignored) {
@@ -1034,6 +1034,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		}
 		main[del].stopLoading();
 		main[del].clearHistory();
+		main[del].setVisibility(View.GONE);
 		tabScroll.smoothScrollTo(currentTabTitle.getLeft(), 0);
 		edit.putString("oldPage", urlToLoad[del][0]);
 		edit.commit();
@@ -1226,7 +1227,7 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 							null, // Which rows to return (all rows)
 							null, // Selection arguments (none)
 							null, null, null);
-
+					
 				} catch (SQLiteException ignored) {
 				} catch (NullPointerException ignored) {
 				} catch (IllegalStateException ignored) {
@@ -1920,7 +1921,10 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 
 	@Override
 	protected void onPause() {
-
+		if(historyHandler == null){
+			historyHandler = new DatabaseHandler(this);
+			historyHandler = null;
+		}
 		if (currentTab != null) {
 			if (API >= 11) {
 				currentTab.onPause();
@@ -1937,6 +1941,9 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if(historyHandler == null){
+			historyHandler = new DatabaseHandler(this);
+		}
 		onProgressChanged(currentId, currentTab.getProgress());
 		if (currentTab.getProgress() == 100) {
 			progressBar.setVisibility(View.GONE);

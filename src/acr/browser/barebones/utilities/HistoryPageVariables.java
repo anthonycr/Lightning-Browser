@@ -7,7 +7,7 @@ public class HistoryPageVariables {
 			+ "body{color: gray;text-size: 10px}div.space {height: 0.7em;}	div.extra{text-align: center;}div	{vertical-align: middle;}"
 			+ "div	{background-color: #ffffff;}div.clickable {position:relative;}p.black{color: black;font-size: 1em;font-family: \"Lucida Console\"}"
 			+ "p.font{font-size: 1em;font-family: \"Lucida Console\"}p.black{padding-left: 0.5em;padding-right: 0.5em;padding-top: 0.5em;padding-bottom: 0em;}"
-			+ "p.font{padding-left: 0.5em;padding-right: 0.5em;padding-top: 0em;padding-bottom: 0.5em;}"
+			+ "p.font{padding-left: 0.5em;padding-right: 0.5em;padding-top: 0em;padding-bottom: 0.5em;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}"
 			+ "div.clickable a {position:absolute; width:100%;height:100%;top:0;left:0;text-decoration:none; z-index:10; background-color:white;opacity: 0;filter: alpha(opacity=1);}"
 			+ "</style><body bgcolor = #f2f2f2>";
 
