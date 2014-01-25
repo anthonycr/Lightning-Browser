@@ -1,11 +1,11 @@
 #Lightning Browser
 #![](ic_launcher_small.png)
 ####Download
-* [Download APK from here](https://github.com/anthonycr/Lightning-Browser/blob/master/Barebones.apk?raw=true)
+* [Download APK from here](https://github.com/anthonycr/Lightning-Browser/blob/master/BrowserActivity.apk?raw=true)
 
 * [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
 
-* [Download the version with a new interface here](https://github.com/anthonycr/Lightning-Browser/blob/master/Lightning_API_14.apk?raw=true)
+* [Download the version with a new interface here](https://github.com/anthonycr/Lightning-Browser/blob/master/MainActivity.apk?raw=true)
 
 
 ####Features
