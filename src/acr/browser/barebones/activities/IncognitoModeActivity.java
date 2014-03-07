@@ -1536,6 +1536,13 @@ public class IncognitoModeActivity extends Activity implements OnTouchListener {
 		defaultUser = user; // setting mobile user
 		// agent
 		switch (settings.getInt("search", 1)) {
+		case 0:
+			SEARCH = settings.getString("searchurl", FinalVariables.GOOGLE_SEARCH);
+			if(!SEARCH.startsWith("http://") && ! SEARCH.startsWith("https://") ) {
+				SEARCH = FinalVariables.GOOGLE_SEARCH;
+			}
+			break;
+
 		case 1:
 			SEARCH = FinalVariables.GOOGLE_SEARCH;
 			break;
