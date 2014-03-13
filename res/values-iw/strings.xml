@@ -16,6 +16,7 @@
     <string name="home">דף הבית</string>
     <string name="settingshelp">הגדות מוחלות על כרטיסיות חדשות בלבד</string>
     <string name="fullscreen">הפעל מצב מסך מלא</string>
+    <string name="source">http://bit.ly/LightWeight-Browser</string>
     <string name="java">הפעל JavaScript</string>
 
 </resources>

@@ -23,7 +23,7 @@
     <string name="advanced">Advanced Settings</string>
     <string name="source">Source Code</string>
     <string name="license">License</string>
-    <string name="github">https://github.com/Dark98/LightWeight-Browser</string>
+    <string name="github">http://bit.ly/LightWeight-Browser</string>
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">NewSettings</string>
     <string name="action_settings">Settings</string>

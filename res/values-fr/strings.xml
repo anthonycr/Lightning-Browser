@@ -13,6 +13,7 @@
     <string name="custom">Utiliser un User Agent personnalisé</string>
     <string name="home">Au démarrage</string>
     <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
+    <string name="source">http://bit.ly/LightWeight-Browser</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
     <string name="menu_history">History</string>

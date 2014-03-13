@@ -16,6 +16,7 @@
     <string name="home">Homepage</string>
     <string name="settingshelp">Impostazioni valgono solo per le nuove schede</string>
     <string name="fullscreen">Enable fullscreen mode</string>
+    <string name="source">http://bit.ly/LightWeight-Browser</string>
     <string name="java">Enable JavaScript</string>
     <string name="menu_history">History</string>
     <string name="menu_add">Aggiungi ai preferiti</string>
