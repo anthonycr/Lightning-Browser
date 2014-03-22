@@ -67,6 +67,7 @@
     <string name="weird_look">(Websites may look weird)</string>
     <string name="search">Search Engine</string>
     <string name="search_hint">Search</string>
+    <string name="custom_url">Custom URL</string>
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>

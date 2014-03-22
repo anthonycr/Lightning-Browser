@@ -38,6 +38,7 @@ public class SettingsActivity extends Activity {
 	static SharedPreferences.Editor mEditPrefs;
 	static int agentChoice;
 	static String homepage;
+	static String searchurl;
 	static TextView agentText;
 	static String agent;
 	static TextView download;
@@ -74,6 +75,9 @@ public class SettingsActivity extends Activity {
 		searchText = (TextView) findViewById(R.id.searchText);
 
 		switch (settings.getInt("search", 1)) {
+		case 0:
+			searchText.setText("Custom URL");
+			break;
 		case 1:
 			searchText.setText("Google");
 			break;
@@ -226,20 +230,24 @@ public class SettingsActivity extends Activity {
 						SettingsActivity.this);
 				picker.setTitle(getResources().getString(
 						R.string.title_search_engine));
-				CharSequence[] chars = { "Google", "Bing", "Yahoo",
+				CharSequence[] chars = { getResources().getString(R.string.custom_url),
+						"Google", "Bing", "Yahoo",
 						"StartPage", "DuckDuckGo (Privacy)" , "Baidu (Chinese)", "Yandex (Russian)", "DuckDuckGo Lite (Privacy)"};
 
 				int n = settings.getInt("search", 1);
 
-				picker.setSingleChoiceItems(chars, n - 1,
+				picker.setSingleChoiceItems(chars, n,
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								mEditPrefs.putInt("search", which + 1);
+								mEditPrefs.putInt("search", which);
 								mEditPrefs.commit();
-								switch (which + 1) {
+								switch (which) {
+								case 0:
+									searchUrlPicker();
+									break;
 								case 1:
 									searchText.setText("Google");
 									break;
@@ -281,6 +289,33 @@ public class SettingsActivity extends Activity {
 
 		});
 	}
+
+	public void searchUrlPicker() {
+		final AlertDialog.Builder urlPicker = new AlertDialog.Builder(
+				SettingsActivity.this);
+		
+		urlPicker.setTitle(getResources().getString(
+				R.string.custom_url));
+		final EditText getSearchUrl = new EditText(SettingsActivity.this);
+
+		searchurl = settings.getString("searchurl", FinalVariables.GOOGLE_SEARCH);
+		getSearchUrl.setText(searchurl);
+		urlPicker.setView(getSearchUrl);
+		urlPicker.setPositiveButton(
+				getResources().getString(R.string.action_ok),
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String text = getSearchUrl.getText().toString();
+						mEditPrefs.putString("searchurl", text);
+						mEditPrefs.commit();
+						searchText.setText( getResources().getString(R.string.custom_url) + ": " + text);
+					}
+				});
+		urlPicker.show();
+	}
+
 
 	public void clickListenerForCheckBoxes(RelativeLayout one,
 			RelativeLayout two, RelativeLayout three, final CheckBox loc,

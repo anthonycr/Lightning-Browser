@@ -1563,6 +1563,12 @@ public class BrowserActivity extends Activity implements OnTouchListener {
 		defaultUser = user; // setting mobile user
 		// agent
 		switch (settings.getInt("search", 1)) {
+		case 0:
+			mSearch = settings.getString("searchurl", FinalVariables.GOOGLE_SEARCH);
+			if(!mSearch.startsWith("http://") && ! mSearch.startsWith("https://") ) {
+				mSearch = FinalVariables.GOOGLE_SEARCH;
+			}
+			break;
 		case 1:
 			mSearch = FinalVariables.GOOGLE_SEARCH;
 			break;
