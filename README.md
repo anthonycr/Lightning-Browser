@@ -42,3 +42,21 @@
 * Please add translations/translation fixes as you see need
 * Change ````FinalVariables.MAX_TABS```` from 5 to 100 to change the Lightning to the paid version
 * Beware when using proguard while compiling. Some methods should not be obfuscated. Use the proguard settings file I provided for best results.
+
+####License
+````
+Copyright 2014 A.C.R. Development
+ 
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+````
+This means that you MUST provide attribution in your application to Lightning Browser for the use of this code. The way you can do this is to provide a separate screen in settings showing what open-source libraries and/or apps (this one) you used in your application
