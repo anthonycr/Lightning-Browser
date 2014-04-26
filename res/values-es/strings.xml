@@ -1,18 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014 A.C.R. Development
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
 <resources>
-        <string name="app_name">Lightning</string>
+
+    <string name="app_name">Lightning</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Buscar en la Web</string>
+    <string name="action_refresh">Recargar</string>
+    <string name="action_new_tab">Nueva Pestaña</string>
+    <string name="action_share">Compartir</string>
+    <string name="action_history">Historial</string>
+    <string name="action_bookmarks">Marcadores</string>
+    <string name="action_add_bookmark">Añadir Marcador</string>
+    <string name="action_copy">Copiar enlace</string>
+    <string name="action_forward">Adelante</string>
     <string name="google">Google</string>
-    <string name="settings">Ajustes del navegador</string>
+    <string name="settings">Ajustes</string>
     <string name="location">Acceder a tu ubicación</string>
     <string name="password">Almacenar contraseñas</string>
     <string name="agent">Agente de usuario</string>
-    <string name="history">Borrar historial al salir</string>
+    <string name="history">Borrar historial</string>
     <string name="email">Envíame un Email</string>
     <string name="flash">Habilitar Adobe Flash</string>
     <string name="mobile">Ver como móvil</string>
     <string name="desk">Ver como ordenador</string>
     <string name="custom">Ver con agente de usuario personalizado</string>
-    <string name="home">Página principal</string>
+    <string name="home">Página de inicio</string>
     <string name="settingshelp">Sólo aplican a nuevas pestañas</string>
     <string name="fullscreen">Habilitar pantalla completa</string>
     <string name="java">Habilitar JavaScript</string>
@@ -20,6 +48,7 @@
     <string name="settings_title">Ajustes</string>
     <string name="download">Ruta de descargas</string>
     <string name="advanced">Ajustes avanzados</string>
+    <string name="gestures">Habilitar gestos de Atrás y Adelante</string>
     <string name="source">Código fuente</string>
     <string name="license">Licencia</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -28,32 +57,77 @@
     <string name="action_settings">Ajustes</string>
     <string name="version">Versión</string>
     <string name="cache">Vaciar caché al salir</string>
-    <string name="reflow">Enable text reflow</string>
+    <string name="reflow">Activar el Text Reflow</string>
     <string name="block">Bloquear imágenes</string>
     <string name="window">Permitir a los sitios abrir nuesvas ventanas</string>
     <string name="cookies">Habilitar cookies</string>
     <string name="importbookmarks">Importar marcadores</string>
     <string name="size">Tamaño de la tipografía</string>
-    <string name="title_activity_advanced_settings">AdvancedSettings</string>
-    <string name="hello_world">¡Hola mundo!</string>
     <string name="recommended">(Recomendado)</string>
     <string name="weird_look">(Puede causar visualización extraña)</string>
     <string name="search">Motor de búsquedas</string>
     <string name="search_hint">Buscar</string>
+    <string name="custom_url">URL Personalizada</string>
     <string name="wideViewPort">Utilizar viewport normal</string>
     <string name="overViewMode">Visualizar la página de lejos al cargar</string>
     <string name="restore">Restaurar pestañas cerradas al iniciar</string>
-    <string name="menu_history">Historial</string>
-    <string name="menu_add">Añadir a Marcadores</string>
-    <string name="menu_bookmarks">Marcadores</string>
-    <string name="menu_share">Compartir</string>
-    <string name="menu_settings">Ajustes</string>
-    <string name="menu_incognito">Pestaña de Incógnito</string>
-    <string name="menu_new_tab">Nueva pestaña</string>
     <string name="stock_browser_unavailable">(No se detecta navegador de sistema)</string>
     <string name="stock_browser_available">(Detectado navegador de sistema soportado)</string>
     <string name="fullScreenOption">Ocultar barra de estado al navegar</string>
     <string name="clear_cookies">Limpiar cookies</string>
-    <string name="gestures">Habilitar gestos de atrás y adelante</string>
+    <string name="dialog_image">¿Qué quieres hacer con esta imagen?</string>
+    <string name="action_download">Descargar</string>
+    <string name="action_open">Abrir</string>
+    <string name="dialog_link">¿Qué quieres hacer con este enlace?</string>
+    <string name="dialog_title_share">Compartir esta página</string>
+    <string name="dialog_bookmark">¿Qué quieres hacer con este marcador?</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_blank">Página en Blanco</string>
+    <string name="agent_default">Por Defecto</string>
+    <string name="agent_desktop">Escritorio</string>
+    <string name="agent_mobile">Móvil</string>
+    <string name="agent_custom">Personalizado</string>
+    <string name="title_search_engine">Motor de Búsqueda</string>
+    <string name="action_ok">Aceptar</string>
+    <string name="dialog_download">¿Quieres descargar este archivo?</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="title_warning">Aviso</string>
+    <string name="dialog_adobe_dead">Lo lamentamos, Google ha realizado algunos cambios y el Adobe Flash no funciona en Android 4.4+</string>
+    <string name="dialog_adobe_not_installed">No se detecta Adobe Flash Player.\nPor favor instálalo.</string>
+    <string name="dialog_adobe_unsupported">Adobe Flash no es compatible con Andoid 4.2 y superiores y hará fallar el navegador. Por favor, no informes de estos cierres si activas Flash.</string>
+    <string name="title_user_agent">Agente de Usuario</string>
+    <string name="title_download_location">Ruta de descargas</string>
+    <string name="title_custom_homepage">Página de inicio personalizada</string>
+    <string name="action_webpage">Webpage</string>
+    <string name="dialog_reflow_warning">Lo lamentamos, Google ha realizado algunos cambios y el Text Reflow ha dejado de funcionar en Android 4.4+</string>
+    <string name="title_clear_history">Borrar Historial</string>
+    <string name="title_clear_cookies">Borrar Cookies</string>
+    <string name="dialog_history">¿Quieres borrar el Historial?</string>
+    <string name="dialog_cookies">¿Quieres borrar todas las Cookies?</string>
+    <string name="action_yes">Sí</string>
+    <string name="action_no">No</string>
+    <string name="title_text_size">Tamaño de la tipografía</string>
+    <string name="size_largest">Más grande</string>
+    <string name="size_large">Grande</string>
+    <string name="size_normal">Normal</string>
+    <string name="size_small">Pequeño</string>
+    <string name="size_smallest">Más Pequeño</string>
+    <string name="title_error">Error</string>
+    <string name="dialog_import_error">No se ha detectado buscador del cuál importar marcadores.</string>
+    <string name="hint_title">Título</string>
+    <string name="hint_url">URL</string>
+    <string name="title_edit_bookmark">Editar Marcador</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_incognito">Nueva pestaña privada</string>
+    <string name="hello_world">¡Hola Mundo!</string>
+    <string name="action_homepage">Por Defecto</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_find">Buscar en la página</string>
+    <string name="download_pending">Iniciando descarga\u2026</string>
+    <string name="cannot_download">Sólo se puede descargar de URLs \"http\" o \"https\".</string>
+    <string name="download_no_sdcard_dlg_title" >No hay tarjeta SD</string>
+    <string name="download_no_sdcard_dlg_msg" >Se requiere de almacenamiento USB para descargar el archivo.</string>
+    <string name="download_sdcard_busy_dlg_title">Almacenamiento USB no disponible</string>
+    <string name="download_sdcard_busy_dlg_msg" >El almacenamiento está ocupado. Para permitir las descargar, Desactiva el almacenamiento USB desde el área de notificación.</string>
 
 </resources>
