@@ -1,57 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014 A.C.R. Development
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
 <resources>
 
     <string name="app_name">Lightning</string>
+    <string name="drawer_open">開啟導覽側欄</string>
+    <string name="drawer_close">關閉導覽側欄</string>
+    <string name="action_websearch">網路搜尋</string>
+    <string name="action_refresh">重新整理</string>
+    <string name="action_new_tab">新分頁</string>
+    <string name="action_share">分享</string>
+    <string name="action_history">記錄</string>
+    <string name="action_bookmarks">書籤</string>
+    <string name="action_add_bookmark">新增書籤</string>
+    <string name="action_copy">複製連結</string>
+    <string name="action_forward">下一頁</string>
     <string name="google">Google</string>
-    <string name="settings">瀏覽器設置</string>
-    <string name="location">允許站點訪問地理位置</string>
-    <string name="password">保存密碼</string>
+    <string name="settings">設定</string>
+    <string name="location">存取地理資訊</string>
+    <string name="password">儲存密碼</string>
     <string name="agent">User Agent</string>
-    <string name="history">清空歷史記錄</string>
-    <string name="email">郵件開發者</string>
+    <string name="history">清除記錄</string>
+    <string name="email">Email 給我</string>
     <string name="flash">啟用 Adobe Flash</string>
-    <string name="mobile">作為移動設備訪問</string>
-    <string name="desk">作為桌面設備訪問</string>
-    <string name="custom">自定義 User Agent</string>
+    <string name="mobile">以行動裝置方式瀏覽</string>
+    <string name="desk">以桌上型電腦方式瀏覽</string>
+    <string name="custom">以自定 user agent 瀏覽</string>
     <string name="home">首頁</string>
-    <string name="settingshelp">設置僅將應用於新標簽頁</string>
-    <string name="fullscreen">啟用全屏模式</string>
+    <string name="settingshelp">設定僅會套用到新分頁</string>
+    <string name="fullscreen">全螢幕模式</string>
     <string name="java">啟用 JavaScript</string>
-    <string name="saveTab">恢復丟失標簽</string>
-    <string name="settings_title">設置</string>
-    <string name="download">下載位置</string>
-    <string name="advanced">高級設置</string>
-    <string name="source">源碼</string>
-    <string name="license">許可證</string>
+    <string name="saveTab">重新啟動時還原分頁</string>
+    <string name="settings_title">偏好設定</string>
+    <string name="download">下載資料夾位置</string>
+    <string name="advanced">進階設定</string>
+    <string name="gestures">啟動上一頁、下一頁手勢</string>
+    <string name="source">原始碼</string>
+    <string name="license">版權資訊</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">NewSettings</string>
-    <string name="action_settings">設置</string>
-    <string name="version">應用版本</string>
-    <string name="cache">退出時清理緩存</string>
-    <string name="reflow">啟用文本重排</string>
-    <string name="block">屏蔽網頁圖像</string>
-    <string name="window">允許站點打開新窗口</string>
+    <string name="title_activity_new_settings">新設定</string>
+    <string name="action_settings">設定</string>
+    <string name="version">應用程式版本</string>
+    <string name="cache">離開時清除快取</string>
+    <string name="reflow">啟動文字自動重新排列</string>
+    <string name="block">封鎖圖片</string>
+    <string name="window">允許網站開啟新分頁</string>
     <string name="cookies">啟用 Cookies</string>
-    <string name="importbookmarks">從瀏覽器中導入書簽</string>
-    <string name="size">頁面文本尺寸</string>
-    <string name="title_activity_advanced_settings">AdvancedSettings</string>
+    <string name="importbookmarks">從其它瀏覽器匯入書籤</string>
+    <string name="size">文字尺寸</string>
+    <string name="recommended">(建議)</string>
+    <string name="weird_look">(網站看起來可能會有點古怪)</string>
+    <string name="search">搜尋引擎</string>
+    <string name="search_hint">搜尋</string>
+    <string name="custom_url">自定 URL</string>
+    <string name="wideViewPort">使用寬廣 viewport</string>
+    <string name="overViewMode">與總覽模式載入網頁</string>
+    <string name="restore">重新啟動時還原分頁</string>
+    <string name="stock_browser_unavailable">(沒有偵測到支援的內建瀏覽器)</string>
+    <string name="stock_browser_available">(偵測到支援的內建瀏覽器)</string>
+    <string name="fullScreenOption">與瀏覽時隱藏狀態列</string>
+    <string name="clear_cookies">清除瀏覽器 cookies</string>
+    <string name="dialog_image">您想要對這張圖片執行什麼動作？</string>
+    <string name="action_download">下載</string>
+    <string name="action_open">開啟</string>
+    <string name="dialog_link">您想要對這個連結執行什麼動作？</string>
+    <string name="dialog_title_share">分享連結</string>
+    <string name="dialog_bookmark">您想要對這個書籤執行什麼動作？</string>
+    <string name="action_delete">刪除</string>
+    <string name="action_blank">空白頁</string>
+    <string name="agent_default">預設</string>
+    <string name="agent_desktop">桌上型電腦</string>
+    <string name="agent_mobile">行動裝置</string>
+    <string name="agent_custom">自定</string>
+    <string name="title_search_engine">搜尋引擎</string>
+    <string name="action_ok">OK</string>
+    <string name="dialog_download">您是否想要下載這個檔案？</string>
+    <string name="action_cancel">取消</string>
+    <string name="title_warning">警告</string>
+    <string name="dialog_adobe_dead">我們很抱歉，由於 Google 的更動，Adobe Flash 與 Android 4.4+ 不再支援。</string>
+    <string name="dialog_adobe_not_installed">沒有偵測到 Adobe Flash Player。\n請安裝  Flash Player。</string>
+    <string name="dialog_adobe_unsupported">Adobe Flash 不支援 Andoid 4.2 及以上，若啟用會導致瀏覽器停止回應，請不要回報任何關於次問題的相關錯誤。</string>
+    <string name="title_user_agent">User Agent</string>
+    <string name="title_download_location">下載資料夾位置</string>
+    <string name="title_custom_homepage">自定首頁</string>
+    <string name="action_webpage">網頁</string>
+    <string name="dialog_reflow_warning">我們很抱歉，由於 Google 的更動，文字重新排列於 Android 4.4 及以上 無法使用。</string>
+    <string name="title_clear_history">清除記錄</string>
+    <string name="title_clear_cookies">清除 Cookies</string>
+    <string name="dialog_history">您是否要清除所有瀏覽記錄？</string>
+    <string name="dialog_cookies">您是否要清除所有 cookies？</string>
+    <string name="action_yes">是</string>
+    <string name="action_no">否</string>
+    <string name="title_text_size">文字尺寸</string>
+    <string name="size_largest">最大</string>
+    <string name="size_large">大</string>
+    <string name="size_normal">普通</string>
+    <string name="size_small">小</string>
+    <string name="size_smallest">最小</string>
+    <string name="title_error">錯誤</string>
+    <string name="dialog_import_error">沒有偵測到任何瀏覽器以匯入書籤。</string>
+    <string name="hint_title">標題</string>
+    <string name="hint_url">URL</string>
+    <string name="title_edit_bookmark">編輯書籤</string>
+    <string name="action_edit">編輯</string>
+    <string name="action_incognito">新無痕式分頁</string>
     <string name="hello_world">Hello world!</string>
-    <string name="recommended">（推薦）</string>
-    <string name="weird_look">（部分網頁可能看起來很奇怪）</string>
-    <string name="search">搜索引擎</string>
-    <string name="search_hint">搜索</string>
-    <string name="wideViewPort">使用寬視圖</string>
-    <string name="overViewMode">使用概覽模式載入頁面</string>
-    <string name="restore">啟動時恢復丟失頁面</string>
-    <string name="menu_history">歷史記錄</string>
-    <string name="menu_add">添加書簽</string>
-    <string name="menu_bookmarks">書簽列表</string>
-    <string name="menu_share">分享頁面</string>
-    <string name="menu_settings">應用設置</string>
-    <string name="menu_incognito">隱身標簽</string>
-    <string name="menu_new_tab">新建標簽</string>
-    <string name="stock_browser_unavailable">（尚未檢測到原生瀏覽器）</string>
-    <string name="stock_browser_available">（檢測到已支持的原生瀏覽器）</string>
+    <string name="action_homepage">預設</string>
+    <string name="action_back">上一頁</string>
+    <string name="action_find">於頁面中搜尋</string>
+    <string name="download_pending">開始下載\u2026</string>
+    <string name="cannot_download">儘可下載 \"http\" 或是 \"https\" URLs.</string>
+    <string name="download_no_sdcard_dlg_title" >沒有偵測到 SD 記憶卡</string>
+    <string name="download_no_sdcard_dlg_msg" >若要下載檔案，USB 儲存裝置是必須的。</string>
+    <string name="download_sdcard_busy_dlg_title">USB 儲存裝置無法使用</string>
+    <string name="download_sdcard_busy_dlg_msg" >儲存裝置忙碌中。若是要下載檔案，請停止掛載 USB 儲存裝置。</string>
 
 </resources>
