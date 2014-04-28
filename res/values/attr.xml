@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="progressColor" format="reference|color" />
+    <attr name="arrowBackDrawable" format="integer" />
+    <attr name="arrowForwardDrawable" format="integer" />
+    <attr name="numberColor" format="reference|color"/>
+    <attr name="autoCompleteTitleColor" format="reference|color"/>
+    <attr name="autoCompleteUrlColor" format="reference|color"/>
+
+</resources>

@@ -1,33 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:layout_width="fill_parent" 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/button"
+    android:background="?android:attr/listChoiceBackgroundIndicator"
     android:clickable="false"
- >
-    <TextView
-        android:id="@+id/title"
-        android:clickable="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxLines="1"
-        android:textColor="#000000"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingLeft="6dip"
-        android:paddingTop="2dip"/>
+    android:orientation="horizontal"
+    android:paddingBottom="3dp"
+    android:paddingLeft="6dp"
+    android:paddingTop="3dp" 
+    android:gravity="center_vertical">
 
-     <TextView
-         android:id="@+id/url"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_weight="1"
-         android:clickable="false"
-         android:maxLines="1"
-         android:paddingBottom="2dip"
-         android:paddingLeft="6dip"
-         android:paddingTop="2dip"
-         android:textColor="@color/light" />
+    <ImageView
+        android:id="@+id/suggestionIcon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/listChoiceBackgroundIndicator"
+        android:clickable="false"
+        android:orientation="vertical"
+        android:paddingLeft="5dp" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:maxLines="1"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:maxLines="1"
+            android:textColor="#6a6a6a" />
+    </LinearLayout>
 
 </LinearLayout>

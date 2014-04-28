@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="acr.browser.barebones"
-    android:versionCode="67"
-    android:versionName="3.0.5b" >
+<!--
+  Copyright 2014 A.C.R. Development
+-->
 
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="19" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="acr.browser.lightning"
+    android:versionCode="66"
+    android:versionName="3.1.1a" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
-    <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <uses-feature
         android:name="android.hardware.location.gps"
@@ -25,18 +26,22 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
 
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:label="@string/app_name" >
         <activity
-            android:name=".activities.BrowserActivity"
+            android:name="acr.browser.lightning.BrowserActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:theme="@style/LightTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,11 +64,6 @@
             <!--
                   For these schemes where any of these particular MIME types
                   have been supplied, we are a good candidate.
-
-
-
-
-
             -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -103,21 +103,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.IncognitoModeActivity"
-            android:alwaysRetainTaskState="true"
+            android:name="acr.browser.lightning.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/app_name"
-            android:launchMode="singleTask" >
-            <intent-filter>
-                <action android:name="android.intent.action.BROWSER_INCOGNITO" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/app_name" >
+            android:label="@string/settings"
+            android:theme="@style/LightTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
 
@@ -125,11 +114,37 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AdvancedSettingsActivity"
+            android:name="acr.browser.lightning.AdvancedSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/advanced" >
+            android:label="@string/advanced"
+            android:theme="@style/LightTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.ADVANCED_SETTINGS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="acr.browser.lightning.IncognitoActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/DarkTheme"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.INCOGNITO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="acr.browser.lightning.LicenseActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/licenses"
+            android:theme="@style/LightTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.LICENSE" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

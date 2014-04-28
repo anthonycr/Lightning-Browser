@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="7dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/card_bg"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:gravity="center" >
+
+    <AutoCompleteTextView
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:gravity="left|center_vertical"
+        android:hint="@+string/search_hint"
+        android:imeOptions="actionGo"
+        android:inputType="textUri"
+        android:paddingBottom="1dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="5dp"
+        android:paddingTop="1dp"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textColor="@color/gray_dark"
+        android:textCursorDrawable="@null" >
+    </AutoCompleteTextView>
+
+</LinearLayout>

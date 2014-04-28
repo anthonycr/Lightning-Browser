@@ -1,168 +1,195 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/background"
+<!--
+  Copyright 2014 ACR Development
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
-
-    <RelativeLayout
-    android:id="@+id/urlBar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    >
-    
-<HorizontalScrollView
-    android:id="@+id/tabScroll"
-    android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:scrollbars="horizontal|none" 
-    android:fadingEdge="none">
+    android:background="@color/gray_medium"
+    android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/Layout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" >
-
-        <LinearLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" >
-
-            <ImageView
-                android:id="@+id/newTab"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/new_tab" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-</HorizontalScrollView>
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-		android:layout_below="@id/tabScroll"
-        android:background="@drawable/bar" >
-
-        <ImageView
-            android:id="@+id/options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/options" />
-
-        <ImageView
-            android:id="@+id/exit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/exit" />
-
-        <ImageView
-            android:id="@+id/forward"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/exit"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/forward" />
-<RelativeLayout
-    android:id="@+id/refreshLayout"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:layout_toRightOf="@+id/forward">
-        <ImageView
-            android:id="@+id/refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:src="@drawable/refresh" />
+        android:id="@+id/progressWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?progressColor"
+        android:orientation="vertical" >
 
         <ProgressBar
-            android:id="@+id/progressBar1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:visibility="gone"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:indeterminate="true"
-           />
-</RelativeLayout>
+            android:id="@+id/activity_bar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:indeterminate="false"
+            android:indeterminateOnly="false"
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+            android:progressDrawable="@drawable/progress" />
+    </LinearLayout>
 
-        <MultiAutoCompleteTextView
-            android:id="@+id/enterUrl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/options"
-            android:layout_toRightOf="@+id/refreshLayout"
-            android:background="@drawable/book"
-            android:ems="10"
-            android:hint="@string/search_hint"
-            android:imeOptions="actionGo"
-            android:inputType="textUri"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:singleLine="true"
-            android:textColor="@color/dark" />
+    <!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
 
-    </RelativeLayout>
-    </RelativeLayout>
-
-    <FrameLayout
-        android:id="@+id/holder"
+    <android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/urlBar" >
-    
-        </FrameLayout>
+        android:layout_height="match_parent" >
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:indeterminate="false"
-        android:indeterminateOnly="false"
-        android:progressDrawable="@drawable/progress"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" 
-        android:maxHeight="5dp"
-        android:minHeight="5dp"/>
-    
-</RelativeLayout>
+        <!--
+         As the main content view, the view below consumes the entire
+         space available using match_parent in both dimensions.
+        -->
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!--
+         android:layout_gravity="start" tells DrawerLayout to treat
+         this as a sliding drawer on the left side for left-to-right
+         languages and on the right side for right-to-left languages.
+         The drawer is given a fixed width in dp and extends the full height of
+         the container. A solid background is used for contrast
+         with the content view.
+        -->
+
+        <RelativeLayout
+            android:id="@+id/drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#e4e4e4"
+            android:clickable="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/new_tab_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:gravity="center_vertical"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/action_new_tab"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/new_tab_button"
+                android:background="#bababa" />
+
+            <ListView
+                android:id="@+id/left_drawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/lineView"
+                android:layout_below="@+id/view"
+                android:choiceMode="singleChoice"
+                android:divider="#bababa"
+                android:dividerHeight="1dp" />
+
+            <View
+                android:id="@+id/lineView"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_above="@+id/linearLayout1"
+                android:background="#bababa" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="2" >
+
+                <RelativeLayout
+                    android:id="@+id/action_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?android:attr/listChoiceBackgroundIndicator"
+                    android:clickable="true" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:contentDescription="@string/action_back"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="4dp"
+                        android:src="@drawable/ic_action_back" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="48dp"
+                    android:background="#bababa" />
+
+                <RelativeLayout
+                    android:id="@+id/action_forward"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?android:attr/listChoiceBackgroundIndicator"
+                    android:clickable="true" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:contentDescription="@string/action_forward"
+                        android:paddingBottom="4dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="4dp"
+                        android:src="@drawable/ic_action_forward" />
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/right_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="#e4e4e4"
+            android:clickable="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#33b5e5"
+                android:gravity="center_vertical"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/action_bookmarks"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#bababa" />
+
+            <ListView
+                android:id="@+id/right_drawer_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#bababa"
+                android:dividerHeight="1dp" />
+        </LinearLayout>
+    </android.support.v4.widget.DrawerLayout>
+
+</LinearLayout>

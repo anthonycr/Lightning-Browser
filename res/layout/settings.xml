@@ -1,53 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/bar" >
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:paddingBottom="5dp"
-			android:paddingLeft="5dp" 
-			android:paddingRight="5dp"
-			android:paddingTop="5dp"
-            android:src="@drawable/back" />
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/settings_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    </RelativeLayout>
-
-    <ScrollView
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <RelativeLayout
                 android:id="@+id/layoutLocation"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:background="@drawable/blueback" 
-                android:paddingRight="10dp">
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:paddingRight="10dp" >
 
                 <TextView
                     android:id="@+id/textView2"
@@ -65,283 +33,400 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true" >
-
                 </RelativeLayout>
-
             </RelativeLayout>
 
-			<RelativeLayout
-			    android:id="@+id/layoutFullScreen"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" 
-			    android:paddingRight="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-				<TextView
-				    android:id="@+id/textView3"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/fullscreen"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
-				<RelativeLayout
+            <RelativeLayout
+                android:id="@+id/layoutFullScreen"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:paddingRight="10dp" >
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/fullscreen"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <RelativeLayout
                     android:id="@+id/setR2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true" >
-
                 </RelativeLayout>
-			</RelativeLayout>
+            </RelativeLayout>
 
-			<RelativeLayout
-			    android:id="@+id/layoutFlash"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" 
-			    android:paddingRight="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-				<TextView
-				    android:id="@+id/textView4"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/flash"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
-				 <RelativeLayout
+            <RelativeLayout
+                android:id="@+id/layoutFlash"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:paddingRight="10dp" >
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/flash"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <RelativeLayout
                     android:id="@+id/setR3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true" >
-
                 </RelativeLayout>
-			</RelativeLayout>
+            </RelativeLayout>
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
+            
+            <RelativeLayout
+                android:id="@+id/layoutAdBlock"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:paddingRight="10dp" >
 
-			<RelativeLayout
-			    android:id="@+id/layoutUserAgent"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/block_ads"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-				<TextView
-				    android:id="@+id/textView5"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/agent"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <RelativeLayout
+                    android:id="@+id/setR4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true" >
+                </RelativeLayout>
+            </RelativeLayout>
 
-				<TextView
-				    android:id="@+id/agentText"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="Small Text"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-			</RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/layoutUserAgent"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
 
-			<RelativeLayout
-			    android:id="@+id/layoutDownload"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
 
-				<TextView
-				    android:id="@+id/textView6"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/download"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/agent"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-				<TextView
-				    android:id="@+id/downloadText"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="Small Text"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+                    <TextView
+                        android:id="@+id/agentText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/light" />
+                </LinearLayout>
+            </RelativeLayout>
 
-			</RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-			<RelativeLayout
-			    android:id="@+id/layoutHomepage"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+            <RelativeLayout
+                android:id="@+id/layoutDownload"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
 
-				<TextView
-				    android:id="@+id/textView7"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/home"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
 
-				<TextView
-				    android:id="@+id/homepageText"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="Small Text"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/download"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-			</RelativeLayout>
+                    <TextView
+                        android:id="@+id/downloadText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/light" />
+                </LinearLayout>
+            </RelativeLayout>
 
-			<RelativeLayout
-			    android:id="@+id/layoutSearch"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-				<TextView
-				    android:id="@+id/textView7"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/search"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+            <RelativeLayout
+                android:id="@+id/layoutHomepage"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
 
-				<TextView
-				    android:id="@+id/searchText"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="Small Text"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
 
-			</RelativeLayout>
-			<RelativeLayout
-			    android:id="@+id/layoutAdvanced"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/home"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-				<TextView
-				    android:id="@+id/textView8"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/advanced"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    <TextView
+                        android:id="@+id/homepageText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/light" />
+                </LinearLayout>
+            </RelativeLayout>
 
-			</RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-			<RelativeLayout
-			    android:id="@+id/layoutSource"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+            <RelativeLayout
+                android:id="@+id/layoutSearch"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
 
-				<TextView
-				    android:id="@+id/textView9"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/source"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
 
-				<TextView
-				    android:id="@+id/isImportAvailable"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/github"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/search"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-			</RelativeLayout>
+                    <TextView
+                        android:id="@+id/searchText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/light" />
+                </LinearLayout>
+            </RelativeLayout>
 
-			<RelativeLayout
-			    android:id="@+id/layoutLicense"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-				<TextView
-				    android:id="@+id/textView10"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/license"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+            <RelativeLayout
+                android:id="@+id/layoutAdvanced"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
 
-				<TextView
-				    android:id="@+id/textView20"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/apache"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="10dp"
+                    android:text="@string/advanced"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </RelativeLayout>
 
-			</RelativeLayout>
-			<RelativeLayout
-			    android:id="@+id/layoutVersion"
-			    android:layout_width="match_parent"
-			    android:layout_height="56dp"
-			    android:background="@drawable/blueback" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
 
-				<TextView
-				    android:id="@+id/textView10"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentLeft="true"
-				    android:layout_centerVertical="true"
-				    android:paddingLeft="10dp"
-				    android:text="@string/version"
-				    android:textAppearance="?android:attr/textAppearanceMedium" />
+            <RelativeLayout
+                android:id="@+id/layoutSource"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
 
-				<TextView
-				    android:id="@+id/versionCode"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_alignParentBottom="true"
-				    android:layout_alignParentLeft="true"
-				    android:paddingLeft="10dp"
-				    android:text="Small Text"
-				    android:textAppearance="?android:attr/textAppearanceSmall"
-				    android:textColor="@color/light" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
 
-			</RelativeLayout>
-			
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/action_follow_me"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/isImportAvailable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/url_twitter"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/light" />
+                </LinearLayout>
+            </RelativeLayout>
+            
+             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
+            
+            <RelativeLayout
+                android:id="@+id/layoutLicense"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
+
+               <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/licenses"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                  
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
+
+            <RelativeLayout
+                android:id="@+id/layoutVersion"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="?android:attr/listChoiceBackgroundIndicator" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="@string/version"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/versionCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="Small Text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/light" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#cdcdcd" />
         </LinearLayout>
     </ScrollView>
-
-</LinearLayout>

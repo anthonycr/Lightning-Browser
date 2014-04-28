@@ -26,7 +26,6 @@
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">YeniAyarlar</string>
-    <string name="action_settings">Ayarlar</string>
     <string name="version">Uygulama Versiyonu</string>
     <string name="cache">Çıkışta önbelleği temizleme</string>
     <string name="reflow">Metin akışını etkinleştirme</string>
@@ -44,13 +43,13 @@
     <string name="wideViewPort">Geniş görünüm kullanma</string>
     <string name="overViewMode">Genel bakış modunda sayfaları yükleme</string>
     <string name="restore">Kaybolan pencereleri başlangıçta yükleme</string>
-    <string name="menu_history">Geçmiş</string>
-    <string name="menu_add">Yer imi ekle</string>
-    <string name="menu_bookmarks">Yer imleri</string>
-    <string name="menu_share">Paylaş</string>
-    <string name="menu_settings">Ayarlar</string>
-    <string name="menu_incognito">Gizli sekme</string>
-    <string name="menu_new_tab">Yeni pencere</string>
+    <string name="action_history">Geçmiş</string>
+    <string name="action_add">Yer imi ekle</string>
+    <string name="action_bookmarks">Yer imleri</string>
+    <string name="action_share">Paylaş</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="action_incognito">Gizli sekme</string>
+    <string name="action_new_tab">Yeni pencere</string>
     <string name="stock_browser_unavailable">(Hiçbir stok tarayıcı tespit edilemedi)</string>
     <string name="stock_browser_available">(Desteklenen stok tarayıcı tespit edildi)</string>
     

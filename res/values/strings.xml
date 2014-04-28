@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2014 A.C.R. Development
+  Copyright 2013 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@
     <string name="settings_title">Settings</string>
     <string name="download">Download Location</string>
     <string name="advanced">Advanced Settings</string>
-    <string name="gestures">Enable back and forward gestures</string>
     <string name="source">Source Code</string>
     <string name="license">License</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -63,16 +62,14 @@
     <string name="cookies">Enable Cookies</string>
     <string name="importbookmarks">Import bookmarks from Browser</string>
     <string name="size">Text size</string>
-    <string name="recommended">(Recommended)</string>
-    <string name="weird_look">(Websites may look weird)</string>
+    <string name="recommended">Recommended</string>
     <string name="search">Search Engine</string>
     <string name="search_hint">Search</string>
-    <string name="custom_url">Custom URL</string>
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>
-    <string name="stock_browser_unavailable">(No stock browser detected)</string>
-    <string name="stock_browser_available">(Supported stock browser detected)</string>
+    <string name="stock_browser_unavailable">No stock browser detected</string>
+    <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
     <string name="clear_cookies">Clear browser cookies</string>
     <string name="dialog_image">What would you like to do with this image?</string>
@@ -129,5 +126,37 @@
     <string name="download_no_sdcard_dlg_msg" >USB storage is required to download the file.</string>
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
     <string name="download_sdcard_busy_dlg_msg" >The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
+    <string name="incognito_cookies">Enable Cookies in Incognito Mode</string>
+    <string name="title_flash">Adobe Flash</string>
+    <string name="action_manual">Manual</string>
+    <string name="action_auto">Auto</string>
+    <string name="action_follow_me">Contact Me</string>
+    <string name="url_twitter">twitter.com/ACRDevelopment</string>
+    <string name="clear_cache">Clear cache</string>
+    <string name="message_cache_cleared">Cache Cleared</string>
+    <string name="message_import">Bookmarks Were Imported</string>
+    <string name="message_clear_history">History Cleared</string>
+    <string name="message_cookies_cleared">Cookies Cleared</string>
+    <string name="max_tabs">Max Tabs Reached</string>
+    <string name="message_text_copied">Text copied to clipboard</string>
+    <string name="message_link_copied">Link copied to clipboard</string>
+    <string name="custom_url">Custom URL</string>
+    <string name="message_blocked_local">Local file has been blocked from loading</string>
+    <string name="licenses">Open Source Licenses</string>
+    <string name="suggestion">Search for</string>
+    <string name="block_ads">Block Ads</string>
+    <string name="message_untrusted_certificate">The certificate of the site is not trusted. Proceed anyway?</string>
+    <string name="title_form_resubmission">Form Resubmission</string>
+    <string name="message_form_resubmission">Would you like to resend the data?</string>
+    <string name="message_location">\nWould like to use your location</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_dont_allow">Don\'t Allow</string>
+    <string name="title_sign_in">Sign In</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="google_suggestions">Search Suggestions</string>
+    <string name="powered_by_google">Powered by Google</string>
+    <string name="title_adblock">AdBlock</string>
+    <string name="message_adblock">AdBlock is currently only available in the browser\'s paid version, Lightning Browser+. It is available to download on Google Play.</string>
 
 </resources>

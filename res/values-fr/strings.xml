@@ -15,11 +15,11 @@
     <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
-    <string name="menu_history">Historique</string>
-    <string name="menu_add">Aj. favoris</string>
-    <string name="menu_bookmarks">Favoris</string>
-    <string name="menu_share">Partager</string>
-    <string name="menu_settings">Paramètres</string>
-    <string name="menu_incognito">Onglet incognito</string>
-    <string name="menu_new_tab">Nouvel onglet</string>
+    <string name="action_history">Historique</string>
+    <string name="action_add">Aj. favoris</string>
+    <string name="action_bookmarks">Favoris</string>
+    <string name="action_share">Partager</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_incognito">Onglet incognito</string>
+    <string name="action_new_tab">Nouvel onglet</string>
 </resources>

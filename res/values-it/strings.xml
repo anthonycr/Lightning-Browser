@@ -17,12 +17,12 @@
     <string name="settingshelp">Impostazioni valgono solo per le nuove schede</string>
     <string name="fullscreen">Enable fullscreen mode</string>
     <string name="java">Enable JavaScript</string>
-    <string name="menu_history">History</string>
-    <string name="menu_add">Aggiungi ai preferiti</string>
-    <string name="menu_bookmarks">Segnalibri</string>
-    <string name="menu_share">Azione</string>
-    <string name="menu_settings">Impostazioni</string>
-    <string name="menu_incognito">Incognito tab</string>
-    <string name="menu_new_tab">New tab</string>
+    <string name="action_history">History</string>
+    <string name="action_add">Aggiungi ai preferiti</string>
+    <string name="action_bookmarks">Segnalibri</string>
+    <string name="action_share">Azione</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="action_incognito">Incognito tab</string>
+    <string name="action_new_tab">New tab</string>
 
 </resources>
