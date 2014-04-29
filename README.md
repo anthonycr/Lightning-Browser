@@ -55,4 +55,6 @@ Lightning Browser
    
    http://mozilla.org/MPL/2.0/
 ````
-This means that you MUST provide attribution in your application to Lightning Browser for the use of this code. The way you can do this is to provide a separate screen in settings showing what open-source libraries and/or apps (this one) you used in your application. You must also publish any changes you make to the code, basically meaning that you must open-source code derived from this one. The purpose of this is to encourage contribution back to the parent repository.
+This means that you MUST provide attribution in your application to Lightning Browser for the use of this code. The way you can do this is to provide a separate screen in settings showing what open-source libraries and/or apps (this one) you used in your application. You must also open-source any files that you use from this repository and if you use any code at all from this repository, the file you put it in must be open-sourced according the the MPL 2.0 license. To put it simply, if you create a fork of this browser, your browser must be open-source, no exceptions.
+
+If you wish to obtain a closed-source license due to proprietary software issues, arrangements can be made to purchase a closed-source license from ACR Development. If you wish to purchase such a license, please contact me at [anthonyrestaino11@gmail.com](mailto:anthonyrestaino11@gmail.com)
