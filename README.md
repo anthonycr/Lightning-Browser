@@ -17,11 +17,11 @@
 
 * Incognito Mode
 
-* Flash Support
+* Flash Support (prior to 4.4)
 
 * Privacy Aware
 
-* HOLOYOLO
+* HOLO
 
 ####Permissions Requested and Explained
 
@@ -40,8 +40,6 @@
 ####The Code
 * Please contribute code back if you can. The code isn't perfect.
 * Please add translations/translation fixes as you see need
-* Change ````FinalVariables.MAX_TABS```` from 5 to 100 to change the Lightning to the paid version
-* Beware when using proguard while compiling. Some methods should not be obfuscated. Use the proguard settings file I provided for best results.
 
 ####License
 ````
