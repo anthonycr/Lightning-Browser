@@ -7,11 +7,13 @@
 .metadata
 bin/
 tmp/
+gen/
 *.tmp
 *.bak
 *.swp
 *~.nib
 local.properties
+project.properties
 .classpath
 .settings/
 .loadpath
