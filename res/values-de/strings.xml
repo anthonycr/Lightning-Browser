@@ -48,7 +48,6 @@
     <string name="settings_title">Einstellungen</string>
     <string name="download">Download-Verzeichnis</string>
     <string name="advanced">Erweiterte Einstellungen</string>
-    <string name="gestures">\'Vor\'- und \'Zurück\'-Gesten aktivieren</string>
     <string name="source">Quelltext</string>
     <string name="license">Lizenz</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -64,7 +63,6 @@
     <string name="importbookmarks">Lesezeichen vom Standardbrowser importieren</string>
     <string name="size">Textgröße</string>
     <string name="recommended">(Empfohlen)</string>
-    <string name="weird_look">(Webseiten sehen womöglich seltsam aus)</string>
     <string name="search">Suchdienst</string>
     <string name="search_hint">Suche</string>
     <string name="wideViewPort">Breiten Anzeigebereich verwenden</string>
@@ -128,5 +126,37 @@
     <string name="download_no_sdcard_dlg_msg" >USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar!</string>
     <string name="download_sdcard_busy_dlg_msg" >Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
+    <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
+    <string name="title_flash">Adobe Flash</string>
+    <string name="action_manual">Manuell</string>
+    <string name="action_auto">Auto</string>
+    <string name="action_follow_me">Kontakt</string>
+    <string name="url_twitter">twitter.com/ACRDevelopment</string>
+    <string name="clear_cache">Cache löschen</string>
+    <string name="message_cache_cleared">Cache gelöscht</string>
+    <string name="message_import">Lesezeichen wurden importiert</string>
+    <string name="message_clear_history">Verlauf gelöscht</string>
+    <string name="message_cookies_cleared">Cookies gelöscht</string>
+    <string name="max_tabs">Maximale Reiteranzahl erreicht!</string>
+    <string name="message_text_copied">Text in Zwischenablage kopiert</string>
+    <string name="message_link_copied">Link in Zwischenablage kopiert</string>
+    <string name="custom_url">Benutzerdefinierte URL</string>
+    <string name="message_blocked_local">Lokale Datei wurde beim Laden blockiert!</string>
+    <string name="licenses">Open Source-Lizenzen</string>
+    <string name="suggestion">Suche nach</string>
+    <string name="block_ads">Werbung blockieren</string>
+    <string name="message_untrusted_certificate">Das Zertifikat dieser Webseite ist nicht vertrauenswürdig. Trozdem fortsetzen?</string>
+    <string name="title_form_resubmission">Formularneuzustellung</string>
+    <string name="message_form_resubmission">Daten erneut senden?</string>
+    <string name="message_location">\nMeine Position verwenden?</string>
+    <string name="action_allow">Erlauben</string>
+    <string name="action_dont_allow">Nicht erlauben</string>
+    <string name="title_sign_in">Anmelden</string>
+    <string name="hint_username">Benutzername</string>
+    <string name="hint_password">Passwort</string>
+    <string name="google_suggestions">Suchvorschläge</string>
+    <string name="powered_by_google">Unterstützt durch Google</string>
+    <string name="title_adblock">Werbeblocker</string>
+    <string name="message_adblock">Der Werbeblocker ist nur in Lightning Browser+ verfügbar und kann im Google Play Store gekauft werden!</string>
 
 </resources>
