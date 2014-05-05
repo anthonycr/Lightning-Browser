@@ -5,8 +5,6 @@
 
 * [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
 
-* [Download the version with a new interface here](https://github.com/anthonycr/Lightning-Browser/blob/master/MainActivity.apk?raw=true)
-
 
 ####Features
 * Bookmarks
