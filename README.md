@@ -1,4 +1,5 @@
 #Lightning Browser
+####Speed, Simplicity, Security
 #![](ic_launcher_small.png)
 ####Download
 * [Download APK from here](https://github.com/anthonycr/Lightning-Browser/blob/master/BrowserActivity.apk?raw=true)
@@ -11,15 +12,17 @@
 
 * History
 
-* Multiple Search Engines (Google, Bing, Yahoo, StartPage, DuckDuckGo, etc.)
+* Multiple search engines (Google, Bing, Yahoo, StartPage, DuckDuckGo, etc.)
 
-* Incognito Mode
+* Incognito mode
 
-* Flash Support (prior to 4.4)
+* Flash support (prior to 4.4)
 
-* Privacy Aware
+* Follows Google design guidelines
 
-* HOLO
+* Unique utilization of navigation drawer for tabs
+
+* Google search suggestions
 
 ####Permissions Requested and Explained
 
