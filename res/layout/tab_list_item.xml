@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:background="?android:attr/activatedBackgroundIndicator"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal" >
 
     <ImageView
@@ -32,19 +33,17 @@
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="#6a6a6a" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/delete1"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
-        android:layout_centerVertical="true"
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
-        android:contentDescription="Delete Tab"
-        android:gravity="center_vertical"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="6dp"
         android:layout_marginRight="6dp"
-        android:src="@drawable/ic_action_delete" >
-    </ImageView>
+        android:gravity="center_vertical"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_action_delete" />
 
 </RelativeLayout>
