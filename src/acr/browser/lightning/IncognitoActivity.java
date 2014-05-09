@@ -19,8 +19,12 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+
+import acr.browser.lightning.BrowserActivity.SortIgnoreCase;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -803,11 +807,18 @@ public class IncognitoActivity extends Activity implements BrowserController {
 						} catch (FileNotFoundException e) {
 						} catch (IOException e) {
 						}
+						Collections.sort(mBookmarkList, new SortIgnoreCase());
 						notifyBookmarkDataSetChanged();
+						if (mCurrentView != null) {
+							if (mCurrentView.getUrl().startsWith(Constants.FILE)
+									&& mCurrentView.getUrl().endsWith("bookmarks.html")) {
+								openBookmarkPage(mCurrentView.getWebView());
+							}
+						}
 					}
 				});
 		homePicker.show();
-
+		
 	}
 
 	/**
@@ -1163,7 +1174,7 @@ public class IncognitoActivity extends Activity implements BrowserController {
 
 		if (isSearch) {
 			try {
-				URLEncoder.encode(query, "UTF-8");
+				query = URLEncoder.encode(query, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -1250,7 +1261,7 @@ public class IncognitoActivity extends Activity implements BrowserController {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			View row = convertView;
 			LightningViewHolder holder = null;
 
@@ -1273,8 +1284,8 @@ public class IncognitoActivity extends Activity implements BrowserController {
 
 				@Override
 				public void onClick(View view) {
-					Integer index = (Integer) view.getTag();
-					deleteTab(index);
+					
+					deleteTab(position);
 				}
 
 			});
@@ -1578,7 +1589,7 @@ public class IncognitoActivity extends Activity implements BrowserController {
 		} catch (FileNotFoundException ignored) {
 		} catch (IOException ignored) {
 		}
-		Collections.sort(bookmarks);
+		Collections.sort(bookmarks, new SortIgnoreCase());
 		return bookmarks;
 	}
 
@@ -1705,7 +1716,7 @@ public class IncognitoActivity extends Activity implements BrowserController {
 			bookWriter.close();
 			urlWriter.close();
 			mBookmarkList.add(bookmark);
-			Collections.sort(mBookmarkList);
+			Collections.sort(mBookmarkList, new SortIgnoreCase());
 			notifyBookmarkDataSetChanged();
 		} catch (FileNotFoundException ignored) {
 		} catch (IOException ignored) {
@@ -2251,4 +2262,12 @@ public class IncognitoActivity extends Activity implements BrowserController {
 		}
 	}
 
+	public class SortIgnoreCase implements Comparator<HistoryItem> {
+
+		public int compare(HistoryItem o1, HistoryItem o2) {
+			return o1.getTitle().toLowerCase(Locale.getDefault()).compareTo(
+					o2.getTitle().toLowerCase(Locale.getDefault()));
+		}
+
+	}
 }
