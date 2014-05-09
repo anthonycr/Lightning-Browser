@@ -85,6 +85,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -1353,7 +1354,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 				holder = new LightningViewHolder();
 				holder.txtTitle = (TextView) row.findViewById(R.id.text1);
 				holder.favicon = (ImageView) row.findViewById(R.id.favicon1);
-				holder.exit = (ImageView) row.findViewById(R.id.delete1);
+				holder.exit = (ImageButton) row.findViewById(R.id.delete1);
 				holder.exit.setTag(position);
 				row.setTag(holder);
 			} else {
@@ -1379,7 +1380,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		class LightningViewHolder {
 			TextView txtTitle;
 			ImageView favicon;
-			ImageView exit;
+			ImageButton exit;
 		}
 	}
 
