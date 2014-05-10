@@ -843,8 +843,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 						Collections.sort(mBookmarkList, new SortIgnoreCase());
 						notifyBookmarkDataSetChanged();
 						if (mCurrentView != null) {
-							if (mCurrentView.getUrl().startsWith(Constants.FILE)
-									&& mCurrentView.getUrl().endsWith("bookmarks.html")) {
+							if (mCurrentView.getUrl()
+									.startsWith(Constants.FILE)
+									&& mCurrentView.getUrl().endsWith(
+											"bookmarks.html")) {
 								openBookmarkPage(mCurrentView.getWebView());
 							}
 						}
@@ -1342,7 +1344,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
 			View row = convertView;
 			LightningViewHolder holder = null;
 			if (row == null) {
@@ -1945,7 +1948,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		Log.i("Lightning", "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
 		mCustomView.setKeepScreenOn(false);
-		setFullscreen(mPreferences.getBoolean("hidestatus", false));
+		setFullscreen(mPreferences.getBoolean(
+				PreferenceConstants.HIDE_STATUS_BAR, false));
 		FrameLayout decor = (FrameLayout) getWindow().getDecorView();
 		if (decor != null) {
 			decor.removeView(mFullscreenContainer);
@@ -2394,8 +2398,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public class SortIgnoreCase implements Comparator<HistoryItem> {
 
 		public int compare(HistoryItem o1, HistoryItem o2) {
-			return o1.getTitle().toLowerCase(Locale.getDefault()).compareTo(
-					o2.getTitle().toLowerCase(Locale.getDefault()));
+			return o1.getTitle().toLowerCase(Locale.getDefault())
+					.compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
 		}
 
 	}
