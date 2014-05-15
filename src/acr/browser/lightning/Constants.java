@@ -25,10 +25,10 @@ public class Constants {
 	public static final String HOMEPAGE = "about:home";
 	public static final String BAIDU_SEARCH = "http://www.baidu.com/s?wd=";
 	public static final String YANDEX_SEARCH = "http://yandex.ru/yandsearch?lr=21411&text=";
-	public static final String ADVANCED_SETTINGS_INTENT = "android.intent.action.LIGHTNING_ADVANCED_SETTINGS";
-	public static final String LICENSE_INTENT = "android.intent.action.LIGHTNING_LICENSE";
-	public static final String SETTINGS_INTENT = "android.intent.action.LIGHTNING_SETTINGS";	
-	public static final String INCOGNITO_INTENT = "android.intent.action.LIGHTNING_INCOGNITO";
+	public static final String ADVANCED_SETTINGS_INTENT = "android.intent.action.ADVANCED_SETTINGS";
+	public static final String LICENSE_INTENT = "android.intent.action.LICENSE";
+	public static final String SETTINGS_INTENT = "android.intent.action.SETTINGS";	
+	public static final String INCOGNITO_INTENT = "android.intent.action.INCOGNITO";
 	public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().toString();
 	public static final String SEPARATOR = "\\|\\$\\|SEPARATOR\\|\\$\\|";
 	public static final String HTTP = "http://";
