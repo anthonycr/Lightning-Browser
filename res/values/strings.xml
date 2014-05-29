@@ -158,5 +158,6 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock is currently only available in the browser\'s paid version, Lightning Browser+. It is available to download on Google Play.</string>
+    <string name="use_tor_prompt">It looks like you have Orbot installed. Do you want to use Tor?</string>
 
 </resources>

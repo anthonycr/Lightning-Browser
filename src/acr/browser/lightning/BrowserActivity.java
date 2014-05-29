@@ -4,6 +4,9 @@
 
 package acr.browser.lightning;
 
+import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.onionkit.web.WebkitProxy;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -73,27 +76,27 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.VideoView;
 
 public class BrowserActivity extends Activity implements BrowserController {
 	private static DrawerLayout mDrawerLayout;
@@ -445,8 +448,60 @@ public class BrowserActivity extends Activity implements BrowserController {
 			WebIconDatabase.getInstance().open(
 					getDir("icons", MODE_PRIVATE).getPath());
 		}
-	}
+		
 
+		checkForTor ();
+		
+	}
+	
+	/*
+	 * If Orbot/Tor is installed, prompt the user if they want to enable proxying for this session
+	 */
+	public void checkForTor ()
+	{
+
+		OrbotHelper oh = new OrbotHelper(this);
+		if (oh.isOrbotInstalled())			
+		{
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+			        switch (which){
+			        case DialogInterface.BUTTON_POSITIVE:
+			        	initializeTor ();
+			            break;
+
+			        case DialogInterface.BUTTON_NEGATIVE:
+			            //No button clicked
+			            break;
+			        }
+			    }
+			};
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.use_tor_prompt).setPositiveButton(android.R.string.yes, dialogClickListener)
+			    .setNegativeButton(android.R.string.no, dialogClickListener).show();
+		}
+	}
+	
+	/*
+	 * Initialize WebKit Proxying for Tor
+	 */
+	public void initializeTor ()
+	{
+		
+		OrbotHelper oh = new OrbotHelper(this);
+		if (!oh.isOrbotRunning())
+			oh.requestOrbotStart(this);
+		
+		WebkitProxy wkp = new WebkitProxy(); 
+		try {
+			wkp.setProxy("acr.browser.lightning.BrowserApp", getApplicationContext(), "localhost",8118);
+		} catch (Exception e) {
+			Log.d("Lightning","error enabling web proxying",e);
+		}		
+	}
+	
 	public synchronized void initializeTabs() {
 		mIdGenerator = 0;
 
