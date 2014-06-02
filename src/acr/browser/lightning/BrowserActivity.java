@@ -449,15 +449,20 @@ public class BrowserActivity extends Activity implements BrowserController {
 					getDir("icons", MODE_PRIVATE).getPath());
 		}
 		
-
-		checkForTor ();
+		boolean useProxy = mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false);
+		
+		if (useProxy)
+			initializeTor();
+		else
+			checkForTor();
+		
 		
 	}
 	
 	/*
 	 * If Orbot/Tor is installed, prompt the user if they want to enable proxying for this session
 	 */
-	public void checkForTor ()
+	public boolean checkForTor ()
 	{
 
 		OrbotHelper oh = new OrbotHelper(this);
@@ -468,11 +473,16 @@ public class BrowserActivity extends Activity implements BrowserController {
 			    public void onClick(DialogInterface dialog, int which) {
 			        switch (which){
 			        case DialogInterface.BUTTON_POSITIVE:
+						
+			        	mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, true).apply();
+
 			        	initializeTor ();
+			        	
 			            break;
 
 			        case DialogInterface.BUTTON_NEGATIVE:
-			            //No button clicked
+			        	
+			        	mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, false).apply();
 			            break;
 			        }
 			    }
@@ -481,7 +491,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.use_tor_prompt).setPositiveButton(android.R.string.yes, dialogClickListener)
 			    .setNegativeButton(android.R.string.no, dialogClickListener).show();
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
 	/*
@@ -496,7 +510,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		
 		WebkitProxy wkp = new WebkitProxy(); 
 		try {
-			wkp.setProxy("acr.browser.lightning.BrowserApp", getApplicationContext(), "localhost",8118);
+			String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
+			int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
+			wkp.setProxy("acr.browser.lightning.BrowserApp", getApplicationContext(), host, port);
 		} catch (Exception e) {
 			Log.d("Lightning","error enabling web proxying",e);
 		}		
@@ -1000,7 +1016,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	private synchronized void newTab(String url, boolean show) {
 		mIsNewIntent = false;
-		LightningView startingTab = new LightningView(mActivity, url);
+		LightningView startingTab = new LightningView(mActivity, url, mCookieManager);
 		if (mIdGenerator == 0) {
 			startingTab.resumeTimers();
 		}

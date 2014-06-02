@@ -908,7 +908,7 @@ public class IncognitoActivity extends Activity implements BrowserController {
 
 	private synchronized void newTab(String url, boolean show) {
 		mIsNewIntent = false;
-		LightningView startingTab = new LightningView(mActivity, url);
+		LightningView startingTab = new LightningView(mActivity, url, mCookieManager);
 		if (mIdGenerator == 0) {
 			startingTab.resumeTimers();
 		}
