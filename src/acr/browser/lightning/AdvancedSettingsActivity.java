@@ -712,16 +712,10 @@ public class AdvancedSettingsActivity extends Activity {
 						AdvancedSettingsActivity.this);
 				picker.setTitle(getResources().getString(
 						R.string.title_text_size));
-				CharSequence[] chars = {
-						getResources().getString(R.string.size_largest),
-						getResources().getString(R.string.size_large),
-						getResources().getString(R.string.size_normal),
-						getResources().getString(R.string.size_small),
-						getResources().getString(R.string.size_smallest) };
 
 				int n = mPreferences.getInt(PreferenceConstants.TEXT_SIZE, 3);
 
-				picker.setSingleChoiceItems(chars, n - 1,
+				picker.setSingleChoiceItems(R.array.text_size, n - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
