@@ -4,11 +4,19 @@
 
 package acr.browser.lightning;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URISyntaxException;
+import java.net.URL;
+
+import org.apache.http.util.ByteArrayBuffer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,10 +36,11 @@ import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
+import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
@@ -44,7 +53,9 @@ import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.VideoView;
 
 public class LightningView {
 
@@ -62,9 +73,12 @@ public class LightningView {
 	private static SharedPreferences mPreferences;
 	private static boolean mWideViewPort;
 	private static AdBlock mAdBlock;
-
-	public LightningView(Activity activity, String url) {
+	private CookieManager mCookieManager;
+	
+	@SuppressLint("NewApi")
+	public LightningView(Activity activity, String url, CookieManager cookieManager) {
 		mActivity = activity;
+		mCookieManager = cookieManager;
 		mWebView = new WebView(activity);
 		mTitle = new Title(activity);
 		mAdBlock = new AdBlock(activity);
@@ -249,6 +263,7 @@ public class LightningView {
 		return Constants.FILE + homepage;
 	}
 
+	@SuppressLint("NewApi")
 	public synchronized void initializePreferences(Context context) {
 		mPreferences = context.getSharedPreferences(
 				PreferenceConstants.PREFERENCES, 0);
@@ -348,7 +363,7 @@ public class LightningView {
 		}
 	}
 
-	@SuppressLint("SetJavaScriptEnabled")
+	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
 	public void initializeSettings(WebSettings settings, Context context) {
 		if (API < 18) {
 			settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -357,7 +372,7 @@ public class LightningView {
 			settings.setEnableSmoothTransition(true);
 		}
 		if (API > 16) {
-			settings.setMediaPlaybackRequiresUserGesture(true);
+			settings.setMediaPlaybackRequiresUserGesture(true);			
 		}
 		if (API < 19) {
 			settings.setDatabasePath(context.getFilesDir().getAbsolutePath()
@@ -450,6 +465,7 @@ public class LightningView {
 		}
 	}
 
+	@SuppressLint("NewApi")
 	public synchronized void find(String text) {
 		if (mWebView != null) {
 			if (API > 16) {
@@ -536,6 +552,7 @@ public class LightningView {
 			return "";
 	}
 
+	
 	public class LightningWebClient extends WebViewClient {
 
 		Context mActivity;
@@ -548,14 +565,121 @@ public class LightningView {
 		public WebResourceResponse shouldInterceptRequest(WebView view,
 				String url) {
 			if (mAdBlock.isAd(url)) {
-				Log.i("Blocked Domain:", url);
 				ByteArrayInputStream EMPTY = new ByteArrayInputStream(
 						"".getBytes());
 				WebResourceResponse response = new WebResourceResponse(
 						"text/plain", "utf-8", EMPTY);
 				return response;
 			}
-			return super.shouldInterceptRequest(view, url);
+			
+			boolean useProxy = mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false);
+			boolean mDoLeakHardening = false;
+			
+			if (!useProxy)
+				return null;
+			
+			if (!mDoLeakHardening)
+				return null;
+			
+			//now we are going to proxy!
+			try
+			{
+			
+
+				URL uURl = new URL(url);
+				
+				Proxy proxy = null;
+				
+				String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
+				int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+				
+				HttpURLConnection.setFollowRedirects(true);
+				HttpURLConnection conn = (HttpURLConnection)uURl.openConnection(proxy);				
+				conn.setInstanceFollowRedirects(true);
+				conn.setRequestProperty("User-Agent", mSettings.getUserAgentString());				
+				
+				//conn.setRequestProperty("Transfer-Encoding", "chunked");
+				//conn.setUseCaches(false);
+				
+				final int bufferSize = 1024 * 32;
+				conn.setChunkedStreamingMode(bufferSize);
+
+				String cType = conn.getContentType();
+				String cEnc = conn.getContentEncoding();				
+				int connLen = conn.getContentLength();
+				
+				
+				if (cType != null)
+				{
+					String[] ctArray = cType.split(";");
+					cType = ctArray[0].trim();
+				
+					if (cEnc == null && ctArray.length > 1)
+					{
+						cEnc = ctArray[1];
+						if (cEnc.indexOf('=')!=-1)
+							cEnc = cEnc.split("=")[1].trim();
+					}
+				}
+				
+				if (connLen <= 0)
+					connLen = 2048;
+				
+				if (cType != null && cType.startsWith("text"))
+				{
+					InputStream fStream = null;
+					
+					BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+				    ByteArrayBuffer baf = new ByteArrayBuffer(connLen);
+				    int read = 0;
+				    int bufSize = 2048;
+				    byte[] buffer = new byte[bufSize];
+				    while(true){
+				          read = bis.read(buffer);
+				          if(read==-1){
+				               break;
+				          }
+				          baf.append(buffer, 0, read);
+				    }
+				    byte[] plainText = baf.toByteArray();
+				    
+					fStream = new ByteArrayInputStream(plainText);
+					
+					fStream = new ReplacingInputStream(new ByteArrayInputStream(plainText),"poster=".getBytes(),"foo=".getBytes());
+					fStream = new ReplacingInputStream(fStream,"Poster=".getBytes(),"foo=".getBytes());
+					fStream = new ReplacingInputStream(fStream,"Poster=".getBytes(),"foo=".getBytes());
+					fStream = new ReplacingInputStream(fStream,".poster".getBytes(),".foo".getBytes());
+					fStream = new ReplacingInputStream(fStream,"\"poster\"".getBytes(),"\"foo\"".getBytes());					
+					
+					WebResourceResponse response = new WebResourceResponse(
+							cType, cEnc, fStream);
+					
+					return response;
+				}/**
+				else if (mDoLeakHardening)
+				{
+					WebResourceResponse response = new WebResourceResponse(
+							cType, cEnc, conn.getInputStream());
+					
+					return response;
+
+				}*/
+				else
+				{
+					return null; //let webkit handle it
+				}
+			}
+			catch (Exception e)
+			{
+				Log.e("Lightning","Error filtering stream",e);
+				ByteArrayInputStream EMPTY = new ByteArrayInputStream(
+						"".getBytes());
+				WebResourceResponse response = new WebResourceResponse(
+						"text/plain", "utf-8", EMPTY);
+				return response;
+			}
+			
 		}
 
 		@Override
@@ -871,9 +995,24 @@ public class LightningView {
 
 		@Override
 		public void onShowCustomView(View view, CustomViewCallback callback) {
-			Activity activity = mBrowserController.getActivity();
-			mBrowserController.onShowCustomView(view,
-					activity.getRequestedOrientation(), callback);
+			
+			if (view instanceof FrameLayout){
+		        FrameLayout frame = (FrameLayout) view;
+		        if (frame.getFocusedChild() instanceof VideoView){
+		            VideoView video = (VideoView) frame.getFocusedChild();		           
+		            video.stopPlayback();
+		            frame.removeView(video);		    		            
+		            video.setVisibility(View.GONE);
+		        }
+		    }
+			else
+			{
+				Activity activity = mBrowserController.getActivity();
+				mBrowserController.onShowCustomView(view,
+						activity.getRequestedOrientation(), callback);
+				
+			}
+			
 			super.onShowCustomView(view, callback);
 		}
 
@@ -881,8 +1020,23 @@ public class LightningView {
 		@Deprecated
 		public void onShowCustomView(View view, int requestedOrientation,
 				CustomViewCallback callback) {
-			mBrowserController.onShowCustomView(view, requestedOrientation,
-					callback);
+			
+			if (view instanceof FrameLayout){
+		        FrameLayout frame = (FrameLayout) view;
+		        if (frame.getFocusedChild() instanceof VideoView){
+		            VideoView video = (VideoView) frame.getFocusedChild();
+		            video.stopPlayback();
+		            frame.removeView(video);		            
+		            video.setVisibility(View.GONE);
+		        }
+		    }
+			else
+			{
+				mBrowserController.onShowCustomView(view, requestedOrientation,
+						callback);
+			
+			}
+			
 			super.onShowCustomView(view, requestedOrientation, callback);
 		}
 
