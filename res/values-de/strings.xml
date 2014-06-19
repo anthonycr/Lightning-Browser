@@ -19,7 +19,7 @@
 
     <string name="app_name">Lightning</string>
     <string name="drawer_open">Navigation-Drawer öffnen</string>
-    <string name="drawer_close">Navigation-Drawer schliessen</string>
+    <string name="drawer_close">Navigation-Drawer schließen</string>
     <string name="action_websearch">Websuche</string>
     <string name="action_refresh">Aktualisieren</string>
     <string name="action_new_tab">Neuer Tab</string>
@@ -145,7 +145,7 @@
     <string name="licenses">Open Source-Lizenzen</string>
     <string name="suggestion">Suche nach</string>
     <string name="block_ads">Werbung blockieren</string>
-    <string name="message_untrusted_certificate">Das Zertifikat dieser Webseite ist nicht vertrauenswürdig. Trozdem fortsetzen?</string>
+    <string name="message_untrusted_certificate">Das Zertifikat dieser Webseite ist nicht vertrauenswürdig. Trotzdem fortsetzen?</string>
     <string name="title_form_resubmission">Formularneuzustellung</string>
     <string name="message_form_resubmission">Daten erneut senden?</string>
     <string name="message_location">\nMeine Position verwenden?</string>

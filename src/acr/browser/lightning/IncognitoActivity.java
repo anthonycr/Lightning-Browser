@@ -417,12 +417,6 @@ public class IncognitoActivity extends Activity implements BrowserController {
 				}
 			}
 
-			@Override
-			public void onDrawerSlide(View drawerView, float slideOffset) {
-				super.onDrawerSlide(drawerView, slideOffset);
-
-			}
-
 		};
 
 		mNewTab.setOnClickListener(new OnClickListener() {
@@ -452,10 +446,6 @@ public class IncognitoActivity extends Activity implements BrowserController {
 
 		newTab(url, true);
 
-	}
-
-	public static String[] getArray(String input) {
-		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
 	}
 
 	public void initializePreferences() {
@@ -534,15 +524,6 @@ public class IncognitoActivity extends Activity implements BrowserController {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.incognito, menu);
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	/* Called whenever we call invalidateOptionsMenu() */
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		// If the nav drawer is open, hide action items related to the content
-		// view
-
-		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -1069,30 +1050,6 @@ public class IncognitoActivity extends Activity implements BrowserController {
 				mHistoryHandler.close();
 		}
 		super.onDestroy();
-	}
-
-	@Override
-	protected void onPostResume() {
-		Log.i("Lightning", "onPostResume");
-		super.onPostResume();
-	}
-
-	@Override
-	protected void onRestart() {
-		Log.i("Lightning", "onRestart");
-		super.onRestart();
-	}
-
-	@Override
-	protected void onStart() {
-		Log.i("Lightning", "onStart");
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		Log.i("Lightning", "onStop");
-		super.onStop();
 	}
 
 	@Override

@@ -26,10 +26,6 @@ import android.widget.Toast;
 
 public class Utils {
 	
-	public Utils() {
-		// TODO Auto-generated constructor stub
-	}
-	
 	public static void downloadFile(final Activity activity, final String url, final String userAgent, final String contentDisposition, final boolean privateBrowsing){
 		String fileName = URLUtil.guessFileName(url, null,
 				null);
@@ -145,5 +141,9 @@ public class Utils {
 		} catch (IOException ignored) {
 		}
 		return bookmarks;
+	}
+	
+	public static String[] getArray(String input) {
+		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
 	}
 }

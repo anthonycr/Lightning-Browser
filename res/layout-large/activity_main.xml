@@ -5,7 +5,6 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_medium"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -58,7 +57,7 @@
             android:layout_width="300dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="#e4e4e4"
+            android:background="@color/drawer_background"
             android:clickable="true"
             android:orientation="vertical" >
 
@@ -161,7 +160,7 @@
             android:layout_width="300dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="#e4e4e4"
+            android:background="@color/drawer_background"
             android:clickable="true"
             android:orientation="vertical" >
 
