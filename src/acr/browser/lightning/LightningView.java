@@ -21,6 +21,7 @@ import org.apache.http.util.ByteArrayBuffer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -74,9 +75,10 @@ public class LightningView {
 	private static boolean mWideViewPort;
 	private static AdBlock mAdBlock;
 	private CookieManager mCookieManager;
-	
+
 	@SuppressLint("NewApi")
-	public LightningView(Activity activity, String url, CookieManager cookieManager) {
+	public LightningView(Activity activity, String url,
+			CookieManager cookieManager) {
 		mActivity = activity;
 		mCookieManager = cookieManager;
 		mWebView = new WebView(activity);
@@ -372,7 +374,7 @@ public class LightningView {
 			settings.setEnableSmoothTransition(true);
 		}
 		if (API > 16) {
-			settings.setMediaPlaybackRequiresUserGesture(true);			
+			settings.setMediaPlaybackRequiresUserGesture(true);
 		}
 		if (API < 19) {
 			settings.setDatabasePath(context.getFilesDir().getAbsolutePath()
@@ -552,7 +554,6 @@ public class LightningView {
 			return "";
 	}
 
-	
 	public class LightningWebClient extends WebViewClient {
 
 		Context mActivity;
@@ -571,115 +572,118 @@ public class LightningView {
 						"text/plain", "utf-8", EMPTY);
 				return response;
 			}
-			
-			boolean useProxy = mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false);
+
+			boolean useProxy = mPreferences.getBoolean(
+					PreferenceConstants.USE_PROXY, false);
 			boolean mDoLeakHardening = false;
-			
+
 			if (!useProxy)
 				return null;
-			
+
 			if (!mDoLeakHardening)
 				return null;
-			
-			//now we are going to proxy!
-			try
-			{
-			
+
+			// now we are going to proxy!
+			try {
 
 				URL uURl = new URL(url);
-				
+
 				Proxy proxy = null;
-				
-				String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
-				int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
-				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
-				
+
+				String host = mPreferences.getString(
+						PreferenceConstants.USE_PROXY_HOST, "localhost");
+				int port = mPreferences.getInt(
+						PreferenceConstants.USE_PROXY_PORT, 8118);
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host,
+						port));
+
 				HttpURLConnection.setFollowRedirects(true);
-				HttpURLConnection conn = (HttpURLConnection)uURl.openConnection(proxy);				
+				HttpURLConnection conn = (HttpURLConnection) uURl
+						.openConnection(proxy);
 				conn.setInstanceFollowRedirects(true);
-				conn.setRequestProperty("User-Agent", mSettings.getUserAgentString());				
-				
-				//conn.setRequestProperty("Transfer-Encoding", "chunked");
-				//conn.setUseCaches(false);
-				
+				conn.setRequestProperty("User-Agent",
+						mSettings.getUserAgentString());
+
+				// conn.setRequestProperty("Transfer-Encoding", "chunked");
+				// conn.setUseCaches(false);
+
 				final int bufferSize = 1024 * 32;
 				conn.setChunkedStreamingMode(bufferSize);
 
 				String cType = conn.getContentType();
-				String cEnc = conn.getContentEncoding();				
+				String cEnc = conn.getContentEncoding();
 				int connLen = conn.getContentLength();
-				
-				
-				if (cType != null)
-				{
+
+				if (cType != null) {
 					String[] ctArray = cType.split(";");
 					cType = ctArray[0].trim();
-				
-					if (cEnc == null && ctArray.length > 1)
-					{
+
+					if (cEnc == null && ctArray.length > 1) {
 						cEnc = ctArray[1];
-						if (cEnc.indexOf('=')!=-1)
+						if (cEnc.indexOf('=') != -1)
 							cEnc = cEnc.split("=")[1].trim();
 					}
 				}
-				
+
 				if (connLen <= 0)
 					connLen = 2048;
-				
-				if (cType != null && cType.startsWith("text"))
-				{
+
+				if (cType != null && cType.startsWith("text")) {
 					InputStream fStream = null;
-					
-					BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
-				    ByteArrayBuffer baf = new ByteArrayBuffer(connLen);
-				    int read = 0;
-				    int bufSize = 2048;
-				    byte[] buffer = new byte[bufSize];
-				    while(true){
-				          read = bis.read(buffer);
-				          if(read==-1){
-				               break;
-				          }
-				          baf.append(buffer, 0, read);
-				    }
-				    byte[] plainText = baf.toByteArray();
-				    
+
+					BufferedInputStream bis = new BufferedInputStream(
+							conn.getInputStream());
+					ByteArrayBuffer baf = new ByteArrayBuffer(connLen);
+					int read = 0;
+					int bufSize = 2048;
+					byte[] buffer = new byte[bufSize];
+					while (true) {
+						read = bis.read(buffer);
+						if (read == -1) {
+							break;
+						}
+						baf.append(buffer, 0, read);
+					}
+					byte[] plainText = baf.toByteArray();
+
 					fStream = new ByteArrayInputStream(plainText);
-					
-					fStream = new ReplacingInputStream(new ByteArrayInputStream(plainText),"poster=".getBytes(),"foo=".getBytes());
-					fStream = new ReplacingInputStream(fStream,"Poster=".getBytes(),"foo=".getBytes());
-					fStream = new ReplacingInputStream(fStream,"Poster=".getBytes(),"foo=".getBytes());
-					fStream = new ReplacingInputStream(fStream,".poster".getBytes(),".foo".getBytes());
-					fStream = new ReplacingInputStream(fStream,"\"poster\"".getBytes(),"\"foo\"".getBytes());					
-					
+
+					fStream = new ReplacingInputStream(
+							new ByteArrayInputStream(plainText),
+							"poster=".getBytes(), "foo=".getBytes());
+					fStream = new ReplacingInputStream(fStream,
+							"Poster=".getBytes(), "foo=".getBytes());
+					fStream = new ReplacingInputStream(fStream,
+							"Poster=".getBytes(), "foo=".getBytes());
+					fStream = new ReplacingInputStream(fStream,
+							".poster".getBytes(), ".foo".getBytes());
+					fStream = new ReplacingInputStream(fStream,
+							"\"poster\"".getBytes(), "\"foo\"".getBytes());
+
 					WebResourceResponse response = new WebResourceResponse(
 							cType, cEnc, fStream);
-					
+
 					return response;
 				}/**
-				else if (mDoLeakHardening)
-				{
-					WebResourceResponse response = new WebResourceResponse(
-							cType, cEnc, conn.getInputStream());
-					
-					return response;
-
-				}*/
-				else
-				{
-					return null; //let webkit handle it
+				 * else if (mDoLeakHardening) { WebResourceResponse response =
+				 * new WebResourceResponse( cType, cEnc, conn.getInputStream());
+				 * 
+				 * return response;
+				 * 
+				 * }
+				 */
+				else {
+					return null; // let webkit handle it
 				}
-			}
-			catch (Exception e)
-			{
-				Log.e("Lightning","Error filtering stream",e);
+			} catch (Exception e) {
+				Log.e(Constants.LOGTAG, "Error filtering stream", e);
 				ByteArrayInputStream EMPTY = new ByteArrayInputStream(
 						"".getBytes());
 				WebResourceResponse response = new WebResourceResponse(
 						"text/plain", "utf-8", EMPTY);
 				return response;
 			}
-			
+
 		}
 
 		@Override
@@ -734,7 +738,7 @@ public class LightningView {
 									String user = name.getText().toString();
 									String pass = password.getText().toString();
 									handler.proceed(user.trim(), pass.trim());
-									Log.i("Lightning", "Request Login");
+									Log.i(Constants.LOGTAG, "Request Login");
 
 								}
 							})
@@ -876,7 +880,11 @@ public class LightningView {
 					return false;
 				}
 				if (intent != null) {
-					mActivity.startActivity(intent);
+					try {
+						mActivity.startActivity(intent);
+					} catch (ActivityNotFoundException e) {
+						Log.e(Constants.LOGTAG, "ActivityNotFoundException");
+					}
 					return true;
 				}
 			}
@@ -995,24 +1003,22 @@ public class LightningView {
 
 		@Override
 		public void onShowCustomView(View view, CustomViewCallback callback) {
-			
-			if (view instanceof FrameLayout){
-		        FrameLayout frame = (FrameLayout) view;
-		        if (frame.getFocusedChild() instanceof VideoView){
-		            VideoView video = (VideoView) frame.getFocusedChild();		           
-		            video.stopPlayback();
-		            frame.removeView(video);		    		            
-		            video.setVisibility(View.GONE);
-		        }
-		    }
-			else
-			{
+
+			if (view instanceof FrameLayout) {
+				FrameLayout frame = (FrameLayout) view;
+				if (frame.getFocusedChild() instanceof VideoView) {
+					VideoView video = (VideoView) frame.getFocusedChild();
+					video.stopPlayback();
+					frame.removeView(video);
+					video.setVisibility(View.GONE);
+				}
+			} else {
 				Activity activity = mBrowserController.getActivity();
 				mBrowserController.onShowCustomView(view,
 						activity.getRequestedOrientation(), callback);
-				
+
 			}
-			
+
 			super.onShowCustomView(view, callback);
 		}
 
@@ -1020,23 +1026,21 @@ public class LightningView {
 		@Deprecated
 		public void onShowCustomView(View view, int requestedOrientation,
 				CustomViewCallback callback) {
-			
-			if (view instanceof FrameLayout){
-		        FrameLayout frame = (FrameLayout) view;
-		        if (frame.getFocusedChild() instanceof VideoView){
-		            VideoView video = (VideoView) frame.getFocusedChild();
-		            video.stopPlayback();
-		            frame.removeView(video);		            
-		            video.setVisibility(View.GONE);
-		        }
-		    }
-			else
-			{
+
+			if (view instanceof FrameLayout) {
+				FrameLayout frame = (FrameLayout) view;
+				if (frame.getFocusedChild() instanceof VideoView) {
+					VideoView video = (VideoView) frame.getFocusedChild();
+					video.stopPlayback();
+					frame.removeView(video);
+					video.setVisibility(View.GONE);
+				}
+			} else {
 				mBrowserController.onShowCustomView(view, requestedOrientation,
 						callback);
-			
+
 			}
-			
+
 			super.onShowCustomView(view, requestedOrientation, callback);
 		}
 

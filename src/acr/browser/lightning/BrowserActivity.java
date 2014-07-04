@@ -77,7 +77,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
@@ -99,57 +98,57 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
 public class BrowserActivity extends Activity implements BrowserController {
-	private static DrawerLayout mDrawerLayout;
-	private static ListView mDrawerList;
-	private static RelativeLayout mDrawer;
-	private static LinearLayout mDrawerRight;
-	private static ListView mDrawerListRight;
-	private static TextView mNewTab;
-	private static ActionBarDrawerToggle mDrawerToggle;
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	private RelativeLayout mDrawer;
+	private LinearLayout mDrawerRight;
+	private ListView mDrawerListRight;
+	private TextView mNewTab;
+	private ActionBarDrawerToggle mDrawerToggle;
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
-	private static List<Integer> mIdList = new ArrayList<Integer>();
+	private List<Integer> mIdList = new ArrayList<Integer>();
 	private LightningView mCurrentView;
-	private static int mIdGenerator;
-	private static LightningViewAdapter mTitleAdapter;
-	private static List<HistoryItem> mBookmarkList;
-	private static BookmarkViewAdapter mBookmarkAdapter;
-	private static AutoCompleteTextView mSearch;
-	private static ClickHandler mClickHandler;
-	private static ProgressBar mProgress;
-	private static boolean mSystemBrowser = false;
-	private static ValueCallback<Uri> mUploadMessage;
-	private static View mCustomView;
-	private static int mOriginalOrientation;
-	private static int mActionBarSize;
-	private static ActionBar mActionBar;
-	private static boolean mFullScreen;
-	private static FrameLayout mBrowserFrame;
-	private static FullscreenHolder mFullscreenContainer;
-	private static CustomViewCallback mCustomViewCallback;
-	private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
+	private int mIdGenerator;
+	private LightningViewAdapter mTitleAdapter;
+	private List<HistoryItem> mBookmarkList;
+	private BookmarkViewAdapter mBookmarkAdapter;
+	private AutoCompleteTextView mSearch;
+	private ClickHandler mClickHandler;
+	private ProgressBar mProgress;
+	private boolean mSystemBrowser = false;
+	private ValueCallback<Uri> mUploadMessage;
+	private View mCustomView;
+	private int mOriginalOrientation;
+	private int mActionBarSize;
+	private ActionBar mActionBar;
+	private boolean mFullScreen;
+	private FrameLayout mBrowserFrame;
+	private FullscreenHolder mFullscreenContainer;
+	private CustomViewCallback mCustomViewCallback;
+	private final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT,
 			ViewGroup.LayoutParams.MATCH_PARENT);
-	private static Bitmap mDefaultVideoPoster;
-	private static View mVideoProgressView;
-	private static DatabaseHandler mHistoryHandler;
-	private static SQLiteDatabase mHistoryDatabase;
-	private static SharedPreferences mPreferences;
-	private static SharedPreferences.Editor mEditPrefs;
-	private static Context mContext;
-	private static Bitmap mWebpageBitmap;
-	private static String mSearchText;
-	private static Activity mActivity;
-	private static CookieManager mCookieManager;
-	private static final int API = android.os.Build.VERSION.SDK_INT;
-	private static Drawable mDeleteIcon;
-	private static Drawable mRefreshIcon;
-	private static Drawable mCopyIcon;
-	private static Drawable mIcon;
-	private static int mActionBarSizeDp;
-	private static int mNumberIconColor;
-	private static String mHomepage;
-	private static boolean mIsNewIntent = false;
-	private static VideoView mVideoView;
+	private Bitmap mDefaultVideoPoster;
+	private View mVideoProgressView;
+	private DatabaseHandler mHistoryHandler;
+	private SQLiteDatabase mHistoryDatabase;
+	private SharedPreferences mPreferences;
+	private SharedPreferences.Editor mEditPrefs;
+	private Context mContext;
+	private Bitmap mWebpageBitmap;
+	private String mSearchText;
+	private Activity mActivity;
+	private CookieManager mCookieManager;
+	private final int API = android.os.Build.VERSION.SDK_INT;
+	private Drawable mDeleteIcon;
+	private Drawable mRefreshIcon;
+	private Drawable mCopyIcon;
+	private Drawable mIcon;
+	private int mActionBarSizeDp;
+	private int mNumberIconColor;
+	private String mHomepage;
+	private boolean mIsNewIntent = false;
+	private VideoView mVideoView;
 	private static SearchAdapter mSearchAdapter;
 
 	@Override
@@ -442,73 +441,92 @@ public class BrowserActivity extends Activity implements BrowserController {
 			WebIconDatabase.getInstance().open(
 					getDir("icons", MODE_PRIVATE).getPath());
 		}
-		
-		boolean useProxy = mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false);
-		
-		if (useProxy)
-			initializeTor();
-		else
-			checkForTor();
-		
+
+		//boolean useProxy = mPreferences.getBoolean(
+		//		PreferenceConstants.USE_PROXY, false);
+
+		// if (useProxy)
+		// initializeTor();
+		// else
+		checkForTor();
+
 	}
-	
+
 	/*
-	 * If Orbot/Tor is installed, prompt the user if they want to enable proxying for this session
+	 * If Orbot/Tor is installed, prompt the user if they want to enable
+	 * proxying for this session
 	 */
-	public boolean checkForTor () {
+	public boolean checkForTor() {
 
 		OrbotHelper oh = new OrbotHelper(this);
 		if (oh.isOrbotInstalled()) {
 			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-			        switch (which){
-			        case DialogInterface.BUTTON_POSITIVE:
-						
-			        	mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, true).apply();
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
 
-			        	initializeTor ();
-			        	
-			            break;
+						mPreferences
+								.edit()
+								.putBoolean(PreferenceConstants.USE_PROXY, true)
+								.apply();
 
-			        case DialogInterface.BUTTON_NEGATIVE:
-			        	
-			        	mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, false).apply();
-			            break;
-			        }
-			    }
+						initializeTor();
+
+						break;
+
+					case DialogInterface.BUTTON_NEGATIVE:
+
+						mPreferences
+								.edit()
+								.putBoolean(PreferenceConstants.USE_PROXY,
+										false).apply();
+						break;
+					}
+				}
 			};
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.use_tor_prompt).setPositiveButton(android.R.string.yes, dialogClickListener)
-			    .setNegativeButton(android.R.string.no, dialogClickListener).show();
-			
+			builder.setMessage(R.string.use_tor_prompt)
+					.setPositiveButton(R.string.yes, dialogClickListener)
+					.setNegativeButton(R.string.no, dialogClickListener).show();
+
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/*
 	 * Initialize WebKit Proxying for Tor
 	 */
 	public void initializeTor() {
-		
+
 		OrbotHelper oh = new OrbotHelper(this);
 		if (!oh.isOrbotRunning())
 			oh.requestOrbotStart(this);
-		
-		WebkitProxy wkp = new WebkitProxy(); 
+
+		WebkitProxy wkp = new WebkitProxy();
 		try {
-			String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
-			int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
-			wkp.setProxy("acr.browser.lightning.BrowserApp", getApplicationContext(), host, port);
+			String host = mPreferences.getString(
+					PreferenceConstants.USE_PROXY_HOST, "localhost");
+			int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT,
+					8118);
+			wkp.setProxy("acr.browser.lightning.BrowserApp",
+					getApplicationContext(), host, port);
 		} catch (Exception e) {
-			Log.d("Lightning","error enabling web proxying",e);
-		}		
+			Log.d(Constants.LOGTAG, "error enabling web proxying", e);
+		}
 	}
-	
+
+	/*
+	 * Override this class
+	 */
 	public synchronized void initializeTabs() {
+
+	}
+
+	public void restoreOrNewTab() {
 		mIdGenerator = 0;
 
 		String url = null;
@@ -545,7 +563,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		} else {
 			newTab(url, true);
 		}
-
 	}
 
 	public void initializePreferences() {
@@ -603,10 +620,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 			break;
 		}
 
-		mCookieManager = CookieManager.getInstance();
-		CookieSyncManager.createInstance(this);
-		mCookieManager.setAcceptCookie(mPreferences.getBoolean(
-				PreferenceConstants.COOKIES, true));
+		updateCookiePreference();
+
+	}
+
+	/*
+	 * Override this if class overrides BrowserActivity
+	 */
+	public void updateCookiePreference() {
 
 	}
 
@@ -622,7 +643,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -938,6 +958,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
+	}
+
+	public void handleNewIntent(Intent intent) {
 		if (mCurrentView == null) {
 			initialize();
 		}
@@ -991,9 +1014,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-	private synchronized void newTab(String url, boolean show) {
+	protected synchronized void newTab(String url, boolean show) {
 		mIsNewIntent = false;
-		LightningView startingTab = new LightningView(mActivity, url, mCookieManager);
+		LightningView startingTab = new LightningView(mActivity, url,
+				mCookieManager);
 		if (mIdGenerator == 0) {
 			startingTab.resumeTimers();
 		}
@@ -1041,7 +1065,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		} else {
 			if (mCurrentView.getUrl().startsWith(Constants.FILE)
 					|| mCurrentView.getUrl().equals(mHomepage)) {
-				moveTaskToBack(true);
+				closeActivity();
 			} else {
 				mIdList.remove(position);
 				mWebViews.remove(position);
@@ -1049,7 +1073,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 						PreferenceConstants.CLEAR_CACHE_EXIT, false)
 						&& mCurrentView != null) {
 					mCurrentView.clearCache(true);
-					Log.i("Lightning", "Cache Cleared");
+					Log.i(Constants.LOGTAG, "Cache Cleared");
 
 				}
 				if (reference != null) {
@@ -1068,10 +1092,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		if (mIsNewIntent && isShown) {
 			mIsNewIntent = false;
-			moveTaskToBack(true);
+			closeActivity();
 		}
 
-		Log.i("Lightning", "deleted tab");
+		Log.i(Constants.LOGTAG, "deleted tab");
 	}
 
 	@Override
@@ -1080,7 +1104,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
 					false) && mCurrentView != null) {
 				mCurrentView.clearCache(true);
-				Log.i("Lightning", "Cache Cleared");
+				Log.i(Constants.LOGTAG, "Cache Cleared");
 
 			}
 			mCurrentView = null;
@@ -1106,7 +1130,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			mDrawerLayout.closeDrawer(mDrawerRight);
 		} else {
 			if (mCurrentView != null) {
-				Log.i("Lightning", "onBackPressed");
+				Log.i(Constants.LOGTAG, "onBackPressed");
 				if (mCurrentView.canGoBack()) {
 					if (!mCurrentView.isShown()) {
 						onHideCustomView();
@@ -1117,7 +1141,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 					deleteTab(mDrawerList.getCheckedItemPosition());
 				}
 			} else {
-				Log.e("Lightning Browser",
+				Log.e(Constants.LOGTAG,
 						"So madness. Much confusion. Why happen.");
 				super.onBackPressed();
 			}
@@ -1127,7 +1151,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.i("Lightning", "onPause");
+		Log.i(Constants.LOGTAG, "onPause");
 		if (mCurrentView != null) {
 			mCurrentView.pauseTimers();
 			mCurrentView.onPause();
@@ -1140,6 +1164,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (mHistoryHandler.isOpen())
 				mHistoryHandler.close();
 		}
+
+	}
+
+	public void saveOpenTabs() {
 		if (mPreferences
 				.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true)) {
 			String s = "";
@@ -1155,7 +1183,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	protected void onDestroy() {
-		Log.i("Lightning", "onDestroy");
+		Log.i(Constants.LOGTAG, "onDestroy");
 		if (mHistoryDatabase != null) {
 			if (mHistoryDatabase.isOpen())
 				mHistoryDatabase.close();
@@ -1170,7 +1198,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i("Lightning", "onResume");
+		Log.i(Constants.LOGTAG, "onResume");
 		if (SettingsController.getClearHistory()) {
 		}
 		if (mSearchAdapter != null) {
@@ -1544,7 +1572,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
-	public static String getDomainName(String url) throws URISyntaxException {
+	static String getDomainName(String url) throws URISyntaxException {
 		URI uri = new URI(url);
 		String domain = uri.getHost();
 		if (domain == null) {
@@ -1580,6 +1608,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	public void updateHistory(final String title, final String url) {
+
+	}
+
+	public void addItemToHistory(final String title, final String url) {
 		Runnable update = new Runnable() {
 			@Override
 			public void run() {
@@ -1624,11 +1656,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 					cursor.close();
 					cursor = null;
 				} catch (IllegalStateException e) {
-					Log.e("Lightning", "IllegalStateException in updateHistory");
+					Log.e(Constants.LOGTAG,
+							"IllegalStateException in updateHistory");
 				} catch (NullPointerException e) {
-					Log.e("Lightning", "NullPointerException in updateHistory");
+					Log.e(Constants.LOGTAG,
+							"NullPointerException in updateHistory");
 				} catch (SQLiteException e) {
-					Log.e("Lightning", "SQLiteException in updateHistory");
+					Log.e(Constants.LOGTAG, "SQLiteException in updateHistory");
 				}
 			}
 		};
@@ -1722,10 +1756,15 @@ public class BrowserActivity extends Activity implements BrowserController {
 		});
 
 		getUrl.setSelectAllOnFocus(true);
-		mSearchAdapter = new SearchAdapter(mContext, false);
+		mSearchAdapter = new SearchAdapter(mContext, isIncognito());
 		getUrl.setAdapter(mSearchAdapter);
 	}
 
+	public boolean isIncognito() {
+		return false;
+	}
+
+	// Damn it, I regret not using SQLite in the first place for this
 	private List<HistoryItem> getBookmarks() {
 		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
 		File bookUrl = new File(getApplicationContext().getFilesDir(),
@@ -1969,7 +2008,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (mCustomView == null || mCustomViewCallback == null
 				|| mCurrentView == null)
 			return;
-		Log.i("Lightning", "onHideCustomView");
+		Log.i(Constants.LOGTAG, "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
 		mCustomView.setKeepScreenOn(false);
 		setFullscreen(mPreferences.getBoolean(
@@ -2134,99 +2173,52 @@ public class BrowserActivity extends Activity implements BrowserController {
 			result = mCurrentView.getWebView().getHitTestResult();
 		}
 		if (url != null) {
-			if (url != null) {
-				if (result != null) {
-					if (result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE
-							|| result.getType() == HitTestResult.IMAGE_TYPE) {
-						DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								switch (which) {
-								case DialogInterface.BUTTON_POSITIVE: {
-									newTab(url, false);
-									break;
-								}
-								case DialogInterface.BUTTON_NEGATIVE: {
-									mCurrentView.loadUrl(url);
-									break;
-								}
-								case DialogInterface.BUTTON_NEUTRAL: {
-									if (API > 8) {
-										Utils.downloadFile(mActivity, url,
-												mCurrentView.getUserAgent(),
-												"attachment", false);
-									}
-									break;
-								}
-								}
+			if (result != null) {
+				if (result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE
+						|| result.getType() == HitTestResult.IMAGE_TYPE) {
+					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case DialogInterface.BUTTON_POSITIVE: {
+								newTab(url, false);
+								break;
 							}
-						};
-
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								mActivity); // dialog
-						builder.setTitle(url.replace(Constants.HTTP, ""))
-								.setMessage(
-										getResources().getString(
-												R.string.dialog_image))
-								.setPositiveButton(
-										getResources().getString(
-												R.string.action_new_tab),
-										dialogClickListener)
-								.setNegativeButton(
-										getResources().getString(
-												R.string.action_open),
-										dialogClickListener)
-								.setNeutralButton(
-										getResources().getString(
-												R.string.action_download),
-										dialogClickListener).show();
-
-					} else {
-						DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								switch (which) {
-								case DialogInterface.BUTTON_POSITIVE: {
-									newTab(url, false);
-									break;
-								}
-								case DialogInterface.BUTTON_NEGATIVE: {
-									mCurrentView.loadUrl(url);
-									break;
-								}
-								case DialogInterface.BUTTON_NEUTRAL: {
-									ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-									ClipData clip = ClipData.newPlainText(
-											"label", url);
-									clipboard.setPrimaryClip(clip);
-
-									break;
-								}
-								}
+							case DialogInterface.BUTTON_NEGATIVE: {
+								mCurrentView.loadUrl(url);
+								break;
 							}
-						};
+							case DialogInterface.BUTTON_NEUTRAL: {
+								if (API > 8) {
+									Utils.downloadFile(mActivity, url,
+											mCurrentView.getUserAgent(),
+											"attachment", false);
+								}
+								break;
+							}
+							}
+						}
+					};
 
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								mActivity); // dialog
-						builder.setTitle(url)
-								.setMessage(
-										getResources().getString(
-												R.string.dialog_link))
-								.setPositiveButton(
-										getResources().getString(
-												R.string.action_new_tab),
-										dialogClickListener)
-								.setNegativeButton(
-										getResources().getString(
-												R.string.action_open),
-										dialogClickListener)
-								.setNeutralButton(
-										getResources().getString(
-												R.string.action_copy),
-										dialogClickListener).show();
-					}
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							mActivity); // dialog
+					builder.setTitle(url.replace(Constants.HTTP, ""))
+							.setMessage(
+									getResources().getString(
+											R.string.dialog_image))
+							.setPositiveButton(
+									getResources().getString(
+											R.string.action_new_tab),
+									dialogClickListener)
+							.setNegativeButton(
+									getResources().getString(
+											R.string.action_open),
+									dialogClickListener)
+							.setNeutralButton(
+									getResources().getString(
+											R.string.action_download),
+									dialogClickListener).show();
+
 				} else {
 					DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 						@Override
@@ -2271,6 +2263,44 @@ public class BrowserActivity extends Activity implements BrowserController {
 											R.string.action_copy),
 									dialogClickListener).show();
 				}
+			} else {
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE: {
+							newTab(url, false);
+							break;
+						}
+						case DialogInterface.BUTTON_NEGATIVE: {
+							mCurrentView.loadUrl(url);
+							break;
+						}
+						case DialogInterface.BUTTON_NEUTRAL: {
+							ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+							ClipData clip = ClipData.newPlainText("label", url);
+							clipboard.setPrimaryClip(clip);
+
+							break;
+						}
+						}
+					}
+				};
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
+				builder.setTitle(url)
+						.setMessage(
+								getResources().getString(R.string.dialog_link))
+						.setPositiveButton(
+								getResources().getString(
+										R.string.action_new_tab),
+								dialogClickListener)
+						.setNegativeButton(
+								getResources().getString(R.string.action_open),
+								dialogClickListener)
+						.setNeutralButton(
+								getResources().getString(R.string.action_copy),
+								dialogClickListener).show();
 			}
 		} else if (result != null) {
 			if (result.getExtra() != null) {
@@ -2417,6 +2447,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 		} else {
 			return false;
 		}
+	}
+
+	//Override this, use finish() for Incognito, moveTaskToBack for Main
+	public void closeActivity() {
+		finish();
 	}
 
 	public class SortIgnoreCase implements Comparator<HistoryItem> {
