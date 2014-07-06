@@ -593,13 +593,8 @@ public class SettingsActivity extends Activity {
 						mActivity);
 				agentPicker.setTitle(getResources().getString(
 						R.string.title_user_agent));
-				CharSequence[] chars = {
-						getResources().getString(R.string.agent_default),
-						getResources().getString(R.string.agent_desktop),
-						getResources().getString(R.string.agent_mobile),
-						getResources().getString(R.string.agent_custom) };
 				mAgentChoice = mPreferences.getInt(PreferenceConstants.USER_AGENT, 1);
-				agentPicker.setSingleChoiceItems(chars, mAgentChoice - 1,
+				agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -689,9 +684,6 @@ public class SettingsActivity extends Activity {
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(
 						R.string.title_download_location));
-				CharSequence[] chars = {
-						getResources().getString(R.string.agent_default),
-						getResources().getString(R.string.agent_custom) };
 				mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
 						Environment.DIRECTORY_DOWNLOADS);
 				int n = -1;
@@ -701,7 +693,7 @@ public class SettingsActivity extends Activity {
 					n = 2;
 				}
 
-				picker.setSingleChoiceItems(chars, n - 1,
+				picker.setSingleChoiceItems(R.array.download_folder, n - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
@@ -828,11 +820,6 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(R.string.home));
-				CharSequence[] chars = {
-						getResources().getString(R.string.action_homepage),
-						getResources().getString(R.string.action_blank),
-						getResources().getString(R.string.action_bookmarks),
-						getResources().getString(R.string.action_webpage) };
 				mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
 				int n = -1;
 				if (mHomepage.contains("about:home")) {
@@ -845,7 +832,7 @@ public class SettingsActivity extends Activity {
 					n = 4;
 				}
 
-				picker.setSingleChoiceItems(chars, n - 1,
+				picker.setSingleChoiceItems(R.array.homepage, n - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
