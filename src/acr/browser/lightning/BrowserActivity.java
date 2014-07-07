@@ -442,12 +442,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 					getDir("icons", MODE_PRIVATE).getPath());
 		}
 
-		//boolean useProxy = mPreferences.getBoolean(
-		//		PreferenceConstants.USE_PROXY, false);
-
-		// if (useProxy)
-		// initializeTor();
-		// else
 		checkForTor();
 
 	}
@@ -457,40 +451,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 	 * proxying for this session
 	 */
 	public boolean checkForTor() {
+		boolean useProxy = mPreferences.getBoolean(
+				PreferenceConstants.USE_PROXY, false);
 
 		OrbotHelper oh = new OrbotHelper(this);
-		if (oh.isOrbotInstalled()) {
-			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-					case DialogInterface.BUTTON_POSITIVE:
-
-						mPreferences
-								.edit()
-								.putBoolean(PreferenceConstants.USE_PROXY, true)
-								.apply();
-
-						initializeTor();
-
-						break;
-
-					case DialogInterface.BUTTON_NEGATIVE:
-
-						mPreferences
-								.edit()
-								.putBoolean(PreferenceConstants.USE_PROXY,
-										false).apply();
-						break;
-					}
-				}
-			};
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.use_tor_prompt)
-					.setPositiveButton(R.string.yes, dialogClickListener)
-					.setNegativeButton(R.string.no, dialogClickListener).show();
-
+		if (oh.isOrbotInstalled() & useProxy == true) {
+			initializeTor();
 			return true;
 		}
 

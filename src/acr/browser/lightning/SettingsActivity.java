@@ -84,6 +84,7 @@ public class SettingsActivity extends Activity {
 		RelativeLayout layoutFullScreen = (RelativeLayout) findViewById(R.id.layoutFullScreen);
 		RelativeLayout layoutFlash = (RelativeLayout) findViewById(R.id.layoutFlash);
 		RelativeLayout layoutBlockAds = (RelativeLayout) findViewById(R.id.layoutAdBlock);
+		RelativeLayout layoutOrbot = (RelativeLayout) findViewById(R.id.layoutUseOrbot);
 
 		mSearchText = (TextView) findViewById(R.id.searchText);
 
@@ -129,15 +130,21 @@ public class SettingsActivity extends Activity {
 			mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
 			mEditPrefs.commit();
 		}
-		boolean locationBool = mPreferences.getBoolean(PreferenceConstants.LOCATION, false);
-		int flashNum = mPreferences.getInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-		boolean fullScreenBool = mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false);
+		boolean locationBool = mPreferences.getBoolean(
+				PreferenceConstants.LOCATION, false);
+		int flashNum = mPreferences.getInt(
+				PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
+		boolean fullScreenBool = mPreferences.getBoolean(
+				PreferenceConstants.FULL_SCREEN, false);
 		mAgentChoice = mPreferences.getInt(PreferenceConstants.USER_AGENT, 1);
-		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
-		mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
+		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE,
+				Constants.HOMEPAGE);
+		mDownloadLocation = mPreferences.getString(
+				PreferenceConstants.DOWNLOAD_DIRECTORY,
 				Environment.DIRECTORY_DOWNLOADS);
 
-		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + "/" + mDownloadLocation);
+		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + "/"
+				+ mDownloadLocation);
 
 		String code = "HOLO";
 
@@ -157,8 +164,8 @@ public class SettingsActivity extends Activity {
 			mHomepageText.setText(getResources().getString(
 					R.string.action_homepage));
 		} else if (mHomepage.contains("about:blank")) {
-			mHomepageText.setText(getResources()
-					.getString(R.string.action_blank));
+			mHomepageText.setText(getResources().getString(
+					R.string.action_blank));
 		} else if (mHomepage.contains("about:bookmarks")) {
 			mHomepageText.setText(getResources().getString(
 					R.string.action_bookmarks));
@@ -168,45 +175,52 @@ public class SettingsActivity extends Activity {
 
 		switch (mAgentChoice) {
 		case 1:
-			mAgentTextView.setText(getResources().getString(R.string.agent_default));
+			mAgentTextView.setText(getResources().getString(
+					R.string.agent_default));
 			break;
 		case 2:
-			mAgentTextView.setText(getResources().getString(R.string.agent_desktop));
+			mAgentTextView.setText(getResources().getString(
+					R.string.agent_desktop));
 			break;
 		case 3:
-			mAgentTextView.setText(getResources().getString(R.string.agent_mobile));
+			mAgentTextView.setText(getResources().getString(
+					R.string.agent_mobile));
 			break;
 		case 4:
-			mAgentTextView.setText(getResources().getString(R.string.agent_custom));
+			mAgentTextView.setText(getResources().getString(
+					R.string.agent_custom));
 		}
-		RelativeLayout r1, r2, r3, r4, licenses;
+		RelativeLayout r1, r2, r3, r4, r5, licenses;
 		r1 = (RelativeLayout) findViewById(R.id.setR1);
 		r2 = (RelativeLayout) findViewById(R.id.setR2);
 		r3 = (RelativeLayout) findViewById(R.id.setR3);
 		r4 = (RelativeLayout) findViewById(R.id.setR4);
+		r5 = (RelativeLayout) findViewById(R.id.setR5);
 		licenses = (RelativeLayout) findViewById(R.id.layoutLicense);
-		
-		licenses.setOnClickListener(new OnClickListener(){
+
+		licenses.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				//NOTE: In order to comply with the open source license,
-				//it is advised that you leave this code so that the License
-				//Activity may be viewed by the user.
+				// NOTE: In order to comply with the open source license,
+				// it is advised that you leave this code so that the License
+				// Activity may be viewed by the user.
 				startActivity(new Intent(Constants.LICENSE_INTENT));
 			}
-			
+
 		});
-		
+
 		Switch location = new Switch(this);
 		Switch fullScreen = new Switch(this);
 		Switch flash = new Switch(this);
 		Switch adblock = new Switch(this);
+		Switch orbot = new Switch(this);
 
 		r1.addView(location);
 		r2.addView(fullScreen);
 		r3.addView(flash);
 		r4.addView(adblock);
+		r5.addView(orbot);
 		location.setChecked(locationBool);
 		fullScreen.setChecked(fullScreenBool);
 		if (flashNum > 0) {
@@ -214,11 +228,13 @@ public class SettingsActivity extends Activity {
 		} else {
 			flash.setChecked(false);
 		}
-		adblock.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false));
+		adblock.setChecked(mPreferences.getBoolean(
+				PreferenceConstants.BLOCK_ADS, false));
 
-		initSwitch(location, fullScreen, flash, adblock);
-		clickListenerForSwitches(layoutLocation, layoutFullScreen, layoutFlash, layoutBlockAds,
-				location, fullScreen, flash, adblock);
+		initSwitch(location, fullScreen, flash, adblock, orbot);
+		clickListenerForSwitches(layoutLocation, layoutFullScreen, layoutFlash,
+				layoutBlockAds, layoutOrbot, location, fullScreen, flash,
+				adblock, orbot);
 
 		RelativeLayout agent = (RelativeLayout) findViewById(R.id.layoutUserAgent);
 		RelativeLayout download = (RelativeLayout) findViewById(R.id.layoutDownload);
@@ -246,9 +262,10 @@ public class SettingsActivity extends Activity {
 						R.string.title_search_engine));
 				CharSequence[] chars = {
 						getResources().getString(R.string.custom_url),
-						"Google", "Android Search", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)", 
-						"DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
-						"Yandex (Russian)"  };
+						"Google", "Android Search", "Bing", "Yahoo",
+						"StartPage", "StartPage (Mobile)",
+						"DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)",
+						"Baidu (Chinese)", "Yandex (Russian)" };
 
 				int n = mPreferences.getInt(PreferenceConstants.SEARCH, 1);
 
@@ -258,7 +275,8 @@ public class SettingsActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								mEditPrefs.putInt(PreferenceConstants.SEARCH, which);
+								mEditPrefs.putInt(PreferenceConstants.SEARCH,
+										which);
 								mEditPrefs.commit();
 								switch (which) {
 								case 0:
@@ -319,8 +337,8 @@ public class SettingsActivity extends Activity {
 		urlPicker.setTitle(getResources().getString(R.string.custom_url));
 		final EditText getSearchUrl = new EditText(SettingsActivity.this);
 
-		mSearchUrl = mPreferences
-				.getString(PreferenceConstants.SEARCH_URL, Constants.GOOGLE_SEARCH);
+		mSearchUrl = mPreferences.getString(PreferenceConstants.SEARCH_URL,
+				Constants.GOOGLE_SEARCH);
 		getSearchUrl.setText(mSearchUrl);
 		urlPicker.setView(getSearchUrl);
 		urlPicker.setPositiveButton(getResources()
@@ -330,7 +348,8 @@ public class SettingsActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getSearchUrl.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.SEARCH_URL, text);
+						mEditPrefs.putString(PreferenceConstants.SEARCH_URL,
+								text);
 						mEditPrefs.commit();
 						mSearchText.setText(getResources().getString(
 								R.string.custom_url)
@@ -341,15 +360,16 @@ public class SettingsActivity extends Activity {
 	}
 
 	public void clickListenerForSwitches(RelativeLayout one,
-			RelativeLayout two, RelativeLayout three, RelativeLayout layoutBlockAds, final Switch loc,
-			final Switch full, final Switch flash, final Switch adblock) {
-		layoutBlockAds.setOnClickListener(new OnClickListener(){
+			RelativeLayout two, RelativeLayout three,
+			RelativeLayout layoutBlockAds, RelativeLayout layoutOrbot, final Switch loc, final Switch full,
+			final Switch flash, final Switch adblock, final Switch orbot) {
+		layoutBlockAds.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				adblock.setChecked(!adblock.isChecked());
 			}
-			
+
 		});
 		one.setOnClickListener(new OnClickListener() {
 
@@ -381,6 +401,14 @@ public class SettingsActivity extends Activity {
 			}
 
 		});
+		layoutOrbot.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				orbot.setChecked(!orbot.isChecked());
+			}
+
+		});
 	}
 
 	public void easterEgg() {
@@ -401,8 +429,9 @@ public class SettingsActivity extends Activity {
 		});
 	}
 
-	public void initSwitch(Switch location, Switch fullscreen, Switch flash, Switch adblock) {
-		adblock.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+	public void initSwitch(Switch location, Switch fullscreen, Switch flash,
+			Switch adblock, Switch orbot) {
+		adblock.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
@@ -410,7 +439,7 @@ public class SettingsActivity extends Activity {
 				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_ADS, isChecked);
 				mEditPrefs.commit();
 			}
-			
+
 		});
 		location.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -432,7 +461,8 @@ public class SettingsActivity extends Activity {
 				if (isChecked) {
 					getFlashChoice();
 				} else {
-					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
+					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT,
+							0);
 					mEditPrefs.commit();
 				}
 
@@ -453,7 +483,8 @@ public class SettingsActivity extends Activity {
 							getResources().getString(
 									R.string.dialog_adobe_not_installed));
 					buttonView.setChecked(false);
-					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
+					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT,
+							0);
 					mEditPrefs.commit();
 
 				} else if ((API >= 17) && isChecked) {
@@ -471,7 +502,20 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.FULL_SCREEN, isChecked);
+				mEditPrefs.putBoolean(PreferenceConstants.FULL_SCREEN,
+						isChecked);
+				mEditPrefs.commit();
+
+			}
+
+		});
+		orbot.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY,
+						isChecked);
 				mEditPrefs.commit();
 
 			}
@@ -490,7 +534,9 @@ public class SettingsActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 1);
+								mEditPrefs
+										.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT,
+												1);
 								mEditPrefs.commit();
 							}
 						})
@@ -501,14 +547,17 @@ public class SettingsActivity extends Activity {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 2);
+								mEditPrefs
+										.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT,
+												2);
 								mEditPrefs.commit();
 							}
 						}).setOnCancelListener(new OnCancelListener() {
 
 					@Override
 					public void onCancel(DialogInterface dialog) {
-						mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
+						mEditPrefs.putInt(
+								PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
 						mEditPrefs.commit();
 					}
 
@@ -558,7 +607,8 @@ public class SettingsActivity extends Activity {
 							getResources().getString(
 									R.string.dialog_adobe_not_installed));
 					buttonView.setChecked(false);
-					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
+					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT,
+							0);
 					mEditPrefs.commit();
 
 				} else if ((API > 17) && isChecked) {
@@ -576,7 +626,8 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.FULL_SCREEN, isChecked);
+				mEditPrefs.putBoolean(PreferenceConstants.FULL_SCREEN,
+						isChecked);
 				mEditPrefs.commit();
 
 			}
@@ -593,31 +644,35 @@ public class SettingsActivity extends Activity {
 						mActivity);
 				agentPicker.setTitle(getResources().getString(
 						R.string.title_user_agent));
-				mAgentChoice = mPreferences.getInt(PreferenceConstants.USER_AGENT, 1);
-				agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
+				mAgentChoice = mPreferences.getInt(
+						PreferenceConstants.USER_AGENT, 1);
+				agentPicker.setSingleChoiceItems(R.array.user_agent,
+						mAgentChoice - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								mEditPrefs.putInt(PreferenceConstants.USER_AGENT, which + 1);
+								mEditPrefs.putInt(
+										PreferenceConstants.USER_AGENT,
+										which + 1);
 								mEditPrefs.commit();
 								switch (which + 1) {
 								case 1:
-									mAgentTextView.setText(getResources().getString(
-											R.string.agent_default));
+									mAgentTextView.setText(getResources()
+											.getString(R.string.agent_default));
 									break;
 								case 2:
-									mAgentTextView.setText(getResources().getString(
-											R.string.agent_desktop));
+									mAgentTextView.setText(getResources()
+											.getString(R.string.agent_desktop));
 									break;
 								case 3:
-									mAgentTextView.setText(getResources().getString(
-											R.string.agent_mobile));
+									mAgentTextView.setText(getResources()
+											.getString(R.string.agent_mobile));
 									break;
 								case 4:
-									mAgentTextView.setText(getResources().getString(
-											R.string.agent_custom));
+									mAgentTextView.setText(getResources()
+											.getString(R.string.agent_custom));
 									agentPicker();
 									break;
 								}
@@ -666,7 +721,8 @@ public class SettingsActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getAgent.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.USER_AGENT_STRING, text);
+						mEditPrefs.putString(
+								PreferenceConstants.USER_AGENT_STRING, text);
 						mEditPrefs.commit();
 						mAgentTextView.setText(getResources().getString(
 								R.string.agent_custom));
@@ -684,7 +740,8 @@ public class SettingsActivity extends Activity {
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(
 						R.string.title_download_location));
-				mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
+				mDownloadLocation = mPreferences.getString(
+						PreferenceConstants.DOWNLOAD_DIRECTORY,
 						Environment.DIRECTORY_DOWNLOADS);
 				int n = -1;
 				if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
@@ -702,12 +759,15 @@ public class SettingsActivity extends Activity {
 
 								switch (which + 1) {
 								case 1:
-									mEditPrefs.putString(PreferenceConstants.DOWNLOAD_DIRECTORY,
-											Environment.DIRECTORY_DOWNLOADS);
+									mEditPrefs
+											.putString(
+													PreferenceConstants.DOWNLOAD_DIRECTORY,
+													Environment.DIRECTORY_DOWNLOADS);
 									mEditPrefs.commit();
-									mDownloadTextView.setText(Constants.EXTERNAL_STORAGE
-											+ "/"
-											+ Environment.DIRECTORY_DOWNLOADS);
+									mDownloadTextView
+											.setText(Constants.EXTERNAL_STORAGE
+													+ "/"
+													+ Environment.DIRECTORY_DOWNLOADS);
 									break;
 								case 2:
 									downPicker();
@@ -738,7 +798,8 @@ public class SettingsActivity extends Activity {
 		homePicker.setTitle(getResources().getString(
 				R.string.title_custom_homepage));
 		final EditText getHome = new EditText(SettingsActivity.this);
-		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
+		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE,
+				Constants.HOMEPAGE);
 		if (!mHomepage.startsWith("about:")) {
 			getHome.setText(mHomepage);
 		} else {
@@ -752,7 +813,8 @@ public class SettingsActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getHome.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.HOMEPAGE, text);
+						mEditPrefs
+								.putString(PreferenceConstants.HOMEPAGE, text);
 						mEditPrefs.commit();
 						mHomepageText.setText(text);
 					}
@@ -769,7 +831,8 @@ public class SettingsActivity extends Activity {
 				R.string.title_download_location));
 		final EditText getDownload = new EditText(SettingsActivity.this);
 		getDownload.setBackgroundResource(0);
-		mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
+		mDownloadLocation = mPreferences.getString(
+				PreferenceConstants.DOWNLOAD_DIRECTORY,
 				Environment.DIRECTORY_DOWNLOADS);
 		int padding = Utils.convertToDensityPixels(this, 10);
 
@@ -804,10 +867,11 @@ public class SettingsActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getDownload.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.DOWNLOAD_DIRECTORY, text);
+						mEditPrefs.putString(
+								PreferenceConstants.DOWNLOAD_DIRECTORY, text);
 						mEditPrefs.commit();
-						mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + "/"
-								+ text);
+						mDownloadTextView.setText(Constants.EXTERNAL_STORAGE
+								+ "/" + text);
 					}
 				});
 		downLocationPicker.show();
@@ -820,7 +884,8 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(R.string.home));
-				mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
+				mHomepage = mPreferences.getString(
+						PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
 				int n = -1;
 				if (mHomepage.contains("about:home")) {
 					n = 1;
@@ -841,20 +906,25 @@ public class SettingsActivity extends Activity {
 
 								switch (which + 1) {
 								case 1:
-									mEditPrefs.putString(PreferenceConstants.HOMEPAGE, "about:home");
+									mEditPrefs.putString(
+											PreferenceConstants.HOMEPAGE,
+											"about:home");
 									mEditPrefs.commit();
 									mHomepageText
 											.setText(getResources().getString(
 													R.string.action_homepage));
 									break;
 								case 2:
-									mEditPrefs.putString(PreferenceConstants.HOMEPAGE, "about:blank");
+									mEditPrefs.putString(
+											PreferenceConstants.HOMEPAGE,
+											"about:blank");
 									mEditPrefs.commit();
 									mHomepageText.setText(getResources()
 											.getString(R.string.action_blank));
 									break;
 								case 3:
-									mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
+									mEditPrefs.putString(
+											PreferenceConstants.HOMEPAGE,
 											"about:bookmarks");
 									mEditPrefs.commit();
 									mHomepageText.setText(getResources()
