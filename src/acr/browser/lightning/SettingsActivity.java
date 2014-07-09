@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning;
 
+import info.guardianproject.onionkit.ui.OrbotHelper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -230,6 +231,7 @@ public class SettingsActivity extends Activity {
 		}
 		adblock.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.BLOCK_ADS, false));
+		orbot.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false));
 
 		initSwitch(location, fullScreen, flash, adblock, orbot);
 		clickListenerForSwitches(layoutLocation, layoutFullScreen, layoutFlash,
@@ -361,8 +363,9 @@ public class SettingsActivity extends Activity {
 
 	public void clickListenerForSwitches(RelativeLayout one,
 			RelativeLayout two, RelativeLayout three,
-			RelativeLayout layoutBlockAds, RelativeLayout layoutOrbot, final Switch loc, final Switch full,
-			final Switch flash, final Switch adblock, final Switch orbot) {
+			RelativeLayout layoutBlockAds, RelativeLayout layoutOrbot,
+			final Switch loc, final Switch full, final Switch flash,
+			final Switch adblock, final Switch orbot) {
 		layoutBlockAds.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -405,7 +408,12 @@ public class SettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				orbot.setChecked(!orbot.isChecked());
+				if (orbot.isEnabled()) {
+					orbot.setChecked(!orbot.isChecked());
+				} else {
+					Utils.showToast(mContext,
+							getResources().getString(R.string.install_orbot));
+				}
 			}
 
 		});
@@ -509,13 +517,17 @@ public class SettingsActivity extends Activity {
 			}
 
 		});
+		OrbotHelper oh = new OrbotHelper(this);
+		if (!oh.isOrbotInstalled()) {
+			orbot.setEnabled(false);
+		}
+
 		orbot.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY,
-						isChecked);
+				mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, isChecked);
 				mEditPrefs.commit();
 
 			}

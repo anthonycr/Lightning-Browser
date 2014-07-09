@@ -455,12 +455,48 @@ public class BrowserActivity extends Activity implements BrowserController {
 				PreferenceConstants.USE_PROXY, false);
 
 		OrbotHelper oh = new OrbotHelper(this);
-		if (oh.isOrbotInstalled() & useProxy == true) {
+		if (oh.isOrbotInstalled()
+				&& !mPreferences.getBoolean(
+						PreferenceConstants.INITIAL_CHECK_FOR_TOR, false)) {
+			mEditPrefs.putBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR,
+					true);
+			mEditPrefs.apply();
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						mPreferences
+								.edit()
+								.putBoolean(PreferenceConstants.USE_PROXY, true)
+								.apply();
+
+						initializeTor();
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						mPreferences
+								.edit()
+								.putBoolean(PreferenceConstants.USE_PROXY,
+										false).apply();
+						break;
+					}
+				}
+			};
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.use_tor_prompt)
+					.setPositiveButton(R.string.yes, dialogClickListener)
+					.setNegativeButton(R.string.no, dialogClickListener).show();
+
+			return true;
+		} else if (oh.isOrbotInstalled() & useProxy == true) {
 			initializeTor();
 			return true;
+		} else {
+			mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, false);
+			mEditPrefs.apply();
+			return false;
 		}
-
-		return false;
 	}
 
 	/*
@@ -471,7 +507,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		OrbotHelper oh = new OrbotHelper(this);
 		if (!oh.isOrbotRunning())
 			oh.requestOrbotStart(this);
-
+		
 		WebkitProxy wkp = new WebkitProxy();
 		try {
 			String host = mPreferences.getString(
@@ -483,6 +519,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		} catch (Exception e) {
 			Log.d(Constants.LOGTAG, "error enabling web proxying", e);
 		}
+
 	}
 
 	/*
@@ -587,7 +624,17 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		updateCookiePreference();
-
+		if (mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false)) {
+			initializeTor();
+		} else {
+			try {
+				WebkitProxy.resetProxy("acr.browser.lightning.BrowserApp",
+						getApplicationContext());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/*
@@ -2415,7 +2462,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
-	//Override this, use finish() for Incognito, moveTaskToBack for Main
+	// Override this, use finish() for Incognito, moveTaskToBack for Main
 	public void closeActivity() {
 		finish();
 	}

@@ -35,4 +35,5 @@ public class PreferenceConstants {
 	public static final String USE_PROXY = "useProxy";
 	public static final String USE_PROXY_HOST = "useProxyHost";
 	public static final String USE_PROXY_PORT = "useProxyPort";
+	public static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
 }
