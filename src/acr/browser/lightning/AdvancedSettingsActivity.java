@@ -38,9 +38,9 @@ public class AdvancedSettingsActivity extends Activity {
 	private static SharedPreferences.Editor mEditPrefs;
 	private static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11,
 			r12, r13, r14, r15, rIncognitoCookies, rClearCache,
-			rSearchSuggestions;
+			rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
 	private static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10,
-			cb11, cbIncognitoCookies, cbSearchSuggestions;
+			cb11, cbIncognitoCookies, cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
 	private static Context mContext;
 	private boolean mSystemBrowser;
 	private Handler messageHandler;
@@ -74,6 +74,8 @@ public class AdvancedSettingsActivity extends Activity {
 
 		r1 = (RelativeLayout) findViewById(R.id.r1);
 		r2 = (RelativeLayout) findViewById(R.id.r2);
+		rClearHistoryExit = (RelativeLayout) findViewById(R.id.rClearHistoryExit);
+		rClearCookiesExit = (RelativeLayout) findViewById(R.id.rClearCookiesExit);
 		r3 = (RelativeLayout) findViewById(R.id.r3);
 		r4 = (RelativeLayout) findViewById(R.id.r4);
 		r5 = (RelativeLayout) findViewById(R.id.r5);
@@ -93,6 +95,8 @@ public class AdvancedSettingsActivity extends Activity {
 
 		cb1 = (CheckBox) findViewById(R.id.cb1);
 		cb2 = (CheckBox) findViewById(R.id.cb2);
+		cbClearHistoryExit = (CheckBox) findViewById(R.id.cbClearHistoryExit);
+		cbClearCookiesExit = (CheckBox) findViewById(R.id.cbClearCookiesExit);
 		cb3 = (CheckBox) findViewById(R.id.cb3);
 		cb4 = (CheckBox) findViewById(R.id.cb4);
 		cb5 = (CheckBox) findViewById(R.id.cb5);
@@ -109,6 +113,10 @@ public class AdvancedSettingsActivity extends Activity {
 				PreferenceConstants.SAVE_PASSWORDS, true));
 		cb2.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.CLEAR_CACHE_EXIT, false));
+		cbClearHistoryExit.setChecked(mPreferences.getBoolean(
+				PreferenceConstants.CLEAR_HISTORY_EXIT, false));
+		cbClearCookiesExit.setChecked(mPreferences.getBoolean(
+				PreferenceConstants.CLEAR_COOKIES_EXIT, false));
 		cb3.setChecked(mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT,
 				true));
 		cb4.setChecked(mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW,
@@ -139,6 +147,8 @@ public class AdvancedSettingsActivity extends Activity {
 
 		r1(r1);
 		r2(r2);
+		rClearHistoryExit(rClearHistoryExit);
+		rClearCookiesExit(rClearCookiesExit);
 		r3(r3);
 		r4(r4);
 		r5(r5);
@@ -157,6 +167,8 @@ public class AdvancedSettingsActivity extends Activity {
 		rSearchSuggestions(rSearchSuggestions);
 		cb1(cb1);
 		cb2(cb2);
+		cbClearHistoryExit(cbClearHistoryExit);
+		cbClearCookiesExit(cbClearCookiesExit);
 		cb3(cb3);
 		cb4(cb4);
 		cb5(cb5);
@@ -226,6 +238,33 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
+						isChecked);
+				mEditPrefs.commit();
+			}
+
+		});
+	}
+	
+	void cbClearHistoryExit(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
+						isChecked);
+				mEditPrefs.commit();
+			}
+
+		});
+	}
+	void cbClearCookiesExit(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
 						isChecked);
 				mEditPrefs.commit();
 			}
@@ -406,7 +445,31 @@ public class AdvancedSettingsActivity extends Activity {
 
 		});
 	}
+	
+	void rClearHistoryExit(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				cbClearHistoryExit.setChecked(!cbClearHistoryExit.isChecked());
+			}
+
+		});
+	}
+
+	void rClearCookiesExit(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				cbClearCookiesExit.setChecked(!cbClearCookiesExit.isChecked());
+			}
+
+		});
+	}
+	
 	void r3(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
@@ -678,7 +741,7 @@ public class AdvancedSettingsActivity extends Activity {
 			}
 		}
 		SettingsController.setClearHistory(true);
-		trimCache(AdvancedSettingsActivity.this);
+		Utils.trimCache(AdvancedSettingsActivity.this);
 		messageHandler.sendEmptyMessage(1);
 	}
 
@@ -742,32 +805,6 @@ public class AdvancedSettingsActivity extends Activity {
 			}
 
 		});
-	}
-
-	void trimCache(Context context) {
-		try {
-			File dir = context.getCacheDir();
-
-			if (dir != null && dir.isDirectory()) {
-				deleteDir(dir);
-			}
-		} catch (Exception ignored) {
-
-		}
-	}
-
-	boolean deleteDir(File dir) {
-		if (dir != null && dir.isDirectory()) {
-			String[] children = dir.list();
-			for (String aChildren : children) {
-				boolean success = deleteDir(new File(dir, aChildren));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-		// The directory is now empty so delete it
-		return dir.delete();
 	}
 
 	public void importFromStockBrowser() {

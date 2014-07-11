@@ -77,7 +77,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.ValueCallback;
+import android.webkit.WebViewDatabase;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebView;
@@ -150,6 +152,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private boolean mIsNewIntent = false;
 	private VideoView mVideoView;
 	private static SearchAdapter mSearchAdapter;
+	private boolean isIncognito = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -527,6 +530,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 	 */
 	public synchronized void initializeTabs() {
 
+	}
+	
+	public void setIsIncognito(boolean letsAsk){
+		isIncognito = letsAsk;
+	}
+	
+	public boolean isThisIncognito(){
+		return isIncognito;
 	}
 
 	public void restoreOrNewTab() {
@@ -1084,9 +1095,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 				mWebViews.remove(position);
 				if (mPreferences.getBoolean(
 						PreferenceConstants.CLEAR_CACHE_EXIT, false)
-						&& mCurrentView != null) {
+						&& mCurrentView != null && !isThisIncognito()) {
 					mCurrentView.clearCache(true);
 					Log.i(Constants.LOGTAG, "Cache Cleared");
+
+				}
+				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
+						false) && !isThisIncognito()) {
+					clearHistory();
+					Log.i(Constants.LOGTAG, "History Cleared");
+
+				}
+				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
+						false) && !isThisIncognito()) {
+					clearCookies();
+					Log.i(Constants.LOGTAG, "Cookies Cleared");
 
 				}
 				if (reference != null) {
@@ -1115,9 +1138,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
-					false) && mCurrentView != null) {
+					false) && mCurrentView != null && !isThisIncognito()) {
 				mCurrentView.clearCache(true);
 				Log.i(Constants.LOGTAG, "Cache Cleared");
+
+			}
+			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
+					false) && !isThisIncognito()) {
+				clearHistory();
+				Log.i(Constants.LOGTAG, "History Cleared");
+
+			}
+			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
+					false) && !isThisIncognito()) {
+				clearCookies();
+				Log.i(Constants.LOGTAG, "Cookies Cleared");
 
 			}
 			mCurrentView = null;
@@ -1130,6 +1165,32 @@ public class BrowserActivity extends Activity implements BrowserController {
 			finish();
 		}
 		return true;
+	}
+	
+	public void clearHistory() {
+		this.deleteDatabase(DatabaseHandler.DATABASE_NAME);
+		WebViewDatabase m = WebViewDatabase
+				.getInstance(this);
+		m.clearFormData();
+		m.clearHttpAuthUsernamePassword();
+		if (API < 18) {
+			m.clearUsernamePassword();
+			WebIconDatabase.getInstance().removeAllIcons();
+		}
+		if (mSystemBrowser) {
+			try {
+				Browser.clearHistory(getContentResolver());
+			} catch (NullPointerException ignored) {
+			}
+		}
+		SettingsController.setClearHistory(true);
+		Utils.trimCache(this);
+	}
+	
+	public void clearCookies() {
+		CookieManager c = CookieManager.getInstance();
+		CookieSyncManager.createInstance(this);
+		c.removeAllCookie();
 	}
 
 	@Override

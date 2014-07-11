@@ -16,6 +16,7 @@ public class IncognitoActivity extends BrowserActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		super.setIsIncognito(true);
 	}
 
 	@Override
