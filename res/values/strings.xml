@@ -163,5 +163,7 @@
     <string name="install_orbot">Please install Orbot in order to proxy with Tor.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="clear_cookies_exit">Clear cookies on exit</string>
+    <string name="clear_history_exit">Clear history on exit</string>
 
 </resources>

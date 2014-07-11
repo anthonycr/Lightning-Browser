@@ -87,6 +87,68 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="#cdcdcd" />
+        
+        <RelativeLayout
+            android:id="@+id/rClearHistoryExit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?android:attr/listChoiceBackgroundIndicator"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:text="@string/clear_history_exit"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/cbClearHistoryExit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#cdcdcd" />
+        
+        <RelativeLayout
+            android:id="@+id/rClearCookiesExit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="?android:attr/listChoiceBackgroundIndicator"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:text="@string/clear_cookies_exit"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/cbClearCookiesExit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#cdcdcd" />
 
         <RelativeLayout
             android:id="@+id/r3"
