@@ -531,14 +531,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public synchronized void initializeTabs() {
 
 	}
-	
-	public void setIsIncognito(boolean letsAsk){
-		isIncognito = letsAsk;
-	}
-	
-	public boolean isThisIncognito(){
-		return isIncognito;
-	}
 
 	public void restoreOrNewTab() {
 		mIdGenerator = 0;
@@ -1095,19 +1087,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 				mWebViews.remove(position);
 				if (mPreferences.getBoolean(
 						PreferenceConstants.CLEAR_CACHE_EXIT, false)
-						&& mCurrentView != null && !isThisIncognito()) {
+						&& mCurrentView != null && !isIncognito()) {
 					mCurrentView.clearCache(true);
 					Log.i(Constants.LOGTAG, "Cache Cleared");
 
 				}
 				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
-						false) && !isThisIncognito()) {
+						false) && !isIncognito()) {
 					clearHistory();
 					Log.i(Constants.LOGTAG, "History Cleared");
 
 				}
 				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
-						false) && !isThisIncognito()) {
+						false) && !isIncognito()) {
 					clearCookies();
 					Log.i(Constants.LOGTAG, "Cookies Cleared");
 
@@ -1138,19 +1130,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
-					false) && mCurrentView != null && !isThisIncognito()) {
+					false) && mCurrentView != null && !isIncognito()) {
 				mCurrentView.clearCache(true);
 				Log.i(Constants.LOGTAG, "Cache Cleared");
 
 			}
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
-					false) && !isThisIncognito()) {
+					false) && !isIncognito()) {
 				clearHistory();
 				Log.i(Constants.LOGTAG, "History Cleared");
 
 			}
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
-					false) && !isThisIncognito()) {
+					false) && !isIncognito()) {
 				clearCookies();
 				Log.i(Constants.LOGTAG, "Cookies Cleared");
 
