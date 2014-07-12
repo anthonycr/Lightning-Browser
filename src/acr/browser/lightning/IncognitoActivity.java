@@ -27,7 +27,7 @@ public class IncognitoActivity extends BrowserActivity {
 		mCookieManager = CookieManager.getInstance();
 		CookieSyncManager.createInstance(this);
 		mCookieManager.setAcceptCookie(mPreferences.getBoolean(
-				PreferenceConstants.COOKIES, false));
+				PreferenceConstants.INCOGNITO_COOKIES, false));
 		super.updateCookiePreference();
 	}
 
