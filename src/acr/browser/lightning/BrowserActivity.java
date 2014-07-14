@@ -58,6 +58,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.provider.Browser;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -436,7 +437,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		});
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 		initializePreferences();
 		initializeTabs();
 
