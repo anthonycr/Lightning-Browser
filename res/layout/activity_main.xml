@@ -54,7 +54,7 @@
 
         <RelativeLayout
             android:id="@+id/drawer"
-            android:layout_width="240dp"
+            android:layout_width="@dimen/navigation_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/drawer_background"
@@ -66,10 +66,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="@drawable/list_bg"
                 android:gravity="center_vertical"
                 android:minHeight="?android:attr/listPreferredItemHeightSmall"
                 android:paddingLeft="16dp"
+                android:textStyle="bold"
                 android:paddingRight="16dp"
                 android:text="@string/action_new_tab"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -88,8 +89,8 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/lineView"
                 android:layout_below="@+id/view"
+                android:listSelector="@drawable/list_bg"
                 android:choiceMode="singleChoice"
-                android:divider="#bababa"
                 android:dividerHeight="1dp" />
 
             <View
@@ -113,7 +114,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?android:attr/listChoiceBackgroundIndicator"
+                    android:background="@drawable/list_bg"
                     android:clickable="true" >
 
                     <ImageView
@@ -128,17 +129,13 @@
                         android:src="@drawable/ic_action_back" />
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="48dp"
-                    android:background="#bababa" />
 
                 <RelativeLayout
                     android:id="@+id/action_forward"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?android:attr/listChoiceBackgroundIndicator"
+                    android:background="@drawable/list_bg"
                     android:clickable="true" >
 
                     <ImageView
@@ -157,7 +154,7 @@
 
         <LinearLayout
             android:id="@+id/right_drawer"
-            android:layout_width="240dp"
+            android:layout_width="@dimen/navigation_width"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:background="@color/drawer_background"
@@ -168,7 +165,7 @@
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#33b5e5"
+                android:textStyle="bold"
                 android:gravity="center_vertical"
                 android:minHeight="?android:attr/listPreferredItemHeightSmall"
                 android:paddingLeft="16dp"
@@ -186,6 +183,7 @@
                 android:id="@+id/right_drawer_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:listSelector="@drawable/list_bg"
                 android:divider="#bababa"
                 android:dividerHeight="1dp" />
         </LinearLayout>
