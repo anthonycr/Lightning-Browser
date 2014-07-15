@@ -101,6 +101,12 @@ public class Utils {
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 	
+	/**
+	 * Returns the number of pixels corresponding to the passed density pixels
+	 * @param context
+	 * @param densityPixels
+	 * @return
+	 */
 	public static int convertToDensityPixels(Context context, int densityPixels) {
 		float scale = context.getResources().getDisplayMetrics().density;
 		int pixels = (int) (densityPixels * scale + 0.5f);

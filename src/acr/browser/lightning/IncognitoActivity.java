@@ -70,6 +70,7 @@ public class IncognitoActivity extends BrowserActivity {
 
 	@Override
 	public void closeActivity() {
+		closeDrawers();
 		finish();
 	}
 	

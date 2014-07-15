@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="drawer_background">#e4e4e4</color>
+    <color name="drawer_background">#ffffff</color>
     <color name="black">#ff000000</color>
     <color name="light">#ffa0a0a0</color>
     <color name="gray_dark">#222222</color>
@@ -9,5 +9,7 @@
     <color name="gray_medium">#cdcdcd</color>
     <color name="white">#ffffff</color>
     <color name="gray_extra_dark">#1b1b1b</color>
+    <color name="gray_list_bg">#0d000000</color>
+    <color name="dark_text">#3f3f3f</color>
 
 </resources>

@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="56dp"
     android:gravity="center_vertical"
-    android:background="?android:attr/activatedBackgroundIndicator"
+    android:background="@drawable/list_bg"
     android:orientation="horizontal" >
 
     <ImageView
         android:id="@+id/favicon1"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:contentDescription="Favicon"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
-        android:layout_marginLeft="2dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="2dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp" >
     </ImageView>
@@ -30,7 +31,7 @@
         android:layout_toLeftOf="@+id/delete1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="#6a6a6a" />
+        android:textColor="@color/dark_text" />
 
     <ImageView
         android:id="@+id/delete1"

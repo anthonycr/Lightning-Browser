@@ -190,8 +190,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mDrawer = (RelativeLayout) findViewById(R.id.drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		mDrawerList.setDivider(null);
+		mDrawerList.setDividerHeight(0);
 		mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
 		mDrawerListRight = (ListView) findViewById(R.id.right_drawer_list);
+		mDrawerListRight.setDivider(null);
+		mDrawerListRight.setDividerHeight(0);
+		setNavigationDrawerWidth();
 		mWebpageBitmap = BitmapFactory.decodeResource(getResources(),
 				R.drawable.ic_webpage);
 		mActionBar = getActionBar();
@@ -437,8 +442,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		});
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow,
+				GravityCompat.END);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+				GravityCompat.START);
 		initializePreferences();
 		initializeTabs();
 
@@ -512,7 +519,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		OrbotHelper oh = new OrbotHelper(this);
 		if (!oh.isOrbotRunning())
 			oh.requestOrbotStart(this);
-		
+
 		WebkitProxy wkp = new WebkitProxy();
 		try {
 			String host = mPreferences.getString(
@@ -525,6 +532,30 @@ public class BrowserActivity extends Activity implements BrowserController {
 			Log.d(Constants.LOGTAG, "error enabling web proxying", e);
 		}
 
+	}
+
+	public void setNavigationDrawerWidth() {
+		int width = getResources().getDisplayMetrics().widthPixels * 4 / 5;
+		int maxWidth = Utils.convertToDensityPixels(mContext, 300);
+		if (width > maxWidth) {
+			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawer
+					.getLayoutParams();
+			params.width = maxWidth;
+			mDrawer.setLayoutParams(params);
+			DrawerLayout.LayoutParams paramsRight = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerRight
+					.getLayoutParams();
+			paramsRight.width = maxWidth;
+			mDrawerRight.setLayoutParams(paramsRight);
+		} else {
+			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawer
+					.getLayoutParams();
+			params.width = width;
+			mDrawer.setLayoutParams(params);
+			DrawerLayout.LayoutParams paramsRight = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerRight
+					.getLayoutParams();
+			paramsRight.width = width;
+			mDrawerRight.setLayoutParams(paramsRight);
+		}
 	}
 
 	/*
@@ -669,6 +700,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 		// The action bar home/up action should open or close the drawer.
 		// ActionBarDrawerToggle will take care of this.
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+				mDrawerLayout.closeDrawer(mDrawerRight);
+				mDrawerLayout.openDrawer(mDrawer);
+			} else if (mDrawerLayout.isDrawerOpen(mDrawer)) {
+				mDrawerLayout.closeDrawer(mDrawer);
+			}
+			mDrawerToggle.syncState();
 			return true;
 		}
 		// Handle action buttons
@@ -1094,14 +1132,16 @@ public class BrowserActivity extends Activity implements BrowserController {
 					Log.i(Constants.LOGTAG, "Cache Cleared");
 
 				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
-						false) && !isIncognito()) {
+				if (mPreferences.getBoolean(
+						PreferenceConstants.CLEAR_HISTORY_EXIT, false)
+						&& !isIncognito()) {
 					clearHistory();
 					Log.i(Constants.LOGTAG, "History Cleared");
 
 				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
-						false) && !isIncognito()) {
+				if (mPreferences.getBoolean(
+						PreferenceConstants.CLEAR_COOKIES_EXIT, false)
+						&& !isIncognito()) {
 					clearCookies();
 					Log.i(Constants.LOGTAG, "Cookies Cleared");
 
@@ -1160,11 +1200,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 		return true;
 	}
-	
+
 	public void clearHistory() {
 		this.deleteDatabase(DatabaseHandler.DATABASE_NAME);
-		WebViewDatabase m = WebViewDatabase
-				.getInstance(this);
+		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
 		m.clearHttpAuthUsernamePassword();
 		if (API < 18) {
@@ -1180,7 +1219,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		SettingsController.setClearHistory(true);
 		Utils.trimCache(this);
 	}
-	
+
 	public void clearCookies() {
 		CookieManager c = CookieManager.getInstance();
 		CookieSyncManager.createInstance(this);
@@ -1913,6 +1952,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 		mDrawerToggle.syncState();
 		mDrawerLayout.openDrawer(mDrawerRight);
+	}
+
+	public void closeDrawers() {
+		mDrawerLayout.closeDrawers();
 	}
 
 	@Override

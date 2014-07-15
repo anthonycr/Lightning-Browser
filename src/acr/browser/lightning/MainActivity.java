@@ -69,6 +69,7 @@ public class MainActivity extends BrowserActivity {
 
 	@Override
 	public void closeActivity() {
+		closeDrawers();
 		moveTaskToBack(true);
 	}
 	
