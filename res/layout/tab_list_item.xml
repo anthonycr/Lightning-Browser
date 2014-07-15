@@ -14,7 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="2dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp" >

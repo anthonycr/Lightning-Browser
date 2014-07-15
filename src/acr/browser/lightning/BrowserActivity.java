@@ -535,7 +535,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	public void setNavigationDrawerWidth() {
-		int width = getResources().getDisplayMetrics().widthPixels * 4 / 5;
+		int width = getResources().getDisplayMetrics().widthPixels * 3 / 4;
 		int maxWidth = Utils.convertToDensityPixels(mContext, 300);
 		if (width > maxWidth) {
 			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawer
