@@ -24,7 +24,9 @@
 
 * Google search suggestions
 
-####Permissions Requested and Explained
+* Orbot Proxy support
+
+####Permissions
 
 * ````INTERNET````: For accessing the web
 
@@ -37,6 +39,8 @@
 * ````READ_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and Lightning
 
 * ````WRITE_HISTORY_BOOKMARKS````: To synchronize history and bookmarks between the stock browser and Lightning
+
+* ````ACCESS_NETWORK_STATE````: Required for the WebView to function by some OEM versions of WebKit
 
 ####The Code
 * Please contribute code back if you can. The code isn't perfect.
