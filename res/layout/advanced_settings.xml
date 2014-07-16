@@ -12,7 +12,10 @@
         <RelativeLayout
             android:id="@+id/r1"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -28,6 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/password"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -36,6 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/recommended"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -59,7 +64,10 @@
         <RelativeLayout
             android:id="@+id/r2"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -70,6 +78,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/cache"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -91,7 +100,10 @@
         <RelativeLayout
             android:id="@+id/rClearHistoryExit"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -101,6 +113,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/clear_history_exit"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -122,7 +135,10 @@
         <RelativeLayout
             android:id="@+id/rClearCookiesExit"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -132,6 +148,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/clear_cookies_exit"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -153,7 +170,10 @@
         <RelativeLayout
             android:id="@+id/r3"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -169,6 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/java"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -177,6 +198,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/recommended"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -200,7 +222,10 @@
         <RelativeLayout
             android:id="@+id/r4"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -210,6 +235,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/reflow"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -231,7 +257,10 @@
         <RelativeLayout
             android:id="@+id/r5"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -242,6 +271,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/block"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -263,7 +293,10 @@
         <RelativeLayout
             android:id="@+id/r6"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -279,6 +312,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/window"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -286,6 +320,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/recommended"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -309,7 +344,10 @@
         <RelativeLayout
             android:id="@+id/r7"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -325,6 +363,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/cookies"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -332,6 +371,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/recommended"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -355,7 +395,10 @@
         <RelativeLayout
             android:id="@+id/rIncognitoCookies"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -370,6 +413,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/incognito_cookies"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
@@ -392,7 +436,10 @@
         <RelativeLayout
             android:id="@+id/r11"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -408,6 +455,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/wideViewPort"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -415,6 +463,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/recommended"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -438,7 +487,10 @@
         <RelativeLayout
             android:id="@+id/r12"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -454,6 +506,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/overViewMode"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -461,6 +514,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/recommended"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -484,7 +538,10 @@
         <RelativeLayout
             android:id="@+id/r13"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -494,6 +551,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/restore"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -515,7 +573,10 @@
         <RelativeLayout
             android:id="@+id/r14"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -525,6 +586,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/fullScreenOption"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -546,7 +608,10 @@
         <RelativeLayout
             android:id="@+id/rGoogleSuggestions"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:paddingRight="10dp" >
 
@@ -563,6 +628,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/google_suggestions"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -570,6 +636,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/powered_by_google"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -593,7 +660,10 @@
         <RelativeLayout
             android:id="@+id/rClearCache"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator" >
 
             <TextView
@@ -602,6 +672,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/clear_cache"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
@@ -616,7 +687,10 @@
         <RelativeLayout
             android:id="@+id/r8"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator" >
 
             <TextView
@@ -625,6 +699,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/history"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
@@ -639,7 +714,10 @@
         <RelativeLayout
             android:id="@+id/r15"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator" >
 
             <TextView
@@ -648,6 +726,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/clear_cookies"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
@@ -662,7 +741,10 @@
         <RelativeLayout
             android:id="@+id/r9"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator" >
 
             <LinearLayout
@@ -676,6 +758,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="@string/importbookmarks"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -684,6 +767,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
                     android:text="text"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -700,7 +784,10 @@
         <RelativeLayout
             android:id="@+id/r10"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="?android:attr/listChoiceBackgroundIndicator" >
 
             <TextView
@@ -709,6 +796,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
+                android:paddingRight="30dp"
                 android:text="@string/size"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
