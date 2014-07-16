@@ -672,7 +672,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
-                android:paddingRight="30dp"
                 android:text="@string/clear_cache"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
@@ -699,7 +698,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
-                android:paddingRight="30dp"
                 android:text="@string/history"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
@@ -726,7 +724,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
-                android:paddingRight="30dp"
                 android:text="@string/clear_cookies"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
@@ -758,7 +755,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
-                    android:paddingRight="30dp"
                     android:text="@string/importbookmarks"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -767,7 +763,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
-                    android:paddingRight="30dp"
                     android:text="text"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/light" />
@@ -796,7 +791,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
-                android:paddingRight="30dp"
                 android:text="@string/size"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </RelativeLayout>
