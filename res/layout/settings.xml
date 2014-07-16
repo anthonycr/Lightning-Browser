@@ -13,7 +13,10 @@
             <RelativeLayout
                 android:id="@+id/layoutLocation"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator"
                 android:paddingRight="10dp" >
 
@@ -24,6 +27,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
+                    android:paddingRight="60dp"
                     android:text="@string/location"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -46,7 +50,10 @@
             <RelativeLayout
                 android:id="@+id/layoutFullScreen"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator"
                 android:paddingRight="10dp" >
 
@@ -57,6 +64,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
+                    android:paddingRight="60dp"
                     android:text="@string/fullscreen"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -69,7 +77,7 @@
                 </RelativeLayout>
             </RelativeLayout>
 
-            <LinearLayout 
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="5dp"
@@ -79,7 +87,10 @@
             <RelativeLayout
                 android:id="@+id/layoutFlash"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator"
                 android:paddingRight="10dp" >
 
@@ -90,6 +101,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
+                    android:paddingRight="60dp"
                     android:text="@string/flash"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -101,18 +113,21 @@
                     android:layout_centerVertical="true" >
                 </RelativeLayout>
             </RelativeLayout>
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:background="#cdcdcd" />
-            
+
             <RelativeLayout
                 android:id="@+id/layoutAdBlock"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator"
                 android:paddingRight="10dp" >
 
@@ -122,6 +137,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
+                    android:paddingRight="60dp"
                     android:text="@string/block_ads"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -133,18 +149,21 @@
                     android:layout_centerVertical="true" >
                 </RelativeLayout>
             </RelativeLayout>
-            
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:background="#cdcdcd" />
-            
+
             <RelativeLayout
                 android:id="@+id/layoutUseOrbot"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator"
                 android:paddingRight="10dp" >
 
@@ -154,6 +173,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="10dp"
+                    android:paddingRight="60dp"
                     android:text="@string/enable_orbot"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -176,7 +196,10 @@
             <RelativeLayout
                 android:id="@+id/layoutUserAgent"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <LinearLayout
@@ -215,7 +238,10 @@
             <RelativeLayout
                 android:id="@+id/layoutDownload"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <LinearLayout
@@ -254,7 +280,10 @@
             <RelativeLayout
                 android:id="@+id/layoutHomepage"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <LinearLayout
@@ -293,7 +322,10 @@
             <RelativeLayout
                 android:id="@+id/layoutSearch"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <LinearLayout
@@ -331,7 +363,10 @@
             <RelativeLayout
                 android:id="@+id/layoutAdvanced"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <TextView
@@ -355,7 +390,10 @@
             <RelativeLayout
                 android:id="@+id/layoutSource"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <LinearLayout
@@ -383,18 +421,21 @@
                         android:textColor="@color/light" />
                 </LinearLayout>
             </RelativeLayout>
-            
+
              <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:background="#cdcdcd" />
-            
+
             <RelativeLayout
                 android:id="@+id/layoutLicense"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                <LinearLayout
@@ -412,7 +453,7 @@
                         android:text="@string/licenses"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                  
+
                 </LinearLayout>
             </RelativeLayout>
 
@@ -426,7 +467,10 @@
             <RelativeLayout
                 android:id="@+id/layoutVersion"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:background="?android:attr/listChoiceBackgroundIndicator" >
 
                 <LinearLayout
