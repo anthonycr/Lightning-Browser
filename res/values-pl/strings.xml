@@ -26,7 +26,7 @@
 	<string name="home">Strona domowa</string>
 	<string name="settingshelp">Ustawienia będą aktywne tylko dla nowootwartych kart</string>
 	<string name="fullscreen">Tryb pełnoekranowy</string>
-	<string name="java">Włącz JavaScript</string>
+	<string name="java">Włącz Javascript</string>
 	<string name="saveTab">Przwraca otwarte karty</string>
 	<string name="settings_title">Ustawienia</string>
 	<string name="download">Miejsce zapisu pobieranych plików</string>
