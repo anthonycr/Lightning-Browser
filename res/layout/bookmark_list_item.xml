@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:fontFamily="sans-serif-light"
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:paddingRight="4dp"

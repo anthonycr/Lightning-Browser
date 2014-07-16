@@ -107,7 +107,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private RelativeLayout mDrawer;
 	private LinearLayout mDrawerRight;
 	private ListView mDrawerListRight;
-	private TextView mNewTab;
+	private RelativeLayout mNewTab;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
 	private List<Integer> mIdList = new ArrayList<Integer>();
@@ -187,7 +187,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
 		mProgress = (ProgressBar) findViewById(R.id.activity_bar);
 		mProgress.setVisibility(View.GONE);
-		mNewTab = (TextView) findViewById(R.id.new_tab_button);
+		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
 		mDrawer = (RelativeLayout) findViewById(R.id.drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -850,7 +850,15 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (mCurrentView != null) {
 				mCurrentView.loadUrl(mBookmarkList.get(position).getUrl());
 			}
-			mDrawerLayout.closeDrawer(mDrawerRight);
+			// keep any jank from happening when the drawer is closed after the
+			// URL starts to load
+			final Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mDrawerLayout.closeDrawer(mDrawerRight);
+				}
+			}, 150);
 		}
 	}
 
@@ -1050,10 +1058,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		mDrawerList.setItemChecked(position, true);
 		showTab(mWebViews.get(position));
-		
-		//Use a delayed handler to make the transition smooth
-		//otherwise it will get caught up with the showTab code 
-		//and cause a janky motion
+
+		// Use a delayed handler to make the transition smooth
+		// otherwise it will get caught up with the showTab code
+		// and cause a janky motion
 		final Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
 			@Override
