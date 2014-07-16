@@ -36,5 +36,13 @@
     <style name="LightActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid">
         <item name="android:background">@color/gray_light</item>
     </style>
+    
+    <style name="boldText" >
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="normalText" >
+        <item name="android:textStyle">normal</item>
+    </style>
 
 </resources>

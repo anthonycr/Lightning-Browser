@@ -55,6 +55,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -991,10 +992,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 			return;
 		}
 		if (mCurrentView != null) {
+			mCurrentView.setIsForgroundTab(false);
 			mCurrentView.onPause();
 		}
 		mCurrentView = view;
-
+		mCurrentView.setIsForgroundTab(true);
 		if (view.getWebView() != null) {
 			updateUrl(view.getUrl());
 			updateProgress(view.getProgress());
@@ -1006,6 +1008,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mBrowserFrame.removeAllViews();
 		mCurrentView.onResume();
 		mBrowserFrame.addView(view.getWebView());
+
 	}
 
 	/**
@@ -1042,13 +1045,23 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
-	private void selectItem(int position) {
+	private void selectItem(final int position) {
 		// update selected item and title, then close the drawer
 
 		mDrawerList.setItemChecked(position, true);
 		showTab(mWebViews.get(position));
+		
+		//Use a delayed handler to make the transition smooth
+		//otherwise it will get caught up with the showTab code 
+		//and cause a janky motion
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mDrawerLayout.closeDrawer(mDrawer);
+			}
+		}, 150);
 
-		mDrawerLayout.closeDrawer(mDrawer);
 	}
 
 	/**
@@ -1533,6 +1546,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 			LightningView web = data.get(position);
 			holder.txtTitle.setText(web.getTitle());
+			if (web.getIsForgroundTab()) {
+				holder.txtTitle.setTextAppearance(context, R.style.boldText);
+			} else {
+				holder.txtTitle.setTextAppearance(context, R.style.normalText);
+			}
+
 			Bitmap favicon = web.getFavicon();
 			holder.favicon.setImageBitmap(favicon);
 			return row;

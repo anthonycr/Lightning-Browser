@@ -75,6 +75,7 @@ public class LightningView {
 	private static boolean mWideViewPort;
 	private static AdBlock mAdBlock;
 	private CookieManager mCookieManager;
+	private boolean isForgroundTab = false;
 
 	@SuppressLint("NewApi")
 	public LightningView(Activity activity, String url,
@@ -414,6 +415,15 @@ public class LightningView {
 	public synchronized void onResume() {
 		if (mWebView != null)
 			mWebView.onResume();
+	}
+
+	public void setIsForgroundTab(boolean isForground) {
+		isForgroundTab = isForground;
+		mBrowserController.update();
+	}
+
+	public boolean getIsForgroundTab() {
+		return isForgroundTab;
 	}
 
 	public int getProgress() {
