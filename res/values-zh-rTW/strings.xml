@@ -112,5 +112,6 @@
     <string name="download_no_sdcard_dlg_msg" >若要下載檔案，USB 儲存裝置是必須的。</string>
     <string name="download_sdcard_busy_dlg_title">USB 儲存裝置無法使用</string>
     <string name="download_sdcard_busy_dlg_msg" >儲存裝置忙碌中。若是要下載檔案，請停止掛載 USB 儲存裝置。</string>
-
+    <string name="folder_default">預設</string>
+    <string name="folder_custom">自定</string>
 </resources>

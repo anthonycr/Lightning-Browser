@@ -54,7 +54,7 @@
     <string name="fullScreenOption">إخفاء شريط الحالة أثناء التصفح</string>
     <string name="clear_cookies">مسح ملفات تعريف الارتباط</string>
     <string name="gestures">تفعيل إيماءات الأمام و الخلف</string>
- 		<string name="dialog_image">ماذا تريد أن تفعل مع هذه الصورة؟</string>
+    <string name="dialog_image">ماذا تريد أن تفعل مع هذه الصورة؟</string>
     <string name="action_download">تحميل</string>
     <string name="action_open">فتح</string>
     <string name="dialog_link">ماذا تريد أن تفعل مع هذا الرابط؟</string>
@@ -110,4 +110,6 @@
     <string name="action_add_bookmark">إضافة إلى العلامات المرجعية</string>
     <string name="action_copy">نسخ الرابط</string>
     <string name="action_forward">الأمام</string>
+    <string name="folder_default">الافتراضي</string>
+    <string name="folder_custom">مخصص</string>
 </resources>

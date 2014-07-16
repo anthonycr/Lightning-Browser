@@ -72,8 +72,7 @@
     <string name="action_cancel">Отмена</string>
     <string name="title_warning">Внимание</string>
     <string name="dialog_adobe_dead">"К сожалению, Adobe Flash не работает на Android 4.4+ из-за изменений, внесённых Google"</string>
-    <string name="dialog_adobe_not_installed">"Adobe Flash Player не найден.
-Установите Flash Player"</string>
+    <string name="dialog_adobe_not_installed">"Adobe Flash Player не найден.\nУстановите Flash Player"</string>
     <string name="dialog_adobe_unsupported">Adobe Flash не поддерживает Andoid 4.2 и новее, вызывая сбой браузера. Пожалуйста, не сообщайте о сбоях при включённом Flash</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Папка загрузок</string>
@@ -108,4 +107,6 @@
     <string name="download_no_sdcard_dlg_msg">Для загрузки файла необходима карта памяти</string>
     <string name="download_sdcard_busy_dlg_title">Карта памяти недоступна</string>
     <string name="download_sdcard_busy_dlg_msg">Карта памяти подключена к ПК. Для начала загрузки отключите её от ПК, нажав на уведомление</string>
+    <string name="folder_default">По умолчанию</string>
+    <string name="folder_custom">Выбрать</string>
 </resources>

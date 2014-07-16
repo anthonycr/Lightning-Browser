@@ -112,5 +112,6 @@
     <string name="download_no_sdcard_dlg_msg" >Se requiere de almacenamiento USB para descargar el archivo.</string>
     <string name="download_sdcard_busy_dlg_title">Almacenamiento USB no disponible</string>
     <string name="download_sdcard_busy_dlg_msg" >El almacenamiento está ocupado. Para permitir las descargar, Desactiva el almacenamiento USB desde el área de notificación.</string>
-
+    <string name="folder_default">Por Defecto</string>
+    <string name="folder_custom">Personalizado</string>
 </resources>

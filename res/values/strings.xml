@@ -165,5 +165,6 @@
     <string name="no">No</string>
     <string name="clear_cookies_exit">Clear cookies on exit</string>
     <string name="clear_history_exit">Clear history on exit</string>
-
+    <string name="folder_default">Default</string>
+    <string name="folder_custom">Custom</string>
 </resources>

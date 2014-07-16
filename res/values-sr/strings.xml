@@ -159,5 +159,6 @@
     <string name="title_adblock">Адблок</string>
     <string name="message_adblock">Адблок је доступан само у плаћеном издању прегледача, „Lightning Browser+“. Доступан је за преузимање на Гугловом Плеју.</string>
     <string name="use_tor_prompt">Изгледа да имате Орбот инсталиран. Желите ли да користите Тор?</string>
-
+    <string name="folder_default">Подразумевана</string>
+    <string name="folder_custom">Посебна</string>
 </resources>
