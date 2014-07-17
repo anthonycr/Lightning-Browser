@@ -158,5 +158,6 @@
     <string name="powered_by_google">Unterstützt durch Google</string>
     <string name="title_adblock">Werbeblocker</string>
     <string name="message_adblock">Der Werbeblocker ist nur in Lightning Browser+ verfügbar und kann im Google Play Store gekauft werden!</string>
-
+    <string name="folder_default">Standard</string>
+    <string name="folder_custom">Andere</string>
 </resources>

@@ -111,4 +111,6 @@
     <string name="download_no_sdcard_dlg_msg">为正常下载此文件需要 USB 存储设备。</string>
     <string name="download_sdcard_busy_dlg_title">USB 存储不可用</string>
     <string name="download_sdcard_busy_dlg_msg">USB 存储设备目前正忙，为确保正常下载此文件请在通知栏中确认关闭 USB 大容量存储。</string>
+    <string name="folder_default">默认 UA</string>
+    <string name="folder_custom">自定义 UA</string>
 </resources>

@@ -8,8 +8,8 @@
     </string-array>
     
     <string-array name="download_folder">
-        <item>@string/agent_default</item>
-        <item>@string/agent_custom</item>
+        <item>@string/folder_default</item>
+        <item>@string/folder_custom</item>
     </string-array>
     
     <string-array name="homepage">
