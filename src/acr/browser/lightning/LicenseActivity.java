@@ -27,25 +27,26 @@ public class LicenseActivity extends Activity implements View.OnClickListener {
 		findViewById(R.id.licenseAOSP).setOnClickListener(this);
 		findViewById(R.id.licenseHosts).setOnClickListener(this);
 	}
-	
+
 	@Override
-    public void onClick(View v) {
-	    switch (v.getId()) {
-	        case R.id.browserLicense:
-                actionView("http://www.mozilla.org/MPL/2.0/");
-                break;
-	        case R.id.licenseAOSP:
-	            actionView("http://www.apache.org/licenses/LICENSE-2.0");
-                break;
-	        case R.id.licenseHosts:
-	            actionView("http://hosts-file.net/");
-                break;
-        }
-    }
-	
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.browserLicense:
+			actionView("http://www.mozilla.org/MPL/2.0/");
+			break;
+		case R.id.licenseAOSP:
+			actionView("http://www.apache.org/licenses/LICENSE-2.0");
+			break;
+		case R.id.licenseHosts:
+			actionView("http://hosts-file.net/");
+			break;
+		}
+	}
+
 	private void actionView(String url) {
-	    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        finish();
+		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), this,
+				MainActivity.class));
+		finish();
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class LightningDownloadListener implements DownloadListener {
 						dialogClickListener)
 				.setNegativeButton(mActivity.getResources().getString(R.string.action_cancel), dialogClickListener)
 				.show();
-		Log.i(Constants.LOGTAG, "Downloading" + fileName);
+		Log.i(Constants.TAG, "Downloading" + fileName);
 		
 	}
 

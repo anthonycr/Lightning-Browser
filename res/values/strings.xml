@@ -167,4 +167,5 @@
     <string name="clear_history_exit">Clear history on exit</string>
     <string name="folder_default">Default</string>
     <string name="folder_custom">Custom</string>
+    <string name="untitled">Untititled</string>
 </resources>

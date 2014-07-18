@@ -206,7 +206,7 @@ public class SettingsActivity extends Activity {
 				// NOTE: In order to comply with the open source license,
 				// it is advised that you leave this code so that the License
 				// Activity may be viewed by the user.
-				startActivity(new Intent(Constants.LICENSE_INTENT));
+				startActivity(new Intent(mContext, LicenseActivity.class));
 			}
 
 		});
@@ -231,7 +231,8 @@ public class SettingsActivity extends Activity {
 		}
 		adblock.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.BLOCK_ADS, false));
-		orbot.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false));
+		orbot.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_PROXY,
+				false));
 
 		initSwitch(location, fullScreen, flash, adblock, orbot);
 		clickListenerForSwitches(layoutLocation, layoutFullScreen, layoutFlash,
@@ -427,8 +428,11 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				mEasterEggCounter++;
 				if (mEasterEggCounter == 10) {
-					startActivity(new Intent(Intent.ACTION_VIEW, Uri
-							.parse("http://imgs.xkcd.com/comics/compiling.png")));
+
+					startActivity(new Intent(
+							Intent.ACTION_VIEW,
+							Uri.parse("http://imgs.xkcd.com/comics/compiling.png"),
+							mContext, MainActivity.class));
 					finish();
 					mEasterEggCounter = 0;
 				}
@@ -972,7 +976,8 @@ public class SettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(Constants.ADVANCED_SETTINGS_INTENT));
+				startActivity(new Intent(mContext,
+						AdvancedSettingsActivity.class));
 			}
 
 		});
@@ -984,7 +989,8 @@ public class SettingsActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri
-						.parse("http://twitter.com/ACRDevelopment")));
+						.parse("http://twitter.com/ACRDevelopment"), mContext,
+						MainActivity.class));
 				finish();
 			}
 

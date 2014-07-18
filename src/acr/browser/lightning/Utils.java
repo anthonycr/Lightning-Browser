@@ -30,7 +30,7 @@ public class Utils {
 		String fileName = URLUtil.guessFileName(url, null,
 				null);
 		DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null, privateBrowsing);
-		Log.i(Constants.LOGTAG, "Downloading" + fileName);
+		Log.i(Constants.TAG, "Downloading" + fileName);
 	}
 	
 	public static synchronized void addBookmark(Context context, String title, String url) {
