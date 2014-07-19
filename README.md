@@ -2,7 +2,7 @@
 ####Speed, Simplicity, Security
 #![](ic_launcher_small.png)
 ####Download
-* [Download APK from here](https://github.com/anthonycr/Lightning-Browser/blob/master/BrowserActivity.apk?raw=true)
+* [Download APK from here](https://github.com/anthonycr/Thunder-Browser/releases)
 
 * [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
 
