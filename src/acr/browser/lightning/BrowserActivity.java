@@ -530,7 +530,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			wkp.setProxy("acr.browser.lightning.BrowserApp",
 					getApplicationContext(), host, port);
 		} catch (Exception e) {
-			Log.d(Constants.LOGTAG, "error enabling web proxying", e);
+			Log.d(Constants.TAG, "error enabling web proxying", e);
 		}
 
 	}
@@ -734,7 +734,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			newTab(null, true);
 			return true;
 		case R.id.action_incognito:
-			startActivity(new Intent(Constants.INCOGNITO_INTENT));
+			startActivity(new Intent(this, IncognitoActivity.class));
 			return true;
 		case R.id.action_share:
 			if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
@@ -766,7 +766,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			}
 			return true;
 		case R.id.action_settings:
-			startActivity(new Intent(Constants.SETTINGS_INTENT));
+			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case R.id.action_history:
 			openHistory();
@@ -1053,6 +1053,18 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
+	@Override
+	public void closeEmptyTab() {
+		if (mCurrentView != null
+				&& mCurrentView.getWebView().copyBackForwardList().getSize() == 0) {
+			closeCurrentTab();
+		}
+	}
+
+	private void closeCurrentTab() {
+		//don't delete the tab because the browser will close and mess stuff up
+	}
+
 	private void selectItem(final int position) {
 		// update selected item and title, then close the drawer
 
@@ -1150,21 +1162,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 						PreferenceConstants.CLEAR_CACHE_EXIT, false)
 						&& mCurrentView != null && !isIncognito()) {
 					mCurrentView.clearCache(true);
-					Log.i(Constants.LOGTAG, "Cache Cleared");
+					Log.i(Constants.TAG, "Cache Cleared");
 
 				}
 				if (mPreferences.getBoolean(
 						PreferenceConstants.CLEAR_HISTORY_EXIT, false)
 						&& !isIncognito()) {
 					clearHistory();
-					Log.i(Constants.LOGTAG, "History Cleared");
+					Log.i(Constants.TAG, "History Cleared");
 
 				}
 				if (mPreferences.getBoolean(
 						PreferenceConstants.CLEAR_COOKIES_EXIT, false)
 						&& !isIncognito()) {
 					clearCookies();
-					Log.i(Constants.LOGTAG, "Cookies Cleared");
+					Log.i(Constants.TAG, "Cookies Cleared");
 
 				}
 				if (reference != null) {
@@ -1186,7 +1198,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			closeActivity();
 		}
 
-		Log.i(Constants.LOGTAG, "deleted tab");
+		Log.i(Constants.TAG, "deleted tab");
 	}
 
 	@Override
@@ -1195,19 +1207,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
 					false) && mCurrentView != null && !isIncognito()) {
 				mCurrentView.clearCache(true);
-				Log.i(Constants.LOGTAG, "Cache Cleared");
+				Log.i(Constants.TAG, "Cache Cleared");
 
 			}
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
 					false) && !isIncognito()) {
 				clearHistory();
-				Log.i(Constants.LOGTAG, "History Cleared");
+				Log.i(Constants.TAG, "History Cleared");
 
 			}
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
 					false) && !isIncognito()) {
 				clearCookies();
-				Log.i(Constants.LOGTAG, "Cookies Cleared");
+				Log.i(Constants.TAG, "Cookies Cleared");
 
 			}
 			mCurrentView = null;
@@ -1258,7 +1270,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			mDrawerLayout.closeDrawer(mDrawerRight);
 		} else {
 			if (mCurrentView != null) {
-				Log.i(Constants.LOGTAG, "onBackPressed");
+				Log.i(Constants.TAG, "onBackPressed");
 				if (mCurrentView.canGoBack()) {
 					if (!mCurrentView.isShown()) {
 						onHideCustomView();
@@ -1269,7 +1281,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 					deleteTab(mDrawerList.getCheckedItemPosition());
 				}
 			} else {
-				Log.e(Constants.LOGTAG,
+				Log.e(Constants.TAG,
 						"So madness. Much confusion. Why happen.");
 				super.onBackPressed();
 			}
@@ -1279,7 +1291,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.i(Constants.LOGTAG, "onPause");
+		Log.i(Constants.TAG, "onPause");
 		if (mCurrentView != null) {
 			mCurrentView.pauseTimers();
 			mCurrentView.onPause();
@@ -1311,7 +1323,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	protected void onDestroy() {
-		Log.i(Constants.LOGTAG, "onDestroy");
+		Log.i(Constants.TAG, "onDestroy");
 		if (mHistoryDatabase != null) {
 			if (mHistoryDatabase.isOpen())
 				mHistoryDatabase.close();
@@ -1326,7 +1338,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i(Constants.LOGTAG, "onResume");
+		Log.i(Constants.TAG, "onResume");
 		if (SettingsController.getClearHistory()) {
 		}
 		if (mSearchAdapter != null) {
@@ -1790,13 +1802,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 					cursor.close();
 					cursor = null;
 				} catch (IllegalStateException e) {
-					Log.e(Constants.LOGTAG,
+					Log.e(Constants.TAG,
 							"IllegalStateException in updateHistory");
 				} catch (NullPointerException e) {
-					Log.e(Constants.LOGTAG,
+					Log.e(Constants.TAG,
 							"NullPointerException in updateHistory");
 				} catch (SQLiteException e) {
-					Log.e(Constants.LOGTAG, "SQLiteException in updateHistory");
+					Log.e(Constants.TAG, "SQLiteException in updateHistory");
 				}
 			}
 		};
@@ -2146,7 +2158,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (mCustomView == null || mCustomViewCallback == null
 				|| mCurrentView == null)
 			return;
-		Log.i(Constants.LOGTAG, "onHideCustomView");
+		Log.i(Constants.TAG, "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
 		mCustomView.setKeepScreenOn(false);
 		setFullscreen(mPreferences.getBoolean(

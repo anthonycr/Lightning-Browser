@@ -67,7 +67,6 @@ public class LightningView {
 	private Activity mActivity;
 	private WebSettings mSettings;
 	private static int API = android.os.Build.VERSION.SDK_INT;
-	private static String mPackageName;
 	private static String mHomepage;
 	private static String mDefaultUserAgent;
 	private static Bitmap mWebpageBitmap;
@@ -76,16 +75,18 @@ public class LightningView {
 	private static AdBlock mAdBlock;
 	private CookieManager mCookieManager;
 	private boolean isForgroundTab = false;
+	private IntentUtils mIntentUtils = null;
 
 	@SuppressLint("NewApi")
 	public LightningView(Activity activity, String url,
 			CookieManager cookieManager) {
+
 		mActivity = activity;
 		mCookieManager = cookieManager;
 		mWebView = new WebView(activity);
 		mTitle = new Title(activity);
 		mAdBlock = new AdBlock(activity);
-		mPackageName = activity.getPackageName();
+		activity.getPackageName();
 		mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
 				R.drawable.ic_webpage);
 
@@ -95,6 +96,7 @@ public class LightningView {
 			throw new ClassCastException(activity.toString()
 					+ " must implement BrowserController");
 		}
+		mIntentUtils = new IntentUtils(mBrowserController);
 		mWebView.setDrawingCacheBackgroundColor(0x00000000);
 		mWebView.setFocusableInTouchMode(true);
 		mWebView.setFocusable(true);
@@ -488,6 +490,10 @@ public class LightningView {
 		}
 	}
 
+	public Activity getActivity() {
+		return mActivity;
+	}
+
 	public synchronized void onDestroy() {
 		if (mWebView != null) {
 			mWebView.stopLoading();
@@ -686,7 +692,7 @@ public class LightningView {
 					return null; // let webkit handle it
 				}
 			} catch (Exception e) {
-				Log.e(Constants.LOGTAG, "Error filtering stream", e);
+				Log.e(Constants.TAG, "Error filtering stream", e);
 				ByteArrayInputStream EMPTY = new ByteArrayInputStream(
 						"".getBytes());
 				WebResourceResponse response = new WebResourceResponse(
@@ -701,7 +707,13 @@ public class LightningView {
 			if (view.isShown()) {
 				view.invalidate();
 			}
-			mTitle.setTitle(view.getTitle());
+			if (view.getTitle() == null) {
+				mTitle.setTitle(mActivity.getString(R.string.untitled));
+			} else if (view.getTitle().length() > 0) {
+				mTitle.setTitle(view.getTitle());
+			} else {
+				mTitle.setTitle(mActivity.getString(R.string.untitled));
+			}
 			mBrowserController.update();
 		}
 
@@ -748,7 +760,7 @@ public class LightningView {
 									String user = name.getText().toString();
 									String pass = password.getText().toString();
 									handler.proceed(user.trim(), pass.trim());
-									Log.i(Constants.LOGTAG, "Request Login");
+									Log.i(Constants.TAG, "Request Login");
 
 								}
 							})
@@ -842,46 +854,16 @@ public class LightningView {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			if (url.startsWith("market://")
-					|| url.startsWith("http://play.google.com/store/apps")
-					|| url.startsWith("https://play.google.com/store/apps")) {
-				Intent urlIntent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse(url));
-				urlIntent.putExtra(mPackageName + ".Origin", 1);
-				mActivity.startActivity(urlIntent);
-				return true;
-			} else if (url.startsWith("http://www.youtube.com")
-					|| url.startsWith("https://www.youtube.com")
-					|| url.startsWith("http://m.youtube.com")
-					|| url.startsWith("https://m.youtube.com")) {
-				Intent urlIntent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse(url));
-				urlIntent.putExtra(mPackageName + ".Origin", 1);
-				mActivity.startActivity(urlIntent);
-				return true;
-			} else if (url.startsWith("http://maps.google.com")
-					|| url.startsWith("https://maps.google.com")) {
-				Intent urlIntent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse(url));
-				urlIntent.putExtra(mPackageName + ".Origin", 1);
-				mActivity.startActivity(urlIntent);
-				return true;
-			} else if (url.contains("tel:") || TextUtils.isDigitsOnly(url)) {
-				mActivity.startActivity(new Intent(Intent.ACTION_DIAL, Uri
-						.parse(url)));
-				return true;
-			} else if (url.contains("mailto:")) {
+			if (url.startsWith("about:")) {
+				return super.shouldOverrideUrlLoading(view, url);
+			}
+			if (url.contains("mailto:")) {
 				MailTo mailTo = MailTo.parse(url);
 				Intent i = Utils.newEmailIntent(mActivity, mailTo.getTo(),
 						mailTo.getSubject(), mailTo.getBody(), mailTo.getCc());
 				mActivity.startActivity(i);
 				view.reload();
 				return true;
-			} else if (url.startsWith("magnet:?")) {
-				Intent urlIntent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse(url));
-				urlIntent.putExtra(mPackageName + ".Origin", 1);
-				mActivity.startActivity(urlIntent);
 			} else if (url.startsWith("intent://")) {
 				Intent intent = null;
 				try {
@@ -893,12 +875,12 @@ public class LightningView {
 					try {
 						mActivity.startActivity(intent);
 					} catch (ActivityNotFoundException e) {
-						Log.e(Constants.LOGTAG, "ActivityNotFoundException");
+						Log.e(Constants.TAG, "ActivityNotFoundException");
 					}
 					return true;
 				}
 			}
-			return super.shouldOverrideUrlLoading(view, url);
+			return mIntentUtils.startActivityForUrl(mWebView, url);	
 		}
 	}
 
@@ -925,7 +907,11 @@ public class LightningView {
 
 		@Override
 		public void onReceivedTitle(WebView view, String title) {
-			mTitle.setTitle(title);
+			if (title.length() > 0) {
+				mTitle.setTitle(title);
+			} else {
+				mTitle.setTitle(mActivity.getString(R.string.untitled));
+			}
 			mBrowserController.update();
 			mBrowserController.updateHistory(title, view.getUrl());
 		}
