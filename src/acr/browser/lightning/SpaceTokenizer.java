@@ -40,7 +40,7 @@ public class SpaceTokenizer implements Tokenizer {
 	@Override
 	public CharSequence terminateToken(CharSequence text) {
 		//int i = text.length();
-		if(text.charAt(text.length()-1) != ' '){
+		if (text.charAt(text.length() - 1) != ' ') {
 			text = text + " ";
 		}
 		return text;

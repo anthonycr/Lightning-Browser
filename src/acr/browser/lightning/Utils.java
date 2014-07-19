@@ -3,18 +3,6 @@
  */
 package acr.browser.lightning;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,19 +12,26 @@ import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utils {
-	
-	public static void downloadFile(final Activity activity, final String url, final String userAgent, final String contentDisposition, final boolean privateBrowsing){
+
+	public static void downloadFile(final Activity activity, final String url, final String userAgent,
+			final String contentDisposition, final boolean privateBrowsing) {
 		String fileName = URLUtil.guessFileName(url, null,
 				null);
 		DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null, privateBrowsing);
 		Log.i(Constants.TAG, "Downloading" + fileName);
 	}
-	
+
 	public static synchronized void addBookmark(Context context, String title, String url) {
 		File book = new File(context.getFilesDir(), "bookmarks");
 		File bookUrl = new File(context.getFilesDir(), "bookurl");
-		if((title.equals("Bookmarks")||title.equals("History"))&& url.startsWith("file://")){
+		if ((title.equals("Bookmarks") || title.equals("History")) && url.startsWith("file://")) {
 			return;
 		}
 		try {
@@ -71,48 +66,46 @@ public class Utils {
 		} catch (NullPointerException ignored) {
 		}
 	}
-	
+
 	public static Intent newEmailIntent(Context context, String address,
 			String subject, String body, String cc) {
 		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+		intent.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
 		intent.putExtra(Intent.EXTRA_TEXT, body);
 		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
 		intent.putExtra(Intent.EXTRA_CC, cc);
 		intent.setType("message/rfc822");
 		return intent;
 	}
-	
+
 	public static void createInformativeDialog(Context context, String title,
 			String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(title);
 		builder.setMessage(message).setCancelable(true)
-				.setPositiveButton(context.getResources().getString(R.string.action_ok), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				});
+				.setPositiveButton(context.getResources().getString(R.string.action_ok),
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
+
 	public static void showToast(Context context, String message) {
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
-	
+
 	/**
 	 * Returns the number of pixels corresponding to the passed density pixels
-	 * @param context
-	 * @param densityPixels
-	 * @return
 	 */
 	public static int convertToDensityPixels(Context context, int densityPixels) {
 		float scale = context.getResources().getDisplayMetrics().density;
 		int pixels = (int) (densityPixels * scale + 0.5f);
 		return pixels;
 	}
-	
+
 	public static String getDomainName(String url) {
 		URI uri;
 		try {
@@ -126,7 +119,7 @@ public class Utils {
 		}
 		return domain.startsWith("www.") ? domain.substring(4) : domain;
 	}
-	
+
 	public static List<HistoryItem> getBookmarks(Context context) {
 		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
 		File bookUrl = new File(context.getFilesDir(),
@@ -148,11 +141,11 @@ public class Utils {
 		}
 		return bookmarks;
 	}
-	
+
 	public static String[] getArray(String input) {
 		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
 	}
-	
+
 	public static void trimCache(Context context) {
 		try {
 			File dir = context.getCacheDir();
@@ -164,7 +157,7 @@ public class Utils {
 
 		}
 	}
-	
+
 	public static boolean deleteDir(File dir) {
 		if (dir != null && dir.isDirectory()) {
 			String[] children = dir.list();

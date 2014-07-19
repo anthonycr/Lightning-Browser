@@ -1,5 +1,9 @@
 package acr.browser.lightning;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,14 +12,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.TreeMap;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-
 public class AdBlock {
 
 	private static TreeMap<String, Integer> mAdBlockMap = null;
+
 	private SharedPreferences mPreferences;
+
 	private boolean mBlockAds = false;
 
 	public AdBlock(Context context) {
@@ -88,5 +90,4 @@ public class AdBlock {
 		}
 		return domain.startsWith("www.") ? domain.substring(4) : domain;
 	}
-
 }

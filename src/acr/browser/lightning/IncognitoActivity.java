@@ -10,6 +10,7 @@ import android.webkit.CookieSyncManager;
 public class IncognitoActivity extends BrowserActivity {
 
 	SharedPreferences mPreferences;
+
 	CookieManager mCookieManager;
 
 	@Override
@@ -73,7 +74,4 @@ public class IncognitoActivity extends BrowserActivity {
 		closeDrawers();
 		finish();
 	}
-	
-	
-	
 }

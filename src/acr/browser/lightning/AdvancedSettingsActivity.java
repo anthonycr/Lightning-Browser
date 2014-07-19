@@ -3,27 +3,21 @@
  */
 package acr.browser.lightning;
 
-import java.io.File;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.Browser;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Browser;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.WebIconDatabase;
-import android.webkit.WebView;
-import android.webkit.WebViewDatabase;
+import android.view.WindowManager;
+import android.webkit.*;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -34,15 +28,22 @@ public class AdvancedSettingsActivity extends Activity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
+
 	private static SharedPreferences mPreferences;
+
 	private static SharedPreferences.Editor mEditPrefs;
+
 	private static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11,
 			r12, r13, r14, r15, rIncognitoCookies, rClearCache,
 			rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
+
 	private static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10,
 			cb11, cbIncognitoCookies, cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
+
 	private static Context mContext;
+
 	private boolean mSystemBrowser;
+
 	private Handler messageHandler;
 
 	@Override
@@ -199,18 +200,18 @@ public class AdvancedSettingsActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case 1:
-				Utils.showToast(
-						mContext,
-						mContext.getResources().getString(
-								R.string.message_clear_history));
-				break;
-			case 2:
-				Utils.showToast(
-						mContext,
-						mContext.getResources().getString(
-								R.string.message_cookies_cleared));
-				break;
+				case 1:
+					Utils.showToast(
+							mContext,
+							mContext.getResources().getString(
+									R.string.message_clear_history));
+					break;
+				case 2:
+					Utils.showToast(
+							mContext,
+							mContext.getResources().getString(
+									R.string.message_cookies_cleared));
+					break;
 			}
 			super.handleMessage(msg);
 		}
@@ -244,7 +245,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 		});
 	}
-	
+
 	void cbClearHistoryExit(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -258,6 +259,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 		});
 	}
+
 	void cbClearCookiesExit(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -408,9 +410,9 @@ public class AdvancedSettingsActivity extends Activity {
 
 		});
 	}
-	
-	void cbSearchSuggestions(CheckBox view){
-		view.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+	void cbSearchSuggestions(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
@@ -418,7 +420,7 @@ public class AdvancedSettingsActivity extends Activity {
 				mEditPrefs.putBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, isChecked);
 				mEditPrefs.commit();
 			}
-			
+
 		});
 	}
 
@@ -445,7 +447,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 		});
 	}
-	
+
 	void rClearHistoryExit(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
@@ -469,7 +471,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 		});
 	}
-	
+
 	void r3(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
@@ -690,15 +692,15 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 
 	}
-	
-	void rSearchSuggestions(RelativeLayout view){
-		view.setOnClickListener(new OnClickListener(){
+
+	void rSearchSuggestions(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				cbSearchSuggestions.setChecked(!cbSearchSuggestions.isChecked());
 			}
-			
+
 		});
 	}
 
@@ -810,8 +812,8 @@ public class AdvancedSettingsActivity extends Activity {
 	public void importFromStockBrowser() {
 		if (mSystemBrowser) {
 			try {
-				String[] proj = new String[] { Browser.BookmarkColumns.TITLE,
-						Browser.BookmarkColumns.URL };
+				String[] proj = new String[]{Browser.BookmarkColumns.TITLE,
+						Browser.BookmarkColumns.URL};
 				// use 0 for history, 1 for bookmarks
 				String sel = Browser.BookmarkColumns.BOOKMARK + " = 1";
 				Cursor mCur;
