@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -29,18 +30,14 @@ public class AdvancedSettingsActivity extends Activity {
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
 
-	private static SharedPreferences mPreferences;
+	private SharedPreferences mPreferences;
 
-	private static SharedPreferences.Editor mEditPrefs;
+	private SharedPreferences.Editor mEditPrefs;
 
-	private static RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11,
-			r12, r13, r14, r15, rIncognitoCookies, rClearCache,
-			rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
-
-	private static CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10,
+	private CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10,
 			cb11, cbIncognitoCookies, cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
 
-	private static Context mContext;
+	private Context mContext;
 
 	private boolean mSystemBrowser;
 
@@ -50,19 +47,26 @@ public class AdvancedSettingsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.advanced_settings);
-		getActionBar().setHomeButtonEnabled(true);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+
+		ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
+
+		// TODO WARNING: SharedPreferences.edit() without a corresponding commit() or apply() call
 		mEditPrefs = mPreferences.edit();
+
 		mSystemBrowser = mPreferences.getBoolean(
 				PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
 		mContext = this;
 		initialize();
-
 	}
 
 	@Override
@@ -71,7 +75,11 @@ public class AdvancedSettingsActivity extends Activity {
 		return true;
 	}
 
-	void initialize() {
+	private void initialize() {
+
+		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11,
+				r12, r13, r14, r15, rIncognitoCookies, rClearCache,
+				rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
 
 		r1 = (RelativeLayout) findViewById(R.id.r1);
 		r2 = (RelativeLayout) findViewById(R.id.r2);
@@ -195,7 +203,7 @@ public class AdvancedSettingsActivity extends Activity {
 		messageHandler = new MessageHandler();
 	}
 
-	static class MessageHandler extends Handler {
+	private class MessageHandler extends Handler {
 
 		@Override
 		public void handleMessage(Message msg) {
@@ -215,10 +223,9 @@ public class AdvancedSettingsActivity extends Activity {
 			}
 			super.handleMessage(msg);
 		}
-
 	}
 
-	static void cb1(CheckBox view) {
+	private void cb1(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -232,7 +239,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb2(CheckBox view) {
+	private void cb2(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -246,7 +253,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cbClearHistoryExit(CheckBox view) {
+	private void cbClearHistoryExit(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -260,7 +267,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cbClearCookiesExit(CheckBox view) {
+	private void cbClearCookiesExit(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -274,7 +281,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb3(CheckBox view) {
+	private void cb3(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -288,7 +295,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb4(CheckBox view) {
+	private void cb4(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -301,7 +308,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb5(CheckBox view) {
+	private void cb5(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -315,7 +322,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb6(CheckBox view) {
+	private void cb6(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -328,7 +335,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb7(CheckBox view) {
+	private void cb7(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -341,7 +348,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb8(CheckBox view) {
+	private void cb8(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -355,7 +362,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb9(CheckBox view) {
+	private void cb9(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -369,7 +376,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb10(CheckBox view) {
+	private void cb10(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -383,7 +390,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cb11(CheckBox view) {
+	private void cb11(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -397,7 +404,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cbIncognitoCookies(CheckBox view) {
+	private void cbIncognitoCookies(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -411,7 +418,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void cbSearchSuggestions(CheckBox view) {
+	private void cbSearchSuggestions(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -424,7 +431,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r1(RelativeLayout view) {
+	private void r1(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -436,7 +443,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r2(RelativeLayout view) {
+	private void r2(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -448,7 +455,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void rClearHistoryExit(RelativeLayout view) {
+	private void rClearHistoryExit(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -460,7 +467,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void rClearCookiesExit(RelativeLayout view) {
+	private void rClearCookiesExit(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -472,7 +479,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r3(RelativeLayout view) {
+	private void r3(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -484,7 +491,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r4(RelativeLayout view) {
+	private void r4(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -502,7 +509,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r5(RelativeLayout view) {
+	private void r5(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -514,7 +521,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r6(RelativeLayout view) {
+	private void r6(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -526,7 +533,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r7(RelativeLayout view) {
+	private void r7(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -538,7 +545,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r8(RelativeLayout view) {
+	private void r8(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -586,7 +593,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r11(RelativeLayout view) {
+	private void r11(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -599,7 +606,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 	}
 
-	void r12(RelativeLayout view) {
+	private void r12(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -611,7 +618,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r13(RelativeLayout view) {
+	private void r13(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -622,7 +629,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r14(RelativeLayout view) {
+	private void r14(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -633,7 +640,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void r15(RelativeLayout view) {
+	private void r15(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -680,7 +687,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void rIncognitoCookies(RelativeLayout view) {
+	private void rIncognitoCookies(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -693,7 +700,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 	}
 
-	void rSearchSuggestions(RelativeLayout view) {
+	private void rSearchSuggestions(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -704,7 +711,7 @@ public class AdvancedSettingsActivity extends Activity {
 		});
 	}
 
-	void rClearCache(RelativeLayout view) {
+	private void rClearCache(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -725,11 +732,10 @@ public class AdvancedSettingsActivity extends Activity {
 				getResources().getString(R.string.message_cache_cleared));
 	}
 
+	@SuppressWarnings("deprecation")
 	public void clearHistory() {
-		AdvancedSettingsActivity.this
-				.deleteDatabase(DatabaseHandler.DATABASE_NAME);
-		WebViewDatabase m = WebViewDatabase
-				.getInstance(AdvancedSettingsActivity.this);
+		deleteDatabase(DatabaseHandler.DATABASE_NAME);
+		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
 		m.clearHttpAuthUsernamePassword();
 		if (API < 18) {
@@ -739,11 +745,11 @@ public class AdvancedSettingsActivity extends Activity {
 		if (mSystemBrowser) {
 			try {
 				Browser.clearHistory(getContentResolver());
-			} catch (NullPointerException ignored) {
+			} catch (Exception ignored) {
 			}
 		}
 		SettingsController.setClearHistory(true);
-		Utils.trimCache(AdvancedSettingsActivity.this);
+		Utils.trimCache(this);
 		messageHandler.sendEmptyMessage(1);
 	}
 
@@ -754,21 +760,23 @@ public class AdvancedSettingsActivity extends Activity {
 		messageHandler.sendEmptyMessage(2);
 	}
 
-	void r9(RelativeLayout view) {
+	private void r9(RelativeLayout view) {
 
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-
-				importFromStockBrowser();
-
+				try {
+					importFromStockBrowser();
+				} catch (Exception e) {
+					// ignored exception
+					// TODO add logging
+				}
 			}
-
 		});
 	}
 
-	void r10(RelativeLayout view) {
+	private void r10(RelativeLayout view) {
 		view.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -811,41 +819,36 @@ public class AdvancedSettingsActivity extends Activity {
 
 	public void importFromStockBrowser() {
 		if (mSystemBrowser) {
-			try {
-				String[] proj = new String[]{Browser.BookmarkColumns.TITLE,
-						Browser.BookmarkColumns.URL};
-				// use 0 for history, 1 for bookmarks
-				String sel = Browser.BookmarkColumns.BOOKMARK + " = 1";
-				Cursor mCur;
-				mCur = getContentResolver().query(Browser.BOOKMARKS_URI, proj,
-						sel, null, null);
+			String[] proj = new String[]{Browser.BookmarkColumns.TITLE,
+					Browser.BookmarkColumns.URL};
+			// use 0 for history, 1 for bookmarks
+			String sel = Browser.BookmarkColumns.BOOKMARK + " = 1";
+			Cursor mCur;
+			mCur = getContentResolver().query(Browser.BOOKMARKS_URI, proj,
+					sel, null, null);
 
-				String title = "";
-				String url = "";
-				int number = 0;
-				if (mCur.moveToFirst() && mCur.getCount() > 0) {
-					while (mCur.isAfterLast() == false) {
-						number++;
-						title = mCur.getString(mCur
-								.getColumnIndex(Browser.BookmarkColumns.TITLE));
-						url = mCur.getString(mCur
-								.getColumnIndex(Browser.BookmarkColumns.URL));
-						if (title.length() < 1) {
-							title = Utils.getDomainName(url);
-						}
-						Utils.addBookmark(mContext, title, url);
-						mCur.moveToNext();
+			String title, url;
+			int number = 0;
+			if (mCur.moveToFirst() && mCur.getCount() > 0) {
+				while (!mCur.isAfterLast()) {
+					number++;
+					title = mCur.getString(mCur
+							.getColumnIndex(Browser.BookmarkColumns.TITLE));
+					url = mCur.getString(mCur
+							.getColumnIndex(Browser.BookmarkColumns.URL));
+					if (title.length() < 1) {
+						title = Utils.getDomainName(url);
 					}
+					Utils.addBookmark(mContext, title, url);
+					mCur.moveToNext();
 				}
-				Utils.showToast(mContext, number + " "
-						+ getResources().getString(R.string.message_import));
-			} catch (NullPointerException ignored) {
 			}
+			Utils.showToast(mContext, number + " "
+					+ getResources().getString(R.string.message_import));
 		} else {
 			Utils.createInformativeDialog(mContext,
 					getResources().getString(R.string.title_error),
 					getResources().getString(R.string.dialog_import_error));
 		}
 	}
-
 }

@@ -4,6 +4,7 @@
 package acr.browser.lightning;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -33,27 +34,25 @@ public class SettingsActivity extends Activity {
 
 	private static int API = android.os.Build.VERSION.SDK_INT;
 
-	private static SharedPreferences.Editor mEditPrefs;
+	private SharedPreferences.Editor mEditPrefs;
 
-	private static int mAgentChoice;
+	private int mAgentChoice;
 
-	private static String mHomepage;
+	private String mHomepage;
 
-	private static TextView mAgentTextView;
+	private TextView mAgentTextView;
 
-	private static TextView mDownloadTextView;
+	private TextView mDownloadTextView;
 
-	private static int mEasterEggCounter = 0;
+	private int mEasterEggCounter;
 
-	private static String mSearchUrl;
+	private String mDownloadLocation;
 
-	private static String mDownloadLocation;
+	private TextView mHomepageText;
 
-	private static TextView mHomepageText;
+	private SharedPreferences mPreferences;
 
-	private static SharedPreferences mPreferences;
-
-	private static TextView mSearchText;
+	private TextView mSearchText;
 
 	private Context mContext;
 
@@ -77,8 +76,12 @@ public class SettingsActivity extends Activity {
 	@SuppressLint("NewApi")
 	public void init() {
 		// mPreferences storage
-		getActionBar().setHomeButtonEnabled(true);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -151,7 +154,7 @@ public class SettingsActivity extends Activity {
 				PreferenceConstants.DOWNLOAD_DIRECTORY,
 				Environment.DIRECTORY_DOWNLOADS);
 
-		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + "/"
+		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/'
 				+ mDownloadLocation);
 
 		String code = "HOLO";
@@ -161,7 +164,7 @@ public class SettingsActivity extends Activity {
 					getPackageName(), 0);
 			code = p.versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TODO add logging
 			e.printStackTrace();
 		}
 
@@ -341,13 +344,12 @@ public class SettingsActivity extends Activity {
 	}
 
 	public void searchUrlPicker() {
-		final AlertDialog.Builder urlPicker = new AlertDialog.Builder(
-				SettingsActivity.this);
+		final AlertDialog.Builder urlPicker = new AlertDialog.Builder(this);
 
 		urlPicker.setTitle(getResources().getString(R.string.custom_url));
-		final EditText getSearchUrl = new EditText(SettingsActivity.this);
+		final EditText getSearchUrl = new EditText(this);
 
-		mSearchUrl = mPreferences.getString(PreferenceConstants.SEARCH_URL,
+		String mSearchUrl = mPreferences.getString(PreferenceConstants.SEARCH_URL,
 				Constants.GOOGLE_SEARCH);
 		getSearchUrl.setText(mSearchUrl);
 		urlPicker.setView(getSearchUrl);
@@ -737,7 +739,7 @@ public class SettingsActivity extends Activity {
 
 		agentStringPicker.setTitle(getResources().getString(
 				R.string.title_user_agent));
-		final EditText getAgent = new EditText(SettingsActivity.this);
+		final EditText getAgent = new EditText(this);
 		agentStringPicker.setView(getAgent);
 		agentStringPicker.setPositiveButton(
 				getResources().getString(R.string.action_ok),
@@ -768,7 +770,7 @@ public class SettingsActivity extends Activity {
 				mDownloadLocation = mPreferences.getString(
 						PreferenceConstants.DOWNLOAD_DIRECTORY,
 						Environment.DIRECTORY_DOWNLOADS);
-				int n = -1;
+				int n;
 				if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
 					n = 1;
 				} else {
@@ -791,7 +793,7 @@ public class SettingsActivity extends Activity {
 										mEditPrefs.commit();
 										mDownloadTextView
 												.setText(Constants.EXTERNAL_STORAGE
-														+ "/"
+														+ '/'
 														+ Environment.DIRECTORY_DOWNLOADS);
 										break;
 									case 2:
@@ -822,7 +824,7 @@ public class SettingsActivity extends Activity {
 				mActivity);
 		homePicker.setTitle(getResources().getString(
 				R.string.title_custom_homepage));
-		final EditText getHome = new EditText(SettingsActivity.this);
+		final EditText getHome = new EditText(this);
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE,
 				Constants.HOMEPAGE);
 		if (!mHomepage.startsWith("about:")) {
@@ -854,7 +856,7 @@ public class SettingsActivity extends Activity {
 		LinearLayout layout = new LinearLayout(this);
 		downLocationPicker.setTitle(getResources().getString(
 				R.string.title_download_location));
-		final EditText getDownload = new EditText(SettingsActivity.this);
+		final EditText getDownload = new EditText(this);
 		getDownload.setBackgroundResource(0);
 		mDownloadLocation = mPreferences.getString(
 				PreferenceConstants.DOWNLOAD_DIRECTORY,
@@ -873,7 +875,7 @@ public class SettingsActivity extends Activity {
 		TextView v = new TextView(this);
 		v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
 		v.setTextColor(Color.DKGRAY);
-		v.setText(Constants.EXTERNAL_STORAGE + "/");
+		v.setText(Constants.EXTERNAL_STORAGE + '/');
 		v.setPadding(padding, padding, 0, padding);
 		layout.addView(v);
 		layout.addView(getDownload);
@@ -896,7 +898,7 @@ public class SettingsActivity extends Activity {
 								PreferenceConstants.DOWNLOAD_DIRECTORY, text);
 						mEditPrefs.commit();
 						mDownloadTextView.setText(Constants.EXTERNAL_STORAGE
-								+ "/" + text);
+								+ '/' + text);
 					}
 				});
 		downLocationPicker.show();
@@ -911,7 +913,7 @@ public class SettingsActivity extends Activity {
 				picker.setTitle(getResources().getString(R.string.home));
 				mHomepage = mPreferences.getString(
 						PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
-				int n = -1;
+				int n;
 				if (mHomepage.contains("about:home")) {
 					n = 1;
 				} else if (mHomepage.contains("about:blank")) {
