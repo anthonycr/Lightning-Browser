@@ -17,6 +17,7 @@ project.properties
 .classpath
 .settings/
 .loadpath
+proguard/
 
 # External tool builders
 .externalToolBuilders/
