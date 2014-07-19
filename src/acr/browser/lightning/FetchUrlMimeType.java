@@ -21,7 +21,7 @@ import java.io.IOException;
  * on a link or image and we don't know the mimetype. If the user just clicks on the link, we will do the same steps of
  * correcting the mimetype down in android.os.webkit.LoadListener rather than handling it here.
  */
-class FetchUrlMimeType extends Thread {
+public class FetchUrlMimeType extends Thread {
 
 	private Context mContext;
 
