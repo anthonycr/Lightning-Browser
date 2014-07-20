@@ -90,6 +90,10 @@ public class IntentUtils {
 				// Error on the side of staying in the browser, ignore
 				continue;
 			}
+			// NOTICE: Use of && instead of || will cause the browser
+			// to launch a new intent for every URL, using OR only 
+			// launches a new one if there is a non-browser app that
+			// can handle it.
 			if (filter.countDataAuthorities() == 0
 					|| filter.countDataPaths() == 0) {
 				// Generic handler, skip
