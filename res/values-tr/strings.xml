@@ -34,17 +34,14 @@
     <string name="cookies">Çerezleri etkinleştirme</string>
     <string name="importbookmarks">Tarayıcı yer imlerini içe aktarma</string>
     <string name="size">Metin boyutu</string>
-    <string name="title_activity_advanced_settings">Gelişmi Ayarlar</string>
     <string name="hello_world">Merhaba dünya!</string>
     <string name="recommended">(Önerilen)</string>
-    <string name="weird_look">(Web siteleri garip görünebilir)</string>
     <string name="search">Arama Motoru</string>
     <string name="search_hint">Arama</string>
     <string name="wideViewPort">Geniş görünüm kullanma</string>
     <string name="overViewMode">Genel bakış modunda sayfaları yükleme</string>
     <string name="restore">Kaybolan pencereleri başlangıçta yükleme</string>
     <string name="action_history">Geçmiş</string>
-    <string name="action_add">Yer imi ekle</string>
     <string name="action_bookmarks">Yer imleri</string>
     <string name="action_share">Paylaş</string>
     <string name="action_settings">Ayarlar</string>

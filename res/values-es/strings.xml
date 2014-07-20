@@ -31,7 +31,6 @@
     <string name="settings_title">Ajustes</string>
     <string name="download">Ruta de descargas</string>
     <string name="advanced">Ajustes avanzados</string>
-    <string name="gestures">Habilitar gestos de Atrás y Adelante</string>
     <string name="source">Código fuente</string>
     <string name="license">Licencia</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -47,7 +46,6 @@
     <string name="importbookmarks">Importar marcadores</string>
     <string name="size">Tamaño de la tipografía</string>
     <string name="recommended">(Recomendado)</string>
-    <string name="weird_look">(Puede causar visualización extraña)</string>
     <string name="search">Motor de búsquedas</string>
     <string name="search_hint">Buscar</string>
     <string name="custom_url">URL Personalizada</string>
