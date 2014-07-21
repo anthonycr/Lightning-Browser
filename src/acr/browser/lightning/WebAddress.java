@@ -11,15 +11,15 @@ import static android.util.Patterns.GOOD_IRI_CHAR;
 
 /**
  * {@hide}
- *
+ * 
  * Web Address Parser
- *
- * This is called WebAddress, rather than URL or URI, because it attempts to parse the stuff that a user will actually
- * type into a browser address widget.
- *
- * Unlike java.net.uri, this parser will not choke on URIs missing schemes.  It will only throw a ParseException if the
- * input is really hosed.
- *
+ * 
+ * This is called WebAddress, rather than URL or URI, because it attempts to
+ * parse the stuff that a user will actually type into a browser address widget.
+ * 
+ * Unlike java.net.uri, this parser will not choke on URIs missing schemes. It
+ * will only throw a ParseException if the input is really hosed.
+ * 
  * If given an https scheme but no port, fills in port
  */
 public class WebAddress {
@@ -44,13 +44,14 @@ public class WebAddress {
 
 	static final int MATCH_GROUP_PATH = 5;
 
-	static Pattern sAddressPattern = Pattern.compile(
-			/* scheme    */ "(?:(http|https|file)\\:\\/\\/)?" +
-            /* authority */ "(?:([-A-Za-z0-9$_.+!*'(),;?&=]+(?:\\:[-A-Za-z0-9$_.+!*'(),;?&=]+)?)@)?" +
-            /* host      */ "([" + GOOD_IRI_CHAR + "%_-][" + GOOD_IRI_CHAR + "%_\\.-]*|\\[[0-9a-fA-F:\\.]+\\])?" +
-            /* port      */ "(?:\\:([0-9]*))?" +
-            /* path      */ "(\\/?[^#]*)?" +
-            /* anchor    */ ".*", Pattern.CASE_INSENSITIVE);
+	static Pattern sAddressPattern = Pattern
+			.compile(
+					/* scheme */"(?:(http|https|file)\\:\\/\\/)?" +
+					/* authority */"(?:([-A-Za-z0-9$_.+!*'(),;?&=]+(?:\\:[-A-Za-z0-9$_.+!*'(),;?&=]+)?)@)?" +
+					/* host */"([" + GOOD_IRI_CHAR + "%_-][" + GOOD_IRI_CHAR + "%_\\.-]*|\\[[0-9a-fA-F:\\.]+\\])?" +
+					/* port */"(?:\\:([0-9]*))?" +
+					/* path */"(\\/?[^#]*)?" +
+					/* anchor */".*", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * parses given uriString.
@@ -94,8 +95,10 @@ public class WebAddress {
 			}
 			t = m.group(MATCH_GROUP_PATH);
 			if (t != null && t.length() > 0) {
-                /* handle busted myspace frontpage redirect with
-                   missing initial "/" */
+				/*
+				 * handle busted myspace frontpage redirect with missing initial
+				 * "/"
+				 */
 				if (t.charAt(0) == '/') {
 					mPath = t;
 				} else {
@@ -108,8 +111,9 @@ public class WebAddress {
 			throw new Exception();
 		}
 
-        /* Get port from scheme or scheme from port, if necessary and
-           possible */
+		/*
+		 * Get port from scheme or scheme from port, if necessary and possible
+		 */
 		if (mPort == 443 && mScheme.equals("")) {
 			mScheme = "https";
 		} else if (mPort == -1) {
@@ -127,8 +131,8 @@ public class WebAddress {
 	@Override
 	public String toString() {
 		String port = "";
-		if ((mPort != 443 && mScheme.equals("https")) ||
-				(mPort != 80 && mScheme.equals("http"))) {
+		if ((mPort != 443 && mScheme.equals("https"))
+				|| (mPort != 80 && mScheme.equals("http"))) {
 			port = ":" + Integer.toString(mPort);
 		}
 		String authInfo = "";
