@@ -4,28 +4,10 @@
 
 package acr.browser.lightning;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import org.apache.http.util.ByteArrayBuffer;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.MailTo;
@@ -33,7 +15,6 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Message;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -42,39 +23,50 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.webkit.CookieManager;
-import android.webkit.GeolocationPermissions;
-import android.webkit.HttpAuthHandler;
-import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
+import android.webkit.*;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.VideoView;
+import org.apache.http.util.ByteArrayBuffer;
+
+import java.io.*;
+import java.net.*;
 
 public class LightningView {
 
 	private Title mTitle;
+
 	private WebView mWebView;
+
 	private BrowserController mBrowserController;
+
 	private GestureDetector mGestureDetector;
+
 	private Activity mActivity;
+
 	private WebSettings mSettings;
+
 	private static int API = android.os.Build.VERSION.SDK_INT;
+
 	private static String mHomepage;
+
 	private static String mDefaultUserAgent;
+
 	private static Bitmap mWebpageBitmap;
+
 	private static SharedPreferences mPreferences;
+
 	private static boolean mWideViewPort;
+
 	private static AdBlock mAdBlock;
+
 	private CookieManager mCookieManager;
+
 	private boolean isForgroundTab = false;
+
 	private IntentUtils mIntentUtils = null;
 
 	@SuppressLint("NewApi")
@@ -122,7 +114,9 @@ public class LightningView {
 		mWebView.setOnTouchListener(new OnTouchListener() {
 
 			float mLocation = 0;
+
 			float mY = 0;
+
 			int mAction = 0;
 
 			@Override
@@ -172,85 +166,85 @@ public class LightningView {
 		String home = "";
 		home = HomepageVariables.HEAD;
 		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
-		case 0:
-			// CUSTOM SEARCH
-			home = home + "file:///android_asset/lightning.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home
-					+ mPreferences.getString(PreferenceConstants.SEARCH_URL,
-							Constants.GOOGLE_SEARCH);
-			break;
-		case 1:
-			// GOOGLE_SEARCH;
-			home = home + "file:///android_asset/google.png";
-			// + "https://www.google.com/images/srpr/logo11w.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.GOOGLE_SEARCH;
-			break;
-		case 2:
-			// ANDROID SEARCH;
-			home = home + "file:///android_asset/lightning.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.ANDROID_SEARCH;
-			break;
-		case 3:
-			// BING_SEARCH;
-			home = home + "file:///android_asset/bing.png";
-			// +
-			// "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.BING_SEARCH;
-			break;
-		case 4:
-			// YAHOO_SEARCH;
-			home = home + "file:///android_asset/yahoo.png";
-			// +
-			// "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.YAHOO_SEARCH;
-			break;
-		case 5:
-			// STARTPAGE_SEARCH;
-			home = home + "file:///android_asset/startpage.png";
-			// + "https://startpage.com/graphics/startp_logo.gif";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.STARTPAGE_SEARCH;
-			break;
-		case 6:
-			// STARTPAGE_MOBILE
-			home = home + "file:///android_asset/startpage.png";
-			// + "https://startpage.com/graphics/startp_logo.gif";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.STARTPAGE_MOBILE_SEARCH;
-		case 7:
-			// DUCK_SEARCH;
-			home = home + "file:///android_asset/duckduckgo.png";
-			// + "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.DUCK_SEARCH;
-			break;
-		case 8:
-			// DUCK_LITE_SEARCH;
-			home = home + "file:///android_asset/duckduckgo.png";
-			// + "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.DUCK_LITE_SEARCH;
-			break;
-		case 9:
-			// BAIDU_SEARCH;
-			home = home + "file:///android_asset/baidu.png";
-			// + "http://www.baidu.com/img/bdlogo.gif";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.BAIDU_SEARCH;
-			break;
-		case 10:
-			// YANDEX_SEARCH;
-			home = home + "file:///android_asset/yandex.png";
-			// +
-			// "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-			home = home + HomepageVariables.MIDDLE;
-			home = home + Constants.YANDEX_SEARCH;
-			break;
+			case 0:
+				// CUSTOM SEARCH
+				home = home + "file:///android_asset/lightning.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home
+						+ mPreferences.getString(PreferenceConstants.SEARCH_URL,
+						Constants.GOOGLE_SEARCH);
+				break;
+			case 1:
+				// GOOGLE_SEARCH;
+				home = home + "file:///android_asset/google.png";
+				// + "https://www.google.com/images/srpr/logo11w.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.GOOGLE_SEARCH;
+				break;
+			case 2:
+				// ANDROID SEARCH;
+				home = home + "file:///android_asset/lightning.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.ANDROID_SEARCH;
+				break;
+			case 3:
+				// BING_SEARCH;
+				home = home + "file:///android_asset/bing.png";
+				// +
+				// "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.BING_SEARCH;
+				break;
+			case 4:
+				// YAHOO_SEARCH;
+				home = home + "file:///android_asset/yahoo.png";
+				// +
+				// "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.YAHOO_SEARCH;
+				break;
+			case 5:
+				// STARTPAGE_SEARCH;
+				home = home + "file:///android_asset/startpage.png";
+				// + "https://startpage.com/graphics/startp_logo.gif";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.STARTPAGE_SEARCH;
+				break;
+			case 6:
+				// STARTPAGE_MOBILE
+				home = home + "file:///android_asset/startpage.png";
+				// + "https://startpage.com/graphics/startp_logo.gif";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.STARTPAGE_MOBILE_SEARCH;
+			case 7:
+				// DUCK_SEARCH;
+				home = home + "file:///android_asset/duckduckgo.png";
+				// + "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.DUCK_SEARCH;
+				break;
+			case 8:
+				// DUCK_LITE_SEARCH;
+				home = home + "file:///android_asset/duckduckgo.png";
+				// + "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.DUCK_LITE_SEARCH;
+				break;
+			case 9:
+				// BAIDU_SEARCH;
+				home = home + "file:///android_asset/baidu.png";
+				// + "http://www.baidu.com/img/bdlogo.gif";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.BAIDU_SEARCH;
+				break;
+			case 10:
+				// YANDEX_SEARCH;
+				home = home + "file:///android_asset/yandex.png";
+				// +
+				// "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
+				home = home + HomepageVariables.MIDDLE;
+				home = home + Constants.YANDEX_SEARCH;
+				break;
 
 		}
 
@@ -285,40 +279,39 @@ public class LightningView {
 		if (API < 19) {
 			switch (mPreferences.getInt(
 					PreferenceConstants.ADOBE_FLASH_SUPPORT, 0)) {
-			case 0:
-				mSettings.setPluginState(PluginState.OFF);
-				break;
-			case 1: {
-				mSettings.setPluginState(PluginState.ON_DEMAND);
-				break;
-			}
-			case 2: {
-				mSettings.setPluginState(PluginState.ON);
-				break;
-			}
-			default:
-				break;
+				case 0:
+					mSettings.setPluginState(PluginState.OFF);
+					break;
+				case 1:
+					mSettings.setPluginState(PluginState.ON_DEMAND);
+					break;
+				case 2:
+					mSettings.setPluginState(PluginState.ON);
+					break;
+				default:
+					break;
 			}
 		}
 
 		switch (mPreferences.getInt(PreferenceConstants.USER_AGENT, 1)) {
-		case 1:
-			if (API > 16)
-				mSettings.setUserAgentString(WebSettings
-						.getDefaultUserAgent(context));
-			else
-				mSettings.setUserAgentString(mDefaultUserAgent);
-			break;
-		case 2:
-			mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
-			break;
-		case 3:
-			mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
-			break;
-		case 4:
-			mSettings.setUserAgentString(mPreferences.getString(
-					PreferenceConstants.USER_AGENT_STRING, mDefaultUserAgent));
-			break;
+			case 1:
+				if (API > 16) {
+					mSettings.setUserAgentString(WebSettings
+							.getDefaultUserAgent(context));
+				} else {
+					mSettings.setUserAgentString(mDefaultUserAgent);
+				}
+				break;
+			case 2:
+				mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
+				break;
+			case 3:
+				mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
+				break;
+			case 4:
+				mSettings.setUserAgentString(mPreferences.getString(
+						PreferenceConstants.USER_AGENT_STRING, mDefaultUserAgent));
+				break;
 		}
 
 		if (mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, false)) {
@@ -350,25 +343,25 @@ public class LightningView {
 		mSettings.setLoadWithOverviewMode(mPreferences.getBoolean(
 				PreferenceConstants.OVERVIEW_MODE, true));
 		switch (mPreferences.getInt(PreferenceConstants.TEXT_SIZE, 3)) {
-		case 1:
-			mSettings.setTextZoom(200);
-			break;
-		case 2:
-			mSettings.setTextZoom(150);
-			break;
-		case 3:
-			mSettings.setTextZoom(100);
-			break;
-		case 4:
-			mSettings.setTextZoom(75);
-			break;
-		case 5:
-			mSettings.setTextZoom(50);
-			break;
+			case 1:
+				mSettings.setTextZoom(200);
+				break;
+			case 2:
+				mSettings.setTextZoom(150);
+				break;
+			case 3:
+				mSettings.setTextZoom(100);
+				break;
+			case 4:
+				mSettings.setTextZoom(75);
+				break;
+			case 5:
+				mSettings.setTextZoom(50);
+				break;
 		}
 	}
 
-	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
+	@SuppressLint({"SetJavaScriptEnabled", "NewApi"})
 	public void initializeSettings(WebSettings settings, Context context) {
 		if (API < 18) {
 			settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -403,20 +396,23 @@ public class LightningView {
 	}
 
 	public boolean isShown() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			return mWebView.isShown();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	public synchronized void onPause() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			mWebView.onPause();
+		}
 	}
 
 	public synchronized void onResume() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			mWebView.onResume();
+		}
 	}
 
 	public void setIsForgroundTab(boolean isForground) {
@@ -456,8 +452,9 @@ public class LightningView {
 
 	public void requestFocus() {
 		if (mWebView != null) {
-			if (!mWebView.hasFocus())
+			if (!mWebView.hasFocus()) {
 				mWebView.requestFocus();
+			}
 		}
 	}
 
@@ -508,8 +505,9 @@ public class LightningView {
 	}
 
 	public synchronized void goBack() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			mWebView.goBack();
+		}
 	}
 
 	public String getUserAgent() {
@@ -521,8 +519,9 @@ public class LightningView {
 	}
 
 	public synchronized void goForward() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			mWebView.goForward();
+		}
 	}
 
 	public boolean canGoBack() {
@@ -550,13 +549,15 @@ public class LightningView {
 	}
 
 	public synchronized void loadUrl(String url) {
-		if (mWebView != null)
+		if (mWebView != null) {
 			mWebView.loadUrl(url);
+		}
 	}
 
 	public synchronized void invalidate() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			mWebView.invalidate();
+		}
 	}
 
 	public String getTitle() {
@@ -564,10 +565,11 @@ public class LightningView {
 	}
 
 	public String getUrl() {
-		if (mWebView != null)
+		if (mWebView != null) {
 			return mWebView.getUrl();
-		else
+		} else {
 			return "";
+		}
 	}
 
 	public class LightningWebClient extends WebViewClient {
@@ -593,11 +595,13 @@ public class LightningView {
 					PreferenceConstants.USE_PROXY, false);
 			boolean mDoLeakHardening = false;
 
-			if (!useProxy)
+			if (!useProxy) {
 				return null;
+			}
 
-			if (!mDoLeakHardening)
+			if (!mDoLeakHardening) {
 				return null;
+			}
 
 			// now we are going to proxy!
 			try {
@@ -636,13 +640,15 @@ public class LightningView {
 
 					if (cEnc == null && ctArray.length > 1) {
 						cEnc = ctArray[1];
-						if (cEnc.indexOf('=') != -1)
+						if (cEnc.indexOf('=') != -1) {
 							cEnc = cEnc.split("=")[1].trim();
+						}
 					}
 				}
 
-				if (connLen <= 0)
+				if (connLen <= 0) {
 					connLen = 2048;
+				}
 
 				if (cType != null && cType.startsWith("text")) {
 					InputStream fStream = null;
@@ -683,9 +689,9 @@ public class LightningView {
 				}/**
 				 * else if (mDoLeakHardening) { WebResourceResponse response =
 				 * new WebResourceResponse( cType, cEnc, conn.getInputStream());
-				 * 
+				 *
 				 * return response;
-				 * 
+				 *
 				 * }
 				 */
 				else {
@@ -880,7 +886,7 @@ public class LightningView {
 					return true;
 				}
 			}
-			return mIntentUtils.startActivityForUrl(mWebView, url);	
+			return mIntentUtils.startActivityForUrl(mWebView, url);
 		}
 	}
 
@@ -1043,8 +1049,11 @@ public class LightningView {
 	}
 
 	public class Title {
+
 		private Bitmap mFavicon;
+
 		private String mTitle;
+
 		private Bitmap mDefaultIcon;
 
 		public Title(Context context) {

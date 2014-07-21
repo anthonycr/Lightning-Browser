@@ -10,6 +10,7 @@ import android.webkit.CookieSyncManager;
 public class MainActivity extends BrowserActivity {
 
 	SharedPreferences mPreferences;
+
 	CookieManager mCookieManager;
 
 	@Override
@@ -72,7 +73,4 @@ public class MainActivity extends BrowserActivity {
 		closeDrawers();
 		moveTaskToBack(true);
 	}
-	
-	
-	
 }

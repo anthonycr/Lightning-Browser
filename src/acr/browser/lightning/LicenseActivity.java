@@ -31,15 +31,15 @@ public class LicenseActivity extends Activity implements View.OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.browserLicense:
-			actionView("http://www.mozilla.org/MPL/2.0/");
-			break;
-		case R.id.licenseAOSP:
-			actionView("http://www.apache.org/licenses/LICENSE-2.0");
-			break;
-		case R.id.licenseHosts:
-			actionView("http://hosts-file.net/");
-			break;
+			case R.id.browserLicense:
+				actionView("http://www.mozilla.org/MPL/2.0/");
+				break;
+			case R.id.licenseAOSP:
+				actionView("http://www.apache.org/licenses/LICENSE-2.0");
+				break;
+			case R.id.licenseHosts:
+				actionView("http://hosts-file.net/");
+				break;
 		}
 	}
 
@@ -54,5 +54,4 @@ public class LicenseActivity extends Activity implements View.OnClickListener {
 		finish();
 		return super.onOptionsItemSelected(item);
 	}
-
 }

@@ -3,14 +3,14 @@
  */
 package acr.browser.lightning;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -26,8 +26,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// HistoryItems Table Columns names
 	public static final String KEY_ID = "id";
+
 	public static final String KEY_URL = "url";
+
 	public static final String KEY_TITLE = "title";
+
 	public static SQLiteDatabase mDatabase;
 
 	public DatabaseHandler(Context context) {
@@ -54,18 +57,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// Create tables again
 		onCreate(db);
 	}
-	
-	public boolean isOpen(){
-		if(mDatabase != null)
+
+	public boolean isOpen() {
+		if (mDatabase != null) {
 			return mDatabase.isOpen();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
 	public synchronized void close() {
-		if(mDatabase != null)
+		if (mDatabase != null) {
 			mDatabase.close();
+		}
 		super.close();
 	}
 
@@ -75,8 +80,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public synchronized void delete(String url) {
 		String n = getHistoryItem(url);
-		if(n != null)
+		if (n != null) {
 			deleteHistoryItem(n);
+		}
 	}
 
 	// Adding new item
@@ -90,8 +96,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// Getting single item
 	String getHistoryItem(String url) {
-		Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[] { KEY_ID, KEY_URL,
-				KEY_TITLE }, KEY_URL + "=?", new String[] { url }, null, null,
+		Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL,
+						KEY_TITLE}, KEY_URL + "=?", new String[]{url}, null, null,
 				null, null);
 		String m = null;
 		if (cursor != null) {
@@ -103,11 +109,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// return item
 		return m;
 	}
-	
+
 	public List<HistoryItem> findItemsContaining(String search) {
 		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
 		//select query
-		String selectQuery = "SELECT * FROM " +TABLE_HISTORY +" WHERE "+KEY_TITLE+" LIKE '%" + search + "%'";
+		String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%" + search + "%'";
 		Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
 		// looping through all rows and adding to list
@@ -126,7 +132,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// return item list
 		return itemList;
 	}
-	
+
 	public List<HistoryItem> getLastHundredItems() {
 		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
 		String selectQuery = "SELECT  * FROM " + TABLE_HISTORY;
@@ -175,7 +181,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_URL, item.getUrl());
 		values.put(KEY_TITLE, item.getTitle());
 		int n = mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
-				new String[] { String.valueOf(item.getId()) });
+				new String[]{String.valueOf(item.getId())});
 		// updating row
 		return n;
 	}
@@ -183,7 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// Deleting single item
 	public synchronized void deleteHistoryItem(String id) {
 		mDatabase.delete(TABLE_HISTORY, KEY_ID + " = ?",
-				new String[] { String.valueOf(id) });
+				new String[]{String.valueOf(id)});
 	}
 
 	// Getting items Count
@@ -195,5 +201,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		// return count
 		return cursor.getCount();
 	}
-	
 }

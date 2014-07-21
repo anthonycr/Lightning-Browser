@@ -1,19 +1,5 @@
 package acr.browser.lightning;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,23 +10,41 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
 	private List<HistoryItem> mHistory;
+
 	private List<HistoryItem> mBookmarks;
+
 	private List<HistoryItem> mSuggestions;
+
 	private List<HistoryItem> mFilteredList;
+
 	private List<HistoryItem> mAllBookmarks;
+
 	private DatabaseHandler mDatabaseHandler;
+
 	private SharedPreferences mPreferences;
+
 	private boolean mUseGoogle = true;
+
 	private Context mContext;
+
 	private boolean mIncognito = false;
 
 	public SearchAdapter(Context context, boolean incognito) {
@@ -114,33 +118,33 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		int imageId = R.drawable.ic_bookmark;
 		switch (web.getImageId()) {
-		case R.drawable.ic_bookmark: {
-			if (!mIncognito) {
-				imageId = R.drawable.ic_bookmark;
-			} else {
-				holder.mTitle.setTextColor(Color.WHITE);
-				imageId = R.drawable.ic_bookmark_dark;
+			case R.drawable.ic_bookmark: {
+				if (!mIncognito) {
+					imageId = R.drawable.ic_bookmark;
+				} else {
+					holder.mTitle.setTextColor(Color.WHITE);
+					imageId = R.drawable.ic_bookmark_dark;
+				}
+				break;
 			}
-			break;
-		}
-		case R.drawable.ic_search: {
-			if (!mIncognito) {
-				imageId = R.drawable.ic_search;
-			} else {
-				holder.mTitle.setTextColor(Color.WHITE);
-				imageId = R.drawable.ic_search_dark;
+			case R.drawable.ic_search: {
+				if (!mIncognito) {
+					imageId = R.drawable.ic_search;
+				} else {
+					holder.mTitle.setTextColor(Color.WHITE);
+					imageId = R.drawable.ic_search_dark;
+				}
+				break;
 			}
-			break;
-		}
-		case R.drawable.ic_history: {
-			if (!mIncognito) {
-				imageId = R.drawable.ic_history;
-			} else {
-				holder.mTitle.setTextColor(Color.WHITE);
-				imageId = R.drawable.ic_history_dark;
+			case R.drawable.ic_history: {
+				if (!mIncognito) {
+					imageId = R.drawable.ic_history;
+				} else {
+					holder.mTitle.setTextColor(Color.WHITE);
+					imageId = R.drawable.ic_history_dark;
+				}
+				break;
 			}
-			break;
-		}
 		}
 
 		holder.mImage.setImageDrawable(mContext.getResources().getDrawable(
@@ -235,8 +239,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	}
 
 	private class SuggestionHolder {
+
 		ImageView mImage;
+
 		TextView mTitle;
+
 		TextView mUrl;
 	}
 
@@ -389,5 +396,4 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		return filteredList;
 	}
-
 }

@@ -27,5 +27,4 @@ public class ClickHandler extends Handler {
 		url = msg.getData().getString("url");
 		mBrowserController.longClickPage(url);
 	}
-
 }

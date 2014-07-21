@@ -4,38 +4,10 @@
 
 package acr.browser.lightning;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
@@ -64,96 +36,131 @@ import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.ValueCallback;
-import android.webkit.WebViewDatabase;
+import android.webkit.*;
 import android.webkit.WebChromeClient.CustomViewCallback;
-import android.webkit.WebIconDatabase;
-import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.VideoView;
+import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.onionkit.web.WebkitProxy;
+
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.util.*;
 
 public class BrowserActivity extends Activity implements BrowserController {
+
 	private DrawerLayout mDrawerLayout;
+
 	private ListView mDrawerList;
+
 	private RelativeLayout mDrawer;
+
 	private LinearLayout mDrawerRight;
+
 	private ListView mDrawerListRight;
+
 	private RelativeLayout mNewTab;
+
 	private ActionBarDrawerToggle mDrawerToggle;
+
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
+
 	private List<Integer> mIdList = new ArrayList<Integer>();
+
 	private LightningView mCurrentView;
+
 	private int mIdGenerator;
+
 	private LightningViewAdapter mTitleAdapter;
+
 	private List<HistoryItem> mBookmarkList;
+
 	private BookmarkViewAdapter mBookmarkAdapter;
+
 	private AutoCompleteTextView mSearch;
+
 	private ClickHandler mClickHandler;
+
 	private ProgressBar mProgress;
+
 	private boolean mSystemBrowser = false;
+
 	private ValueCallback<Uri> mUploadMessage;
+
 	private View mCustomView;
+
 	private int mOriginalOrientation;
+
 	private int mActionBarSize;
+
 	private ActionBar mActionBar;
+
 	private boolean mFullScreen;
+
 	private FrameLayout mBrowserFrame;
+
 	private FullscreenHolder mFullscreenContainer;
+
 	private CustomViewCallback mCustomViewCallback;
+
 	private final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT,
 			ViewGroup.LayoutParams.MATCH_PARENT);
+
 	private Bitmap mDefaultVideoPoster;
+
 	private View mVideoProgressView;
+
 	private DatabaseHandler mHistoryHandler;
+
 	private SQLiteDatabase mHistoryDatabase;
+
 	private SharedPreferences mPreferences;
+
 	private SharedPreferences.Editor mEditPrefs;
+
 	private Context mContext;
+
 	private Bitmap mWebpageBitmap;
+
 	private String mSearchText;
+
 	private Activity mActivity;
+
 	private CookieManager mCookieManager;
+
 	private final int API = android.os.Build.VERSION.SDK_INT;
+
 	private Drawable mDeleteIcon;
+
 	private Drawable mRefreshIcon;
+
 	private Drawable mCopyIcon;
+
 	private Drawable mIcon;
+
 	private int mActionBarSizeDp;
+
 	private int mNumberIconColor;
+
 	private String mHomepage;
+
 	private boolean mIsNewIntent = false;
+
 	private VideoView mVideoView;
+
 	private static SearchAdapter mSearchAdapter;
+
 	private boolean isIncognito = false;
 
 	@Override
@@ -203,7 +210,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mActionBar = getActionBar();
 		final TypedArray styledAttributes = mContext.getTheme()
 				.obtainStyledAttributes(
-						new int[] { android.R.attr.actionBarSize });
+						new int[]{android.R.attr.actionBarSize});
 		mActionBarSize = (int) styledAttributes.getDimension(0, 0);
 		if (pixelsToDp(mActionBarSize) < 48) {
 			mActionBarSize = getDp(48);
@@ -298,16 +305,16 @@ public class BrowserActivity extends Activity implements BrowserController {
 			public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
 
 				switch (arg1) {
-				case KeyEvent.KEYCODE_ENTER:
-					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-					searchTheWeb(mSearch.getText().toString());
-					if (mCurrentView != null) {
-						mCurrentView.requestFocus();
-					}
-					return true;
-				default:
-					break;
+					case KeyEvent.KEYCODE_ENTER:
+						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+						searchTheWeb(mSearch.getText().toString());
+						if (mCurrentView != null) {
+							mCurrentView.requestFocus();
+						}
+						return true;
+					default:
+						break;
 				}
 				return false;
 			}
@@ -402,10 +409,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-		R.string.drawer_open, /* "open drawer" description for accessibility */
-		R.string.drawer_close /* "close drawer" description for accessibility */
+				mDrawerLayout, /* DrawerLayout object */
+				R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+				R.string.drawer_open, /* "open drawer" description for accessibility */
+				R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
@@ -470,7 +477,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		OrbotHelper oh = new OrbotHelper(this);
 		if (oh.isOrbotInstalled()
 				&& !mPreferences.getBoolean(
-						PreferenceConstants.INITIAL_CHECK_FOR_TOR, false)) {
+				PreferenceConstants.INITIAL_CHECK_FOR_TOR, false)) {
 			mEditPrefs.putBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR,
 					true);
 			mEditPrefs.apply();
@@ -478,20 +485,20 @@ public class BrowserActivity extends Activity implements BrowserController {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					switch (which) {
-					case DialogInterface.BUTTON_POSITIVE:
-						mPreferences
-								.edit()
-								.putBoolean(PreferenceConstants.USE_PROXY, true)
-								.apply();
+						case DialogInterface.BUTTON_POSITIVE:
+							mPreferences
+									.edit()
+									.putBoolean(PreferenceConstants.USE_PROXY, true)
+									.apply();
 
-						initializeTor();
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						mPreferences
-								.edit()
-								.putBoolean(PreferenceConstants.USE_PROXY,
-										false).apply();
-						break;
+							initializeTor();
+							break;
+						case DialogInterface.BUTTON_NEGATIVE:
+							mPreferences
+									.edit()
+									.putBoolean(PreferenceConstants.USE_PROXY,
+											false).apply();
+							break;
 					}
 				}
 			};
@@ -518,8 +525,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public void initializeTor() {
 
 		OrbotHelper oh = new OrbotHelper(this);
-		if (!oh.isOrbotRunning())
+		if (!oh.isOrbotRunning()) {
 			oh.requestOrbotStart(this);
+		}
 
 		WebkitProxy wkp = new WebkitProxy();
 		try {
@@ -620,44 +628,44 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
-		case 0:
-			mSearchText = mPreferences.getString(
-					PreferenceConstants.SEARCH_URL, Constants.GOOGLE_SEARCH);
-			if (!mSearchText.startsWith(Constants.HTTP)
-					&& !mSearchText.startsWith(Constants.HTTPS)) {
+			case 0:
+				mSearchText = mPreferences.getString(
+						PreferenceConstants.SEARCH_URL, Constants.GOOGLE_SEARCH);
+				if (!mSearchText.startsWith(Constants.HTTP)
+						&& !mSearchText.startsWith(Constants.HTTPS)) {
+					mSearchText = Constants.GOOGLE_SEARCH;
+				}
+				break;
+			case 1:
 				mSearchText = Constants.GOOGLE_SEARCH;
-			}
-			break;
-		case 1:
-			mSearchText = Constants.GOOGLE_SEARCH;
-			break;
-		case 2:
-			mSearchText = Constants.ANDROID_SEARCH;
-			break;
-		case 3:
-			mSearchText = Constants.BING_SEARCH;
-			break;
-		case 4:
-			mSearchText = Constants.YAHOO_SEARCH;
-			break;
-		case 5:
-			mSearchText = Constants.STARTPAGE_SEARCH;
-			break;
-		case 6:
-			mSearchText = Constants.STARTPAGE_MOBILE_SEARCH;
-			break;
-		case 7:
-			mSearchText = Constants.DUCK_SEARCH;
-			break;
-		case 8:
-			mSearchText = Constants.DUCK_LITE_SEARCH;
-			break;
-		case 9:
-			mSearchText = Constants.BAIDU_SEARCH;
-			break;
-		case 10:
-			mSearchText = Constants.YANDEX_SEARCH;
-			break;
+				break;
+			case 2:
+				mSearchText = Constants.ANDROID_SEARCH;
+				break;
+			case 3:
+				mSearchText = Constants.BING_SEARCH;
+				break;
+			case 4:
+				mSearchText = Constants.YAHOO_SEARCH;
+				break;
+			case 5:
+				mSearchText = Constants.STARTPAGE_SEARCH;
+				break;
+			case 6:
+				mSearchText = Constants.STARTPAGE_MOBILE_SEARCH;
+				break;
+			case 7:
+				mSearchText = Constants.DUCK_SEARCH;
+				break;
+			case 8:
+				mSearchText = Constants.DUCK_LITE_SEARCH;
+				break;
+			case 9:
+				mSearchText = Constants.BAIDU_SEARCH;
+				break;
+			case 10:
+				mSearchText = Constants.YANDEX_SEARCH;
+				break;
 		}
 
 		updateCookiePreference();
@@ -712,82 +720,84 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 		// Handle action buttons
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-				mDrawerLayout.closeDrawer(mDrawerRight);
-			}
-			mDrawerToggle.syncState();
-			return true;
-		case R.id.action_back:
-			if (mCurrentView != null) {
-				if (mCurrentView.canGoBack())
-					mCurrentView.goBack();
-			}
-			return true;
-		case R.id.action_forward:
-			if (mCurrentView != null) {
-				if (mCurrentView.canGoForward())
-					mCurrentView.goForward();
-			}
-			return true;
-		case R.id.action_new_tab:
-			newTab(null, true);
-			return true;
-		case R.id.action_incognito:
-			startActivity(new Intent(this, IncognitoActivity.class));
-			return true;
-		case R.id.action_share:
-			if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-				Intent shareIntent = new Intent(
-						android.content.Intent.ACTION_SEND);
-				shareIntent.setType("text/plain");
-				shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-						mCurrentView.getTitle());
-				String shareMessage = mCurrentView.getUrl();
-				shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-						shareMessage);
-				startActivity(Intent.createChooser(shareIntent, getResources()
-						.getString(R.string.dialog_title_share)));
-			}
-			return true;
-		case R.id.action_bookmarks:
-			openBookmarks();
-			return true;
-		case R.id.action_copy:
-			if (mCurrentView != null) {
-				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-					ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-					ClipData clip = ClipData.newPlainText("label", mCurrentView
-							.getUrl().toString());
-					clipboard.setPrimaryClip(clip);
-					Utils.showToast(mContext, mContext.getResources()
-							.getString(R.string.message_link_copied));
+			case android.R.id.home:
+				if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+					mDrawerLayout.closeDrawer(mDrawerRight);
 				}
-			}
-			return true;
-		case R.id.action_settings:
-			startActivity(new Intent(this, SettingsActivity.class));
-			return true;
-		case R.id.action_history:
-			openHistory();
-			return true;
-		case R.id.action_add_bookmark:
-			if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-				addBookmark(this, mCurrentView.getTitle(),
-						mCurrentView.getUrl());
-			}
-			return true;
-		case R.id.action_find:
-			findInPage();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+				mDrawerToggle.syncState();
+				return true;
+			case R.id.action_back:
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoBack()) {
+						mCurrentView.goBack();
+					}
+				}
+				return true;
+			case R.id.action_forward:
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoForward()) {
+						mCurrentView.goForward();
+					}
+				}
+				return true;
+			case R.id.action_new_tab:
+				newTab(null, true);
+				return true;
+			case R.id.action_incognito:
+				startActivity(new Intent(this, IncognitoActivity.class));
+				return true;
+			case R.id.action_share:
+				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
+					Intent shareIntent = new Intent(
+							android.content.Intent.ACTION_SEND);
+					shareIntent.setType("text/plain");
+					shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+							mCurrentView.getTitle());
+					String shareMessage = mCurrentView.getUrl();
+					shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+							shareMessage);
+					startActivity(Intent.createChooser(shareIntent, getResources()
+							.getString(R.string.dialog_title_share)));
+				}
+				return true;
+			case R.id.action_bookmarks:
+				openBookmarks();
+				return true;
+			case R.id.action_copy:
+				if (mCurrentView != null) {
+					if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
+						ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+						ClipData clip = ClipData.newPlainText("label", mCurrentView
+								.getUrl().toString());
+						clipboard.setPrimaryClip(clip);
+						Utils.showToast(mContext, mContext.getResources()
+								.getString(R.string.message_link_copied));
+					}
+				}
+				return true;
+			case R.id.action_settings:
+				startActivity(new Intent(this, SettingsActivity.class));
+				return true;
+			case R.id.action_history:
+				openHistory();
+				return true;
+			case R.id.action_add_bookmark:
+				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
+					addBookmark(this, mCurrentView.getTitle(),
+							mCurrentView.getUrl());
+				}
+				return true;
+			case R.id.action_find:
+				findInPage();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
 	/**
-	 * refreshes the underlying list of the Bookmark adapter since the bookmark
-	 * adapter doesn't always change when notifyDataChanged gets called.
+	 * refreshes the underlying list of the Bookmark adapter since the bookmark adapter doesn't always change when
+	 * notifyDataChanged gets called.
 	 */
 	private void notifyBookmarkDataSetChanged() {
 		mBookmarkAdapter.clear();
@@ -796,8 +806,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * method that shows a dialog asking what string the user wishes to search
-	 * for. It highlights the text entered.
+	 * method that shows a dialog asking what string the user wishes to search for. It highlights the text entered.
 	 */
 	private void findInPage() {
 		final AlertDialog.Builder finder = new AlertDialog.Builder(mActivity);
@@ -820,9 +829,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 		finder.show();
 	}
 
-	/** The click listener for ListView in the navigation drawer */
+	/**
+	 * The click listener for ListView in the navigation drawer
+	 */
 	private class DrawerItemClickListener implements
 			ListView.OnItemClickListener {
+
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
@@ -831,9 +843,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
-	/** long click listener for Navigation Drawer */
+	/**
+	 * long click listener for Navigation Drawer
+	 */
 	private class DrawerItemLongClickListener implements
 			ListView.OnItemLongClickListener {
+
 		@Override
 		public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 				int position, long arg3) {
@@ -844,6 +859,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	private class BookmarkItemClickListener implements
 			ListView.OnItemClickListener {
+
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
@@ -864,6 +880,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	private class BookmarkItemLongClickListener implements
 			ListView.OnItemLongClickListener {
+
 		@Override
 		public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 				final int position, long arg3) {
@@ -913,11 +930,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * Takes in the id of which bookmark was selected and shows a dialog that
-	 * allows the user to rename and change the url of the bookmark
-	 * 
-	 * @param id
-	 *            which id in the list was chosen
+	 * Takes in the id of which bookmark was selected and shows a dialog that allows the user to rename and change the
+	 * url of the bookmark
+	 *
+	 * @param id which id in the list was chosen
 	 */
 	public synchronized void editBookmark(final int id) {
 		final AlertDialog.Builder homePicker = new AlertDialog.Builder(
@@ -979,7 +995,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 							if (mCurrentView.getUrl()
 									.startsWith(Constants.FILE)
 									&& mCurrentView.getUrl().endsWith(
-											"bookmarks.html")) {
+									"bookmarks.html")) {
 								openBookmarkPage(mCurrentView.getWebView());
 							}
 						}
@@ -989,11 +1005,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * displays the WebView contained in the LightningView Also handles the
-	 * removal of previous views
-	 * 
-	 * @param view
-	 *            the LightningView to show
+	 * displays the WebView contained in the LightningView Also handles the removal of previous views
+	 *
+	 * @param view the LightningView to show
 	 */
 	private synchronized void showTab(LightningView view) {
 		if (view == null) {
@@ -1037,8 +1051,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 			url = intent.getDataString();
 		}
 		int num = 0;
-		if (intent != null && intent.getExtras() != null)
+		if (intent != null && intent.getExtras() != null) {
 			num = intent.getExtras().getInt(getPackageName() + ".Origin");
+		}
 		if (num == 1) {
 			mCurrentView.loadUrl(url);
 		} else if (url != null) {
@@ -1085,8 +1100,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * When using the ActionBarDrawerToggle, you must call it during
-	 * onPostCreate() and onConfigurationChanged()...
+	 * When using the ActionBarDrawerToggle, you must call it during onPostCreate() and onConfigurationChanged()...
 	 */
 
 	@Override
@@ -1224,8 +1238,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 			}
 			mCurrentView = null;
 			for (int n = 0; n < mWebViews.size(); n++) {
-				if (mWebViews.get(n) != null)
+				if (mWebViews.get(n) != null) {
 					mWebViews.get(n).onDestroy();
+				}
 			}
 			mWebViews.clear();
 			mTitleAdapter.notifyDataSetChanged();
@@ -1297,12 +1312,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 			mCurrentView.onPause();
 		}
 		if (mHistoryDatabase != null) {
-			if (mHistoryDatabase.isOpen())
+			if (mHistoryDatabase.isOpen()) {
 				mHistoryDatabase.close();
+			}
 		}
 		if (mHistoryHandler != null) {
-			if (mHistoryHandler.isOpen())
+			if (mHistoryHandler.isOpen()) {
 				mHistoryHandler.close();
+			}
 		}
 
 	}
@@ -1325,12 +1342,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 	protected void onDestroy() {
 		Log.i(Constants.TAG, "onDestroy");
 		if (mHistoryDatabase != null) {
-			if (mHistoryDatabase.isOpen())
+			if (mHistoryDatabase.isOpen()) {
 				mHistoryDatabase.close();
+			}
 		}
 		if (mHistoryHandler != null) {
-			if (mHistoryHandler.isOpen())
+			if (mHistoryHandler.isOpen()) {
 				mHistoryHandler.close();
+			}
 		}
 		super.onDestroy();
 	}
@@ -1380,8 +1399,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * searches the web for the query fixing any and all problems with the input
-	 * checks if it is a search, url, etc.
+	 * searches the web for the query fixing any and all problems with the input checks if it is a search, url, etc.
 	 */
 	void searchTheWeb(String query) {
 		if (query.equals("")) {
@@ -1405,12 +1423,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 		boolean validURL = (query.startsWith("ftp://")
 				|| query.startsWith(Constants.HTTP)
 				|| query.startsWith(Constants.FILE) || query
-					.startsWith(Constants.HTTPS)) || isIPAddress;
+				.startsWith(Constants.HTTPS)) || isIPAddress;
 		boolean isSearch = ((query.contains(" ") || !containsPeriod) && !aboutScheme);
 
 		if (isIPAddress
 				&& (!query.startsWith(Constants.HTTP) || !query
-						.startsWith(Constants.HTTPS))) {
+				.startsWith(Constants.HTTPS))) {
 			query = Constants.HTTP + query;
 		}
 
@@ -1466,8 +1484,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	/**
 	 * converts the int num into density pixels
-	 * 
-	 * @param num
+	 *
 	 * @return density pixels
 	 */
 	private int getDp(int num) {
@@ -1493,18 +1510,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 		paint.setAntiAlias(true);
 		paint.setStyle(Style.FILL);
 		paint.setColor(mNumberIconColor);
-		if (number > 99)
+		if (number > 99) {
 			number = 99;
+		}
 		// pixels, 36 dp
 		if (mActionBarSizeDp < 50) {
 			if (number > 9) {
 				paint.setTextSize(mActionBarSize * 3 / 4); // originally
-															// 40
-															// pixels,
-															// 24 dp
+				// 40
+				// pixels,
+				// 24 dp
 			} else {
 				paint.setTextSize(mActionBarSize * 9 / 10); // originally 50
-															// pixels, 30 dp
+				// pixels, 30 dp
 			}
 		} else {
 			paint.setTextSize(mActionBarSize * 3 / 4);
@@ -1524,7 +1542,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public class LightningViewAdapter extends ArrayAdapter<LightningView> {
 
 		Context context;
+
 		int layoutResourceId;
+
 		List<LightningView> data = null;
 
 		public LightningViewAdapter(Context context, int layoutResourceId,
@@ -1578,8 +1598,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		class LightningViewHolder {
+
 			TextView txtTitle;
+
 			ImageView favicon;
+
 			ImageView exit;
 		}
 	}
@@ -1587,7 +1610,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
 
 		Context context;
+
 		int layoutResourceId;
+
 		List<HistoryItem> data = null;
 
 		public BookmarkViewAdapter(Context context, int layoutResourceId,
@@ -1628,7 +1653,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		class BookmarkViewHolder {
+
 			TextView txtTitle;
+
 			ImageView favicon;
 		}
 	}
@@ -1646,7 +1673,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
 		ImageView bmImage;
+
 		HistoryItem mWeb;
 
 		public DownloadImageTask(ImageView bmImage, HistoryItem web) {
@@ -1729,8 +1758,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	public void updateUrl(String url) {
-		if (url == null)
+		if (url == null) {
 			return;
+		}
 		url = url.replaceFirst(Constants.HTTP, "");
 		if (url.startsWith(Constants.FILE)) {
 			url = "";
@@ -1741,8 +1771,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	public void updateProgress(int n) {
-		if (!mProgress.isShown())
+		if (!mProgress.isShown()) {
 			mProgress.setVisibility(View.VISIBLE);
+		}
 		mProgress.setProgress(n);
 		if (n == 100) {
 			mProgress.setVisibility(View.INVISIBLE);
@@ -1788,8 +1819,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 								.getReadableDatabase();
 					}
 					Cursor cursor = mHistoryDatabase.query(
-							DatabaseHandler.TABLE_HISTORY, new String[] { "id",
-									"url", "title" }, sb.toString(), null,
+							DatabaseHandler.TABLE_HISTORY, new String[]{"id",
+									"url", "title"}, sb.toString(), null,
 							null, null, null);
 					if (!cursor.moveToFirst()) {
 						mHistoryHandler.addHistoryItem(new HistoryItem(url,
@@ -1821,20 +1852,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * 1, 2, 3, testing... is there a system browser that has some nice
-	 * bookmarks for us?
+	 * 1, 2, 3, testing... is there a system browser that has some nice bookmarks for us?
 	 */
 	public boolean isSystemBrowserAvailable() {
 		return mSystemBrowser;
 	}
 
 	/**
-	 * 1, 2, 3, testing... is there a system browser that has some nice
-	 * bookmarks for us? helper method for isSystemBrowserAvailable
+	 * 1, 2, 3, testing... is there a system browser that has some nice bookmarks for us? helper method for
+	 * isSystemBrowserAvailable
 	 */
 	public boolean getSystemBrowser() {
 		Cursor c = null;
-		String[] columns = new String[] { "url", "title" };
+		String[] columns = new String[]{"url", "title"};
 		boolean browserFlag = false;
 		try {
 
@@ -1863,8 +1893,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * method to generate search suggestions for the AutoCompleteTextView from
-	 * previously searched URLs
+	 * method to generate search suggestions for the AutoCompleteTextView from previously searched URLs
 	 */
 	private void initializeSearchSuggestions(final AutoCompleteTextView getUrl) {
 
@@ -1936,8 +1965,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	/**
 	 * returns a list of HistoryItems
-	 * 
-	 * @return
 	 */
 	private List<HistoryItem> getLatestHistory() {
 		DatabaseHandler historyHandler = new DatabaseHandler(mContext);
@@ -2096,8 +2123,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 		if (requestCode == 1) {
-			if (null == mUploadMessage)
+			if (null == mUploadMessage) {
 				return;
+			}
 			Uri result = intent == null || resultCode != RESULT_OK ? null
 					: intent.getData();
 			mUploadMessage.onReceiveValue(result);
@@ -2156,8 +2184,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	public void onHideCustomView() {
 		if (mCustomView == null || mCustomViewCallback == null
-				|| mCurrentView == null)
+				|| mCurrentView == null) {
 			return;
+		}
 		Log.i(Constants.TAG, "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
 		mCustomView.setKeepScreenOn(false);
@@ -2202,9 +2231,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	/**
 	 * turns on fullscreen mode in the app
-	 * 
-	 * @param enabled
-	 *            whether to enable fullscreen or not
+	 *
+	 * @param enabled whether to enable fullscreen or not
 	 */
 	public void setFullscreen(boolean enabled) {
 		Window win = getWindow();
@@ -2330,22 +2358,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
-							case DialogInterface.BUTTON_POSITIVE: {
-								newTab(url, false);
-								break;
-							}
-							case DialogInterface.BUTTON_NEGATIVE: {
-								mCurrentView.loadUrl(url);
-								break;
-							}
-							case DialogInterface.BUTTON_NEUTRAL: {
-								if (API > 8) {
-									Utils.downloadFile(mActivity, url,
-											mCurrentView.getUserAgent(),
-											"attachment", false);
-								}
-								break;
-							}
+								case DialogInterface.BUTTON_POSITIVE:
+									newTab(url, false);
+									break;
+
+								case DialogInterface.BUTTON_NEGATIVE:
+									mCurrentView.loadUrl(url);
+									break;
+
+								case DialogInterface.BUTTON_NEUTRAL:
+									if (API > 8) {
+										Utils.downloadFile(mActivity, url,
+												mCurrentView.getUserAgent(),
+												"attachment", false);
+									}
+									break;
 							}
 						}
 					};
@@ -2374,22 +2401,20 @@ public class BrowserActivity extends Activity implements BrowserController {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
-							case DialogInterface.BUTTON_POSITIVE: {
-								newTab(url, false);
-								break;
-							}
-							case DialogInterface.BUTTON_NEGATIVE: {
-								mCurrentView.loadUrl(url);
-								break;
-							}
-							case DialogInterface.BUTTON_NEUTRAL: {
-								ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-								ClipData clip = ClipData.newPlainText("label",
-										url);
-								clipboard.setPrimaryClip(clip);
+								case DialogInterface.BUTTON_POSITIVE:
+									newTab(url, false);
+									break;
 
-								break;
-							}
+								case DialogInterface.BUTTON_NEGATIVE:
+									mCurrentView.loadUrl(url);
+									break;
+
+								case DialogInterface.BUTTON_NEUTRAL:
+									ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+									ClipData clip = ClipData.newPlainText("label",
+											url);
+									clipboard.setPrimaryClip(clip);
+									break;
 							}
 						}
 					};
@@ -2418,21 +2443,20 @@ public class BrowserActivity extends Activity implements BrowserController {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
-						case DialogInterface.BUTTON_POSITIVE: {
-							newTab(url, false);
-							break;
-						}
-						case DialogInterface.BUTTON_NEGATIVE: {
-							mCurrentView.loadUrl(url);
-							break;
-						}
-						case DialogInterface.BUTTON_NEUTRAL: {
-							ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-							ClipData clip = ClipData.newPlainText("label", url);
-							clipboard.setPrimaryClip(clip);
+							case DialogInterface.BUTTON_POSITIVE:
+								newTab(url, false);
+								break;
 
-							break;
-						}
+							case DialogInterface.BUTTON_NEGATIVE:
+								mCurrentView.loadUrl(url);
+								break;
+
+							case DialogInterface.BUTTON_NEUTRAL:
+								ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+								ClipData clip = ClipData.newPlainText("label", url);
+								clipboard.setPrimaryClip(clip);
+
+								break;
 						}
 					}
 				};
@@ -2461,22 +2485,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
-							case DialogInterface.BUTTON_POSITIVE: {
-								newTab(newUrl, false);
-								break;
-							}
-							case DialogInterface.BUTTON_NEGATIVE: {
-								mCurrentView.loadUrl(newUrl);
-								break;
-							}
-							case DialogInterface.BUTTON_NEUTRAL: {
-								if (API > 8) {
-									Utils.downloadFile(mActivity, newUrl,
-											mCurrentView.getUserAgent(),
-											"attachment", false);
-								}
-								break;
-							}
+								case DialogInterface.BUTTON_POSITIVE:
+									newTab(newUrl, false);
+									break;
+
+								case DialogInterface.BUTTON_NEGATIVE:
+									mCurrentView.loadUrl(newUrl);
+									break;
+
+								case DialogInterface.BUTTON_NEUTRAL:
+									if (API > 8) {
+										Utils.downloadFile(mActivity, newUrl,
+												mCurrentView.getUserAgent(),
+												"attachment", false);
+									}
+									break;
 							}
 						}
 					};
@@ -2505,22 +2528,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
-							case DialogInterface.BUTTON_POSITIVE: {
-								newTab(newUrl, false);
-								break;
-							}
-							case DialogInterface.BUTTON_NEGATIVE: {
-								mCurrentView.loadUrl(newUrl);
-								break;
-							}
-							case DialogInterface.BUTTON_NEUTRAL: {
-								ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-								ClipData clip = ClipData.newPlainText("label",
-										newUrl);
-								clipboard.setPrimaryClip(clip);
+								case DialogInterface.BUTTON_POSITIVE:
+									newTab(newUrl, false);
+									break;
 
-								break;
-							}
+								case DialogInterface.BUTTON_NEGATIVE:
+									mCurrentView.loadUrl(newUrl);
+									break;
+
+								case DialogInterface.BUTTON_NEUTRAL:
+									ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+									ClipData clip = ClipData.newPlainText("label",
+											newUrl);
+									clipboard.setPrimaryClip(clip);
+
+									break;
 							}
 						}
 					};
@@ -2552,9 +2574,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * This method lets the search bar know that the page is currently loading
-	 * and that it should display the stop icon to indicate to the user that
-	 * pressing it stops the page from loading
+	 * This method lets the search bar know that the page is currently loading and that it should display the stop icon
+	 * to indicate to the user that pressing it stops the page from loading
 	 */
 	public void setIsLoading() {
 		if (!mSearch.hasFocus()) {
@@ -2564,8 +2585,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * This tells the search bar that the page is finished loading and it should
-	 * display the refresh icon
+	 * This tells the search bar that the page is finished loading and it should display the refresh icon
 	 */
 	public void setIsFinishedLoading() {
 		if (!mSearch.hasFocus()) {
@@ -2575,9 +2595,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	/**
-	 * handle presses on the refresh icon in the search bar, if the page is
-	 * loading, stop the page, if it is done loading refresh the page.
-	 * 
+	 * handle presses on the refresh icon in the search bar, if the page is loading, stop the page, if it is done
+	 * loading refresh the page.
+	 *
 	 * See setIsFinishedLoading and setIsLoading for displaying the correct icon
 	 */
 	public void refreshOrStop() {
@@ -2612,5 +2632,4 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 	}
-
 }

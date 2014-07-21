@@ -3,11 +3,8 @@
  */
 package acr.browser.lightning;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,36 +17,45 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.WindowManager;
+import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
-import android.widget.TextView;
+import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class SettingsActivity extends Activity {
 
 	private static int API = android.os.Build.VERSION.SDK_INT;
-	private static SharedPreferences.Editor mEditPrefs;
-	private static int mAgentChoice;
-	private static String mHomepage;
-	private static TextView mAgentTextView;
-	private static TextView mDownloadTextView;
-	private static int mEasterEggCounter = 0;
-	private static String mSearchUrl;
-	private static String mDownloadLocation;
-	private static TextView mHomepageText;
-	private static SharedPreferences mPreferences;
-	private static TextView mSearchText;
+
+	private SharedPreferences.Editor mEditPrefs;
+
+	private int mAgentChoice;
+
+	private String mHomepage;
+
+	private TextView mAgentTextView;
+
+	private TextView mDownloadTextView;
+
+	private int mEasterEggCounter;
+
+	private String mDownloadLocation;
+
+	private TextView mHomepageText;
+
+	private SharedPreferences mPreferences;
+
+	private TextView mSearchText;
+
 	private Context mContext;
+
 	private Activity mActivity;
 
 	@Override
@@ -70,8 +76,12 @@ public class SettingsActivity extends Activity {
 	@SuppressLint("NewApi")
 	public void init() {
 		// mPreferences storage
-		getActionBar().setHomeButtonEnabled(true);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -90,38 +100,38 @@ public class SettingsActivity extends Activity {
 		mSearchText = (TextView) findViewById(R.id.searchText);
 
 		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
-		case 0:
-			mSearchText.setText(getResources().getString(R.string.custom_url));
-			break;
-		case 1:
-			mSearchText.setText("Google");
-			break;
-		case 2:
-			mSearchText.setText("Android Search");
-			break;
-		case 3:
-			mSearchText.setText("Bing");
-			break;
-		case 4:
-			mSearchText.setText("Yahoo");
-			break;
-		case 5:
-			mSearchText.setText("StartPage");
-			break;
-		case 6:
-			mSearchText.setText("StartPage (Mobile)");
-			break;
-		case 7:
-			mSearchText.setText("DuckDuckGo");
-			break;
-		case 8:
-			mSearchText.setText("DuckDuckGo Lite");
-			break;
-		case 9:
-			mSearchText.setText("Baidu");
-			break;
-		case 10:
-			mSearchText.setText("Yandex");
+			case 0:
+				mSearchText.setText(getResources().getString(R.string.custom_url));
+				break;
+			case 1:
+				mSearchText.setText("Google");
+				break;
+			case 2:
+				mSearchText.setText("Android Search");
+				break;
+			case 3:
+				mSearchText.setText("Bing");
+				break;
+			case 4:
+				mSearchText.setText("Yahoo");
+				break;
+			case 5:
+				mSearchText.setText("StartPage");
+				break;
+			case 6:
+				mSearchText.setText("StartPage (Mobile)");
+				break;
+			case 7:
+				mSearchText.setText("DuckDuckGo");
+				break;
+			case 8:
+				mSearchText.setText("DuckDuckGo Lite");
+				break;
+			case 9:
+				mSearchText.setText("Baidu");
+				break;
+			case 10:
+				mSearchText.setText("Yandex");
 		}
 
 		mAgentTextView = (TextView) findViewById(R.id.agentText);
@@ -144,7 +154,7 @@ public class SettingsActivity extends Activity {
 				PreferenceConstants.DOWNLOAD_DIRECTORY,
 				Environment.DIRECTORY_DOWNLOADS);
 
-		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + "/"
+		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/'
 				+ mDownloadLocation);
 
 		String code = "HOLO";
@@ -154,7 +164,7 @@ public class SettingsActivity extends Activity {
 					getPackageName(), 0);
 			code = p.versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TODO add logging
 			e.printStackTrace();
 		}
 
@@ -175,21 +185,21 @@ public class SettingsActivity extends Activity {
 		}
 
 		switch (mAgentChoice) {
-		case 1:
-			mAgentTextView.setText(getResources().getString(
-					R.string.agent_default));
-			break;
-		case 2:
-			mAgentTextView.setText(getResources().getString(
-					R.string.agent_desktop));
-			break;
-		case 3:
-			mAgentTextView.setText(getResources().getString(
-					R.string.agent_mobile));
-			break;
-		case 4:
-			mAgentTextView.setText(getResources().getString(
-					R.string.agent_custom));
+			case 1:
+				mAgentTextView.setText(getResources().getString(
+						R.string.agent_default));
+				break;
+			case 2:
+				mAgentTextView.setText(getResources().getString(
+						R.string.agent_desktop));
+				break;
+			case 3:
+				mAgentTextView.setText(getResources().getString(
+						R.string.agent_mobile));
+				break;
+			case 4:
+				mAgentTextView.setText(getResources().getString(
+						R.string.agent_custom));
 		}
 		RelativeLayout r1, r2, r3, r4, r5, licenses;
 		r1 = (RelativeLayout) findViewById(R.id.setR1);
@@ -268,7 +278,7 @@ public class SettingsActivity extends Activity {
 						"Google", "Android Search", "Bing", "Yahoo",
 						"StartPage", "StartPage (Mobile)",
 						"DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)",
-						"Baidu (Chinese)", "Yandex (Russian)" };
+						"Baidu (Chinese)", "Yandex (Russian)"};
 
 				int n = mPreferences.getInt(PreferenceConstants.SEARCH, 1);
 
@@ -282,38 +292,38 @@ public class SettingsActivity extends Activity {
 										which);
 								mEditPrefs.commit();
 								switch (which) {
-								case 0:
-									searchUrlPicker();
-									break;
-								case 1:
-									mSearchText.setText("Google");
-									break;
-								case 2:
-									mSearchText.setText("Android Search");
-									break;
-								case 3:
-									mSearchText.setText("Bing");
-									break;
-								case 4:
-									mSearchText.setText("Yahoo");
-									break;
-								case 5:
-									mSearchText.setText("StartPage");
-									break;
-								case 6:
-									mSearchText.setText("StartPage (Mobile)");
-									break;
-								case 7:
-									mSearchText.setText("DuckDuckGo");
-									break;
-								case 8:
-									mSearchText.setText("DuckDuckGo Lite");
-									break;
-								case 9:
-									mSearchText.setText("Baidu");
-									break;
-								case 10:
-									mSearchText.setText("Yandex");
+									case 0:
+										searchUrlPicker();
+										break;
+									case 1:
+										mSearchText.setText("Google");
+										break;
+									case 2:
+										mSearchText.setText("Android Search");
+										break;
+									case 3:
+										mSearchText.setText("Bing");
+										break;
+									case 4:
+										mSearchText.setText("Yahoo");
+										break;
+									case 5:
+										mSearchText.setText("StartPage");
+										break;
+									case 6:
+										mSearchText.setText("StartPage (Mobile)");
+										break;
+									case 7:
+										mSearchText.setText("DuckDuckGo");
+										break;
+									case 8:
+										mSearchText.setText("DuckDuckGo Lite");
+										break;
+									case 9:
+										mSearchText.setText("Baidu");
+										break;
+									case 10:
+										mSearchText.setText("Yandex");
 								}
 							}
 						});
@@ -334,18 +344,17 @@ public class SettingsActivity extends Activity {
 	}
 
 	public void searchUrlPicker() {
-		final AlertDialog.Builder urlPicker = new AlertDialog.Builder(
-				SettingsActivity.this);
+		final AlertDialog.Builder urlPicker = new AlertDialog.Builder(this);
 
 		urlPicker.setTitle(getResources().getString(R.string.custom_url));
-		final EditText getSearchUrl = new EditText(SettingsActivity.this);
+		final EditText getSearchUrl = new EditText(this);
 
-		mSearchUrl = mPreferences.getString(PreferenceConstants.SEARCH_URL,
+		String mSearchUrl = mPreferences.getString(PreferenceConstants.SEARCH_URL,
 				Constants.GOOGLE_SEARCH);
 		getSearchUrl.setText(mSearchUrl);
 		urlPicker.setView(getSearchUrl);
 		urlPicker.setPositiveButton(getResources()
-				.getString(R.string.action_ok),
+						.getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -483,8 +492,9 @@ public class SettingsActivity extends Activity {
 					PackageManager pm = getPackageManager();
 					ApplicationInfo ai = pm.getApplicationInfo(
 							"com.adobe.flashplayer", 0);
-					if (ai != null)
+					if (ai != null) {
 						flashInstalled = true;
+					}
 				} catch (NameNotFoundException e) {
 					flashInstalled = false;
 				}
@@ -570,14 +580,14 @@ public class SettingsActivity extends Activity {
 							}
 						}).setOnCancelListener(new OnCancelListener() {
 
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						mEditPrefs.putInt(
-								PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-						mEditPrefs.commit();
-					}
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				mEditPrefs.putInt(
+						PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
+				mEditPrefs.commit();
+			}
 
-				});
+		});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -611,8 +621,9 @@ public class SettingsActivity extends Activity {
 					PackageManager pm = getPackageManager();
 					ApplicationInfo ai = pm.getApplicationInfo(
 							"com.adobe.flashplayer", 0);
-					if (ai != null)
+					if (ai != null) {
 						flashInstalled = true;
+					}
 				} catch (NameNotFoundException e) {
 					flashInstalled = false;
 				}
@@ -674,23 +685,23 @@ public class SettingsActivity extends Activity {
 										which + 1);
 								mEditPrefs.commit();
 								switch (which + 1) {
-								case 1:
-									mAgentTextView.setText(getResources()
-											.getString(R.string.agent_default));
-									break;
-								case 2:
-									mAgentTextView.setText(getResources()
-											.getString(R.string.agent_desktop));
-									break;
-								case 3:
-									mAgentTextView.setText(getResources()
-											.getString(R.string.agent_mobile));
-									break;
-								case 4:
-									mAgentTextView.setText(getResources()
-											.getString(R.string.agent_custom));
-									agentPicker();
-									break;
+									case 1:
+										mAgentTextView.setText(getResources()
+												.getString(R.string.agent_default));
+										break;
+									case 2:
+										mAgentTextView.setText(getResources()
+												.getString(R.string.agent_desktop));
+										break;
+									case 3:
+										mAgentTextView.setText(getResources()
+												.getString(R.string.agent_mobile));
+										break;
+									case 4:
+										mAgentTextView.setText(getResources()
+												.getString(R.string.agent_custom));
+										agentPicker();
+										break;
 								}
 							}
 						});
@@ -728,7 +739,7 @@ public class SettingsActivity extends Activity {
 
 		agentStringPicker.setTitle(getResources().getString(
 				R.string.title_user_agent));
-		final EditText getAgent = new EditText(SettingsActivity.this);
+		final EditText getAgent = new EditText(this);
 		agentStringPicker.setView(getAgent);
 		agentStringPicker.setPositiveButton(
 				getResources().getString(R.string.action_ok),
@@ -759,7 +770,7 @@ public class SettingsActivity extends Activity {
 				mDownloadLocation = mPreferences.getString(
 						PreferenceConstants.DOWNLOAD_DIRECTORY,
 						Environment.DIRECTORY_DOWNLOADS);
-				int n = -1;
+				int n;
 				if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
 					n = 1;
 				} else {
@@ -774,21 +785,21 @@ public class SettingsActivity extends Activity {
 									int which) {
 
 								switch (which + 1) {
-								case 1:
-									mEditPrefs
-											.putString(
-													PreferenceConstants.DOWNLOAD_DIRECTORY,
-													Environment.DIRECTORY_DOWNLOADS);
-									mEditPrefs.commit();
-									mDownloadTextView
-											.setText(Constants.EXTERNAL_STORAGE
-													+ "/"
-													+ Environment.DIRECTORY_DOWNLOADS);
-									break;
-								case 2:
-									downPicker();
+									case 1:
+										mEditPrefs
+												.putString(
+														PreferenceConstants.DOWNLOAD_DIRECTORY,
+														Environment.DIRECTORY_DOWNLOADS);
+										mEditPrefs.commit();
+										mDownloadTextView
+												.setText(Constants.EXTERNAL_STORAGE
+														+ '/'
+														+ Environment.DIRECTORY_DOWNLOADS);
+										break;
+									case 2:
+										downPicker();
 
-									break;
+										break;
 								}
 							}
 						});
@@ -813,7 +824,7 @@ public class SettingsActivity extends Activity {
 				mActivity);
 		homePicker.setTitle(getResources().getString(
 				R.string.title_custom_homepage));
-		final EditText getHome = new EditText(SettingsActivity.this);
+		final EditText getHome = new EditText(this);
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE,
 				Constants.HOMEPAGE);
 		if (!mHomepage.startsWith("about:")) {
@@ -845,7 +856,7 @@ public class SettingsActivity extends Activity {
 		LinearLayout layout = new LinearLayout(this);
 		downLocationPicker.setTitle(getResources().getString(
 				R.string.title_download_location));
-		final EditText getDownload = new EditText(SettingsActivity.this);
+		final EditText getDownload = new EditText(this);
 		getDownload.setBackgroundResource(0);
 		mDownloadLocation = mPreferences.getString(
 				PreferenceConstants.DOWNLOAD_DIRECTORY,
@@ -864,7 +875,7 @@ public class SettingsActivity extends Activity {
 		TextView v = new TextView(this);
 		v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
 		v.setTextColor(Color.DKGRAY);
-		v.setText(Constants.EXTERNAL_STORAGE + "/");
+		v.setText(Constants.EXTERNAL_STORAGE + '/');
 		v.setPadding(padding, padding, 0, padding);
 		layout.addView(v);
 		layout.addView(getDownload);
@@ -887,7 +898,7 @@ public class SettingsActivity extends Activity {
 								PreferenceConstants.DOWNLOAD_DIRECTORY, text);
 						mEditPrefs.commit();
 						mDownloadTextView.setText(Constants.EXTERNAL_STORAGE
-								+ "/" + text);
+								+ '/' + text);
 					}
 				});
 		downLocationPicker.show();
@@ -902,7 +913,7 @@ public class SettingsActivity extends Activity {
 				picker.setTitle(getResources().getString(R.string.home));
 				mHomepage = mPreferences.getString(
 						PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
-				int n = -1;
+				int n;
 				if (mHomepage.contains("about:home")) {
 					n = 1;
 				} else if (mHomepage.contains("about:blank")) {
@@ -921,37 +932,37 @@ public class SettingsActivity extends Activity {
 									int which) {
 
 								switch (which + 1) {
-								case 1:
-									mEditPrefs.putString(
-											PreferenceConstants.HOMEPAGE,
-											"about:home");
-									mEditPrefs.commit();
-									mHomepageText
-											.setText(getResources().getString(
-													R.string.action_homepage));
-									break;
-								case 2:
-									mEditPrefs.putString(
-											PreferenceConstants.HOMEPAGE,
-											"about:blank");
-									mEditPrefs.commit();
-									mHomepageText.setText(getResources()
-											.getString(R.string.action_blank));
-									break;
-								case 3:
-									mEditPrefs.putString(
-											PreferenceConstants.HOMEPAGE,
-											"about:bookmarks");
-									mEditPrefs.commit();
-									mHomepageText.setText(getResources()
-											.getString(
-													R.string.action_bookmarks));
+									case 1:
+										mEditPrefs.putString(
+												PreferenceConstants.HOMEPAGE,
+												"about:home");
+										mEditPrefs.commit();
+										mHomepageText
+												.setText(getResources().getString(
+														R.string.action_homepage));
+										break;
+									case 2:
+										mEditPrefs.putString(
+												PreferenceConstants.HOMEPAGE,
+												"about:blank");
+										mEditPrefs.commit();
+										mHomepageText.setText(getResources()
+												.getString(R.string.action_blank));
+										break;
+									case 3:
+										mEditPrefs.putString(
+												PreferenceConstants.HOMEPAGE,
+												"about:bookmarks");
+										mEditPrefs.commit();
+										mHomepageText.setText(getResources()
+												.getString(
+														R.string.action_bookmarks));
 
-									break;
-								case 4:
-									homePicker();
+										break;
+									case 4:
+										homePicker();
 
-									break;
+										break;
 								}
 							}
 						});
