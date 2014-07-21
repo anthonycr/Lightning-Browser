@@ -160,7 +160,7 @@
     <string name="message_adblock">Der Werbeblocker ist nur in Lightning Browser+ verfügbar und kann im Google Play Store gekauft werden!</string>
     <string name="enable_orbot">Orbot aktivieren</string>
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
-    <string name="install_orbot">Um Tor verwenden zu können, muß Orbot installiert sein!</string>
+    <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="clear_cookies_exit">Cookies beim Beenden löschen</string>
