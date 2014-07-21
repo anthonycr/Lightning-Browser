@@ -3,6 +3,7 @@ package acr.browser.lightning;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AdBlock {
+
+	private static final String TAG = "AdBlock";
 
 	private static final String BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt";
 
@@ -51,7 +54,8 @@ public class AdBlock {
 						mBlockedDomainsList.add(line.trim().toLowerCase());
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.wtf(TAG, "Reading blocked domains list from file '" +
+							BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
 				}
 			}
 		});
@@ -67,11 +71,15 @@ public class AdBlock {
 		try {
 			domain = getDomainName(url);
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
+			Log.e(TAG, "URL '" + url + "' is invalid", e);
 			return false;
 		}
 
-		return mBlockedDomainsList.contains(domain.toLowerCase());
+		boolean isOnBlacklist = mBlockedDomainsList.contains(domain.toLowerCase());
+		if (isOnBlacklist) {
+			Log.d(TAG, "URL '" + url + "' is an ad");
+		}
+		return isOnBlacklist;
 	}
 
 	private static String getDomainName(String url) throws URISyntaxException {
