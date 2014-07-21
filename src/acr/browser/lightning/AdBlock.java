@@ -6,25 +6,25 @@ import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AdBlock {
 
-	private static SortedMap<String, Integer> mAdBlockMap =
-			new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
+	private static final String BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt";
+
+	private static final Set<String> mBlockedDomainsList = new HashSet<String>();
 
 	private SharedPreferences mPreferences;
 
 	private boolean mBlockAds;
 
 	public AdBlock(Context context) {
-		if (mAdBlockMap.isEmpty()) {
-			fillSearchTree(context);
+		if (mBlockedDomainsList.isEmpty()) {
+			loadBlockedDomainsList(context);
 		}
 		mPreferences = context.getSharedPreferences(
 				PreferenceConstants.PREFERENCES, 0);
@@ -37,27 +37,23 @@ public class AdBlock {
 				false);
 	}
 
-	public void fillSearchTree(final Context context) {
+	private void loadBlockedDomainsList(final Context context) {
 		Thread thread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				AssetManager asset = context.getAssets();
 				try {
-					InputStream input = asset.open("hosts.txt");
-					InputStreamReader read = new InputStreamReader(input);
-					BufferedReader reader = new BufferedReader(read);
-					String line = reader.readLine();
-					while (line != null) {
-						mAdBlockMap.put(line, 1);
-						line = reader.readLine();
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
+					String line;
+					while ((line = reader.readLine()) != null) {
+						mBlockedDomainsList.add(line.trim().toLowerCase());
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 			}
-
 		});
 		thread.start();
 	}
@@ -66,6 +62,7 @@ public class AdBlock {
 		if (!mBlockAds) {
 			return false;
 		}
+
 		String domain;
 		try {
 			domain = getDomainName(url);
@@ -73,7 +70,8 @@ public class AdBlock {
 			e.printStackTrace();
 			return false;
 		}
-		return mAdBlockMap.containsKey(domain);
+
+		return mBlockedDomainsList.contains(domain.toLowerCase());
 	}
 
 	private static String getDomainName(String url) throws URISyntaxException {
@@ -81,11 +79,13 @@ public class AdBlock {
 		if (index != -1) {
 			url = url.substring(0, index);
 		}
+
 		URI uri = new URI(url);
 		String domain = uri.getHost();
 		if (domain == null) {
 			return url;
 		}
+
 		return domain.startsWith("www.") ? domain.substring(4) : domain;
 	}
 }
