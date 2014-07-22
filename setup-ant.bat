@@ -1,7 +1,7 @@
 @ECHO OFF
 SETLOCAL enabledelayedexpansion
 
-SET "target=android-19"
+SET "target=android-20"
 
 REM Update ant setup in project and all sub-projects
 SET "pattern=project.properties"
