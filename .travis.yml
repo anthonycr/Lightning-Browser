@@ -1,0 +1,15 @@
+language: android
+android:
+  components:
+    - build-tools-19.1.0
+    - android-19
+    - extra-android-support
+  licenses:
+    - 'android-sdk-license-.+'
+    - '.*intel.+'
+before_install:
+  - git submodule update --init --recursive
+install:
+  - ./setup-ant.sh
+script:
+  - ant debug && lint -w --exitcode --disable MissingTranslation .
