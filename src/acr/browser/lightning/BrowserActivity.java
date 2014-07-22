@@ -4,6 +4,7 @@
 
 package acr.browser.lightning;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -161,14 +162,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	private static SearchAdapter mSearchAdapter;
 
-	private boolean isIncognito = false;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initialize();
 	}
 
+	@SuppressWarnings("deprecation")
 	private synchronized void initialize() {
 		setContentView(R.layout.activity_main);
 		TypedValue typedValue = new TypedValue();
@@ -1249,6 +1249,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void clearHistory() {
 		this.deleteDatabase(DatabaseHandler.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
@@ -2283,6 +2284,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		return mDefaultVideoPoster;
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	/**
 	 * dumb method that returns the loading progress for a video

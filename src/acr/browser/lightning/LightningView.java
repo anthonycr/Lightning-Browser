@@ -27,9 +27,7 @@ import android.webkit.*;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.VideoView;
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.*;
@@ -63,18 +61,16 @@ public class LightningView {
 
 	private AdBlock mAdBlock;
 
-	private CookieManager mCookieManager;
-
 	private boolean isForgroundTab = false;
 
 	private IntentUtils mIntentUtils = null;
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	public LightningView(Activity activity, String url,
 			CookieManager cookieManager) {
 
 		mActivity = activity;
-		mCookieManager = cookieManager;
 		mWebView = new WebView(activity);
 		mTitle = new Title(activity);
 		mAdBlock = new AdBlock(activity);
@@ -262,7 +258,8 @@ public class LightningView {
 		return Constants.FILE + homepage;
 	}
 
-	@SuppressLint("NewApi")
+	@SuppressWarnings("deprecation")
+	@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
 	public synchronized void initializePreferences(Context context) {
 		mPreferences = context.getSharedPreferences(
 				PreferenceConstants.PREFERENCES, 0);
@@ -361,6 +358,7 @@ public class LightningView {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint({"SetJavaScriptEnabled", "NewApi"})
 	public void initializeSettings(WebSettings settings, Context context) {
 		if (API < 18) {
@@ -476,6 +474,7 @@ public class LightningView {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	public synchronized void find(String text) {
 		if (mWebView != null) {
