@@ -1005,21 +1005,22 @@ public class LightningView {
 
 		@Override
 		public void onShowCustomView(View view, CustomViewCallback callback) {
-
-			if (view instanceof FrameLayout) {
-				FrameLayout frame = (FrameLayout) view;
-				if (frame.getFocusedChild() instanceof VideoView) {
-					VideoView video = (VideoView) frame.getFocusedChild();
-					video.stopPlayback();
-					frame.removeView(video);
-					video.setVisibility(View.GONE);
-				}
-			} else {
+		// While these lines might look like they work, in practive,
+		// Full-screen videos won't work correctly. I may test this out some more
+		//	if (view instanceof FrameLayout) {
+		//		FrameLayout frame = (FrameLayout) view;
+		//		if (frame.getFocusedChild() instanceof VideoView) {
+		//			VideoView video = (VideoView) frame.getFocusedChild();
+		//			video.stopPlayback();
+		//			frame.removeView(video);
+		//			video.setVisibility(View.GONE);
+		//		}
+		//	} else {
 				Activity activity = mBrowserController.getActivity();
 				mBrowserController.onShowCustomView(view,
 						activity.getRequestedOrientation(), callback);
 
-			}
+		//	}
 
 			super.onShowCustomView(view, callback);
 		}
@@ -1028,20 +1029,21 @@ public class LightningView {
 		@Deprecated
 		public void onShowCustomView(View view, int requestedOrientation,
 				CustomViewCallback callback) {
-
-			if (view instanceof FrameLayout) {
-				FrameLayout frame = (FrameLayout) view;
-				if (frame.getFocusedChild() instanceof VideoView) {
-					VideoView video = (VideoView) frame.getFocusedChild();
-					video.stopPlayback();
-					frame.removeView(video);
-					video.setVisibility(View.GONE);
-				}
-			} else {
+		// While these lines might look like they work, in practive,
+		// Full-screen videos won't work correctly. I may test this out some more
+		//	if (view instanceof FrameLayout) {
+		//		FrameLayout frame = (FrameLayout) view;
+		//		if (frame.getFocusedChild() instanceof VideoView) {
+		//			VideoView video = (VideoView) frame.getFocusedChild();
+		//			video.stopPlayback();
+		//			frame.removeView(video);
+		//			video.setVisibility(View.GONE);
+		//		}
+		//	} else {
 				mBrowserController.onShowCustomView(view, requestedOrientation,
 						callback);
 
-			}
+		//	}
 
 			super.onShowCustomView(view, requestedOrientation, callback);
 		}
