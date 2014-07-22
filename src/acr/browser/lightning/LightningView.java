@@ -61,7 +61,7 @@ public class LightningView {
 
 	private static boolean mWideViewPort;
 
-	private static AdBlock mAdBlock;
+	private AdBlock mAdBlock;
 
 	private CookieManager mCookieManager;
 
