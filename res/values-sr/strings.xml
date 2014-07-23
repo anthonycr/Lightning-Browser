@@ -158,7 +158,18 @@
     <string name="powered_by_google">Погоњено Гуглом</string>
     <string name="title_adblock">Адблок</string>
     <string name="message_adblock">Адблок је доступан само у плаћеном издању прегледача, „Lightning Browser+“. Доступан је за преузимање на Гугловом Плеју.</string>
+    <string name="enable_orbot">Омогући Орбот</string>
     <string name="use_tor_prompt">Изгледа да имате Орбот инсталиран. Желите ли да користите Тор?</string>
+    <string name="install_orbot">Инсталирајте Орбот да бисте користили Тор.</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="clear_cookies_exit">Очисти колачиће по затварању</string>
+    <string name="clear_history_exit">Очисти историјат по затварању</string>
     <string name="folder_default">Подразумевана</string>
     <string name="folder_custom">Посебна</string>
+    <string name="untitled">Неименована</string>
+    <string name="mpl_license">Мозилина Јавна Лиценца в. 2.0</string>
+    <string name="freeware">Фривер</string>
+    <string name="android_open_source_project">Андроид пројекат отвореног кôда</string>
+    <string name="hphosts_ad_server_list">hpHosts списак рекламних сервера</string>
 </resources>
