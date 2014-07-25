@@ -93,7 +93,7 @@ public class DownloadHandler {
 				break;
 			}
 		}
-		if (needed == false) {
+		if (!needed) {
 			return path;
 		}
 
@@ -204,6 +204,7 @@ public class DownloadHandler {
 			final DownloadManager manager
 					= (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
 			new Thread("Browser download") {
+				@Override
 				public void run() {
 					manager.enqueue(request);
 				}
