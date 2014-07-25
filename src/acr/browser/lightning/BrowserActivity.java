@@ -1014,11 +1014,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 			return;
 		}
 		if (mCurrentView != null) {
-			mCurrentView.setIsForgroundTab(false);
+			mCurrentView.setForegroundTab(false);
 			mCurrentView.onPause();
 		}
 		mCurrentView = view;
-		mCurrentView.setIsForgroundTab(true);
+		mCurrentView.setForegroundTab(true);
 		if (view.getWebView() != null) {
 			updateUrl(view.getUrl());
 			updateProgress(view.getProgress());
@@ -1587,7 +1587,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 			LightningView web = data.get(position);
 			holder.txtTitle.setText(web.getTitle());
-			if (web.getIsForgroundTab()) {
+			if (web.isForegroundTab()) {
 				holder.txtTitle.setTextAppearance(context, R.style.boldText);
 			} else {
 				holder.txtTitle.setTextAppearance(context, R.style.normalText);

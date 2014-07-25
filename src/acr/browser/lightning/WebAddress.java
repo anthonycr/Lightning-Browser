@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 import static android.util.Patterns.GOOD_IRI_CHAR;
 
 /**
- * {@hide}
- * 
  * Web Address Parser
  * 
  * This is called WebAddress, rather than URL or URI, because it attempts to
@@ -54,14 +52,13 @@ public class WebAddress {
 					/* anchor */".*", Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * parses given uriString.
+	 * Parses given URI-like string.
 	 */
-	public WebAddress(String address) throws Exception {
-		if (address == null) {
-			throw new NullPointerException();
-		}
+	public WebAddress(String address) {
 
-		// android.util.Log.d(LOGTAG, "WebAddress: " + address);
+		if (address == null) {
+			throw new IllegalArgumentException("address can't be null");
+		}
 
 		mScheme = "";
 		mHost = "";
@@ -71,73 +68,73 @@ public class WebAddress {
 
 		Matcher m = sAddressPattern.matcher(address);
 		String t;
-		if (m.matches()) {
-			t = m.group(MATCH_GROUP_SCHEME);
-			if (t != null) {
-				mScheme = t.toLowerCase(Locale.ROOT);
-			}
-			t = m.group(MATCH_GROUP_AUTHORITY);
-			if (t != null) {
-				mAuthInfo = t;
-			}
-			t = m.group(MATCH_GROUP_HOST);
-			if (t != null) {
-				mHost = t;
-			}
-			t = m.group(MATCH_GROUP_PORT);
-			if (t != null && t.length() > 0) {
-				// The ':' character is not returned by the regex.
-				try {
-					mPort = Integer.parseInt(t);
-				} catch (NumberFormatException ex) {
-					throw new Exception();
-				}
-			}
-			t = m.group(MATCH_GROUP_PATH);
-			if (t != null && t.length() > 0) {
-				/*
-				 * handle busted myspace frontpage redirect with missing initial
-				 * "/"
-				 */
-				if (t.charAt(0) == '/') {
-					mPath = t;
-				} else {
-					mPath = "/" + t;
-				}
-			}
+		if (!m.matches()) {
+			throw new IllegalArgumentException("Parsing of address '" +
+					address + "' failed");
+		}
 
-		} else {
-			// nothing found... outa here
-			throw new Exception();
+		t = m.group(MATCH_GROUP_SCHEME);
+		if (t != null) {
+			mScheme = t.toLowerCase(Locale.ROOT);
+		}
+		t = m.group(MATCH_GROUP_AUTHORITY);
+		if (t != null) {
+			mAuthInfo = t;
+		}
+		t = m.group(MATCH_GROUP_HOST);
+		if (t != null) {
+			mHost = t;
+		}
+		t = m.group(MATCH_GROUP_PORT);
+		if (t != null && !t.isEmpty()) {
+			// The ':' character is not returned by the regex.
+			try {
+				mPort = Integer.parseInt(t);
+			} catch (NumberFormatException ex) {
+				throw new RuntimeException("Parsing of port number failed", ex);
+			}
+		}
+		t = m.group(MATCH_GROUP_PATH);
+		if (t != null && !t.isEmpty()) {
+			/*
+			 * handle busted myspace frontpage redirect with missing initial
+			 * "/"
+			 */
+			if (t.charAt(0) == '/') {
+				mPath = t;
+			} else {
+				mPath = '/' + t;
+			}
 		}
 
 		/*
 		 * Get port from scheme or scheme from port, if necessary and possible
 		 */
-		if (mPort == 443 && mScheme.equals("")) {
+		if (mPort == 443 && "".equals(mScheme)) {
 			mScheme = "https";
 		} else if (mPort == -1) {
-			if (mScheme.equals("https")) {
+			if ("https".equals(mScheme)) {
 				mPort = 443;
 			} else {
 				mPort = 80; // default
 			}
 		}
-		if (mScheme.equals("")) {
+		if ("".equals(mScheme)) {
 			mScheme = "http";
 		}
 	}
 
 	@Override
 	public String toString() {
+
 		String port = "";
-		if ((mPort != 443 && mScheme.equals("https"))
-				|| (mPort != 80 && mScheme.equals("http"))) {
-			port = ":" + Integer.toString(mPort);
+		if ((mPort != 443 && "https".equals(mScheme))
+				|| (mPort != 80 && "http".equals(mScheme))) {
+			port = ':' + Integer.toString(mPort);
 		}
 		String authInfo = "";
-		if (mAuthInfo.length() > 0) {
-			authInfo = mAuthInfo + "@";
+		if (!mAuthInfo.isEmpty()) {
+			authInfo = mAuthInfo + '@';
 		}
 
 		return mScheme + "://" + authInfo + mHost + port + mPath;

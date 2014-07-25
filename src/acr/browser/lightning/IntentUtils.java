@@ -80,7 +80,7 @@ public class IntentUtils {
 		PackageManager pm = mActivity.getPackageManager();
 		List<ResolveInfo> handlers = pm.queryIntentActivities(intent,
 				PackageManager.GET_RESOLVED_FILTER);
-		if (handlers == null || handlers.size() == 0) {
+		if (handlers == null || handlers.isEmpty()) {
 			return false;
 		}
 		for (ResolveInfo resolveInfo : handlers) {

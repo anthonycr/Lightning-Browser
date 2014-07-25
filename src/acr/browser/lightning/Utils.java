@@ -18,7 +18,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utils {
+public final class Utils {
+
+	private Utils() {
+	}
 
 	public static void downloadFile(final Activity activity, final String url, final String userAgent,
 			final String contentDisposition, final boolean privateBrowsing) {
@@ -31,7 +34,7 @@ public class Utils {
 	public static synchronized void addBookmark(Context context, String title, String url) {
 		File book = new File(context.getFilesDir(), "bookmarks");
 		File bookUrl = new File(context.getFilesDir(), "bookurl");
-		if ((title.equals("Bookmarks") || title.equals("History")) && url.startsWith("file://")) {
+		if (("Bookmarks".equals(title) || "History".equals(title)) && url.startsWith("file://")) {
 			return;
 		}
 		try {
@@ -102,8 +105,7 @@ public class Utils {
 	 */
 	public static int convertToDensityPixels(Context context, int densityPixels) {
 		float scale = context.getResources().getDisplayMetrics().density;
-		int pixels = (int) (densityPixels * scale + 0.5f);
-		return pixels;
+		return (int) (densityPixels * scale + 0.5f);
 	}
 
 	public static String getDomainName(String url) {
@@ -169,6 +171,6 @@ public class Utils {
 			}
 		}
 		// The directory is now empty so delete it
-		return dir.delete();
+		return dir != null && dir.delete();
 	}
 }

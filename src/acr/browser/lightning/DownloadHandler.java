@@ -93,7 +93,7 @@ public class DownloadHandler {
 				break;
 			}
 		}
-		if (needed == false) {
+		if (!needed) {
 			return path;
 		}
 
@@ -160,9 +160,9 @@ public class DownloadHandler {
 			webAddress = new WebAddress(url);
 			webAddress.setPath(encodePath(webAddress.getPath()));
 		} catch (Exception e) {
-			// This only happens for very bad urls, we want to chatch the
+			// This only happens for very bad urls, we want to catch the
 			// exception here
-			Log.e(LOGTAG, "Exception trying to parse url:" + url);
+			Log.e(LOGTAG, "Exception while trying to parse url '" + url + '\'', e);
 			return;
 		}
 
@@ -204,6 +204,7 @@ public class DownloadHandler {
 			final DownloadManager manager
 					= (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
 			new Thread("Browser download") {
+				@Override
 				public void run() {
 					manager.enqueue(request);
 				}

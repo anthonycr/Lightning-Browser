@@ -15,16 +15,14 @@ public class ClickHandler extends Handler {
 		try {
 			mBrowserController = (BrowserController) context;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(context.toString()
-					+ " must implement BrowserController");
+			throw new ClassCastException(context + " must implement BrowserController");
 		}
 	}
 
 	@Override
 	public void handleMessage(Message msg) {
 		super.handleMessage(msg);
-		String url = null;
-		url = msg.getData().getString("url");
+		String url = msg.getData().getString("url");
 		mBrowserController.longClickPage(url);
 	}
 }

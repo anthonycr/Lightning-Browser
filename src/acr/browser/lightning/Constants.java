@@ -5,10 +5,9 @@ package acr.browser.lightning;
 
 import android.os.Environment;
 
-public class Constants {
+public final class Constants {
 
-	public Constants() {
-		// TODO Auto-generated constructor stub
+	private Constants() {
 	}
 
 	public static final String DESKTOP_USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/20 Safari/537.17";
