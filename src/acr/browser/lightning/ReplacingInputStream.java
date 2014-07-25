@@ -3,14 +3,15 @@ package acr.browser.lightning;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ReplacingInputStream extends FilterInputStream {
 
-	LinkedList<Integer> inQueue = new LinkedList<Integer>();
+	Deque<Integer> inQueue = new LinkedList<Integer>();
 
-	LinkedList<Integer> outQueue = new LinkedList<Integer>();
+	Deque<Integer> outQueue = new LinkedList<Integer>();
 
 	final byte[] search, replacement;
 
@@ -70,6 +71,7 @@ public class ReplacingInputStream extends FilterInputStream {
 	/**
 	 * Returns false.  REFilterInputStream does not support mark() and reset() methods.
 	 */
+	@Override
 	public boolean markSupported() {
 		return false;
 	}
@@ -77,6 +79,7 @@ public class ReplacingInputStream extends FilterInputStream {
 	/**
 	 * Reads from the stream into the provided array.
 	 */
+	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		int i;
 		int ok = 0;
