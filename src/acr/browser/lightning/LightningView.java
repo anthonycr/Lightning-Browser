@@ -61,9 +61,9 @@ public class LightningView {
 
 	private AdBlock mAdBlock;
 
-	private boolean isForgroundTab = false;
+	private boolean isForegroundTab;
 
-	private IntentUtils mIntentUtils = null;
+	private IntentUtils mIntentUtils;
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
@@ -81,7 +81,7 @@ public class LightningView {
 		try {
 			mBrowserController = (BrowserController) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
+			throw new ClassCastException(activity
 					+ " must implement BrowserController");
 		}
 		mIntentUtils = new IntentUtils(mBrowserController);
@@ -109,11 +109,11 @@ public class LightningView {
 				new CustomGestureListener());
 		mWebView.setOnTouchListener(new OnTouchListener() {
 
-			float mLocation = 0;
+			float mLocation;
 
-			float mY = 0;
+			float mY;
 
-			int mAction = 0;
+			int mAction;
 
 			@Override
 			public boolean onTouch(View view, MotionEvent arg1) {
@@ -142,10 +142,8 @@ public class LightningView {
 		initializeSettings(mWebView.getSettings(), activity);
 		initializePreferences(activity);
 
-		if (url != null) {
-			if (!url.equals("")) {
-				mWebView.loadUrl(url);
-			}
+		if (url != null && !url.trim().isEmpty()) {
+			mWebView.loadUrl(url);
 		} else {
 			if (mHomepage.startsWith("about:home")) {
 				mSettings.setUseWideViewPort(false);
@@ -159,7 +157,7 @@ public class LightningView {
 	}
 
 	public String getHomepage() {
-		String home = "";
+		String home;
 		home = HomepageVariables.HEAD;
 		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
 			case 0:
@@ -394,11 +392,7 @@ public class LightningView {
 	}
 
 	public boolean isShown() {
-		if (mWebView != null) {
-			return mWebView.isShown();
-		} else {
-			return false;
-		}
+		return mWebView != null && mWebView.isShown();
 	}
 
 	public synchronized void onPause() {
@@ -413,13 +407,13 @@ public class LightningView {
 		}
 	}
 
-	public void setIsForgroundTab(boolean isForground) {
-		isForgroundTab = isForground;
+	public void setForegroundTab(boolean isForeground) {
+		isForegroundTab = isForeground;
 		mBrowserController.update();
 	}
 
-	public boolean getIsForgroundTab() {
-		return isForgroundTab;
+	public boolean isForegroundTab() {
+		return isForegroundTab;
 	}
 
 	public int getProgress() {
@@ -449,10 +443,8 @@ public class LightningView {
 	}
 
 	public void requestFocus() {
-		if (mWebView != null) {
-			if (!mWebView.hasFocus()) {
-				mWebView.requestFocus();
-			}
+		if (mWebView != null && !mWebView.hasFocus()) {
+			mWebView.requestFocus();
 		}
 	}
 
@@ -524,19 +516,11 @@ public class LightningView {
 	}
 
 	public boolean canGoBack() {
-		if (mWebView != null) {
-			return mWebView.canGoBack();
-		} else {
-			return false;
-		}
+		return mWebView != null && mWebView.canGoBack();
 	}
 
 	public boolean canGoForward() {
-		if (mWebView != null) {
-			return mWebView.canGoForward();
-		} else {
-			return false;
-		}
+		return mWebView != null && mWebView.canGoForward();
 	}
 
 	public WebView getWebView() {
@@ -583,11 +567,8 @@ public class LightningView {
 		public WebResourceResponse shouldInterceptRequest(WebView view,
 				String url) {
 			if (mAdBlock.isAd(url)) {
-				ByteArrayInputStream EMPTY = new ByteArrayInputStream(
-						"".getBytes());
-				WebResourceResponse response = new WebResourceResponse(
-						"text/plain", "utf-8", EMPTY);
-				return response;
+				ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
+				return new WebResourceResponse("text/plain", "utf-8", EMPTY);
 			}
 
 			boolean useProxy = mPreferences.getBoolean(
@@ -650,12 +631,12 @@ public class LightningView {
 				}
 
 				if (cType != null && cType.startsWith("text")) {
-					InputStream fStream = null;
+					InputStream fStream;
 
 					BufferedInputStream bis = new BufferedInputStream(
 							conn.getInputStream());
 					ByteArrayBuffer baf = new ByteArrayBuffer(connLen);
-					int read = 0;
+					int read;
 					int bufSize = 2048;
 					byte[] buffer = new byte[bufSize];
 					while (true) {
@@ -681,10 +662,7 @@ public class LightningView {
 					fStream = new ReplacingInputStream(fStream,
 							"\"poster\"".getBytes(), "\"foo\"".getBytes());
 
-					WebResourceResponse response = new WebResourceResponse(
-							cType, cEnc, fStream);
-
-					return response;
+					return new WebResourceResponse(cType, cEnc, fStream);
 				}/**
 				 * else if (mDoLeakHardening) { WebResourceResponse response =
 				 * new WebResourceResponse( cType, cEnc, conn.getInputStream());
@@ -700,11 +678,8 @@ public class LightningView {
 				Log.e(Constants.TAG, "Error filtering stream", e);
 				ByteArrayInputStream EMPTY = new ByteArrayInputStream(
 						"".getBytes());
-				WebResourceResponse response = new WebResourceResponse(
-						"text/plain", "utf-8", EMPTY);
-				return response;
+				return new WebResourceResponse("text/plain", "utf-8", EMPTY);
 			}
-
 		}
 
 		@Override
@@ -714,7 +689,7 @@ public class LightningView {
 			}
 			if (view.getTitle() == null) {
 				mTitle.setTitle(mActivity.getString(R.string.untitled));
-			} else if (view.getTitle().length() > 0) {
+			} else if (!view.getTitle().isEmpty()) {
 				mTitle.setTitle(view.getTitle());
 			} else {
 				mTitle.setTitle(mActivity.getString(R.string.untitled));
@@ -912,7 +887,7 @@ public class LightningView {
 
 		@Override
 		public void onReceivedTitle(WebView view, String title) {
-			if (title.length() > 0) {
+			if (!title.isEmpty()) {
 				mTitle.setTitle(title);
 			} else {
 				mTitle.setTitle(mActivity.getString(R.string.untitled));
@@ -929,7 +904,7 @@ public class LightningView {
 			builder.setTitle(mActivity.getString(R.string.location));
 			String org = null;
 			if (origin.length() > 50) {
-				org = (String) origin.subSequence(0, 50) + "...";
+				org = origin.subSequence(0, 50) + "...";
 			} else {
 				org = origin;
 			}
@@ -1004,7 +979,7 @@ public class LightningView {
 
 		@Override
 		public void onShowCustomView(View view, CustomViewCallback callback) {
-		// While these lines might look like they work, in practive,
+		// While these lines might look like they work, in practice,
 		// Full-screen videos won't work correctly. I may test this out some more
 		//	if (view instanceof FrameLayout) {
 		//		FrameLayout frame = (FrameLayout) view;
@@ -1028,7 +1003,7 @@ public class LightningView {
 		@Deprecated
 		public void onShowCustomView(View view, int requestedOrientation,
 				CustomViewCallback callback) {
-		// While these lines might look like they work, in practive,
+		// While these lines might look like they work, in practice,
 		// Full-screen videos won't work correctly. I may test this out some more
 		//	if (view instanceof FrameLayout) {
 		//		FrameLayout frame = (FrameLayout) view;
@@ -1046,7 +1021,6 @@ public class LightningView {
 
 			super.onShowCustomView(view, requestedOrientation, callback);
 		}
-
 	}
 
 	public class Title {
@@ -1073,9 +1047,10 @@ public class LightningView {
 
 		public void setTitle(String title) {
 			if (title == null) {
-				title = "";
+				mTitle = "";
+			} else {
+				mTitle = title;
 			}
-			mTitle = title;
 		}
 
 		public void setTitleAndFavicon(String title, Bitmap favicon) {
