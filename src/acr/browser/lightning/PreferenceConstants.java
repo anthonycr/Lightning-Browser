@@ -3,7 +3,10 @@
  */
 package acr.browser.lightning;
 
-public class PreferenceConstants {
+public final class PreferenceConstants {
+
+	private PreferenceConstants() {
+	}
 
 	public static final String ADOBE_FLASH_SUPPORT = "enableflash";
 
