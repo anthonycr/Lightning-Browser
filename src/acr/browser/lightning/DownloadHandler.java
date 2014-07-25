@@ -160,9 +160,9 @@ public class DownloadHandler {
 			webAddress = new WebAddress(url);
 			webAddress.setPath(encodePath(webAddress.getPath()));
 		} catch (Exception e) {
-			// This only happens for very bad urls, we want to chatch the
+			// This only happens for very bad urls, we want to catch the
 			// exception here
-			Log.e(LOGTAG, "Exception trying to parse url:" + url);
+			Log.e(LOGTAG, "Exception while trying to parse url '" + url + '\'', e);
 			return;
 		}
 
