@@ -45,7 +45,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 	private Context mContext;
 
-	private boolean mIncognito = false;
+	private boolean mIncognito;
 
 	public SearchAdapter(Context context, boolean incognito) {
 		mDatabaseHandler = new DatabaseHandler(context);
@@ -278,13 +278,13 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 					int counter = 0;
 					while (eventType != XmlPullParser.END_DOCUMENT) {
 						if (eventType == XmlPullParser.START_TAG) {
-							if (xpp.getName().equals("suggestion")) {
+							if ("suggestion".equals(xpp.getName())) {
 								String suggestion = xpp.getAttributeValue(null,
 										"data");
 								filter.add(new HistoryItem(mContext
 										.getString(R.string.suggestion)
 										+ " \""
-										+ suggestion + "\"", suggestion,
+										+ suggestion + '"', suggestion,
 										R.drawable.ic_search));
 								counter++;
 								if (counter >= 5) {
