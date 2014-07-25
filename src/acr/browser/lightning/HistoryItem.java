@@ -101,4 +101,47 @@ public class HistoryItem implements Comparable<HistoryItem> {
 	public int compareTo(HistoryItem another) {
 		return mTitle.compareTo(another.mTitle);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o) {
+			return true;
+		}
+		if (o == null || ((Object) this).getClass() != o.getClass()) {
+			return false;
+		}
+
+		HistoryItem that = (HistoryItem) o;
+
+		if (mId != that.mId) {
+			return false;
+		}
+		if (mImageId != that.mImageId) {
+			return false;
+		}
+		if (mBitmap != null ? !mBitmap.equals(that.mBitmap) : that.mBitmap != null) {
+			return false;
+		}
+		if (!mTitle.equals(that.mTitle)) {
+			return false;
+		}
+		if (!mUrl.equals(that.mUrl)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+
+		int result = mId;
+		result = 31 * result + mUrl.hashCode();
+		result = 31 * result + mTitle.hashCode();
+		result = 31 * result + (mBitmap != null ? mBitmap.hashCode() : 0);
+		result = 31 * result + mImageId;
+
+		return result;
+	}
 }
