@@ -504,7 +504,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 	if (!oh.isOrbotRunning()) {
 	    oh.requestOrbotStart(this);
 	}
-
 	try {
 	    String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
 	    int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
