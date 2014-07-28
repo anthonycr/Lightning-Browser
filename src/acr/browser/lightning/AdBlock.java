@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class AdBlock {
@@ -25,19 +26,18 @@ public class AdBlock {
 
 	private boolean mBlockAds;
 
+	private static final Locale mLocale = Locale.getDefault();
+
 	public AdBlock(Context context) {
 		if (mBlockedDomainsList.isEmpty()) {
 			loadBlockedDomainsList(context);
 		}
-		mPreferences = context.getSharedPreferences(
-				PreferenceConstants.PREFERENCES, 0);
-		mBlockAds = mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS,
-				false);
+		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		mBlockAds = mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false);
 	}
 
 	public void updatePreference() {
-		mBlockAds = mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS,
-				false);
+		mBlockAds = mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false);
 	}
 
 	private void loadBlockedDomainsList(final Context context) {
@@ -47,15 +47,15 @@ public class AdBlock {
 			public void run() {
 				AssetManager asset = context.getAssets();
 				try {
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
+					BufferedReader reader = new BufferedReader(new InputStreamReader(
+							asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
 					String line;
 					while ((line = reader.readLine()) != null) {
-						mBlockedDomainsList.add(line.trim().toLowerCase());
+						mBlockedDomainsList.add(line.trim().toLowerCase(mLocale));
 					}
 				} catch (IOException e) {
-					Log.wtf(TAG, "Reading blocked domains list from file '" +
-							BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
+					Log.wtf(TAG, "Reading blocked domains list from file '"
+							+ BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
 				}
 			}
 		});
@@ -75,7 +75,7 @@ public class AdBlock {
 			return false;
 		}
 
-		boolean isOnBlacklist = mBlockedDomainsList.contains(domain.toLowerCase());
+		boolean isOnBlacklist = mBlockedDomainsList.contains(domain.toLowerCase(mLocale));
 		if (isOnBlacklist) {
 			Log.d(TAG, "URL '" + url + "' is an ad");
 		}

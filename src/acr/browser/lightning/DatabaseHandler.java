@@ -34,17 +34,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public static SQLiteDatabase mDatabase;
 
 	public DatabaseHandler(Context context) {
-		super(context.getApplicationContext(), DATABASE_NAME, null,
-				DATABASE_VERSION);
+		super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
 		mDatabase = this.getWritableDatabase();
 	}
 
 	// Creating Tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + "("
-				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_URL + " TEXT,"
-				+ KEY_TITLE + " TEXT" + ")";
+		String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + "(" + KEY_ID
+				+ " INTEGER PRIMARY KEY," + KEY_URL + " TEXT," + KEY_TITLE + " TEXT" + ")";
 		db.execSQL(CREATE_HISTORY_TABLE);
 	}
 
@@ -96,9 +94,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// Getting single item
 	String getHistoryItem(String url) {
-		Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL,
-						KEY_TITLE}, KEY_URL + "=?", new String[]{url}, null, null,
-				null, null);
+		Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[] { KEY_ID, KEY_URL, KEY_TITLE },
+				KEY_URL + "=?", new String[] { url }, null, null, null, null);
 		String m = null;
 		if (cursor != null) {
 			cursor.moveToFirst();
@@ -112,8 +109,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public List<HistoryItem> findItemsContaining(String search) {
 		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
-		//select query
-		String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%" + search + "%'";
+		// select query
+		String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%"
+				+ search + "%'";
 		Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
 		// looping through all rows and adding to list
@@ -181,15 +179,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_URL, item.getUrl());
 		values.put(KEY_TITLE, item.getTitle());
 		int n = mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
-				new String[]{String.valueOf(item.getId())});
+				new String[] { String.valueOf(item.getId()) });
 		// updating row
 		return n;
 	}
 
 	// Deleting single item
 	public synchronized void deleteHistoryItem(String id) {
-		mDatabase.delete(TABLE_HISTORY, KEY_ID + " = ?",
-				new String[]{String.valueOf(id)});
+		mDatabase.delete(TABLE_HISTORY, KEY_ID + " = ?", new String[] { String.valueOf(id) });
 	}
 
 	// Getting items Count

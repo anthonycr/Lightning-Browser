@@ -30,27 +30,31 @@ public class DownloadHandler {
 	private static Activity mActivity;
 
 	/**
-	 * Notify the host application a download should be done, or that the data should be streamed if a streaming viewer
-	 * is available.
-	 *
-	 * @param activity           Activity requesting the download.
-	 * @param url                The full url to the content that should be downloaded
-	 * @param userAgent          User agent of the downloading application.
-	 * @param contentDisposition Content-disposition http header, if present.
-	 * @param mimetype           The mimetype of the content reported by the server
-	 * @param privateBrowsing    If the request is coming from a private browsing tab.
+	 * Notify the host application a download should be done, or that the data
+	 * should be streamed if a streaming viewer is available.
+	 * 
+	 * @param activity
+	 *            Activity requesting the download.
+	 * @param url
+	 *            The full url to the content that should be downloaded
+	 * @param userAgent
+	 *            User agent of the downloading application.
+	 * @param contentDisposition
+	 *            Content-disposition http header, if present.
+	 * @param mimetype
+	 *            The mimetype of the content reported by the server
+	 * @param privateBrowsing
+	 *            If the request is coming from a private browsing tab.
 	 */
-	public static void onDownloadStart(Activity activity, String url,
-			String userAgent, String contentDisposition, String mimetype,
-			boolean privateBrowsing) {
+	public static void onDownloadStart(Activity activity, String url, String userAgent,
+			String contentDisposition, String mimetype, boolean privateBrowsing) {
 		mActivity = activity;
 		// if we're dealing wih A/V content that's not explicitly marked
-		//     for download, check if it's streamable.
+		// for download, check if it's streamable.
 		if (contentDisposition == null
-				|| !contentDisposition.regionMatches(
-				true, 0, "attachment", 0, 10)) {
+				|| !contentDisposition.regionMatches(true, 0, "attachment", 0, 10)) {
 			// query the package manager to see if there's a registered handler
-			//     that matches.
+			// that matches.
 			Intent intent = new Intent(Intent.ACTION_VIEW);
 			intent.setDataAndType(Uri.parse(url), mimetype);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -60,10 +64,8 @@ public class DownloadHandler {
 				ComponentName myName = activity.getComponentName();
 				// If we resolved to ourselves, we don't want to attempt to
 				// load the url only to try and download it again.
-				if (!myName.getPackageName().equals(
-						info.activityInfo.packageName)
-						|| !myName.getClassName().equals(
-						info.activityInfo.name)) {
+				if (!myName.getPackageName().equals(info.activityInfo.packageName)
+						|| !myName.getClassName().equals(info.activityInfo.name)) {
 					// someone (other than us) knows how to handle this mime
 					// type with this scheme, don't download.
 					try {
@@ -76,8 +78,8 @@ public class DownloadHandler {
 				}
 			}
 		}
-		onDownloadStartNoStream(activity, url, userAgent, contentDisposition,
-				mimetype, privateBrowsing);
+		onDownloadStartNoStream(activity, url, userAgent, contentDisposition, mimetype,
+				privateBrowsing);
 	}
 
 	// This is to work around the fact that java.net.URI throws Exceptions
@@ -111,23 +113,27 @@ public class DownloadHandler {
 	}
 
 	/**
-	 * Notify the host application a download should be done, even if there is a streaming viewer available for thise
-	 * type.
-	 *
-	 * @param activity           Activity requesting the download.
-	 * @param url                The full url to the content that should be downloaded
-	 * @param userAgent          User agent of the downloading application.
-	 * @param contentDisposition Content-disposition http header, if present.
-	 * @param mimetype           The mimetype of the content reported by the server
-	 * @param privateBrowsing    If the request is coming from a private browsing tab.
+	 * Notify the host application a download should be done, even if there is a
+	 * streaming viewer available for thise type.
+	 * 
+	 * @param activity
+	 *            Activity requesting the download.
+	 * @param url
+	 *            The full url to the content that should be downloaded
+	 * @param userAgent
+	 *            User agent of the downloading application.
+	 * @param contentDisposition
+	 *            Content-disposition http header, if present.
+	 * @param mimetype
+	 *            The mimetype of the content reported by the server
+	 * @param privateBrowsing
+	 *            If the request is coming from a private browsing tab.
 	 */
-	/*package */
-	static void onDownloadStartNoStream(Activity activity,
-			String url, String userAgent, String contentDisposition,
-			String mimetype, boolean privateBrowsing) {
+	/* package */
+	static void onDownloadStartNoStream(Activity activity, String url, String userAgent,
+			String contentDisposition, String mimetype, boolean privateBrowsing) {
 
-		String filename = URLUtil.guessFileName(url,
-				contentDisposition, mimetype);
+		String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
 		// Check to see if we have an SDCard
 		String status = Environment.getExternalStorageState();
@@ -144,12 +150,9 @@ public class DownloadHandler {
 				title = R.string.download_no_sdcard_dlg_title;
 			}
 
-			new AlertDialog.Builder(activity)
-					.setTitle(title)
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setMessage(msg)
-					.setPositiveButton(R.string.action_ok, null)
-					.show();
+			new AlertDialog.Builder(activity).setTitle(title)
+					.setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
+					.setPositiveButton(R.string.action_ok, null).show();
 			return;
 		}
 
@@ -177,7 +180,8 @@ public class DownloadHandler {
 		}
 		request.setMimeType(mimetype);
 		// set downloaded file destination to /sdcard/Download.
-		// or, should it be set to one of several Environment.DIRECTORY* dirs depending on mimetype?
+		// or, should it be set to one of several Environment.DIRECTORY* dirs
+		// depending on mimetype?
 
 		String location = mActivity.getSharedPreferences(PreferenceConstants.PREFERENCES, 0)
 				.getString(PreferenceConstants.DOWNLOAD_DIRECTORY, Environment.DIRECTORY_DOWNLOADS);
@@ -190,19 +194,17 @@ public class DownloadHandler {
 		// old percent-encoded url.
 		String cookies = CookieManager.getInstance().getCookie(url);
 		request.addRequestHeader("cookie", cookies);
-		request.setNotificationVisibility(
-				DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 		if (mimetype == null) {
 			if (TextUtils.isEmpty(addressString)) {
 				return;
 			}
 			// We must have long pressed on a link or image to download it. We
 			// are not sure of the mimetype in this case, so do a head request
-			new FetchUrlMimeType(activity, request, addressString, cookies,
-					userAgent).start();
+			new FetchUrlMimeType(activity, request, addressString, cookies, userAgent).start();
 		} else {
-			final DownloadManager manager
-					= (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+			final DownloadManager manager = (DownloadManager) activity
+					.getSystemService(Context.DOWNLOAD_SERVICE);
 			new Thread("Browser download") {
 				@Override
 				public void run() {
@@ -210,7 +212,6 @@ public class DownloadHandler {
 				}
 			}.start();
 		}
-		Toast.makeText(activity, R.string.download_pending, Toast.LENGTH_SHORT)
-				.show();
+		Toast.makeText(activity, R.string.download_pending, Toast.LENGTH_SHORT).show();
 	}
 }

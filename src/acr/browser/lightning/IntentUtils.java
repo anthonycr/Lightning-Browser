@@ -94,8 +94,7 @@ public class IntentUtils {
 			// to launch a new intent for every URL, using OR only 
 			// launches a new one if there is a non-browser app that
 			// can handle it.
-			if (filter.countDataAuthorities() == 0
-					|| filter.countDataPaths() == 0) {
+			if (filter.countDataAuthorities() == 0 || filter.countDataPaths() == 0) {
 				// Generic handler, skip
 				continue;
 			}

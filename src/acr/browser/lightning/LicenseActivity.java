@@ -44,8 +44,7 @@ public class LicenseActivity extends Activity implements View.OnClickListener {
 	}
 
 	private void actionView(String url) {
-		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), this,
-				MainActivity.class));
+		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), this, MainActivity.class));
 		finish();
 	}
 

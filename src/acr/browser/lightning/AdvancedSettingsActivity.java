@@ -200,24 +200,30 @@ public class AdvancedSettingsActivity extends Activity {
 					R.string.stock_browser_available));
 		}
 
-		messageHandler = new MessageHandler();
+		messageHandler = new MessageHandler(mContext);
 	}
 
-	private class MessageHandler extends Handler {
+	private static class MessageHandler extends Handler {
+		
+		Context mHandlerContext;
+		
+		public MessageHandler(Context context){
+			this.mHandlerContext = context;
+		}
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case 1:
 					Utils.showToast(
-							mContext,
-							mContext.getResources().getString(
+							mHandlerContext,
+							mHandlerContext.getResources().getString(
 									R.string.message_clear_history));
 					break;
 				case 2:
 					Utils.showToast(
-							mContext,
-							mContext.getResources().getString(
+							mHandlerContext,
+							mHandlerContext.getResources().getString(
 									R.string.message_cookies_cleared));
 					break;
 			}

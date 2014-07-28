@@ -22,8 +22,7 @@ public class IncognitoActivity extends BrowserActivity {
 	@Override
 	public void updateCookiePreference() {
 		if (mPreferences == null) {
-			mPreferences = getSharedPreferences(
-					PreferenceConstants.PREFERENCES, 0);
+			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		}
 		mCookieManager = CookieManager.getInstance();
 		CookieSyncManager.createInstance(this);
@@ -35,9 +34,9 @@ public class IncognitoActivity extends BrowserActivity {
 	@Override
 	public synchronized void initializeTabs() {
 		super.initializeTabs();
-		//restoreOrNewTab();
+		// restoreOrNewTab();
 		newTab(null, true);
-		//if incognito mode use newTab(null, true); instead
+		// if incognito mode use newTab(null, true); instead
 	}
 
 	@Override
@@ -48,20 +47,20 @@ public class IncognitoActivity extends BrowserActivity {
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		//handleNewIntent(intent);
+		// handleNewIntent(intent);
 		super.onNewIntent(intent);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		//saveOpenTabs();
+		// saveOpenTabs();
 	}
 
 	@Override
 	public void updateHistory(String title, String url) {
 		super.updateHistory(title, url);
-		//addItemToHistory(title, url);
+		// addItemToHistory(title, url);
 	}
 
 	@Override
