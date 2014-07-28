@@ -94,7 +94,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	private ClickHandler mClickHandler;
 
-	private ProgressBar mProgress;
+	private ProgressBar mProgressBar;
 
 	private boolean mSystemBrowser = false;
 
@@ -193,8 +193,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
-		mProgress = (ProgressBar) findViewById(R.id.activity_bar);
-		mProgress.setVisibility(View.GONE);
+		mProgressBar = (ProgressBar) findViewById(R.id.activity_bar);
+		mProgressBar.setVisibility(View.GONE);
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
 		mDrawer = (RelativeLayout) findViewById(R.id.drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -1687,26 +1687,29 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	public void updateProgress(int n) {
 
-		if (n > mProgress.getProgress()) {
-			ObjectAnimator animator = ObjectAnimator.ofInt(mProgress, "progress", n);
+		if (n > mProgressBar.getProgress()) {
+			ObjectAnimator animator = ObjectAnimator.ofInt(mProgressBar, "progress", n);
 			animator.setDuration(200);
 			animator.setInterpolator(new DecelerateInterpolator());
 			animator.start();
 		} else {
-			mProgress.setProgress(n);
+			ObjectAnimator animator = ObjectAnimator.ofInt(mProgressBar, "progress", 0, n);
+			animator.setDuration(200);
+			animator.setInterpolator(new DecelerateInterpolator());
+			animator.start();
 		}
 		if (n >= 100) {
 			Handler handler = new Handler();
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					mProgress.setVisibility(View.INVISIBLE);
+					mProgressBar.setVisibility(View.INVISIBLE);
 					setIsFinishedLoading();
 				}
 			}, 200);
 
 		} else {
-			mProgress.setVisibility(View.VISIBLE);
+			mProgressBar.setVisibility(View.VISIBLE);
 			setIsLoading();
 		}
 	}
