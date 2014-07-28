@@ -15,8 +15,7 @@ public class ReplacingInputStream extends FilterInputStream {
 
 	final byte[] search, replacement;
 
-	protected ReplacingInputStream(InputStream in, byte[] search,
-			byte[] replacement) {
+	protected ReplacingInputStream(InputStream in, byte[] search, byte[] replacement) {
 		super(in);
 		this.search = search;
 		this.replacement = replacement;
@@ -43,7 +42,6 @@ public class ReplacingInputStream extends FilterInputStream {
 		}
 	}
 
-
 	@Override
 	public int read() throws IOException {
 
@@ -69,7 +67,8 @@ public class ReplacingInputStream extends FilterInputStream {
 	}
 
 	/**
-	 * Returns false.  REFilterInputStream does not support mark() and reset() methods.
+	 * Returns false. REFilterInputStream does not support mark() and reset()
+	 * methods.
 	 */
 	@Override
 	public boolean markSupported() {
