@@ -1689,17 +1689,27 @@ public class BrowserActivity extends Activity implements BrowserController {
 
     @Override
     public void updateProgress(int n) {
-	if (!mProgress.isShown()) {
-	    mProgress.setVisibility(View.VISIBLE);
-	}
-	ObjectAnimator animator = ObjectAnimator.ofInt(mProgress, "progress", n);
-	animator.setDuration(200);
-	animator.setInterpolator(new DecelerateInterpolator());
-	animator.start();
-	if (n == 100) {
-	    mProgress.setVisibility(View.INVISIBLE);
-	    setIsFinishedLoading();
+
+	if (n > mProgress.getProgress()) {
+	    ObjectAnimator animator = ObjectAnimator.ofInt(mProgress, "progress", n);
+	    animator.setDuration(200);
+	    animator.setInterpolator(new DecelerateInterpolator());
+	    animator.start();
 	} else {
+	    mProgress.setProgress(n);
+	}
+	if (n >= 100) {
+	    Handler handler = new Handler();
+	    handler.postDelayed(new Runnable() {
+		@Override
+		public void run() {
+		    mProgress.setVisibility(View.INVISIBLE);
+		    setIsFinishedLoading();
+		}
+	    }, 200);
+
+	} else {
+	    mProgress.setVisibility(View.VISIBLE);
 	    setIsLoading();
 	}
     }
