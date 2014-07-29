@@ -139,8 +139,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	private Activity mActivity;
 
-	private CookieManager mCookieManager;
-
 	private final int API = android.os.Build.VERSION.SDK_INT;
 
 	private Drawable mDeleteIcon;
@@ -1050,7 +1048,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	protected synchronized void newTab(String url, boolean show) {
 		mIsNewIntent = false;
-		LightningView startingTab = new LightningView(mActivity, url, mCookieManager);
+		LightningView startingTab = new LightningView(mActivity, url);
 		if (mIdGenerator == 0) {
 			startingTab.resumeTimers();
 		}

@@ -22,7 +22,6 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.webkit.CookieManager;
 import android.webkit.*;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
@@ -67,7 +66,7 @@ public class LightningView {
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
-	public LightningView(Activity activity, String url, CookieManager cookieManager) {
+	public LightningView(Activity activity, String url) {
 
 		mActivity = activity;
 		mWebView = new WebView(activity);
@@ -138,9 +137,13 @@ public class LightningView {
 		mSettings = mWebView.getSettings();
 		initializeSettings(mWebView.getSettings(), activity);
 		initializePreferences(activity);
-
-		if (url != null && !url.trim().isEmpty()) {
-			mWebView.loadUrl(url);
+ 
+		if (url != null) {
+			if (!url.trim().isEmpty()) {
+				mWebView.loadUrl(url);
+			} else {
+				//don't load anything, the user is looking for a blank tab
+			}
 		} else {
 			if (mHomepage.startsWith("about:home")) {
 				mSettings.setUseWideViewPort(false);
@@ -902,7 +905,7 @@ public class LightningView {
 		public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
 				Message resultMsg) {
 			mBrowserController.onCreateWindow(isUserGesture, resultMsg);
-			return isUserGesture;
+			return true;
 		}
 
 		@Override
