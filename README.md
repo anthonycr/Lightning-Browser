@@ -1,4 +1,5 @@
-#Lightning Browser [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
+#Lightning Browser 
+#![![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
 ####Speed, Simplicity, Security
 #![](ic_launcher_small.png)
 ####Download
