@@ -12,4 +12,3 @@ before_install:
 install:
   - ./setup-ant.sh
 script:
-  - ant debug && lint -w --exitcode --disable MissingTranslation .
