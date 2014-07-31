@@ -1,5 +1,6 @@
-#Lightning Browser [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
+#Lightning Browser
 ####Speed, Simplicity, Security
+#![](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)
 #![](ic_launcher_small.png)
 ####Download
 * [Download APK from here](https://github.com/anthonycr/Lightning-Browser/releases)
