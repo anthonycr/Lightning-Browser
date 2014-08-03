@@ -55,8 +55,10 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.onionkit.web.WebkitProxy;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -1606,7 +1608,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (!image.exists()) {
 				try {
 					// if not, download it...
-					InputStream in = new java.net.URL(urldisplay).openStream();
+					URL url = new URL(urldisplay);
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setDoInput(true);
+					connection.connect();
+					InputStream in = connection.getInputStream();
 
 					if (in != null) {
 						mIcon = BitmapFactory.decodeStream(in);
@@ -1614,12 +1620,15 @@ public class BrowserActivity extends Activity implements BrowserController {
 					// ...and cache it
 					if (mIcon != null) {
 						FileOutputStream fos = new FileOutputStream(image);
-						mIcon.compress(Bitmap.CompressFormat.PNG, 85, fos);
+						mIcon.compress(Bitmap.CompressFormat.PNG, 100, fos);
 						fos.flush();
 						fos.close();
+						Log.i(Constants.TAG, "Downloaded: " + urldisplay);
 					}
 
 				} catch (Exception e) {
+				} finally {
+					
 				}
 			} else {
 				// if it exists, retrieve it from the cache
@@ -1638,7 +1647,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 					// ...and cache it
 					if (mIcon != null) {
 						FileOutputStream fos = new FileOutputStream(image);
-						mIcon.compress(Bitmap.CompressFormat.PNG, 85, fos);
+						mIcon.compress(Bitmap.CompressFormat.PNG, 100, fos);
 						fos.flush();
 						fos.close();
 					}
@@ -1690,7 +1699,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			animator.setDuration(200);
 			animator.setInterpolator(new DecelerateInterpolator());
 			animator.start();
-		} else {
+		} else if (n < mProgressBar.getProgress()) {
 			ObjectAnimator animator = ObjectAnimator.ofInt(mProgressBar, "progress", 0, n);
 			animator.setDuration(200);
 			animator.setInterpolator(new DecelerateInterpolator());

@@ -78,8 +78,7 @@
                     android:minHeight="?android:attr/listPreferredItemHeightSmall"
                     android:text="@string/action_new_tab"
                     android:textAppearance="?android:attr/textAppearanceListItemSmall"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black" />
             </RelativeLayout>
 
             <View
@@ -87,7 +86,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/new_tab_button"
-                android:background="#bababa" />
+                android:background="@color/gray_list_bg" />
 
             <ListView
                 android:id="@+id/left_drawer"
@@ -104,7 +103,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_above="@+id/linearLayout1"
-                android:background="#bababa" />
+                android:background="@color/gray_list_bg" />
 
             <LinearLayout
                 android:id="@+id/linearLayout1"
@@ -170,7 +169,6 @@
                 android:id="@+id/bookmark_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 android:background="@drawable/list_bg"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" >
@@ -201,14 +199,13 @@
                     android:minHeight="?android:attr/listPreferredItemHeightSmall"
                     android:text="@string/action_bookmarks"
                     android:textAppearance="?android:attr/textAppearanceListItemSmall"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black" />
             </RelativeLayout>
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="#bababa" />
+                android:background="@color/gray_list_bg" />
 
             <ListView
                 android:id="@+id/right_drawer_list"
