@@ -21,6 +21,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
@@ -42,6 +44,7 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -162,6 +165,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private VideoView mVideoView;
 
 	private static SearchAdapter mSearchAdapter;
+
+	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
+			LayoutParams.MATCH_PARENT);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -403,6 +409,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
+			@Override
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
 				if (view.equals(mDrawer)) {
@@ -412,6 +419,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 				}
 			}
 
+			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
 				if (drawerView.equals(mDrawer)) {
@@ -946,24 +954,34 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (view == null) {
 			return;
 		}
+		mBrowserFrame.removeAllViews();
 		if (mCurrentView != null) {
 			mCurrentView.setForegroundTab(false);
 			mCurrentView.onPause();
 		}
 		mCurrentView = view;
 		mCurrentView.setForegroundTab(true);
-		if (view.getWebView() != null) {
-			updateUrl(view.getUrl());
-			updateProgress(view.getProgress());
+		if (mCurrentView.getWebView() != null) {
+			updateUrl(mCurrentView.getUrl());
+			updateProgress(mCurrentView.getProgress());
 		} else {
 			updateUrl("");
 			updateProgress(0);
 		}
 
-		mBrowserFrame.removeAllViews();
+		mBrowserFrame.addView(mCurrentView.getWebView(), mMatchParent);
 		mCurrentView.onResume();
-		mBrowserFrame.addView(view.getWebView());
 
+		// Use a delayed handler to make the transition smooth
+		// otherwise it will get caught up with the showTab code
+		// and cause a janky motion
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mDrawerLayout.closeDrawers();
+			}
+		}, 150);
 	}
 
 	/**
@@ -1013,19 +1031,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private void selectItem(final int position) {
 		// update selected item and title, then close the drawer
 
-		mDrawerList.setItemChecked(position, true);
 		showTab(mWebViews.get(position));
-
-		// Use a delayed handler to make the transition smooth
-		// otherwise it will get caught up with the showTab code
-		// and cause a janky motion
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				mDrawerLayout.closeDrawer(mDrawer);
-			}
-		}, 150);
 
 	}
 
@@ -1085,15 +1091,25 @@ public class BrowserActivity extends Activity implements BrowserController {
 			reference.onDestroy();
 		} else if (mWebViews.size() > position + 1) {
 			mIdList.remove(position);
-			showTab(mWebViews.get(position + 1));
-			mWebViews.remove(position);
-			mDrawerList.setItemChecked(position, true);
+			if (current == position) {
+				showTab(mWebViews.get(position + 1));
+				mWebViews.remove(position);
+				mDrawerList.setItemChecked(position, true);
+			} else {
+				mWebViews.remove(position);
+			}
+
 			reference.onDestroy();
 		} else if (mWebViews.size() > 1) {
 			mIdList.remove(position);
-			showTab(mWebViews.get(position - 1));
-			mWebViews.remove(position);
-			mDrawerList.setItemChecked(position - 1, true);
+			if (current == position) {
+				showTab(mWebViews.get(position - 1));
+				mWebViews.remove(position);
+				mDrawerList.setItemChecked(position - 1, true);
+			} else {
+				mWebViews.remove(position);
+			}
+
 			reference.onDestroy();
 		} else {
 			if (mCurrentView.getUrl().startsWith(Constants.FILE)
@@ -1511,7 +1527,23 @@ public class BrowserActivity extends Activity implements BrowserController {
 			}
 
 			Bitmap favicon = web.getFavicon();
-			holder.favicon.setImageBitmap(favicon);
+			if (web.isForegroundTab()) {
+
+				holder.favicon.setImageBitmap(favicon);
+			} else {
+				Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
+						favicon.getHeight(), Bitmap.Config.ARGB_8888);
+
+				Canvas c = new Canvas(grayscaleBitmap);
+				Paint p = new Paint();
+				ColorMatrix cm = new ColorMatrix();
+
+				cm.setSaturation(0);
+				ColorMatrixColorFilter filter = new ColorMatrixColorFilter(cm);
+				p.setColorFilter(filter);
+				c.drawBitmap(favicon, 0, 0, p);
+				holder.favicon.setImageBitmap(grayscaleBitmap);
+			}
 			return row;
 		}
 
@@ -1628,7 +1660,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 				} catch (Exception e) {
 				} finally {
-					
+
 				}
 			} else {
 				// if it exists, retrieve it from the cache
