@@ -54,17 +54,14 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mBookmarks = new ArrayList<HistoryItem>();
 		mSuggestions = new ArrayList<HistoryItem>();
 		mAllBookmarks = Utils.getBookmarks(context);
-		mPreferences = context.getSharedPreferences(
-				PreferenceConstants.PREFERENCES, 0);
-		mUseGoogle = mPreferences.getBoolean(
-				PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
+		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		mContext = context;
 		mIncognito = incognito;
 	}
 
 	public void refreshPreferences() {
-		mUseGoogle = mPreferences.getBoolean(
-				PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
+		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		if (!mUseGoogle && mSuggestions != null) {
 			mSuggestions.clear();
 		}
@@ -100,8 +97,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		if (row == null) {
 			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-			row = inflater.inflate(R.layout.two_line_autocomplete, parent,
-					false);
+			row = inflater.inflate(R.layout.two_line_autocomplete, parent, false);
 
 			holder = new SuggestionHolder();
 			holder.mTitle = (TextView) row.findViewById(R.id.title);
@@ -147,8 +143,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 		}
 
-		holder.mImage.setImageDrawable(mContext.getResources().getDrawable(
-				imageId));
+		holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId));
 
 		return row;
 	}
@@ -173,8 +168,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			if (constraint == null) {
 				return results;
 			}
-			String query = constraint.toString().toLowerCase(
-					Locale.getDefault());
+			String query = constraint.toString().toLowerCase(Locale.getDefault());
 			if (query == null) {
 				return results;
 			}
@@ -190,8 +184,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				if (counter >= 5) {
 					break;
 				}
-				if (mAllBookmarks.get(n).getTitle()
-						.toLowerCase(Locale.getDefault()).startsWith(query)) {
+				if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
+						.startsWith(query)) {
 					filter.add(mAllBookmarks.get(n));
 					mBookmarks.add(mAllBookmarks.get(n));
 					counter++;
@@ -201,8 +195,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			if (mDatabaseHandler == null || !mDatabaseHandler.isOpen()) {
 				mDatabaseHandler = new DatabaseHandler(mContext);
 			}
-			mHistory = mDatabaseHandler.findItemsContaining(constraint
-					.toString());
+			mHistory = mDatabaseHandler.findItemsContaining(constraint.toString());
 			for (int n = 0; n < mHistory.size(); n++) {
 				if (n >= 5) {
 					break;
@@ -228,8 +221,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		}
 
 		@Override
-		protected void publishResults(CharSequence constraint,
-				FilterResults results) {
+		protected void publishResults(CharSequence constraint, FilterResults results) {
 			synchronized (mFilteredList) {
 				mFilteredList = getSuggestions();
 				notifyDataSetChanged();
@@ -247,8 +239,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		TextView mUrl;
 	}
 
-	private class RetrieveSearchSuggestions extends
-			AsyncTask<String, Void, List<HistoryItem>> {
+	private class RetrieveSearchSuggestions extends AsyncTask<String, Void, List<HistoryItem>> {
 
 		@Override
 		protected List<HistoryItem> doInBackground(String... arg0) {
@@ -266,11 +257,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			InputStream download = null;
 			try {
 				try {
-					download = new java.net.URL(
-							"http://google.com/complete/search?q=" + query
-									+ "&output=toolbar&hl=en").openStream();
-					XmlPullParserFactory factory = XmlPullParserFactory
-							.newInstance();
+					download = new java.net.URL("http://google.com/complete/search?q=" + query
+							+ "&output=toolbar&hl=en").openStream();
+					XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 					factory.setNamespaceAware(true);
 					XmlPullParser xpp = factory.newPullParser();
 					xpp.setInput(download, "iso-8859-1");
@@ -279,12 +268,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 					while (eventType != XmlPullParser.END_DOCUMENT) {
 						if (eventType == XmlPullParser.START_TAG) {
 							if ("suggestion".equals(xpp.getName())) {
-								String suggestion = xpp.getAttributeValue(null,
-										"data");
-								filter.add(new HistoryItem(mContext
-										.getString(R.string.suggestion)
-										+ " \""
-										+ suggestion + '"', suggestion,
+								String suggestion = xpp.getAttributeValue(null, "data");
+								filter.add(new HistoryItem(mContext.getString(R.string.suggestion)
+										+ " \"" + suggestion + '"', suggestion,
 										R.drawable.ic_search));
 								counter++;
 								if (counter >= 5) {

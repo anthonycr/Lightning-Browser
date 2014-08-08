@@ -34,8 +34,8 @@ public class AdvancedSettingsActivity extends Activity {
 
 	private SharedPreferences.Editor mEditPrefs;
 
-	private CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10,
-			cb11, cbIncognitoCookies, cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
+	private CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11, cbIncognitoCookies,
+			cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
 
 	private Context mContext;
 
@@ -60,11 +60,11 @@ public class AdvancedSettingsActivity extends Activity {
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 
-		// TODO WARNING: SharedPreferences.edit() without a corresponding commit() or apply() call
+		// TODO WARNING: SharedPreferences.edit() without a corresponding
+		// commit() or apply() call
 		mEditPrefs = mPreferences.edit();
 
-		mSystemBrowser = mPreferences.getBoolean(
-				PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
+		mSystemBrowser = mPreferences.getBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
 		mContext = this;
 		initialize();
 	}
@@ -77,9 +77,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 	private void initialize() {
 
-		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11,
-				r12, r13, r14, r15, rIncognitoCookies, rClearCache,
-				rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
+		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, rIncognitoCookies, rClearCache, rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
 
 		r1 = (RelativeLayout) findViewById(R.id.r1);
 		r2 = (RelativeLayout) findViewById(R.id.r2);
@@ -118,37 +116,26 @@ public class AdvancedSettingsActivity extends Activity {
 		cbIncognitoCookies = (CheckBox) findViewById(R.id.cbIncognitoCookies);
 		cbSearchSuggestions = (CheckBox) findViewById(R.id.cbGoogleSuggestions);
 
-		cb1.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.SAVE_PASSWORDS, true));
-		cb2.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.CLEAR_CACHE_EXIT, false));
+		cb1.setChecked(mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, true));
+		cb2.setChecked(mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false));
 		cbClearHistoryExit.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.CLEAR_HISTORY_EXIT, false));
 		cbClearCookiesExit.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.CLEAR_COOKIES_EXIT, false));
-		cb3.setChecked(mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT,
-				true));
-		cb4.setChecked(mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW,
-				false));
+		cb3.setChecked(mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT, true));
+		cb4.setChecked(mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW, false));
 		cb4.setEnabled(API < 19);
 		if (API >= 19) {
 			mEditPrefs.putBoolean(PreferenceConstants.TEXT_REFLOW, false);
 			mEditPrefs.commit();
 		}
-		cb5.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.BLOCK_IMAGES, false));
-		cb6.setChecked(mPreferences
-				.getBoolean(PreferenceConstants.POPUPS, true));
-		cb7.setChecked(mPreferences.getBoolean(PreferenceConstants.COOKIES,
-				true));
-		cb8.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.USE_WIDE_VIEWPORT, true));
-		cb9.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.OVERVIEW_MODE, true));
-		cb10.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.RESTORE_LOST_TABS, true));
-		cb11.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.HIDE_STATUS_BAR, false));
+		cb5.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_IMAGES, false));
+		cb6.setChecked(mPreferences.getBoolean(PreferenceConstants.POPUPS, true));
+		cb7.setChecked(mPreferences.getBoolean(PreferenceConstants.COOKIES, true));
+		cb8.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, true));
+		cb9.setChecked(mPreferences.getBoolean(PreferenceConstants.OVERVIEW_MODE, true));
+		cb10.setChecked(mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true));
+		cb11.setChecked(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false));
 		cbIncognitoCookies.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.INCOGNITO_COOKIES, false));
 		cbSearchSuggestions.setChecked(mPreferences.getBoolean(
@@ -193,21 +180,19 @@ public class AdvancedSettingsActivity extends Activity {
 		TextView importBookmarks = (TextView) findViewById(R.id.isImportAvailable);
 
 		if (!mSystemBrowser) {
-			importBookmarks.setText(getResources().getString(
-					R.string.stock_browser_unavailable));
+			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
 		} else {
-			importBookmarks.setText(getResources().getString(
-					R.string.stock_browser_available));
+			importBookmarks.setText(getResources().getString(R.string.stock_browser_available));
 		}
 
 		messageHandler = new MessageHandler(mContext);
 	}
 
 	private static class MessageHandler extends Handler {
-		
+
 		Context mHandlerContext;
-		
-		public MessageHandler(Context context){
+
+		public MessageHandler(Context context) {
 			this.mHandlerContext = context;
 		}
 
@@ -215,10 +200,9 @@ public class AdvancedSettingsActivity extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case 1:
-					Utils.showToast(
-							mHandlerContext,
-							mHandlerContext.getResources().getString(
-									R.string.message_clear_history));
+					Utils.showToast(mHandlerContext,
+							mHandlerContext.getResources()
+									.getString(R.string.message_clear_history));
 					break;
 				case 2:
 					Utils.showToast(
@@ -235,10 +219,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.SAVE_PASSWORDS,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.SAVE_PASSWORDS, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -249,10 +231,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -263,10 +243,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -277,10 +255,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -291,10 +267,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs
-						.putBoolean(PreferenceConstants.JAVASCRIPT, isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.JAVASCRIPT, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -305,10 +279,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.TEXT_REFLOW,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.TEXT_REFLOW, isChecked);
 				mEditPrefs.commit();
 			}
 		});
@@ -318,10 +290,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_IMAGES,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_IMAGES, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -332,8 +302,7 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.POPUPS, isChecked);
 				mEditPrefs.commit();
 			}
@@ -345,8 +314,7 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.COOKIES, isChecked);
 				mEditPrefs.commit();
 			}
@@ -358,10 +326,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.USE_WIDE_VIEWPORT,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -372,10 +338,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.OVERVIEW_MODE,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.OVERVIEW_MODE, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -386,10 +350,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.RESTORE_LOST_TABS,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.RESTORE_LOST_TABS, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -400,10 +362,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.HIDE_STATUS_BAR,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.HIDE_STATUS_BAR, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -414,10 +374,8 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.INCOGNITO_COOKIES,
-						isChecked);
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.INCOGNITO_COOKIES, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -428,8 +386,7 @@ public class AdvancedSettingsActivity extends Activity {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, isChecked);
 				mEditPrefs.commit();
 			}
@@ -506,9 +463,9 @@ public class AdvancedSettingsActivity extends Activity {
 				if (API < 19) {
 					cb4.setChecked(!cb4.isChecked());
 				} else {
-					Utils.createInformativeDialog(mContext, getResources()
-							.getString(R.string.title_warning), getResources()
-							.getString(R.string.dialog_reflow_warning));
+					Utils.createInformativeDialog(mContext,
+							getResources().getString(R.string.title_warning), getResources()
+									.getString(R.string.dialog_reflow_warning));
 				}
 			}
 
@@ -556,39 +513,31 @@ public class AdvancedSettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AdvancedSettingsActivity.this); // dialog
-				builder.setTitle(getResources().getString(
-						R.string.title_clear_history));
-				builder.setMessage(
-						getResources().getString(R.string.dialog_history))
-						.setPositiveButton(
-								getResources().getString(R.string.action_yes),
+				AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedSettingsActivity.this); // dialog
+				builder.setTitle(getResources().getString(R.string.title_clear_history));
+				builder.setMessage(getResources().getString(R.string.dialog_history))
+						.setPositiveButton(getResources().getString(R.string.action_yes),
 								new DialogInterface.OnClickListener() {
 
 									@Override
-									public void onClick(DialogInterface arg0,
-											int arg1) {
-										Thread clear = new Thread(
-												new Runnable() {
+									public void onClick(DialogInterface arg0, int arg1) {
+										Thread clear = new Thread(new Runnable() {
 
-													@Override
-													public void run() {
-														clearHistory();
-													}
+											@Override
+											public void run() {
+												clearHistory();
+											}
 
-												});
+										});
 										clear.start();
 									}
 
 								})
-						.setNegativeButton(
-								getResources().getString(R.string.action_no),
+						.setNegativeButton(getResources().getString(R.string.action_no),
 								new DialogInterface.OnClickListener() {
 
 									@Override
-									public void onClick(DialogInterface arg0,
-											int arg1) {
+									public void onClick(DialogInterface arg0, int arg1) {
 										// TODO Auto-generated method stub
 
 									}
@@ -651,39 +600,31 @@ public class AdvancedSettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						AdvancedSettingsActivity.this); // dialog
-				builder.setTitle(getResources().getString(
-						R.string.title_clear_cookies));
-				builder.setMessage(
-						getResources().getString(R.string.dialog_cookies))
-						.setPositiveButton(
-								getResources().getString(R.string.action_yes),
+				AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedSettingsActivity.this); // dialog
+				builder.setTitle(getResources().getString(R.string.title_clear_cookies));
+				builder.setMessage(getResources().getString(R.string.dialog_cookies))
+						.setPositiveButton(getResources().getString(R.string.action_yes),
 								new DialogInterface.OnClickListener() {
 
 									@Override
-									public void onClick(DialogInterface arg0,
-											int arg1) {
-										Thread clear = new Thread(
-												new Runnable() {
+									public void onClick(DialogInterface arg0, int arg1) {
+										Thread clear = new Thread(new Runnable() {
 
-													@Override
-													public void run() {
-														clearCookies();
-													}
+											@Override
+											public void run() {
+												clearCookies();
+											}
 
-												});
+										});
 										clear.start();
 									}
 
 								})
-						.setNegativeButton(
-								getResources().getString(R.string.action_no),
+						.setNegativeButton(getResources().getString(R.string.action_no),
 								new DialogInterface.OnClickListener() {
 
 									@Override
-									public void onClick(DialogInterface arg0,
-											int arg1) {
+									public void onClick(DialogInterface arg0, int arg1) {
 
 									}
 
@@ -734,8 +675,7 @@ public class AdvancedSettingsActivity extends Activity {
 		WebView webView = new WebView(this);
 		webView.clearCache(true);
 		webView.destroy();
-		Utils.showToast(mContext,
-				getResources().getString(R.string.message_cache_cleared));
+		Utils.showToast(mContext, getResources().getString(R.string.message_cache_cleared));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -787,10 +727,8 @@ public class AdvancedSettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				AlertDialog.Builder picker = new AlertDialog.Builder(
-						AdvancedSettingsActivity.this);
-				picker.setTitle(getResources().getString(
-						R.string.title_text_size));
+				AlertDialog.Builder picker = new AlertDialog.Builder(AdvancedSettingsActivity.this);
+				picker.setTitle(getResources().getString(R.string.title_text_size));
 
 				int n = mPreferences.getInt(PreferenceConstants.TEXT_SIZE, 3);
 
@@ -798,22 +736,17 @@ public class AdvancedSettingsActivity extends Activity {
 						new DialogInterface.OnClickListener() {
 
 							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								mEditPrefs.putInt(
-										PreferenceConstants.TEXT_SIZE,
-										which + 1);
+							public void onClick(DialogInterface dialog, int which) {
+								mEditPrefs.putInt(PreferenceConstants.TEXT_SIZE, which + 1);
 								mEditPrefs.commit();
 
 							}
 						});
-				picker.setNeutralButton(
-						getResources().getString(R.string.action_ok),
+				picker.setNeutralButton(getResources().getString(R.string.action_ok),
 						new DialogInterface.OnClickListener() {
 
 							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+							public void onClick(DialogInterface dialog, int which) {
 
 							}
 						});
@@ -825,23 +758,20 @@ public class AdvancedSettingsActivity extends Activity {
 
 	public void importFromStockBrowser() {
 		if (mSystemBrowser) {
-			String[] proj = new String[]{Browser.BookmarkColumns.TITLE,
-					Browser.BookmarkColumns.URL};
+			String[] proj = new String[] { Browser.BookmarkColumns.TITLE,
+					Browser.BookmarkColumns.URL };
 			// use 0 for history, 1 for bookmarks
 			String sel = Browser.BookmarkColumns.BOOKMARK + " = 1";
 			Cursor mCur;
-			mCur = getContentResolver().query(Browser.BOOKMARKS_URI, proj,
-					sel, null, null);
+			mCur = getContentResolver().query(Browser.BOOKMARKS_URI, proj, sel, null, null);
 
 			String title, url;
 			int number = 0;
 			if (mCur.moveToFirst() && mCur.getCount() > 0) {
 				while (!mCur.isAfterLast()) {
 					number++;
-					title = mCur.getString(mCur
-							.getColumnIndex(Browser.BookmarkColumns.TITLE));
-					url = mCur.getString(mCur
-							.getColumnIndex(Browser.BookmarkColumns.URL));
+					title = mCur.getString(mCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
+					url = mCur.getString(mCur.getColumnIndex(Browser.BookmarkColumns.URL));
 					if (title.length() < 1) {
 						title = Utils.getDomainName(url);
 					}
@@ -849,11 +779,10 @@ public class AdvancedSettingsActivity extends Activity {
 					mCur.moveToNext();
 				}
 			}
-			Utils.showToast(mContext, number + " "
-					+ getResources().getString(R.string.message_import));
+			Utils.showToast(mContext,
+					number + " " + getResources().getString(R.string.message_import));
 		} else {
-			Utils.createInformativeDialog(mContext,
-					getResources().getString(R.string.title_error),
+			Utils.createInformativeDialog(mContext, getResources().getString(R.string.title_error),
 					getResources().getString(R.string.dialog_import_error));
 		}
 	}

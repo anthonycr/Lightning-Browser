@@ -22,13 +22,11 @@ public class MainActivity extends BrowserActivity {
 	@Override
 	public void updateCookiePreference() {
 		if (mPreferences == null) {
-			mPreferences = getSharedPreferences(
-					PreferenceConstants.PREFERENCES, 0);
+			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		}
 		mCookieManager = CookieManager.getInstance();
 		CookieSyncManager.createInstance(this);
-		mCookieManager.setAcceptCookie(mPreferences.getBoolean(
-				PreferenceConstants.COOKIES, true));
+		mCookieManager.setAcceptCookie(mPreferences.getBoolean(PreferenceConstants.COOKIES, true));
 		super.updateCookiePreference();
 	}
 
@@ -36,7 +34,7 @@ public class MainActivity extends BrowserActivity {
 	public synchronized void initializeTabs() {
 		super.initializeTabs();
 		restoreOrNewTab();
-		//if incognito mode use newTab(null, true); instead
+		// if incognito mode use newTab(null, true); instead
 	}
 
 	@Override

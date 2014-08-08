@@ -46,7 +46,8 @@ public final class Constants {
 
 	public static final String INCOGNITO_INTENT = "android.intent.action.INCOGNITO";
 
-	public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory().toString();
+	public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory()
+			.toString();
 
 	public static final String SEPARATOR = "\\|\\$\\|SEPARATOR\\|\\$\\|";
 

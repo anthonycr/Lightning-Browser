@@ -8,8 +8,9 @@ public class SettingsController {
 	private static boolean clearHistory;
 
 	/**
-	 * The purpose of this class is so that I can clear the dropdown history in the main activities if the user selects
-	 * to clear the history from the disk in advanced settings
+	 * The purpose of this class is so that I can clear the dropdown history in
+	 * the main activities if the user selects to clear the history from the
+	 * disk in advanced settings
 	 */
 	public static void setClearHistory(boolean choice) {
 		clearHistory = choice;

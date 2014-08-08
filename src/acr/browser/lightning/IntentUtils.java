@@ -25,8 +25,8 @@ public class IntentUtils {
 			+ // switch on case insensitive matching
 			"("
 			+ // begin group for schema
-			"(?:http|https|file):\\/\\/" + "|(?:inline|data|about|javascript):"
-			+ "|(?:.*:.*@)" + ")" + "(.*)");
+			"(?:http|https|file):\\/\\/" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
+			+ ")" + "(.*)");
 
 	public IntentUtils(BrowserController controller) {
 		mController = controller;
@@ -45,8 +45,8 @@ public class IntentUtils {
 		if (mActivity.getPackageManager().resolveActivity(intent, 0) == null) {
 			String packagename = intent.getPackage();
 			if (packagename != null) {
-				intent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse("market://search?q=pname:" + packagename));
+				intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:"
+						+ packagename));
 				intent.addCategory(Intent.CATEGORY_BROWSABLE);
 				mActivity.startActivity(intent);
 				return true;
@@ -74,7 +74,8 @@ public class IntentUtils {
 	}
 
 	/**
-	 * Search for intent handlers that are specific to this URL aka, specialized apps like google maps or youtube
+	 * Search for intent handlers that are specific to this URL aka, specialized
+	 * apps like google maps or youtube
 	 */
 	private boolean isSpecializedHandlerAvailable(Intent intent) {
 		PackageManager pm = mActivity.getPackageManager();
@@ -91,7 +92,7 @@ public class IntentUtils {
 				continue;
 			}
 			// NOTICE: Use of && instead of || will cause the browser
-			// to launch a new intent for every URL, using OR only 
+			// to launch a new intent for every URL, using OR only
 			// launches a new one if there is a non-browser app that
 			// can handle it.
 			if (filter.countDataAuthorities() == 0 || filter.countDataPaths() == 0) {

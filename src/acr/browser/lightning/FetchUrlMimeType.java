@@ -16,10 +16,12 @@ import org.apache.http.client.methods.HttpHead;
 import java.io.IOException;
 
 /**
- * This class is used to pull down the http headers of a given URL so that we can analyse the mimetype and make any
- * correction needed before we give the URL to the download manager. This operation is needed when the user long-clicks
- * on a link or image and we don't know the mimetype. If the user just clicks on the link, we will do the same steps of
- * correcting the mimetype down in android.os.webkit.LoadListener rather than handling it here.
+ * This class is used to pull down the http headers of a given URL so that we
+ * can analyse the mimetype and make any correction needed before we give the
+ * URL to the download manager. This operation is needed when the user
+ * long-clicks on a link or image and we don't know the mimetype. If the user
+ * just clicks on the link, we will do the same steps of correcting the mimetype
+ * down in android.os.webkit.LoadListener rather than handling it here.
  */
 public class FetchUrlMimeType extends Thread {
 
@@ -33,8 +35,8 @@ public class FetchUrlMimeType extends Thread {
 
 	private String mUserAgent;
 
-	public FetchUrlMimeType(Context context, DownloadManager.Request request,
-			String uri, String cookies, String userAgent) {
+	public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
+			String cookies, String userAgent) {
 		mContext = context.getApplicationContext();
 		mRequest = request;
 		mUri = uri;
@@ -85,17 +87,15 @@ public class FetchUrlMimeType extends Thread {
 		}
 
 		if (mimeType != null) {
-			if (mimeType.equalsIgnoreCase("text/plain") ||
-					mimeType.equalsIgnoreCase("application/octet-stream")) {
-				String newMimeType =
-						MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-								MimeTypeMap.getFileExtensionFromUrl(mUri));
+			if (mimeType.equalsIgnoreCase("text/plain")
+					|| mimeType.equalsIgnoreCase("application/octet-stream")) {
+				String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+						MimeTypeMap.getFileExtensionFromUrl(mUri));
 				if (newMimeType != null) {
 					mRequest.setMimeType(newMimeType);
 				}
 			}
-			String filename = URLUtil.guessFileName(mUri, contentDisposition,
-					mimeType);
+			String filename = URLUtil.guessFileName(mUri, contentDisposition, mimeType);
 			mRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
 		}
 

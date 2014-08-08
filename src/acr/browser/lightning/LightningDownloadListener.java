@@ -20,16 +20,15 @@ public class LightningDownloadListener implements DownloadListener {
 
 	@Override
 	public void onDownloadStart(final String url, final String userAgent,
-			final String contentDisposition, final String mimetype,
-			long contentLength) {
-		String fileName = URLUtil.guessFileName(url, contentDisposition,
-				mimetype);
+			final String contentDisposition, final String mimetype, long contentLength) {
+		String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 					case DialogInterface.BUTTON_POSITIVE:
-						DownloadHandler.onDownloadStart(mActivity, url, userAgent, contentDisposition, mimetype, false);
+						DownloadHandler.onDownloadStart(mActivity, url, userAgent,
+								contentDisposition, mimetype, false);
 						break;
 
 					case DialogInterface.BUTTON_NEGATIVE:
@@ -43,8 +42,8 @@ public class LightningDownloadListener implements DownloadListener {
 				.setMessage(mActivity.getResources().getString(R.string.dialog_download))
 				.setPositiveButton(mActivity.getResources().getString(R.string.action_download),
 						dialogClickListener)
-				.setNegativeButton(mActivity.getResources().getString(R.string.action_cancel), dialogClickListener)
-				.show();
+				.setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),
+						dialogClickListener).show();
 		Log.i(Constants.TAG, "Downloading" + fileName);
 
 	}
