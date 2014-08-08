@@ -54,16 +54,14 @@
 
                 <ImageView
                     android:id="@+id/plusIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="2dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     android:contentDescription="Favicon"
                     android:gravity="center_vertical"
-                    android:paddingLeft="2dp"
-                    android:paddingRight="2dp"
                     android:src="@drawable/ic_action_plus" >
                 </ImageView>
 
@@ -175,16 +173,14 @@
 
                 <ImageView
                     android:id="@+id/starIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="2dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     android:contentDescription="Favicon"
                     android:gravity="center_vertical"
-                    android:paddingLeft="2dp"
-                    android:paddingRight="2dp"
                     android:src="@drawable/ic_action_star" >
                 </ImageView>
 

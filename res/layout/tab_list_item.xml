@@ -8,16 +8,14 @@
 
     <ImageView
         android:id="@+id/favicon1"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="2dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:contentDescription="Favicon"
-        android:gravity="center_vertical"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp" >
+        android:gravity="center_vertical" >
     </ImageView>
 
     <TextView
@@ -27,10 +25,12 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/delete1"
         android:layout_toRightOf="@+id/favicon1"
+        android:ellipsize="end"
         android:fontFamily="sans-serif-light"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/dark_text" />
 
@@ -40,12 +40,11 @@
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
+        android:layout_marginRight="13dp"
+        android:alpha="0.5"
         android:contentDescription="Delete Tab"
         android:gravity="center_vertical"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
+        android:padding="3dp"
         android:src="@drawable/ic_action_delete" >
     </ImageView>
 

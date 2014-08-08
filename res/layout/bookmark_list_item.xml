@@ -8,14 +8,12 @@
 
     <ImageView
         android:id="@+id/favicon1"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:contentDescription="Favicon"
         android:gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="2dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp" >
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp" >
     </ImageView>
 
     <TextView
@@ -25,8 +23,10 @@
         android:gravity="center_vertical"
         android:fontFamily="sans-serif-light"
         android:maxLines="1"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:paddingRight="4dp"
+        android:paddingRight="16dp"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/dark_text" />
 
