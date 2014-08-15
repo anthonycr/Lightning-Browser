@@ -28,23 +28,14 @@ import java.util.Locale;
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
 	private List<HistoryItem> mHistory;
-
 	private List<HistoryItem> mBookmarks;
-
 	private List<HistoryItem> mSuggestions;
-
 	private List<HistoryItem> mFilteredList;
-
 	private List<HistoryItem> mAllBookmarks;
-
 	private DatabaseHandler mDatabaseHandler;
-
 	private SharedPreferences mPreferences;
-
 	private boolean mUseGoogle = true;
-
 	private Context mContext;
-
 	private boolean mIncognito;
 
 	public SearchAdapter(Context context, boolean incognito) {
