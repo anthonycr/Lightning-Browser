@@ -68,104 +68,55 @@ import java.util.*;
 public class BrowserActivity extends Activity implements BrowserController {
 
 	private DrawerLayout mDrawerLayout;
-
 	private ListView mDrawerList;
-
 	private RelativeLayout mDrawer;
-
 	private LinearLayout mDrawerRight;
-
 	private ListView mDrawerListRight;
-
 	private RelativeLayout mNewTab;
-
 	private ActionBarDrawerToggle mDrawerToggle;
-
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
-
 	private List<Integer> mIdList = new ArrayList<Integer>();
-
 	private LightningView mCurrentView;
-
 	private int mIdGenerator;
-
 	private LightningViewAdapter mTitleAdapter;
-
 	private List<HistoryItem> mBookmarkList;
-
 	private BookmarkViewAdapter mBookmarkAdapter;
-
 	private AutoCompleteTextView mSearch;
-
 	private ClickHandler mClickHandler;
-
 	private ProgressBar mProgressBar;
-
 	private boolean mSystemBrowser = false;
-
 	private ValueCallback<Uri> mUploadMessage;
-
 	private View mCustomView;
-
 	private int mOriginalOrientation;
-
 	private int mActionBarSize;
-
 	private ActionBar mActionBar;
-
 	private boolean mFullScreen;
-
 	private FrameLayout mBrowserFrame;
-
 	private FullscreenHolder mFullscreenContainer;
-
 	private CustomViewCallback mCustomViewCallback;
-
 	private final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
 	private Bitmap mDefaultVideoPoster;
-
 	private View mVideoProgressView;
-
 	private DatabaseHandler mHistoryHandler;
-
 	private SQLiteDatabase mHistoryDatabase;
-
 	private SharedPreferences mPreferences;
-
 	private SharedPreferences.Editor mEditPrefs;
-
 	private Context mContext;
-
 	private Bitmap mWebpageBitmap;
-
 	private String mSearchText;
-
 	private Activity mActivity;
-
 	private final int API = android.os.Build.VERSION.SDK_INT;
-
 	private Drawable mDeleteIcon;
-
 	private Drawable mRefreshIcon;
-
 	private Drawable mCopyIcon;
-
 	private Drawable mIcon;
-
 	private int mActionBarSizeDp;
-
 	private int mNumberIconColor;
-
 	private String mHomepage;
-
 	private boolean mIsNewIntent = false;
-
 	private VideoView mVideoView;
-
 	private static SearchAdapter mSearchAdapter;
-
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
 
@@ -648,7 +599,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 			try {
 				WebkitProxy.resetProxy("acr.browser.lightning.BrowserApp", getApplicationContext());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1997,7 +1947,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 					+ helper.getTitle() + BookmarkPageVariables.Part4);
 		}
 		bookmarkHtml += BookmarkPageVariables.End;
-		File bookmarkWebPage = new File(mContext.getCacheDir(), "bookmarks.html");
+		File bookmarkWebPage = new File(mContext.getFilesDir(), "bookmarks.html");
 		try {
 			FileWriter bookWriter = new FileWriter(bookmarkWebPage, false);
 			bookWriter.write(bookmarkHtml);

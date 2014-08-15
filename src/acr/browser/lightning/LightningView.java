@@ -243,7 +243,7 @@ public class LightningView {
 
 		home = home + HomepageVariables.END;
 
-		File homepage = new File(mActivity.getCacheDir(), "homepage.html");
+		File homepage = new File(mActivity.getFilesDir(), "homepage.html");
 		try {
 			FileWriter hWriter = new FileWriter(homepage, false);
 			hWriter.write(home);
@@ -366,13 +366,13 @@ public class LightningView {
 			settings.setMediaPlaybackRequiresUserGesture(true);
 		}
 		if (API < 19) {
-			settings.setDatabasePath(context.getFilesDir().getAbsolutePath() + "/databases");
+			settings.setDatabasePath(context.getCacheDir() + "/databases");
 		}
 		settings.setDomStorageEnabled(true);
-		settings.setAppCachePath(context.getCacheDir().toString());
 		settings.setAppCacheEnabled(true);
+		settings.setAppCachePath(context.getCacheDir().toString());
 		settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-		settings.setGeolocationDatabasePath(context.getCacheDir().getAbsolutePath());
+		settings.setGeolocationDatabasePath(context.getFilesDir().toString());
 		settings.setAllowFileAccess(true);
 		settings.setDatabaseEnabled(true);
 		settings.setSupportZoom(true);
@@ -431,6 +431,10 @@ public class LightningView {
 
 	public void setNormalRendering() {
 		mWebView.setLayerType(View.LAYER_TYPE_NONE, mPaint);
+	}
+	
+	public void setSoftwareRendering() {
+		mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, mPaint);
 	}
 
 	public void setColorMode(int mode) {
