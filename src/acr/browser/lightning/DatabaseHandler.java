@@ -111,7 +111,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
 		// select query
 		String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%"
-				+ search + "%'";
+				+ search + "%' OR " + KEY_URL + " LIKE '%" + search + "%'";
 		Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
 		// looping through all rows and adding to list
