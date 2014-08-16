@@ -1065,7 +1065,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 			reference.onDestroy();
 		} else {
-			if (mCurrentView.getUrl().startsWith(Constants.FILE)
+			if (mCurrentView.getUrl() == null || mCurrentView.getUrl().startsWith(Constants.FILE)
 					|| mCurrentView.getUrl().equals(mHomepage)) {
 				closeActivity();
 			} else {
