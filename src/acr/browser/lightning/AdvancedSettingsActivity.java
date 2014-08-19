@@ -29,18 +29,12 @@ public class AdvancedSettingsActivity extends Activity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
-
 	private SharedPreferences mPreferences;
-
 	private SharedPreferences.Editor mEditPrefs;
-
 	private CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11, cbIncognitoCookies,
 			cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
-
 	private Context mContext;
-
 	private boolean mSystemBrowser;
-
 	private Handler messageHandler;
 
 	@Override
@@ -88,7 +82,7 @@ public class AdvancedSettingsActivity extends Activity {
 		r5 = (RelativeLayout) findViewById(R.id.r5);
 		r6 = (RelativeLayout) findViewById(R.id.r6);
 		r7 = (RelativeLayout) findViewById(R.id.r7);
-		r8 = (RelativeLayout) findViewById(R.id.r8);
+		r8 = (RelativeLayout) findViewById(R.id.rClearHistory);
 		r9 = (RelativeLayout) findViewById(R.id.r9);
 		r10 = (RelativeLayout) findViewById(R.id.r10);
 		r11 = (RelativeLayout) findViewById(R.id.r11);
@@ -178,11 +172,38 @@ public class AdvancedSettingsActivity extends Activity {
 		cbSearchSuggestions(cbSearchSuggestions);
 
 		TextView importBookmarks = (TextView) findViewById(R.id.isImportAvailable);
+		TextView syncHistory = (TextView) findViewById(R.id.isBrowserAvailable);
+
+		RelativeLayout layoutSyncHistory = (RelativeLayout) findViewById(R.id.rBrowserHistory);
+		final CheckBox cbSyncHistory = (CheckBox) findViewById(R.id.cbBrowserHistory);
+		layoutSyncHistory.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cbSyncHistory.setChecked(!cbSyncHistory.isChecked());
+			}
+
+		});
+		cbSyncHistory.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.SYNC_HISTORY, isChecked).apply();
+			}
+
+		});
 
 		if (!mSystemBrowser) {
+			cbSyncHistory.setChecked(false);
+			cbSyncHistory.setEnabled(false);
 			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
+			syncHistory.setText(getResources().getString(R.string.stock_browser_unavailable));
 		} else {
+			cbSyncHistory.setEnabled(true);
+			cbSyncHistory.setChecked(mPreferences
+					.getBoolean(PreferenceConstants.SYNC_HISTORY, true));
 			importBookmarks.setText(getResources().getString(R.string.stock_browser_available));
+			syncHistory.setText(getResources().getString(R.string.stock_browser_available));
 		}
 
 		messageHandler = new MessageHandler(mContext);
