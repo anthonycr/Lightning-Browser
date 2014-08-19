@@ -43,6 +43,7 @@ import android.util.TypedValue;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.DecelerateInterpolator;
@@ -390,6 +391,21 @@ public class BrowserActivity extends Activity implements BrowserController {
 			@Override
 			public void onClick(View arg0) {
 				newTab(null, true);
+			}
+
+		});
+		
+		mNewTab.setOnLongClickListener(new OnLongClickListener() {
+
+			@Override
+			public boolean onLongClick(View v) {
+				String url = mPreferences.getString(PreferenceConstants.SAVE_URL, null);
+				if (url != null) {
+					newTab(url, true);
+					Toast.makeText(mContext, R.string.deleted_tab, Toast.LENGTH_SHORT).show();
+				}
+				mEditPrefs.putString(PreferenceConstants.SAVE_URL, null);
+				return false;
 			}
 
 		});
@@ -1035,6 +1051,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		LightningView reference = mWebViews.get(position);
 		if (reference == null) {
 			return;
+		}
+		if (reference.getUrl() != null && !reference.getUrl().startsWith(Constants.FILE)) {
+			mEditPrefs.putString(PreferenceConstants.SAVE_URL, reference.getUrl()).apply();
 		}
 		boolean isShown = reference.isShown();
 		if (current > position) {
