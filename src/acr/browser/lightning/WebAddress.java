@@ -23,25 +23,15 @@ import static android.util.Patterns.GOOD_IRI_CHAR;
 public class WebAddress {
 
 	private String mScheme;
-
 	private String mHost;
-
 	private int mPort;
-
 	private String mPath;
-
 	private String mAuthInfo;
-
 	static final int MATCH_GROUP_SCHEME = 1;
-
 	static final int MATCH_GROUP_AUTHORITY = 2;
-
 	static final int MATCH_GROUP_HOST = 3;
-
 	static final int MATCH_GROUP_PORT = 4;
-
 	static final int MATCH_GROUP_PATH = 5;
-
 	static Pattern sAddressPattern = Pattern.compile(
 	/* scheme */"(?:(http|https|file)\\:\\/\\/)?" +
 	/* authority */"(?:([-A-Za-z0-9$_.+!*'(),;?&=]+(?:\\:[-A-Za-z0-9$_.+!*'(),;?&=]+)?)@)?" +
