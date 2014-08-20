@@ -82,8 +82,8 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 			deleteHistoryItem(n);
 		}
 	}
-	
-	public synchronized void visitHistoryItem(String url, String title){
+
+	public synchronized void visitHistoryItem(String url, String title) {
 		mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[] { url });
 		ContentValues values = new ContentValues();
 		values.put(KEY_URL, url);
@@ -122,6 +122,7 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 		Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
 		// looping through all rows and adding to list
+		int n = 0;
 		if (cursor.moveToLast()) {
 			do {
 				HistoryItem item = new HistoryItem();
@@ -131,7 +132,8 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 				item.setImageId(R.drawable.ic_history);
 				// Adding item to list
 				itemList.add(item);
-			} while (cursor.moveToPrevious());
+				n++;
+			} while (cursor.moveToPrevious() && n < 5);
 		}
 		cursor.close();
 		// return item list
