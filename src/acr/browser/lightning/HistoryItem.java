@@ -9,14 +9,12 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
 	// private variables
 	private int mId;
-
 	private String mUrl;
-
 	private String mTitle;
-
 	private Bitmap mBitmap;
-
+	private String mFolder;
 	private int mImageId;
+	private int mOrder;
 
 	// Empty constructor
 	public HistoryItem() {
@@ -66,6 +64,22 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
 	public void setBitmap(Bitmap image) {
 		mBitmap = image;
+	}
+
+	public void setFolder(String folder) {
+		mFolder = folder;
+	}
+
+	public void setOrder(int order) {
+		mOrder = order;
+	}
+
+	public int getOrder() {
+		return mOrder;
+	}
+
+	public String getFolder() {
+		return mFolder;
 	}
 
 	public Bitmap getBitmap() {

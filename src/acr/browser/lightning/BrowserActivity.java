@@ -14,8 +14,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -99,8 +97,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 	private Bitmap mDefaultVideoPoster;
 	private View mVideoProgressView;
-	private DatabaseHandler mHistoryHandler;
-	private SQLiteDatabase mHistoryDatabase;
+	private HistoryDatabaseHandler mHistoryHandler;
 	private SharedPreferences mPreferences;
 	private SharedPreferences.Editor mEditPrefs;
 	private Context mContext;
@@ -189,11 +186,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mDrawerListRight.setOnItemLongClickListener(new BookmarkItemLongClickListener());
 
 		if (mHistoryHandler == null) {
-			mHistoryHandler = new DatabaseHandler(this);
+			mHistoryHandler = new HistoryDatabaseHandler(this);
 		} else if (!mHistoryHandler.isOpen()) {
-			mHistoryHandler = new DatabaseHandler(this);
+			mHistoryHandler = new HistoryDatabaseHandler(this);
 		}
-		mHistoryDatabase = mHistoryHandler.getReadableDatabase();
 
 		// set display options of the ActionBar
 		mActionBar.setDisplayShowTitleEnabled(false);
@@ -412,7 +408,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START);
 		initializePreferences();
 		initializeTabs();
 
@@ -1166,7 +1162,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@SuppressWarnings("deprecation")
 	public void clearHistory() {
-		this.deleteDatabase(DatabaseHandler.DATABASE_NAME);
+		this.deleteDatabase(HistoryDatabaseHandler.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
 		m.clearHttpAuthUsernamePassword();
@@ -1226,11 +1222,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 			mCurrentView.pauseTimers();
 			mCurrentView.onPause();
 		}
-		if (mHistoryDatabase != null) {
-			if (mHistoryDatabase.isOpen()) {
-				mHistoryDatabase.close();
-			}
-		}
 		if (mHistoryHandler != null) {
 			if (mHistoryHandler.isOpen()) {
 				mHistoryHandler.close();
@@ -1255,11 +1246,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@Override
 	protected void onDestroy() {
 		Log.i(Constants.TAG, "onDestroy");
-		if (mHistoryDatabase != null) {
-			if (mHistoryDatabase.isOpen()) {
-				mHistoryDatabase.close();
-			}
-		}
 		if (mHistoryHandler != null) {
 			if (mHistoryHandler.isOpen()) {
 				mHistoryHandler.close();
@@ -1288,11 +1274,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 			mCurrentView.onResume();
 
 			if (mHistoryHandler == null) {
-				mHistoryHandler = new DatabaseHandler(this);
+				mHistoryHandler = new HistoryDatabaseHandler(this);
 			} else if (!mHistoryHandler.isOpen()) {
-				mHistoryHandler = new DatabaseHandler(this);
+				mHistoryHandler = new HistoryDatabaseHandler(this);
 			}
-			mHistoryDatabase = mHistoryHandler.getReadableDatabase();
 			mBookmarkList = getBookmarks();
 			notifyBookmarkDataSetChanged();
 		} else {
@@ -1742,31 +1727,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 					}
 				}
 				try {
-					StringBuilder sb = new StringBuilder("url" + " = ");
-					DatabaseUtils.appendEscapedSQLString(sb, url);
-
-					if (mHistoryHandler == null) {
-						mHistoryHandler = new DatabaseHandler(mContext);
-						mHistoryDatabase = mHistoryHandler.getReadableDatabase();
-					} else if (!mHistoryHandler.isOpen()) {
-						mHistoryHandler = new DatabaseHandler(mContext);
-						mHistoryDatabase = mHistoryHandler.getReadableDatabase();
-					} else if (mHistoryDatabase == null) {
-						mHistoryDatabase = mHistoryHandler.getReadableDatabase();
-					} else if (!mHistoryDatabase.isOpen()) {
-						mHistoryDatabase = mHistoryHandler.getReadableDatabase();
+					if (mHistoryHandler == null && !mHistoryHandler.isOpen()) {
+						mHistoryHandler = new HistoryDatabaseHandler(mContext);
 					}
-					Cursor cursor = mHistoryDatabase.query(DatabaseHandler.TABLE_HISTORY,
-							new String[] { "id", "url", "title" }, sb.toString(), null, null, null,
-							null);
-					if (!cursor.moveToFirst()) {
-						mHistoryHandler.addHistoryItem(new HistoryItem(url, title));
-					} else {
-						mHistoryHandler.delete(url);
-						mHistoryHandler.addHistoryItem(new HistoryItem(url, title));
-					}
-					cursor.close();
-					cursor = null;
+					mHistoryHandler.visitHistoryItem(url, title);
 				} catch (IllegalStateException e) {
 					Log.e(Constants.TAG, "IllegalStateException in updateHistory");
 				} catch (NullPointerException e) {
@@ -1884,7 +1848,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	 * returns a list of HistoryItems
 	 */
 	private List<HistoryItem> getLatestHistory() {
-		DatabaseHandler historyHandler = new DatabaseHandler(mContext);
+		HistoryDatabaseHandler historyHandler = new HistoryDatabaseHandler(mContext);
 		return historyHandler.getLastHundredItems();
 	}
 

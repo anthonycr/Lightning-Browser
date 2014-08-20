@@ -701,7 +701,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 	@SuppressWarnings("deprecation")
 	public void clearHistory() {
-		deleteDatabase(DatabaseHandler.DATABASE_NAME);
+		deleteDatabase(HistoryDatabaseHandler.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
 		m.clearHttpAuthUsernamePassword();

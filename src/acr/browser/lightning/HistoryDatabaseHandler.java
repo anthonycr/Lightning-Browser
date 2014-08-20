@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
 	// Database Version
@@ -33,7 +33,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public static SQLiteDatabase mDatabase;
 
-	public DatabaseHandler(Context context) {
+	public HistoryDatabaseHandler(Context context) {
 		super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
 		mDatabase = this.getWritableDatabase();
 	}
@@ -82,13 +82,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			deleteHistoryItem(n);
 		}
 	}
+	
+	public synchronized void visitHistoryItem(String url, String title){
+		mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[] { url });
+		ContentValues values = new ContentValues();
+		values.put(KEY_URL, url);
+		values.put(KEY_TITLE, title);
+		mDatabase.insert(TABLE_HISTORY, null, values);
+	}
 
 	// Adding new item
 	public synchronized void addHistoryItem(HistoryItem item) {
 		ContentValues values = new ContentValues();
-		values.put(KEY_URL, item.getUrl()); // HistoryItem Name
-		values.put(KEY_TITLE, item.getTitle()); // HistoryItem Phone
-		// Inserting Row
+		values.put(KEY_URL, item.getUrl());
+		values.put(KEY_TITLE, item.getTitle());
 		mDatabase.insert(TABLE_HISTORY, null, values);
 	}
 
