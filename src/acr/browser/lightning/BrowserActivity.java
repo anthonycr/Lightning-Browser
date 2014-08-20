@@ -167,7 +167,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 				new int[] { android.R.attr.actionBarSize });
 		mActionBarSize = (int) styledAttributes.getDimension(0, 0);
 		if (pixelsToDp(mActionBarSize) < 48) {
-			mActionBarSize = getDp(48);
+			mActionBarSize = Utils.convertToDensityPixels(mContext, 48);
 		}
 		mActionBarSizeDp = pixelsToDp(mActionBarSize);
 		styledAttributes.recycle();
@@ -1376,16 +1376,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		notifyBookmarkDataSetChanged();
 		mSearchAdapter.refreshBookmarks();
 		openBookmarks();
-	}
-
-	/**
-	 * converts the int num into density pixels
-	 * 
-	 * @return density pixels
-	 */
-	private int getDp(int num) {
-		float scale = getResources().getDisplayMetrics().density;
-		return (int) (num * scale + 0.5f);
 	}
 
 	private int pixelsToDp(int num) {
