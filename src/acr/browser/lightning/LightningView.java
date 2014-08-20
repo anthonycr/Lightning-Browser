@@ -331,7 +331,6 @@ public class LightningView {
 				true));
 		mSettings.setUseWideViewPort(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT,
 				true));
-		mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, true);
 		mSettings.setLoadWithOverviewMode(mPreferences.getBoolean(
 				PreferenceConstants.OVERVIEW_MODE, true));
 		switch (mPreferences.getInt(PreferenceConstants.TEXT_SIZE, 3)) {
