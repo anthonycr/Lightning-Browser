@@ -8,13 +8,13 @@ import android.graphics.Bitmap;
 public class HistoryItem implements Comparable<HistoryItem> {
 
 	// private variables
-	private int mId;
-	private String mUrl;
-	private String mTitle;
-	private Bitmap mBitmap;
-	private String mFolder;
-	private int mImageId;
-	private int mOrder;
+	private int mId = 0;
+	private String mUrl = "";
+	private String mTitle = "";
+	private String mFolder = "";
+	private Bitmap mBitmap = null;
+	private int mImageId = 0;
+	private int mOrder = 0;
 
 	// Empty constructor
 	public HistoryItem() {
