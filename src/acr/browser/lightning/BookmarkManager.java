@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,9 +28,12 @@ public class BookmarkManager {
 	private static final String FOLDER = "folder";
 	private static final String ORDER = "order";
 	private static final String FILE_BOOKMARKS = "bookmarks.dat";
+	private static SortedMap<String, Integer> mBookmarkMap = new TreeMap<String, Integer>(
+			String.CASE_INSENSITIVE_ORDER);
 
 	public BookmarkManager(Context context) {
 		mContext = context;
+		mBookmarkMap = getBookmarkUrls();
 	}
 
 	/**
@@ -39,9 +44,7 @@ public class BookmarkManager {
 	public void addBookmark(HistoryItem item) {
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 
-		List<String> bookmarkUrls = getBookmarkUrls();
-
-		if (bookmarkUrls.contains(item.getUrl())) {
+		if (mBookmarkMap.containsKey(item.getUrl())) {
 			return;
 		}
 		try {
@@ -54,6 +57,7 @@ public class BookmarkManager {
 			bookmarkWriter.write(object.toString());
 			bookmarkWriter.newLine();
 			bookmarkWriter.close();
+			mBookmarkMap.put(item.getUrl(), 1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
@@ -71,13 +75,16 @@ public class BookmarkManager {
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, true));
 			for (HistoryItem item : list) {
-				JSONObject object = new JSONObject();
-				object.put(TITLE, item.getTitle());
-				object.put(URL, item.getUrl());
-				object.put(FOLDER, item.getFolder());
-				object.put(ORDER, item.getOrder());
-				bookmarkWriter.write(object.toString());
-				bookmarkWriter.newLine();
+				if (!mBookmarkMap.containsKey(item.getUrl())) {
+					JSONObject object = new JSONObject();
+					object.put(TITLE, item.getTitle());
+					object.put(URL, item.getUrl());
+					object.put(FOLDER, item.getFolder());
+					object.put(ORDER, item.getOrder());
+					bookmarkWriter.write(object.toString());
+					bookmarkWriter.newLine();
+					mBookmarkMap.put(item.getUrl(), 1);
+				}
 			}
 			bookmarkWriter.close();
 		} catch (IOException e) {
@@ -94,6 +101,7 @@ public class BookmarkManager {
 	 */
 	public void deleteBookmark(String url) {
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
+		mBookmarkMap.remove(url);
 		list = getBookmarks();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
@@ -216,15 +224,15 @@ public class BookmarkManager {
 	 * 
 	 * @return
 	 */
-	private List<String> getBookmarkUrls() {
-		List<String> bookmarks = new ArrayList<String>();
+	private SortedMap<String, Integer> getBookmarkUrls() {
+		SortedMap<String, Integer> map = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
 			String line;
 			while ((line = bookmarksReader.readLine()) != null) {
 				JSONObject object = new JSONObject(line);
-				bookmarks.add(object.getString(URL));
+				map.put(object.getString(URL), 1);
 			}
 			bookmarksReader.close();
 		} catch (FileNotFoundException e) {
@@ -234,7 +242,7 @@ public class BookmarkManager {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return bookmarks;
+		return map;
 	}
 
 	/**
@@ -244,7 +252,8 @@ public class BookmarkManager {
 	 */
 	public List<HistoryItem> getFolders() {
 		List<HistoryItem> folders = new ArrayList<HistoryItem>();
-		List<String> folderNameList = new ArrayList<String>();
+		SortedMap<String, Integer> folderMap = new TreeMap<String, Integer>(
+				String.CASE_INSENSITIVE_ORDER);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
@@ -252,11 +261,11 @@ public class BookmarkManager {
 			while ((line = bookmarksReader.readLine()) != null) {
 				JSONObject object = new JSONObject(line);
 				String folderName = object.getString(FOLDER);
-				if (!folderName.isEmpty() && !folderNameList.contains(folderName)) {
+				if (!folderName.isEmpty() && !folderMap.containsKey(folderName)) {
 					HistoryItem item = new HistoryItem();
 					item.setTitle(folderName);
 					item.setUrl(Constants.FOLDER + folderName);
-					folderNameList.add(folderName);
+					folderMap.put(folderName, 1);
 					folders.add(item);
 				}
 			}
@@ -288,7 +297,6 @@ public class BookmarkManager {
 
 			String title, url;
 			int number = 0;
-			List<String> bookmarkUrls = getBookmarkUrls();
 			if (cursor.moveToFirst()) {
 				do {
 					title = cursor.getString(0);
@@ -296,10 +304,8 @@ public class BookmarkManager {
 					if (title.isEmpty()) {
 						title = Utils.getDomainName(url);
 					}
-					if (!bookmarkUrls.contains(url)) {
-						number++;
-						bookmarkList.add(new HistoryItem(url, title));
-					}
+					number++;
+					bookmarkList.add(new HistoryItem(url, title));
 				} while (cursor.moveToNext());
 			}
 
@@ -324,22 +330,21 @@ public class BookmarkManager {
 	 */
 	public void importBookmarksFromFile(File dir, String file) {
 		File bookmarksImport = new File(dir, file);
+		List<HistoryItem> list = new ArrayList<HistoryItem>();
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksImport));
 			String line;
-			List<String> bookmarkUrls = getBookmarkUrls();
 			while ((line = bookmarksReader.readLine()) != null) {
 				JSONObject object = new JSONObject(line);
-				if (!bookmarkUrls.contains(object.getString(URL))) {
-					HistoryItem item = new HistoryItem();
-					item.setTitle(object.getString(TITLE));
-					item.setUrl(object.getString(URL));
-					item.setFolder(object.getString(FOLDER));
-					item.setOrder(object.getInt(ORDER));
-					addBookmark(item);
-				}
+				HistoryItem item = new HistoryItem();
+				item.setTitle(object.getString(TITLE));
+				item.setUrl(object.getString(URL));
+				item.setFolder(object.getString(FOLDER));
+				item.setOrder(object.getInt(ORDER));
+				list.add(item);
 			}
 			bookmarksReader.close();
+			addBookmarkList(list);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
