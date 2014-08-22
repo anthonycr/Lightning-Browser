@@ -117,6 +117,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private static SearchAdapter mSearchAdapter;
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
+	private BookmarkManager mBookmarkManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +145,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 		} else {
 			mWebViews = new ArrayList<LightningView>();
 		}
-
+		mBookmarkManager = new BookmarkManager(this);
+		if (!mPreferences.getBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, false)) {
+			List<HistoryItem> old = Utils.getOldBookmarks(this);
+			mBookmarkManager.addBookmarkList(old);
+			mEditPrefs.putBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, true).apply();
+		}
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
@@ -179,7 +185,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 		mDrawerList.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
-		mBookmarkList = getBookmarks();
+		mBookmarkList = mBookmarkManager.getBookmarks();
 		mBookmarkAdapter = new BookmarkViewAdapter(this, R.layout.bookmark_list_item, mBookmarkList);
 		mDrawerListRight.setAdapter(mBookmarkAdapter);
 		mDrawerListRight.setOnItemClickListener(new BookmarkItemClickListener());
@@ -715,7 +721,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 				return true;
 			case R.id.action_add_bookmark:
 				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-					addBookmark(this, mCurrentView.getTitle(), mCurrentView.getUrl());
+					HistoryItem bookmark = new HistoryItem(mCurrentView.getUrl(),
+							mCurrentView.getTitle());
+					if (mBookmarkManager.addBookmark(bookmark)) {
+						mBookmarkList.add(bookmark);
+						Collections.sort(mBookmarkList, new SortIgnoreCase());
+						notifyBookmarkDataSetChanged();
+						mSearchAdapter.refreshBookmarks();
+					}
 				}
 				return true;
 			case R.id.action_find:
@@ -825,7 +838,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									deleteBookmark(mBookmarkList.get(position).getUrl());
+									if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position)
+											.getUrl())) {
+										mBookmarkList.remove(position);
+										notifyBookmarkDataSetChanged();
+										mSearchAdapter.refreshBookmarks();
+										openBookmarks();
+									}
 								}
 							})
 					.setNeutralButton(getResources().getString(R.string.action_edit),
@@ -872,29 +891,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 					public void onClick(DialogInterface dialog, int which) {
 						mBookmarkList.get(id).setTitle(getTitle.getText().toString());
 						mBookmarkList.get(id).setUrl(getUrl.getText().toString());
-						notifyBookmarkDataSetChanged();
-						File book = new File(getFilesDir(), "bookmarks");
-						File bookUrl = new File(getFilesDir(), "bookurl");
-						try {
-							BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book));
-							BufferedWriter urlWriter = new BufferedWriter(new FileWriter(bookUrl));
-							Iterator<HistoryItem> iter = mBookmarkList.iterator();
-							HistoryItem item;
-							while (iter.hasNext()) {
-								item = iter.next();
-
-								bookWriter.write(item.getTitle());
-								urlWriter.write(item.getUrl());
-								bookWriter.newLine();
-								urlWriter.newLine();
-
-							}
-
-							bookWriter.close();
-							urlWriter.close();
-						} catch (FileNotFoundException e) {
-						} catch (IOException e) {
-						}
+						mBookmarkManager.overwriteBookmarks(mBookmarkList);
 						Collections.sort(mBookmarkList, new SortIgnoreCase());
 						notifyBookmarkDataSetChanged();
 						if (mCurrentView != null) {
@@ -1278,7 +1275,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			} else if (!mHistoryHandler.isOpen()) {
 				mHistoryHandler = new HistoryDatabaseHandler(this);
 			}
-			mBookmarkList = getBookmarks();
+			mBookmarkList = mBookmarkManager.getBookmarks();
 			notifyBookmarkDataSetChanged();
 		} else {
 			initialize();
@@ -1341,41 +1338,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		} else {
 			mCurrentView.loadUrl(query);
 		}
-	}
-
-	public void deleteBookmark(String url) {
-		File book = new File(getFilesDir(), "bookmarks");
-		File bookUrl = new File(getFilesDir(), "bookurl");
-		try {
-			BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book));
-			BufferedWriter urlWriter = new BufferedWriter(new FileWriter(bookUrl));
-			Iterator<HistoryItem> iter = mBookmarkList.iterator();
-			HistoryItem item;
-			int num = 0;
-			int deleteIndex = -1;
-			while (iter.hasNext()) {
-				item = iter.next();
-				if (!item.getUrl().equalsIgnoreCase(url)) {
-					bookWriter.write(item.getTitle());
-					urlWriter.write(item.getUrl());
-					bookWriter.newLine();
-					urlWriter.newLine();
-				} else {
-					deleteIndex = num;
-				}
-				num++;
-			}
-			if (deleteIndex != -1) {
-				mBookmarkList.remove(deleteIndex);
-			}
-			bookWriter.close();
-			urlWriter.close();
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		}
-		notifyBookmarkDataSetChanged();
-		mSearchAdapter.refreshBookmarks();
-		openBookmarks();
 	}
 
 	private int pixelsToDp(int num) {
@@ -1812,28 +1774,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		return false;
 	}
 
-	// Damn it, I regret not using SQLite in the first place for this
-	private List<HistoryItem> getBookmarks() {
-		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
-		File bookUrl = new File(getApplicationContext().getFilesDir(), "bookurl");
-		File book = new File(getApplicationContext().getFilesDir(), "bookmarks");
-		try {
-			BufferedReader readUrl = new BufferedReader(new FileReader(bookUrl));
-			BufferedReader readBook = new BufferedReader(new FileReader(book));
-			String u, t;
-			while ((u = readUrl.readLine()) != null && (t = readBook.readLine()) != null) {
-				HistoryItem map = new HistoryItem(u, t);
-				bookmarks.add(map);
-			}
-			readBook.close();
-			readUrl.close();
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		}
-		Collections.sort(bookmarks, new SortIgnoreCase());
-		return bookmarks;
-	}
-
 	/**
 	 * function that opens the HTML history page in the browser
 	 */
@@ -1876,9 +1816,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		HistoryItem helper;
 		while (iter.hasNext()) {
 			helper = iter.next();
-			bookmarkHtml += (BookmarkPage.PART1 + helper.getUrl()
-					+ BookmarkPage.PART2 + helper.getUrl() + BookmarkPage.PART3
-					+ helper.getTitle() + BookmarkPage.PART4);
+			bookmarkHtml += (BookmarkPage.PART1 + helper.getUrl() + BookmarkPage.PART2
+					+ helper.getUrl() + BookmarkPage.PART3 + helper.getTitle() + BookmarkPage.PART4);
 		}
 		bookmarkHtml += BookmarkPage.END;
 		File bookmarkWebPage = new File(mContext.getFilesDir(), BookmarkPage.FILENAME);
@@ -1891,48 +1830,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		view.loadUrl(Constants.FILE + bookmarkWebPage);
-	}
-
-	/**
-	 * adds a bookmark with a title and url. Simple.
-	 */
-	public void addBookmark(Context context, String title, String url) {
-		File book = new File(context.getFilesDir(), "bookmarks");
-		File bookUrl = new File(context.getFilesDir(), "bookurl");
-		HistoryItem bookmark = new HistoryItem(url, title);
-
-		try {
-			BufferedReader readUrlRead = new BufferedReader(new FileReader(bookUrl));
-			String u;
-			while ((u = readUrlRead.readLine()) != null) {
-				if (u.contentEquals(url)) {
-					readUrlRead.close();
-					return;
-				}
-			}
-			readUrlRead.close();
-
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
-		}
-		try {
-			BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book, true));
-			BufferedWriter urlWriter = new BufferedWriter(new FileWriter(bookUrl, true));
-			bookWriter.write(title);
-			urlWriter.write(url);
-			bookWriter.newLine();
-			urlWriter.newLine();
-			bookWriter.close();
-			urlWriter.close();
-			mBookmarkList.add(bookmark);
-			Collections.sort(mBookmarkList, new SortIgnoreCase());
-			notifyBookmarkDataSetChanged();
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
-		}
-		mSearchAdapter.refreshBookmarks();
 	}
 
 	@Override

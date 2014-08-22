@@ -41,11 +41,11 @@ public class BookmarkManager {
 	 * 
 	 * @param item
 	 */
-	public void addBookmark(HistoryItem item) {
+	public synchronized boolean addBookmark(HistoryItem item) {
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 
 		if (mBookmarkMap.containsKey(item.getUrl())) {
-			return;
+			return false;
 		}
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, true));
@@ -63,6 +63,7 @@ public class BookmarkManager {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return true;
 	}
 
 	/**
@@ -70,7 +71,7 @@ public class BookmarkManager {
 	 * 
 	 * @param list
 	 */
-	public void addBookmarkList(List<HistoryItem> list) {
+	public synchronized void addBookmarkList(List<HistoryItem> list) {
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, true));
@@ -99,11 +100,12 @@ public class BookmarkManager {
 	 * 
 	 * @param url
 	 */
-	public void deleteBookmark(String url) {
+	public synchronized boolean deleteBookmark(String url) {
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
 		mBookmarkMap.remove(url);
 		list = getBookmarks();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
+		boolean bookmarkDeleted = false;
 		try {
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(bookmarksFile, false));
 			for (HistoryItem item : list) {
@@ -115,6 +117,8 @@ public class BookmarkManager {
 					object.put(ORDER, item.getOrder());
 					fileWriter.write(object.toString());
 					fileWriter.newLine();
+				} else {
+					bookmarkDeleted = true;
 				}
 			}
 			fileWriter.close();
@@ -123,13 +127,14 @@ public class BookmarkManager {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		return bookmarkDeleted;
 	}
 
 	/**
 	 * This method exports the stored bookmarks to a text file in the device's
 	 * external download directory
 	 */
-	public void exportBookmarks() {
+	public synchronized void exportBookmarks() {
 		List<HistoryItem> bookmarkList = getBookmarks();
 		File bookmarksExport = new File(
 				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -159,7 +164,7 @@ public class BookmarkManager {
 	 * 
 	 * @return
 	 */
-	public List<HistoryItem> getBookmarks() {
+	public synchronized List<HistoryItem> getBookmarks() {
 		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
@@ -172,6 +177,7 @@ public class BookmarkManager {
 				item.setUrl(object.getString(URL));
 				item.setFolder(object.getString(FOLDER));
 				item.setOrder(object.getInt(ORDER));
+				item.setImageId(R.drawable.ic_bookmark);
 				bookmarks.add(item);
 			}
 			bookmarksReader.close();
@@ -191,7 +197,7 @@ public class BookmarkManager {
 	 * @param folder
 	 * @return
 	 */
-	public List<HistoryItem> getBookmarksFromFolder(String folder) {
+	public synchronized List<HistoryItem> getBookmarksFromFolder(String folder) {
 		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
@@ -205,6 +211,7 @@ public class BookmarkManager {
 					item.setUrl(object.getString(URL));
 					item.setFolder(object.getString(FOLDER));
 					item.setOrder(object.getInt(ORDER));
+					item.setImageId(R.drawable.ic_bookmark);
 					bookmarks.add(item);
 				}
 			}
@@ -224,7 +231,7 @@ public class BookmarkManager {
 	 * 
 	 * @return
 	 */
-	private SortedMap<String, Integer> getBookmarkUrls() {
+	private synchronized SortedMap<String, Integer> getBookmarkUrls() {
 		SortedMap<String, Integer> map = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
@@ -250,7 +257,7 @@ public class BookmarkManager {
 	 * 
 	 * @return
 	 */
-	public List<HistoryItem> getFolders() {
+	public synchronized List<HistoryItem> getFolders() {
 		List<HistoryItem> folders = new ArrayList<HistoryItem>();
 		SortedMap<String, Integer> folderMap = new TreeMap<String, Integer>(
 				String.CASE_INSENSITIVE_ORDER);
@@ -284,7 +291,7 @@ public class BookmarkManager {
 	 * This method imports all bookmarks that are included in the device's
 	 * permanent bookmark storage
 	 */
-	public void importBookmarksFromBrowser() {
+	public synchronized void importBookmarksFromBrowser() {
 		if (mContext.getSharedPreferences(PreferenceConstants.PREFERENCES, 0).getBoolean(
 				PreferenceConstants.SYSTEM_BROWSER_PRESENT, false)) {
 
@@ -328,7 +335,7 @@ public class BookmarkManager {
 	 * @param dir
 	 * @param file
 	 */
-	public void importBookmarksFromFile(File dir, String file) {
+	public synchronized void importBookmarksFromFile(File dir, String file) {
 		File bookmarksImport = new File(dir, file);
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
 		try {
@@ -361,7 +368,7 @@ public class BookmarkManager {
 	 * 
 	 * @param list
 	 */
-	public void overwriteBookmarks(List<HistoryItem> list) {
+	public synchronized void overwriteBookmarks(List<HistoryItem> list) {
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, false));

@@ -31,42 +31,6 @@ public final class Utils {
 		Log.i(Constants.TAG, "Downloading" + fileName);
 	}
 
-	public static synchronized void addBookmark(Context context, String title, String url) {
-		File book = new File(context.getFilesDir(), "bookmarks");
-		File bookUrl = new File(context.getFilesDir(), "bookurl");
-		if (("Bookmarks".equals(title) || "History".equals(title)) && url.startsWith("file://")) {
-			return;
-		}
-		try {
-			BufferedReader readUrlRead = new BufferedReader(new FileReader(bookUrl));
-			String u;
-			while ((u = readUrlRead.readLine()) != null) {
-				if (u.contentEquals(url)) {
-					readUrlRead.close();
-					return;
-				}
-			}
-			readUrlRead.close();
-
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
-		}
-		try {
-			BufferedWriter bookWriter = new BufferedWriter(new FileWriter(book, true));
-			BufferedWriter urlWriter = new BufferedWriter(new FileWriter(bookUrl, true));
-			bookWriter.write(title);
-			urlWriter.write(url);
-			bookWriter.newLine();
-			urlWriter.newLine();
-			bookWriter.close();
-			urlWriter.close();
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
-		} catch (NullPointerException ignored) {
-		}
-	}
-
 	public static Intent newEmailIntent(Context context, String address, String subject,
 			String body, String cc) {
 		Intent intent = new Intent(Intent.ACTION_SEND);
@@ -119,7 +83,7 @@ public final class Utils {
 		return domain.startsWith("www.") ? domain.substring(4) : domain;
 	}
 
-	public static List<HistoryItem> getBookmarks(Context context) {
+	public static List<HistoryItem> getOldBookmarks(Context context) {
 		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
 		File bookUrl = new File(context.getFilesDir(), "bookurl");
 		File book = new File(context.getFilesDir(), "bookmarks");

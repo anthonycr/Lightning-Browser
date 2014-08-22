@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -778,33 +777,7 @@ public class AdvancedSettingsActivity extends Activity {
 	}
 
 	public void importFromStockBrowser() {
-		if (mSystemBrowser) {
-			String[] proj = new String[] { Browser.BookmarkColumns.TITLE,
-					Browser.BookmarkColumns.URL };
-			// use 0 for history, 1 for bookmarks
-			String sel = Browser.BookmarkColumns.BOOKMARK + " = 1";
-			Cursor mCur;
-			mCur = getContentResolver().query(Browser.BOOKMARKS_URI, proj, sel, null, null);
-
-			String title, url;
-			int number = 0;
-			if (mCur.moveToFirst() && mCur.getCount() > 0) {
-				while (!mCur.isAfterLast()) {
-					number++;
-					title = mCur.getString(mCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
-					url = mCur.getString(mCur.getColumnIndex(Browser.BookmarkColumns.URL));
-					if (title.length() < 1) {
-						title = Utils.getDomainName(url);
-					}
-					Utils.addBookmark(mContext, title, url);
-					mCur.moveToNext();
-				}
-			}
-			Utils.showToast(mContext,
-					number + " " + getResources().getString(R.string.message_import));
-		} else {
-			Utils.createInformativeDialog(mContext, getResources().getString(R.string.title_error),
-					getResources().getString(R.string.dialog_import_error));
-		}
+		BookmarkManager manager = new BookmarkManager(this);
+		manager.importBookmarksFromBrowser();
 	}
 }
