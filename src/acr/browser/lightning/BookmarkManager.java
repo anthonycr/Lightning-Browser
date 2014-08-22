@@ -38,6 +38,12 @@ public class BookmarkManager {
 	 */
 	public void addBookmark(HistoryItem item) {
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
+
+		List<String> bookmarkUrls = getBookmarkUrls();
+
+		if (bookmarkUrls.contains(item.getUrl())) {
+			return;
+		}
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, true));
 			JSONObject object = new JSONObject();
@@ -82,11 +88,41 @@ public class BookmarkManager {
 	}
 
 	/**
+	 * This method deletes the bookmark with the given url
+	 * 
+	 * @param url
+	 */
+	public void deleteBookmark(String url) {
+		List<HistoryItem> list = new ArrayList<HistoryItem>();
+		list = getBookmarks();
+		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
+		try {
+			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(bookmarksFile, false));
+			for (HistoryItem item : list) {
+				if (!item.getUrl().equalsIgnoreCase(url)) {
+					JSONObject object = new JSONObject();
+					object.put(TITLE, item.getTitle());
+					object.put(URL, item.getUrl());
+					object.put(FOLDER, item.getFolder());
+					object.put(ORDER, item.getOrder());
+					fileWriter.write(object.toString());
+					fileWriter.newLine();
+				}
+			}
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * This method exports the stored bookmarks to a text file in the device's
 	 * external download directory
 	 */
 	public void exportBookmarks() {
-		List<HistoryItem> bookmarkList = Utils.getBookmarks(mContext);
+		List<HistoryItem> bookmarkList = getBookmarks();
 		File bookmarksExport = new File(
 				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
 				"BookmarksExport.txt");
@@ -176,6 +212,32 @@ public class BookmarkManager {
 	}
 
 	/**
+	 * Method is used internally for searching the bookmarks
+	 * 
+	 * @return
+	 */
+	private List<String> getBookmarkUrls() {
+		List<String> bookmarks = new ArrayList<String>();
+		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
+		try {
+			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
+			String line;
+			while ((line = bookmarksReader.readLine()) != null) {
+				JSONObject object = new JSONObject(line);
+				bookmarks.add(object.getString(URL));
+			}
+			bookmarksReader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return bookmarks;
+	}
+
+	/**
 	 * This method returns a list of all folders
 	 * 
 	 * @return
@@ -226,16 +288,18 @@ public class BookmarkManager {
 
 			String title, url;
 			int number = 0;
-
+			List<String> bookmarkUrls = getBookmarkUrls();
 			if (cursor.moveToFirst()) {
 				do {
-					number++;
 					title = cursor.getString(0);
 					url = cursor.getString(1);
 					if (title.isEmpty()) {
 						title = Utils.getDomainName(url);
 					}
-					bookmarkList.add(new HistoryItem(url, title));
+					if (!bookmarkUrls.contains(url)) {
+						number++;
+						bookmarkList.add(new HistoryItem(url, title));
+					}
 				} while (cursor.moveToNext());
 			}
 
@@ -263,14 +327,17 @@ public class BookmarkManager {
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksImport));
 			String line;
+			List<String> bookmarkUrls = getBookmarkUrls();
 			while ((line = bookmarksReader.readLine()) != null) {
 				JSONObject object = new JSONObject(line);
-				HistoryItem item = new HistoryItem();
-				item.setTitle(object.getString(TITLE));
-				item.setUrl(object.getString(URL));
-				item.setFolder(object.getString(FOLDER));
-				item.setOrder(object.getInt(ORDER));
-				addBookmark(item);
+				if (!bookmarkUrls.contains(object.getString(URL))) {
+					HistoryItem item = new HistoryItem();
+					item.setTitle(object.getString(TITLE));
+					item.setUrl(object.getString(URL));
+					item.setFolder(object.getString(FOLDER));
+					item.setOrder(object.getInt(ORDER));
+					addBookmark(item);
+				}
 			}
 			bookmarksReader.close();
 		} catch (FileNotFoundException e) {
