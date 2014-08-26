@@ -180,4 +180,6 @@
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sync history with Google</string>
     <string name="title_file_chooser">File Chooser</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">GNU Lesser General Public License</string>
 </resources>
