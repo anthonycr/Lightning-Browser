@@ -35,7 +35,7 @@
             android:layout_height="match_parent" />
 
         <RelativeLayout
-            android:id="@+id/drawer"
+            android:id="@+id/left_drawer"
             android:layout_width="@dimen/navigation_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
@@ -87,7 +87,7 @@
                 android:background="@color/gray_list_bg" />
 
             <ListView
-                android:id="@+id/left_drawer"
+                android:id="@+id/left_drawer_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/lineView"

@@ -157,9 +157,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mProgressBar = (ProgressBar) findViewById(R.id.activity_bar);
 		mProgressBar.setVisibility(View.GONE);
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
-		mDrawer = (RelativeLayout) findViewById(R.id.drawer);
+		mDrawer = (RelativeLayout) findViewById(R.id.left_drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		mDrawerList = (ListView) findViewById(R.id.left_drawer_list);
 		mDrawerList.setDivider(null);
 		mDrawerList.setDividerHeight(0);
 		mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
