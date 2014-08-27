@@ -107,7 +107,7 @@
             android:name="acr.browser.lightning.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings"
-            android:theme="@style/LightTheme" >
+            android:theme="@style/DefaultTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
 
@@ -118,7 +118,7 @@
             android:name="acr.browser.lightning.AdvancedSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/advanced"
-            android:theme="@style/LightTheme" >
+            android:theme="@style/DefaultTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.ADVANCED_SETTINGS" />
 
@@ -143,7 +143,7 @@
             android:name="acr.browser.lightning.LicenseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/licenses"
-            android:theme="@style/LightTheme" >
+            android:theme="@style/DefaultTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.LICENSE" />
 

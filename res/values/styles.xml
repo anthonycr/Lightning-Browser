@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+     <style name="DefaultTheme" parent="android:Theme.Holo.Light">
+        <item name="progressColor">@color/gray_medium</item>
+        <item name="arrowBackDrawable">@drawable/ic_action_back</item>
+        <item name="numberColor">@color/gray_dark</item>
+        <item name="autoCompleteTitleColor">@color/black</item>
+        <item name="autoCompleteUrlColor">@color/gray_medium</item>
+        <item name="arrowForwardDrawable">@drawable/ic_action_forward</item>
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+
+        -->
+    </style>
+    
     <!-- Application theme. -->
     <style name="LightTheme" parent="android:Theme.Holo.Light">
         <item name="android:windowContentOverlay">@null</item>
@@ -14,7 +29,7 @@
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
@@ -36,12 +51,12 @@
     <style name="LightActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid">
         <item name="android:background">@color/gray_light</item>
     </style>
-    
-    <style name="boldText" >
+
+    <style name="boldText">
         <item name="android:textStyle">bold</item>
     </style>
-    
-    <style name="normalText" >
+
+    <style name="normalText">
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
