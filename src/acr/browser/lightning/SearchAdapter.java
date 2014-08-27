@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -377,8 +376,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 			filteredList.add(mSuggestions.get(n));
 		}
-		Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
-		Log.i("SIZE", "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
+		//Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
+		//Log.i("SIZE", "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
 		return filteredList;
 	}
 }
