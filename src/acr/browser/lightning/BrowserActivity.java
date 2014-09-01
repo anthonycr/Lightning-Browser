@@ -1770,6 +1770,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		getUrl.setAdapter(mSearchAdapter);
 	}
 
+	@Override
 	public boolean isIncognito() {
 		return false;
 	}
