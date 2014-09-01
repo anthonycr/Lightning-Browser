@@ -76,11 +76,8 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 	 * All CRUD(Create, Read, Update, Delete) Operations
 	 */
 
-	public synchronized void delete(String url) {
-		String n = getHistoryItem(url);
-		if (n != null) {
-			deleteHistoryItem(n);
-		}
+	public synchronized void deleteHistoryItem(String url) {
+		mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[] { url });
 	}
 
 	public synchronized void visitHistoryItem(String url, String title) {
@@ -191,11 +188,6 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 				new String[] { String.valueOf(item.getId()) });
 		// updating row
 		return n;
-	}
-
-	// Deleting single item
-	public synchronized void deleteHistoryItem(String id) {
-		mDatabase.delete(TABLE_HISTORY, KEY_ID + " = ?", new String[] { String.valueOf(id) });
 	}
 
 	// Getting items Count
