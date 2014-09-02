@@ -185,7 +185,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 		mDrawerList.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
-		mBookmarkList = mBookmarkManager.getBookmarks();
+		mBookmarkList = mBookmarkManager.getBookmarks(true);
 		mBookmarkAdapter = new BookmarkViewAdapter(this, R.layout.bookmark_list_item, mBookmarkList);
 		mDrawerListRight.setAdapter(mBookmarkAdapter);
 		mDrawerListRight.setOnItemClickListener(new BookmarkItemClickListener());
@@ -1275,7 +1275,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			} else if (!mHistoryHandler.isOpen()) {
 				mHistoryHandler = new HistoryDatabaseHandler(this);
 			}
-			mBookmarkList = mBookmarkManager.getBookmarks();
+			mBookmarkList = mBookmarkManager.getBookmarks(true);
 			notifyBookmarkDataSetChanged();
 		} else {
 			initialize();

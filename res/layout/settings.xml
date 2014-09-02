@@ -385,6 +385,32 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/light" />
         </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#cdcdcd" />
+
+        <RelativeLayout
+            android:id="@+id/layoutBookmarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/listChoiceBackgroundIndicator"
+            android:minHeight="60dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:text="@string/bookmark_settings"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

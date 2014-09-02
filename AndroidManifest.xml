@@ -150,6 +150,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name="acr.browser.lightning.BookmarkActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/bookmark_settings"
+            android:theme="@style/DefaultTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOKMARK" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

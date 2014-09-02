@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/browserLicense"
+        android:id="@+id/exportBackup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/listChoiceBackgroundIndicator"
@@ -39,7 +39,7 @@
                 android:background="#cdcdcd" />
     
     <LinearLayout
-        android:id="@+id/licenseAOSP"
+        android:id="@+id/importBackup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/listChoiceBackgroundIndicator"

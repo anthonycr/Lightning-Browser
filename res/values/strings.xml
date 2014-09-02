@@ -182,4 +182,10 @@
     <string name="title_file_chooser">File Chooser</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="export_bookmarks">Export bookmarks to backup</string>
+    <string name="import_backup">Import bookmarks from backup</string>
+    <string name="bookmark_export_path">Bookmarks exported to</string>
+    <string name="bookmark_settings">Bookmark Settings</string>
+    <string name="import_bookmark_error">Could not import bookmarks from file</string>
+    <string name="title_chooser">Choose a file</string>
 </resources>

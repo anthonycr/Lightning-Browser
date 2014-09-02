@@ -8,7 +8,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,6 +22,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
 import android.provider.Browser;
+import android.widget.Toast;
 
 public class BookmarkManager {
 
@@ -103,7 +107,7 @@ public class BookmarkManager {
 	public synchronized boolean deleteBookmark(String url) {
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
 		mBookmarkMap.remove(url);
-		list = getBookmarks();
+		list = getBookmarks(false);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		boolean bookmarkDeleted = false;
 		try {
@@ -135,10 +139,17 @@ public class BookmarkManager {
 	 * external download directory
 	 */
 	public synchronized void exportBookmarks() {
-		List<HistoryItem> bookmarkList = getBookmarks();
+		List<HistoryItem> bookmarkList = getBookmarks(true);
 		File bookmarksExport = new File(
 				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
 				"BookmarksExport.txt");
+		int counter = 0;
+		while (bookmarksExport.exists()) {
+			counter++;
+			bookmarksExport = new File(
+					Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+					"BookmarksExport-" + counter + ".txt");
+		}
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksExport,
 					false));
@@ -152,11 +163,16 @@ public class BookmarkManager {
 				bookmarkWriter.newLine();
 			}
 			bookmarkWriter.close();
+			Toast.makeText(
+					mContext,
+					mContext.getString(R.string.bookmark_export_path) + " "
+							+ bookmarksExport.getPath(), Toast.LENGTH_SHORT).show();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -164,7 +180,7 @@ public class BookmarkManager {
 	 * 
 	 * @return
 	 */
-	public synchronized List<HistoryItem> getBookmarks() {
+	public synchronized List<HistoryItem> getBookmarks(boolean sort) {
 		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
@@ -187,6 +203,9 @@ public class BookmarkManager {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+		if (sort) {
+			Collections.sort(bookmarks, new SortIgnoreCase());
 		}
 		return bookmarks;
 	}
@@ -335,12 +354,16 @@ public class BookmarkManager {
 	 * @param dir
 	 * @param file
 	 */
-	public synchronized void importBookmarksFromFile(File dir, String file) {
-		File bookmarksImport = new File(dir, file);
+	public synchronized void importBookmarksFromFile(File file) {
+		if (file == null) {
+			return;
+		}
+		File bookmarksImport = file;
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksImport));
 			String line;
+			int number = 0;
 			while ((line = bookmarksReader.readLine()) != null) {
 				JSONObject object = new JSONObject(line);
 				HistoryItem item = new HistoryItem();
@@ -349,15 +372,27 @@ public class BookmarkManager {
 				item.setFolder(object.getString(FOLDER));
 				item.setOrder(object.getInt(ORDER));
 				list.add(item);
+				number++;
 			}
 			bookmarksReader.close();
 			addBookmarkList(list);
+			Utils.showToast(mContext,
+					number + " " + mContext.getResources().getString(R.string.message_import));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			Utils.createInformativeDialog(mContext,
+					mContext.getResources().getString(R.string.title_error), mContext
+							.getResources().getString(R.string.import_bookmark_error));
 		} catch (IOException e) {
 			e.printStackTrace();
+			Utils.createInformativeDialog(mContext,
+					mContext.getResources().getString(R.string.title_error), mContext
+							.getResources().getString(R.string.import_bookmark_error));
 		} catch (JSONException e) {
 			e.printStackTrace();
+			Utils.createInformativeDialog(mContext,
+					mContext.getResources().getString(R.string.title_error), mContext
+							.getResources().getString(R.string.import_bookmark_error));
 		}
 	}
 
@@ -387,5 +422,14 @@ public class BookmarkManager {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private class SortIgnoreCase implements Comparator<HistoryItem> {
+
+		public int compare(HistoryItem o1, HistoryItem o2) {
+			return o1.getTitle().toLowerCase(Locale.getDefault())
+					.compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
+		}
+
 	}
 }

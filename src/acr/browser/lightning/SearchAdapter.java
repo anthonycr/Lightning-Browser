@@ -46,7 +46,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mBookmarks = new ArrayList<HistoryItem>();
 		mSuggestions = new ArrayList<HistoryItem>();
 		mBookmarkManager = new BookmarkManager(context);
-		mAllBookmarks = mBookmarkManager.getBookmarks();
+		mAllBookmarks = mBookmarkManager.getBookmarks(true);
 		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		mContext = context;
@@ -61,7 +61,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	}
 
 	public void refreshBookmarks() {
-		mAllBookmarks = mBookmarkManager.getBookmarks();
+		mAllBookmarks = mBookmarkManager.getBookmarks(true);
 	}
 
 	@Override
