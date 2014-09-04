@@ -67,8 +67,8 @@ import java.util.*;
 public class BrowserActivity extends Activity implements BrowserController {
 
 	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerList;
-	private RelativeLayout mDrawer;
+	private ListView mDrawerListLeft;
+	private RelativeLayout mDrawerLeft;
 	private LinearLayout mDrawerRight;
 	private ListView mDrawerListRight;
 	private RelativeLayout mNewTab;
@@ -157,11 +157,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mProgressBar = (ProgressBar) findViewById(R.id.activity_bar);
 		mProgressBar.setVisibility(View.GONE);
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
-		mDrawer = (RelativeLayout) findViewById(R.id.left_drawer);
+		mDrawerLeft = (RelativeLayout) findViewById(R.id.left_drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerList = (ListView) findViewById(R.id.left_drawer_list);
-		mDrawerList.setDivider(null);
-		mDrawerList.setDividerHeight(0);
+		mDrawerListLeft = (ListView) findViewById(R.id.left_drawer_list);
+		mDrawerListLeft.setDivider(null);
+		mDrawerListLeft.setDividerHeight(0);
 		mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
 		mDrawerListRight = (ListView) findViewById(R.id.right_drawer_list);
 		mDrawerListRight.setDivider(null);
@@ -181,9 +181,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
 
 		mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViews);
-		mDrawerList.setAdapter(mTitleAdapter);
-		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-		mDrawerList.setOnItemLongClickListener(new DrawerItemLongClickListener());
+		mDrawerListLeft.setAdapter(mTitleAdapter);
+		mDrawerListLeft.setOnItemClickListener(new DrawerItemClickListener());
+		mDrawerListLeft.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
 		mBookmarkList = mBookmarkManager.getBookmarks(true);
 		mBookmarkAdapter = new BookmarkViewAdapter(this, R.layout.bookmark_list_item, mBookmarkList);
@@ -215,7 +215,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 						if (mCurrentView.canGoBack()) {
 							mCurrentView.goBack();
 						} else {
-							deleteTab(mDrawerList.getCheckedItemPosition());
+							deleteTab(mDrawerListLeft.getCheckedItemPosition());
 						}
 					}
 				}
@@ -366,23 +366,23 @@ public class BrowserActivity extends Activity implements BrowserController {
 			@Override
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-				if (view.equals(mDrawer)) {
+				if (view.equals(mDrawerLeft)) {
 					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerRight);
 				} else if (view.equals(mDrawerRight)) {
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawer);
+					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerLeft);
 				}
 			}
 
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				if (drawerView.equals(mDrawer)) {
+				if (drawerView.equals(mDrawerLeft)) {
 					mDrawerLayout.closeDrawer(mDrawerRight);
 					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
 							mDrawerRight);
 				} else if (drawerView.equals(mDrawerRight)) {
-					mDrawerLayout.closeDrawer(mDrawer);
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawer);
+					mDrawerLayout.closeDrawer(mDrawerLeft);
+					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
 				}
 			}
 
@@ -496,19 +496,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 		int width = getResources().getDisplayMetrics().widthPixels * 3 / 4;
 		int maxWidth = Utils.convertToDensityPixels(mContext, 300);
 		if (width > maxWidth) {
-			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawer
+			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerLeft
 					.getLayoutParams();
 			params.width = maxWidth;
-			mDrawer.setLayoutParams(params);
+			mDrawerLeft.setLayoutParams(params);
 			DrawerLayout.LayoutParams paramsRight = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerRight
 					.getLayoutParams();
 			paramsRight.width = maxWidth;
 			mDrawerRight.setLayoutParams(paramsRight);
 		} else {
-			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawer
+			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerLeft
 					.getLayoutParams();
 			params.width = width;
-			mDrawer.setLayoutParams(params);
+			mDrawerLeft.setLayoutParams(params);
 			DrawerLayout.LayoutParams paramsRight = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerRight
 					.getLayoutParams();
 			paramsRight.width = width;
@@ -651,9 +651,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
 				mDrawerLayout.closeDrawer(mDrawerRight);
-				mDrawerLayout.openDrawer(mDrawer);
-			} else if (mDrawerLayout.isDrawerOpen(mDrawer)) {
-				mDrawerLayout.closeDrawer(mDrawer);
+				mDrawerLayout.openDrawer(mDrawerLeft);
+			} else if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
+				mDrawerLayout.closeDrawer(mDrawerLeft);
 			}
 			mDrawerToggle.syncState();
 			return true;
@@ -1030,7 +1030,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mActionBar.setIcon(icon);
 		mTitleAdapter.notifyDataSetChanged();
 		if (show) {
-			mDrawerList.setItemChecked(mWebViews.size() - 1, true);
+			mDrawerListLeft.setItemChecked(mWebViews.size() - 1, true);
 			showTab(startingTab);
 		}
 	}
@@ -1040,7 +1040,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			return;
 		}
 
-		int current = mDrawerList.getCheckedItemPosition();
+		int current = mDrawerListLeft.getCheckedItemPosition();
 		LightningView reference = mWebViews.get(position);
 		if (reference == null) {
 			return;
@@ -1052,14 +1052,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (current > position) {
 			mIdList.remove(position);
 			mWebViews.remove(position);
-			mDrawerList.setItemChecked(current - 1, true);
+			mDrawerListLeft.setItemChecked(current - 1, true);
 			reference.onDestroy();
 		} else if (mWebViews.size() > position + 1) {
 			mIdList.remove(position);
 			if (current == position) {
 				showTab(mWebViews.get(position + 1));
 				mWebViews.remove(position);
-				mDrawerList.setItemChecked(position, true);
+				mDrawerListLeft.setItemChecked(position, true);
 			} else {
 				mWebViews.remove(position);
 			}
@@ -1070,7 +1070,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (current == position) {
 				showTab(mWebViews.get(position - 1));
 				mWebViews.remove(position);
-				mDrawerList.setItemChecked(position - 1, true);
+				mDrawerListLeft.setItemChecked(position - 1, true);
 			} else {
 				mWebViews.remove(position);
 			}
@@ -1188,8 +1188,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (!mActionBar.isShowing()) {
 			mActionBar.show();
 		}
-		if (mDrawerLayout.isDrawerOpen(mDrawer)) {
-			mDrawerLayout.closeDrawer(mDrawer);
+		if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
+			mDrawerLayout.closeDrawer(mDrawerLeft);
 		} else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
 			mDrawerLayout.closeDrawer(mDrawerRight);
 		} else {
@@ -1202,7 +1202,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 						mCurrentView.goBack();
 					}
 				} else {
-					deleteTab(mDrawerList.getCheckedItemPosition());
+					deleteTab(mDrawerListLeft.getCheckedItemPosition());
 				}
 			} else {
 				Log.e(Constants.TAG, "So madness. Much confusion. Why happen.");
@@ -1796,7 +1796,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	 * helper function that opens the bookmark drawer
 	 */
 	private void openBookmarks() {
-		if (mDrawerLayout.isDrawerOpen(mDrawer)) {
+		if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
 			mDrawerLayout.closeDrawers();
 		}
 		mDrawerToggle.syncState();
