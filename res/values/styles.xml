@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-     <style name="DefaultTheme" parent="android:Theme.Holo.Light">
+    <style name="DefaultTheme" parent="android:Theme.Holo.Light">
         <item name="progressColor">@color/gray_medium</item>
         <item name="arrowBackDrawable">@drawable/ic_action_back</item>
         <item name="numberColor">@color/gray_dark</item>
@@ -11,11 +11,10 @@
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-
+            backward-compatibility can go here.
         -->
     </style>
-    
+
     <!-- Application theme. -->
     <style name="LightTheme" parent="android:Theme.Holo.Light">
         <item name="android:windowContentOverlay">@null</item>
@@ -29,7 +28,7 @@
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
     </style>
 
