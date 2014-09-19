@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2014 A.C.R. Development
+  Copyright 2014  The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -167,4 +167,17 @@
     <string name="clear_history_exit">Verlauf beim Beenden löschen</string>
     <string name="folder_default">Standard</string>
     <string name="folder_custom">Andere</string>
+    <string name="untitled">Ohne Titel</string>
+    <string name="mpl_license">Mozilla Public License v2.0</string>
+    <string name="freeware">Freeware</string>
+    <string name="android_open_source_project">Android Open Source Project</string>
+    <string name="hphosts_ad_server_list">hpHosts AdServer-List</string>
+    <string name="deleted_tab">Alten Reiter erneut öffnen</string>
+    <string name="rendering_mode">Rendermodus</string>
+    <string name="name_inverted">Invertiert</string>
+    <string name="name_grayscale">Graustufen</string>
+    <string name="name_inverted_grayscale">Invertierte Graustufen</string>
+    <string name="name_normal">Normal</string>
+    <string name="sync_history">Verlauf nach Google abgleichen</string>
+    <string name="title_file_chooser">Datei-Browser</string>
 </resources>
