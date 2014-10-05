@@ -204,38 +204,31 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setCustomView(R.layout.search);
 
-		RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
-		RelativeLayout forward = (RelativeLayout) findViewById(R.id.action_forward);
-		if (back != null) {
-			back.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (mCurrentView != null) {
-						if (mCurrentView.canGoBack()) {
-							mCurrentView.goBack();
-						} else {
-							deleteTab(mDrawerList.getCheckedItemPosition());
-						}
+		ImageView back = (ImageView) findViewById(R.id.action_back);
+		back.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoBack()) {
+						mCurrentView.goBack();
+					} else {
+						deleteTab(mDrawerList.getCheckedItemPosition());
 					}
 				}
+			}
+		});
 
-			});
-		}
-		if (forward != null) {
-			forward.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (mCurrentView != null) {
-						if (mCurrentView.canGoForward()) {
-							mCurrentView.goForward();
-						}
+		ImageView forward = (ImageView) findViewById(R.id.action_forward);
+		forward.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoForward()) {
+						mCurrentView.goForward();
 					}
 				}
-
-			});
-		}
+			}
+		});
 
 		// create the search EditText in the ActionBar
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
