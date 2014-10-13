@@ -45,8 +45,4 @@ public interface BrowserController {
     public void longClickPage(String url);
 
     public void openBookmarkPage(WebView view);
-
-    public boolean isActionBarShowing();
-
-    public void closeEmptyTab();
 }

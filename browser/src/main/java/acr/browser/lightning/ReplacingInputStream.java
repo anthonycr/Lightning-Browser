@@ -9,10 +9,8 @@ import java.util.LinkedList;
 
 public class ReplacingInputStream extends FilterInputStream {
 
-    Deque<Integer> inQueue = new LinkedList<Integer>();
-
-    Deque<Integer> outQueue = new LinkedList<Integer>();
-
+    final Deque<Integer> inQueue = new LinkedList<Integer>();
+    final Deque<Integer> outQueue = new LinkedList<Integer>();
     final byte[] search, replacement;
 
     protected ReplacingInputStream(InputStream in, byte[] search, byte[] replacement) {

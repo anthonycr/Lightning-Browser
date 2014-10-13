@@ -25,10 +25,9 @@ import java.util.List;
 public final class Utils {
 
     public static void downloadFile(final Activity activity, final String url,
-                                    final String userAgent, final String contentDisposition, final boolean privateBrowsing) {
+                                    final String userAgent) {
         String fileName = URLUtil.guessFileName(url, null, null);
-        DownloadHandler.onDownloadStart(activity, url, userAgent, "attachment", null,
-                false);
+        DownloadHandler.onDownloadStart(activity, url, userAgent, "attachment", null);
         Log.i(Constants.TAG, "Downloading" + fileName);
     }
 
@@ -109,15 +108,11 @@ public final class Utils {
     }
 
     public static void trimCache(Context context) {
-        try {
             File dir = context.getCacheDir();
 
             if (dir != null && dir.isDirectory()) {
                 deleteDir(dir);
             }
-        } catch (Exception ignored) {
-
-        }
     }
 
     public static boolean deleteDir(File dir) {

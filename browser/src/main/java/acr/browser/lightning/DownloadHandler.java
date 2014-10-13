@@ -32,16 +32,14 @@ public class DownloadHandler {
     /**
      * Notify the host application a download should be done, or that the data
      * should be streamed if a streaming viewer is available.
-     *
-     * @param activity           Activity requesting the download.
+     *  @param activity           Activity requesting the download.
      * @param url                The full url to the content that should be downloaded
      * @param userAgent          User agent of the downloading application.
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
-     * @param privateBrowsing    If the request is coming from a private browsing tab.
      */
     public static void onDownloadStart(Activity activity, String url, String userAgent,
-                                       String contentDisposition, String mimetype, boolean privateBrowsing) {
+                                       String contentDisposition, String mimetype) {
         mActivity = activity;
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.

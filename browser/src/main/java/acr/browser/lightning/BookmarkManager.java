@@ -22,7 +22,7 @@ import java.util.TreeMap;
 
 public class BookmarkManager {
 
-    private Context mContext;
+    private final Context mContext;
     private static final String TITLE = "title";
     private static final String URL = "url";
     private static final String FOLDER = "folder";

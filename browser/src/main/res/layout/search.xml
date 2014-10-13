@@ -29,6 +29,6 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:textColor="@color/gray_dark"
-        android:textCursorDrawable="@null"></AutoCompleteTextView>
+        android:textCursorDrawable="@null"/>
 
 </LinearLayout>

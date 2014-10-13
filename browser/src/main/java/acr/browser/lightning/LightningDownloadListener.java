@@ -12,7 +12,7 @@ import android.webkit.URLUtil;
 
 public class LightningDownloadListener implements DownloadListener {
 
-    private Activity mActivity;
+    private final Activity mActivity;
 
     LightningDownloadListener(Activity activity) {
         mActivity = activity;
@@ -28,7 +28,7 @@ public class LightningDownloadListener implements DownloadListener {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         DownloadHandler.onDownloadStart(mActivity, url, userAgent,
-                                contentDisposition, mimetype, false);
+                                contentDisposition, mimetype);
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:

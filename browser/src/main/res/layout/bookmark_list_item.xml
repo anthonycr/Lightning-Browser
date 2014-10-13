@@ -10,10 +10,10 @@
         android:id="@+id/favicon1"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:contentDescription="Favicon"
+        android:contentDescription="@null"
         android:gravity="center_vertical"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"></ImageView>
+        android:layout_marginRight="16dp"/>
 
     <TextView
         android:id="@+id/text1"

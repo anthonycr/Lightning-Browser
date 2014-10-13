@@ -17,9 +17,8 @@ import java.util.regex.Pattern;
 
 public class IntentUtils {
 
-    private Activity mActivity;
-
-    private BrowserController mController;
+    private final Activity mActivity;
+    private final BrowserController mController;
 
     static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
             + // switch on case insensitive matching

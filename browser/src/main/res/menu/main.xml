@@ -17,30 +17,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_new_tab"
-        android:title="@string/action_new_tab"></item>
+        android:title="@string/action_new_tab"/>
     <item
         android:id="@+id/action_incognito"
-        android:title="@string/action_incognito"></item>
+        android:title="@string/action_incognito"/>
     <item
         android:id="@+id/action_share"
         android:title="@string/action_share" />
     <item
         android:id="@+id/action_history"
-        android:title="@string/action_history"></item>
+        android:title="@string/action_history"/>
     <item
         android:id="@+id/action_find"
-        android:title="@string/action_find"></item>
+        android:title="@string/action_find"/>
     <item
         android:id="@+id/action_copy"
-        android:title="@string/action_copy"></item>
+        android:title="@string/action_copy"/>
     <item
         android:id="@+id/action_bookmarks"
-        android:title="@string/action_bookmarks"></item>
+        android:title="@string/action_bookmarks"/>
     <item
         android:id="@+id/action_add_bookmark"
-        android:title="@string/action_add_bookmark"></item>
+        android:title="@string/action_add_bookmark"/>
     <item
         android:id="@+id/action_settings"
-        android:title="@string/settings"></item>
+        android:title="@string/settings"/>
 
 </menu>

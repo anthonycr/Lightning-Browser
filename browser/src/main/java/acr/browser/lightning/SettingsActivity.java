@@ -527,8 +527,6 @@ public class SettingsActivity extends Activity {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-
                             }
 
                         });
@@ -536,7 +534,6 @@ public class SettingsActivity extends Activity {
 
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        // TODO Auto-generated method stub
                         Log.i("Cancelled", "");
                     }
                 });

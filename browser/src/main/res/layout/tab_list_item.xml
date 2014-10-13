@@ -14,8 +14,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:contentDescription="Favicon"
-        android:gravity="center_vertical"></ImageView>
+        android:contentDescription="@null"
+        android:gravity="center_vertical"/>
 
     <TextView
         android:id="@+id/text1"
@@ -41,9 +41,9 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="13dp"
         android:alpha="0.5"
-        android:contentDescription="Delete Tab"
+        android:contentDescription="@null"
         android:gravity="center_vertical"
         android:padding="3dp"
-        android:src="@drawable/ic_action_delete"></ImageView>
+        android:src="@drawable/ic_action_delete"/>
 
 </RelativeLayout>

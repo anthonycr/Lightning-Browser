@@ -39,11 +39,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private List<HistoryItem> mFilteredList;
     private List<HistoryItem> mAllBookmarks;
     private HistoryDatabaseHandler mDatabaseHandler;
-    private SharedPreferences mPreferences;
+    private final SharedPreferences mPreferences;
     private boolean mUseGoogle = true;
-    private Context mContext;
-    private boolean mIncognito;
-    private BookmarkManager mBookmarkManager;
+    private final Context mContext;
+    private final boolean mIncognito;
+    private final BookmarkManager mBookmarkManager;
 
     public SearchAdapter(Context context, boolean incognito) {
         mDatabaseHandler = new HistoryDatabaseHandler(context);

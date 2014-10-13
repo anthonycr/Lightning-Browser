@@ -58,21 +58,21 @@ import java.net.URL;
 
 public class LightningView {
 
-    private Title mTitle;
+    private final Title mTitle;
     private WebView mWebView;
     private BrowserController mBrowserController;
     private GestureDetector mGestureDetector;
-    private Activity mActivity;
+    private final Activity mActivity;
     private WebSettings mSettings;
-    private static int API = android.os.Build.VERSION.SDK_INT;
+    private static final int API = android.os.Build.VERSION.SDK_INT;
     private static String mHomepage;
     private static String mDefaultUserAgent;
     private static Bitmap mWebpageBitmap;
     private static SharedPreferences mPreferences;
-    private AdBlock mAdBlock;
+    private final AdBlock mAdBlock;
     private boolean isForegroundTab;
     private IntentUtils mIntentUtils;
-    private Paint mPaint = new Paint();
+    private final Paint mPaint = new Paint();
     private static final float[] mNegativeColorArray = {-1.0f, 0, 0, 0, 255, // red
             0, -1.0f, 0, 0, 255, // green
             0, 0, -1.0f, 0, 255, // blue
@@ -583,7 +583,7 @@ public class LightningView {
 
     public class LightningWebClient extends WebViewClient {
 
-        Context mActivity;
+        final Context mActivity;
 
         LightningWebClient(Context context) {
             mActivity = context;
@@ -858,7 +858,7 @@ public class LightningView {
 
     public class LightningChromeClient extends WebChromeClient {
 
-        Context mActivity;
+        final Context mActivity;
 
         LightningChromeClient(Context context) {
             mActivity = context;
@@ -926,11 +926,6 @@ public class LightningView {
                                       Message resultMsg) {
             mBrowserController.onCreateWindow(isUserGesture, resultMsg);
             return true;
-        }
-
-        @Override
-        public void onCloseWindow(WebView window) {
-            super.onCloseWindow(window);
         }
 
         public void openFileChooser(ValueCallback<Uri> uploadMsg) {
@@ -1013,7 +1008,7 @@ public class LightningView {
 
         private String mTitle;
 
-        private Bitmap mDefaultIcon;
+        private final Bitmap mDefaultIcon;
 
         public Title(Context context) {
             mDefaultIcon = BitmapFactory.decodeResource(context.getResources(),

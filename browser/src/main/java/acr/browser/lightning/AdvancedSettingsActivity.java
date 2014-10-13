@@ -214,7 +214,7 @@ public class AdvancedSettingsActivity extends Activity {
 
     private static class MessageHandler extends Handler {
 
-        Context mHandlerContext;
+        final Context mHandlerContext;
 
         public MessageHandler(Context context) {
             this.mHandlerContext = context;

@@ -26,15 +26,11 @@ import java.io.IOException;
  */
 public class FetchUrlMimeType extends Thread {
 
-    private Context mContext;
-
-    private DownloadManager.Request mRequest;
-
-    private String mUri;
-
-    private String mCookies;
-
-    private String mUserAgent;
+    private final Context mContext;
+    private final DownloadManager.Request mRequest;
+    private final String mUri;
+    private final String mCookies;
+    private final String mUserAgent;
 
     public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
                             String cookies, String userAgent) {

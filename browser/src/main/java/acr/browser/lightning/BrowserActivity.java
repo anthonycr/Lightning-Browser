@@ -45,7 +45,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -156,7 +155,7 @@ public class BrowserActivity extends Activity implements BrowserController {
     private boolean mIsNewIntent = false;
     private VideoView mVideoView;
     private static SearchAdapter mSearchAdapter;
-    private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
+    private static final LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
             LayoutParams.MATCH_PARENT);
     private BookmarkManager mBookmarkManager;
 
@@ -455,14 +454,13 @@ public class BrowserActivity extends Activity implements BrowserController {
         }
 
         checkForTor();
-
     }
 
     /*
      * If Orbot/Tor is installed, prompt the user if they want to enable
      * proxying for this session
      */
-    public boolean checkForTor() {
+    public void checkForTor() {
         boolean useProxy = mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false);
 
         OrbotHelper oh = new OrbotHelper(this);
@@ -492,15 +490,11 @@ public class BrowserActivity extends Activity implements BrowserController {
             builder.setMessage(R.string.use_tor_prompt)
                     .setPositiveButton(R.string.yes, dialogClickListener)
                     .setNegativeButton(R.string.no, dialogClickListener).show();
-
-            return true;
-        } else if (oh.isOrbotInstalled() & useProxy == true) {
+        } else if (oh.isOrbotInstalled() & useProxy) {
             initializeTor();
-            return true;
         } else {
             mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, false);
             mEditPrefs.apply();
-            return false;
         }
     }
 
@@ -669,11 +663,6 @@ public class BrowserActivity extends Activity implements BrowserController {
             }
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -975,14 +964,6 @@ public class BrowserActivity extends Activity implements BrowserController {
         }, 150);
     }
 
-    /**
-     * creates a new tab with the passed in URL if it isn't null
-     */
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-    }
-
     public void handleNewIntent(Intent intent) {
         if (mCurrentView == null) {
             initialize();
@@ -1006,17 +987,6 @@ public class BrowserActivity extends Activity implements BrowserController {
             newTab(url, true);
             mIsNewIntent = true;
         }
-    }
-
-    @Override
-    public void closeEmptyTab() {
-        if (mCurrentView != null && mCurrentView.getWebView().copyBackForwardList().getSize() == 0) {
-            closeCurrentTab();
-        }
-    }
-
-    private void closeCurrentTab() {
-        // don't delete the tab because the browser will close and mess stuff up
     }
 
     private void selectItem(final int position) {
@@ -1128,10 +1098,9 @@ public class BrowserActivity extends Activity implements BrowserController {
                     Log.i(Constants.TAG, "Cookies Cleared");
 
                 }
-                if (reference != null) {
-                    reference.pauseTimers();
-                    reference.onDestroy();
-                }
+
+                reference.pauseTimers();
+                reference.onDestroy();
                 mCurrentView = null;
                 mTitleAdapter.notifyDataSetChanged();
                 finish();
@@ -1411,9 +1380,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 
     public class LightningViewAdapter extends ArrayAdapter<LightningView> {
 
-        Context context;
+        final Context context;
 
-        int layoutResourceId;
+        final int layoutResourceId;
 
         List<LightningView> data = null;
 
@@ -1491,8 +1460,8 @@ public class BrowserActivity extends Activity implements BrowserController {
     }
 
     public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
-        Context context;
-        int layoutResourceId;
+        final Context context;
+        final int layoutResourceId;
         List<HistoryItem> data = null;
 
         public BookmarkViewAdapter(Context context, int layoutResourceId, List<HistoryItem> data) {
@@ -1550,8 +1519,8 @@ public class BrowserActivity extends Activity implements BrowserController {
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-        HistoryItem mWeb;
+        final ImageView bmImage;
+        final HistoryItem mWeb;
 
         public DownloadImageTask(ImageView bmImage, HistoryItem web) {
             this.bmImage = bmImage;
@@ -1588,8 +1557,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                } finally {
-
                 }
             } else {
                 // if it exists, retrieve it from the cache
@@ -1725,9 +1692,8 @@ public class BrowserActivity extends Activity implements BrowserController {
     public boolean getSystemBrowser() {
         Cursor c = null;
         String[] columns = new String[]{"url", "title"};
-        boolean browserFlag = false;
+        boolean browserFlag;
         try {
-
             Uri bookmarks = Browser.BOOKMARKS_URI;
             c = getContentResolver().query(bookmarks, columns, null, null, null);
         } catch (SQLiteException ignored) {
@@ -2115,7 +2081,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
                                 case DialogInterface.BUTTON_NEUTRAL:
                                     Utils.downloadFile(mActivity, url,
-                                            mCurrentView.getUserAgent(), "attachment", false);
+                                            mCurrentView.getUserAgent());
                                     break;
                             }
                         }
@@ -2215,7 +2181,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
                                 case DialogInterface.BUTTON_NEUTRAL:
                                     Utils.downloadFile(mActivity, newUrl,
-                                            mCurrentView.getUserAgent(), "attachment", false);
+                                            mCurrentView.getUserAgent());
                                     break;
                             }
                         }
@@ -2308,11 +2274,6 @@ public class BrowserActivity extends Activity implements BrowserController {
                 mCurrentView.reload();
             }
         }
-    }
-
-    @Override
-    public boolean isActionBarShowing() {
-        return mActionBar != null && mActionBar.isShowing();
     }
 
     // Override this, use finish() for Incognito, moveTaskToBack for Main

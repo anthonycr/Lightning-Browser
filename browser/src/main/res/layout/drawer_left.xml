@@ -27,7 +27,7 @@
             android:layout_marginRight="16dp"
             android:contentDescription="@null"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_action_plus"></ImageView>
+            android:src="@drawable/ic_action_plus"/>
 
         <TextView
             android:id="@+id/text1"
