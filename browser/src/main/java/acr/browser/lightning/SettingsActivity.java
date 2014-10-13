@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -152,19 +150,6 @@ public class SettingsActivity extends Activity {
 
         mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/' + mDownloadLocation);
 
-        String code = "HOLO";
-
-        try {
-            PackageInfo p = getPackageManager().getPackageInfo(getPackageName(), 0);
-            code = p.versionName;
-        } catch (NameNotFoundException e) {
-            // TODO add logging
-            e.printStackTrace();
-        }
-
-        TextView version = (TextView) findViewById(R.id.versionCode);
-        version.setText(code + "");
-
         if (mHomepage.contains("about:home")) {
             mHomepageText.setText(getResources().getString(R.string.action_homepage));
         } else if (mHomepage.contains("about:blank")) {
@@ -239,7 +224,6 @@ public class SettingsActivity extends Activity {
         source(source);
         search();
         renderPicker();
-        easterEgg();
     }
 
     public void search() {
@@ -425,26 +409,6 @@ public class SettingsActivity extends Activity {
                     orbot.setChecked(!orbot.isChecked());
                 } else {
                     Utils.showToast(mContext, getResources().getString(R.string.install_orbot));
-                }
-            }
-
-        });
-    }
-
-    public void easterEgg() {
-        RelativeLayout easter = (RelativeLayout) findViewById(R.id.layoutVersion);
-        easter.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mEasterEggCounter++;
-                if (mEasterEggCounter == 10) {
-
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri
-                            .parse("http://imgs.xkcd.com/comics/compiling.png"), mContext,
-                            MainActivity.class));
-                    finish();
-                    mEasterEggCounter = 0;
                 }
             }
 

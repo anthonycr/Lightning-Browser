@@ -36,7 +36,6 @@
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">新設定</string>
     <string name="action_settings">設定</string>
-    <string name="version">應用程式版本</string>
     <string name="cache">離開時清除快取</string>
     <string name="reflow">啟動文字自動重新排列</string>
     <string name="block">封鎖圖片</string>

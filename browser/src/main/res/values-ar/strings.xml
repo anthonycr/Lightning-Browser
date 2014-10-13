@@ -25,7 +25,6 @@
     <string name="apache"> ترخيص اباتشي 2.0</string>
     <string name="title_activity_new_settings">الإعدادات الجديدة</string>
     <string name="action_settings">الإعدادات</string>
-    <string name="version">إصدار التطبيق</string>
     <string name="cache"> مسح ذاكرة التخزين المؤقتة عند الخروج</string>
     <string name="reflow">تفعيل إلتفاف النص</string>
     <string name="block">حظر الصور</string>

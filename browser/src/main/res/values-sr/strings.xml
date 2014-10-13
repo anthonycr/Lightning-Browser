@@ -52,7 +52,6 @@
     <string name="apache">Апачи лиценца 2.0</string>
     <string name="title_activity_new_settings">Нове поставке</string>
     <string name="action_settings">Поставке</string>
-    <string name="version">Издање апликације</string>
     <string name="cache">Очисти кеш по затварању</string>
     <string name="reflow">Прилагођавање текста</string>
     <string name="block">Блокирај слике</string>

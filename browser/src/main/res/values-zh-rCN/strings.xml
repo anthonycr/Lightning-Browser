@@ -36,7 +36,6 @@
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">NewSettings</string>
     <string name="action_settings">应用设置</string>
-    <string name="version">当前版本</string>
     <string name="cache">退出时清理缓存</string>
     <string name="reflow">启用文本重排</string>
     <string name="block">屏蔽网页图像</string>

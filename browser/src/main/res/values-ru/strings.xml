@@ -33,7 +33,6 @@
     <string name="source">Исходный код</string>
     <string name="license">Лицензия</string>
     <string name="action_settings">Настройки</string>
-    <string name="version">Версия</string>
     <string name="cache">Очищать кэш при выходе</string>
     <string name="reflow">Перекомпоновка</string>
     <string name="block">Без изображений</string>

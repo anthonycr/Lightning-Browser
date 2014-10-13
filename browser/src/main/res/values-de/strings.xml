@@ -52,7 +52,6 @@
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">Neue Einstellungen</string>
     <string name="action_settings">Einstellungen</string>
-    <string name="version">Programmversion</string>
     <string name="cache">Cache beim Beenden leeren</string>
     <string name="reflow">Textfluß anpassen</string>
     <string name="block">Bilder blockieren</string>

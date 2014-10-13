@@ -24,7 +24,6 @@
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
     <string name="title_activity_new_settings">YeniAyarlar</string>
-    <string name="version">Uygulama Versiyonu</string>
     <string name="cache">Çıkışta önbelleği temizleme</string>
     <string name="reflow">Metin akışını etkinleştirme</string>
     <string name="block">Resimleri engelleme</string>
