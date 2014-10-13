@@ -6,7 +6,7 @@
     android:layout_gravity="end"
     android:background="@color/drawer_background"
     android:clickable="true"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/bookmark_title"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/list_bg"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/starIcon"
@@ -26,8 +26,7 @@
             android:layout_marginRight="16dp"
             android:contentDescription="@null"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_action_star" >
-        </ImageView>
+            android:src="@drawable/ic_action_star"></ImageView>
 
         <TextView
             android:id="@+id/text2"

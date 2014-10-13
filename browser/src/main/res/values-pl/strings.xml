@@ -19,7 +19,6 @@
     <string name="agent">Przedstawiaj się jako</string>
     <string name="history">Wyczyść historię</string>
     <string name="email">Wyslij mi e-mail</string>
-    <string name="flash">Włącz Adobe Flash</string>
     <string name="mobile">Przeglądarka mobilna</string>
     <string name="desk">Przeglądarka desktopowa</string>
     <string name="custom">Własna lokalizacja</string>
@@ -72,9 +71,6 @@
     <string name="dialog_download">Czy chcesz pobrać ten plik?</string>
     <string name="action_cancel">Anuluj</string>
     <string name="title_warning">Ostrzeżenie</string>
-    <string name="dialog_adobe_dead">Przepraszamy, Adobe Flash nie jest wspierany na urządzeniach z Androidem 4.4 i nowszym</string>
-    <string name="dialog_adobe_not_installed">Adobe Flash Player nie został wykryty.\nProszę go zainstalować.</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash nie jest oficjalnie wspierany na urządzeniach z Andoidem 4.2 i nowszym, i może zawiesić przegldarkę. Proszę nie zgłaszać awarii przegladarki mających miejsce po jego włączeniu.</string>
     <string name="title_user_agent">Przedstawiaj się jako</string>
     <string name="title_download_location">Miejsce zapisu pobieranych plików</string>
     <string name="title_custom_homepage">Adres strony domowej</string>
@@ -105,10 +101,10 @@
     <string name="action_find">Znajdź na stronie</string>
     <string name="download_pending">Rozpoczynanie pobierania\u2026</string>
     <string name="cannot_download">Pliki mogą być pobierane tylko z linków zaczynających się od \"http\" lub \"https\".</string>
-    <string name="download_no_sdcard_dlg_title" >Brak karty SD</string>
-    <string name="download_no_sdcard_dlg_msg" >Pamięć USB jest wymagana do pobrania tego pliku.</string>
+    <string name="download_no_sdcard_dlg_title">Brak karty SD</string>
+    <string name="download_no_sdcard_dlg_msg">Pamięć USB jest wymagana do pobrania tego pliku.</string>
     <string name="download_sdcard_busy_dlg_title">Pamięć USB niedostępna</string>
-    <string name="download_sdcard_busy_dlg_msg" >Pamięć USB jest zablokowana. By umożliwić pobieranie plików, dotknij \"Wyłącz pamięć USB\" w powiadomieniu.</string>
+    <string name="download_sdcard_busy_dlg_msg">Pamięć USB jest zablokowana. By umożliwić pobieranie plików, dotknij \"Wyłącz pamięć USB\" w powiadomieniu.</string>
     <string name="incognito_cookies">Włącz ciasteczka w trybie Incognito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Ręcznie</string>

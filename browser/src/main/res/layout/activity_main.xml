@@ -3,14 +3,14 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/progressWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?progressColor"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <ProgressBar
             android:id="@+id/activity_bar"
@@ -21,11 +21,10 @@
             android:progressDrawable="@drawable/progress" />
     </LinearLayout>
 
-    <android.support.v4.widget.DrawerLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:id="@+id/content_frame"

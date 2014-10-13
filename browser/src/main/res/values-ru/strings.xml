@@ -19,7 +19,6 @@
     <string name="agent">User Agent</string>
     <string name="history">Очистить историю</string>
     <string name="email">Обратная связь</string>
-    <string name="flash">Adobe Flash</string>
     <string name="mobile">Мобильный вид</string>
     <string name="desk">Стандартный вид</string>
     <string name="custom">Свой user agent</string>
@@ -69,9 +68,6 @@
     <string name="dialog_download">Загрузить файл?</string>
     <string name="action_cancel">Отмена</string>
     <string name="title_warning">Внимание</string>
-    <string name="dialog_adobe_dead">"К сожалению, Adobe Flash не работает на Android 4.4+ из-за изменений, внесённых Google"</string>
-    <string name="dialog_adobe_not_installed">"Adobe Flash Player не найден.\nУстановите Flash Player"</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash не поддерживает Andoid 4.2 и новее, вызывая сбой браузера. Пожалуйста, не сообщайте о сбоях при включённом Flash</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Папка загрузок</string>
     <string name="title_custom_homepage">Введите адрес</string>

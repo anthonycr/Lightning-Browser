@@ -2,14 +2,12 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="google">Google</string>
     <string name="settings">Tarayıcı ayarlarıstring</string>
     <string name="location">Konum erişimi</string>
     <string name="password">Parolarınızı kaydetme</string>
     <string name="agent">Kullanıcı arayüzü</string>
     <string name="history">Geçmişi temizle</string>
     <string name="email">Bana e-posta</string>
-    <string name="flash">Adobe Flash aktif</string>
     <string name="mobile">Mobil Görünüm</string>
     <string name="desk">Masaüstü Görünüm</string>
     <string name="custom">Özel kullanıcı aracısı olarak görüntüleme</string>
@@ -34,7 +32,6 @@
     <string name="cookies">Çerezleri etkinleştirme</string>
     <string name="importbookmarks">Tarayıcı yer imlerini içe aktarma</string>
     <string name="size">Metin boyutu</string>
-    <string name="hello_world">Merhaba dünya!</string>
     <string name="recommended">(Önerilen)</string>
     <string name="search">Arama Motoru</string>
     <string name="search_hint">Arama</string>
@@ -49,5 +46,5 @@
     <string name="action_new_tab">Yeni pencere</string>
     <string name="stock_browser_unavailable">(Hiçbir stok tarayıcı tespit edilemedi)</string>
     <string name="stock_browser_available">(Desteklenen stok tarayıcı tespit edildi)</string>
-    
+
 </resources>
