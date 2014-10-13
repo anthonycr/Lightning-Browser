@@ -785,7 +785,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showSearchInterfaceBar(getHome.getText().toString());
+                        String query = getHome.getText().toString();
+                        if (query.length() > 0)
+                            showSearchInterfaceBar(query);
                     }
                 });
         finder.show();
