@@ -20,9 +20,6 @@ import java.util.List;
 
 public final class Utils {
 
-	private Utils() {
-	}
-
 	public static void downloadFile(final Activity activity, final String url,
 			final String userAgent, final String contentDisposition, final boolean privateBrowsing) {
 		String fileName = URLUtil.guessFileName(url, null, null);

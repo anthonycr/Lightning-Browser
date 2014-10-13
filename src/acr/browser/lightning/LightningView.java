@@ -57,7 +57,6 @@ public class LightningView {
 			0, 0, 0, 1.0f, 0 // alpha
 	};
 
-	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	public LightningView(Activity activity, String url) {
 
@@ -82,12 +81,7 @@ public class LightningView {
 		mWebView.setDrawingCacheEnabled(true);
 		mWebView.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
 		mWebView.setBackground(null);
-
-		if (API > 15) {
-			mWebView.getRootView().setBackground(null);
-		} else {
-			mWebView.getRootView().setBackgroundDrawable(null);
-		}
+		mWebView.getRootView().setBackground(null);
 		mWebView.setWillNotCacheDrawing(false);
 		mWebView.setAlwaysDrawnWithCacheEnabled(true);
 		mWebView.setScrollbarFadingEnabled(true);
@@ -253,7 +247,7 @@ public class LightningView {
 	}
 
 	@SuppressWarnings("deprecation")
-	@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
+	@SuppressLint({ "SetJavaScriptEnabled" })
 	public synchronized void initializePreferences(Context context) {
 		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
@@ -271,11 +265,7 @@ public class LightningView {
 
 		switch (mPreferences.getInt(PreferenceConstants.USER_AGENT, 1)) {
 			case 1:
-				if (API > 16) {
-					mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
-				} else {
-					mSettings.setUserAgentString(mDefaultUserAgent);
-				}
+				mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
 				break;
 			case 2:
 				mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
@@ -337,7 +327,7 @@ public class LightningView {
 	}
 
 	@SuppressWarnings("deprecation")
-	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
+	@SuppressLint({ "SetJavaScriptEnabled" })
 	public void initializeSettings(WebSettings settings, Context context) {
 		if (API < 18) {
 			settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -363,10 +353,8 @@ public class LightningView {
 		settings.setDisplayZoomControls(false);
 		settings.setAllowContentAccess(true);
 		settings.setDefaultTextEncodingName("utf-8");
-		if (API > 16) {
-			settings.setAllowFileAccessFromFileURLs(false);
-			settings.setAllowUniversalAccessFromFileURLs(false);
-		}
+		settings.setAllowFileAccessFromFileURLs(false);
+		settings.setAllowUniversalAccessFromFileURLs(false);
 	}
 
 	public boolean isShown() {
@@ -490,15 +478,9 @@ public class LightningView {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
 	public synchronized void find(String text) {
 		if (mWebView != null) {
-			if (API > 16) {
-				mWebView.findAllAsync(text);
-			} else {
-				mWebView.findAll(text);
-			}
+			mWebView.findAllAsync(text);
 		}
 	}
 

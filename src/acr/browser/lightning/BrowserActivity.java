@@ -2089,10 +2089,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 									break;
 
 								case DialogInterface.BUTTON_NEUTRAL:
-									if (API > 8) {
 										Utils.downloadFile(mActivity, url,
 												mCurrentView.getUserAgent(), "attachment", false);
-									}
 									break;
 							}
 						}
@@ -2191,10 +2189,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 									break;
 
 								case DialogInterface.BUTTON_NEUTRAL:
-									if (API > 8) {
 										Utils.downloadFile(mActivity, newUrl,
 												mCurrentView.getUserAgent(), "attachment", false);
-									}
 									break;
 							}
 						}

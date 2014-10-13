@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning;
 
-import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,7 +28,6 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class SettingsActivity extends Activity {
 
-	private static int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences.Editor mEditPrefs;
 	private int mAgentChoice;
 	private String mHomepage;
@@ -59,7 +57,6 @@ public class SettingsActivity extends Activity {
 		return true;
 	}
 
-	@SuppressLint("NewApi")
 	public void init() {
 		// mPreferences storage
 		ActionBar actionBar = getActionBar();
@@ -677,7 +674,6 @@ public class SettingsActivity extends Activity {
 		homePicker.show();
 	}
 
-	@SuppressWarnings("deprecation")
 	public void downPicker() {
 		final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(mActivity);
 		LinearLayout layout = new LinearLayout(this);
@@ -703,11 +699,8 @@ public class SettingsActivity extends Activity {
 		v.setPadding(padding, padding, 0, padding);
 		layout.addView(v);
 		layout.addView(getDownload);
-		if (API < 16) {
-			layout.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
-		} else {
-			layout.setBackground(getResources().getDrawable(android.R.drawable.edit_text));
-		}
+		layout.setBackground(getResources().getDrawable(android.R.drawable.edit_text));
+
 		downLocationPicker.setView(layout);
 		downLocationPicker.setPositiveButton(getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
