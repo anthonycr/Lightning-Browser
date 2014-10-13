@@ -1,5 +1,6 @@
 <resources>
 
     <dimen name="navigation_width">260dp</dimen>
+    <dimen name="search_bar_height">48dp</dimen>
 
 </resources>

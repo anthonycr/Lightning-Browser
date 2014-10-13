@@ -9,7 +9,7 @@
         android:id="@+id/progressWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?progressColor"
+        android:background="?attr/progressColor"
         android:orientation="vertical">
 
         <ProgressBar
@@ -26,10 +26,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/content_frame"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <include layout="@layout/search_interface" />
+        </LinearLayout>
 
         <include layout="@layout/drawer_left" />
 
