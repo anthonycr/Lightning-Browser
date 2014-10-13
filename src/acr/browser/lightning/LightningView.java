@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.webkit.*;
 import android.webkit.WebSettings.LayoutAlgorithm;
-import android.webkit.WebSettings.PluginState;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import org.apache.http.util.ByteArrayBuffer;
@@ -269,21 +268,6 @@ public class LightningView {
 
 		mSettings.setGeolocationEnabled(mPreferences
 				.getBoolean(PreferenceConstants.LOCATION, false));
-		if (API < 19) {
-			switch (mPreferences.getInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0)) {
-				case 0:
-					mSettings.setPluginState(PluginState.OFF);
-					break;
-				case 1:
-					mSettings.setPluginState(PluginState.ON_DEMAND);
-					break;
-				case 2:
-					mSettings.setPluginState(PluginState.ON);
-					break;
-				default:
-					break;
-			}
-		}
 
 		switch (mPreferences.getInt(PreferenceConstants.USER_AGENT, 1)) {
 			case 1:

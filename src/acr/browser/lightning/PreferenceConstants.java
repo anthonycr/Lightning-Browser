@@ -5,10 +5,6 @@ package acr.browser.lightning;
 
 public final class PreferenceConstants {
 
-	private PreferenceConstants() {
-	}
-
-	public static final String ADOBE_FLASH_SUPPORT = "enableflash";
 	public static final String BLOCK_ADS = "AdBlock";
 	public static final String BLOCK_IMAGES = "blockimages";
 	public static final String CLEAR_CACHE_EXIT = "cache";
