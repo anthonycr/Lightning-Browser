@@ -19,6 +19,9 @@
 #   public *;
 #}
 
+# avoid errors
+-dontwarn android.support.**
+
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
