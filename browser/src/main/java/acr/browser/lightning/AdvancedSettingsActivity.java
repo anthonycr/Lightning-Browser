@@ -718,7 +718,6 @@ public class AdvancedSettingsActivity extends Activity {
             } catch (Exception ignored) {
             }
         }
-        SettingsController.setClearHistory();
         Utils.trimCache(this);
         messageHandler.sendEmptyMessage(1);
     }

@@ -1204,7 +1204,6 @@ public class BrowserActivity extends Activity implements BrowserController {
             } catch (NullPointerException ignored) {
             }
         }
-        SettingsController.setClearHistory();
         Utils.trimCache(this);
     }
 
