@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "acr.browser.lightning"
+        minSdkVersion 16
+        targetSdkVersion 20
+        versionCode 66
+        versionName "3.2.0.1a"
+    }
+
+    lintOptions {
+        abortOnError false
+        disable 'MissingTranslation', 'ExtraTranslation'
+    }
+
+    buildTypes {
+        release {
+            runProguard true
+            proguardFiles 'proguard-android.txt'
+        }
+    }
+}
+
+dependencies {
+    compile project(':libraries:libnetcipher')
+}

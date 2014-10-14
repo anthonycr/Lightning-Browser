@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">OnionKit</string>
+    <string name="warning_weak_crypto">WARNING: This service uses a certificate with WEAK cryptography. Please tell the administrator to upgrade.</string>
+
+    <string name="warning_pinned_cert_mismatch">"Provided Certificate Does Not Match PINNED Certifcate: "</string>
+
+    <string name="error_signature_chain_verification_failed">"signature chain verification failed of "</string>
+
+    <string name="error_could_not_find_cert_issuer_certificate_in_chain">"Could not find cert issuer certificate in chain: "</string>
+
+    <string name="error_could_not_find_root_ca_issuer_certificate_in_chain">Could not find Root CA issuer certificate in chain</string>
+
+    <string name="could_not_find_self_signed_certificate_in_chain">Could not find self-signed certificate in chain</string>
+
+    <string name="error_domain_check_failed">Domain check failed</string>
+
+    <string name="error_does_not_contain_">" does not contain "</string>
+
+    <string name="error_problem_access_local_root_ca_store">problem access local ROOT CA store</string>
+
+    <string name="install_orbot_">Install Orbot?</string>
+
+    <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
+
+    <string name="you_must_have_orbot">You must have Orbot installed and activated to proxy traffic through it. Would you like to install it from Google Play?</string>
+
+    <string name="yes">Yes</string>
+
+    <string name="no">No</string>
+
+    <string name="always">Always</string>
+
+    <string name="start_orbot_">Start Orbot?</string>
+
+    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot doesn\'t appear to be running. Would you like to start it up and connect to Tor?</string>
+
+    <string name="secure_connection_active_">"Secure Connection Active: "</string>
+</resources>
