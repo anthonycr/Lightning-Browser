@@ -764,14 +764,49 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						String text = getHome.getText().toString();
-						if (mCurrentView != null) {
-							mCurrentView.find(text);
-						}
+						String query = getHome.getText().toString();
+						if (query.length() > 0)
+							showSearchInterfaceBar(query);
 					}
 				});
 		finder.show();
 	}
+	
+	private void showSearchInterfaceBar(String text) {
+        if (mCurrentView != null) {
+            mCurrentView.find(text);
+        }
+
+        final RelativeLayout bar = (RelativeLayout) findViewById(R.id.search_bar);
+        bar.setVisibility(View.VISIBLE);
+
+        TextView tw = (TextView) findViewById(R.id.search_query);
+        tw.setText("'" + text + "'");
+
+        ImageButton up = (ImageButton) findViewById(R.id.button_next);
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentView.getWebView().findNext(true);
+            }
+        });
+        ImageButton down = (ImageButton) findViewById(R.id.button_back);
+        down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentView.getWebView().findNext(false);
+            }
+        });
+
+        ImageButton quit = (ImageButton) findViewById(R.id.button_quit);
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentView.getWebView().clearMatches();
+                bar.setVisibility(View.GONE);
+            }
+        });
+    }
 
 	/**
 	 * The click listener for ListView in the navigation drawer
