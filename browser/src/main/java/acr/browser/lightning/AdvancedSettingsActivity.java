@@ -423,7 +423,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb1.setChecked(!cb1.isChecked());
             }
 
@@ -435,7 +434,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb2.setChecked(!cb2.isChecked());
             }
 
@@ -447,7 +445,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cbClearHistoryExit.setChecked(!cbClearHistoryExit.isChecked());
             }
 
@@ -459,7 +456,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cbClearCookiesExit.setChecked(!cbClearCookiesExit.isChecked());
             }
 
@@ -471,7 +467,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb3.setChecked(!cb3.isChecked());
             }
 
@@ -483,7 +478,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 if (API < 19) {
                     cb4.setChecked(!cb4.isChecked());
                 } else {
@@ -501,7 +495,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb5.setChecked(!cb5.isChecked());
             }
 
@@ -513,7 +506,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb6.setChecked(!cb6.isChecked());
             }
 
@@ -525,7 +517,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb7.setChecked(!cb7.isChecked());
             }
 
@@ -562,8 +553,6 @@ public class AdvancedSettingsActivity extends Activity {
 
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-                                        // TODO Auto-generated method stub
-
                                     }
 
                                 }).show();
@@ -577,7 +566,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb8.setChecked(!cb8.isChecked());
             }
 
@@ -590,7 +578,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cb9.setChecked(!cb9.isChecked());
             }
 
@@ -663,7 +650,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 cbIncognitoCookies.setChecked(!cbIncognitoCookies.isChecked());
             }
 
@@ -687,7 +673,6 @@ public class AdvancedSettingsActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 clearCache();
             }
 
@@ -738,8 +723,7 @@ public class AdvancedSettingsActivity extends Activity {
                 try {
                     importFromStockBrowser();
                 } catch (Exception e) {
-                    // ignored exception
-                    // TODO add logging
+                    e.printStackTrace();
                 }
             }
         });

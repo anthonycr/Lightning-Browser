@@ -168,9 +168,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 return results;
             }
             String query = constraint.toString().toLowerCase(Locale.getDefault());
-            if (query == null) {
-                return results;
-            }
             if (mUseGoogle && !mIncognito) {
                 new RetrieveSearchSuggestions().execute(query);
             }

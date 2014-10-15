@@ -115,7 +115,6 @@ public class BrowserActivity extends Activity implements BrowserController {
     private RelativeLayout mNewTab;
     private ActionBarDrawerToggle mDrawerToggle;
     private List<LightningView> mWebViews = new ArrayList<LightningView>();
-    private List<Integer> mIdList = new ArrayList<Integer>();
     private LightningView mCurrentView;
     private int mIdGenerator;
     private LightningViewAdapter mTitleAdapter;
@@ -176,11 +175,6 @@ public class BrowserActivity extends Activity implements BrowserController {
         mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
         mEditPrefs = mPreferences.edit();
         mContext = this;
-        if (mIdList != null) {
-            mIdList.clear();
-        } else {
-            mIdList = new ArrayList<Integer>();
-        }
         if (mWebViews != null) {
             mWebViews.clear();
         } else {
@@ -1055,7 +1049,6 @@ public class BrowserActivity extends Activity implements BrowserController {
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
-        mIdList.add(mIdGenerator);
         mIdGenerator++;
         mWebViews.add(startingTab);
 
@@ -1083,12 +1076,10 @@ public class BrowserActivity extends Activity implements BrowserController {
         }
         boolean isShown = reference.isShown();
         if (current > position) {
-            mIdList.remove(position);
             mWebViews.remove(position);
             mDrawerList.setItemChecked(current - 1, true);
             reference.onDestroy();
         } else if (mWebViews.size() > position + 1) {
-            mIdList.remove(position);
             if (current == position) {
                 showTab(mWebViews.get(position + 1));
                 mWebViews.remove(position);
@@ -1099,7 +1090,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 
             reference.onDestroy();
         } else if (mWebViews.size() > 1) {
-            mIdList.remove(position);
             if (current == position) {
                 showTab(mWebViews.get(position - 1));
                 mWebViews.remove(position);
@@ -1114,7 +1104,6 @@ public class BrowserActivity extends Activity implements BrowserController {
                     || mCurrentView.getUrl().equals(mHomepage)) {
                 closeActivity();
             } else {
-                mIdList.remove(position);
                 mWebViews.remove(position);
                 if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
                         && mCurrentView != null && !isIncognito()) {
