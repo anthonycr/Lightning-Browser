@@ -163,4 +163,13 @@
     <string name="name_normal">普通</string>
     <string name="sync_history">与 Google 同步历史</string>
     <string name="title_file_chooser">文件选择器</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="export_bookmarks">导出书签到备份文件</string>
+    <string name="import_backup">从备份文件导入书签</string>
+    <string name="bookmark_export_path">书签已导出到</string>
+    <string name="bookmark_settings">书签设置</string>
+    <string name="import_bookmark_error">无法从文件导入书签</string>
+    <string name="title_chooser">选择一个文件</string>
+    <string name="exit">退出</string>
 </resources>

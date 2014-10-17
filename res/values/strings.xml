@@ -188,4 +188,5 @@
     <string name="bookmark_settings">Bookmark Settings</string>
     <string name="import_bookmark_error">Could not import bookmarks from file</string>
     <string name="title_chooser">Choose a file</string>
+    <string name="exit">Exit</string>
 </resources>
