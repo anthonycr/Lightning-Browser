@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mBookmarks = new ArrayList<HistoryItem>();
 		mSuggestions = new ArrayList<HistoryItem>();
 		mBookmarkManager = new BookmarkManager(context);
-		mAllBookmarks = mBookmarkManager.getBookmarks();
+		mAllBookmarks = mBookmarkManager.getBookmarks(true);
 		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		mContext = context;
@@ -62,7 +61,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	}
 
 	public void refreshBookmarks() {
-		mAllBookmarks = mBookmarkManager.getBookmarks();
+		mAllBookmarks = mBookmarkManager.getBookmarks(true);
 	}
 
 	@Override
@@ -377,8 +376,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 			filteredList.add(mSuggestions.get(n));
 		}
-		Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
-		Log.i("SIZE", "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
+		//Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
+		//Log.i("SIZE", "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
 		return filteredList;
 	}
 }

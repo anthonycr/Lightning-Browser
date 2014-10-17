@@ -70,7 +70,7 @@ public class AdvancedSettingsActivity extends Activity {
 
 	private void initialize() {
 
-		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, rIncognitoCookies, rClearCache, rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
+		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r10, r11, r12, r13, r14, r15, rIncognitoCookies, rClearCache, rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
 
 		r1 = (RelativeLayout) findViewById(R.id.r1);
 		r2 = (RelativeLayout) findViewById(R.id.r2);
@@ -82,7 +82,6 @@ public class AdvancedSettingsActivity extends Activity {
 		r6 = (RelativeLayout) findViewById(R.id.r6);
 		r7 = (RelativeLayout) findViewById(R.id.r7);
 		r8 = (RelativeLayout) findViewById(R.id.rClearHistory);
-		r9 = (RelativeLayout) findViewById(R.id.r9);
 		r10 = (RelativeLayout) findViewById(R.id.r10);
 		r11 = (RelativeLayout) findViewById(R.id.r11);
 		r12 = (RelativeLayout) findViewById(R.id.r12);
@@ -144,7 +143,6 @@ public class AdvancedSettingsActivity extends Activity {
 		r6(r6);
 		r7(r7);
 		r8(r8);
-		r9(r9);
 		r10(r10);
 		r11(r11);
 		r12(r12);
@@ -170,7 +168,6 @@ public class AdvancedSettingsActivity extends Activity {
 		cbIncognitoCookies(cbIncognitoCookies);
 		cbSearchSuggestions(cbSearchSuggestions);
 
-		TextView importBookmarks = (TextView) findViewById(R.id.isImportAvailable);
 		TextView syncHistory = (TextView) findViewById(R.id.isBrowserAvailable);
 
 		RelativeLayout layoutSyncHistory = (RelativeLayout) findViewById(R.id.rBrowserHistory);
@@ -195,13 +192,11 @@ public class AdvancedSettingsActivity extends Activity {
 		if (!mSystemBrowser) {
 			cbSyncHistory.setChecked(false);
 			cbSyncHistory.setEnabled(false);
-			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
 			syncHistory.setText(getResources().getString(R.string.stock_browser_unavailable));
 		} else {
 			cbSyncHistory.setEnabled(true);
 			cbSyncHistory.setChecked(mPreferences
 					.getBoolean(PreferenceConstants.SYNC_HISTORY, true));
-			importBookmarks.setText(getResources().getString(R.string.stock_browser_available));
 			syncHistory.setText(getResources().getString(R.string.stock_browser_available));
 		}
 
@@ -724,22 +719,6 @@ public class AdvancedSettingsActivity extends Activity {
 		CookieSyncManager.createInstance(this);
 		c.removeAllCookie();
 		messageHandler.sendEmptyMessage(2);
-	}
-
-	private void r9(RelativeLayout view) {
-
-		view.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				try {
-					importFromStockBrowser();
-				} catch (Exception e) {
-					// ignored exception
-					// TODO add logging
-				}
-			}
-		});
 	}
 
 	private void r10(RelativeLayout view) {

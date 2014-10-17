@@ -26,6 +26,7 @@ public class LicenseActivity extends Activity implements View.OnClickListener {
 		findViewById(R.id.browserLicense).setOnClickListener(this);
 		findViewById(R.id.licenseAOSP).setOnClickListener(this);
 		findViewById(R.id.licenseHosts).setOnClickListener(this);
+		findViewById(R.id.licenseOrbot).setOnClickListener(this);
 	}
 
 	@Override
@@ -39,6 +40,9 @@ public class LicenseActivity extends Activity implements View.OnClickListener {
 				break;
 			case R.id.licenseHosts:
 				actionView("http://hosts-file.net/");
+				break;
+			case R.id.licenseOrbot:
+				actionView("http://www.gnu.org/licenses/lgpl.html");
 				break;
 		}
 	}

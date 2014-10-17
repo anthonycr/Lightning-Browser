@@ -172,4 +172,12 @@
     <string name="freeware">Фривер</string>
     <string name="android_open_source_project">Андроид пројекат отвореног кôда</string>
     <string name="hphosts_ad_server_list">hpHosts списак рекламних сервера</string>
+    <string name="deleted_tab">Поново отворени претходни језичци</string>
+    <string name="rendering_mode">Исцртавање</string>
+    <string name="name_inverted">Инверзно</string>
+    <string name="name_grayscale">Сивило</string>
+    <string name="name_inverted_grayscale">Инверзно сивило</string>
+    <string name="name_normal">Нормално</string>
+    <string name="sync_history">Синхронизуј историјат са Гуглом</string>
+    <string name="title_file_chooser">Бирач фајлова</string>
 </resources>

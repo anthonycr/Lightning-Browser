@@ -82,9 +82,9 @@ public class LightningView {
 		mWebView.setAnimationCacheEnabled(false);
 		mWebView.setDrawingCacheEnabled(true);
 		mWebView.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
-		mWebView.setBackground(null);
 
 		if (API > 15) {
+			mWebView.setBackground(null);
 			mWebView.getRootView().setBackground(null);
 		} else {
 			mWebView.getRootView().setBackgroundDrawable(null);
@@ -844,6 +844,9 @@ public class LightningView {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			if (mBrowserController.isIncognito()) {
+				return super.shouldOverrideUrlLoading(view, url);
+			}
 			if (url.startsWith("about:")) {
 				return super.shouldOverrideUrlLoading(view, url);
 			}
