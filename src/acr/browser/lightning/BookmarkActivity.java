@@ -105,8 +105,7 @@ public class BookmarkActivity extends Activity implements OnClickListener {
 			mFileList = new File[0];
 		}
 
-		Arrays.sort(mFileList, new SortFileName());
-		Arrays.sort(mFileList, new SortFolders());
+		Arrays.sort(mFileList, new SortName());
 
 		if (mFileList == null) {
 			mFileNameList = new String[0];
@@ -116,6 +115,26 @@ public class BookmarkActivity extends Activity implements OnClickListener {
 		}
 		for (int n = 0; n < mFileList.length; n++) {
 			mFileNameList[n] = mFileList[n].getName();
+		}
+	}
+	
+	public class SortName implements Comparator<File> {
+
+		@Override
+		public int compare(File a, File b) {
+			if (a.isDirectory() && b.isDirectory())
+				return a.getName().compareTo(b.getName());
+
+			if (a.isDirectory())
+				return -1;
+
+			if (b.isDirectory())
+				return 1;
+
+			if (a.isFile() && b.isFile())
+				return a.getName().compareTo(b.getName());
+			else
+				return 1;
 		}
 	}
 
@@ -149,27 +168,4 @@ public class BookmarkActivity extends Activity implements OnClickListener {
 		dialog = builder.show();
 		return dialog;
 	}
-
-	public class SortFileName implements Comparator<File> {
-
-		@Override
-		public int compare(File f1, File f2) {
-			return f1.getName().compareTo(f2.getName());
-		}
-
-	}
-
-	public class SortFolders implements Comparator<File> {
-
-		@Override
-		public int compare(File f1, File f2) {
-			if (f1.isDirectory() == f2.isDirectory())
-				return 0;
-			else if (f1.isDirectory() && !f2.isDirectory())
-				return -1;
-			else
-				return 1;
-		}
-	}
-
 }
