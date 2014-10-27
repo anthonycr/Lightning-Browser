@@ -64,6 +64,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -159,6 +161,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
 	private BookmarkManager mBookmarkManager;
+	
+	private GestureDetector mGestureDetector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +180,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 		mContext = this;
+		
+		mGestureDetector = new GestureDetector(this, new CustomGestureDetector());
+		
+		
 		if (mIdList != null) {
 			mIdList.clear();
 		} else {
@@ -1003,6 +1011,15 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		mBrowserFrame.addView(mCurrentView.getWebView(), mMatchParent);
 		mCurrentView.onResume();
+		
+		mCurrentView.getWebView().setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent arg1) {
+				mGestureDetector.onTouchEvent(arg1);
+				return false;
+			}
+		});
 
 		// Use a delayed handler to make the transition smooth
 		// otherwise it will get caught up with the showTab code
@@ -2389,4 +2406,32 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 	}
+	
+	class CustomGestureDetector extends SimpleOnGestureListener {      
+	    @Override
+	    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	        if(e1 == null || e2 == null) return false;
+	        if(e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
+	        else {
+	            try { // right to left swipe .. go to next page
+	                if(e1.getX() - e2.getX() > 100 && Math.abs(velocityX) > 800) {
+	                    //do your stuff
+//	                	selectItem(1);
+	                    return false;
+	                } //left to right swipe .. go to prev page
+	                else if (Math.abs((e2.getY() - e1.getY()) / (e2.getX() - e1.getX())) < 0.5 &&
+	                		Math.abs(velocityX) > 800 &&
+	                		(e2.getX() - e1.getX()) > 200 )
+	                {
+	                	deleteTab(mDrawerListLeft.getCheckedItemPosition());
+	                    return false;
+	                } //bottom to top, go to next document
+	            } catch (Exception e) { // nothing
+	            }
+	            return false;
+	        }
+	    }
+	}
 }
+
+
