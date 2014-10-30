@@ -148,8 +148,8 @@
     <string name="no">否</string>
     <string name="clear_cookies_exit">退出时清除 cookies</string>
     <string name="clear_history_exit">退出时清除历史</string>
-    <string name="folder_default">默认 UA</string>
-    <string name="folder_custom">自定义 UA</string>
+    <string name="folder_default">默认</string>
+    <string name="folder_custom">自定义</string>
     <string name="untitled">未标题的</string>
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">免费软件</string>
