@@ -1164,38 +1164,41 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 			reference.onDestroy();
 		} else {
-			if (mCurrentView.getUrl() == null || mCurrentView.getUrl().startsWith(Constants.FILE)
-					|| mCurrentView.getUrl().equals(mHomepage)) {
-				closeActivity();
-			} else {
-				mIdList.remove(position);
-				mWebViews.remove(position);
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
-						&& mCurrentView != null && !isIncognito()) {
-					mCurrentView.clearCache(true);
-					Log.i(Constants.TAG, "Cache Cleared");
-
+			if(!mPreferences.getBoolean(PreferenceConstants.KEEP_LAST_TAB, false))
+				{
+				if (mCurrentView.getUrl() == null || mCurrentView.getUrl().startsWith(Constants.FILE)
+						|| mCurrentView.getUrl().equals(mHomepage)) {
+					closeActivity();
+				} else {
+					mIdList.remove(position);
+					mWebViews.remove(position);
+					if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
+							&& mCurrentView != null && !isIncognito()) {
+						mCurrentView.clearCache(true);
+						Log.i(Constants.TAG, "Cache Cleared");
+	
+					}
+					if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
+							&& !isIncognito()) {
+						clearHistory();
+						Log.i(Constants.TAG, "History Cleared");
+	
+					}
+					if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
+							&& !isIncognito()) {
+						clearCookies();
+						Log.i(Constants.TAG, "Cookies Cleared");
+	
+					}
+					if (reference != null) {
+						reference.pauseTimers();
+						reference.onDestroy();
+					}
+					mCurrentView = null;
+					mTitleAdapter.notifyDataSetChanged();
+					finish();
+	
 				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
-						&& !isIncognito()) {
-					clearHistory();
-					Log.i(Constants.TAG, "History Cleared");
-
-				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
-						&& !isIncognito()) {
-					clearCookies();
-					Log.i(Constants.TAG, "Cookies Cleared");
-
-				}
-				if (reference != null) {
-					reference.pauseTimers();
-					reference.onDestroy();
-				}
-				mCurrentView = null;
-				mTitleAdapter.notifyDataSetChanged();
-				finish();
-
 			}
 		}
 		mTitleAdapter.notifyDataSetChanged();
