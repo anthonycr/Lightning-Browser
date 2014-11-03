@@ -1165,7 +1165,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 			reference.onDestroy();
 		} else {
 			if(!mPreferences.getBoolean(PreferenceConstants.KEEP_LAST_TAB, false))
-				{
+			{
 				if (mCurrentView.getUrl() == null || mCurrentView.getUrl().startsWith(Constants.FILE)
 						|| mCurrentView.getUrl().equals(mHomepage)) {
 					closeActivity();
@@ -1199,6 +1199,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 					finish();
 	
 				}
+			} else {
+				mWebViews.get(mDrawerListLeft.getCheckedItemPosition()).gotoHomePage();
 			}
 		}
 		mTitleAdapter.notifyDataSetChanged();
