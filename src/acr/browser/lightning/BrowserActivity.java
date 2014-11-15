@@ -2428,7 +2428,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 	                		Math.abs(velocityX) > 800 &&
 	                		(e2.getX() - e1.getX()) > 200 )
 	                {
-	                	deleteTab(mDrawerListLeft.getCheckedItemPosition());
+//	                	deleteTab(mDrawerListLeft.getCheckedItemPosition());
 	                    return false;
 	                } //bottom to top, go to next document
 	            } catch (Exception e) { // nothing
