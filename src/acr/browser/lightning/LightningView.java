@@ -1078,10 +1078,39 @@ public class LightningView {
 
 	private class CustomGestureListener extends SimpleOnGestureListener {
 
+		/**
+		 * Without this, onLongPress is not called when user is zooming
+		 * using two fingers, but is when using only one.
+		 *
+		 * The required behaviour is to not trigger this when the
+		 * user is zooming, it shouldn't matter how much fingers
+		 * the user's using.
+		 */
+		private boolean mCanTriggerLongPress = true;
+
 		@Override
 		public void onLongPress(MotionEvent e) {
-			mBrowserController.onLongPress();
+			if(mCanTriggerLongPress)
+				mBrowserController.onLongPress();
 		}
 
+		/**
+		 * Is called when the user is swiping after the doubletap,
+		 * which in our case means that he is zooming.
+		 */
+		@Override
+		public boolean onDoubleTapEvent(MotionEvent e) {
+			mCanTriggerLongPress = false;
+			return false;
+		}
+
+		/**
+		 * Is called when something is starting being pressed,
+		 * always before onLongPress.
+		 */
+		@Override
+		public void onShowPress(MotionEvent e) {
+			mCanTriggerLongPress = true;
+		}
 	}
 }
