@@ -47,7 +47,7 @@
     <string name="saveTab">Restore your tabs if they\'re lost</string>
     <string name="settings_title">Settings</string>
     <string name="download">Download Location</string>
-    <string name="advanced">Advanced Settings</string>
+    <string name="settings_advanced">Advanced Settings</string>
     <string name="source">Source Code</string>
     <string name="license">License</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -188,4 +188,9 @@
     <string name="bookmark_settings">Bookmark Settings</string>
     <string name="import_bookmark_error">Could not import bookmarks from file</string>
     <string name="title_chooser">Choose a file</string>
+    <string name="settings_general">General Settings</string>
+    <string name="settings_display">Display Settings</string>
+    <string name="settings_privacy">Privacy Settings</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_explain">Details about version, author and license.</string>
 </resources>

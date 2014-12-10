@@ -10,7 +10,77 @@
         android:orientation="vertical" >
 
         <RelativeLayout
-            android:id="@+id/rAllowPopups"
+            android:id="@+id/rHideStatusBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/listChoiceBackgroundIndicator"
+            android:minHeight="60dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="30dp"
+                android:text="@string/fullScreenOption"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/cbHideStatusBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#cdcdcd" />
+
+        <RelativeLayout
+            android:id="@+id/rFullScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/listChoiceBackgroundIndicator"
+            android:minHeight="60dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="30dp"
+                android:text="@string/fullscreen"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/cbFullScreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#cdcdcd" />
+
+        <RelativeLayout
+            android:id="@+id/rWideViewPort"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/listChoiceBackgroundIndicator"
@@ -32,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:paddingRight="30dp"
-                    android:text="@string/window"
+                    android:text="@string/wideViewPort"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -46,7 +116,7 @@
             </LinearLayout>
 
             <CheckBox
-                android:id="@+id/cbAllowPopups"
+                android:id="@+id/cbWideViewPort"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -61,7 +131,7 @@
             android:background="#cdcdcd" />
 
         <RelativeLayout
-            android:id="@+id/rAllowCookies"
+            android:id="@+id/rOverView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/listChoiceBackgroundIndicator"
@@ -83,7 +153,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:paddingRight="30dp"
-                    android:text="@string/cookies"
+                    android:text="@string/overViewMode"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -97,7 +167,7 @@
             </LinearLayout>
 
             <CheckBox
-                android:id="@+id/cbAllowCookies"
+                android:id="@+id/cbOverView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -112,48 +182,7 @@
             android:background="#cdcdcd" />
 
         <RelativeLayout
-            android:id="@+id/rAllowIncognitoCookies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/listChoiceBackgroundIndicator"
-            android:minHeight="60dp"
-            android:paddingBottom="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp" >
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="30dp"
-                    android:text="@string/incognito_cookies"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/cbAllowIncognitoCookies"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true" />
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="#cdcdcd" />
-
-        <RelativeLayout
-            android:id="@+id/rRestoreTabs"
+            android:id="@+id/rTextReflow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/listChoiceBackgroundIndicator"
@@ -163,17 +192,17 @@
             android:paddingTop="10dp" >
 
             <TextView
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
                 android:paddingRight="30dp"
-                android:text="@string/restore"
+                android:text="@string/reflow"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <CheckBox
-                android:id="@+id/cbRestoreTabs"
+                android:id="@+id/cbTextReflow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -187,32 +216,24 @@
             android:layout_marginRight="5dp"
             android:background="#cdcdcd" />
 
-        <LinearLayout
-            android:id="@+id/layoutRendering"
+        <RelativeLayout
+            android:id="@+id/rTextSize"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/listChoiceBackgroundIndicator"
             android:minHeight="60dp"
-            android:orientation="vertical"
             android:paddingBottom="10dp"
             android:paddingTop="10dp" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
-                android:text="@string/rendering_mode"
+                android:text="@string/size"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/renderText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="Small Text"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/light" />
-        </LinearLayout>
+        </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
