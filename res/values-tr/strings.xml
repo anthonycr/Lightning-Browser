@@ -20,7 +20,7 @@
     <string name="saveTab">Kaybedilen sekmeleri geri yükle</string>
     <string name="settings_title">Ayarlar</string>
     <string name="download">Yükleme Yeri</string>
-    <string name="advanced">Gelişmiş Ayarlar</string>
+    <string name="settings_advanced">Gelişmiş Ayarlar</string>
     <string name="source">Kaynak kodu</string>
     <string name="license">Lisans</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
