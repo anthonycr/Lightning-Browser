@@ -41,7 +41,7 @@
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>
-    <string name="stock_browser_unavailable">Nessun browser stock trovato/string>
+    <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
     <string name="clear_cookies">Cancella cookie del browser</string>
