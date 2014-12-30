@@ -731,6 +731,7 @@ public class SettingsActivity extends Activity {
 
 		agentStringPicker.setTitle(getResources().getString(R.string.title_user_agent));
 		final EditText getAgent = new EditText(this);
+		getAgent.append(mPreferences.getString(PreferenceConstants.USER_AGENT_STRING, ""));
 		agentStringPicker.setView(getAgent);
 		agentStringPicker.setPositiveButton(getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
