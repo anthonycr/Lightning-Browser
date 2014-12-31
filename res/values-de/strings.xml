@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2014  The Android Open Source Project
 
@@ -168,16 +168,24 @@
     <string name="folder_default">Standard</string>
     <string name="folder_custom">Andere</string>
     <string name="untitled">Ohne Titel</string>
-    <string name="mpl_license">Mozilla Public License v2.0</string>
+    <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
-    <string name="hphosts_ad_server_list">hpHosts AdServer-List</string>
-    <string name="deleted_tab">Alten Reiter erneut öffnen</string>
-    <string name="rendering_mode">Rendermodus</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server Liste</string>
+    <string name="deleted_tab">Alten Tab geöffnet</string>
+    <string name="rendering_mode">Rendering Modus</string>
     <string name="name_inverted">Invertiert</string>
     <string name="name_grayscale">Graustufen</string>
     <string name="name_inverted_grayscale">Invertierte Graustufen</string>
     <string name="name_normal">Normal</string>
-    <string name="sync_history">Verlauf nach Google abgleichen</string>
-    <string name="title_file_chooser">Datei-Browser</string>
+    <string name="sync_history">Verlauf mit Google synchronisieren</string>
+    <string name="title_file_chooser">Dateiauswahl</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="export_bookmarks">Exportiere Backup</string>
+    <string name="import_backup">Importiere Backup</string>
+    <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
+    <string name="bookmark_settings">Lesezeichen Einstellungen</string>
+    <string name="import_bookmark_error">Lesezeichen konnten nicht imprortiert werden</string>
+    <string name="title_chooser">Wähle Datei aus</string>
 </resources>

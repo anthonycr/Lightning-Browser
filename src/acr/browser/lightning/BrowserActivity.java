@@ -74,7 +74,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private RelativeLayout mNewTab;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
-	private List<Integer> mIdList = new ArrayList<Integer>();
 	private LightningView mCurrentView;
 	private int mIdGenerator;
 	private LightningViewAdapter mTitleAdapter;
@@ -135,11 +134,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 		mContext = this;
-		if (mIdList != null) {
-			mIdList.clear();
-		} else {
-			mIdList = new ArrayList<Integer>();
-		}
 		if (mWebViews != null) {
 			mWebViews.clear();
 		} else {
@@ -764,14 +758,49 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						String text = getHome.getText().toString();
-						if (mCurrentView != null) {
-							mCurrentView.find(text);
-						}
+						String query = getHome.getText().toString();
+						if (query.length() > 0)
+							showSearchInterfaceBar(query);
 					}
 				});
 		finder.show();
 	}
+	
+	private void showSearchInterfaceBar(String text) {
+        if (mCurrentView != null) {
+            mCurrentView.find(text);
+        }
+
+        final RelativeLayout bar = (RelativeLayout) findViewById(R.id.search_bar);
+        bar.setVisibility(View.VISIBLE);
+
+        TextView tw = (TextView) findViewById(R.id.search_query);
+        tw.setText("'" + text + "'");
+
+        ImageButton up = (ImageButton) findViewById(R.id.button_next);
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentView.getWebView().findNext(true);
+            }
+        });
+        ImageButton down = (ImageButton) findViewById(R.id.button_back);
+        down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentView.getWebView().findNext(false);
+            }
+        });
+
+        ImageButton quit = (ImageButton) findViewById(R.id.button_quit);
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentView.getWebView().clearMatches();
+                bar.setVisibility(View.GONE);
+            }
+        });
+    }
 
 	/**
 	 * The click listener for ListView in the navigation drawer
@@ -1022,7 +1051,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (mIdGenerator == 0) {
 			startingTab.resumeTimers();
 		}
-		mIdList.add(mIdGenerator);
 		mIdGenerator++;
 		mWebViews.add(startingTab);
 
@@ -1050,12 +1078,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 		boolean isShown = reference.isShown();
 		if (current > position) {
-			mIdList.remove(position);
 			mWebViews.remove(position);
 			mDrawerListLeft.setItemChecked(current - 1, true);
 			reference.onDestroy();
 		} else if (mWebViews.size() > position + 1) {
-			mIdList.remove(position);
 			if (current == position) {
 				showTab(mWebViews.get(position + 1));
 				mWebViews.remove(position);
@@ -1066,7 +1092,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 			reference.onDestroy();
 		} else if (mWebViews.size() > 1) {
-			mIdList.remove(position);
 			if (current == position) {
 				showTab(mWebViews.get(position - 1));
 				mWebViews.remove(position);
@@ -1081,7 +1106,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 					|| mCurrentView.getUrl().equals(mHomepage)) {
 				closeActivity();
 			} else {
-				mIdList.remove(position);
 				mWebViews.remove(position);
 				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
 						&& mCurrentView != null && !isIncognito()) {
@@ -1173,7 +1197,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 			} catch (NullPointerException ignored) {
 			}
 		}
-		SettingsController.setClearHistory(true);
 		Utils.trimCache(this);
 	}
 
@@ -1255,8 +1278,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 	protected void onResume() {
 		super.onResume();
 		Log.i(Constants.TAG, "onResume");
-		if (SettingsController.getClearHistory()) {
-		}
 		if (mSearchAdapter != null) {
 			mSearchAdapter.refreshPreferences();
 			mSearchAdapter.refreshBookmarks();
