@@ -19,7 +19,7 @@
     <string name="saveTab">استعادة علامات التبويب المفقودة</string>
     <string name="settings_title">الإعدادات</string>
     <string name="download">مسار التحميلات</string>
-    <string name="advanced">الإعدادات المتقدمة</string>
+    <string name="settings_advanced">الإعدادات المتقدمة</string>
     <string name="source">رمز المصدر</string>
     <string name="license">الرخصة</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>

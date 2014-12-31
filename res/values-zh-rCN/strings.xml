@@ -31,7 +31,7 @@
     <string name="saveTab">恢复丢失标签</string>
     <string name="settings_title">应用设置</string>
     <string name="download">下载目录</string>
-    <string name="advanced">高级设置</string>
+    <string name="settings_advanced">高级设置</string>
     <string name="source">源码</string>
     <string name="license">许可</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>

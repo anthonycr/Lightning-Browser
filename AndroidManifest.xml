@@ -115,12 +115,56 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="acr.browser.lightning.GeneralSettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/settings_general"
+            android:theme="@style/DefaultTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.GENERAL_SETTINGS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="acr.browser.lightning.DisplaySettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/settings_display"
+            android:theme="@style/DefaultTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.DISPLAY_SETTINGS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="acr.browser.lightning.PrivacySettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/settings_privacy"
+            android:theme="@style/DefaultTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.PRIVACY_SETTINGS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="acr.browser.lightning.AdvancedSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/advanced"
+            android:label="@string/settings_advanced"
             android:theme="@style/DefaultTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.ADVANCED_SETTINGS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="acr.browser.lightning.AboutSettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/settings_about"
+            android:theme="@style/DefaultTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.ABOUT_SETTINGS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

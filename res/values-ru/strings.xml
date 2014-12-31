@@ -30,7 +30,7 @@
     <string name="saveTab">"Восстанавливать вкладки при сбое"</string>
     <string name="settings_title">Настройки</string>
     <string name="download">Папка загрузок</string>
-    <string name="advanced">Дополнительно</string>
+    <string name="settings_advanced">Дополнительно</string>
     <string name="source">Исходный код</string>
     <string name="license">Лицензия</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>

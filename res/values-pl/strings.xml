@@ -30,7 +30,7 @@
     <string name="saveTab">Przwraca otwarte karty</string>
     <string name="settings_title">Ustawienia</string>
     <string name="download">Miejsce zapisu pobieranych plików</string>
-    <string name="advanced">Ustawienia zaawansowane</string>
+    <string name="settings_advanced">Ustawienia zaawansowane</string>
     <string name="source">Kod źródłowy</string>
     <string name="license">Licencja</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>

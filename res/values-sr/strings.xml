@@ -47,7 +47,7 @@
     <string name="saveTab">Врати језичке ако су изгубљени</string>
     <string name="settings_title">Поставке</string>
     <string name="download">Фасцикла преузимања</string>
-    <string name="advanced">Напредне поставке</string>
+    <string name="settings_advanced">Напредне поставке</string>
     <string name="source">Изворни кôд</string>
     <string name="license">Лиценца</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -180,4 +180,17 @@
     <string name="name_normal">Нормално</string>
     <string name="sync_history">Синхронизуј историјат са Гуглом</string>
     <string name="title_file_chooser">Бирач фајлова</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">Гнуова Мања општа јавна лиценца</string>
+    <string name="export_bookmarks">Извези обележиваче у резерву</string>
+    <string name="import_backup">Увези обележиваче из резерве</string>
+    <string name="bookmark_export_path">Обележивачи извезени у</string>
+    <string name="bookmark_settings">Поставке обележивача</string>
+    <string name="import_bookmark_error">Не могу да увезем обележиваче из фајла</string>
+    <string name="title_chooser">Изаберите фајл</string>
+    <string name="settings_general">Опште поставке</string>
+    <string name="settings_display">Поставке приказа</string>
+    <string name="settings_privacy">Поставке приватности</string>
+    <string name="settings_about">О програму</string>
+    <string name="settings_about_explain">Детаљи о издању, аутору и лиценци.</string>
 </resources>
