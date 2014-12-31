@@ -405,7 +405,6 @@ public class PrivacySettingsActivity extends Activity {
 			} catch (Exception ignored) {
 			}
 		}
-		SettingsController.setClearHistory(true);
 		Utils.trimCache(this);
 		messageHandler.sendEmptyMessage(1);
 	}

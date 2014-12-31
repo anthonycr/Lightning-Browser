@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import info.guardianproject.onionkit.ui.OrbotHelper;
@@ -387,7 +388,7 @@ public class SettingsActivity extends Activity {
 						String text = getAgent.getText().toString();
 						mEditPrefs.putString(PreferenceConstants.USER_AGENT_STRING, text);
 						mEditPrefs.commit();
-						mAgentTextView.setText(getResources().getString(R.string.agent_custom));
+						getAgent.setText(getResources().getString(R.string.agent_custom));
 					}
 				});
 		agentStringPicker.show();

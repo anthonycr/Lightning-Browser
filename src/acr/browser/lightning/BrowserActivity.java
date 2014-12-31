@@ -376,7 +376,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 							mDrawerRight);
 				} else if (drawerView.equals(mDrawerRight)) {
 					mDrawerLayout.closeDrawer(mDrawerLeft);
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
+					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+							mDrawerLeft);
 				}
 			}
 
@@ -765,42 +766,42 @@ public class BrowserActivity extends Activity implements BrowserController {
 				});
 		finder.show();
 	}
-	
+
 	private void showSearchInterfaceBar(String text) {
-        if (mCurrentView != null) {
-            mCurrentView.find(text);
-        }
+		if (mCurrentView != null) {
+			mCurrentView.find(text);
+		}
 
-        final RelativeLayout bar = (RelativeLayout) findViewById(R.id.search_bar);
-        bar.setVisibility(View.VISIBLE);
+		final RelativeLayout bar = (RelativeLayout) findViewById(R.id.search_bar);
+		bar.setVisibility(View.VISIBLE);
 
-        TextView tw = (TextView) findViewById(R.id.search_query);
-        tw.setText("'" + text + "'");
+		TextView tw = (TextView) findViewById(R.id.search_query);
+		tw.setText("'" + text + "'");
 
-        ImageButton up = (ImageButton) findViewById(R.id.button_next);
-        up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentView.getWebView().findNext(true);
-            }
-        });
-        ImageButton down = (ImageButton) findViewById(R.id.button_back);
-        down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentView.getWebView().findNext(false);
-            }
-        });
+		ImageButton up = (ImageButton) findViewById(R.id.button_next);
+		up.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mCurrentView.getWebView().findNext(false);
+			}
+		});
+		ImageButton down = (ImageButton) findViewById(R.id.button_back);
+		down.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mCurrentView.getWebView().findNext(true);
+			}
+		});
 
-        ImageButton quit = (ImageButton) findViewById(R.id.button_quit);
-        quit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentView.getWebView().clearMatches();
-                bar.setVisibility(View.GONE);
-            }
-        });
-    }
+		ImageButton quit = (ImageButton) findViewById(R.id.button_quit);
+		quit.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mCurrentView.getWebView().clearMatches();
+				bar.setVisibility(View.GONE);
+			}
+		});
+	}
 
 	/**
 	 * The click listener for ListView in the navigation drawer
