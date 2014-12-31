@@ -141,13 +141,17 @@ public class LightningView {
 				// don't load anything, the user is looking for a blank tab
 			}
 		} else {
-			if (mHomepage.startsWith("about:home")) {
-				mWebView.loadUrl(getHomepage());
-			} else if (mHomepage.startsWith("about:bookmarks")) {
-				mBrowserController.openBookmarkPage(mWebView);
-			} else {
-				mWebView.loadUrl(mHomepage);
-			}
+			gotoHomePage();
+		}
+	}
+
+	public void gotoHomePage() {
+		if (mHomepage.startsWith("about:home")) {
+			mWebView.loadUrl(getHomepage());
+		} else if (mHomepage.startsWith("about:bookmarks")) {
+			mBrowserController.openBookmarkPage(mWebView);
+		} else {
+			mWebView.loadUrl(mHomepage);
 		}
 	}
 

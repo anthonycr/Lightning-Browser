@@ -40,6 +40,7 @@ public final class PreferenceConstants {
 	public static final String SAVE_URL = "saveUrl";
 	public static final String RENDERING_MODE = "renderMode";
 	public static final String SYNC_HISTORY = "syncHistory";
+	public static final String KEEP_LAST_TAB = "keepLastTab";
 
 	public static final String USE_PROXY = "useProxy";
 	public static final String USE_PROXY_HOST = "useProxyHost";

@@ -17,7 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.webkit.*;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebIconDatabase;
+import android.webkit.WebView;
+import android.webkit.WebViewDatabase;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -31,7 +35,7 @@ public class AdvancedSettingsActivity extends Activity {
 	private SharedPreferences mPreferences;
 	private SharedPreferences.Editor mEditPrefs;
 	private CheckBox cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11, cbIncognitoCookies,
-			cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit;
+			cbSearchSuggestions, cbClearHistoryExit, cbClearCookiesExit, cbKeepLastTab;
 	private Context mContext;
 	private boolean mSystemBrowser;
 	private Handler messageHandler;
@@ -70,7 +74,9 @@ public class AdvancedSettingsActivity extends Activity {
 
 	private void initialize() {
 
-		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r10, r11, r12, r13, r14, r15, rIncognitoCookies, rClearCache, rSearchSuggestions, rClearHistoryExit, rClearCookiesExit;
+		RelativeLayout r1, r2, r3, r4, r5, r6, r7, r8, r10, r11, r12, r13, r14, r15, 
+			rIncognitoCookies, rClearCache, rSearchSuggestions, 
+			rClearHistoryExit, rClearCookiesExit, rKeepLastTab;
 
 		r1 = (RelativeLayout) findViewById(R.id.r1);
 		r2 = (RelativeLayout) findViewById(R.id.r2);
@@ -91,6 +97,7 @@ public class AdvancedSettingsActivity extends Activity {
 		rIncognitoCookies = (RelativeLayout) findViewById(R.id.rIncognitoCookies);
 		rClearCache = (RelativeLayout) findViewById(R.id.rClearCache);
 		rSearchSuggestions = (RelativeLayout) findViewById(R.id.rGoogleSuggestions);
+		rKeepLastTab = (RelativeLayout) findViewById(R.id.rKeepLastTab);
 
 		cb1 = (CheckBox) findViewById(R.id.cb1);
 		cb2 = (CheckBox) findViewById(R.id.cb2);
@@ -107,6 +114,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb11 = (CheckBox) findViewById(R.id.cb11);
 		cbIncognitoCookies = (CheckBox) findViewById(R.id.cbIncognitoCookies);
 		cbSearchSuggestions = (CheckBox) findViewById(R.id.cbGoogleSuggestions);
+		cbKeepLastTab = (CheckBox) findViewById(R.id.cbKeepLastTab);
 
 		cb1.setChecked(mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, true));
 		cb2.setChecked(mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false));
@@ -132,11 +140,14 @@ public class AdvancedSettingsActivity extends Activity {
 				PreferenceConstants.INCOGNITO_COOKIES, false));
 		cbSearchSuggestions.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true));
+		cbKeepLastTab.setChecked(mPreferences.getBoolean(
+				PreferenceConstants.KEEP_LAST_TAB, false));
 
 		r1(r1);
 		r2(r2);
 		rClearHistoryExit(rClearHistoryExit);
 		rClearCookiesExit(rClearCookiesExit);
+		rKeepLastTab(rKeepLastTab);
 		r3(r3);
 		r4(r4);
 		r5(r5);
@@ -156,6 +167,7 @@ public class AdvancedSettingsActivity extends Activity {
 		cb2(cb2);
 		cbClearHistoryExit(cbClearHistoryExit);
 		cbClearCookiesExit(cbClearCookiesExit);
+		cbKeepLastTab(cbKeepLastTab);
 		cb3(cb3);
 		cb4(cb4);
 		cb5(cb5);
@@ -272,6 +284,18 @@ public class AdvancedSettingsActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, isChecked);
+				mEditPrefs.commit();
+			}
+
+		});
+	}
+	
+	private void cbKeepLastTab(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.KEEP_LAST_TAB, isChecked);
 				mEditPrefs.commit();
 			}
 
@@ -452,6 +476,17 @@ public class AdvancedSettingsActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				cbClearCookiesExit.setChecked(!cbClearCookiesExit.isChecked());
+			}
+
+		});
+	}
+	
+	private void rKeepLastTab(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cbKeepLastTab.setChecked(!cbKeepLastTab.isChecked());
 			}
 
 		});

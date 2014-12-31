@@ -33,6 +33,7 @@
     <string name="settings">Settings</string>
     <string name="location">Location Access</string>
     <string name="password">Save your passwords</string>
+    <string name="keep_last_tab">Keep the last tab</string>
     <string name="agent">User Agent</string>
     <string name="history">Clear history</string>
     <string name="email">Email me</string>
@@ -188,4 +189,5 @@
     <string name="bookmark_settings">Bookmark Settings</string>
     <string name="import_bookmark_error">Could not import bookmarks from file</string>
     <string name="title_chooser">Choose a file</string>
+    <string name="exit">Exit</string>
 </resources>

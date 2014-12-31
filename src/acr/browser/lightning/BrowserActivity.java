@@ -4,12 +4,38 @@
 
 package acr.browser.lightning;
 
+import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.onionkit.web.WebkitProxy;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.*;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
@@ -38,31 +64,48 @@ import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.*;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
+import android.webkit.WebIconDatabase;
+import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
-import android.widget.*;
+import android.webkit.WebViewDatabase;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.*;
+import android.widget.Toast;
+import android.widget.VideoView;
 
 public class BrowserActivity extends Activity implements BrowserController {
 
@@ -118,6 +161,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
 	private BookmarkManager mBookmarkManager;
+	
+	private GestureDetector mGestureDetector;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +180,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 		mContext = this;
+		
+		mGestureDetector = new GestureDetector(this, new CustomGestureDetector());
+		
+		
 		if (mIdList != null) {
 			mIdList.clear();
 		} else {
@@ -734,6 +783,35 @@ public class BrowserActivity extends Activity implements BrowserController {
 			case R.id.action_find:
 				findInPage();
 				return true;
+			case R.id.action_exit:
+				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
+						&& mCurrentView != null && !isIncognito()) {
+					mCurrentView.clearCache(true);
+					Log.i(Constants.TAG, "Cache Cleared");
+
+				}
+				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
+						&& !isIncognito()) {
+					clearHistory();
+					Log.i(Constants.TAG, "History Cleared");
+
+				}
+				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
+						&& !isIncognito()) {
+					clearCookies();
+					Log.i(Constants.TAG, "Cookies Cleared");
+
+				}
+				mCurrentView = null;
+				for (int n = 0; n < mWebViews.size(); n++) {
+					if (mWebViews.get(n) != null) {
+						mWebViews.get(n).onDestroy();
+					}
+				}
+				mWebViews.clear();
+				mTitleAdapter.notifyDataSetChanged();
+				finish();
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -933,6 +1011,15 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		mBrowserFrame.addView(mCurrentView.getWebView(), mMatchParent);
 		mCurrentView.onResume();
+		
+		mCurrentView.getWebView().setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent arg1) {
+				mGestureDetector.onTouchEvent(arg1);
+				return false;
+			}
+		});
 
 		// Use a delayed handler to make the transition smooth
 		// otherwise it will get caught up with the showTab code
@@ -1077,38 +1164,43 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 			reference.onDestroy();
 		} else {
-			if (mCurrentView.getUrl() == null || mCurrentView.getUrl().startsWith(Constants.FILE)
-					|| mCurrentView.getUrl().equals(mHomepage)) {
-				closeActivity();
+			if(!mPreferences.getBoolean(PreferenceConstants.KEEP_LAST_TAB, false))
+			{
+				if (mCurrentView.getUrl() == null || mCurrentView.getUrl().startsWith(Constants.FILE)
+						|| mCurrentView.getUrl().equals(mHomepage)) {
+					closeActivity();
+				} else {
+					mIdList.remove(position);
+					mWebViews.remove(position);
+					if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
+							&& mCurrentView != null && !isIncognito()) {
+						mCurrentView.clearCache(true);
+						Log.i(Constants.TAG, "Cache Cleared");
+	
+					}
+					if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
+							&& !isIncognito()) {
+						clearHistory();
+						Log.i(Constants.TAG, "History Cleared");
+	
+					}
+					if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
+							&& !isIncognito()) {
+						clearCookies();
+						Log.i(Constants.TAG, "Cookies Cleared");
+	
+					}
+					if (reference != null) {
+						reference.pauseTimers();
+						reference.onDestroy();
+					}
+					mCurrentView = null;
+					mTitleAdapter.notifyDataSetChanged();
+					finish();
+	
+				}
 			} else {
-				mIdList.remove(position);
-				mWebViews.remove(position);
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
-						&& mCurrentView != null && !isIncognito()) {
-					mCurrentView.clearCache(true);
-					Log.i(Constants.TAG, "Cache Cleared");
-
-				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
-						&& !isIncognito()) {
-					clearHistory();
-					Log.i(Constants.TAG, "History Cleared");
-
-				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
-						&& !isIncognito()) {
-					clearCookies();
-					Log.i(Constants.TAG, "Cookies Cleared");
-
-				}
-				if (reference != null) {
-					reference.pauseTimers();
-					reference.onDestroy();
-				}
-				mCurrentView = null;
-				mTitleAdapter.notifyDataSetChanged();
-				finish();
-
+				mWebViews.get(mDrawerListLeft.getCheckedItemPosition()).gotoHomePage();
 			}
 		}
 		mTitleAdapter.notifyDataSetChanged();
@@ -2319,4 +2411,32 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 	}
+	
+	class CustomGestureDetector extends SimpleOnGestureListener {      
+	    @Override
+	    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	        if(e1 == null || e2 == null) return false;
+	        if(e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
+	        else {
+	            try { // right to left swipe .. go to next page
+	                if(e1.getX() - e2.getX() > 100 && Math.abs(velocityX) > 800) {
+	                    //do your stuff
+//	                	selectItem(1);
+	                    return false;
+	                } //left to right swipe .. go to prev page
+	                else if (Math.abs((e2.getY() - e1.getY()) / (e2.getX() - e1.getX())) < 0.5 &&
+	                		Math.abs(velocityX) > 800 &&
+	                		(e2.getX() - e1.getX()) > 200 )
+	                {
+//	                	deleteTab(mDrawerListLeft.getCheckedItemPosition());
+	                    return false;
+	                } //bottom to top, go to next document
+	            } catch (Exception e) { // nothing
+	            }
+	            return false;
+	        }
+	    }
+	}
 }
+
+

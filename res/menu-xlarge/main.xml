@@ -36,6 +36,8 @@
     </item>
     <item
         android:id="@+id/action_new_tab"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_plus"
         android:title="@string/action_new_tab">
     </item>
     <item
@@ -69,5 +71,5 @@
         android:id="@+id/action_settings"
         android:title="@string/settings">
     </item>
-
+ <item android:id="@+id/action_exit" android:title="@string/exit" ></item>
 </menu>
