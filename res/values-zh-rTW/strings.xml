@@ -16,6 +16,7 @@
     <string name="settings">設定</string>
     <string name="location">存取地理資訊</string>
     <string name="password">儲存密碼</string>
+    <string name="keep_last_tab">不關閉最後一個標籤</string>
     <string name="agent">User Agent</string>
     <string name="history">清除記錄</string>
     <string name="email">Email 給我</string>
