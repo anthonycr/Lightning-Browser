@@ -16,7 +16,7 @@
     <string name="settings">浏览器设置</string>
     <string name="location">允许站点访问地理位置</string>
     <string name="password">保存密码</string>
-    <string name="keep_last_tab">不关闭最后一个标签</string>
+    <!-- <string name="keep_last_tab">不关闭最后一个标签</string> -->
     <string name="agent">User Agent</string>
     <string name="history">清空历史记录</string>
     <string name="email">邮件开发者</string>
@@ -172,5 +172,5 @@
     <string name="bookmark_settings">书签设置</string>
     <string name="import_bookmark_error">无法从文件导入书签</string>
     <string name="title_chooser">选择一个文件</string>
-    <string name="exit">退出</string>
+    <!-- <string name="exit">退出</string> -->
 </resources>

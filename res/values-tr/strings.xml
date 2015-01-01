@@ -31,7 +31,7 @@
     <string name="saveTab">Sorun çıkarsa sekmeleri kaydet</string>
     <string name="settings_title">Ayarlar</string>
     <string name="download">İndirme Yeri</string>
-    <string name="advanced">Gelişmiş Ayarlar</string>
+    <!-- <string name="advanced">Gelişmiş Ayarlar</string> -->
     <string name="source">Kaynak Kodu</string>
     <string name="license">Lisans</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
