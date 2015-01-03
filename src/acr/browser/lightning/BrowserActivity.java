@@ -1876,7 +1876,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	/**
-	 * used to allow uploading into the browser, doesn't get called in KitKat :(
+	 * used to allow uploading into the browser
 	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 1) {
