@@ -167,7 +167,7 @@
     <string name="license_gnu">GNU Lesser General Public License</string>
     <string name="export_bookmarks">Eksportuj zakładki do backupu</string>
     <string name="import_backup">Importuj zakładki z backupu</string>
-    <string name="bookmark_export_path">Zakładki wyeksportodane do</string>
+    <string name="bookmark_export_path">Zakładki wyeksportowane do</string>
     <string name="bookmark_settings">Zakładki</string>
     <string name="import_bookmark_error">Nie udało się zaimportować zakładek z</string>
     <string name="title_chooser">Wybierz plik</string>
