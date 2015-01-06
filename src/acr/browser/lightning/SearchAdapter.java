@@ -38,6 +38,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private Context mContext;
 	private boolean mIncognito;
 	private BookmarkManager mBookmarkManager;
+	private static final String ENCODING = "ISO-8859-1";
+	private static final String URL_ENCODING = "UTF-8";
+	private XmlPullParserFactory mFactory;
+	private XmlPullParser mXpp;
+	private String mSearchSubtitle;
 
 	public SearchAdapter(Context context, boolean incognito) {
 		mDatabaseHandler = new HistoryDatabaseHandler(context);
@@ -50,6 +55,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		mContext = context;
+		mSearchSubtitle = mContext.getString(R.string.suggestion);
 		mIncognito = incognito;
 	}
 
@@ -193,6 +199,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				mDatabaseHandler = new HistoryDatabaseHandler(mContext);
 			}
 			mHistory = mDatabaseHandler.findItemsContaining(constraint.toString());
+
 			for (int n = 0; n < mHistory.size(); n++) {
 				if (n >= 5) {
 					break;
@@ -247,46 +254,52 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			String query = arg0[0];
 			try {
 				query = query.replace(" ", "+");
-				URLEncoder.encode(query, "UTF-8");
+				URLEncoder.encode(query, ENCODING);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			InputStream download = null;
 			try {
-				try {
-					download = new java.net.URL("http://google.com/complete/search?q=" + query
-							+ "&output=toolbar&hl=en").openStream();
-					XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-					factory.setNamespaceAware(true);
-					XmlPullParser xpp = factory.newPullParser();
-					xpp.setInput(download, "iso-8859-1");
-					int eventType = xpp.getEventType();
-					int counter = 0;
-					while (eventType != XmlPullParser.END_DOCUMENT) {
-						if (eventType == XmlPullParser.START_TAG) {
-							if ("suggestion".equals(xpp.getName())) {
-								String suggestion = xpp.getAttributeValue(null, "data");
-								filter.add(new HistoryItem(mContext.getString(R.string.suggestion)
-										+ " \"" + suggestion + '"', suggestion,
-										R.drawable.ic_search));
-								counter++;
-								if (counter >= 5) {
-									break;
-								}
+				download = new java.net.URL("http://google.com/complete/search?q=" + query
+						+ "&output=toolbar&hl=en").openStream();
+				if (mFactory == null) {
+					mFactory = XmlPullParserFactory.newInstance();
+					mFactory.setNamespaceAware(true);
+				}
+				if (mXpp == null) {
+					mXpp = mFactory.newPullParser();
+				}
+				mXpp.setInput(download, URL_ENCODING);
+				int eventType = mXpp.getEventType();
+				int counter = 0;
+				while (eventType != XmlPullParser.END_DOCUMENT) {
+					if (eventType == XmlPullParser.START_TAG) {
+						if ("suggestion".equals(mXpp.getName())) {
+							String suggestion = mXpp.getAttributeValue(null, "data");
+							filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
+									suggestion, R.drawable.ic_search));
+							counter++;
+							if (counter >= 5) {
+								break;
 							}
 						}
-						eventType = xpp.next();
 					}
-				} finally {
-					if (download != null) {
-						download.close();
-					}
+					eventType = mXpp.next();
 				}
+
 			} catch (FileNotFoundException e) {
 			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			} catch (XmlPullParserException e) {
+			} finally {
+				if (download != null) {
+					try {
+						download.close();
+					} catch (IOException e) {
+					}
+				}
 			}
+
 			return filter;
 		}
 
@@ -376,8 +389,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 			filteredList.add(mSuggestions.get(n));
 		}
-		//Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
-		//Log.i("SIZE", "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
+		// Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
+		// Log.i("SIZE",
+		// "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
 		return filteredList;
 	}
 }
