@@ -54,10 +54,6 @@
         android:title="@string/action_find">
     </item>
     <item
-        android:id="@+id/action_copy"
-        android:title="@string/action_copy">
-    </item>
-    <item
         android:id="@+id/action_bookmarks"
         android:title="@string/action_bookmarks">
     </item>

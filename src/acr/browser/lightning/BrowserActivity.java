@@ -696,18 +696,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 			case R.id.action_bookmarks:
 				openBookmarks();
 				return true;
-			case R.id.action_copy:
-				if (mCurrentView != null) {
-					if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-						ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl()
-								.toString());
-						clipboard.setPrimaryClip(clip);
-						Utils.showToast(mContext,
-								mContext.getResources().getString(R.string.message_link_copied));
-					}
-				}
-				return true;
 			case R.id.action_settings:
 				startActivity(new Intent(this, SettingsActivity.class));
 				return true;
