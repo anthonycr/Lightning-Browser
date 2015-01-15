@@ -124,14 +124,14 @@
     <string name="message_text_copied">Текст скопирован в буфер обмена</string>
     <string name="message_link_copied">Ссылка скопирована в буфер обмена</string>
     <string name="custom_url">Пользовательский URL</string>
-    <string name="message_blocked_local">Local file has been blocked from loading</string>
+    <string name="message_blocked_local">Локальный файл недоступен для загрузки</string>
     <string name="licenses">Open Source Licenses</string>
-    <string name="suggestion">Search for</string>
+    <string name="suggestion">Искать</string>
     <string name="block_ads">Блокировать рекламу</string>
     <string name="message_untrusted_certificate">Сертификат сайта не является доверенным. Все равно продолжить?</string>
-    <string name="title_form_resubmission">Form Resubmission</string>
+    <string name="title_form_resubmission">Повторная форма</string>
     <string name="message_form_resubmission">Вы действительно хотите отправить данные?</string>
-    <string name="message_location">\nWould like to use your location</string>
+    <string name="message_location">\Хотите использовать своё местоположение?</string>
     <string name="action_allow">Разрешить</string>
     <string name="action_dont_allow">Не разрешать</string>
     <string name="title_sign_in">Вход</string>
@@ -162,7 +162,7 @@
     <string name="name_inverted_grayscale">Инвертированные оттенки серого</string>
     <string name="name_normal">Нормальный</string>
     <string name="sync_history">Синхронизировать историю с Google</string>
-    <string name="title_file_chooser">File Chooser</string>
+    <string name="title_file_chooser">Выбор файла</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
     <string name="export_bookmarks">Сделать резервную копию закладок</string>
