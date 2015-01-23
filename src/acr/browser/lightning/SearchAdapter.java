@@ -39,7 +39,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private boolean mIncognito;
 	private BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
-	private static final String URL_ENCODING = "UTF-8";
 	private XmlPullParserFactory mFactory;
 	private XmlPullParser mXpp;
 	private String mSearchSubtitle;
@@ -269,7 +268,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				if (mXpp == null) {
 					mXpp = mFactory.newPullParser();
 				}
-				mXpp.setInput(download, URL_ENCODING);
+				mXpp.setInput(download, ENCODING);
 				int eventType = mXpp.getEventType();
 				int counter = 0;
 				while (eventType != XmlPullParser.END_DOCUMENT) {
