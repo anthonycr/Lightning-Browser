@@ -67,6 +67,11 @@ public class MainActivity extends BrowserActivity {
 	}
 
 	@Override
+	public int getMenu() {
+		return R.menu.main;
+	}
+
+	@Override
 	public void closeActivity() {
 		closeDrawers();
 		moveTaskToBack(true);
