@@ -81,11 +81,6 @@ public class DisplaySettingsActivity extends Activity {
 		cbWideViewPort.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, true));
 		cbOverView.setChecked(mPreferences.getBoolean(PreferenceConstants.OVERVIEW_MODE, true));
 		cbTextReflow.setChecked(mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW, false));
-		cbTextReflow.setEnabled(API < 19);
-		if (API >= 19) {
-			mEditPrefs.putBoolean(PreferenceConstants.TEXT_REFLOW, false);
-			mEditPrefs.commit();
-		}
 
 		rHideStatusBar(rHideStatusBar);
 		rFullScreen(rFullScreen);
@@ -212,14 +207,7 @@ public class DisplaySettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (API < 19) {
-					cbTextReflow.setChecked(!cbTextReflow.isChecked());
-				} else {
-					Utils.createInformativeDialog(mContext,
-							getResources().getString(R.string.title_warning), getResources()
-									.getString(R.string.dialog_reflow_warning));
-				}
+				cbTextReflow.setChecked(!cbTextReflow.isChecked());
 			}
 
 		});
