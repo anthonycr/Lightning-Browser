@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2014 A.C.R. Development
--->
+<!-- Copyright 2014 A.C.R. Development -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="acr.browser.lightning"
@@ -14,7 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature
         android:name="android.hardware.location.gps"
@@ -28,13 +26,13 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="20" />
+        android:targetSdkVersion="21" />
 
     <application
         android:name="acr.browser.lightning.BrowserApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name" >
         <activity
             android:name="acr.browser.lightning.MainActivity"
@@ -42,7 +40,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/LightTheme" >
+            android:theme="@style/Theme.LightTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,7 +62,7 @@
             </intent-filter>
             <!--
                   For these schemes where any of these particular MIME types
-                  have been supplied, we are a good candidate.
+                  have been supplied, we are a good candidate.
             -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -107,7 +105,7 @@
             android:name="acr.browser.lightning.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.SETTINGS" />
 
@@ -118,7 +116,7 @@
             android:name="acr.browser.lightning.GeneralSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_general"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.GENERAL_SETTINGS" />
 
@@ -129,7 +127,7 @@
             android:name="acr.browser.lightning.DisplaySettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_display"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.DISPLAY_SETTINGS" />
 
@@ -140,7 +138,7 @@
             android:name="acr.browser.lightning.PrivacySettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_privacy"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.PRIVACY_SETTINGS" />
 
@@ -151,7 +149,7 @@
             android:name="acr.browser.lightning.AdvancedSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_advanced"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.ADVANCED_SETTINGS" />
 
@@ -162,7 +160,7 @@
             android:name="acr.browser.lightning.AboutSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_about"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.ABOUT_SETTINGS" />
 
@@ -175,7 +173,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/DarkTheme"
+            android:theme="@style/Theme.DarkTheme"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.INCOGNITO" />
@@ -187,19 +185,18 @@
             android:name="acr.browser.lightning.LicenseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/licenses"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.LICENSE" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name="acr.browser.lightning.BookmarkActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/bookmark_settings"
-            android:theme="@style/DefaultTheme" >
+            android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOKMARK" />
 
