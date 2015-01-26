@@ -8,6 +8,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
@@ -64,23 +67,34 @@ public final class Utils {
 	/**
 	 * Returns the number of pixels corresponding to the passed density pixels
 	 */
-	public static int convertToDensityPixels(Context context, int densityPixels) {
+	public static int convertDpiToPixels(Context context, int densityPixels) {
 		float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (densityPixels * scale + 0.5f);
 	}
 
 	public static String getDomainName(String url) {
+		boolean ssl = url.startsWith(Constants.HTTPS);
+		int index = url.indexOf('/', 8);
+		if (index != -1) {
+			url = url.substring(0, index);
+		}
+
 		URI uri;
+		String domain = null;
 		try {
 			uri = new URI(url);
+			domain = uri.getHost();
 		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+
+		if (domain == null || domain.isEmpty()) {
 			return url;
 		}
-		String domain = uri.getHost();
-		if (domain == null) {
-			return url;
-		}
-		return domain.startsWith("www.") ? domain.substring(4) : domain;
+		if (ssl)
+			return Constants.HTTPS + domain;
+		else
+			return domain.startsWith("www.") ? domain.substring(4) : domain;
 	}
 
 	public static List<HistoryItem> getOldBookmarks(Context context) {
@@ -131,5 +145,26 @@ public final class Utils {
 		}
 		// The directory is now empty so delete it
 		return dir != null && dir.delete();
+	}
+
+	/**
+	 * Creates and returns a new favicon which is the same as the provided
+	 * favicon but with horizontal or vertical padding of 4dp
+	 * 
+	 * @param bitmap
+	 *            is the bitmap to pad.
+	 * @return the padded bitmap.
+	 */
+	public static Bitmap padFavicon(Bitmap bitmap, Context context) {
+		int padding = Utils.convertDpiToPixels(context, 4);
+
+		Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
+				+ padding, Bitmap.Config.ARGB_8888);
+
+		Canvas canvas = new Canvas(paddedBitmap);
+		canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
+		canvas.drawBitmap(bitmap, padding / 2, padding / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+		return paddedBitmap;
 	}
 }

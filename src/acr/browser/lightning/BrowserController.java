@@ -14,7 +14,7 @@ import android.webkit.WebView;
 
 public interface BrowserController {
 
-	public void updateUrl(String title);
+	public void updateUrl(String title, boolean shortUrl);
 
 	public void updateProgress(int n);
 
@@ -51,4 +51,6 @@ public interface BrowserController {
 	public void closeEmptyTab();
 
 	public boolean isIncognito();
+	
+	public int getMenu();
 }

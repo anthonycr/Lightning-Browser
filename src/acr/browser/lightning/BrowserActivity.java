@@ -4,11 +4,13 @@
 
 package acr.browser.lightning;
 
-import android.animation.ObjectAnimator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
@@ -24,6 +26,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -32,7 +35,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -44,13 +47,19 @@ import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.*;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebView.HitTestResult;
 import android.widget.*;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 import info.guardianproject.onionkit.ui.OrbotHelper;
@@ -64,7 +73,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
-public class BrowserActivity extends Activity implements BrowserController {
+public class BrowserActivity extends ActionBarActivity implements BrowserController {
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerListLeft;
@@ -76,12 +85,13 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
 	private LightningView mCurrentView;
 	private int mIdGenerator;
+	private Toolbar mToolbar;
 	private LightningViewAdapter mTitleAdapter;
 	private List<HistoryItem> mBookmarkList;
 	private BookmarkViewAdapter mBookmarkAdapter;
 	private AutoCompleteTextView mSearch;
 	private ClickHandler mClickHandler;
-	private ProgressBar mProgressBar;
+	private AnimatedProgressBar mProgressBar;
 	private boolean mSystemBrowser = false;
 	private ValueCallback<Uri> mUploadMessage;
 	private View mCustomView;
@@ -90,12 +100,14 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private ActionBar mActionBar;
 	private boolean mFullScreen;
 	private FrameLayout mBrowserFrame;
+	private LinearLayout mPageLayout;
 	private FullscreenHolder mFullscreenContainer;
 	private CustomViewCallback mCustomViewCallback;
 	private final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 	private Bitmap mDefaultVideoPoster;
 	private View mVideoProgressView;
+	private LinearLayout mToolbarLayout;
 	private HistoryDatabaseHandler mHistoryHandler;
 	private SharedPreferences mPreferences;
 	private SharedPreferences.Editor mEditPrefs;
@@ -127,6 +139,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 	@SuppressWarnings("deprecation")
 	private synchronized void initialize() {
 		setContentView(R.layout.activity_main);
+
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(mToolbar);
+
 		TypedValue typedValue = new TypedValue();
 		Theme theme = getTheme();
 		theme.resolveAttribute(R.attr.numberColor, typedValue, true);
@@ -148,8 +164,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
-		mProgressBar = (ProgressBar) findViewById(R.id.activity_bar);
-		mProgressBar.setVisibility(View.GONE);
+		mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
+		mPageLayout = (LinearLayout) findViewById(R.id.main_layout);
+		mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
+		// mProgressBar.setVisibility(View.GONE);
+		// TODO
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
 		mDrawerLeft = (RelativeLayout) findViewById(R.id.left_drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -162,12 +181,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mDrawerListRight.setDividerHeight(0);
 		setNavigationDrawerWidth();
 		mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
-		mActionBar = getActionBar();
+		mActionBar = getSupportActionBar();
 		final TypedArray styledAttributes = mContext.getTheme().obtainStyledAttributes(
 				new int[] { android.R.attr.actionBarSize });
 		mActionBarSize = (int) styledAttributes.getDimension(0, 0);
 		if (pixelsToDp(mActionBarSize) < 48) {
-			mActionBarSize = Utils.convertToDensityPixels(mContext, 48);
+			mActionBarSize = Utils.convertDpiToPixels(mContext, 48);
 		}
 		mActionBarSizeDp = pixelsToDp(mActionBarSize);
 		styledAttributes.recycle();
@@ -192,11 +211,40 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		// set display options of the ActionBar
+
 		mActionBar.setDisplayShowTitleEnabled(false);
+		mActionBar.setHomeButtonEnabled(false);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		mActionBar.setDisplayHomeAsUpEnabled(false);
+		mActionBar.setDisplayShowTitleEnabled(false);
+		mActionBar.setDisplayUseLogoEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setDisplayShowHomeEnabled(true);
-		mActionBar.setDisplayHomeAsUpEnabled(true);
-		mActionBar.setCustomView(R.layout.search);
+		mActionBar.setCustomView(R.layout.toolbar_content);
+
+		View v = mActionBar.getCustomView();
+		LayoutParams lp = v.getLayoutParams();
+		lp.width = LayoutParams.MATCH_PARENT;
+		v.setLayoutParams(lp);
+
+		// TODO
+
+		final DrawerArrowDrawable drawable = new DrawerArrowDrawable(this);
+		final ImageView arrow = (ImageView) mActionBar.getCustomView().findViewById(R.id.arrow);
+		arrow.setImageDrawable(drawable);
+		LinearLayout arrowButton = (LinearLayout) mActionBar.getCustomView().findViewById(
+				R.id.arrow_button);
+		arrowButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (mSearch != null && mSearch.hasFocus()) {
+					mCurrentView.requestFocus();
+				} else {
+					mDrawerLayout.openDrawer(mDrawerLeft);
+				}
+			}
+
+		});
 
 		RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
 		RelativeLayout forward = (RelativeLayout) findViewById(R.id.action_forward);
@@ -232,16 +280,19 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		// create the search EditText in the ActionBar
+		// mSearch = (AutoCompleteTextView)
+		// mActionBar.getCustomView().findViewById(R.id.search);
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
+		// TODO
 		mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
-		mDeleteIcon.setBounds(0, 0, Utils.convertToDensityPixels(mContext, 24),
-				Utils.convertToDensityPixels(mContext, 24));
+		mDeleteIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
+				Utils.convertDpiToPixels(mContext, 24));
 		mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh);
-		mRefreshIcon.setBounds(0, 0, Utils.convertToDensityPixels(mContext, 24),
-				Utils.convertToDensityPixels(mContext, 24));
+		mRefreshIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
+				Utils.convertDpiToPixels(mContext, 24));
 		mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy);
-		mCopyIcon.setBounds(0, 0, Utils.convertToDensityPixels(mContext, 24),
-				Utils.convertToDensityPixels(mContext, 24));
+		mCopyIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
+				Utils.convertDpiToPixels(mContext, 24));
 		mIcon = mRefreshIcon;
 		mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
 		mSearch.setOnKeyListener(new OnKeyListener() {
@@ -268,7 +319,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
+			public void onFocusChange(View v, final boolean hasFocus) {
 				if (!hasFocus && mCurrentView != null) {
 					if (mCurrentView != null) {
 						if (mCurrentView.getProgress() < 100) {
@@ -277,10 +328,44 @@ public class BrowserActivity extends Activity implements BrowserController {
 							setIsFinishedLoading();
 						}
 					}
-					updateUrl(mCurrentView.getUrl());
+					updateUrl(mCurrentView.getUrl(), true);
 				} else if (hasFocus) {
+					updateUrl(mCurrentView.getUrl(), false);
+					mSearch.selectAll();
 					mIcon = mCopyIcon;
 					mSearch.setCompoundDrawables(null, null, mCopyIcon, null);
+				}
+				final Animation anim = new Animation() {
+
+					@Override
+					protected void applyTransformation(float interpolatedTime, Transformation t) {
+						if (!hasFocus) {
+							drawable.setProgress(1.0f - interpolatedTime);
+						} else {
+							drawable.setProgress(interpolatedTime);
+						}
+					}
+
+					@Override
+					public boolean willChangeBounds() {
+						return true;
+					}
+
+				};
+				anim.setDuration(300);
+				anim.setInterpolator(new DecelerateInterpolator());
+				new Handler().postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						arrow.startAnimation(anim);
+					}
+
+				}, 100);
+
+				if (!hasFocus) {
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
 				}
 			}
 		});
@@ -349,40 +434,31 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		});
 		initialize.run();
+
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
-		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-		R.string.drawer_open, /* "open drawer" description for accessibility */
-		R.string.drawer_close /* "close drawer" description for accessibility */
-		) {
-			@Override
-			public void onDrawerClosed(View view) {
-				super.onDrawerClosed(view);
-				if (view.equals(mDrawerLeft)) {
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerRight);
-				} else if (view.equals(mDrawerRight)) {
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerLeft);
-				}
-			}
-
-			@Override
-			public void onDrawerOpened(View drawerView) {
-				super.onDrawerOpened(drawerView);
-				if (drawerView.equals(mDrawerLeft)) {
-					mDrawerLayout.closeDrawer(mDrawerRight);
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
-							mDrawerRight);
-				} else if (drawerView.equals(mDrawerRight)) {
-					mDrawerLayout.closeDrawer(mDrawerLeft);
-					mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
-							mDrawerLeft);
-				}
-			}
-
-		};
-
+		/*
+		 * mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+		 * R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close ) {
+		 * 
+		 * @Override public void onDrawerClosed(View view) {
+		 * super.onDrawerClosed(view); if (view.equals(mDrawerLeft)) {
+		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED,
+		 * mDrawerRight); } else if (view.equals(mDrawerRight)) {
+		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED,
+		 * mDrawerLeft); } }
+		 * 
+		 * @Override public void onDrawerOpened(View drawerView) {
+		 * super.onDrawerOpened(drawerView); if (drawerView.equals(mDrawerLeft))
+		 * { mDrawerLayout.closeDrawer(mDrawerRight);
+		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+		 * mDrawerRight); } else if (drawerView.equals(mDrawerRight)) {
+		 * mDrawerLayout.closeDrawer(mDrawerLeft);
+		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+		 * mDrawerLeft); } }
+		 * 
+		 * };
+		 */
 		mNewTab.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -407,7 +483,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		});
 
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		// mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START);
 		initializePreferences();
@@ -419,6 +495,88 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		checkForTor();
 
+	}
+
+	public boolean handleMenuItemClick(MenuItem item) {
+		// Handle action buttons
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+					mDrawerLayout.closeDrawer(mDrawerRight);
+				}
+				// mDrawerToggle.syncState();
+				return true;
+			case R.id.action_back:
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoBack()) {
+						mCurrentView.goBack();
+					}
+				}
+				return true;
+			case R.id.action_forward:
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoForward()) {
+						mCurrentView.goForward();
+					}
+				}
+				return true;
+			case R.id.action_new_tab:
+				newTab(null, true);
+				return true;
+			case R.id.action_incognito:
+				startActivity(new Intent(this, IncognitoActivity.class));
+				return true;
+			case R.id.action_share:
+				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
+					Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+					shareIntent.setType("text/plain");
+					shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+							mCurrentView.getTitle());
+					String shareMessage = mCurrentView.getUrl();
+					shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
+					startActivity(Intent.createChooser(shareIntent,
+							getResources().getString(R.string.dialog_title_share)));
+				}
+				return true;
+			case R.id.action_bookmarks:
+				openBookmarks();
+				return true;
+			case R.id.action_copy:
+				if (mCurrentView != null) {
+					if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
+						ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl()
+								.toString());
+						clipboard.setPrimaryClip(clip);
+						Utils.showToast(mContext,
+								mContext.getResources().getString(R.string.message_link_copied));
+					}
+				}
+				return true;
+			case R.id.action_settings:
+				startActivity(new Intent(this, SettingsActivity.class));
+				return true;
+			case R.id.action_history:
+				openHistory();
+				return true;
+			case R.id.action_add_bookmark:
+				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
+					HistoryItem bookmark = new HistoryItem(mCurrentView.getUrl(),
+							mCurrentView.getTitle());
+					if (mBookmarkManager.addBookmark(bookmark)) {
+						mBookmarkList.add(bookmark);
+						Collections.sort(mBookmarkList, new SortIgnoreCase());
+						notifyBookmarkDataSetChanged();
+						mSearchAdapter.refreshBookmarks();
+					}
+				}
+				return true;
+			case R.id.action_find:
+				findInPage();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/*
@@ -489,7 +647,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	public void setNavigationDrawerWidth() {
 		int width = getResources().getDisplayMetrics().widthPixels * 3 / 4;
-		int maxWidth = Utils.convertToDensityPixels(mContext, 300);
+		int maxWidth = Utils.convertDpiToPixels(mContext, 300);
 		if (width > maxWidth) {
 			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerLeft
 					.getLayoutParams();
@@ -643,23 +801,23 @@ public class BrowserActivity extends Activity implements BrowserController {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// The action bar home/up action should open or close the drawer.
 		// ActionBarDrawerToggle will take care of this.
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
-			if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-				mDrawerLayout.closeDrawer(mDrawerRight);
-				mDrawerLayout.openDrawer(mDrawerLeft);
-			} else if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
-				mDrawerLayout.closeDrawer(mDrawerLeft);
-			}
-			mDrawerToggle.syncState();
-			return true;
-		}
+		/*
+		 * if (mDrawerToggle.onOptionsItemSelected(item)) { if
+		 * (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+		 * mDrawerLayout.closeDrawer(mDrawerRight);
+		 * mDrawerLayout.openDrawer(mDrawerLeft); } else if
+		 * (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
+		 * mDrawerLayout.closeDrawer(mDrawerLeft); } mDrawerToggle.syncState();
+		 * return true; }
+		 */
+		// TODO
 		// Handle action buttons
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
 					mDrawerLayout.closeDrawer(mDrawerRight);
 				}
-				mDrawerToggle.syncState();
+				// mDrawerToggle.syncState();
 				return true;
 			case R.id.action_back:
 				if (mCurrentView != null) {
@@ -771,7 +929,6 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (mCurrentView != null) {
 			mCurrentView.find(text);
 		}
-
 		final RelativeLayout bar = (RelativeLayout) findViewById(R.id.search_bar);
 		bar.setVisibility(View.VISIBLE);
 
@@ -821,9 +978,30 @@ public class BrowserActivity extends Activity implements BrowserController {
 	private class DrawerItemLongClickListener implements ListView.OnItemLongClickListener {
 
 		@Override
-		public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-			deleteTab(position);
-			return false;
+		public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext,
+					android.R.layout.simple_dropdown_item_1line);
+			adapter.add(mContext.getString(R.string.close_tab));
+			adapter.add(mContext.getString(R.string.close_all_tabs));
+			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+						case 0:
+							deleteTab(position);
+							break;
+						case 1:
+							closeBrowser();
+							break;
+						default:
+							break;
+					}
+				}
+			});
+			builder.show();
+			return true;
 		}
 	}
 
@@ -954,10 +1132,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mCurrentView = view;
 		mCurrentView.setForegroundTab(true);
 		if (mCurrentView.getWebView() != null) {
-			updateUrl(mCurrentView.getUrl());
+			updateUrl(mCurrentView.getUrl(), true);
 			updateProgress(mCurrentView.getProgress());
 		} else {
-			updateUrl("");
+			updateUrl("", true);
 			updateProgress(0);
 		}
 
@@ -1036,14 +1214,16 @@ public class BrowserActivity extends Activity implements BrowserController {
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		// Sync the toggle state after onRestoreInstanceState has occurred.
-		mDrawerToggle.syncState();
+		// mDrawerToggle.syncState();
+		// TODO
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		// Pass any configuration change to the drawer toggls
-		mDrawerToggle.onConfigurationChanged(newConfig);
+		// TODO
+		// mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	protected synchronized void newTab(String url, boolean show) {
@@ -1056,7 +1236,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		mWebViews.add(startingTab);
 
 		Drawable icon = writeOnDrawable(mWebViews.size());
-		mActionBar.setIcon(icon);
+		// mActionBar.setIcon(icon);
+		// TODO
 		mTitleAdapter.notifyDataSetChanged();
 		if (show) {
 			mDrawerListLeft.setItemChecked(mWebViews.size() - 1, true);
@@ -1138,7 +1319,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 		mTitleAdapter.notifyDataSetChanged();
 		Drawable icon = writeOnDrawable(mWebViews.size());
-		mActionBar.setIcon(icon);
+		// TODO
+		// mActionBar.setIcon(icon);
 
 		if (mIsNewIntent && isShown) {
 			mIsNewIntent = false;
@@ -1182,6 +1364,36 @@ public class BrowserActivity extends Activity implements BrowserController {
 		return true;
 	}
 
+	private void closeBrowser() {
+		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
+				&& mCurrentView != null && !isIncognito()) {
+			mCurrentView.clearCache(true);
+			Log.i(Constants.TAG, "Cache Cleared");
+
+		}
+		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
+				&& !isIncognito()) {
+			clearHistory();
+			Log.i(Constants.TAG, "History Cleared");
+
+		}
+		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
+				&& !isIncognito()) {
+			clearCookies();
+			Log.i(Constants.TAG, "Cookies Cleared");
+
+		}
+		mCurrentView = null;
+		for (int n = 0; n < mWebViews.size(); n++) {
+			if (mWebViews.get(n) != null) {
+				mWebViews.get(n).onDestroy();
+			}
+		}
+		mWebViews.clear();
+		mTitleAdapter.notifyDataSetChanged();
+		finish();
+	}
+
 	@SuppressWarnings("deprecation")
 	public void clearHistory() {
 		this.deleteDatabase(HistoryDatabaseHandler.DATABASE_NAME);
@@ -1209,9 +1421,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	public void onBackPressed() {
-		if (!mActionBar.isShowing()) {
-			mActionBar.show();
-		}
+		/*
+		 * if (!mActionBar.isShowing()) { mActionBar.show(); }
+		 */
+		// TODO
 		if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
 			mDrawerLayout.closeDrawer(mDrawerLeft);
 		} else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
@@ -1283,11 +1496,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 			mSearchAdapter.refreshPreferences();
 			mSearchAdapter.refreshBookmarks();
 		}
-		if (mActionBar != null) {
-			if (!mActionBar.isShowing()) {
-				mActionBar.show();
-			}
-		}
+		/*
+		 * if (mActionBar != null) { if (!mActionBar.isShowing()) {
+		 * mActionBar.show(); } }
+		 */
+		// TODO
 		if (mCurrentView != null) {
 			mCurrentView.resumeTimers();
 			mCurrentView.onResume();
@@ -1431,9 +1644,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 				row = inflater.inflate(layoutResourceId, parent, false);
 
 				holder = new LightningViewHolder();
-				holder.txtTitle = (TextView) row.findViewById(R.id.text1);
-				holder.favicon = (ImageView) row.findViewById(R.id.favicon1);
-				holder.exit = (ImageView) row.findViewById(R.id.delete1);
+				holder.txtTitle = (TextView) row.findViewById(R.id.textTab);
+				holder.favicon = (ImageView) row.findViewById(R.id.faviconTab);
+				holder.exit = (ImageView) row.findViewById(R.id.deleteButton);
 				holder.exit.setTag(position);
 				row.setTag(holder);
 			} else {
@@ -1461,6 +1674,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (web.isForegroundTab()) {
 
 				holder.favicon.setImageBitmap(favicon);
+				if (!isIncognito())
+					changeToolbarBackground(favicon);
 			} else {
 				Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
 						favicon.getHeight(), Bitmap.Config.ARGB_8888);
@@ -1488,6 +1703,38 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
+	private void changeToolbarBackground(Bitmap favicon) {
+		android.support.v7.graphics.Palette.generateAsync(favicon,
+				new android.support.v7.graphics.Palette.PaletteAsyncListener() {
+
+					@Override
+					public void onGenerated(Palette palette) {
+						// TODO Auto-generated method stub
+						int color = palette.getVibrantColor(mContext.getResources().getColor(
+								R.color.primary_color));
+						ColorDrawable draw = (ColorDrawable) mPageLayout.getBackground();
+
+						ValueAnimator anim = ValueAnimator.ofObject(new ArgbEvaluator(),
+								draw.getColor(), color);
+						anim.addUpdateListener(new AnimatorUpdateListener() {
+
+							@Override
+							public void onAnimationUpdate(ValueAnimator animation) {
+								mPageLayout.setBackgroundColor((Integer) animation
+										.getAnimatedValue());
+								mToolbarLayout.setBackgroundColor((Integer) animation
+										.getAnimatedValue());
+							}
+
+						});
+						mToolbarLayout.setBackgroundColor(color);
+						mPageLayout.setBackgroundColor(color);
+						anim.setDuration(300);
+						anim.start();
+					}
+				});
+	}
+
 	public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
 
 		Context context;
@@ -1513,8 +1760,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 				row = inflater.inflate(layoutResourceId, parent, false);
 
 				holder = new BookmarkViewHolder();
-				holder.txtTitle = (TextView) row.findViewById(R.id.text1);
-				holder.favicon = (ImageView) row.findViewById(R.id.favicon1);
+				holder.txtTitle = (TextView) row.findViewById(R.id.textBookmark);
+				holder.favicon = (ImageView) row.findViewById(R.id.faviconBookmark);
 				row.setTag(holder);
 			} else {
 				holder = (BookmarkViewHolder) row.getTag();
@@ -1539,7 +1786,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 	}
 
-	public void getImage(ImageView image, HistoryItem web) {
+	private void getImage(ImageView image, HistoryItem web) {
 		try {
 			new DownloadImageTask(image, web).execute(Constants.HTTP + getDomainName(web.getUrl())
 					+ "/favicon.ico");
@@ -1600,9 +1847,11 @@ public class BrowserActivity extends Activity implements BrowserController {
 			if (mIcon == null) {
 				try {
 					// if not, download it...
-					InputStream in = new java.net.URL(
-							"https://www.google.com/s2/favicons?domain_url=" + urldisplay)
-							.openStream();
+					URL url = new URL("https://www.google.com/s2/favicons?domain_url=" + urldisplay);
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setDoInput(true);
+					connection.connect();
+					InputStream in = connection.getInputStream();
 
 					if (in != null) {
 						mIcon = BitmapFactory.decodeStream(in);
@@ -1626,8 +1875,9 @@ public class BrowserActivity extends Activity implements BrowserController {
 		}
 
 		protected void onPostExecute(Bitmap result) {
-			bmImage.setImageBitmap(result);
-			mWeb.setBitmap(result);
+			Bitmap fav = Utils.padFavicon(result, mContext);
+			bmImage.setImageBitmap(fav);
+			mWeb.setBitmap(fav);
 			notifyBookmarkDataSetChanged();
 		}
 	}
@@ -1642,46 +1892,50 @@ public class BrowserActivity extends Activity implements BrowserController {
 	}
 
 	@Override
-	public void updateUrl(String url) {
+	public void updateUrl(String url, boolean shortUrl) {
 		if (url == null) {
 			return;
 		}
-		url = url.replaceFirst(Constants.HTTP, "");
-		if (url.startsWith(Constants.FILE)) {
-			url = "";
+		if (shortUrl) {
+			url = url.replaceFirst(Constants.HTTP, "");
+			if (url.startsWith(Constants.FILE)) {
+				url = "";
+			}
+			url = Utils.getDomainName(url);
+			mSearch.setText(url);
+		} else {
+			if (url.startsWith(Constants.FILE)) {
+				url = "";
+			}
+			mSearch.setText(url);
 		}
-
-		mSearch.setText(url);
 	}
 
 	@Override
 	public void updateProgress(int n) {
-
-		if (n > mProgressBar.getProgress()) {
-			ObjectAnimator animator = ObjectAnimator.ofInt(mProgressBar, "progress", n);
-			animator.setDuration(200);
-			animator.setInterpolator(new DecelerateInterpolator());
-			animator.start();
-		} else if (n < mProgressBar.getProgress()) {
-			ObjectAnimator animator = ObjectAnimator.ofInt(mProgressBar, "progress", 0, n);
-			animator.setDuration(200);
-			animator.setInterpolator(new DecelerateInterpolator());
-			animator.start();
-		}
+		/*
+		 * if (n > mProgressBar.getProgress()) { ObjectAnimator animator =
+		 * ObjectAnimator.ofInt(mProgressBar, "progress", n);
+		 * animator.setDuration(200); animator.setInterpolator(new
+		 * DecelerateInterpolator()); animator.start(); } else if (n <
+		 * mProgressBar.getProgress()) { ObjectAnimator animator =
+		 * ObjectAnimator.ofInt(mProgressBar, "progress", 0, n);
+		 * animator.setDuration(200); animator.setInterpolator(new
+		 * DecelerateInterpolator()); animator.start(); } if (n >= 100) {
+		 * Handler handler = new Handler(); handler.postDelayed(new Runnable() {
+		 * 
+		 * @Override public void run() {
+		 * mProgressBar.setVisibility(View.INVISIBLE); setIsFinishedLoading(); }
+		 * }, 200);
+		 * 
+		 * } else { mProgressBar.setVisibility(View.VISIBLE); setIsLoading(); }
+		 */
 		if (n >= 100) {
-			Handler handler = new Handler();
-			handler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					mProgressBar.setVisibility(View.INVISIBLE);
-					setIsFinishedLoading();
-				}
-			}, 200);
-
+			setIsFinishedLoading();
 		} else {
-			mProgressBar.setVisibility(View.VISIBLE);
 			setIsLoading();
 		}
+		mProgressBar.setProgress(n);
 	}
 
 	@Override
@@ -1760,7 +2014,7 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 		getUrl.setThreshold(1);
 		getUrl.setDropDownWidth(-1);
-		getUrl.setDropDownAnchor(R.id.progressWrapper);
+		getUrl.setDropDownAnchor(R.id.toolbar_layout);
 		getUrl.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -1821,7 +2075,8 @@ public class BrowserActivity extends Activity implements BrowserController {
 		if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
 			mDrawerLayout.closeDrawers();
 		}
-		mDrawerToggle.syncState();
+		// mDrawerToggle.syncState();
+		// TODO
 		mDrawerLayout.openDrawer(mDrawerRight);
 	}
 
@@ -2076,9 +2331,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 	 */
 	@Override
 	public void hideActionBar() {
-		if (mActionBar.isShowing() && mFullScreen) {
-			mActionBar.hide();
-		}
+		/*
+		 * if (mActionBar.isShowing() && mFullScreen) { mActionBar.hide(); }
+		 */
+		// TODO
 	}
 
 	@Override
@@ -2086,9 +2342,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 	 * obviously it shows the action bar if it's hidden
 	 */
 	public void showActionBar() {
-		if (!mActionBar.isShowing() && mFullScreen) {
-			mActionBar.show();
-		}
+		/*
+		 * if (!mActionBar.isShowing() && mFullScreen) { mActionBar.show(); }
+		 */
+		// TODO
 	}
 
 	@Override
@@ -2321,11 +2578,12 @@ public class BrowserActivity extends Activity implements BrowserController {
 
 	@Override
 	public boolean isActionBarShowing() {
-		if (mActionBar != null) {
-			return mActionBar.isShowing();
-		} else {
-			return false;
-		}
+		/*
+		 * if (mActionBar != null) { return mActionBar.isShowing(); } else {
+		 * return false; }
+		 */
+		// TODO
+		return false;
 	}
 
 	// Override this, use finish() for Incognito, moveTaskToBack for Main
@@ -2340,5 +2598,10 @@ public class BrowserActivity extends Activity implements BrowserController {
 					.compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
 		}
 
+	}
+
+	@Override
+	public int getMenu() {
+		return R.menu.main;
 	}
 }

@@ -10,6 +10,15 @@
     <color name="white">#ffffff</color>
     <color name="gray_extra_dark">#1b1b1b</color>
     <color name="gray_list_bg">#0d000000</color>
-    <color name="dark_text">#3f3f3f</color>
+    <color name="dark_text">#212121</color>
 
+    <color name="primary_color">#E0E0E0</color>
+    <color name="secondary_color">#4D000000</color>
+    <color name="accent_color">#0073EF</color>
+    
+    <color name="secondary_color_settings">#9C9C9C</color>
+    
+    <color name="hint_text">#BDBDBD</color>
+    
+    <color name="primary_color_dark">#424242</color>
 </resources>

@@ -431,7 +431,7 @@ public class GeneralSettingsActivity extends Activity {
 		getDownload.setBackgroundResource(0);
 		mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
 				Environment.DIRECTORY_DOWNLOADS);
-		int padding = Utils.convertToDensityPixels(this, 10);
+		int padding = Utils.convertDpiToPixels(this, 10);
 
 		LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);

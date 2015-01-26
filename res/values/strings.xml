@@ -193,4 +193,6 @@
     <string name="settings_privacy">Privacy Settings</string>
     <string name="settings_about">About</string>
     <string name="settings_about_explain">Details about version, author and license.</string>
+    <string name="close_tab">Close tab</string>
+    <string name="close_all_tabs">Close all tabs</string>
 </resources>

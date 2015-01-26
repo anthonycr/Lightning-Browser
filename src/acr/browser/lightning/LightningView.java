@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
@@ -52,6 +53,8 @@ public class LightningView {
 	private boolean isForegroundTab;
 	private IntentUtils mIntentUtils;
 	private Paint mPaint = new Paint();
+	private boolean mTextReflow = false;
+	private boolean mInvertPage = false;
 	private static final float[] mNegativeColorArray = { -1.0f, 0, 0, 0, 255, // red
 			0, -1.0f, 0, 0, 255, // green
 			0, 0, -1.0f, 0, 255, // blue
@@ -318,10 +321,13 @@ public class LightningView {
 		}
 
 		if (mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW, false)) {
+			mTextReflow = true;
 			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
-		} else if (API >= android.os.Build.VERSION_CODES.KITKAT) {
-			mSettings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+			if (API >= android.os.Build.VERSION_CODES.KITKAT) {
+				mSettings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+			}
 		} else {
+			mTextReflow = false;
 			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 		}
 
@@ -367,6 +373,8 @@ public class LightningView {
 		if (API < 19) {
 			settings.setDatabasePath(context.getCacheDir() + "/databases");
 		}
+		mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		//TODO
 		settings.setDomStorageEnabled(true);
 		settings.setAppCacheEnabled(true);
 		settings.setAppCachePath(context.getCacheDir().toString());
@@ -437,16 +445,20 @@ public class LightningView {
 	}
 
 	public void setColorMode(int mode) {
+		mInvertPage = false;
 		switch (mode) {
 			case 0:
 				mPaint.setColorFilter(null);
 				setNormalRendering();
+				mInvertPage = false;
 				break;
 			case 1:
 				ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
 						mNegativeColorArray);
 				mPaint.setColorFilter(filterInvert);
 				setHardwareRendering();
+
+				mInvertPage = true;
 				break;
 			case 2:
 				ColorMatrix cm = new ColorMatrix();
@@ -465,9 +477,12 @@ public class LightningView {
 				ColorMatrixColorFilter filterInvertGray = new ColorMatrixColorFilter(concat);
 				mPaint.setColorFilter(filterInvertGray);
 				setHardwareRendering();
+				
+				mInvertPage = true;
 				break;
 
 		}
+		
 	}
 
 	public synchronized void pauseTimers() {
@@ -716,6 +731,7 @@ public class LightningView {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			if (view.isShown()) {
+				mBrowserController.updateUrl(url, true);
 				view.invalidate();
 			}
 			if (view.getTitle() == null || view.getTitle().isEmpty()) {
@@ -723,15 +739,19 @@ public class LightningView {
 			} else {
 				mTitle.setTitle(view.getTitle());
 			}
+			if(API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage){
+				view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
+			}
 			mBrowserController.update();
 		}
 
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			if (isShown()) {
-				mBrowserController.updateUrl(url);
+				mBrowserController.updateUrl(url, false);
 				mBrowserController.showActionBar();
 			}
+			
 			mTitle.setFavicon(mWebpageBitmap);
 			mBrowserController.update();
 		}
@@ -779,11 +799,24 @@ public class LightningView {
 			alert.show();
 
 		}
-
+		boolean isRunning = false;
 		@Override
-		public void onScaleChanged(WebView view, float oldScale, float newScale) {
-			if (view.isShown()) {
+		public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
+			if (view.isShown() && mTextReflow && API >= android.os.Build.VERSION_CODES.KITKAT) {
 				view.invalidate();
+				if(isRunning)
+					return;
+				isRunning = view.postDelayed(new Runnable(){
+
+					@Override
+					public void run() {
+						//TODO
+						view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
+						isRunning = false;
+					}
+					
+				}, 100);
+				
 			}
 		}
 
@@ -1045,9 +1078,10 @@ public class LightningView {
 		}
 
 		public void setFavicon(Bitmap favicon) {
-			mFavicon = favicon;
-			if (mFavicon == null) {
+			if (favicon == null) {
 				mFavicon = mDefaultIcon;
+			} else {
+				mFavicon = Utils.padFavicon(favicon, mActivity);
 			}
 		}
 
@@ -1061,9 +1095,11 @@ public class LightningView {
 
 		public void setTitleAndFavicon(String title, Bitmap favicon) {
 			mTitle = title;
-			mFavicon = favicon;
-			if (mFavicon == null) {
+			
+			if (favicon == null) {
 				mFavicon = mDefaultIcon;
+			} else {
+				mFavicon = Utils.padFavicon(favicon, mActivity);
 			}
 		}
 
@@ -1074,6 +1110,7 @@ public class LightningView {
 		public Bitmap getFavicon() {
 			return mFavicon;
 		}
+		
 	}
 
 	private class CustomGestureListener extends SimpleOnGestureListener {
