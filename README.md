@@ -6,6 +6,11 @@
 
 * [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
 
+####Master Branch
+* [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
+
+####Dev Branch
+* [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=dev)](https://travis-ci.org/anthonycr/Lightning-Browser)
 
 ####Features
 * Bookmarks
