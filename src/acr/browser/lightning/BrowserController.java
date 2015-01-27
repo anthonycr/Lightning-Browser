@@ -41,6 +41,8 @@ public interface BrowserController {
 	public void hideActionBar();
 
 	public void showActionBar();
+	
+	public void toggleActionBar();
 
 	public void longClickPage(String url);
 

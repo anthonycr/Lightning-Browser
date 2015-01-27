@@ -18,8 +18,6 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/listChoiceBackgroundIndicator"
-        android:clickable="false"
         android:orientation="vertical"
         android:paddingLeft="5dp" >
 
@@ -28,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:maxLines="1"
             android:textColor="#000000"
             android:textSize="18sp" />
@@ -38,7 +35,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:maxLines="1"
             android:textColor="#6a6a6a" />
     </LinearLayout>

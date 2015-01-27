@@ -48,6 +48,8 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
@@ -101,6 +103,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private boolean mFullScreen;
 	private FrameLayout mBrowserFrame;
 	private LinearLayout mPageLayout;
+	private LinearLayout mUiLayout;
 	private FullscreenHolder mFullscreenContainer;
 	private CustomViewCallback mCustomViewCallback;
 	private final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
@@ -166,6 +169,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
 		mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
 		mPageLayout = (LinearLayout) findViewById(R.id.main_layout);
+		mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
 		mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
 		// mProgressBar.setVisibility(View.GONE);
 		// TODO
@@ -715,6 +719,18 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		}
 		mFullScreen = mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false);
+		if(mFullScreen){
+			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
+				mUiLayout.removeView(mToolbarLayout);
+				mBrowserFrame.addView(mToolbarLayout);
+				mToolbarLayout.bringToFront();
+			}
+		} else {
+			if (mBrowserFrame.findViewById(R.id.toolbar_layout) != null) {
+				mBrowserFrame.removeView(mToolbarLayout);
+				mUiLayout.addView(mToolbarLayout, 0);
+			}
+		}
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -2335,6 +2351,47 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		 * if (mActionBar.isShowing() && mFullScreen) { mActionBar.hide(); }
 		 */
 		// TODO
+		if (mFullScreen) {
+			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
+				mUiLayout.removeView(mToolbarLayout);
+				mBrowserFrame.addView(mToolbarLayout);
+				mToolbarLayout.bringToFront();
+				Log.i(Constants.TAG, "Move view to browser frame");
+			}
+			if (mToolbarLayout.getVisibility() != View.GONE) {
+				
+				Animation hide = AnimationUtils.loadAnimation(mContext, R.anim.slide_up);
+				hide.setAnimationListener(new AnimationListener(){
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						mToolbarLayout.setVisibility(View.GONE);
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+					
+				});
+				mToolbarLayout.startAnimation(hide);
+				Log.i(Constants.TAG, "Hide");
+			}
+		}
+	}
+	
+	@Override
+	public void toggleActionBar(){
+		if (mFullScreen) {
+			if (mToolbarLayout.getVisibility() != View.VISIBLE) {
+				showActionBar();
+			} else {
+				hideActionBar();
+			}
+		}
 	}
 
 	@Override
@@ -2346,6 +2403,37 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		 * if (!mActionBar.isShowing() && mFullScreen) { mActionBar.show(); }
 		 */
 		// TODO
+		if (mFullScreen) {
+			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
+				mUiLayout.removeView(mToolbarLayout);
+				mBrowserFrame.addView(mToolbarLayout);
+				mToolbarLayout.bringToFront();
+				Log.i(Constants.TAG, "Move view to browser frame");
+			}
+			if (mToolbarLayout.getVisibility() != View.VISIBLE) {
+				Animation show = AnimationUtils.loadAnimation(mContext, R.anim.slide_down);
+				show.setAnimationListener(new AnimationListener(){
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						mToolbarLayout.setVisibility(View.VISIBLE);
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+				
+				});
+				mToolbarLayout.startAnimation(show);
+				Log.i(Constants.TAG, "Show");
+			}
+
+		}
+
 	}
 
 	@Override

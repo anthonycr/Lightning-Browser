@@ -22,7 +22,6 @@ import android.widget.TextView;
 public class AboutSettingsActivity extends Activity {
 
 	// mPreferences variables
-	private static final int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences mPreferences;
 	private int mEasterEggCounter;
 	private Context mContext;
@@ -116,7 +115,7 @@ public class AboutSettingsActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri
-						.parse("http://twitter.com/ACRDevelopment"), mContext, MainActivity.class));
+						.parse("http://twitter.com/RestainoAnthony"), mContext, MainActivity.class));
 				finish();
 			}
 

@@ -17,6 +17,7 @@ import android.graphics.Paint;
 import android.net.MailTo;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Message;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
@@ -121,7 +122,11 @@ public class LightningView {
 					mLocation = mY;
 				} else if (mAction == MotionEvent.ACTION_UP) {
 					if ((mY - mLocation) > 10) {
-						mBrowserController.showActionBar();
+						if (mWebView.getScrollY() != 0) {
+							mBrowserController.showActionBar();
+						} else {
+							mBrowserController.toggleActionBar();
+						}
 					} else if ((mY - mLocation) < -10) {
 						mBrowserController.hideActionBar();
 					}
@@ -373,8 +378,11 @@ public class LightningView {
 		if (API < 19) {
 			settings.setDatabasePath(context.getCacheDir() + "/databases");
 		}
-		mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-		//TODO
+		if (API >= Build.VERSION_CODES.LOLLIPOP) {
+			mWebView.getSettings()
+					.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		}
+		// TODO
 		settings.setDomStorageEnabled(true);
 		settings.setAppCacheEnabled(true);
 		settings.setAppCachePath(context.getCacheDir().toString());
@@ -477,12 +485,12 @@ public class LightningView {
 				ColorMatrixColorFilter filterInvertGray = new ColorMatrixColorFilter(concat);
 				mPaint.setColorFilter(filterInvertGray);
 				setHardwareRendering();
-				
+
 				mInvertPage = true;
 				break;
 
 		}
-		
+
 	}
 
 	public synchronized void pauseTimers() {
@@ -739,7 +747,7 @@ public class LightningView {
 			} else {
 				mTitle.setTitle(view.getTitle());
 			}
-			if(API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage){
+			if (API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage) {
 				view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
 			}
 			mBrowserController.update();
@@ -751,7 +759,7 @@ public class LightningView {
 				mBrowserController.updateUrl(url, false);
 				mBrowserController.showActionBar();
 			}
-			
+
 			mTitle.setFavicon(mWebpageBitmap);
 			mBrowserController.update();
 		}
@@ -799,24 +807,26 @@ public class LightningView {
 			alert.show();
 
 		}
+
 		boolean isRunning = false;
+
 		@Override
 		public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
 			if (view.isShown() && mTextReflow && API >= android.os.Build.VERSION_CODES.KITKAT) {
 				view.invalidate();
-				if(isRunning)
+				if (isRunning)
 					return;
-				isRunning = view.postDelayed(new Runnable(){
+				isRunning = view.postDelayed(new Runnable() {
 
 					@Override
 					public void run() {
-						//TODO
+						// TODO
 						view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
 						isRunning = false;
 					}
-					
+
 				}, 100);
-				
+
 			}
 		}
 
@@ -1095,7 +1105,7 @@ public class LightningView {
 
 		public void setTitleAndFavicon(String title, Bitmap favicon) {
 			mTitle = title;
-			
+
 			if (favicon == null) {
 				mFavicon = mDefaultIcon;
 			} else {
@@ -1110,30 +1120,29 @@ public class LightningView {
 		public Bitmap getFavicon() {
 			return mFavicon;
 		}
-		
+
 	}
 
 	private class CustomGestureListener extends SimpleOnGestureListener {
 
 		/**
-		 * Without this, onLongPress is not called when user is zooming
-		 * using two fingers, but is when using only one.
-		 *
-		 * The required behaviour is to not trigger this when the
-		 * user is zooming, it shouldn't matter how much fingers
-		 * the user's using.
+		 * Without this, onLongPress is not called when user is zooming using
+		 * two fingers, but is when using only one.
+		 * 
+		 * The required behaviour is to not trigger this when the user is
+		 * zooming, it shouldn't matter how much fingers the user's using.
 		 */
 		private boolean mCanTriggerLongPress = true;
 
 		@Override
 		public void onLongPress(MotionEvent e) {
-			if(mCanTriggerLongPress)
+			if (mCanTriggerLongPress)
 				mBrowserController.onLongPress();
 		}
 
 		/**
-		 * Is called when the user is swiping after the doubletap,
-		 * which in our case means that he is zooming.
+		 * Is called when the user is swiping after the doubletap, which in our
+		 * case means that he is zooming.
 		 */
 		@Override
 		public boolean onDoubleTapEvent(MotionEvent e) {
@@ -1142,8 +1151,8 @@ public class LightningView {
 		}
 
 		/**
-		 * Is called when something is starting being pressed,
-		 * always before onLongPress.
+		 * Is called when something is starting being pressed, always before
+		 * onLongPress.
 		 */
 		@Override
 		public void onShowPress(MotionEvent e) {
