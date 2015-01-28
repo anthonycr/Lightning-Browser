@@ -4,7 +4,6 @@
 package acr.browser.lightning;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +15,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends ActionBarActivity {
 
 	private static int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences.Editor mEditPrefs;
@@ -44,7 +45,7 @@ public class SettingsActivity extends Activity {
 		mActivity = this;
 		init();
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		finish();
@@ -53,13 +54,13 @@ public class SettingsActivity extends Activity {
 
 	@SuppressLint("NewApi")
 	public void init() {
-		// mPreferences storage
-		ActionBar actionBar = getActionBar();
-		if (actionBar != null) {
-			actionBar.setHomeButtonEnabled(true);
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
+		// set up ActionBar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		// mPreferences storage
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

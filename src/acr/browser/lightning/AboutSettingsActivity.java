@@ -3,8 +3,6 @@
  */
 package acr.browser.lightning;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +10,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,7 +19,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AboutSettingsActivity extends Activity {
+public class AboutSettingsActivity extends ActionBarActivity {
 
 	// mPreferences variables
 	private SharedPreferences mPreferences;
@@ -31,11 +31,11 @@ public class AboutSettingsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about_settings);
 
-		ActionBar actionBar = getActionBar();
-		if (actionBar != null) {
-			actionBar.setHomeButtonEnabled(true);
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
+		// set up ActionBar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {

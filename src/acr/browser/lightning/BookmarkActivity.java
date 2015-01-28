@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -13,13 +11,15 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class BookmarkActivity extends Activity implements OnClickListener {
+public class BookmarkActivity extends ActionBarActivity implements OnClickListener {
 
 	private BookmarkManager mBookmarkManager;
 	private boolean mSystemBrowser;
@@ -32,14 +32,13 @@ public class BookmarkActivity extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.bookmark_activity);
 
-		ActionBar actionBar = getActionBar();
-		if (actionBar != null) {
-			actionBar.setHomeButtonEnabled(true);
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
+		// set up ActionBar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		LinearLayout exportBackup = (LinearLayout) findViewById(R.id.exportBackup);
 		LinearLayout importBackup = (LinearLayout) findViewById(R.id.importBackup);
