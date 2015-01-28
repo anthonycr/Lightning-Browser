@@ -641,8 +641,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		try {
 			String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
 			int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
-			WebkitProxy.setProxy("acr.browser.lightning.BrowserApp", getApplicationContext(), host,
-					port);
+			WebkitProxy.setProxy(this.getPackageName() + ".BrowserApp", getApplicationContext(),
+					host, port);
 		} catch (Exception e) {
 			Log.d(Constants.TAG, "error enabling web proxying", e);
 		}
@@ -719,7 +719,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		}
 		mFullScreen = mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false);
-		if(mFullScreen){
+		if (mFullScreen) {
 			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
 				mUiLayout.removeView(mToolbarLayout);
 				mBrowserFrame.addView(mToolbarLayout);
@@ -2359,9 +2359,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				Log.i(Constants.TAG, "Move view to browser frame");
 			}
 			if (mToolbarLayout.getVisibility() != View.GONE) {
-				
+
 				Animation hide = AnimationUtils.loadAnimation(mContext, R.anim.slide_up);
-				hide.setAnimationListener(new AnimationListener(){
+				hide.setAnimationListener(new AnimationListener() {
 
 					@Override
 					public void onAnimationStart(Animation animation) {
@@ -2375,16 +2375,16 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					@Override
 					public void onAnimationRepeat(Animation animation) {
 					}
-					
+
 				});
 				mToolbarLayout.startAnimation(hide);
 				Log.i(Constants.TAG, "Hide");
 			}
 		}
 	}
-	
+
 	@Override
-	public void toggleActionBar(){
+	public void toggleActionBar() {
 		if (mFullScreen) {
 			if (mToolbarLayout.getVisibility() != View.VISIBLE) {
 				showActionBar();
@@ -2412,7 +2412,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			}
 			if (mToolbarLayout.getVisibility() != View.VISIBLE) {
 				Animation show = AnimationUtils.loadAnimation(mContext, R.anim.slide_down);
-				show.setAnimationListener(new AnimationListener(){
+				show.setAnimationListener(new AnimationListener() {
 
 					@Override
 					public void onAnimationStart(Animation animation) {
@@ -2426,7 +2426,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					@Override
 					public void onAnimationRepeat(Animation animation) {
 					}
-				
+
 				});
 				mToolbarLayout.startAnimation(show);
 				Log.i(Constants.TAG, "Show");
