@@ -1,6 +1,6 @@
 <!-- Copyright 2014 ACR Development -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +19,24 @@
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
-            <include layout="@layout/toolbar" />
+            <LinearLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:elevation="2dp"
+                android:orientation="vertical" >
+
+                <include layout="@layout/toolbar" />
+
+                <acr.browser.lightning.AnimatedProgressBar
+                    android:id="@+id/progress_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    custom:backgroundColor="?progressBackgroundColor"
+                    custom:bidirectionalAnimate="false"
+                    custom:progressColor="?colorAccent" />
+            </LinearLayout>
 
             <include layout="@layout/browser_content" />
 

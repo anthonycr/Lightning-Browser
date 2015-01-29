@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    
+    <include layout="@layout/toolbar" />
 
     <LinearLayout
         android:id="@+id/browserLicense"
@@ -30,14 +32,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/light" />
     </LinearLayout>
-    
+
     <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="#cdcdcd" />
-    
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#cdcdcd" />
+
     <LinearLayout
         android:id="@+id/licenseAOSP"
         android:layout_width="match_parent"
@@ -64,13 +66,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/light" />
     </LinearLayout>
+
     <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="#cdcdcd" />
-    
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#cdcdcd" />
+
     <LinearLayout
         android:id="@+id/licenseHosts"
         android:layout_width="match_parent"
@@ -97,12 +100,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/light" />
     </LinearLayout>
+
     <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="#cdcdcd" />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#cdcdcd" />
+
     <LinearLayout
         android:id="@+id/licenseOrbot"
         android:layout_width="match_parent"
@@ -129,10 +134,12 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/light" />
     </LinearLayout>
+
     <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="#cdcdcd" />
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#cdcdcd" />
+
 </LinearLayout>
