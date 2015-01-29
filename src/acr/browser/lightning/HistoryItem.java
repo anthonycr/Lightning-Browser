@@ -67,7 +67,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 	}
 
 	public void setFolder(String folder) {
-		mFolder = folder;
+		mFolder = (folder == null) ? "" : folder;
 	}
 
 	public void setOrder(int order) {
@@ -93,7 +93,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
 	// setting name
 	public void setUrl(String url) {
-		this.mUrl = url;
+		this.mUrl = (url == null) ? "" : url;
 	}
 
 	// getting phone number
@@ -103,7 +103,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
 	// setting phone number
 	public void setTitle(String title) {
-		this.mTitle = title;
+		this.mTitle = (title == null) ? "" : title;
 	}
 
 	@Override

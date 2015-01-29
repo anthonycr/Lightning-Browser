@@ -429,10 +429,8 @@ public class BookmarkManager {
 	private class SortIgnoreCase implements Comparator<HistoryItem> {
 
 		public int compare(HistoryItem o1, HistoryItem o2) {
-			if (o1 == null || o2 == null) {
+			if (o1 == null || o2 == null || o1.getTitle() == null || o2.getTitle() == null) {
 				return 0;
-			} else if (o1.getTitle() == null || o2.getTitle() == null) {
-				return o1.getTitle().compareTo(o2.getTitle());
 			}
 			return o1.getTitle().toLowerCase(Locale.getDefault())
 					.compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
