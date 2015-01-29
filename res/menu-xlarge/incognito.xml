@@ -19,6 +19,7 @@
         android:visible="true">
     </item>
     <item android:id="@+id/action_new_tab" android:title="@string/action_new_tab"></item>
+    <item android:id="@+id/action_share" android:title="@string/action_share" />
     <item android:id="@+id/action_find" android:title="@string/action_find"></item>
     <item android:id="@+id/action_history" android:title="@string/action_history" ></item>    
     <item android:id="@+id/action_bookmarks" android:title="@string/action_bookmarks" ></item>
