@@ -26,7 +26,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class SettingsActivity extends ActionBarActivity {
@@ -94,24 +93,12 @@ public class SettingsActivity extends ActionBarActivity {
 		boolean imagesBool = mPreferences.getBoolean(PreferenceConstants.BLOCK_IMAGES, false);
 		boolean enableJSBool = mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT, true);
 
-		RelativeLayout r1, r2, r3, r4, r5;
-		r1 = (RelativeLayout) findViewById(R.id.setR1);
-		r2 = (RelativeLayout) findViewById(R.id.setR2);
-		r3 = (RelativeLayout) findViewById(R.id.setR3);
-		r4 = (RelativeLayout) findViewById(R.id.setR4);
-		r5 = (RelativeLayout) findViewById(R.id.setR5);
+		CheckBox flash = (CheckBox) findViewById(R.id.cbFlash);
+		CheckBox adblock = (CheckBox) findViewById(R.id.cbAdblock);
+		CheckBox images = (CheckBox) findViewById(R.id.cbImageBlock);
+		CheckBox enablejs = (CheckBox) findViewById(R.id.cbJavascript);
+		CheckBox orbot = (CheckBox) findViewById(R.id.cbOrbot);
 
-		Switch flash = new Switch(this);
-		Switch adblock = new Switch(this);
-		Switch images = new Switch(this);
-		Switch enablejs = new Switch(this);
-		Switch orbot = new Switch(this);
-
-		r1.addView(flash);
-		r2.addView(adblock);
-		r3.addView(images);
-		r4.addView(enablejs);
-		r5.addView(orbot);
 		images.setChecked(imagesBool);
 		enablejs.setChecked(enableJSBool);
 		if (flashNum > 0) {
@@ -122,8 +109,8 @@ public class SettingsActivity extends ActionBarActivity {
 		adblock.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false));
 		orbot.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false));
 
-		initSwitch(flash, adblock, images, enablejs, orbot);
-		clickListenerForSwitches(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS, 
+		initCheckBox(flash, adblock, images, enablejs, orbot);
+		clickListenerForCheckBoxes(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS, 
 				layoutOrbot, flash, adblock, images, enablejs, orbot);
 
 		RelativeLayout general = (RelativeLayout) findViewById(R.id.layoutGeneral);
@@ -139,10 +126,10 @@ public class SettingsActivity extends ActionBarActivity {
 		about(about);
 	}
 
-	public void clickListenerForSwitches(RelativeLayout layoutFlash, RelativeLayout layoutBlockAds,
+	public void clickListenerForCheckBoxes(RelativeLayout layoutFlash, RelativeLayout layoutBlockAds,
 			RelativeLayout layoutImages, RelativeLayout layoutEnableJS, RelativeLayout layoutOrbot,
-			final Switch flash, final Switch adblock, final Switch images, final Switch enablejs, 
-			final Switch orbot) {
+			final CheckBox flash, final CheckBox adblock, final CheckBox images, final CheckBox enablejs, 
+			final CheckBox orbot) {
 		layoutFlash.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -195,8 +182,8 @@ public class SettingsActivity extends ActionBarActivity {
 		});
 	}
 
-	public void initSwitch(Switch flash, Switch adblock, Switch images, Switch enablejs,
-			Switch orbot) {
+	public void initCheckBox(CheckBox flash, CheckBox adblock, CheckBox images, CheckBox enablejs,
+			CheckBox orbot) {
 		flash.setEnabled(API < 19);
 		flash.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 

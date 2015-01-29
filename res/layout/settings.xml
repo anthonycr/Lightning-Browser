@@ -20,7 +20,7 @@
                 android:id="@+id/layoutFlash"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -32,32 +32,31 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="60dp"
                     android:text="@string/flash"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <RelativeLayout
-                    android:id="@+id/setR1"
+                <CheckBox
+                    android:id="@+id/cbFlash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" >
-                </RelativeLayout>
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutAdBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -68,32 +67,31 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="60dp"
                     android:text="@string/block_ads"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <RelativeLayout
-                    android:id="@+id/setR2"
+                <CheckBox
+                    android:id="@+id/cbAdblock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" >
-                </RelativeLayout>
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -105,32 +103,31 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="60dp"
                     android:text="@string/block"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <RelativeLayout
-                    android:id="@+id/setR3"
+                <CheckBox
+                    android:id="@+id/cbImageBlock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" >
-                </RelativeLayout>
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutEnableJS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -142,32 +139,31 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="60dp"
                     android:text="@string/java"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <RelativeLayout
-                    android:id="@+id/setR4"
+                <CheckBox
+                    android:id="@+id/cbJavascript"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" >
-                </RelativeLayout>
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutUseOrbot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -178,32 +174,31 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="60dp"
                     android:text="@string/enable_orbot"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <RelativeLayout
-                    android:id="@+id/setR5"
+                <CheckBox
+                    android:id="@+id/cbOrbot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" >
-                </RelativeLayout>
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutGeneral"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -214,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/settings_general"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -222,15 +217,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutBookmarks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -240,7 +235,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/bookmark_settings"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -248,15 +243,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutDisplay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -267,7 +262,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/settings_display"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -275,15 +270,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutPrivacy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -294,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/settings_privacy"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -302,15 +297,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutAdvanced"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -321,23 +316,23 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/settings_advanced"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutAbout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -353,7 +348,7 @@
                         android:id="@+id/textView11"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="@string/settings_about"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -361,7 +356,7 @@
                         android:id="@+id/isImportAvailable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="@string/settings_about_explain"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/light" />
@@ -371,8 +366,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
         </LinearLayout>
     </ScrollView>

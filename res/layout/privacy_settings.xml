@@ -20,7 +20,7 @@
                 android:id="@+id/rLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/location"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -48,15 +48,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rSavePasswords"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -73,7 +73,7 @@
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/password"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -82,7 +82,7 @@
                         android:id="@+id/textView3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/recommended"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -100,15 +100,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rClearCacheExit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -120,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/cache"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -136,15 +136,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rClearHistoryExit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/clear_history_exit"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -171,15 +171,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rClearCookiesExit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -190,7 +190,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/clear_cookies_exit"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -206,15 +206,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rBrowserHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -230,7 +230,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/sync_history"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -239,7 +239,7 @@
                         android:id="@+id/isBrowserAvailable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="text"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/light" />
@@ -256,15 +256,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rClearCache"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -274,7 +274,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/clear_cache"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -282,15 +282,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rClearHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -300,7 +300,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/history"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -308,15 +308,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rClearCookies"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -326,7 +326,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/clear_cookies"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -334,8 +334,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
         </LinearLayout>
     </ScrollView>

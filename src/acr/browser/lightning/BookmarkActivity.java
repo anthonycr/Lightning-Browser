@@ -32,7 +32,7 @@ public class BookmarkActivity extends ActionBarActivity implements OnClickListen
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.bookmark_activity);
+		setContentView(R.layout.bookmark_settings);
 
 		// set up ActionBar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

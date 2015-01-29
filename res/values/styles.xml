@@ -4,6 +4,7 @@
     <style name="Theme.SettingsTheme" parent="Theme.AppCompat.Light">
 
         <!-- customize the color palette -->
+        <item name="toolbarSettingsBackground">@drawable/toolbar_elevate</item>
         <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/secondary_color_settings</item>

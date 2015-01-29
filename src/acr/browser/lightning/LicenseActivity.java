@@ -3,10 +3,11 @@
  */
 package acr.browser.lightning;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -15,14 +16,16 @@ import android.view.View;
  *under which this code is licensed. Unless you plan on providing other attribution in the app to 
  *the original source in another visible way, it is advised against the removal of this Activity.
  */
-public class LicenseActivity extends Activity implements View.OnClickListener {
+public class LicenseActivity extends ActionBarActivity implements View.OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.license_activity);
-		getActionBar().setHomeButtonEnabled(true);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		findViewById(R.id.browserLicense).setOnClickListener(this);
 		findViewById(R.id.licenseAOSP).setOnClickListener(this);
 		findViewById(R.id.licenseHosts).setOnClickListener(this);

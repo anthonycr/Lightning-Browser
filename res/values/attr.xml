@@ -9,6 +9,7 @@
     <attr name="listBackground" format="reference|color" />
     <attr name="progressBackgroundColor" format="color" />
     <attr name="searchBackground" format="reference|color" />
+    <attr name="toolbarSettingsBackground" format="reference|color" />
 
     <declare-styleable name="AnimatedProgressBar">
         <attr name="progressColor" format="color" />

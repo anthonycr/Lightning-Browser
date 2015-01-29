@@ -20,7 +20,7 @@
                 android:id="@+id/rHideStatusBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/fullScreenOption"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -47,15 +47,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rFullScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/fullscreen"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -82,15 +82,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rWideViewPort"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -107,7 +107,7 @@
                         android:id="@+id/textView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/wideViewPort"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -115,7 +115,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/recommended"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -133,15 +133,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rOverView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -158,7 +158,7 @@
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/overViewMode"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -166,7 +166,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/recommended"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -184,15 +184,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rTextReflow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -203,7 +203,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="30dp"
                     android:text="@string/reflow"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -219,15 +219,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rTextSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -237,7 +237,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="16dp"
                     android:text="@string/size"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </RelativeLayout>
@@ -245,8 +245,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
         </LinearLayout>
     </ScrollView>

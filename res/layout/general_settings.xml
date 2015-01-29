@@ -20,7 +20,7 @@
                 android:id="@+id/layoutUserAgent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -36,7 +36,7 @@
                         android:id="@+id/textView4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="@string/agent"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -44,7 +44,7 @@
                         android:id="@+id/agentText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="Small Text"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/light" />
@@ -54,15 +54,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutDownload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -78,7 +78,7 @@
                         android:id="@+id/textView5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="@string/download"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -86,7 +86,7 @@
                         android:id="@+id/downloadText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="Small Text"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/light" />
@@ -96,15 +96,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutHomepage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -120,7 +120,7 @@
                         android:id="@+id/textView6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="@string/home"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -128,7 +128,7 @@
                         android:id="@+id/homepageText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="Small Text"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/light" />
@@ -138,15 +138,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/layoutSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -161,7 +161,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="@string/search"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -169,7 +169,7 @@
                         android:id="@+id/searchText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:text="Small Text"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/light" />
@@ -179,15 +179,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
 
             <RelativeLayout
                 android:id="@+id/rGoogleSuggestions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/listChoiceBackgroundIndicator"
+                android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
@@ -203,7 +203,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/google_suggestions"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -211,7 +211,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="16dp"
                         android:paddingRight="30dp"
                         android:text="@string/powered_by_google"
                         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -229,8 +229,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:background="#cdcdcd" />
         </LinearLayout>
     </ScrollView>
