@@ -63,7 +63,7 @@ public class AdBlock {
 	}
 
 	public boolean isAd(String url) {
-		if (!mBlockAds) {
+		if (!mBlockAds || url == null) {
 			return false;
 		}
 

@@ -47,8 +47,7 @@ public class BookmarkManager {
 	 */
 	public synchronized boolean addBookmark(HistoryItem item) {
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
-
-		if (mBookmarkMap.containsKey(item.getUrl())) {
+		if (item.getUrl() == null || mBookmarkMap.containsKey(item.getUrl())) {
 			return false;
 		}
 		try {
@@ -80,7 +79,7 @@ public class BookmarkManager {
 		try {
 			BufferedWriter bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, true));
 			for (HistoryItem item : list) {
-				if (!mBookmarkMap.containsKey(item.getUrl())) {
+				if (item.getUrl() != null && !mBookmarkMap.containsKey(item.getUrl())) {
 					JSONObject object = new JSONObject();
 					object.put(TITLE, item.getTitle());
 					object.put(URL, item.getUrl());
@@ -106,6 +105,9 @@ public class BookmarkManager {
 	 */
 	public synchronized boolean deleteBookmark(String url) {
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
+		if (url == null) {
+			return false;
+		}
 		mBookmarkMap.remove(url);
 		list = getBookmarks(false);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
@@ -427,6 +429,11 @@ public class BookmarkManager {
 	private class SortIgnoreCase implements Comparator<HistoryItem> {
 
 		public int compare(HistoryItem o1, HistoryItem o2) {
+			if (o1 == null || o2 == null) {
+				return 0;
+			} else if (o1.getTitle() == null || o2.getTitle() == null) {
+				return o1.getTitle().compareTo(o2.getTitle());
+			}
 			return o1.getTitle().toLowerCase(Locale.getDefault())
 					.compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
 		}
