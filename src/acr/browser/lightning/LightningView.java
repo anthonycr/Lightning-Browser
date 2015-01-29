@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.webkit.*;
+import android.webkit.CookieManager;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.widget.EditText;
@@ -360,6 +361,10 @@ public class LightningView {
 			case 5:
 				mSettings.setTextZoom(50);
 				break;
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
+					!mPreferences.getBoolean(PreferenceConstants.BLOCK_THIRD_PARTY, false));
 		}
 	}
 

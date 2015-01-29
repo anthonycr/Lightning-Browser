@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -1429,10 +1430,15 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		Utils.trimCache(this);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void clearCookies() {
 		CookieManager c = CookieManager.getInstance();
-		CookieSyncManager.createInstance(this);
-		c.removeAllCookie();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			c.removeAllCookies(null);
+		} else {
+			CookieSyncManager.createInstance(this);
+			c.removeAllCookie();
+		}
 	}
 
 	@Override

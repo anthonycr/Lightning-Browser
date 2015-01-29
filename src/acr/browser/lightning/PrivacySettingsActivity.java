@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,7 +31,8 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 	private static final int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences mPreferences;
 	private SharedPreferences.Editor mEditPrefs;
-	private CheckBox cbLocation, cbSavePasswords, cbClearCacheExit, cbClearHistoryExit, cbClearCookiesExit;
+	private CheckBox cbLocation, cbSavePasswords, cbClearCacheExit, cbClearHistoryExit,
+			cbClearCookiesExit, cbThirdParty;
 	private Context mContext;
 	private boolean mSystemBrowser;
 	private Handler messageHandler;
@@ -41,10 +43,10 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 		setContentView(R.layout.privacy_settings);
 
 		// set up ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
@@ -69,7 +71,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 
 	private void initialize() {
 
-		RelativeLayout rLocation, rSavePasswords, rClearCacheExit, rClearHistoryExit, rClearCookiesExit, rClearCache, rClearHistory, rClearCookies;
+		RelativeLayout rLocation, rSavePasswords, rClearCacheExit, rClearHistoryExit, rClearCookiesExit, rClearCache, rClearHistory, rClearCookies, rThirdParty;
 
 		rLocation = (RelativeLayout) findViewById(R.id.rLocation);
 		rSavePasswords = (RelativeLayout) findViewById(R.id.rSavePasswords);
@@ -79,20 +81,28 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 		rClearCache = (RelativeLayout) findViewById(R.id.rClearCache);
 		rClearHistory = (RelativeLayout) findViewById(R.id.rClearHistory);
 		rClearCookies = (RelativeLayout) findViewById(R.id.rClearCookies);
+		rThirdParty = (RelativeLayout) findViewById(R.id.rThirdParty);
 
 		cbLocation = (CheckBox) findViewById(R.id.cbLocation);
 		cbSavePasswords = (CheckBox) findViewById(R.id.cbSavePasswords);
 		cbClearCacheExit = (CheckBox) findViewById(R.id.cbClearCacheExit);
 		cbClearHistoryExit = (CheckBox) findViewById(R.id.cbClearHistoryExit);
 		cbClearCookiesExit = (CheckBox) findViewById(R.id.cbClearCookiesExit);
+		cbThirdParty = (CheckBox) findViewById(R.id.cbThirdParty);
 
 		cbLocation.setChecked(mPreferences.getBoolean(PreferenceConstants.LOCATION, false));
-		cbSavePasswords.setChecked(mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, true));
-		cbClearCacheExit.setChecked(mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false));
+		cbSavePasswords.setChecked(mPreferences
+				.getBoolean(PreferenceConstants.SAVE_PASSWORDS, true));
+		cbClearCacheExit.setChecked(mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
+				false));
 		cbClearHistoryExit.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.CLEAR_HISTORY_EXIT, false));
 		cbClearCookiesExit.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.CLEAR_COOKIES_EXIT, false));
+		cbThirdParty.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_THIRD_PARTY,
+				false));
+
+		cbThirdParty.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
 		rLocation(rLocation);
 		rSavePasswords(rSavePasswords);
@@ -102,11 +112,13 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 		rClearCache(rClearCache);
 		rClearHistory(rClearHistory);
 		rClearCookies(rClearCookies);
+		rThirdParty(rThirdParty);
 		cbLocation(cbLocation);
 		cbSavePasswords(cbSavePasswords);
 		cbClearCacheExit(cbClearCacheExit);
 		cbClearHistoryExit(cbClearHistoryExit);
 		cbClearCookiesExit(cbClearCookiesExit);
+		cbThirdParty(cbThirdParty);
 
 		TextView syncHistory = (TextView) findViewById(R.id.isBrowserAvailable);
 
@@ -218,6 +230,18 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 		});
 	}
 
+	private void cbThirdParty(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_THIRD_PARTY, isChecked);
+				mEditPrefs.commit();
+			}
+
+		});
+	}
+
 	private void cbClearCookiesExit(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -261,6 +285,22 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				cbClearCacheExit.setChecked(!cbClearCacheExit.isChecked());
+			}
+
+		});
+	}
+
+	private void rThirdParty(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					cbThirdParty.setChecked(!cbThirdParty.isChecked());
+				} else {
+					Utils.showToast(mContext, mContext.getString(R.string.available_lollipop));
+				}
 			}
 
 		});
@@ -409,10 +449,16 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 		messageHandler.sendEmptyMessage(1);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void clearCookies() {
 		CookieManager c = CookieManager.getInstance();
-		CookieSyncManager.createInstance(this);
-		c.removeAllCookie();
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			c.removeAllCookies(null);
+		} else {
+			CookieSyncManager.createInstance(this);
+			c.removeAllCookie();
+		}
 		messageHandler.sendEmptyMessage(2);
 	}
 }

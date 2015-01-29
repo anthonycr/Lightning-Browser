@@ -2,6 +2,7 @@ package acr.browser.lightning;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.webkit.CookieManager;
@@ -19,13 +20,16 @@ public class MainActivity extends BrowserActivity {
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void updateCookiePreference() {
 		if (mPreferences == null) {
 			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		}
 		mCookieManager = CookieManager.getInstance();
-		CookieSyncManager.createInstance(this);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			CookieSyncManager.createInstance(this);
+		}
 		mCookieManager.setAcceptCookie(mPreferences.getBoolean(PreferenceConstants.COOKIES, true));
 		super.updateCookiePreference();
 	}
