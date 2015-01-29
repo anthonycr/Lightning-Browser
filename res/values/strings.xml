@@ -197,4 +197,5 @@
     <string name="close_all_tabs">Close all tabs</string>
     <string name="third_party">Block 3rd Party Cookies</string>
     <string name="available_lollipop">This feature is only available on Android 5.0+</string>
+    <string name="color_mode">Enable Color Mode</string>
 </resources>

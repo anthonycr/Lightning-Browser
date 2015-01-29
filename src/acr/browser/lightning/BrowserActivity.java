@@ -102,6 +102,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private int mActionBarSize;
 	private ActionBar mActionBar;
 	private boolean mFullScreen;
+	private boolean mColorMode;
 	private FrameLayout mBrowserFrame;
 	private LinearLayout mPageLayout;
 	private LinearLayout mUiLayout;
@@ -494,7 +495,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		initializePreferences();
 		initializeTabs();
 
-		if (API < 19) {
+		if (API <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 			WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
 		}
 
@@ -720,17 +721,20 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		}
 		mFullScreen = mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false);
-		if (mFullScreen) {
-			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
-				mUiLayout.removeView(mToolbarLayout);
-				mBrowserFrame.addView(mToolbarLayout);
-				mToolbarLayout.bringToFront();
-			}
-		} else {
-			if (mBrowserFrame.findViewById(R.id.toolbar_layout) != null) {
-				mBrowserFrame.removeView(mToolbarLayout);
-				mUiLayout.addView(mToolbarLayout, 0);
-			}
+		mColorMode = mPreferences.getBoolean(PreferenceConstants.ENABLE_COLOR_MODE, true);
+
+		if (!isIncognito() && !mColorMode && mWebpageBitmap != null)
+			changeToolbarBackground(mWebpageBitmap);
+		else if (!isIncognito() && mCurrentView != null && mCurrentView.getFavicon() != null)
+			changeToolbarBackground(mCurrentView.getFavicon());
+
+		if (mFullScreen && mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
+			mUiLayout.removeView(mToolbarLayout);
+			mBrowserFrame.addView(mToolbarLayout);
+			mToolbarLayout.bringToFront();
+		} else if (mBrowserFrame.findViewById(R.id.toolbar_layout) != null) {
+			mBrowserFrame.removeView(mToolbarLayout);
+			mUiLayout.addView(mToolbarLayout, 0);
 		}
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -1180,9 +1184,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	}
 
 	public void handleNewIntent(Intent intent) {
-		if (mCurrentView == null) {
-			initialize();
-		}
 
 		String url = null;
 		if (intent != null) {
@@ -1534,8 +1535,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			}
 			mBookmarkList = mBookmarkManager.getBookmarks(true);
 			notifyBookmarkDataSetChanged();
-		} else {
-			initialize();
 		}
 		initializePreferences();
 		if (mWebViews != null) {
@@ -1546,8 +1545,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					mWebViews.remove(n);
 				}
 			}
-		} else {
-			initialize();
 		}
 	}
 
@@ -1696,7 +1693,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			if (web.isForegroundTab()) {
 
 				holder.favicon.setImageBitmap(favicon);
-				if (!isIncognito())
+				if (!isIncognito() && mColorMode)
 					changeToolbarBackground(favicon);
 			} else {
 				Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),

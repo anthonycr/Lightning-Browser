@@ -74,6 +74,7 @@ public class SettingsActivity extends ActionBarActivity {
 		RelativeLayout layoutImages = (RelativeLayout) findViewById(R.id.layoutImages);
 		RelativeLayout layoutEnableJS = (RelativeLayout) findViewById(R.id.layoutEnableJS);
 		RelativeLayout layoutOrbot = (RelativeLayout) findViewById(R.id.layoutUseOrbot);
+		RelativeLayout layoutColor = (RelativeLayout) findViewById(R.id.layoutColorMode);
 		RelativeLayout layoutBookmarks = (RelativeLayout) findViewById(R.id.layoutBookmarks);
 		
 		layoutBookmarks.setOnClickListener(new OnClickListener(){
@@ -98,6 +99,7 @@ public class SettingsActivity extends ActionBarActivity {
 		CheckBox images = (CheckBox) findViewById(R.id.cbImageBlock);
 		CheckBox enablejs = (CheckBox) findViewById(R.id.cbJavascript);
 		CheckBox orbot = (CheckBox) findViewById(R.id.cbOrbot);
+		CheckBox color = (CheckBox) findViewById(R.id.cbColorMode);
 
 		images.setChecked(imagesBool);
 		enablejs.setChecked(enableJSBool);
@@ -108,10 +110,11 @@ public class SettingsActivity extends ActionBarActivity {
 		}
 		adblock.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false));
 		orbot.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false));
+		color.setChecked(mPreferences.getBoolean(PreferenceConstants.ENABLE_COLOR_MODE, true));
 
-		initCheckBox(flash, adblock, images, enablejs, orbot);
+		initCheckBox(flash, adblock, images, enablejs, orbot, color);
 		clickListenerForCheckBoxes(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS, 
-				layoutOrbot, flash, adblock, images, enablejs, orbot);
+				layoutOrbot, layoutColor, flash, adblock, images, enablejs, orbot, color);
 
 		RelativeLayout general = (RelativeLayout) findViewById(R.id.layoutGeneral);
 		RelativeLayout display = (RelativeLayout) findViewById(R.id.layoutDisplay);
@@ -127,9 +130,9 @@ public class SettingsActivity extends ActionBarActivity {
 	}
 
 	public void clickListenerForCheckBoxes(RelativeLayout layoutFlash, RelativeLayout layoutBlockAds,
-			RelativeLayout layoutImages, RelativeLayout layoutEnableJS, RelativeLayout layoutOrbot,
+			RelativeLayout layoutImages, RelativeLayout layoutEnableJS, RelativeLayout layoutOrbot, RelativeLayout layoutColor,
 			final CheckBox flash, final CheckBox adblock, final CheckBox images, final CheckBox enablejs, 
-			final CheckBox orbot) {
+			final CheckBox orbot, final CheckBox color) {
 		layoutFlash.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -180,10 +183,18 @@ public class SettingsActivity extends ActionBarActivity {
 			}
 
 		});
+		layoutColor.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				color.setChecked(!color.isChecked());
+			}
+			
+		});
 	}
 
 	public void initCheckBox(CheckBox flash, CheckBox adblock, CheckBox images, CheckBox enablejs,
-			CheckBox orbot) {
+			CheckBox orbot, CheckBox color) {
 		flash.setEnabled(API < 19);
 		flash.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -261,6 +272,16 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, isChecked);
+				mEditPrefs.commit();
+
+			}
+
+		});
+		color.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mEditPrefs.putBoolean(PreferenceConstants.ENABLE_COLOR_MODE, isChecked);
 				mEditPrefs.commit();
 
 			}
