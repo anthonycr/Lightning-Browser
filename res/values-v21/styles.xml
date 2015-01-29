@@ -16,14 +16,14 @@
     <style name="Theme.LightTheme" parent="Theme.AppCompat.Light">
 
         <!-- customize the color palette -->
-        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="searchBackground">@drawable/card_bg</item>
+        <item name="listBackground">?attr/listChoiceBackgroundIndicator</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/secondary_color</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="progressBackgroundColor">@color/secondary_color</item>
-        <item name="listBackground">@drawable/list_bg</item>
+        <item name="progressBackgroundColor">#00000000</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="progressColor">@color/gray_medium</item>
         <item name="arrowBackDrawable">@drawable/ic_action_back</item>
@@ -38,14 +38,14 @@
     <style name="Theme.DarkTheme" parent="Theme.AppCompat">
 
         <!-- customize the color palette -->
-        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="searchBackground">@drawable/card_bg</item>
+        <item name="listBackground">?attr/listChoiceBackgroundIndicator</item>
         <item name="colorPrimary">@color/primary_color_dark</item>
         <item name="colorPrimaryDark">@color/secondary_color</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="progressBackgroundColor">#00000000</item>
         <item name="windowActionBar">false</item>
-        <item name="progressBackgroundColor">@color/secondary_color</item>
-        <item name="listBackground">@drawable/list_bg</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="progressColor">@color/gray_medium</item>
         <item name="arrowBackDrawable">@drawable/ic_action_back</item>
@@ -53,29 +53,8 @@
         <item name="autoCompleteTitleColor">@color/black</item>
         <item name="autoCompleteUrlColor">@color/gray_medium</item>
         <item name="arrowForwardDrawable">@drawable/ic_action_forward</item>
+        <item name="android:actionBarStyle">@style/LightActionBar</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
-    </style>
-
-    <style name="overFlowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:minWidth">48dp</item>
-        <item name="android:padding">0dp</item>
-    </style>
-
-    <style name="boldText">
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="normalText">
-        <item name="android:textStyle">normal</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-    </style>
-
-    <style name="DarkActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/gray_dark</item>
-    </style>
-
-    <style name="LightActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid">
-        <item name="android:background">@color/gray_light</item>
     </style>
 
 </resources>
