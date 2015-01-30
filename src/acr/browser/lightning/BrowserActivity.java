@@ -10,7 +10,6 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
@@ -18,14 +17,11 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -36,7 +32,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -84,7 +79,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private LinearLayout mDrawerRight;
 	private ListView mDrawerListRight;
 	private RelativeLayout mNewTab;
-	private ActionBarDrawerToggle mDrawerToggle;
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
 	private LightningView mCurrentView;
 	private int mIdGenerator;
@@ -125,8 +119,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private Drawable mRefreshIcon;
 	private Drawable mCopyIcon;
 	private Drawable mIcon;
-	private int mActionBarSizeDp;
-	private int mNumberIconColor;
 	private String mHomepage;
 	private boolean mIsNewIntent = false;
 	private VideoView mVideoView;
@@ -151,7 +143,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		TypedValue typedValue = new TypedValue();
 		Theme theme = getTheme();
 		theme.resolveAttribute(R.attr.numberColor, typedValue, true);
-		mNumberIconColor = typedValue.data;
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 		mContext = this;
@@ -194,7 +185,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (pixelsToDp(mActionBarSize) < 48) {
 			mActionBarSize = Utils.convertDpiToPixels(mContext, 48);
 		}
-		mActionBarSizeDp = pixelsToDp(mActionBarSize);
 		styledAttributes.recycle();
 
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
@@ -1253,7 +1243,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mIdGenerator++;
 		mWebViews.add(startingTab);
 
-		Drawable icon = writeOnDrawable(mWebViews.size());
+		//Drawable icon = writeOnDrawable(mWebViews.size());
 		// mActionBar.setIcon(icon);
 		// TODO
 		mTitleAdapter.notifyDataSetChanged();
@@ -1336,7 +1326,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			}
 		}
 		mTitleAdapter.notifyDataSetChanged();
-		Drawable icon = writeOnDrawable(mWebViews.size());
+		//Drawable icon = writeOnDrawable(mWebViews.size());
 		// TODO
 		// mActionBar.setIcon(icon);
 
@@ -1599,46 +1589,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		return (int) ((num - 0.5f) / scale);
 	}
 
-	/**
-	 * writes the number of open tabs on the icon.
-	 */
-	public BitmapDrawable writeOnDrawable(int number) {
-
-		Bitmap bm = Bitmap.createBitmap(mActionBarSize, mActionBarSize, Config.ARGB_8888);
-		String text = number + "";
-		Paint paint = new Paint();
-		paint.setTextAlign(Paint.Align.CENTER);
-		paint.setAntiAlias(true);
-		paint.setStyle(Style.FILL);
-		paint.setColor(mNumberIconColor);
-		if (number > 99) {
-			number = 99;
-		}
-		// pixels, 36 dp
-		if (mActionBarSizeDp < 50) {
-			if (number > 9) {
-				paint.setTextSize(mActionBarSize * 3 / 4); // originally
-				// 40
-				// pixels,
-				// 24 dp
-			} else {
-				paint.setTextSize(mActionBarSize * 9 / 10); // originally 50
-				// pixels, 30 dp
-			}
-		} else {
-			paint.setTextSize(mActionBarSize * 3 / 4);
-		}
-		Canvas canvas = new Canvas(bm);
-		// originally only vertical padding of 5 pixels
-
-		int xPos = (canvas.getWidth() / 2);
-		int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-
-		canvas.drawText(text, xPos, yPos, paint);
-
-		return new BitmapDrawable(getResources(), bm);
-	}
-
 	public class LightningViewAdapter extends ArrayAdapter<LightningView> {
 
 		Context context;
@@ -1807,7 +1757,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	private void getImage(ImageView image, HistoryItem web) {
 		try {
-			new DownloadImageTask(image, web).execute(Constants.HTTP + getDomainName(web.getUrl())
+			new DownloadImageTask(image, web).execute(Utils.getProtocol(web.getUrl()) + getDomainName(web.getUrl())
 					+ "/favicon.ico");
 		} catch (URISyntaxException e) {
 			new DownloadImageTask(image, web)
