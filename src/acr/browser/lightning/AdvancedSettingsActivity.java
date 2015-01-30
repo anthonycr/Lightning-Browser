@@ -24,8 +24,6 @@ import android.widget.TextView;
 
 public class AdvancedSettingsActivity extends ActionBarActivity {
 
-	// mPreferences variables
-	private static final int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences mPreferences;
 	private SharedPreferences.Editor mEditPrefs;
 	private CheckBox cbAllowPopups, cbAllowCookies, cbAllowIncognitoCookies, cbRestoreTabs;
@@ -119,7 +117,7 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.POPUPS, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -131,7 +129,7 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.COOKIES, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -143,7 +141,7 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.INCOGNITO_COOKIES, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -155,7 +153,7 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.RESTORE_LOST_TABS, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});

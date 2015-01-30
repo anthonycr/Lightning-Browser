@@ -187,7 +187,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						mEditPrefs.putInt(PreferenceConstants.SEARCH, which);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 						switch (which) {
 							case 0:
 								searchUrlPicker();
@@ -255,7 +255,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getSearchUrl.getText().toString();
 						mEditPrefs.putString(PreferenceConstants.SEARCH_URL, text);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 						mSearchText.setText(getResources().getString(R.string.custom_url) + ": "
 								+ text);
 					}
@@ -277,7 +277,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								mEditPrefs.putInt(PreferenceConstants.USER_AGENT, which + 1);
-								mEditPrefs.commit();
+								mEditPrefs.apply();
 								switch (which + 1) {
 									case 1:
 										mAgentTextView.setText(getResources().getString(
@@ -337,7 +337,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getAgent.getText().toString();
 						mEditPrefs.putString(PreferenceConstants.USER_AGENT_STRING, text);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 						mAgentTextView.setText(getResources().getString(R.string.agent_custom));
 					}
 				});
@@ -372,7 +372,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 										mEditPrefs.putString(
 												PreferenceConstants.DOWNLOAD_DIRECTORY,
 												Environment.DIRECTORY_DOWNLOADS);
-										mEditPrefs.commit();
+										mEditPrefs.apply();
 										mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/'
 												+ Environment.DIRECTORY_DOWNLOADS);
 										break;
@@ -415,7 +415,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getHome.getText().toString();
 						mEditPrefs.putString(PreferenceConstants.HOMEPAGE, text);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 						mHomepageText.setText(text);
 					}
 				});
@@ -461,7 +461,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getDownload.getText().toString();
 						mEditPrefs.putString(PreferenceConstants.DOWNLOAD_DIRECTORY, text);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 						mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/' + text);
 					}
 				});
@@ -498,21 +498,21 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 									case 1:
 										mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
 												"about:home");
-										mEditPrefs.commit();
+										mEditPrefs.apply();
 										mHomepageText.setText(getResources().getString(
 												R.string.action_homepage));
 										break;
 									case 2:
 										mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
 												"about:blank");
-										mEditPrefs.commit();
+										mEditPrefs.apply();
 										mHomepageText.setText(getResources().getString(
 												R.string.action_blank));
 										break;
 									case 3:
 										mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
 												"about:bookmarks");
-										mEditPrefs.commit();
+										mEditPrefs.apply();
 										mHomepageText.setText(getResources().getString(
 												R.string.action_bookmarks));
 
@@ -544,7 +544,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});

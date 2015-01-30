@@ -88,7 +88,7 @@ public class SettingsActivity extends ActionBarActivity {
 
 		if (API >= 19) {
 			mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-			mEditPrefs.commit();
+			mEditPrefs.apply();
 		}
 		int flashNum = mPreferences.getInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
 		boolean imagesBool = mPreferences.getBoolean(PreferenceConstants.BLOCK_IMAGES, false);
@@ -204,7 +204,7 @@ public class SettingsActivity extends ActionBarActivity {
 					getFlashChoice();
 				} else {
 					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-					mEditPrefs.commit();
+					mEditPrefs.apply();
 				}
 
 				boolean flashInstalled = false;
@@ -223,7 +223,7 @@ public class SettingsActivity extends ActionBarActivity {
 									.getString(R.string.dialog_adobe_not_installed));
 					buttonView.setChecked(false);
 					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-					mEditPrefs.commit();
+					mEditPrefs.apply();
 
 				} else if ((API >= 17) && isChecked) {
 					Utils.createInformativeDialog(SettingsActivity.this,
@@ -238,7 +238,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_ADS, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -247,7 +247,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_IMAGES, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 
 			}
 
@@ -257,7 +257,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.JAVASCRIPT, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 
 			}
 
@@ -272,7 +272,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 
 			}
 
@@ -282,7 +282,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.ENABLE_COLOR_MODE, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 
 			}
 
@@ -299,7 +299,7 @@ public class SettingsActivity extends ActionBarActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 1);
-								mEditPrefs.commit();
+								mEditPrefs.apply();
 							}
 						})
 				.setNegativeButton(getResources().getString(R.string.action_auto),
@@ -308,14 +308,14 @@ public class SettingsActivity extends ActionBarActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 2);
-								mEditPrefs.commit();
+								mEditPrefs.apply();
 							}
 						}).setOnCancelListener(new OnCancelListener() {
 
 					@Override
 					public void onCancel(DialogInterface dialog) {
 						mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 					}
 
 				});
@@ -333,7 +333,7 @@ public class SettingsActivity extends ActionBarActivity {
 					n = 1;
 				}
 				mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, n);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 				boolean flashInstalled = false;
 				try {
 					PackageManager pm = getPackageManager();
@@ -350,7 +350,7 @@ public class SettingsActivity extends ActionBarActivity {
 									.getString(R.string.dialog_adobe_not_installed));
 					buttonView.setChecked(false);
 					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-					mEditPrefs.commit();
+					mEditPrefs.apply();
 
 				} else if ((API > 17) && isChecked) {
 					Utils.createInformativeDialog(SettingsActivity.this,
@@ -365,7 +365,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_IMAGES, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 
 			}
 
@@ -375,7 +375,7 @@ public class SettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.JAVASCRIPT, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 
 			}
 
@@ -396,7 +396,7 @@ public class SettingsActivity extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getAgent.getText().toString();
 						mEditPrefs.putString(PreferenceConstants.USER_AGENT_STRING, text);
-						mEditPrefs.commit();
+						mEditPrefs.apply();
 						getAgent.setText(getResources().getString(R.string.agent_custom));
 					}
 				});

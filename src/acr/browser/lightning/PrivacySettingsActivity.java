@@ -188,7 +188,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.LOCATION, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -200,7 +200,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.SAVE_PASSWORDS, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -212,7 +212,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -224,7 +224,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -236,7 +236,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_THIRD_PARTY, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -248,7 +248,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});

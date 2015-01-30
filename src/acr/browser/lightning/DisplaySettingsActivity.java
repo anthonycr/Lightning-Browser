@@ -4,7 +4,6 @@
 package acr.browser.lightning;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,11 +21,9 @@ import android.widget.RelativeLayout;
 public class DisplaySettingsActivity extends ActionBarActivity {
 
 	// mPreferences variables
-	private static final int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences mPreferences;
 	private SharedPreferences.Editor mEditPrefs;
 	private CheckBox cbHideStatusBar, cbFullScreen, cbWideViewPort, cbOverView, cbTextReflow;
-	private Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +46,6 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 		// commit() or apply() call
 		mEditPrefs = mPreferences.edit();
 
-		mContext = this;
 		initialize();
 	}
 
@@ -101,7 +97,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.HIDE_STATUS_BAR, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -113,7 +109,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.FULL_SCREEN, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -126,7 +122,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -138,7 +134,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.OVERVIEW_MODE, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 
 		});
@@ -150,7 +146,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mEditPrefs.putBoolean(PreferenceConstants.TEXT_REFLOW, isChecked);
-				mEditPrefs.commit();
+				mEditPrefs.apply();
 			}
 		});
 	}
@@ -229,7 +225,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								mEditPrefs.putInt(PreferenceConstants.TEXT_SIZE, which + 1);
-								mEditPrefs.commit();
+								mEditPrefs.apply();
 
 							}
 						});
