@@ -12,14 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,8 +171,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				new RetrieveSearchSuggestions().execute(query);
 			}
 
-			List<HistoryItem> filter = new ArrayList<HistoryItem>();
-
 			int counter = 0;
 			mBookmarks = new ArrayList<HistoryItem>();
 			for (int n = 0; n < mAllBookmarks.size(); n++) {
@@ -184,11 +179,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				}
 				if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
 						.startsWith(query)) {
-					filter.add(mAllBookmarks.get(n));
 					mBookmarks.add(mAllBookmarks.get(n));
 					counter++;
 				} else if (mAllBookmarks.get(n).getUrl().contains(query)) {
-					filter.add(mAllBookmarks.get(n));
 					mBookmarks.add(mAllBookmarks.get(n));
 					counter++;
 				}
@@ -199,22 +192,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 			mHistory = mDatabaseHandler.findItemsContaining(constraint.toString());
 
-			for (int n = 0; n < mHistory.size(); n++) {
-				if (n >= 5) {
-					break;
-				}
-				filter.add(mHistory.get(n));
-			}
-
-			for (int n = 0; n < mSuggestions.size(); n++) {
-				if (filter.size() >= 5) {
-					break;
-				}
-				filter.add(mSuggestions.get(n));
-			}
-
-			results.count = filter.size();
-			results.values = filter;
+			mFilteredList = getSuggestions();
+			results.count = 1;
 			return results;
 		}
 
@@ -225,10 +204,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
-			synchronized (mFilteredList) {
-				mFilteredList = getSuggestions();
-				notifyDataSetChanged();
-			}
+			notifyDataSetChanged();
 		}
 
 	}
@@ -272,29 +248,25 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				int eventType = mXpp.getEventType();
 				int counter = 0;
 				while (eventType != XmlPullParser.END_DOCUMENT) {
-					if (eventType == XmlPullParser.START_TAG) {
-						if ("suggestion".equals(mXpp.getName())) {
-							String suggestion = mXpp.getAttributeValue(null, "data");
-							filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
-									suggestion, R.drawable.ic_search));
-							counter++;
-							if (counter >= 5) {
-								break;
-							}
+					if (eventType == XmlPullParser.START_TAG && "suggestion".equals(mXpp.getName())) {
+						String suggestion = mXpp.getAttributeValue(null, "data");
+						filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
+								suggestion, R.drawable.ic_search));
+						counter++;
+						if (counter >= 5) {
+							break;
 						}
 					}
 					eventType = mXpp.next();
 				}
-
-			} catch (FileNotFoundException e) {
-			} catch (MalformedURLException e) {
-			} catch (IOException e) {
-			} catch (XmlPullParserException e) {
+			} catch (Exception e){
+				return filter;
 			} finally {
 				if (download != null) {
 					try {
 						download.close();
 					} catch (IOException e) {
+						return filter;
 					}
 				}
 			}
@@ -331,66 +303,34 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	public List<HistoryItem> getSuggestions() {
 		List<HistoryItem> filteredList = new ArrayList<HistoryItem>();
 
-		int suggestionsSize = 0;
-		int historySize = 0;
-		int bookmarkSize = 0;
+		int suggestionsSize = (mSuggestions == null) ? 0 : mSuggestions.size();
+		int historySize = (mHistory == null) ? 0 : mHistory.size();
+		int bookmarkSize = (mBookmarks == null) ? 0 : mBookmarks.size();
 
-		if (mSuggestions != null) {
-			suggestionsSize = mSuggestions.size();
-		}
-		if (mHistory != null) {
-			historySize = mHistory.size();
-		}
-		if (mBookmarks != null) {
-			bookmarkSize = mBookmarks.size();
-		}
-
-		int maxSuggestions = 2;
-		int maxHistory = 1;
-		int maxBookmarks = 2;
+		int maxSuggestions = (bookmarkSize + historySize < 3) ? (5 - bookmarkSize - historySize)
+				: (bookmarkSize < 2) ? (4 - bookmarkSize) : (historySize < 1) ? 3 : 2;
+		int maxHistory = (suggestionsSize + bookmarkSize < 4) ? (5 - suggestionsSize - bookmarkSize)
+				: 1;
+		int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize)
+				: 2;
 
 		if (!mUseGoogle || mIncognito) {
 			maxHistory++;
 			maxBookmarks++;
 		}
 
-		if (bookmarkSize + historySize < 3) {
-			maxSuggestions = 5 - (bookmarkSize + historySize);
-		} else if (bookmarkSize < 2) {
-			maxSuggestions += 2 - bookmarkSize;
-		} else if (historySize < 1) {
-			maxSuggestions += 1;
-		}
-		if (suggestionsSize + bookmarkSize < 4) {
-			maxHistory = 5 - (suggestionsSize + bookmarkSize);
-		}
-		if (suggestionsSize + historySize < 3) {
-			maxBookmarks = 5 - (suggestionsSize + historySize);
-		}
-
-		for (int n = 0; n < bookmarkSize; n++) {
-			if (n >= maxBookmarks) {
-				break;
-			}
+		for (int n = 0; n < bookmarkSize && n < maxBookmarks; n++) {
 			filteredList.add(mBookmarks.get(n));
 		}
 
-		for (int n = 0; n < historySize; n++) {
-			if (n >= maxHistory) {
-				break;
-			}
+		for (int n = 0; n < historySize && n < maxHistory; n++) {
 			filteredList.add(mHistory.get(n));
 		}
 
-		for (int n = 0; n < suggestionsSize; n++) {
-			if (n >= maxSuggestions) {
-				break;
-			}
+		for (int n = 0; n < suggestionsSize && n < maxSuggestions; n++) {
 			filteredList.add(mSuggestions.get(n));
 		}
-		// Log.i("MAX", "Max: "+maxSuggestions+" "+maxBookmarks+" "+maxHistory);
-		// Log.i("SIZE",
-		// "size: "+suggestionsSize+" "+bookmarkSize+" "+historySize);
 		return filteredList;
 	}
+
 }
