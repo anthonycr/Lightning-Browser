@@ -17,15 +17,10 @@ import java.util.Set;
 public class AdBlock {
 
 	private static final String TAG = "AdBlock";
-
 	private static final String BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt";
-
 	private static final Set<String> mBlockedDomainsList = new HashSet<String>();
-
 	private SharedPreferences mPreferences;
-
 	private boolean mBlockAds;
-
 	private static final Locale mLocale = Locale.getDefault();
 
 	public AdBlock(Context context) {
