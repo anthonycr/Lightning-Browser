@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
-@SuppressWarnings("deprecation")
 public class IncognitoActivity extends BrowserActivity {
 
 	SharedPreferences mPreferences;
@@ -21,6 +20,7 @@ public class IncognitoActivity extends BrowserActivity {
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void updateCookiePreference() {
 		if (mPreferences == null) {
