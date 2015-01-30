@@ -33,6 +33,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private SharedPreferences mPreferences;
 	private boolean mUseGoogle = true;
 	private Context mContext;
+	private boolean mIsExecuting = false;
 	private boolean mIncognito;
 	private BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
@@ -167,7 +168,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			if (query == null) {
 				return results;
 			}
-			if (mUseGoogle && !mIncognito) {
+			if (mUseGoogle && !mIncognito && !mIsExecuting) {
 				new RetrieveSearchSuggestions().execute(query);
 			}
 
@@ -222,6 +223,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		@Override
 		protected List<HistoryItem> doInBackground(String... arg0) {
+			mIsExecuting = true;
 			if (!isNetworkConnected(mContext)) {
 				return new ArrayList<HistoryItem>();
 			}
@@ -259,7 +261,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 					}
 					eventType = mXpp.next();
 				}
-			} catch (Exception e){
+			} catch (Exception e) {
 				return filter;
 			} finally {
 				if (download != null) {
@@ -282,6 +284,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				mFilteredList = getSuggestions();
 				notifyDataSetChanged();
 			}
+			mIsExecuting = false;
 		}
 
 	}
