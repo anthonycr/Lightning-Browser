@@ -1185,7 +1185,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 	}
 
-	protected synchronized void newTab(String url, boolean show) {
+	protected synchronized boolean newTab(String url, boolean show) {
 		mIsNewIntent = false;
 		LightningView startingTab = new LightningView(mActivity, url);
 		if (mIdGenerator == 0) {
@@ -1199,6 +1199,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mDrawerListLeft.setItemChecked(mWebViews.size() - 1, true);
 			showTab(startingTab);
 		}
+		return true;
 	}
 
 	private synchronized void deleteTab(int position) {
@@ -1594,7 +1595,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					filter = new ColorMatrixColorFilter(colorMatrix);
 					paint.setColorFilter(filter);
 				}
-				
+
 				c.drawBitmap(favicon, 0, 0, paint);
 				holder.favicon.setImageBitmap(grayscaleBitmap);
 			}
@@ -2064,8 +2065,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		Message click = mClickHandler.obtainMessage();
 		if (click != null) {
 			click.setTarget(mClickHandler);
+			mCurrentView.getWebView().requestFocusNodeHref(click);
 		}
-		mCurrentView.getWebView().requestFocusNodeHref(click);
 	}
 
 	@Override
@@ -2077,7 +2078,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			callback.onCustomViewHidden();
 			return;
 		}
-		view.setKeepScreenOn(true);
+		try{
+			view.setKeepScreenOn(true);
+		} catch (SecurityException e){
+			Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
+		}
 		mOriginalOrientation = getRequestedOrientation();
 		FrameLayout decor = (FrameLayout) getWindow().getDecorView();
 		mFullscreenContainer = new FullscreenHolder(this);
@@ -2103,7 +2108,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		Log.d(Constants.TAG, "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
-		mCustomView.setKeepScreenOn(false);
+		try{
+			mCustomView.setKeepScreenOn(false);
+		} catch (SecurityException e){
+			Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
+		}
 		setFullscreen(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false));
 		FrameLayout decor = (FrameLayout) getWindow().getDecorView();
 		if (decor != null) {
@@ -2217,10 +2226,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (resultMsg == null) {
 			return;
 		}
-		newTab("", true);
-		WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-		transport.setWebView(mCurrentView.getWebView());
-		resultMsg.sendToTarget();
+		if (newTab("", true)) {
+			WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+			transport.setWebView(mCurrentView.getWebView());
+			resultMsg.sendToTarget();
+		}
 	}
 
 	@Override

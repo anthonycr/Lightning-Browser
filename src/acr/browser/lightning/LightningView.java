@@ -329,7 +329,13 @@ public class LightningView {
 			mTextReflow = true;
 			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
 			if (API >= android.os.Build.VERSION_CODES.KITKAT) {
-				mSettings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+				try {
+					mSettings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+				} catch (Exception e) {
+					// This shouldn't be necessary, but there are a number
+					// of KitKat devices that crash trying to set this
+					Log.e(Constants.TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING");
+				}
 			}
 		} else {
 			mTextReflow = false;
