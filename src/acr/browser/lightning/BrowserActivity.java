@@ -1528,9 +1528,10 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	public class LightningViewAdapter extends ArrayAdapter<LightningView> {
 
 		Context context;
-
+		ColorMatrix colorMatrix;
+		ColorMatrixColorFilter filter;
+		Paint paint;
 		int layoutResourceId;
-
 		List<LightningView> data = null;
 
 		public LightningViewAdapter(Context context, int layoutResourceId, List<LightningView> data) {
@@ -1586,13 +1587,15 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 						favicon.getHeight(), Bitmap.Config.ARGB_8888);
 
 				Canvas c = new Canvas(grayscaleBitmap);
-				Paint p = new Paint();
-				ColorMatrix cm = new ColorMatrix();
-
-				cm.setSaturation(0);
-				ColorMatrixColorFilter filter = new ColorMatrixColorFilter(cm);
-				p.setColorFilter(filter);
-				c.drawBitmap(favicon, 0, 0, p);
+				if (colorMatrix == null || filter == null || paint == null) {
+					paint = new Paint();
+					colorMatrix = new ColorMatrix();
+					colorMatrix.setSaturation(0);
+					filter = new ColorMatrixColorFilter(colorMatrix);
+					paint.setColorFilter(filter);
+				}
+				
+				c.drawBitmap(favicon, 0, 0, paint);
 				holder.favicon.setImageBitmap(grayscaleBitmap);
 			}
 			return row;
