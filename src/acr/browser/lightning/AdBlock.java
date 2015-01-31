@@ -66,7 +66,7 @@ public class AdBlock {
 		try {
 			domain = getDomainName(url);
 		} catch (URISyntaxException e) {
-			Log.e(TAG, "URL '" + url + "' is invalid", e);
+			Log.d(TAG, "URL '" + url + "' is invalid", e);
 			return false;
 		}
 

@@ -11,7 +11,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
-import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -275,11 +274,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			});
 		}
 
-		// create the search EditText in the ActionBar
-		// mSearch = (AutoCompleteTextView)
-		// mActionBar.getCustomView().findViewById(R.id.search);
+		// create the search EditText in the ToolBar
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
-		// TODO
 		mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
 		mDeleteIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
 				Utils.convertDpiToPixels(mContext, 24));
@@ -431,30 +427,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		});
 		initialize.run();
 
-		// ActionBarDrawerToggle ties together the the proper interactions
-		// between the sliding drawer and the action bar app icon
-		/*
-		 * mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-		 * R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close ) {
-		 * 
-		 * @Override public void onDrawerClosed(View view) {
-		 * super.onDrawerClosed(view); if (view.equals(mDrawerLeft)) {
-		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED,
-		 * mDrawerRight); } else if (view.equals(mDrawerRight)) {
-		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED,
-		 * mDrawerLeft); } }
-		 * 
-		 * @Override public void onDrawerOpened(View drawerView) {
-		 * super.onDrawerOpened(drawerView); if (drawerView.equals(mDrawerLeft))
-		 * { mDrawerLayout.closeDrawer(mDrawerRight);
-		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
-		 * mDrawerRight); } else if (drawerView.equals(mDrawerRight)) {
-		 * mDrawerLayout.closeDrawer(mDrawerLeft);
-		 * mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
-		 * mDrawerLeft); } }
-		 * 
-		 * };
-		 */
 		mNewTab.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -810,18 +782,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// The action bar home/up action should open or close the drawer.
-		// ActionBarDrawerToggle will take care of this.
-		/*
-		 * if (mDrawerToggle.onOptionsItemSelected(item)) { if
-		 * (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-		 * mDrawerLayout.closeDrawer(mDrawerRight);
-		 * mDrawerLayout.openDrawer(mDrawerLeft); } else if
-		 * (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
-		 * mDrawerLayout.closeDrawer(mDrawerLeft); } mDrawerToggle.syncState();
-		 * return true; }
-		 */
-		// TODO
 		// Handle action buttons
 		switch (item.getItemId()) {
 			case android.R.id.home:
@@ -1213,25 +1173,16 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	}
 
-	/**
-	 * When using the ActionBarDrawerToggle, you must call it during
-	 * onPostCreate() and onConfigurationChanged()...
-	 */
-
+	@SuppressWarnings("deprecation")
 	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		// Sync the toggle state after onRestoreInstanceState has occurred.
-		// mDrawerToggle.syncState();
-		// TODO
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		// Pass any configuration change to the drawer toggls
-		// TODO
-		// mDrawerToggle.onConfigurationChanged(newConfig);
+	public void onTrimMemory(int level) {
+		if (level > TRIM_MEMORY_RUNNING_MODERATE
+				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+			Log.d(Constants.TAG, "Low Memory, Free Memory");
+			for (LightningView view : mWebViews) {
+				view.getWebView().freeMemory();
+			}
+		}
 	}
 
 	protected synchronized void newTab(String url, boolean show) {
@@ -1243,9 +1194,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mIdGenerator++;
 		mWebViews.add(startingTab);
 
-		//Drawable icon = writeOnDrawable(mWebViews.size());
-		// mActionBar.setIcon(icon);
-		// TODO
 		mTitleAdapter.notifyDataSetChanged();
 		if (show) {
 			mDrawerListLeft.setItemChecked(mWebViews.size() - 1, true);
@@ -1300,19 +1248,19 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
 						&& mCurrentView != null && !isIncognito()) {
 					mCurrentView.clearCache(true);
-					Log.i(Constants.TAG, "Cache Cleared");
+					Log.d(Constants.TAG, "Cache Cleared");
 
 				}
 				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
 						&& !isIncognito()) {
 					clearHistory();
-					Log.i(Constants.TAG, "History Cleared");
+					Log.d(Constants.TAG, "History Cleared");
 
 				}
 				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
 						&& !isIncognito()) {
 					clearCookies();
-					Log.i(Constants.TAG, "Cookies Cleared");
+					Log.d(Constants.TAG, "Cookies Cleared");
 
 				}
 				if (reference != null) {
@@ -1326,16 +1274,13 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			}
 		}
 		mTitleAdapter.notifyDataSetChanged();
-		//Drawable icon = writeOnDrawable(mWebViews.size());
-		// TODO
-		// mActionBar.setIcon(icon);
 
 		if (mIsNewIntent && isShown) {
 			mIsNewIntent = false;
 			closeActivity();
 		}
 
-		Log.i(Constants.TAG, "deleted tab");
+		Log.d(Constants.TAG, "deleted tab");
 	}
 
 	@Override
@@ -1344,19 +1289,19 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
 					&& mCurrentView != null && !isIncognito()) {
 				mCurrentView.clearCache(true);
-				Log.i(Constants.TAG, "Cache Cleared");
+				Log.d(Constants.TAG, "Cache Cleared");
 
 			}
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
 					&& !isIncognito()) {
 				clearHistory();
-				Log.i(Constants.TAG, "History Cleared");
+				Log.d(Constants.TAG, "History Cleared");
 
 			}
 			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
 					&& !isIncognito()) {
 				clearCookies();
-				Log.i(Constants.TAG, "Cookies Cleared");
+				Log.d(Constants.TAG, "Cookies Cleared");
 
 			}
 			mCurrentView = null;
@@ -1376,19 +1321,19 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
 				&& mCurrentView != null && !isIncognito()) {
 			mCurrentView.clearCache(true);
-			Log.i(Constants.TAG, "Cache Cleared");
+			Log.d(Constants.TAG, "Cache Cleared");
 
 		}
 		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
 				&& !isIncognito()) {
 			clearHistory();
-			Log.i(Constants.TAG, "History Cleared");
+			Log.d(Constants.TAG, "History Cleared");
 
 		}
 		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
 				&& !isIncognito()) {
 			clearCookies();
-			Log.i(Constants.TAG, "Cookies Cleared");
+			Log.d(Constants.TAG, "Cookies Cleared");
 
 		}
 		mCurrentView = null;
@@ -1434,17 +1379,13 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	@Override
 	public void onBackPressed() {
-		/*
-		 * if (!mActionBar.isShowing()) { mActionBar.show(); }
-		 */
-		// TODO
 		if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
 			mDrawerLayout.closeDrawer(mDrawerLeft);
 		} else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
 			mDrawerLayout.closeDrawer(mDrawerRight);
 		} else {
 			if (mCurrentView != null) {
-				Log.i(Constants.TAG, "onBackPressed");
+				Log.d(Constants.TAG, "onBackPressed");
 				if (mCurrentView.canGoBack()) {
 					if (!mCurrentView.isShown()) {
 						onHideCustomView();
@@ -1464,7 +1405,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.i(Constants.TAG, "onPause");
+		Log.d(Constants.TAG, "onPause");
 		if (mCurrentView != null) {
 			mCurrentView.pauseTimers();
 			mCurrentView.onPause();
@@ -1492,7 +1433,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	@Override
 	protected void onDestroy() {
-		Log.i(Constants.TAG, "onDestroy");
+		Log.d(Constants.TAG, "onDestroy");
 		if (mHistoryHandler != null) {
 			if (mHistoryHandler.isOpen()) {
 				mHistoryHandler.close();
@@ -1504,16 +1445,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i(Constants.TAG, "onResume");
+		Log.d(Constants.TAG, "onResume");
 		if (mSearchAdapter != null) {
 			mSearchAdapter.refreshPreferences();
 			mSearchAdapter.refreshBookmarks();
 		}
-		/*
-		 * if (mActionBar != null) { if (!mActionBar.isShowing()) {
-		 * mActionBar.show(); } }
-		 */
-		// TODO
 		if (mCurrentView != null) {
 			mCurrentView.resumeTimers();
 			mCurrentView.onResume();
@@ -1757,8 +1693,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	private void getImage(ImageView image, HistoryItem web) {
 		try {
-			new DownloadImageTask(image, web).execute(Utils.getProtocol(web.getUrl()) + getDomainName(web.getUrl())
-					+ "/favicon.ico");
+			new DownloadImageTask(image, web).execute(Utils.getProtocol(web.getUrl())
+					+ getDomainName(web.getUrl()) + "/favicon.ico");
 		} catch (URISyntaxException e) {
 			new DownloadImageTask(image, web)
 					.execute("https://www.google.com/s2/favicons?domain_url=" + web.getUrl());
@@ -1802,7 +1738,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 						mIcon.compress(Bitmap.CompressFormat.PNG, 100, fos);
 						fos.flush();
 						fos.close();
-						Log.i(Constants.TAG, "Downloaded: " + urldisplay);
+						Log.d(Constants.TAG, "Downloaded: " + urldisplay);
 					}
 
 				} catch (Exception e) {
@@ -1960,7 +1896,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		if (c != null) {
-			Log.i("Browser", "System Browser Available");
+			Log.d("Browser", "System Browser Available");
 			browserFlag = true;
 		} else {
 			Log.e("Browser", "System Browser Unavailable");
@@ -2044,8 +1980,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
 			mDrawerLayout.closeDrawers();
 		}
-		// mDrawerToggle.syncState();
-		// TODO
 		mDrawerLayout.openDrawer(mDrawerRight);
 	}
 
@@ -2164,7 +2098,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (mCustomView == null || mCustomViewCallback == null || mCurrentView == null) {
 			return;
 		}
-		Log.i(Constants.TAG, "onHideCustomView");
+		Log.d(Constants.TAG, "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
 		mCustomView.setKeepScreenOn(false);
 		setFullscreen(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false));
@@ -2300,16 +2234,12 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	 */
 	@Override
 	public void hideActionBar() {
-		/*
-		 * if (mActionBar.isShowing() && mFullScreen) { mActionBar.hide(); }
-		 */
-		// TODO
 		if (mFullScreen) {
 			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
 				mUiLayout.removeView(mToolbarLayout);
 				mBrowserFrame.addView(mToolbarLayout);
 				mToolbarLayout.bringToFront();
-				Log.i(Constants.TAG, "Move view to browser frame");
+				Log.d(Constants.TAG, "Move view to browser frame");
 			}
 			if (mToolbarLayout.getVisibility() != View.GONE) {
 
@@ -2331,7 +2261,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 				});
 				mToolbarLayout.startAnimation(hide);
-				Log.i(Constants.TAG, "Hide");
+				Log.d(Constants.TAG, "Hide");
 			}
 		}
 	}
@@ -2352,16 +2282,12 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	 * obviously it shows the action bar if it's hidden
 	 */
 	public void showActionBar() {
-		/*
-		 * if (!mActionBar.isShowing() && mFullScreen) { mActionBar.show(); }
-		 */
-		// TODO
 		if (mFullScreen) {
 			if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
 				mUiLayout.removeView(mToolbarLayout);
 				mBrowserFrame.addView(mToolbarLayout);
 				mToolbarLayout.bringToFront();
-				Log.i(Constants.TAG, "Move view to browser frame");
+				Log.d(Constants.TAG, "Move view to browser frame");
 			}
 			if (mToolbarLayout.getVisibility() != View.VISIBLE) {
 				Animation show = AnimationUtils.loadAnimation(mContext, R.anim.slide_down);
@@ -2382,7 +2308,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 				});
 				mToolbarLayout.startAnimation(show);
-				Log.i(Constants.TAG, "Show");
+				Log.d(Constants.TAG, "Show");
 			}
 
 		}
@@ -2619,12 +2545,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	@Override
 	public boolean isActionBarShowing() {
-		/*
-		 * if (mActionBar != null) { return mActionBar.isShowing(); } else {
-		 * return false; }
-		 */
-		// TODO
-		return false;
+		return mToolbarLayout.isShown();
 	}
 
 	// Override this, use finish() for Incognito, moveTaskToBack for Main

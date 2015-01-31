@@ -795,7 +795,7 @@ public class LightningView {
 									String user = name.getText().toString();
 									String pass = password.getText().toString();
 									handler.proceed(user.trim(), pass.trim());
-									Log.i(Constants.TAG, "Request Login");
+									Log.d(Constants.TAG, "Request Login");
 
 								}
 							})
