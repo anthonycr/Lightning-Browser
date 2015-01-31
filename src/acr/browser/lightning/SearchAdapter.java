@@ -149,6 +149,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			mFilteredList.clear();
 			mFilteredList.addAll(list);
 		}
+		notifyDataSetChanged();
 	}
 
 	@Override
@@ -193,7 +194,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 			mHistory = mDatabaseHandler.findItemsContaining(constraint.toString());
 
-			mFilteredList = getSuggestions();
 			results.count = 1;
 			return results;
 		}
@@ -205,6 +205,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
+			mFilteredList = getSuggestions();
 			notifyDataSetChanged();
 		}
 
