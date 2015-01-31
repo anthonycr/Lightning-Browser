@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
@@ -97,11 +98,7 @@ public class AnimatedProgressBar extends LinearLayout {
                     mProgressView.getLayoutParams().width = width;
                     mProgressView.requestLayout();
                 }
-                if ((1.0f - interpolatedTime) < 0.0005) {
-                    if (mProgress >= 100) {
-                        fadeOut();
-                    }
-                }
+                mProgressView.invalidate();
             }
 
             @Override
@@ -109,7 +106,25 @@ public class AnimatedProgressBar extends LinearLayout {
                 return true;
             }
         };
+        mAnimation.setAnimationListener(new AnimationListener(){
 
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				if (mProgress >= 100) {
+                    fadeOut();
+                }
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+        	
+        });
+        
         mAnimation.setDuration(300);
         mAnimation.setInterpolator(new DecelerateInterpolator());
     }
@@ -155,9 +170,7 @@ public class AnimatedProgressBar extends LinearLayout {
             initialWidth = 0;
 
         } else if (progress == mProgress) {     // we don't need to go any farther if the progress is unchanged
-
             return;
-
         }
 
         mProgress = progress;       // save the progress
@@ -178,6 +191,7 @@ public class AnimatedProgressBar extends LinearLayout {
     	mInitialWidth = initialWidth;
     	mMaxWidth = maxWidth;
     	mDeltaWidth = deltaWidth;
+    	mAnimation.reset();
         mProgressView.startAnimation(mAnimation);
     }
 
