@@ -188,4 +188,14 @@
     <string name="bookmark_settings">Lesezeichen Einstellungen</string>
     <string name="import_bookmark_error">Lesezeichen konnten nicht imprortiert werden</string>
     <string name="title_chooser">Wähle Datei aus</string>
+    <string name="settings_general">Allgemeine Settings</string>
+    <string name="settings_display">Display Einstellungen</string>
+    <string name="settings_privacy">Privatsphäre Einstellungen</string>
+    <string name="settings_about">Über</string>
+    <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
+    <string name="close_tab">Tab schließen</string>
+    <string name="close_all_tabs">Alle Tabs schließen</string>
+    <string name="third_party">Drittanbieter Cookies blockieren</string>
+    <string name="available_lollipop">Dieses Feature ist nur ab Android 5.0+ verfügbar</string>
+    <string name="color_mode">Farbmodus aktivieren</string>
 </resources>
