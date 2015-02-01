@@ -1,6 +1,6 @@
 #!/bin/sh
 
-target="android-20"
+target="android-21"
 
 # Update ant setup in project and all sub-projects
 for f in `find external/ -name project.properties`; do
