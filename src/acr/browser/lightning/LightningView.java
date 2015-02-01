@@ -275,8 +275,12 @@ public class LightningView {
 
 		setColorMode(mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0));
 
-		mSettings.setGeolocationEnabled(mPreferences
-				.getBoolean(PreferenceConstants.LOCATION, false));
+		if (!mBrowserController.isIncognito()) {
+			mSettings.setGeolocationEnabled(mPreferences.getBoolean(PreferenceConstants.LOCATION,
+					false));
+		} else {
+			mSettings.setGeolocationEnabled(false);
+		}
 		if (API < 19) {
 			switch (mPreferences.getInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0)) {
 				case 0:
@@ -313,11 +317,17 @@ public class LightningView {
 				break;
 		}
 
-		if (mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, false)) {
+		if (mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, false)
+				&& !mBrowserController.isIncognito()) {
 			if (API < 18) {
 				mSettings.setSavePassword(true);
 			}
 			mSettings.setSaveFormData(true);
+		} else {
+			if (API < 18) {
+				mSettings.setSavePassword(false);
+			}
+			mSettings.setSaveFormData(false);
 		}
 
 		if (mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT, true)) {
@@ -388,12 +398,18 @@ public class LightningView {
 		if (API < 19) {
 			settings.setDatabasePath(context.getCacheDir() + "/databases");
 		}
-		if (API >= Build.VERSION_CODES.LOLLIPOP) {
-			mWebView.getSettings()
-					.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		if (API >= Build.VERSION_CODES.LOLLIPOP && !mBrowserController.isIncognito()) {
+			settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		} else if (API >= Build.VERSION_CODES.LOLLIPOP) {
+			// We're in Incognito mode, reject
+			settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
 		}
 		// TODO
-		settings.setDomStorageEnabled(true);
+		if (!mBrowserController.isIncognito()) {
+			settings.setDomStorageEnabled(true);
+		} else {
+			settings.setDomStorageEnabled(false);
+		}
 		settings.setAppCacheEnabled(true);
 		settings.setAppCachePath(context.getCacheDir().toString());
 		settings.setCacheMode(WebSettings.LOAD_DEFAULT);
