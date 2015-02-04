@@ -176,4 +176,9 @@
     <string name="settings_privacy">Prywatność</string>
     <string name="settings_about">O Przeglądarce</string>
     <string name="settings_about_explain">Szczegóły o wersji, autorze i licencji.</string>
+    <string name="close_tab">Zamknij kartę</string>
+    <string name="close_all_tabs">Zamknij wszystkie karty</string>
+    <string name="third_party">Blokuj obce ciasteczka</string>
+    <string name="available_lollipop">Ta opcja jest dostępna tylko na Androidzie 5.0+</string>
+    <string name="color_mode">Włącz Tryb Kolorowy</string>
 </resources>
