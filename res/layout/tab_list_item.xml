@@ -42,6 +42,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="13dp"
         android:alpha="0.5"
+        android:background="?attr/actionBarItemBackground"
         android:contentDescription="Delete Tab"
         android:gravity="center_vertical"
         android:padding="3dp"

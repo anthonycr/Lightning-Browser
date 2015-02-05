@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -346,6 +347,26 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				};
 				anim.setDuration(300);
 				anim.setInterpolator(new DecelerateInterpolator());
+				anim.setAnimationListener(new AnimationListener(){
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						if (!hasFocus) {
+							drawable.setProgress(0.0f);
+						} else {
+							drawable.setProgress(1.0f);
+						}
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+					
+				});
 				new Handler().postDelayed(new Runnable() {
 
 					@Override
@@ -1568,6 +1589,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				}
 
 			});
+			
+			ViewCompat.jumpDrawablesToCurrentState(holder.exit);
 
 			LightningView web = data.get(position);
 			holder.txtTitle.setText(web.getTitle());
