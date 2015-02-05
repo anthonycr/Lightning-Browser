@@ -34,6 +34,7 @@ import android.provider.Browser;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -177,6 +178,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mDrawerListRight.setDivider(null);
 		mDrawerListRight.setDividerHeight(0);
 		setNavigationDrawerWidth();
+		mDrawerLayout.setDrawerListener(new DrawerLocker());
+		
 		mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
 		mActionBar = getSupportActionBar();
 		final TypedArray styledAttributes = mContext.getTheme().obtainStyledAttributes(
@@ -484,6 +487,36 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		checkForTor();
 
+	}
+	
+	private class DrawerLocker implements DrawerListener {
+
+		@Override
+		public void onDrawerClosed(View v) {
+			if(v == mDrawerRight){
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerLeft);
+			} else {
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerRight);
+			}
+		}
+
+		@Override
+		public void onDrawerOpened(View v) {
+			if(v == mDrawerRight){
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
+			} else {
+				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerRight);
+			}
+		}
+
+		@Override
+		public void onDrawerSlide(View v, float arg) {
+		}
+
+		@Override
+		public void onDrawerStateChanged(int arg) {
+		}
+		
 	}
 
 	public boolean handleMenuItemClick(MenuItem item) {
