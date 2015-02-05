@@ -203,6 +203,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="acr.browser.lightning.ReadingActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:label="@string/reading_mode"
+            android:theme="@style/Theme.SettingsTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.READING" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -179,7 +179,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mDrawerListRight.setDividerHeight(0);
 		setNavigationDrawerWidth();
 		mDrawerLayout.setDrawerListener(new DrawerLocker());
-		
+
 		mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
 		mActionBar = getSupportActionBar();
 		final TypedArray styledAttributes = mContext.getTheme().obtainStyledAttributes(
@@ -350,7 +350,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				};
 				anim.setDuration(300);
 				anim.setInterpolator(new DecelerateInterpolator());
-				anim.setAnimationListener(new AnimationListener(){
+				anim.setAnimationListener(new AnimationListener() {
 
 					@Override
 					public void onAnimationStart(Animation animation) {
@@ -368,7 +368,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					@Override
 					public void onAnimationRepeat(Animation animation) {
 					}
-					
+
 				});
 				new Handler().postDelayed(new Runnable() {
 
@@ -488,12 +488,12 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		checkForTor();
 
 	}
-	
+
 	private class DrawerLocker implements DrawerListener {
 
 		@Override
 		public void onDrawerClosed(View v) {
-			if(v == mDrawerRight){
+			if (v == mDrawerRight) {
 				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerLeft);
 			} else {
 				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerRight);
@@ -502,7 +502,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		@Override
 		public void onDrawerOpened(View v) {
-			if(v == mDrawerRight){
+			if (v == mDrawerRight) {
 				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
 			} else {
 				mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerRight);
@@ -516,7 +516,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		@Override
 		public void onDrawerStateChanged(int arg) {
 		}
-		
+
 	}
 
 	public boolean handleMenuItemClick(MenuItem item) {
@@ -595,6 +595,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				return true;
 			case R.id.action_find:
 				findInPage();
+				return true;
+			case R.id.action_reading_mode:
+				Intent read = new Intent(this, ReadingActivity.class);
+				read.putExtra(Constants.LOAD_READING_URL, mCurrentView.getUrl());
+				startActivity(read);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -911,6 +916,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				return true;
 			case R.id.action_find:
 				findInPage();
+				return true;
+			case R.id.action_reading_mode:
+				Intent read = new Intent(this, ReadingActivity.class);
+				read.putExtra(Constants.LOAD_READING_URL, mCurrentView.getUrl());
+				startActivity(read);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -1622,7 +1632,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				}
 
 			});
-			
+
 			ViewCompat.jumpDrawablesToCurrentState(holder.exit);
 
 			LightningView web = data.get(position);

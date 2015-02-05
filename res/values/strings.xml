@@ -198,4 +198,8 @@
     <string name="third_party">Block 3rd Party Cookies</string>
     <string name="available_lollipop">This feature is only available on Android 5.0+</string>
     <string name="color_mode">Enable Color Mode</string>
+    <string name="reading_mode">Reader Mode</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="loading_failed">Couldn\'t load anything from the page.</string>
+    <string name="snacktory">Snacktory</string>
 </resources>
