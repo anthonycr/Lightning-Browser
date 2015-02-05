@@ -1619,10 +1619,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					@Override
 					public void onGenerated(Palette palette) {
 						// TODO Auto-generated method stub
-						int color = palette.getVibrantColor(mContext.getResources().getColor(
-								R.color.primary_color));
+						int color = 0xff000000 | palette.getVibrantColor(mContext.getResources()
+								.getColor(R.color.primary_color));
 						ColorDrawable draw = (ColorDrawable) mPageLayout.getBackground();
-
 						ValueAnimator anim = ValueAnimator.ofObject(new ArgbEvaluator(),
 								draw.getColor(), color);
 						anim.addUpdateListener(new AnimatorUpdateListener() {
@@ -2078,9 +2077,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			callback.onCustomViewHidden();
 			return;
 		}
-		try{
+		try {
 			view.setKeepScreenOn(true);
-		} catch (SecurityException e){
+		} catch (SecurityException e) {
 			Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
 		}
 		mOriginalOrientation = getRequestedOrientation();
@@ -2108,9 +2107,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		Log.d(Constants.TAG, "onHideCustomView");
 		mCurrentView.setVisibility(View.VISIBLE);
-		try{
+		try {
 			mCustomView.setKeepScreenOn(false);
-		} catch (SecurityException e){
+		} catch (SecurityException e) {
 			Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
 		}
 		setFullscreen(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false));
