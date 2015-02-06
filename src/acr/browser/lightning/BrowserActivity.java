@@ -40,6 +40,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
@@ -87,6 +88,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private LightningViewAdapter mTitleAdapter;
 	private List<HistoryItem> mBookmarkList;
 	private BookmarkViewAdapter mBookmarkAdapter;
+	private DrawerArrowDrawable mArrowDrawable;
+	private ImageView mArrowImage;
 	private AutoCompleteTextView mSearch;
 	private ClickHandler mClickHandler;
 	private AnimatedProgressBar mProgressBar;
@@ -227,9 +230,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		// TODO
 
-		final DrawerArrowDrawable drawable = new DrawerArrowDrawable(this);
-		final ImageView arrow = (ImageView) mActionBar.getCustomView().findViewById(R.id.arrow);
-		arrow.setImageDrawable(drawable);
+		mArrowDrawable = new DrawerArrowDrawable(this);
+		mArrowImage = (ImageView) mActionBar.getCustomView().findViewById(R.id.arrow);
+		mArrowImage.setImageDrawable(mArrowDrawable);
 		LinearLayout arrowButton = (LinearLayout) mActionBar.getCustomView().findViewById(
 				R.id.arrow_button);
 		arrowButton.setOnClickListener(new OnClickListener() {
@@ -290,155 +293,12 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mCopyIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
 				Utils.convertDpiToPixels(mContext, 24));
 		mIcon = mRefreshIcon;
+		SearchClass search = new SearchClass();
 		mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
-		mSearch.setOnKeyListener(new OnKeyListener() {
-
-			@Override
-			public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-
-				switch (arg1) {
-					case KeyEvent.KEYCODE_ENTER:
-						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-						imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-						searchTheWeb(mSearch.getText().toString());
-						if (mCurrentView != null) {
-							mCurrentView.requestFocus();
-						}
-						return true;
-					default:
-						break;
-				}
-				return false;
-			}
-
-		});
-		mSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-			@Override
-			public void onFocusChange(View v, final boolean hasFocus) {
-				if (!hasFocus && mCurrentView != null) {
-					if (mCurrentView != null) {
-						if (mCurrentView.getProgress() < 100) {
-							setIsLoading();
-						} else {
-							setIsFinishedLoading();
-						}
-					}
-					updateUrl(mCurrentView.getUrl(), true);
-				} else if (hasFocus) {
-					updateUrl(mCurrentView.getUrl(), false);
-					mSearch.selectAll();
-					mIcon = mCopyIcon;
-					mSearch.setCompoundDrawables(null, null, mCopyIcon, null);
-				}
-				final Animation anim = new Animation() {
-
-					@Override
-					protected void applyTransformation(float interpolatedTime, Transformation t) {
-						if (!hasFocus) {
-							drawable.setProgress(1.0f - interpolatedTime);
-						} else {
-							drawable.setProgress(interpolatedTime);
-						}
-					}
-
-					@Override
-					public boolean willChangeBounds() {
-						return true;
-					}
-
-				};
-				anim.setDuration(300);
-				anim.setInterpolator(new DecelerateInterpolator());
-				anim.setAnimationListener(new AnimationListener() {
-
-					@Override
-					public void onAnimationStart(Animation animation) {
-					}
-
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						if (!hasFocus) {
-							drawable.setProgress(0.0f);
-						} else {
-							drawable.setProgress(1.0f);
-						}
-					}
-
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
-
-				});
-				new Handler().postDelayed(new Runnable() {
-
-					@Override
-					public void run() {
-						arrow.startAnimation(anim);
-					}
-
-				}, 100);
-
-				if (!hasFocus) {
-					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-				}
-			}
-		});
-		mSearch.setOnEditorActionListener(new OnEditorActionListener() {
-
-			@Override
-			public boolean onEditorAction(TextView arg0, int actionId, KeyEvent arg2) {
-				// hide the keyboard and search the web when the enter key
-				// button is pressed
-				if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE
-						|| actionId == EditorInfo.IME_ACTION_NEXT
-						|| actionId == EditorInfo.IME_ACTION_SEND
-						|| actionId == EditorInfo.IME_ACTION_SEARCH
-						|| (arg2.getAction() == KeyEvent.KEYCODE_ENTER)) {
-					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-					searchTheWeb(mSearch.getText().toString());
-					if (mCurrentView != null) {
-						mCurrentView.requestFocus();
-					}
-					return true;
-				}
-				return false;
-			}
-
-		});
-
-		mSearch.setOnTouchListener(new OnTouchListener() {
-
-			@SuppressLint("ClickableViewAccessibility")
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (mSearch.getCompoundDrawables()[2] != null) {
-					boolean tappedX = event.getX() > (mSearch.getWidth()
-							- mSearch.getPaddingRight() - mIcon.getIntrinsicWidth());
-					if (tappedX) {
-						if (event.getAction() == MotionEvent.ACTION_UP) {
-							if (mSearch.hasFocus()) {
-								ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-								ClipData clip = ClipData.newPlainText("label", mSearch.getText()
-										.toString());
-								clipboard.setPrimaryClip(clip);
-								Utils.showToast(
-										mContext,
-										mContext.getResources().getString(
-												R.string.message_text_copied));
-							} else {
-								refreshOrStop();
-							}
-						}
-						return true;
-					}
-				}
-				return false;
-			}
-
-		});
+		mSearch.setOnKeyListener(search.new KeyListener());
+		mSearch.setOnFocusChangeListener(search.new FocusChangeListener());
+		mSearch.setOnEditorActionListener(search.new EditorActionListener());
+		mSearch.setOnTouchListener(search.new TouchListener());
 
 		mSystemBrowser = getSystemBrowser();
 		Thread initialize = new Thread(new Runnable() {
@@ -487,6 +347,157 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		checkForTor();
 
+	}
+
+	private class SearchClass {
+
+		public class KeyListener implements OnKeyListener {
+
+			@Override
+			public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
+
+				switch (arg1) {
+					case KeyEvent.KEYCODE_ENTER:
+						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+						searchTheWeb(mSearch.getText().toString());
+						if (mCurrentView != null) {
+							mCurrentView.requestFocus();
+						}
+						return true;
+					default:
+						break;
+				}
+				return false;
+			}
+
+		}
+
+		public class EditorActionListener implements OnEditorActionListener {
+			@Override
+			public boolean onEditorAction(TextView arg0, int actionId, KeyEvent arg2) {
+				// hide the keyboard and search the web when the enter key
+				// button is pressed
+				if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE
+						|| actionId == EditorInfo.IME_ACTION_NEXT
+						|| actionId == EditorInfo.IME_ACTION_SEND
+						|| actionId == EditorInfo.IME_ACTION_SEARCH
+						|| (arg2.getAction() == KeyEvent.KEYCODE_ENTER)) {
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+					searchTheWeb(mSearch.getText().toString());
+					if (mCurrentView != null) {
+						mCurrentView.requestFocus();
+					}
+					return true;
+				}
+				return false;
+			}
+		}
+
+		public class FocusChangeListener implements OnFocusChangeListener {
+			@Override
+			public void onFocusChange(View v, final boolean hasFocus) {
+				if (!hasFocus && mCurrentView != null) {
+					if (mCurrentView != null) {
+						if (mCurrentView.getProgress() < 100) {
+							setIsLoading();
+						} else {
+							setIsFinishedLoading();
+						}
+					}
+					updateUrl(mCurrentView.getUrl(), true);
+				} else if (hasFocus) {
+					updateUrl(mCurrentView.getUrl(), false);
+					mSearch.selectAll();
+					mIcon = mCopyIcon;
+					mSearch.setCompoundDrawables(null, null, mCopyIcon, null);
+				}
+				final Animation anim = new Animation() {
+
+					@Override
+					protected void applyTransformation(float interpolatedTime, Transformation t) {
+						if (!hasFocus) {
+							mArrowDrawable.setProgress(1.0f - interpolatedTime);
+						} else {
+							mArrowDrawable.setProgress(interpolatedTime);
+						}
+					}
+
+					@Override
+					public boolean willChangeBounds() {
+						return true;
+					}
+
+				};
+				anim.setDuration(300);
+				anim.setInterpolator(new DecelerateInterpolator());
+				anim.setAnimationListener(new AnimationListener() {
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						if (!hasFocus) {
+							mArrowDrawable.setProgress(0.0f);
+						} else {
+							mArrowDrawable.setProgress(1.0f);
+						}
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+
+				});
+				new Handler().postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						mArrowImage.startAnimation(anim);
+					}
+
+				}, 100);
+
+				if (!hasFocus) {
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+				}
+			}
+		}
+
+		public class TouchListener implements OnTouchListener {
+
+			@SuppressLint("ClickableViewAccessibility")
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (mSearch.getCompoundDrawables()[2] != null) {
+					boolean tappedX = event.getX() > (mSearch.getWidth()
+							- mSearch.getPaddingRight() - mIcon.getIntrinsicWidth());
+					if (tappedX) {
+						if (event.getAction() == MotionEvent.ACTION_UP) {
+							if (mSearch.hasFocus()) {
+								ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+								ClipData clip = ClipData.newPlainText("label", mSearch.getText()
+										.toString());
+								clipboard.setPrimaryClip(clip);
+								Utils.showToast(
+										mContext,
+										mContext.getResources().getString(
+												R.string.message_text_copied));
+							} else {
+								refreshOrStop();
+							}
+						}
+						return true;
+					}
+				}
+				return false;
+			}
+
+		}
 	}
 
 	private class DrawerLocker implements DrawerListener {

@@ -98,7 +98,6 @@ public class AnimatedProgressBar extends LinearLayout {
                     mProgressView.getLayoutParams().width = width;
                     mProgressView.requestLayout();
                 }
-                mProgressView.invalidate();
             }
 
             @Override

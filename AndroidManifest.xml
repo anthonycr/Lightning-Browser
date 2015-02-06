@@ -3,8 +3,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="acr.browser.lightning"
-    android:versionCode="70"
-    android:versionName="4.0.2a" >
+    android:versionCode="71"
+    android:versionName="4.0.3a" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
