@@ -34,6 +34,7 @@
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
 -keep public class com.android.vending.licensing.ILicensingService
+-keep public class acr.browser.lightning.reading.*
 
 # Without this rule, openFileChooser does not get called on KitKat
 -keep class acr.browser.lightning.LightningView$LightningChromeClient {
