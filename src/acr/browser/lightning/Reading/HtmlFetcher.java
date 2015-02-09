@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package acr.browser.lightning.Reading;
+package acr.browser.lightning.reading;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

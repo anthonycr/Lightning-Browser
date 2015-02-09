@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package acr.browser.lightning.Reading;
+package acr.browser.lightning.reading;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -65,9 +65,8 @@ public class MapEntry<K, V> implements Map.Entry<K, V>, Serializable {
 		final MapEntry<K, V> other = (MapEntry<K, V>) obj;
 		if (this.key != other.key && (this.key == null || !this.key.equals(other.key)))
 			return false;
-		if (this.value != other.value && (this.value == null || !this.value.equals(other.value)))
-			return false;
-		return true;
+		return !(this.value != other.value && (this.value == null || !this.value
+				.equals(other.value)));
 	}
 
 	@Override

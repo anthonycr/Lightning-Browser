@@ -1,4 +1,4 @@
-package acr.browser.lightning.Reading;
+package acr.browser.lightning.reading;
 
 import org.jsoup.nodes.Element;
 

@@ -1,4 +1,4 @@
-package acr.browser.lightning.Reading;
+package acr.browser.lightning.reading;
 
 import java.util.ArrayList;
 import java.util.Arrays;

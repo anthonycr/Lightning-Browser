@@ -3,8 +3,8 @@ package acr.browser.lightning;
 import java.util.ArrayList;
 import java.util.List;
 
-import acr.browser.lightning.Reading.HtmlFetcher;
-import acr.browser.lightning.Reading.JResult;
+import acr.browser.lightning.reading.HtmlFetcher;
+import acr.browser.lightning.reading.JResult;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -111,7 +111,7 @@ public class ReadingActivity extends ActionBarActivity {
 			} else {
 				StringBuilder builder = new StringBuilder();
 				for (String text : mBodyText) {
-					builder.append(text + "\n\n");
+					builder.append(text).append("\n\n");
 				}
 				setText(mTitleText, builder.toString());
 			}

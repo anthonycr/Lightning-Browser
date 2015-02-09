@@ -1,4 +1,4 @@
-package acr.browser.lightning.Reading;
+package acr.browser.lightning.reading;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -118,14 +118,13 @@ public class OutputFormatter {
 	}
 
 	boolean unlikely(Node e) {
-		if (e.attr("class") != null && e.attr("class").toLowerCase(Locale.getDefault()).contains("caption"))
+		if (e.attr("class") != null
+				&& e.attr("class").toLowerCase(Locale.getDefault()).contains("caption"))
 			return true;
 
 		String style = e.attr("style");
 		String clazz = e.attr("class");
-		if (unlikelyPattern.matcher(style).find() || unlikelyPattern.matcher(clazz).find())
-			return true;
-		return false;
+		return unlikelyPattern.matcher(style).find() || unlikelyPattern.matcher(clazz).find();
 	}
 
 	void appendTextSkipHidden(Element e, StringBuilder accum) {
@@ -148,9 +147,7 @@ public class OutputFormatter {
 	}
 
 	boolean lastCharIsWhitespace(StringBuilder accum) {
-		if (accum.length() == 0)
-			return false;
-		return Character.isWhitespace(accum.charAt(accum.length() - 1));
+		return (accum.length() != 0) && Character.isWhitespace(accum.charAt(accum.length() - 1));
 	}
 
 	protected String node2TextOld(Element el) {
