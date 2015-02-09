@@ -31,6 +31,7 @@ public class LicenseActivity extends ActionBarActivity implements View.OnClickLi
 		findViewById(R.id.licenseHosts).setOnClickListener(this);
 		findViewById(R.id.licenseOrbot).setOnClickListener(this);
 		findViewById(R.id.licenseSnactory).setOnClickListener(this);
+		findViewById(R.id.licenseJsoup).setOnClickListener(this);
 	}
 
 	@Override
@@ -50,6 +51,9 @@ public class LicenseActivity extends ActionBarActivity implements View.OnClickLi
 				break;
 			case R.id.licenseSnactory:
 				actionView("http://www.apache.org/licenses/LICENSE-2.0");
+				break;
+			case R.id.licenseJsoup:
+				actionView("http://jsoup.org/license");
 				break;
 		}
 	}

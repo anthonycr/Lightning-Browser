@@ -202,4 +202,6 @@
     <string name="loading">Loading&#8230;</string>
     <string name="loading_failed">Couldn\'t load anything from the page.</string>
     <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT License</string>
 </resources>
