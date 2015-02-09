@@ -90,14 +90,13 @@ public class LightningView {
 		if (API > 15) {
 			mWebView.setBackground(null);
 			mWebView.getRootView().setBackground(null);
-		} else {
+		} else if (mWebView.getRootView() != null) {
 			mWebView.getRootView().setBackgroundDrawable(null);
 		}
 		mWebView.setWillNotCacheDrawing(false);
 		mWebView.setAlwaysDrawnWithCacheEnabled(true);
 		mWebView.setScrollbarFadingEnabled(true);
 		mWebView.setSaveEnabled(true);
-
 		mWebView.setWebChromeClient(new LightningChromeClient(activity));
 		mWebView.setWebViewClient(new LightningWebClient(activity));
 		mWebView.setDownloadListener(new LightningDownloadListener(activity));
@@ -395,9 +394,6 @@ public class LightningView {
 		if (API > 16) {
 			settings.setMediaPlaybackRequiresUserGesture(true);
 		}
-		if (API < 19) {
-			settings.setDatabasePath(context.getCacheDir() + "/databases");
-		}
 		if (API >= Build.VERSION_CODES.LOLLIPOP && !mBrowserController.isIncognito()) {
 			settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		} else if (API >= Build.VERSION_CODES.LOLLIPOP) {
@@ -411,19 +407,23 @@ public class LightningView {
 			settings.setDomStorageEnabled(false);
 		}
 		settings.setAppCacheEnabled(true);
-		settings.setAppCachePath(context.getCacheDir().toString());
 		settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-		settings.setGeolocationDatabasePath(context.getFilesDir().toString());
-		settings.setAllowFileAccess(true);
 		settings.setDatabaseEnabled(true);
 		settings.setSupportZoom(true);
 		settings.setBuiltInZoomControls(true);
 		settings.setDisplayZoomControls(false);
 		settings.setAllowContentAccess(true);
+		settings.setAllowFileAccess(true);
 		settings.setDefaultTextEncodingName("utf-8");
 		if (API > 16) {
 			settings.setAllowFileAccessFromFileURLs(false);
 			settings.setAllowUniversalAccessFromFileURLs(false);
+		}
+
+		settings.setAppCachePath(context.getDir("appcache", 0).getPath());
+		settings.setGeolocationDatabasePath(context.getDir("geolocation", 0).getPath());
+		if (API < Build.VERSION_CODES.KITKAT) {
+			settings.setDatabasePath(context.getDir("databases", 0).getPath());
 		}
 	}
 
@@ -471,11 +471,11 @@ public class LightningView {
 	}
 
 	public void setNormalRendering() {
-		mWebView.setLayerType(View.LAYER_TYPE_NONE, mPaint);
+		mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
 	}
 
 	public void setSoftwareRendering() {
-		mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, mPaint);
+		mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
 
 	public void setColorMode(int mode) {
@@ -483,6 +483,9 @@ public class LightningView {
 		switch (mode) {
 			case 0:
 				mPaint.setColorFilter(null);
+				// setSoftwareRendering(); // Some devices get segfaults
+				// in the WebView with Hardware Acceleration enabled,
+				// the only fix is to disable hardware rendering
 				setNormalRendering();
 				mInvertPage = false;
 				break;
@@ -653,6 +656,16 @@ public class LightningView {
 		}
 
 		@Override
+		public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+			if (mAdBlock.isAd(request.getUrl().getHost())) {
+				ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
+				return new WebResourceResponse("text/plain", "utf-8", EMPTY);
+			}
+
+			return super.shouldInterceptRequest(view, request);
+		}
+
+		@Override
 		public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
 			if (mAdBlock.isAd(url)) {
 				ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
@@ -766,7 +779,7 @@ public class LightningView {
 		public void onPageFinished(WebView view, String url) {
 			if (view.isShown()) {
 				mBrowserController.updateUrl(url, true);
-				view.invalidate();
+				view.postInvalidate();
 			}
 			if (view.getTitle() == null || view.getTitle().isEmpty()) {
 				mTitle.setTitle(mActivity.getString(R.string.untitled));
@@ -785,7 +798,6 @@ public class LightningView {
 				mBrowserController.updateUrl(url, false);
 				mBrowserController.showActionBar();
 			}
-
 			mTitle.setFavicon(mWebpageBitmap);
 			mBrowserController.update();
 		}

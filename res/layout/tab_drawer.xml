@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/left_drawer"
     android:layout_width="@dimen/navigation_width"
     android:layout_height="match_parent"
@@ -13,7 +13,6 @@
         android:id="@+id/new_tab_button"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
         android:background="?attr/listBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal" >
@@ -49,14 +48,13 @@
         android:id="@+id/view"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/new_tab_button"
         android:background="@color/gray_list_bg" />
 
     <ListView
         android:id="@+id/left_drawer_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/lineView"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_below="@+id/view"
         android:choiceMode="singleChoice"
         android:dividerHeight="1dp"
@@ -66,14 +64,12 @@
         android:id="@+id/lineView"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/linearLayout1"
         android:background="@color/gray_list_bg" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
         android:baselineAligned="false"
         android:orientation="horizontal"
         android:weightSum="2" >
@@ -119,4 +115,4 @@
         </RelativeLayout>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

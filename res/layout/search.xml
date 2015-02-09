@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:gravity="left|center_vertical"
-        android:hint="@+string/search_hint"
+        android:hint="@string/search_hint"
         android:imeOptions="actionGo"
         android:inputType="textUri"
         android:paddingBottom="1dp"

@@ -77,7 +77,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerListLeft;
-	private RelativeLayout mDrawerLeft;
+	private LinearLayout mDrawerLeft;
 	private LinearLayout mDrawerRight;
 	private ListView mDrawerListRight;
 	private RelativeLayout mNewTab;
@@ -171,15 +171,20 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		// mProgressBar.setVisibility(View.GONE);
 		// TODO
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
-		mDrawerLeft = (RelativeLayout) findViewById(R.id.left_drawer);
+		mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
+		mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null); // Drawer
+																	// stutters
+																	// otherwise
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerListLeft = (ListView) findViewById(R.id.left_drawer_list);
 		mDrawerListLeft.setDivider(null);
 		mDrawerListLeft.setDividerHeight(0);
 		mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
+		mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mDrawerListRight = (ListView) findViewById(R.id.right_drawer_list);
 		mDrawerListRight.setDivider(null);
 		mDrawerListRight.setDividerHeight(0);
+
 		setNavigationDrawerWidth();
 		mDrawerLayout.setDrawerListener(new DrawerLocker());
 
@@ -232,6 +237,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		mArrowDrawable = new DrawerArrowDrawable(this);
 		mArrowImage = (ImageView) mActionBar.getCustomView().findViewById(R.id.arrow);
+		mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null); // Use a
+																	// hardware
+																	// layer for
+																	// the
+																	// animation
 		mArrowImage.setImageDrawable(mArrowDrawable);
 		LinearLayout arrowButton = (LinearLayout) mActionBar.getCustomView().findViewById(
 				R.id.arrow_button);
@@ -399,17 +409,22 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			@Override
 			public void onFocusChange(View v, final boolean hasFocus) {
 				if (!hasFocus && mCurrentView != null) {
-					if (mCurrentView != null) {
-						if (mCurrentView.getProgress() < 100) {
-							setIsLoading();
-						} else {
-							setIsFinishedLoading();
-						}
+					if (mCurrentView.getProgress() < 100) {
+						setIsLoading();
+					} else {
+						setIsFinishedLoading();
 					}
 					updateUrl(mCurrentView.getUrl(), true);
 				} else if (hasFocus) {
-					updateUrl(mCurrentView.getUrl(), false);
-					mSearch.selectAll();
+					String url = mCurrentView.getUrl();
+					if (url == null || url.startsWith(Constants.FILE)) {
+						mSearch.setText("");
+					} else {
+						mSearch.setText(url);
+					}
+					((AutoCompleteTextView) v).selectAll(); // Hack to make sure
+															// the text gets
+															// selected
 					mIcon = mCopyIcon;
 					mSearch.setCompoundDrawables(null, null, mCopyIcon, null);
 				}
@@ -578,8 +593,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				if (mCurrentView != null) {
 					if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
 						ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl()
-								.toString());
+						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl());
 						clipboard.setPrimaryClip(clip);
 						Utils.showToast(mContext,
 								mContext.getResources().getString(R.string.message_link_copied));
@@ -653,7 +667,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					.setNegativeButton(R.string.no, dialogClickListener).show();
 
 			return true;
-		} else if (oh.isOrbotInstalled() & useProxy == true) {
+		} else if (oh.isOrbotInstalled() & useProxy) {
 			initializeTor();
 			return true;
 		} else {
@@ -691,19 +705,23 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					.getLayoutParams();
 			params.width = maxWidth;
 			mDrawerLeft.setLayoutParams(params);
+			mDrawerLeft.requestLayout();
 			DrawerLayout.LayoutParams paramsRight = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerRight
 					.getLayoutParams();
 			paramsRight.width = maxWidth;
 			mDrawerRight.setLayoutParams(paramsRight);
+			mDrawerRight.requestLayout();
 		} else {
 			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerLeft
 					.getLayoutParams();
 			params.width = width;
 			mDrawerLeft.setLayoutParams(params);
+			mDrawerLeft.requestLayout();
 			DrawerLayout.LayoutParams paramsRight = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerRight
 					.getLayoutParams();
 			paramsRight.width = width;
 			mDrawerRight.setLayoutParams(paramsRight);
+			mDrawerRight.requestLayout();
 		}
 	}
 
@@ -729,7 +747,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		if (mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true)) {
 			String mem = mPreferences.getString(PreferenceConstants.URL_MEMORY, "");
-			mEditPrefs.putString(PreferenceConstants.URL_MEMORY, "");
+			mEditPrefs.putString(PreferenceConstants.URL_MEMORY, "").apply();
 			String[] array = Utils.getArray(mem);
 			int count = 0;
 			for (int n = 0; n < array.length; n++) {
@@ -899,8 +917,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				if (mCurrentView != null) {
 					if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
 						ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl()
-								.toString());
+						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl());
 						clipboard.setPrimaryClip(clip);
 						Utils.showToast(mContext,
 								mContext.getResources().getString(R.string.message_link_copied));
@@ -1006,6 +1023,31 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		});
 	}
 
+	private void showCloseDialog(final int position) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext,
+				android.R.layout.simple_dropdown_item_1line);
+		adapter.add(mContext.getString(R.string.close_tab));
+		adapter.add(mContext.getString(R.string.close_all_tabs));
+		builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+					case 0:
+						deleteTab(position);
+						break;
+					case 1:
+						closeBrowser();
+						break;
+					default:
+						break;
+				}
+			}
+		});
+		builder.show();
+	}
+
 	/**
 	 * The click listener for ListView in the navigation drawer
 	 */
@@ -1025,28 +1067,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		@Override
 		public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-			ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext,
-					android.R.layout.simple_dropdown_item_1line);
-			adapter.add(mContext.getString(R.string.close_tab));
-			adapter.add(mContext.getString(R.string.close_all_tabs));
-			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-						case 0:
-							deleteTab(position);
-							break;
-						case 1:
-							closeBrowser();
-							break;
-						default:
-							break;
-					}
-				}
-			});
-			builder.show();
+			showCloseDialog(position);
 			return true;
 		}
 	}
@@ -1339,10 +1360,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					Log.d(Constants.TAG, "Cookies Cleared");
 
 				}
-				if (reference != null) {
-					reference.pauseTimers();
-					reference.onDestroy();
-				}
+				reference.pauseTimers();
+				reference.onDestroy();
 				mCurrentView = null;
 				mTitleAdapter.notifyDataSetChanged();
 				finish();
@@ -1362,33 +1381,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
-					&& mCurrentView != null && !isIncognito()) {
-				mCurrentView.clearCache(true);
-				Log.d(Constants.TAG, "Cache Cleared");
-
-			}
-			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
-					&& !isIncognito()) {
-				clearHistory();
-				Log.d(Constants.TAG, "History Cleared");
-
-			}
-			if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
-					&& !isIncognito()) {
-				clearCookies();
-				Log.d(Constants.TAG, "Cookies Cleared");
-
-			}
-			mCurrentView = null;
-			for (int n = 0; n < mWebViews.size(); n++) {
-				if (mWebViews.get(n) != null) {
-					mWebViews.get(n).onDestroy();
-				}
-			}
-			mWebViews.clear();
-			mTitleAdapter.notifyDataSetChanged();
-			finish();
+			showCloseDialog(mDrawerListLeft.getCheckedItemPosition());
 		}
 		return true;
 	}
@@ -1502,8 +1495,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					s = s + mWebViews.get(n).getUrl() + "|$|SEPARATOR|$|";
 				}
 			}
-			mEditPrefs.putString(PreferenceConstants.URL_MEMORY, s);
-			mEditPrefs.commit();
+			mEditPrefs.putString(PreferenceConstants.URL_MEMORY, s).commit();
 		}
 	}
 
@@ -1822,8 +1814,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					}
 
 				} catch (Exception e) {
-				} finally {
-
+					e.printStackTrace();
 				}
 			} else {
 				// if it exists, retrieve it from the cache
@@ -1850,6 +1841,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					}
 
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			if (mIcon == null) {
@@ -1878,7 +1870,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	@Override
 	public void updateUrl(String url, boolean shortUrl) {
-		if (url == null) {
+		if (url == null || mSearch == null || mSearch.hasFocus()) {
 			return;
 		}
 		if (shortUrl) {
@@ -1940,7 +1932,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					}
 				}
 				try {
-					if (mHistoryHandler == null && !mHistoryHandler.isOpen()) {
+					if (mHistoryHandler == null || !mHistoryHandler.isOpen()) {
 						mHistoryHandler = new HistoryDatabaseHandler(mContext);
 					}
 					mHistoryHandler.visitHistoryItem(url, title);

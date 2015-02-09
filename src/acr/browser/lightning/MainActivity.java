@@ -36,7 +36,6 @@ public class MainActivity extends BrowserActivity {
 
 	@Override
 	public synchronized void initializeTabs() {
-		super.initializeTabs();
 		restoreOrNewTab();
 		// if incognito mode use newTab(null, true); instead
 	}

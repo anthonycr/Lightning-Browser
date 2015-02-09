@@ -57,11 +57,7 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public boolean isOpen() {
-		if (mDatabase != null) {
-			return mDatabase.isOpen();
-		} else {
-			return false;
-		}
+		return mDatabase != null && mDatabase.isOpen();
 	}
 
 	@Override
@@ -184,10 +180,8 @@ public class HistoryDatabaseHandler extends SQLiteOpenHelper {
 		ContentValues values = new ContentValues();
 		values.put(KEY_URL, item.getUrl());
 		values.put(KEY_TITLE, item.getTitle());
-		int n = mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
+		return mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(item.getId()) });
-		// updating row
-		return n;
 	}
 
 	// Getting items Count

@@ -360,10 +360,9 @@ public class BookmarkManager {
 		if (file == null) {
 			return;
 		}
-		File bookmarksImport = file;
 		List<HistoryItem> list = new ArrayList<HistoryItem>();
 		try {
-			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksImport));
+			BufferedReader bookmarksReader = new BufferedReader(new FileReader(file));
 			String line;
 			int number = 0;
 			while ((line = bookmarksReader.readLine()) != null) {

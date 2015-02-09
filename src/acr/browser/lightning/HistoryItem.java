@@ -140,11 +140,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 		if (!mTitle.equals(that.mTitle)) {
 			return false;
 		}
-		if (!mUrl.equals(that.mUrl)) {
-			return false;
-		}
-
-		return true;
+		return mUrl.equals(that.mUrl);
 	}
 
 	@Override

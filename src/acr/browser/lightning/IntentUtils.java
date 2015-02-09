@@ -19,8 +19,6 @@ public class IntentUtils {
 
 	private Activity mActivity;
 
-	private BrowserController mController;
-
 	static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
 			+ // switch on case insensitive matching
 			"("
@@ -29,8 +27,7 @@ public class IntentUtils {
 			+ ")" + "(.*)");
 
 	public IntentUtils(BrowserController controller) {
-		mController = controller;
-		mActivity = mController.getActivity();
+		mActivity = controller.getActivity();
 	}
 
 	public boolean startActivityForUrl(WebView tab, String url) {
@@ -69,6 +66,7 @@ public class IntentUtils {
 				return true;
 			}
 		} catch (ActivityNotFoundException ex) {
+			ex.printStackTrace();
 		}
 		return false;
 	}

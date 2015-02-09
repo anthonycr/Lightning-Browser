@@ -162,13 +162,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			FilterResults results = new FilterResults();
-			if (constraint == null) {
+			if (constraint == null || constraint.toString() == null) {
 				return results;
 			}
 			String query = constraint.toString().toLowerCase(Locale.getDefault());
-			if (query == null) {
-				return results;
-			}
 			if (mUseGoogle && !mIncognito && !mIsExecuting) {
 				new RetrieveSearchSuggestions().execute(query);
 			}
@@ -269,11 +266,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 					try {
 						download.close();
 					} catch (IOException e) {
-						return filter;
+						e.printStackTrace();
 					}
 				}
 			}
-
 			return filter;
 		}
 
