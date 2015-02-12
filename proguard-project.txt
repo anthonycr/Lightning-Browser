@@ -36,6 +36,11 @@
 -keep public class com.android.vending.licensing.ILicensingService
 -keep public class acr.browser.lightning.reading.*
 
+# this will fix a force close in ReadingActivity
+-keep public class org.jsoup.** {
+	public *;
+}
+
 # Without this rule, openFileChooser does not get called on KitKat
 -keep class acr.browser.lightning.LightningView$LightningChromeClient {
 	void openFileChooser(android.webkit.ValueCallback);
