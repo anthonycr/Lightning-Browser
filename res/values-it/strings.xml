@@ -75,11 +75,11 @@
     <string name="hint_url">URL</string>
     <string name="title_edit_bookmark">Modifica Segnalibro</string>
     <string name="action_edit">Modifica</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Ciao mondo!</string>
     <string name="action_homepage">Default</string>
     <string name="action_back">Indietro</string>
     <string name="action_find">Trova nella pagina</string>
-    <string name="incognito_cookies">Enable Cookies in Incognito Mode</string>
+    <string name="incognito_cookies">Abilita Cookies in Incognito Mode</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuale</string>
     <string name="action_auto">Auto</string>
@@ -90,7 +90,7 @@
     <string name="message_import">Segnalibri importati!</string>
     <string name="message_clear_history">Cronologia Cancellata</string>
     <string name="message_cookies_cleared">Cookies Cancellati</string>
-    <string name="max_tabs">Max Tabs Reached</string>
+    <string name="max_tabs">Numero massimo di pagine raggiunto</string>
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
     <string name="block_ads">Blocca Annunci</string>
