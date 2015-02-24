@@ -23,7 +23,7 @@ public interface BrowserController {
 	public void openFileChooser(ValueCallback<Uri> uploadMsg);
 
 	public void update();
-
+	
 	public void onLongPress();
 
 	public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback);

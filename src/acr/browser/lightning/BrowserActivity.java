@@ -11,8 +11,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
-import android.content.res.Resources.Theme;
-import android.content.res.TypedArray;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
@@ -37,7 +36,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -97,7 +95,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private ValueCallback<Uri> mUploadMessage;
 	private View mCustomView;
 	private int mOriginalOrientation;
-	private int mActionBarSize;
 	private ActionBar mActionBar;
 	private boolean mFullScreen;
 	private boolean mColorMode;
@@ -113,10 +110,10 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private LinearLayout mToolbarLayout;
 	private HistoryDatabaseHandler mHistoryHandler;
 	private SharedPreferences mPreferences;
-	private SharedPreferences.Editor mEditPrefs;
 	private Context mContext;
 	private Bitmap mWebpageBitmap;
 	private String mSearchText;
+	private String mUntitledTitle;
 	private Activity mActivity;
 	private final int API = android.os.Build.VERSION.SDK_INT;
 	private Drawable mDeleteIcon;
@@ -144,11 +141,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
-		TypedValue typedValue = new TypedValue();
-		Theme theme = getTheme();
-		theme.resolveAttribute(R.attr.numberColor, typedValue, true);
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mEditPrefs = mPreferences.edit();
 		mContext = this;
 		if (mWebViews != null) {
 			mWebViews.clear();
@@ -159,7 +152,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (!mPreferences.getBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, false)) {
 			List<HistoryItem> old = Utils.getOldBookmarks(this);
 			mBookmarkManager.addBookmarkList(old);
-			mEditPrefs.putBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, true).apply();
+			mPreferences.edit().putBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, true)
+					.apply();
 		}
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
@@ -168,8 +162,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mPageLayout = (LinearLayout) findViewById(R.id.main_layout);
 		mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
 		mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
-		// mProgressBar.setVisibility(View.GONE);
-		// TODO
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
 		mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
 		mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null); // Drawer
@@ -190,13 +182,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
 		mActionBar = getSupportActionBar();
-		final TypedArray styledAttributes = mContext.getTheme().obtainStyledAttributes(
-				new int[] { android.R.attr.actionBarSize });
-		mActionBarSize = (int) styledAttributes.getDimension(0, 0);
-		if (pixelsToDp(mActionBarSize) < 48) {
-			mActionBarSize = Utils.convertDpiToPixels(mContext, 48);
-		}
-		styledAttributes.recycle();
 
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
 
@@ -211,9 +196,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mDrawerListRight.setOnItemClickListener(new BookmarkItemClickListener());
 		mDrawerListRight.setOnItemLongClickListener(new BookmarkItemLongClickListener());
 
-		if (mHistoryHandler == null) {
-			mHistoryHandler = new HistoryDatabaseHandler(this);
-		} else if (!mHistoryHandler.isOpen()) {
+		if (mHistoryHandler == null || !mHistoryHandler.isOpen()) {
 			mHistoryHandler = new HistoryDatabaseHandler(this);
 		}
 
@@ -293,15 +276,16 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 		// create the search EditText in the ToolBar
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
+		mUntitledTitle = (String) this.getString(R.string.untitled);
 		mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
-		mDeleteIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
-				Utils.convertDpiToPixels(mContext, 24));
+		mDeleteIcon.setBounds(0, 0, Utils.convertDpToPixels(24),
+				Utils.convertDpToPixels(24));
 		mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh);
-		mRefreshIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
-				Utils.convertDpiToPixels(mContext, 24));
+		mRefreshIcon.setBounds(0, 0, Utils.convertDpToPixels(24),
+				Utils.convertDpToPixels(24));
 		mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy);
-		mCopyIcon.setBounds(0, 0, Utils.convertDpiToPixels(mContext, 24),
-				Utils.convertDpiToPixels(mContext, 24));
+		mCopyIcon.setBounds(0, 0, Utils.convertDpToPixels(24),
+				Utils.convertDpToPixels(24));
 		mIcon = mRefreshIcon;
 		SearchClass search = new SearchClass();
 		mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
@@ -339,7 +323,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					newTab(url, true);
 					Toast.makeText(mContext, R.string.deleted_tab, Toast.LENGTH_SHORT).show();
 				}
-				mEditPrefs.putString(PreferenceConstants.SAVE_URL, null).apply();
+				mPreferences.edit().putString(PreferenceConstants.SAVE_URL, null).apply();
 				return true;
 			}
 
@@ -641,8 +625,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		OrbotHelper oh = new OrbotHelper(this);
 		if (oh.isOrbotInstalled()
 				&& !mPreferences.getBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR, false)) {
-			mEditPrefs.putBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR, true);
-			mEditPrefs.apply();
+			mPreferences.edit().putBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR, true).apply();
 			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -671,8 +654,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			initializeTor();
 			return true;
 		} else {
-			mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, false);
-			mEditPrefs.apply();
+			mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, false).apply();
 			return false;
 		}
 	}
@@ -697,9 +679,19 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	}
 
-	public void setNavigationDrawerWidth() {
-		int width = getResources().getDisplayMetrics().widthPixels * 3 / 4;
-		int maxWidth = Utils.convertDpiToPixels(mContext, 300);
+	private boolean isTablet() {
+		return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
+	}
+
+	private void setNavigationDrawerWidth() {
+		int width = getResources().getDisplayMetrics().widthPixels
+				- Utils.convertDpToPixels(56);
+		int maxWidth;
+		if(isTablet()){
+			maxWidth = Utils.convertDpToPixels(320);
+		} else {
+			maxWidth = Utils.convertDpToPixels(300);
+		}
 		if (width > maxWidth) {
 			DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerLeft
 					.getLayoutParams();
@@ -747,7 +739,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		if (mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true)) {
 			String mem = mPreferences.getString(PreferenceConstants.URL_MEMORY, "");
-			mEditPrefs.putString(PreferenceConstants.URL_MEMORY, "").apply();
+			mPreferences.edit().putString(PreferenceConstants.URL_MEMORY, "").apply();
 			String[] array = Utils.getArray(mem);
 			int count = 0;
 			for (int n = 0; n < array.length; n++) {
@@ -1198,6 +1190,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		mCurrentView = view;
 		mCurrentView.setForegroundTab(true);
+		mCurrentView.requestFocus();
 		if (mCurrentView.getWebView() != null) {
 			updateUrl(mCurrentView.getUrl(), true);
 			updateProgress(mCurrentView.getProgress());
@@ -1309,7 +1302,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			return;
 		}
 		if (reference.getUrl() != null && !reference.getUrl().startsWith(Constants.FILE)) {
-			mEditPrefs.putString(PreferenceConstants.SAVE_URL, reference.getUrl()).apply();
+			mPreferences.edit().putString(PreferenceConstants.SAVE_URL, reference.getUrl()).apply();
 		}
 		boolean isShown = reference.isShown();
 		if (current > position) {
@@ -1455,7 +1448,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		} else {
 			if (mCurrentView != null) {
 				Log.d(Constants.TAG, "onBackPressed");
-				if (mCurrentView.canGoBack()) {
+				if (!mCurrentView.getWebView().hasFocus()) {
+					mCurrentView.requestFocus();
+				} else if (mCurrentView.canGoBack()) {
 					if (!mCurrentView.isShown()) {
 						onHideCustomView();
 					} else {
@@ -1495,7 +1490,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					s = s + mWebViews.get(n).getUrl() + "|$|SEPARATOR|$|";
 				}
 			}
-			mEditPrefs.putString(PreferenceConstants.URL_MEMORY, s).commit();
+			mPreferences.edit().putString(PreferenceConstants.URL_MEMORY, s).apply();
 		}
 	}
 
@@ -1586,11 +1581,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		} else {
 			mCurrentView.loadUrl(query);
 		}
-	}
-
-	private int pixelsToDp(int num) {
-		float scale = getResources().getDisplayMetrics().density;
-		return (int) ((num - 0.5f) / scale);
 	}
 
 	public class LightningViewAdapter extends ArrayAdapter<LightningView> {
@@ -1852,7 +1842,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		protected void onPostExecute(Bitmap result) {
-			Bitmap fav = Utils.padFavicon(result, mContext);
+			Bitmap fav = Utils.padFavicon(result);
 			bmImage.setImageBitmap(fav);
 			mWeb.setBitmap(fav);
 			notifyBookmarkDataSetChanged();
@@ -1873,13 +1863,25 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (url == null || mSearch == null || mSearch.hasFocus()) {
 			return;
 		}
-		if (shortUrl) {
-			url = url.replaceFirst(Constants.HTTP, "");
-			if (url.startsWith(Constants.FILE)) {
-				url = "";
+		if (shortUrl && !url.startsWith(Constants.FILE)) {
+			switch (mPreferences.getInt(PreferenceConstants.URL_BOX_CONTENTS, 0)) {
+				case 0: // Default, show only the domain
+					url = url.replaceFirst(Constants.HTTP, "");
+					url = Utils.getDomainName(url);
+					mSearch.setText(url);
+					break;
+				case 1: // URL, show the entire URL
+					mSearch.setText(url);
+					break;
+				case 2: // Title, show the page's title
+					if (mCurrentView != null && !mCurrentView.getTitle().isEmpty()) {
+						mSearch.setText(mCurrentView.getTitle());
+					} else {
+						mSearch.setText(mUntitledTitle);
+					}
+					break;
 			}
-			url = Utils.getDomainName(url);
-			mSearch.setText(url);
+
 		} else {
 			if (url.startsWith(Constants.FILE)) {
 				url = "";
@@ -1978,8 +1980,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			c.close();
 			c = null;
 		}
-		mEditPrefs.putBoolean("SystemBrowser", browserFlag);
-		mEditPrefs.commit();
+		mPreferences.edit().putBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, browserFlag)
+				.apply();
 		return browserFlag;
 	}
 

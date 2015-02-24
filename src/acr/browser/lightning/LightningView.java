@@ -70,7 +70,7 @@ public class LightningView {
 		mWebView = new WebView(activity);
 		mTitle = new Title(activity);
 		mAdBlock = new AdBlock(activity);
-		activity.getPackageName();
+
 		mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
 				R.drawable.ic_webpage);
 
@@ -101,41 +101,7 @@ public class LightningView {
 		mWebView.setWebViewClient(new LightningWebClient(activity));
 		mWebView.setDownloadListener(new LightningDownloadListener(activity));
 		mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
-		mWebView.setOnTouchListener(new OnTouchListener() {
-
-			float mLocation;
-
-			float mY;
-
-			int mAction;
-
-			@SuppressLint("ClickableViewAccessibility")
-			@Override
-			public boolean onTouch(View view, MotionEvent arg1) {
-				if (view != null && !view.hasFocus()) {
-					view.requestFocus();
-				}
-				mAction = arg1.getAction();
-				mY = arg1.getY();
-				if (mAction == MotionEvent.ACTION_DOWN) {
-					mLocation = mY;
-				} else if (mAction == MotionEvent.ACTION_UP) {
-					if ((mY - mLocation) > 10) {
-						if (mWebView.getScrollY() != 0) {
-							mBrowserController.showActionBar();
-						} else {
-							mBrowserController.toggleActionBar();
-						}
-					} else if ((mY - mLocation) < -10) {
-						mBrowserController.hideActionBar();
-					}
-					mLocation = 0;
-				}
-				mGestureDetector.onTouchEvent(arg1);
-				return false;
-			}
-
-		});
+		mWebView.setOnTouchListener(new TouchListener());
 		mDefaultUserAgent = mWebView.getSettings().getUserAgentString();
 		mSettings = mWebView.getSettings();
 		initializeSettings(mWebView.getSettings(), activity);
@@ -1129,7 +1095,7 @@ public class LightningView {
 			if (favicon == null) {
 				mFavicon = mDefaultIcon;
 			} else {
-				mFavicon = Utils.padFavicon(favicon, mActivity);
+				mFavicon = Utils.padFavicon(favicon);
 			}
 		}
 
@@ -1147,7 +1113,7 @@ public class LightningView {
 			if (favicon == null) {
 				mFavicon = mDefaultIcon;
 			} else {
-				mFavicon = Utils.padFavicon(favicon, mActivity);
+				mFavicon = Utils.padFavicon(favicon);
 			}
 		}
 
@@ -1159,6 +1125,40 @@ public class LightningView {
 			return mFavicon;
 		}
 
+	}
+
+	private class TouchListener implements OnTouchListener {
+		float mLocation;
+
+		float mY;
+
+		int mAction;
+
+		@SuppressLint("ClickableViewAccessibility")
+		@Override
+		public boolean onTouch(View view, MotionEvent arg1) {
+			if (view != null && !view.hasFocus()) {
+				view.requestFocus();
+			}
+			mAction = arg1.getAction();
+			mY = arg1.getY();
+			if (mAction == MotionEvent.ACTION_DOWN) {
+				mLocation = mY;
+			} else if (mAction == MotionEvent.ACTION_UP) {
+				if ((mY - mLocation) > 10) {
+					if (mWebView.getScrollY() != 0) {
+						mBrowserController.showActionBar();
+					} else {
+						mBrowserController.toggleActionBar();
+					}
+				} else if ((mY - mLocation) < -10) {
+					mBrowserController.hideActionBar();
+				}
+				mLocation = 0;
+			}
+			mGestureDetector.onTouchEvent(arg1);
+			return false;
+		}
 	}
 
 	private class CustomGestureListener extends SimpleOnGestureListener {

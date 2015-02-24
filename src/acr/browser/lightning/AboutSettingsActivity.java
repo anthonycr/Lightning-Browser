@@ -55,7 +55,7 @@ public class AboutSettingsActivity extends ActionBarActivity {
 
 	private void initialize() {
 
-		String code = "HOLO";
+		String code = "1.0";
 
 		try {
 			PackageInfo p = getPackageManager().getPackageInfo(getPackageName(), 0);

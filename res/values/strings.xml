@@ -204,4 +204,10 @@
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
+    <string name="url_contents">URL Box Contents</string>
+    <string-array name="url_content_array">
+        <item >Domain (default)</item>
+        <item >URL</item>
+        <item >Title</item>
+    </string-array>
 </resources>

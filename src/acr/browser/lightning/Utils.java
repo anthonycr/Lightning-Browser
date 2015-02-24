@@ -8,9 +8,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
@@ -67,9 +69,9 @@ public final class Utils {
 	/**
 	 * Returns the number of pixels corresponding to the passed density pixels
 	 */
-	public static int convertDpiToPixels(Context context, int densityPixels) {
-		float scale = context.getResources().getDisplayMetrics().density;
-		return (int) (densityPixels * scale + 0.5f);
+	public static int convertDpToPixels(int dp) {
+		DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+	    return (int) (dp * metrics.density + 0.5f);
 	}
 
 	public static String getDomainName(String url) {
@@ -160,8 +162,8 @@ public final class Utils {
 	 *            is the bitmap to pad.
 	 * @return the padded bitmap.
 	 */
-	public static Bitmap padFavicon(Bitmap bitmap, Context context) {
-		int padding = Utils.convertDpiToPixels(context, 4);
+	public static Bitmap padFavicon(Bitmap bitmap) {
+		int padding = Utils.convertDpToPixels(4);
 
 		Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
 				+ padding, Bitmap.Config.ARGB_8888);

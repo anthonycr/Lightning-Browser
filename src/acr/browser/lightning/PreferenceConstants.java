@@ -42,6 +42,7 @@ public final class PreferenceConstants {
 	public static final String SYNC_HISTORY = "syncHistory";
 	public static final String BLOCK_THIRD_PARTY = "thirdParty";
 	public static final String ENABLE_COLOR_MODE = "colorMode";
+	public static final String URL_BOX_CONTENTS = "urlContent";
 
 	public static final String USE_PROXY = "useProxy";
 	public static final String USE_PROXY_HOST = "useProxyHost";

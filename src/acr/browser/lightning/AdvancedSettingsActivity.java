@@ -25,11 +25,12 @@ import android.widget.TextView;
 public class AdvancedSettingsActivity extends ActionBarActivity {
 
 	private SharedPreferences mPreferences;
-	private SharedPreferences.Editor mEditPrefs;
 	private CheckBox cbAllowPopups, cbAllowCookies, cbAllowIncognitoCookies, cbRestoreTabs;
 	private Context mContext;
 	private TextView mRenderText;
+	private TextView mUrlText;
 	private Activity mActivity;
+	private CharSequence[] mUrlOptions;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +38,16 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 		setContentView(R.layout.advanced_settings);
 
 		// set up ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
-
-		// TODO WARNING: SharedPreferences.edit() without a corresponding
-		// commit() or apply() call
-		mEditPrefs = mPreferences.edit();
 
 		mContext = this;
 		mActivity = this;
@@ -66,11 +63,14 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 	private void initialize() {
 
 		RelativeLayout rAllowPopups, rAllowCookies, rAllowIncognitoCookies, rRestoreTabs;
+		LinearLayout lRenderPicker, lUrlContent;
 
 		rAllowPopups = (RelativeLayout) findViewById(R.id.rAllowPopups);
 		rAllowCookies = (RelativeLayout) findViewById(R.id.rAllowCookies);
 		rAllowIncognitoCookies = (RelativeLayout) findViewById(R.id.rAllowIncognitoCookies);
 		rRestoreTabs = (RelativeLayout) findViewById(R.id.rRestoreTabs);
+		lRenderPicker = (LinearLayout) findViewById(R.id.layoutRendering);
+		lUrlContent = (LinearLayout) findViewById(R.id.rUrlBarContents);
 
 		cbAllowPopups = (CheckBox) findViewById(R.id.cbAllowPopups);
 		cbAllowCookies = (CheckBox) findViewById(R.id.cbAllowCookies);
@@ -81,9 +81,11 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 		cbAllowCookies.setChecked(mPreferences.getBoolean(PreferenceConstants.COOKIES, true));
 		cbAllowIncognitoCookies.setChecked(mPreferences.getBoolean(
 				PreferenceConstants.INCOGNITO_COOKIES, false));
-		cbRestoreTabs.setChecked(mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true));
+		cbRestoreTabs.setChecked(mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS,
+				true));
 
 		mRenderText = (TextView) findViewById(R.id.renderText);
+		mUrlText = (TextView) findViewById(R.id.urlText);
 
 		switch (mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0)) {
 			case 0:
@@ -100,166 +102,148 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 				break;
 		}
 
-		rAllowPopups(rAllowPopups);
-		rAllowCookies(rAllowCookies);
-		rAllowIncognitoCookies(rAllowIncognitoCookies);
-		rRestoreTabs(rRestoreTabs);
-		cbAllowPopups(cbAllowPopups);
-		cbAllowCookies(cbAllowCookies);
-		cbAllowIncognitoCookies(cbAllowIncognitoCookies);
-		cbRestoreTabs(cbRestoreTabs);
-		renderPicker();
-	}
+		mUrlOptions = this.getResources().getStringArray(R.array.url_content_array);
+		int option = mPreferences.getInt(PreferenceConstants.URL_BOX_CONTENTS, 0);
+		mUrlText.setText(mUrlOptions[option]);
 
-	private void cbAllowPopups(CheckBox view) {
-		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		LayoutClickListener listener = new LayoutClickListener();
+		CheckListener cListener = new CheckListener();
 
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.POPUPS, isChecked);
-				mEditPrefs.apply();
-			}
+		rAllowPopups.setOnClickListener(listener);
+		rAllowCookies.setOnClickListener(listener);
+		rAllowIncognitoCookies.setOnClickListener(listener);
+		rRestoreTabs.setOnClickListener(listener);
+		lRenderPicker.setOnClickListener(listener);
+		lUrlContent.setOnClickListener(listener);
 
-		});
-	}
-
-	private void cbAllowCookies(CheckBox view) {
-		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.COOKIES, isChecked);
-				mEditPrefs.apply();
-			}
-
-		});
-	}
-
-	private void cbAllowIncognitoCookies(CheckBox view) {
-		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.INCOGNITO_COOKIES, isChecked);
-				mEditPrefs.apply();
-			}
-
-		});
-	}
-
-	private void cbRestoreTabs(CheckBox view) {
-		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.RESTORE_LOST_TABS, isChecked);
-				mEditPrefs.apply();
-			}
-
-		});
-	}
-
-	private void rAllowPopups(RelativeLayout view) {
-		view.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				cbAllowPopups.setChecked(!cbAllowPopups.isChecked());
-			}
-
-		});
-	}
-
-	private void rAllowCookies(RelativeLayout view) {
-		view.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				cbAllowCookies.setChecked(!cbAllowCookies.isChecked());
-			}
-
-		});
-	}
-
-	private void rAllowIncognitoCookies(RelativeLayout view) {
-		view.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				cbAllowIncognitoCookies.setChecked(!cbAllowIncognitoCookies.isChecked());
-			}
-
-		});
+		cbAllowPopups.setOnCheckedChangeListener(cListener);
+		cbAllowCookies.setOnCheckedChangeListener(cListener);
+		cbAllowIncognitoCookies.setOnCheckedChangeListener(cListener);
+		cbRestoreTabs.setOnCheckedChangeListener(cListener);
 
 	}
 
-	private void rRestoreTabs(RelativeLayout view) {
-		view.setOnClickListener(new OnClickListener() {
+	private class LayoutClickListener implements OnClickListener {
 
-			@Override
-			public void onClick(View v) {
-				cbRestoreTabs.setChecked(!cbRestoreTabs.isChecked());
+		@Override
+		public void onClick(View v) {
+			switch (v.getId()) {
+				case R.id.rAllowPopups:
+					cbAllowPopups.setChecked(!cbAllowPopups.isChecked());
+					break;
+				case R.id.rAllowIncognitoCookies:
+					cbAllowIncognitoCookies.setChecked(!cbAllowIncognitoCookies.isChecked());
+					break;
+				case R.id.rAllowCookies:
+					cbAllowCookies.setChecked(!cbAllowCookies.isChecked());
+					break;
+				case R.id.rRestoreTabs:
+					cbRestoreTabs.setChecked(!cbRestoreTabs.isChecked());
+					break;
+				case R.id.layoutRendering:
+					renderPicker();
+					break;
+				case R.id.rUrlBarContents:
+					urlBoxPicker();
+					break;
 			}
+		}
 
-		});
+	}
+
+	private class CheckListener implements OnCheckedChangeListener {
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			switch (buttonView.getId()) {
+				case R.id.cbAllowPopups:
+					mPreferences.edit().putBoolean(PreferenceConstants.POPUPS, isChecked).apply();
+					break;
+				case R.id.cbAllowCookies:
+					mPreferences.edit().putBoolean(PreferenceConstants.COOKIES, isChecked).apply();
+					break;
+				case R.id.cbAllowIncognitoCookies:
+					mPreferences.edit()
+							.putBoolean(PreferenceConstants.INCOGNITO_COOKIES, isChecked).apply();
+					break;
+				case R.id.cbRestoreTabs:
+					mPreferences.edit()
+							.putBoolean(PreferenceConstants.RESTORE_LOST_TABS, isChecked).apply();
+					break;
+			}
+		}
+
 	}
 
 	public void renderPicker() {
-		LinearLayout layout = (LinearLayout) findViewById(R.id.layoutRendering);
-		layout.setOnClickListener(new OnClickListener() {
+
+		AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+		picker.setTitle(getResources().getString(R.string.rendering_mode));
+		CharSequence[] chars = { mContext.getString(R.string.name_normal),
+				mContext.getString(R.string.name_inverted),
+				mContext.getString(R.string.name_grayscale),
+				mContext.getString(R.string.name_inverted_grayscale) };
+
+		int n = mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0);
+
+		picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-				picker.setTitle(getResources().getString(R.string.rendering_mode));
-				CharSequence[] chars = { mContext.getString(R.string.name_normal),
-						mContext.getString(R.string.name_inverted),
-						mContext.getString(R.string.name_grayscale),
-						mContext.getString(R.string.name_inverted_grayscale) };
-
-				int n = mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0);
-
-				picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				mPreferences.edit().putInt(PreferenceConstants.RENDERING_MODE, which).apply();
+				switch (which) {
+					case 0:
+						mRenderText.setText(mContext.getString(R.string.name_normal));
+						break;
+					case 1:
+						mRenderText.setText(mContext.getString(R.string.name_inverted));
+						break;
+					case 2:
+						mRenderText.setText(mContext.getString(R.string.name_grayscale));
+						break;
+					case 3:
+						mRenderText.setText(mContext.getString(R.string.name_inverted_grayscale));
+						break;
+				}
+			}
+		});
+		picker.setNeutralButton(getResources().getString(R.string.action_ok),
+				new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						mEditPrefs.putInt(PreferenceConstants.RENDERING_MODE, which).apply();
-						switch (which) {
-							case 0:
-								mRenderText.setText(mContext.getString(R.string.name_normal));
-								break;
-							case 1:
-								mRenderText.setText(mContext.getString(R.string.name_inverted));
-								break;
-							case 2:
-								mRenderText.setText(mContext.getString(R.string.name_grayscale));
-								break;
-							case 3:
-								mRenderText.setText(mContext
-										.getString(R.string.name_inverted_grayscale));
-								break;
-						}
+
 					}
 				});
-				picker.setNeutralButton(getResources().getString(R.string.action_ok),
-						new DialogInterface.OnClickListener() {
+		picker.show();
+	}
 
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
+	public void urlBoxPicker() {
 
-							}
-						});
-				picker.show();
+		AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+		picker.setTitle(getResources().getString(R.string.url_contents));
+
+		int n = mPreferences.getInt(PreferenceConstants.URL_BOX_CONTENTS, 0);
+
+		picker.setSingleChoiceItems(mUrlOptions, n, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				mPreferences.edit().putInt(PreferenceConstants.URL_BOX_CONTENTS, which).apply();
+				if (which < mUrlOptions.length) {
+					mUrlText.setText(mUrlOptions[which]);
+				}
 			}
-
 		});
+		picker.setNeutralButton(getResources().getString(R.string.action_ok),
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+		picker.show();
 	}
 
-	public void importFromStockBrowser() {
-		BookmarkManager manager = new BookmarkManager(this);
-		manager.importBookmarksFromBrowser();
-	}
 }
