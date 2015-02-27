@@ -171,4 +171,9 @@
     <string name="bookmark_settings">Настройки закладок</string>
     <string name="import_bookmark_error">Не удалось импортировать закладки из файла</string>
     <string name="title_chooser">Выберите файл</string>
+    <string name="settings_general">Основные настройки</string>
+    <string name="settings_display">Настройки отображения</string>
+    <string name="settings_privacy">Настройки приватности</string>
+    <string name="settings_about">О программе</string>
+    <string name="settings_about_explain">Информация о версии, авторах и лицензиях</string>
 </resources>
