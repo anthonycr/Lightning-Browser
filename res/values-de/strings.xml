@@ -41,13 +41,13 @@
     <string name="desk">Desktop Ansicht</string>
     <string name="custom">Benutzerdefinierte Ansicht</string>
     <string name="home">Startseite</string>
-    <string name="settingshelp">Einstellungen nur für neue Tab gültig</string>
+    <string name="settingshelp">Einstellungen nur für neue Tabs gültig</string>
     <string name="fullscreen">Vollbildmodus aktivieren</string>
     <string name="java">JavaScript aktivieren</string>
     <string name="saveTab">Geschlossene Tab wiederherstellen</string>
     <string name="settings_title">Einstellungen</string>
     <string name="download">Download-Verzeichnis</string>
-    <string name="settings_advanced">Erweiterte Einstellungen</string>
+    <string name="settings_advanced">Erweitert</string>
     <string name="source">Quelltext</string>
     <string name="license">Lizenz</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
@@ -185,12 +185,12 @@
     <string name="export_bookmarks">Exportiere Backup</string>
     <string name="import_backup">Importiere Backup</string>
     <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
-    <string name="bookmark_settings">Lesezeichen Einstellungen</string>
+    <string name="bookmark_settings">Lesezeichen</string>
     <string name="import_bookmark_error">Lesezeichen konnten nicht imprortiert werden</string>
     <string name="title_chooser">Wähle Datei aus</string>
-    <string name="settings_general">Allgemeine Settings</string>
-    <string name="settings_display">Display Einstellungen</string>
-    <string name="settings_privacy">Privatsphäre Einstellungen</string>
+    <string name="settings_general">Allgemein</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_privacy">Privatsphäre</string>
     <string name="settings_about">Über</string>
     <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
     <string name="close_tab">Tab schließen</string>
@@ -198,4 +198,16 @@
     <string name="third_party">Drittanbieter Cookies blockieren</string>
     <string name="available_lollipop">Dieses Feature ist nur ab Android 5.0+ verfügbar</string>
     <string name="color_mode">Farbmodus aktivieren</string>
+    <string name="reading_mode">Lesemodus</string>
+    <string name="loading">Lade&#8230;</string>
+    <string name="loading_failed">Es konnte nichts von der Seite geladen werden.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT Lizenz</string>
+    <string name="url_contents">URL-Box Inhalt</string>
+    <string-array name="url_content_array">
+        <item >Domain (Standard)</item>
+        <item >URL</item>
+        <item >Titel</item>
+    </string-array>
 </resources>
