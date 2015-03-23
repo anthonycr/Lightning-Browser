@@ -50,9 +50,9 @@
     <string name="search_hint">Поиск</string>
     <string name="wideViewPort">Широкий вид</string>
     <string name="overViewMode">Загружать обзор</string>
-    <string name="restore">Предыдущая сессия</string>
-    <string name="stock_browser_unavailable">браузер не обнаружен</string>
-    <string name="stock_browser_available">браузер обнаружен</string>
+    <string name="restore">Восстановление предыдущей сессии</string>
+    <string name="stock_browser_unavailable">Встроенный браузер не обнаружен</string>
+    <string name="stock_browser_available">Встроенный браузер обнаружен</string>
     <string name="fullScreenOption">Без строки состояния</string>
     <string name="clear_cookies">Очистить cookies</string>
     <string name="dialog_image">Выберите действие для изображения</string>
@@ -137,12 +137,12 @@
     <string name="title_sign_in">Вход</string>
     <string name="hint_username">Имя пользователя</string>
     <string name="hint_password">Пароль</string>
-    <string name="google_suggestions">Поиск предложений</string>
+    <string name="google_suggestions">Подсказки поиска</string>
     <string name="powered_by_google">Используя Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock в настоящее время доступен только в платной версии браузера Lightning Browser+. Он доступен для загрузки в Google Play.</string>
-    <string name="enable_orbot">Включить Orbot</string>
-    <string name="use_tor_prompt">Похоже Orbot установлен. Вы хотите использовать Tor?</string>
+    <string name="enable_orbot">Использовать Orbot</string>
+    <string name="use_tor_prompt">Похоже, установлен Orbot. Вы хотите использовать Tor?</string>
     <string name="install_orbot">Пожалуйста, установите Orbot для проксирования через Tor.</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
@@ -150,13 +150,13 @@
     <string name="clear_history_exit">Очистить историю при выходе</string>
     <string name="folder_default">По умолчанию</string>
     <string name="folder_custom">Выбрать</string>
-    <string name="untitled">Untitled</string>
+    <string name="untitled">Без названия</string>
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
     <string name="deleted_tab">Восстановить закрытую вкладку</string>
-    <string name="rendering_mode">Режим рендеринга</string>
+    <string name="rendering_mode">Режим отображения страниц</string>
     <string name="name_inverted">Инвертированный</string>
     <string name="name_grayscale">Оттенки серого</string>
     <string name="name_inverted_grayscale">Инвертированные оттенки серого</string>
@@ -171,4 +171,9 @@
     <string name="bookmark_settings">Настройки закладок</string>
     <string name="import_bookmark_error">Не удалось импортировать закладки из файла</string>
     <string name="title_chooser">Выберите файл</string>
+    <string name="settings_general">Основные настройки</string>
+    <string name="settings_display">Настройки отображения</string>
+    <string name="settings_privacy">Настройки приватности</string>
+    <string name="settings_about">О программе</string>
+    <string name="settings_about_explain">Информация о версии, авторах и лицензиях</string>
 </resources>
