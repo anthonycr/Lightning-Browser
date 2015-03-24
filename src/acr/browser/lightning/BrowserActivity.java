@@ -2626,11 +2626,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 	}
 
-	@Override
-	public boolean isActionBarShowing() {
-		return mToolbarLayout.isShown();
-	}
-
 	// Override this, use finish() for Incognito, moveTaskToBack for Main
 	public void closeActivity() {
 		finish();

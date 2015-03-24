@@ -48,7 +48,6 @@ public interface BrowserController {
 
 	public void openBookmarkPage(WebView view);
 
-	public boolean isActionBarShowing();
 
 	public void closeEmptyTab();
 
