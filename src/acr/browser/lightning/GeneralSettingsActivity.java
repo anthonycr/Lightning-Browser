@@ -48,10 +48,10 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 		setContentView(R.layout.general_settings);
 
 		// set up ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
@@ -85,7 +85,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 				mSearchText.setText("Google");
 				break;
 			case 2:
-				mSearchText.setText("Android Search");
+				mSearchText.setText("Ask");
 				break;
 			case 3:
 				mSearchText.setText("Bing");
@@ -176,7 +176,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(R.string.title_search_engine));
 				CharSequence[] chars = { getResources().getString(R.string.custom_url), "Google",
-						"Android Search", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
+						"Ask", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
 						"DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
 						"Yandex (Russian)" };
 
@@ -196,7 +196,7 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 								mSearchText.setText("Google");
 								break;
 							case 2:
-								mSearchText.setText("Android Search");
+								mSearchText.setText("Ask");
 								break;
 							case 3:
 								mSearchText.setText("Bing");

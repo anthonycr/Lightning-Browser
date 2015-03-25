@@ -278,14 +278,11 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
 		mUntitledTitle = (String) this.getString(R.string.untitled);
 		mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
-		mDeleteIcon.setBounds(0, 0, Utils.convertDpToPixels(24),
-				Utils.convertDpToPixels(24));
+		mDeleteIcon.setBounds(0, 0, Utils.convertDpToPixels(24), Utils.convertDpToPixels(24));
 		mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh);
-		mRefreshIcon.setBounds(0, 0, Utils.convertDpToPixels(24),
-				Utils.convertDpToPixels(24));
+		mRefreshIcon.setBounds(0, 0, Utils.convertDpToPixels(24), Utils.convertDpToPixels(24));
 		mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy);
-		mCopyIcon.setBounds(0, 0, Utils.convertDpToPixels(24),
-				Utils.convertDpToPixels(24));
+		mCopyIcon.setBounds(0, 0, Utils.convertDpToPixels(24), Utils.convertDpToPixels(24));
 		mIcon = mRefreshIcon;
 		SearchClass search = new SearchClass();
 		mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
@@ -684,10 +681,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	}
 
 	private void setNavigationDrawerWidth() {
-		int width = getResources().getDisplayMetrics().widthPixels
-				- Utils.convertDpToPixels(56);
+		int width = getResources().getDisplayMetrics().widthPixels - Utils.convertDpToPixels(56);
 		int maxWidth;
-		if(isTablet()){
+		if (isTablet()) {
 			maxWidth = Utils.convertDpToPixels(320);
 		} else {
 			maxWidth = Utils.convertDpToPixels(300);
@@ -798,7 +794,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				mSearchText = Constants.GOOGLE_SEARCH;
 				break;
 			case 2:
-				mSearchText = Constants.ANDROID_SEARCH;
+				mSearchText = Constants.ASK_SEARCH;
 				break;
 			case 3:
 				mSearchText = Constants.BING_SEARCH;

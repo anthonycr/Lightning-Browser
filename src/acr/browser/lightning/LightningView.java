@@ -145,9 +145,9 @@ public class LightningView {
 				break;
 			case 2:
 				// ANDROID SEARCH;
-				home = home + "file:///android_asset/lightning.png";
+				home = home + "file:///android_asset/ask.png";
 				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.ANDROID_SEARCH;
+				home = home + Constants.ASK_SEARCH;
 				break;
 			case 3:
 				// BING_SEARCH;
