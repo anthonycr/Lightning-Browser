@@ -126,9 +126,10 @@ public class AnimatedProgressBar extends LinearLayout {
             // previous progress
             mDrawWidth = 0;
         } else if (progress == mProgress) {     // we don't need to go any farther if the progress is unchanged
-
+        	if (progress == 100) {
+        		fadeOut();
+        	}
             return;
-
         }
 
         mProgress = progress;       // save the progress
