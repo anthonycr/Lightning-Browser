@@ -53,7 +53,7 @@ public class HistoryPage {
 	}
 
 	private static List<HistoryItem> getWebHistory(Context context) {
-		HistoryDatabaseHandler databaseHandler = new HistoryDatabaseHandler(context);
+		HistoryDatabase databaseHandler = HistoryDatabase.getInstance(context);
 		return databaseHandler.getLastHundredItems();
 	}
 }

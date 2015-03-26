@@ -108,7 +108,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private Bitmap mDefaultVideoPoster;
 	private View mVideoProgressView;
 	private LinearLayout mToolbarLayout;
-	private HistoryDatabaseHandler mHistoryHandler;
+	private HistoryDatabase mHistoryDatabase;
 	private SharedPreferences mPreferences;
 	private Context mContext;
 	private Bitmap mWebpageBitmap;
@@ -196,9 +196,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mDrawerListRight.setOnItemClickListener(new BookmarkItemClickListener());
 		mDrawerListRight.setOnItemLongClickListener(new BookmarkItemLongClickListener());
 
-		if (mHistoryHandler == null || !mHistoryHandler.isOpen()) {
-			mHistoryHandler = new HistoryDatabaseHandler(this);
-		}
+		mHistoryDatabase = HistoryDatabase.getInstance(this);
 
 		// set display options of the ActionBar
 
@@ -1407,7 +1405,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	@SuppressWarnings("deprecation")
 	public void clearHistory() {
-		this.deleteDatabase(HistoryDatabaseHandler.DATABASE_NAME);
+		this.deleteDatabase(HistoryDatabase.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
 		m.clearHttpAuthUsernamePassword();
@@ -1470,12 +1468,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mCurrentView.pauseTimers();
 			mCurrentView.onPause();
 		}
-		if (mHistoryHandler != null) {
-			if (mHistoryHandler.isOpen()) {
-				mHistoryHandler.close();
-			}
-		}
-
 	}
 
 	public void saveOpenTabs() {
@@ -1493,10 +1485,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	@Override
 	protected void onDestroy() {
 		Log.d(Constants.TAG, "onDestroy");
-		if (mHistoryHandler != null) {
-			if (mHistoryHandler.isOpen()) {
-				mHistoryHandler.close();
-			}
+		if (mHistoryDatabase != null) {
+			mHistoryDatabase.close();
 		}
 		super.onDestroy();
 	}
@@ -1513,11 +1503,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mCurrentView.resumeTimers();
 			mCurrentView.onResume();
 
-			if (mHistoryHandler == null) {
-				mHistoryHandler = new HistoryDatabaseHandler(this);
-			} else if (!mHistoryHandler.isOpen()) {
-				mHistoryHandler = new HistoryDatabaseHandler(this);
-			}
+			mHistoryDatabase = HistoryDatabase.getInstance(this);
 			mBookmarkList = mBookmarkManager.getBookmarks(true);
 			notifyBookmarkDataSetChanged();
 		}
@@ -1970,10 +1956,10 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					}
 				}
 				try {
-					if (mHistoryHandler == null || !mHistoryHandler.isOpen()) {
-						mHistoryHandler = new HistoryDatabaseHandler(mContext);
+					if (mHistoryDatabase == null) {
+						mHistoryDatabase = HistoryDatabase.getInstance(mContext);
 					}
-					mHistoryHandler.visitHistoryItem(url, title);
+					mHistoryDatabase.visitHistoryItem(url, title);
 				} catch (IllegalStateException e) {
 					Log.e(Constants.TAG, "IllegalStateException in updateHistory");
 				} catch (NullPointerException e) {

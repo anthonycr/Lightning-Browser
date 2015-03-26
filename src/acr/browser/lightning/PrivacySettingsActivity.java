@@ -431,7 +431,7 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 
 	@SuppressWarnings("deprecation")
 	public void clearHistory() {
-		deleteDatabase(HistoryDatabaseHandler.DATABASE_NAME);
+		deleteDatabase(HistoryDatabase.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
 		m.clearHttpAuthUsernamePassword();
