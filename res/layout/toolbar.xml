@@ -15,12 +15,18 @@
         custom:contentInsetEnd="0dp"
         custom:contentInsetStart="0dp" />
 
-    <acr.browser.lightning.AnimatedProgressBar
-        android:id="@+id/progress_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        custom:backgroundColor="?attr/progressBackgroundColor"
-        custom:bidirectionalAnimate="false"
-        custom:progressColor="?attr/colorAccent" />
+        android:layout_height="wrap_content"
+        android:background="?attr/progressBackgroundColor" >
+
+        <acr.browser.lightning.AnimatedProgressBar
+            android:id="@+id/progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            custom:backgroundColor="#00000000"
+            custom:bidirectionalAnimate="false"
+            custom:progressColor="?attr/colorAccent" />
+    </LinearLayout>
 
 </LinearLayout>

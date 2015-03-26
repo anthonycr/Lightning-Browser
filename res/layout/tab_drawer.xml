@@ -25,7 +25,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:contentDescription="Favicon"
+            android:contentDescription="@string/action_new_tab"
             android:gravity="center_vertical"
             android:src="@drawable/ic_action_plus" >
         </ImageView>
@@ -55,7 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_below="@+id/view"
         android:choiceMode="singleChoice"
         android:dividerHeight="1dp"
         android:listSelector="?attr/listBackground" />
