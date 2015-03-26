@@ -1186,7 +1186,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		mCurrentView = view;
 		mCurrentView.setForegroundTab(true);
-		mCurrentView.requestFocus();
 		if (mCurrentView.getWebView() != null) {
 			updateUrl(mCurrentView.getUrl(), true);
 			updateProgress(mCurrentView.getProgress());
@@ -1196,6 +1195,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		mBrowserFrame.addView(mCurrentView.getWebView(), mMatchParent);
+		mCurrentView.requestFocus();
 		mCurrentView.onResume();
 
 		// Use a delayed handler to make the transition smooth
@@ -1444,7 +1444,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		} else {
 			if (mCurrentView != null) {
 				Log.d(Constants.TAG, "onBackPressed");
-				if (!mCurrentView.getWebView().hasFocus()) {
+				if (mSearch.hasFocus()) {
 					mCurrentView.requestFocus();
 				} else if (mCurrentView.canGoBack()) {
 					if (!mCurrentView.isShown()) {
@@ -1456,7 +1456,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 					deleteTab(mDrawerListLeft.getCheckedItemPosition());
 				}
 			} else {
-				Log.e(Constants.TAG, "So madness. Much confusion. Why happen.");
+				Log.e(Constants.TAG, "This shouldn't happen ever");
 				super.onBackPressed();
 			}
 		}
@@ -1673,29 +1673,69 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 					@Override
 					public void onGenerated(Palette palette) {
-						// TODO Auto-generated method stub
 						int color = 0xff000000 | palette.getVibrantColor(mContext.getResources()
 								.getColor(R.color.primary_color));
+
+						int finalColor; // Lighten up the dark color if it is
+										// too dark
+						if (isColorTooDark(color)) {
+							finalColor = mixTwoColors(
+									mContext.getResources().getColor(R.color.primary_color), color,
+									0.25f);
+						} else {
+							finalColor = color;
+						}
+
 						ColorDrawable draw = (ColorDrawable) mPageLayout.getBackground();
 						ValueAnimator anim = ValueAnimator.ofObject(new ArgbEvaluator(),
-								draw.getColor(), color);
+								draw.getColor(), finalColor);
+
 						anim.addUpdateListener(new AnimatorUpdateListener() {
 
 							@Override
 							public void onAnimationUpdate(ValueAnimator animation) {
-								mPageLayout.setBackgroundColor((Integer) animation
-										.getAnimatedValue());
-								mToolbarLayout.setBackgroundColor((Integer) animation
-										.getAnimatedValue());
+								int color = (Integer) animation.getAnimatedValue();
+								mPageLayout.setBackgroundColor(color);
+								mToolbarLayout.setBackgroundColor(color);
 							}
 
 						});
-						mToolbarLayout.setBackgroundColor(color);
-						mPageLayout.setBackgroundColor(color);
+
+						mToolbarLayout.setBackgroundColor(finalColor);
+						mPageLayout.setBackgroundColor(finalColor);
 						anim.setDuration(300);
 						anim.start();
 					}
 				});
+	}
+
+	public static boolean isColorTooDark(int color) {
+		final byte RED_CHANNEL = 16;
+		final byte GREEN_CHANNEL = 8;
+		final byte BLUE_CHANNEL = 0;
+
+		int r = ((int) ((float) (color >> RED_CHANNEL & 0xff) * 0.3f)) & 0xff;
+		int g = ((int) ((float) (color >> GREEN_CHANNEL & 0xff) * 0.59)) & 0xff;
+		int b = ((int) ((float) (color >> BLUE_CHANNEL & 0xff) * 0.11)) & 0xff;
+		int gr = (r + g + b) & 0xff;
+		int gray = gr + (gr << GREEN_CHANNEL) + (gr << RED_CHANNEL);
+
+		return gray < 0x727272;
+	}
+
+	public static int mixTwoColors(int color1, int color2, float amount) {
+		final byte ALPHA_CHANNEL = 24;
+		final byte RED_CHANNEL = 16;
+		final byte GREEN_CHANNEL = 8;
+		final byte BLUE_CHANNEL = 0;
+
+		final float inverseAmount = 1.0f - amount;
+
+		int r = ((int) (((float) (color1 >> RED_CHANNEL & 0xff) * amount) + ((float) (color2 >> RED_CHANNEL & 0xff) * inverseAmount))) & 0xff;
+		int g = ((int) (((float) (color1 >> GREEN_CHANNEL & 0xff) * amount) + ((float) (color2 >> GREEN_CHANNEL & 0xff) * inverseAmount))) & 0xff;
+		int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
+
+		return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b << BLUE_CHANNEL;
 	}
 
 	public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
