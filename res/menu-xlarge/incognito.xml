@@ -1,27 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
     <item
         android:id="@+id/action_back"
         android:checkable="false"
         android:enabled="true"
         android:icon="?arrowBackDrawable"
-        android:showAsAction="always"
         android:title="@string/action_back"
-        android:visible="true">
-    </item>
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_forward"
         android:checkable="false"
         android:enabled="true"
         android:icon="?arrowForwardDrawable"
-        android:showAsAction="always"
         android:title="@string/action_forward"
-        android:visible="true">
-    </item>
-    <item android:id="@+id/action_new_tab" android:title="@string/action_new_tab"></item>
-    <item android:id="@+id/action_share" android:title="@string/action_share" />
-    <item android:id="@+id/action_find" android:title="@string/action_find"></item>
-    <item android:id="@+id/action_history" android:title="@string/action_history" ></item>    
-    <item android:id="@+id/action_bookmarks" android:title="@string/action_bookmarks" ></item>
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_new_tab"
+        android:title="@string/action_new_tab"/>
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/action_share"/>
+    <item
+        android:id="@+id/action_find"
+        android:title="@string/action_find"/>
+    <item
+        android:id="@+id/action_history"
+        android:title="@string/action_history"/>
+    <item
+        android:id="@+id/action_bookmarks"
+        android:title="@string/action_bookmarks"/>
 
 </menu>
