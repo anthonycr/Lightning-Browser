@@ -1,5 +1,23 @@
 package acr.browser.lightning;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,17 +28,11 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
@@ -31,12 +43,13 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private List<HistoryItem> mAllBookmarks;
 	private HistoryDatabase mDatabaseHandler;
 	private SharedPreferences mPreferences;
-	private boolean mUseGoogle = true;
 	private Context mContext;
+	private boolean mUseGoogle = true;
 	private boolean mIsExecuting = false;
 	private boolean mIncognito;
 	private BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
+	private static final long INTERVAL_DAY = 86400000;
 	private XmlPullParserFactory mFactory;
 	private XmlPullParser mXpp;
 	private String mSearchSubtitle;
@@ -54,6 +67,38 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mContext = context;
 		mSearchSubtitle = mContext.getString(R.string.suggestion);
 		mIncognito = incognito;
+		Thread delete = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				deleteOldCacheFiles(mContext);
+			}
+
+		});
+		delete.start();
+	}
+
+	private void deleteOldCacheFiles(Context context) {
+		File dir = new File(context.getCacheDir().toString());
+		String[] fileList = dir.list(new NameFilter());
+		long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
+		for (String fileName : fileList) {
+			File file = new File(dir.getPath() + fileName);
+			if (earliestTimeAllowed > file.lastModified()) {
+				file.delete();
+			}
+		}
+	}
+
+	private class NameFilter implements FilenameFilter {
+
+		private static final String ext = ".sgg";
+
+		@Override
+		public boolean accept(File dir, String filename) {
+			return filename.endsWith(ext);
+		}
+
 	}
 
 	public void refreshPreferences() {
@@ -222,9 +267,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		@Override
 		protected List<HistoryItem> doInBackground(String... arg0) {
 			mIsExecuting = true;
-			if (!isNetworkConnected(mContext)) {
-				return new ArrayList<HistoryItem>();
-			}
+
 			List<HistoryItem> filter = new ArrayList<HistoryItem>();
 			String query = arg0[0];
 			try {
@@ -233,10 +276,13 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			InputStream download = null;
+			File cache = downloadSuggestionsForQuery(query);
+			if (!cache.exists()) {
+				return filter;
+			}
+			InputStream fileInput = null;
 			try {
-				download = new java.net.URL("http://google.com/complete/search?q=" + query
-						+ "&output=toolbar&hl=en").openStream();
+				fileInput = new BufferedInputStream(new FileInputStream(cache));
 				if (mFactory == null) {
 					mFactory = XmlPullParserFactory.newInstance();
 					mFactory.setNamespaceAware(true);
@@ -244,7 +290,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				if (mXpp == null) {
 					mXpp = mFactory.newPullParser();
 				}
-				mXpp.setInput(download, ENCODING);
+				mXpp.setInput(fileInput, ENCODING);
 				int eventType = mXpp.getEventType();
 				int counter = 0;
 				while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -262,9 +308,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			} catch (Exception e) {
 				return filter;
 			} finally {
-				if (download != null) {
+				if (fileInput != null) {
 					try {
-						download.close();
+						fileInput.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -284,6 +330,38 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			mIsExecuting = false;
 		}
 
+	}
+
+	private File downloadSuggestionsForQuery(String query) {
+		File cacheFile = new File(mContext.getCacheDir(), query.hashCode() + ".sgg");
+		if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
+			return cacheFile;
+		}
+		if (!isNetworkConnected(mContext)) {
+			return cacheFile;
+		}
+		try {
+			URL url = new URL("http://google.com/complete/search?q=" + query
+					+ "&output=toolbar&hl=en");
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoInput(true);
+			connection.connect();
+			InputStream in = connection.getInputStream();
+
+			if (in != null) {
+				FileOutputStream fos = new FileOutputStream(cacheFile);
+				int buffer;
+				while ((buffer = in.read()) != -1) {
+					fos.write(buffer);
+				}
+				fos.flush();
+				fos.close();
+			}
+			cacheFile.setLastModified(System.currentTimeMillis());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cacheFile;
 	}
 
 	private boolean isNetworkConnected(Context context) {
