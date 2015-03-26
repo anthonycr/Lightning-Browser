@@ -1768,28 +1768,18 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		class BookmarkViewHolder {
-
 			TextView txtTitle;
-
 			ImageView favicon;
 		}
 	}
 
 	private void getImage(ImageView image, HistoryItem web) {
-		try {
-			new DownloadImageTask(image, web).execute(Utils.getProtocol(web.getUrl())
-					+ getDomainName(web.getUrl()) + "/favicon.ico");
-		} catch (URISyntaxException e) {
-			new DownloadImageTask(image, web)
-					.execute("https://www.google.com/s2/favicons?domain_url=" + web.getUrl());
-			e.printStackTrace();
-		}
+		new DownloadImageTask(image, web).execute(web.getUrl());
 	}
 
 	private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
 		ImageView bmImage;
-
 		HistoryItem mWeb;
 
 		public DownloadImageTask(ImageView bmImage, HistoryItem web) {
@@ -1798,17 +1788,24 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		protected Bitmap doInBackground(String... urls) {
-			String urldisplay = urls[0];
+			String url = urls[0];
 			Bitmap mIcon = null;
 			// unique path for each url that is bookmarked.
-			String hash = String.valueOf(urldisplay.hashCode());
+			String hash = String.valueOf(Utils.getDomainName(url).hashCode());
 			File image = new File(mContext.getCacheDir(), hash + ".png");
+			String urldisplay;
+			try {
+				urldisplay = Utils.getProtocol(url) + getDomainName(url) + "/favicon.ico";
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				urldisplay = "https://www.google.com/s2/favicons?domain_url=" + url;
+			}
 			// checks to see if the image exists
 			if (!image.exists()) {
 				try {
 					// if not, download it...
-					URL url = new URL(urldisplay);
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					URL urlDownload = new URL(urldisplay);
+					HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
 					connection.setDoInput(true);
 					connection.connect();
 					InputStream in = connection.getInputStream();
@@ -1835,8 +1832,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			if (mIcon == null) {
 				try {
 					// if not, download it...
-					URL url = new URL("https://www.google.com/s2/favicons?domain_url=" + urldisplay);
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					URL urlDownload = new URL("https://www.google.com/s2/favicons?domain_url="
+							+ url);
+					HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
 					connection.setDoInput(true);
 					connection.connect();
 					InputStream in = connection.getInputStream();

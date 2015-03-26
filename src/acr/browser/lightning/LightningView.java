@@ -524,6 +524,22 @@ public class LightningView {
 		}
 	}
 
+	private void cacheFavicon(Bitmap icon) {
+		String hash = String.valueOf(Utils.getDomainName(getUrl()).hashCode());
+		Log.d(Constants.TAG, "Caching icon for " + Utils.getDomainName(getUrl()));
+		File image = new File(mActivity.getCacheDir(), hash + ".png");
+		try {
+			FileOutputStream fos = new FileOutputStream(image);
+			icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.flush();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	public synchronized void find(String text) {
@@ -943,6 +959,7 @@ public class LightningView {
 		public void onReceivedIcon(WebView view, Bitmap icon) {
 			mTitle.setFavicon(icon);
 			mBrowserController.update();
+			cacheFavicon(icon);
 		}
 
 		@Override
