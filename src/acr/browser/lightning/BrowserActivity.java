@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.content.res.Configuration;
+import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
@@ -95,6 +96,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private ValueCallback<Uri> mUploadMessage;
 	private View mCustomView;
 	private int mOriginalOrientation;
+	private int mBackgroundColor;
 	private ActionBar mActionBar;
 	private boolean mFullScreen;
 	private boolean mColorMode;
@@ -276,11 +278,20 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		// create the search EditText in the ToolBar
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
 		mUntitledTitle = (String) this.getString(R.string.untitled);
-		mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
+		mBackgroundColor = getResources().getColor(R.color.primary_color);
+		Theme theme = getTheme();
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
+			mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh);
+			mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy);
+		} else {
+			mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete, theme);
+			mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh, theme);
+			mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy, theme);
+		}
+
 		mDeleteIcon.setBounds(0, 0, Utils.convertDpToPixels(24), Utils.convertDpToPixels(24));
-		mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh);
 		mRefreshIcon.setBounds(0, 0, Utils.convertDpToPixels(24), Utils.convertDpToPixels(24));
-		mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy);
 		mCopyIcon.setBounds(0, 0, Utils.convertDpToPixels(24), Utils.convertDpToPixels(24));
 		mIcon = mRefreshIcon;
 		SearchClass search = new SearchClass();
@@ -1175,6 +1186,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	 *            the LightningView to show
 	 */
 	private synchronized void showTab(LightningView view) {
+		// Set the background color so the color mode color doesn't show through
+		mBrowserFrame.setBackgroundColor(mBackgroundColor);
 		if (view == null) {
 			return;
 		}
@@ -1194,6 +1207,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		mBrowserFrame.addView(mCurrentView.getWebView(), mMatchParent);
+		// Remove browser frame background to reduce overdraw
+		mBrowserFrame.setBackgroundColor(0);
 		mCurrentView.requestFocus();
 		mCurrentView.onResume();
 
@@ -1375,6 +1390,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	}
 
 	private void closeBrowser() {
+		mBrowserFrame.setBackgroundColor(mBackgroundColor);
 		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
 				&& mCurrentView != null && !isIncognito()) {
 			mCurrentView.clearCache(true);
