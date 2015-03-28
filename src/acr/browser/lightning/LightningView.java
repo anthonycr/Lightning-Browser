@@ -84,7 +84,9 @@ public class LightningView {
 		mWebView.setFocusableInTouchMode(true);
 		mWebView.setFocusable(true);
 		mWebView.setAnimationCacheEnabled(false);
-		mWebView.setDrawingCacheEnabled(true);
+		mWebView.setDrawingCacheEnabled(false);
+		mWebView.setWillNotCacheDrawing(true);
+		mWebView.setAlwaysDrawnWithCacheEnabled(false);
 		mWebView.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
 
 		if (API > 15) {
@@ -93,8 +95,6 @@ public class LightningView {
 		} else if (mWebView.getRootView() != null) {
 			mWebView.getRootView().setBackgroundDrawable(null);
 		}
-		mWebView.setWillNotCacheDrawing(false);
-		mWebView.setAlwaysDrawnWithCacheEnabled(true);
 		mWebView.setScrollbarFadingEnabled(true);
 		mWebView.setSaveEnabled(true);
 		mWebView.setWebChromeClient(new LightningChromeClient(activity));
@@ -366,12 +366,7 @@ public class LightningView {
 			// We're in Incognito mode, reject
 			settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
 		}
-		// TODO
-		if (!mBrowserController.isIncognito()) {
-			settings.setDomStorageEnabled(true);
-		} else {
-			settings.setDomStorageEnabled(false);
-		}
+		settings.setDomStorageEnabled(true);
 		settings.setAppCacheEnabled(true);
 		settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 		settings.setDatabaseEnabled(true);

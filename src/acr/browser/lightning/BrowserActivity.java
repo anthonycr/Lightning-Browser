@@ -157,6 +157,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
+		getWindow().setBackgroundDrawable(null);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
 		mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
 		mPageLayout = (LinearLayout) findViewById(R.id.main_layout);
