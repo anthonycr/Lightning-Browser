@@ -54,7 +54,6 @@ public class AnimatedProgressBar extends LinearLayout {
      * @param attrs   is the attribute set passed by the constructor
      */
     private void init(final Context context, AttributeSet attrs) {
-        this.setLayerType(LAYER_TYPE_HARDWARE, null);
         TypedArray array = context.getTheme().obtainStyledAttributes(attrs, R.styleable.AnimatedProgressBar, 0, 0);
         int backgroundColor;
         try {   // Retrieve the style of the progress bar that the user hopefully set

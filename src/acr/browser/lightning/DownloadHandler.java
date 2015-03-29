@@ -211,7 +211,8 @@ public class DownloadHandler {
 					manager.enqueue(request);
 				}
 			}.start();
+			Toast.makeText(activity, R.string.download_pending, Toast.LENGTH_SHORT).show();
 		}
-		Toast.makeText(activity, R.string.download_pending, Toast.LENGTH_SHORT).show();
+
 	}
 }

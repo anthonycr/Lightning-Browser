@@ -5,15 +5,14 @@ package acr.browser.lightning;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.net.http.AndroidHttpClient;
 import android.os.Environment;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpHead;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -42,48 +41,50 @@ public class FetchUrlMimeType extends Thread {
 		mUri = uri;
 		mCookies = cookies;
 		mUserAgent = userAgent;
+		Toast.makeText(mContext, R.string.download_pending, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void run() {
 		// User agent is likely to be null, though the AndroidHttpClient
 		// seems ok with that.
-		AndroidHttpClient client = AndroidHttpClient.newInstance(mUserAgent);
-
-		HttpHead request = new HttpHead(mUri);
-
-		if (mCookies != null && mCookies.length() > 0) {
-			request.addHeader("Cookie", mCookies);
-		}
-
-		HttpResponse response;
 		String mimeType = null;
 		String contentDisposition = null;
+		HttpURLConnection connection = null;
 		try {
-			response = client.execute(request);
+			URL url = new URL(mUri);
+			connection = (HttpURLConnection) url.openConnection();
+			if (mCookies != null && mCookies.length() > 0) {
+				connection.addRequestProperty("Cookie", mCookies);
+				connection.setRequestProperty("User-Agent", mUserAgent);
+			}
+			connection.connect();
 			// We could get a redirect here, but if we do lets let
 			// the download manager take care of it, and thus trust that
 			// the server sends the right mimetype
-			if (response.getStatusLine().getStatusCode() == 200) {
-				Header header = response.getFirstHeader("Content-Type");
+			if (connection.getResponseCode() == 200) {
+				String header = connection.getHeaderField("Content-Type");
 				if (header != null) {
-					mimeType = header.getValue();
+					mimeType = header;
 					final int semicolonIndex = mimeType.indexOf(';');
 					if (semicolonIndex != -1) {
 						mimeType = mimeType.substring(0, semicolonIndex);
 					}
 				}
-				Header contentDispositionHeader = response.getFirstHeader("Content-Disposition");
+				String contentDispositionHeader = connection.getHeaderField("Content-Disposition");
 				if (contentDispositionHeader != null) {
-					contentDisposition = contentDispositionHeader.getValue();
+					contentDisposition = contentDispositionHeader;
 				}
 			}
 		} catch (IllegalArgumentException ex) {
-			request.abort();
+			if (connection != null)
+				connection.disconnect();
 		} catch (IOException ex) {
-			request.abort();
+			if (connection != null)
+				connection.disconnect();
 		} finally {
-			client.close();
+			if (connection != null)
+				connection.disconnect();
 		}
 
 		if (mimeType != null) {

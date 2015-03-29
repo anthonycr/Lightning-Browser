@@ -1316,6 +1316,9 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 			mPreferences.edit().putString(PreferenceConstants.SAVE_URL, reference.getUrl()).apply();
 		}
 		boolean isShown = reference.isShown();
+		if (isShown) {
+			mBrowserFrame.setBackgroundColor(mBackgroundColor);
+		}
 		if (current > position) {
 			mWebViews.remove(position);
 			mDrawerListLeft.setItemChecked(current - 1, true);
@@ -1678,6 +1681,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 					@Override
 					public void onGenerated(Palette palette) {
+						// OR with opaque black to remove transparency glitches
 						int color = 0xff000000 | palette.getVibrantColor(mContext.getResources()
 								.getColor(R.color.primary_color));
 
