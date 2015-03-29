@@ -27,12 +27,11 @@
         <item name="listBackground">@drawable/list_bg</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="progressColor">@color/gray_medium</item>
-        <item name="arrowBackDrawable">@drawable/ic_action_back</item>
         <item name="numberColor">@color/gray_dark</item>
         <item name="autoCompleteTitleColor">@color/black</item>
         <item name="autoCompleteUrlColor">@color/gray_medium</item>
+        <item name="arrowBackDrawable">@drawable/ic_action_back</item>
         <item name="arrowForwardDrawable">@drawable/ic_action_forward</item>
-        <item name="android:actionBarStyle">@style/LightActionBar</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
     </style>
 
@@ -49,10 +48,10 @@
         <item name="listBackground">@drawable/list_bg</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="progressColor">@color/gray_medium</item>
-        <item name="arrowBackDrawable">@drawable/ic_action_back_dark</item>
         <item name="numberColor">@color/gray_dark</item>
         <item name="autoCompleteTitleColor">@color/black</item>
         <item name="autoCompleteUrlColor">@color/gray_medium</item>
+        <item name="arrowBackDrawable">@drawable/ic_action_back_dark</item>
         <item name="arrowForwardDrawable">@drawable/ic_action_forward_dark</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
     </style>
@@ -71,12 +70,5 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
-    <style name="DarkActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/gray_dark</item>
-    </style>
-
-    <style name="LightActionBar" parent="android:Widget.Holo.Light.ActionBar.Solid">
-        <item name="android:background">@color/gray_light</item>
-    </style>
 
 </resources>

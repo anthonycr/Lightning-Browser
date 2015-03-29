@@ -18,13 +18,16 @@ import java.util.Locale;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources.Theme;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,9 +56,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private XmlPullParserFactory mFactory;
 	private XmlPullParser mXpp;
 	private String mSearchSubtitle;
+	private static final int API = Build.VERSION.SDK_INT;
+	private Theme mTheme;
 
 	public SearchAdapter(Context context, boolean incognito) {
 		mDatabaseHandler = HistoryDatabase.getInstance(context);
+		mTheme = context.getTheme();
 		mFilteredList = new ArrayList<HistoryItem>();
 		mHistory = new ArrayList<HistoryItem>();
 		mBookmarks = new ArrayList<HistoryItem>();
@@ -131,6 +137,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		return 0;
 	}
 
+	@SuppressWarnings("deprecation")
+	@SuppressLint("NewApi")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
@@ -184,7 +192,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 		}
 
-		holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId));
+		if (API < Build.VERSION_CODES.LOLLIPOP) {
+			holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId));
+		} else {
+			holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId, mTheme));
+		}
 
 		return row;
 	}
@@ -193,6 +205,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		if (mFilteredList != null) {
 			mFilteredList.clear();
 			mFilteredList.addAll(list);
+		} else {
+			mFilteredList = list;
 		}
 		notifyDataSetChanged();
 	}
@@ -321,12 +335,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		@Override
 		protected void onPostExecute(List<HistoryItem> result) {
-			synchronized (mFilteredList) {
-				mSuggestions = result;
-
-				mFilteredList = getSuggestions();
-				notifyDataSetChanged();
-			}
+			mSuggestions = result;
+			mFilteredList = getSuggestions();
+			notifyDataSetChanged();
 			mIsExecuting = false;
 		}
 

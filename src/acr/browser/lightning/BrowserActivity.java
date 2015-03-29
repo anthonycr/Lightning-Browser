@@ -136,6 +136,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		initialize();
 	}
 
+	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	private synchronized void initialize() {
 		setContentView(R.layout.activity_main);
@@ -1439,6 +1440,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		Utils.trimCache(this);
 	}
 
+	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	public void clearCookies() {
 		CookieManager c = CookieManager.getInstance();
