@@ -1,0 +1,67 @@
+<!--
+  Copyright 2014 A.C.R. Development
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_back"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="?arrowBackDrawable"
+        android:title="@string/action_back"
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_forward"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="?arrowForwardDrawable"
+        android:title="@string/action_forward"
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_new_tab"
+        android:title="@string/action_new_tab"/>
+    <item
+        android:id="@+id/action_incognito"
+        android:title="@string/action_incognito"/>
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/action_share"/>
+    <item
+        android:id="@+id/action_history"
+        android:title="@string/action_history"/>
+    <item
+        android:id="@+id/action_find"
+        android:title="@string/action_find"/>
+    <item
+        android:id="@+id/action_copy"
+        android:title="@string/action_copy"/>
+    <item
+        android:id="@+id/action_bookmarks"
+        android:title="@string/action_bookmarks"/>
+    <item
+        android:id="@+id/action_add_bookmark"
+        android:title="@string/action_add_bookmark"/>
+    <item
+        android:id="@+id/action_reading_mode"
+        android:title="@string/reading_mode"/>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"/>
+
+</menu>
