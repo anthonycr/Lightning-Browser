@@ -43,6 +43,9 @@ public final class PreferenceConstants {
 	public static final String BLOCK_THIRD_PARTY = "thirdParty";
 	public static final String ENABLE_COLOR_MODE = "colorMode";
 	public static final String URL_BOX_CONTENTS = "urlContent";
+	public static final String INVERT_COLORS = "invertColors";
+	public static final String READING_TEXT_SIZE = "readingTextSize";
+	public static final String DARK_THEME = "darkTheme";
 
 	public static final String USE_PROXY = "useProxy";
 	public static final String USE_PROXY_HOST = "useProxyHost";
