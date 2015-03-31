@@ -65,7 +65,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rAllowCookies"
@@ -116,7 +116,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rAllowIncognitoCookies"
@@ -157,7 +157,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rRestoreTabs"
@@ -192,7 +192,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <LinearLayout
                 android:id="@+id/layoutRendering"
@@ -226,7 +226,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <LinearLayout
                 android:id="@+id/rUrlBarContents"
@@ -260,7 +260,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
         </LinearLayout>
     </ScrollView>
 

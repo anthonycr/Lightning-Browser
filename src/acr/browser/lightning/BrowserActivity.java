@@ -129,6 +129,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
 	private BookmarkManager mBookmarkManager;
+	private boolean mDarkTheme;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +146,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		setSupportActionBar(mToolbar);
 
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		mDarkTheme = mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)
+				|| isIncognito();
 		mContext = this;
 		if (mWebViews != null) {
 			mWebViews.clear();
@@ -184,7 +187,12 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		setNavigationDrawerWidth();
 		mDrawerLayout.setDrawerListener(new DrawerLocker());
 
-		mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
+		if (mDarkTheme) {
+			mWebpageBitmap = BitmapFactory.decodeResource(getResources(),
+					R.drawable.ic_webpage_dark);
+		} else {
+			mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
+		}
 		mActionBar = getSupportActionBar();
 
 		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
@@ -218,15 +226,10 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		lp.width = LayoutParams.MATCH_PARENT;
 		v.setLayoutParams(lp);
 
-		// TODO
-
 		mArrowDrawable = new DrawerArrowDrawable(this);
 		mArrowImage = (ImageView) mActionBar.getCustomView().findViewById(R.id.arrow);
-		mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null); // Use a
-																	// hardware
-																	// layer for
-																	// the
-																	// animation
+		// Use hardware acceleration for the animation
+		mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mArrowImage.setImageDrawable(mArrowDrawable);
 		LinearLayout arrowButton = (LinearLayout) mActionBar.getCustomView().findViewById(
 				R.id.arrow_button);
@@ -771,11 +774,14 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 		mFullScreen = mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false);
 		mColorMode = mPreferences.getBoolean(PreferenceConstants.ENABLE_COLOR_MODE, true);
+		mColorMode &= !mDarkTheme;
 
-		if (!isIncognito() && !mColorMode && mWebpageBitmap != null)
+		if (!isIncognito() && !mColorMode && !mDarkTheme && mWebpageBitmap != null) {
 			changeToolbarBackground(mWebpageBitmap);
-		else if (!isIncognito() && mCurrentView != null && mCurrentView.getFavicon() != null)
+		} else if (!isIncognito() && mCurrentView != null && !mDarkTheme
+				&& mCurrentView.getFavicon() != null) {
 			changeToolbarBackground(mCurrentView.getFavicon());
+		}
 
 		if (mFullScreen && mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
 			mUiLayout.removeView(mToolbarLayout);
@@ -1287,7 +1293,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 
 	protected synchronized boolean newTab(String url, boolean show) {
 		mIsNewIntent = false;
-		LightningView startingTab = new LightningView(mActivity, url);
+		LightningView startingTab = new LightningView(mActivity, url, mDarkTheme);
 		if (mIdGenerator == 0) {
 			startingTab.resumeTimers();
 		}
@@ -2064,7 +2070,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		});
 
 		getUrl.setSelectAllOnFocus(true);
-		mSearchAdapter = new SearchAdapter(mContext, isIncognito());
+		mSearchAdapter = new SearchAdapter(mContext, isIncognito() || mDarkTheme);
 		getUrl.setAdapter(mSearchAdapter);
 	}
 

@@ -4,6 +4,7 @@
 package acr.browser.lightning;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -20,6 +21,10 @@ public class LicenseActivity extends ActionBarActivity implements View.OnClickLi
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		SharedPreferences preferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		if (preferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
+			this.setTheme(R.style.Theme_SettingsTheme_Dark);
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.license_activity);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

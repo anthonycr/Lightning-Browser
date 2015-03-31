@@ -56,7 +56,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutLicense"
@@ -89,7 +89,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutVersion"
@@ -130,7 +130,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
         </LinearLayout>
     </ScrollView>
 

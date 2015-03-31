@@ -4,7 +4,7 @@
     android:layout_width="@dimen/navigation_width"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@color/drawer_background"
+    android:background="?drawerBackground"
     android:clickable="true"
     android:fitsSystemWindows="true"
     android:orientation="vertical" >
@@ -27,7 +27,7 @@
             android:layout_marginRight="16dp"
             android:contentDescription="@string/action_new_tab"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_action_plus" >
+            android:src="?attr/plusDrawable" >
         </ImageView>
 
         <TextView
@@ -40,15 +40,14 @@
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeightSmall"
             android:text="@string/action_new_tab"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall"
-            android:textColor="@color/black" />
+            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
     </RelativeLayout>
 
     <View
         android:id="@+id/view"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_list_bg" />
+        android:background="?attr/dividerColor" />
 
     <ListView
         android:id="@+id/left_drawer_list"
@@ -63,12 +62,12 @@
         android:id="@+id/lineView"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_list_bg" />
+        android:background="?attr/dividerColor" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="?attr/actionBarSize"
         android:baselineAligned="false"
         android:orientation="horizontal"
         android:weightSum="2" >
@@ -90,7 +89,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_action_back" />
+                android:src="?attr/arrowBackDrawable" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -110,7 +109,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_action_forward" />
+                android:src="?attr/arrowForwardDrawable" />
         </RelativeLayout>
     </LinearLayout>
 

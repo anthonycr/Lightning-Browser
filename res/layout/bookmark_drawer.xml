@@ -4,7 +4,7 @@
     android:layout_width="@dimen/navigation_width"
     android:layout_height="match_parent"
     android:layout_gravity="end"
-    android:background="@color/drawer_background"
+    android:background="?attr/drawerBackground"
     android:clickable="true"
     android:fitsSystemWindows="true"
     android:orientation="vertical" >
@@ -28,7 +28,7 @@
             android:layout_marginRight="16dp"
             android:contentDescription="Favicon"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_action_star" >
+            android:src="?attr/starDrawable" >
         </ImageView>
 
         <TextView
@@ -41,14 +41,13 @@
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeightSmall"
             android:text="@string/action_bookmarks"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall"
-            android:textColor="@color/black" />
+            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
     </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_list_bg" />
+        android:background="?attr/dividerColor" />
 
     <ListView
         android:id="@+id/right_drawer_list"

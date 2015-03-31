@@ -12,6 +12,25 @@
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="invertColorDrawable">@drawable/ic_action_invert_light</item>
+        <item name="textSizeDrawable">@drawable/ic_action_text_size_light</item>
+        <item name="dividerColor">@color/divider_light</item>
+    </style>
+
+    <style name="Theme.SettingsTheme.Dark" parent="Theme.AppCompat">
+
+        <!-- customize the color palette -->
+        <item name="toolbarSettingsBackground">@color/primary_color_dark</item>
+        <item name="listBackground">@drawable/list_bg</item>
+        <item name="colorPrimary">@color/primary_color_dark</item>
+        <item name="colorPrimaryDark">@color/secondary_color_settings_dark</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="invertColorDrawable">@drawable/ic_action_invert_dark</item>
+        <item name="textSizeDrawable">@drawable/ic_action_text_size_dark</item>
+        <item name="dividerColor">@color/divider_dark</item>
     </style>
 
     <style name="Theme.LightTheme" parent="Theme.AppCompat.Light">
@@ -33,6 +52,11 @@
         <item name="arrowBackDrawable">@drawable/ic_action_back</item>
         <item name="arrowForwardDrawable">@drawable/ic_action_forward</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
+        <item name="drawerBackground">@color/drawer_background</item>
+        <item name="plusDrawable">@drawable/ic_action_plus</item>
+        <item name="deleteDrawable">@drawable/ic_action_delete</item>
+        <item name="starDrawable">@drawable/ic_action_star</item>
+        <item name="dividerColor">@color/divider_light</item>
     </style>
 
     <style name="Theme.DarkTheme" parent="Theme.AppCompat">
@@ -54,6 +78,11 @@
         <item name="arrowBackDrawable">@drawable/ic_action_back_dark</item>
         <item name="arrowForwardDrawable">@drawable/ic_action_forward_dark</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
+        <item name="drawerBackground">@color/drawer_background_dark</item>
+        <item name="plusDrawable">@drawable/ic_action_plus_dark</item>
+        <item name="deleteDrawable">@drawable/ic_action_delete_dark</item>
+        <item name="starDrawable">@drawable/ic_action_star_dark</item>
+        <item name="dividerColor">@color/divider_dark</item>
     </style>
 
 </resources>

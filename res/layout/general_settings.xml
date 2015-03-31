@@ -56,7 +56,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutDownload"
@@ -98,7 +98,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutHomepage"
@@ -140,7 +140,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutSearch"
@@ -181,7 +181,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rGoogleSuggestions"
@@ -231,7 +231,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
         </LinearLayout>
     </ScrollView>
 

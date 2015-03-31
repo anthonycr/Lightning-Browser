@@ -35,32 +35,46 @@ public class SettingsActivity extends ActionBarActivity {
 	private SharedPreferences mPreferences;
 	private Context mContext;
 	private Activity mActivity;
+	private boolean mDark;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
+			this.setTheme(R.style.Theme_SettingsTheme_Dark);
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
+		mDark = mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false);
 		mContext = this;
 		mActivity = this;
 		init();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		finish();
 		return true;
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mPreferences != null
+				&& mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false) != mDark) {
+			this.recreate();
+		}
+	}
+
 	@SuppressLint("NewApi")
 	public void init() {
 		// set up ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// mPreferences storage
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -76,14 +90,14 @@ public class SettingsActivity extends ActionBarActivity {
 		RelativeLayout layoutOrbot = (RelativeLayout) findViewById(R.id.layoutUseOrbot);
 		RelativeLayout layoutColor = (RelativeLayout) findViewById(R.id.layoutColorMode);
 		RelativeLayout layoutBookmarks = (RelativeLayout) findViewById(R.id.layoutBookmarks);
-		
-		layoutBookmarks.setOnClickListener(new OnClickListener(){
+
+		layoutBookmarks.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(mContext, BookmarkActivity.class));
 			}
-			
+
 		});
 
 		if (API >= 19) {
@@ -113,7 +127,7 @@ public class SettingsActivity extends ActionBarActivity {
 		color.setChecked(mPreferences.getBoolean(PreferenceConstants.ENABLE_COLOR_MODE, true));
 
 		initCheckBox(flash, adblock, images, enablejs, orbot, color);
-		clickListenerForCheckBoxes(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS, 
+		clickListenerForCheckBoxes(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS,
 				layoutOrbot, layoutColor, flash, adblock, images, enablejs, orbot, color);
 
 		RelativeLayout general = (RelativeLayout) findViewById(R.id.layoutGeneral);
@@ -129,10 +143,11 @@ public class SettingsActivity extends ActionBarActivity {
 		about(about);
 	}
 
-	public void clickListenerForCheckBoxes(RelativeLayout layoutFlash, RelativeLayout layoutBlockAds,
-			RelativeLayout layoutImages, RelativeLayout layoutEnableJS, RelativeLayout layoutOrbot, RelativeLayout layoutColor,
-			final CheckBox flash, final CheckBox adblock, final CheckBox images, final CheckBox enablejs, 
-			final CheckBox orbot, final CheckBox color) {
+	public void clickListenerForCheckBoxes(RelativeLayout layoutFlash,
+			RelativeLayout layoutBlockAds, RelativeLayout layoutImages,
+			RelativeLayout layoutEnableJS, RelativeLayout layoutOrbot, RelativeLayout layoutColor,
+			final CheckBox flash, final CheckBox adblock, final CheckBox images,
+			final CheckBox enablejs, final CheckBox orbot, final CheckBox color) {
 		layoutFlash.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -183,13 +198,13 @@ public class SettingsActivity extends ActionBarActivity {
 			}
 
 		});
-		layoutColor.setOnClickListener(new OnClickListener(){
+		layoutColor.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				color.setChecked(!color.isChecked());
 			}
-			
+
 		});
 	}
 

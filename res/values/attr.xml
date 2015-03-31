@@ -10,6 +10,13 @@
     <attr name="progressBackgroundColor" format="color" />
     <attr name="searchBackground" format="reference|color" />
     <attr name="toolbarSettingsBackground" format="reference|color" />
+    <attr name="invertColorDrawable" format="integer" />
+    <attr name="textSizeDrawable" format="integer" />
+    <attr name="drawerBackground" format="reference|color" />
+    <attr name="plusDrawable" format="reference|color" />
+    <attr name="deleteDrawable" format="reference|color" />
+    <attr name="starDrawable" format="reference|color" />
+    <attr name="dividerColor" format="reference|color" />
 
     <declare-styleable name="AnimatedProgressBar">
         <attr name="progressColor" format="color" />

@@ -81,15 +81,20 @@ public class LightningView {
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
-	public LightningView(Activity activity, String url) {
+	public LightningView(Activity activity, String url, boolean darkTheme) {
 
 		mActivity = activity;
 		mWebView = new WebView(activity);
-		mTitle = new Title(activity);
+		mTitle = new Title(activity, darkTheme);
 		mAdBlock = new AdBlock(activity);
 
-		mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
-				R.drawable.ic_webpage);
+		if (darkTheme) {
+			mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
+					R.drawable.ic_webpage_dark);
+		} else {
+			mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
+					R.drawable.ic_webpage);
+		}
 
 		try {
 			mBrowserController = (BrowserController) activity;
@@ -1007,14 +1012,17 @@ public class LightningView {
 	public class Title {
 
 		private Bitmap mFavicon;
-
 		private String mTitle;
-
 		private Bitmap mDefaultIcon;
 
-		public Title(Context context) {
-			mDefaultIcon = BitmapFactory.decodeResource(context.getResources(),
-					R.drawable.ic_webpage);
+		public Title(Context context, boolean darkTheme) {
+			if (darkTheme) {
+				mDefaultIcon = BitmapFactory.decodeResource(context.getResources(),
+						R.drawable.ic_webpage_dark);
+			} else {
+				mDefaultIcon = BitmapFactory.decodeResource(context.getResources(),
+						R.drawable.ic_webpage);
+			}
 			mFavicon = mDefaultIcon;
 			mTitle = mActivity.getString(R.string.action_new_tab);
 		}

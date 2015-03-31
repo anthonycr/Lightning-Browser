@@ -49,7 +49,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private Context mContext;
 	private boolean mUseGoogle = true;
 	private boolean mIsExecuting = false;
-	private boolean mIncognito;
+	private boolean mDarkTheme;
 	private BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
 	private static final long INTERVAL_DAY = 86400000;
@@ -59,7 +59,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private static final int API = Build.VERSION.SDK_INT;
 	private Theme mTheme;
 
-	public SearchAdapter(Context context, boolean incognito) {
+	public SearchAdapter(Context context, boolean dark) {
 		mDatabaseHandler = HistoryDatabase.getInstance(context);
 		mTheme = context.getTheme();
 		mFilteredList = new ArrayList<HistoryItem>();
@@ -72,7 +72,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		mContext = context;
 		mSearchSubtitle = mContext.getString(R.string.suggestion);
-		mIncognito = incognito;
+		mDarkTheme = dark;
 		Thread delete = new Thread(new Runnable() {
 
 			@Override
@@ -164,7 +164,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		int imageId = R.drawable.ic_bookmark;
 		switch (web.getImageId()) {
 			case R.drawable.ic_bookmark: {
-				if (!mIncognito) {
+				if (!mDarkTheme) {
 					imageId = R.drawable.ic_bookmark;
 				} else {
 					holder.mTitle.setTextColor(Color.WHITE);
@@ -173,7 +173,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				break;
 			}
 			case R.drawable.ic_search: {
-				if (!mIncognito) {
+				if (!mDarkTheme) {
 					imageId = R.drawable.ic_search;
 				} else {
 					holder.mTitle.setTextColor(Color.WHITE);
@@ -182,7 +182,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				break;
 			}
 			case R.drawable.ic_history: {
-				if (!mIncognito) {
+				if (!mDarkTheme) {
 					imageId = R.drawable.ic_history;
 				} else {
 					holder.mTitle.setTextColor(Color.WHITE);
@@ -225,7 +225,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				return results;
 			}
 			String query = constraint.toString().toLowerCase(Locale.getDefault());
-			if (mUseGoogle && !mIncognito && !mIsExecuting) {
+			if (mUseGoogle && !mDarkTheme && !mIsExecuting) {
 				new RetrieveSearchSuggestions().execute(query);
 			}
 
@@ -403,7 +403,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize)
 				: 2;
 
-		if (!mUseGoogle || mIncognito) {
+		if (!mUseGoogle || mDarkTheme) {
 			maxHistory++;
 			maxBookmarks++;
 		}

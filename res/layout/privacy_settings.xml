@@ -50,7 +50,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rThirdParty"
@@ -85,7 +85,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rSavePasswords"
@@ -137,7 +137,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rClearCacheExit"
@@ -173,7 +173,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rClearHistoryExit"
@@ -208,7 +208,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rClearCookiesExit"
@@ -243,7 +243,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rBrowserHistory"
@@ -293,7 +293,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rClearCache"
@@ -319,7 +319,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rClearHistory"
@@ -345,7 +345,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/rClearCookies"
@@ -371,7 +371,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
         </LinearLayout>
     </ScrollView>
 

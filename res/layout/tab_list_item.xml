@@ -31,8 +31,7 @@
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="@color/dark_text" />
+        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
 
     <ImageView
         android:id="@+id/deleteButton"
@@ -46,7 +45,7 @@
         android:contentDescription="Delete Tab"
         android:gravity="center_vertical"
         android:padding="3dp"
-        android:src="@drawable/ic_action_delete" >
+        android:src="?attr/deleteDrawable" >
     </ImageView>
 
 </RelativeLayout>

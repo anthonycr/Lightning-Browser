@@ -35,7 +35,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#cdcdcd" />
+        android:background="?attr/dividerColor" />
 
     <LinearLayout
         android:id="@+id/licenseAOSP"
@@ -67,7 +67,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#cdcdcd" />
+        android:background="?attr/dividerColor" />
 
     <LinearLayout
         android:id="@+id/licenseHosts"
@@ -99,7 +99,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#cdcdcd" />
+        android:background="?attr/dividerColor" />
 
     <LinearLayout
         android:id="@+id/licenseOrbot"
@@ -131,7 +131,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#cdcdcd" />
+        android:background="?attr/dividerColor" />
     
     <LinearLayout
         android:id="@+id/licenseSnactory"
@@ -163,7 +163,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#cdcdcd" />
+        android:background="?attr/dividerColor" />
     
     <LinearLayout
         android:id="@+id/licenseJsoup"
@@ -195,6 +195,6 @@
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#cdcdcd" />
+        android:background="?attr/dividerColor" />
 
 </LinearLayout>

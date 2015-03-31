@@ -34,6 +34,10 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
+			this.setTheme(R.style.Theme_SettingsTheme_Dark);
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.advanced_settings);
 
@@ -43,7 +47,6 @@ public class AdvancedSettingsActivity extends ActionBarActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);

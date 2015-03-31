@@ -50,7 +50,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutAdBlock"
@@ -85,7 +85,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutImages"
@@ -121,7 +121,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutEnableJS"
@@ -157,7 +157,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutUseOrbot"
@@ -192,7 +192,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
             
             <RelativeLayout
                 android:id="@+id/layoutColorMode"
@@ -227,7 +227,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutGeneral"
@@ -254,7 +254,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutBookmarks"
@@ -280,7 +280,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutDisplay"
@@ -307,7 +307,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutPrivacy"
@@ -334,7 +334,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutAdvanced"
@@ -361,7 +361,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
 
             <RelativeLayout
                 android:id="@+id/layoutAbout"
@@ -403,7 +403,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="#cdcdcd" />
+                android:background="?attr/dividerColor" />
         </LinearLayout>
     </ScrollView>
 

@@ -31,6 +31,10 @@ public class BookmarkActivity extends ActionBarActivity implements OnClickListen
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
+			this.setTheme(R.style.Theme_SettingsTheme_Dark);
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bookmark_settings);
 
@@ -47,8 +51,6 @@ public class BookmarkActivity extends ActionBarActivity implements OnClickListen
 		TextView importBookmarks = (TextView) findViewById(R.id.isImportBrowserAvailable);
 
 		mBookmarkManager = new BookmarkManager(this);
-
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 
 		mSystemBrowser = mPreferences.getBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
 

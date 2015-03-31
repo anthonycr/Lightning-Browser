@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -22,30 +23,31 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 	// mPreferences variables
 	private SharedPreferences mPreferences;
-	private SharedPreferences.Editor mEditPrefs;
-	private CheckBox cbHideStatusBar, cbFullScreen, cbWideViewPort, cbOverView, cbTextReflow;
+	private CheckBox cbHideStatusBar, cbFullScreen, cbWideViewPort, cbOverView, cbTextReflow,
+			cbDarkTheme;
+	private Activity mActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
+			this.setTheme(R.style.Theme_SettingsTheme_Dark);
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.display_settings);
 
+		mActivity = this;
+
 		// set up ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
-
-		// TODO WARNING: SharedPreferences.edit() without a corresponding
-		// commit() or apply() call
-		mEditPrefs = mPreferences.edit();
-
 		initialize();
 	}
 
@@ -57,7 +59,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 	private void initialize() {
 
-		RelativeLayout rHideStatusBar, rFullScreen, rWideViewPort, rOverView, rTextReflow, rTextSize;
+		RelativeLayout rHideStatusBar, rFullScreen, rWideViewPort, rOverView, rTextReflow, rTextSize, rDarkTheme;
 
 		rHideStatusBar = (RelativeLayout) findViewById(R.id.rHideStatusBar);
 		rFullScreen = (RelativeLayout) findViewById(R.id.rFullScreen);
@@ -65,18 +67,23 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 		rOverView = (RelativeLayout) findViewById(R.id.rOverView);
 		rTextReflow = (RelativeLayout) findViewById(R.id.rTextReflow);
 		rTextSize = (RelativeLayout) findViewById(R.id.rTextSize);
+		rDarkTheme = (RelativeLayout) findViewById(R.id.rDarkTheme);
 
 		cbHideStatusBar = (CheckBox) findViewById(R.id.cbHideStatusBar);
 		cbFullScreen = (CheckBox) findViewById(R.id.cbFullScreen);
 		cbWideViewPort = (CheckBox) findViewById(R.id.cbWideViewPort);
 		cbOverView = (CheckBox) findViewById(R.id.cbOverView);
 		cbTextReflow = (CheckBox) findViewById(R.id.cbTextReflow);
+		cbDarkTheme = (CheckBox) findViewById(R.id.cbDarkTheme);
 
-		cbHideStatusBar.setChecked(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false));
+		cbHideStatusBar.setChecked(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR,
+				false));
 		cbFullScreen.setChecked(mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false));
-		cbWideViewPort.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, true));
+		cbWideViewPort.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT,
+				true));
 		cbOverView.setChecked(mPreferences.getBoolean(PreferenceConstants.OVERVIEW_MODE, true));
 		cbTextReflow.setChecked(mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW, false));
+		cbDarkTheme.setChecked(mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false));
 
 		rHideStatusBar(rHideStatusBar);
 		rFullScreen(rFullScreen);
@@ -84,11 +91,13 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 		rOverView(rOverView);
 		rTextReflow(rTextReflow);
 		rTextSize(rTextSize);
+		rDarkTheme(rDarkTheme);
 		cbHideStatusBar(cbHideStatusBar);
 		cbFullScreen(cbFullScreen);
 		cbWideViewPort(cbWideViewPort);
 		cbOverView(cbOverView);
 		cbTextReflow(cbTextReflow);
+		cbDarkTheme(cbDarkTheme);
 	}
 
 	private void cbHideStatusBar(CheckBox view) {
@@ -96,8 +105,8 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.HIDE_STATUS_BAR, isChecked);
-				mEditPrefs.apply();
+				mPreferences.edit().putBoolean(PreferenceConstants.HIDE_STATUS_BAR, isChecked)
+						.apply();
 			}
 
 		});
@@ -108,21 +117,31 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.FULL_SCREEN, isChecked);
-				mEditPrefs.apply();
+				mPreferences.edit().putBoolean(PreferenceConstants.FULL_SCREEN, isChecked).apply();
 			}
 
 		});
 	}
 
+	private void cbDarkTheme(CheckBox view) {
+		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				mPreferences.edit().putBoolean(PreferenceConstants.DARK_THEME, isChecked).apply();
+				mActivity.recreate();
+			}
+
+		});
+	}
 
 	private void cbWideViewPort(CheckBox view) {
 		view.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, isChecked);
-				mEditPrefs.apply();
+				mPreferences.edit().putBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, isChecked)
+						.apply();
 			}
 
 		});
@@ -133,8 +152,8 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.OVERVIEW_MODE, isChecked);
-				mEditPrefs.apply();
+				mPreferences.edit().putBoolean(PreferenceConstants.OVERVIEW_MODE, isChecked)
+						.apply();
 			}
 
 		});
@@ -145,8 +164,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.TEXT_REFLOW, isChecked);
-				mEditPrefs.apply();
+				mPreferences.edit().putBoolean(PreferenceConstants.TEXT_REFLOW, isChecked).apply();
 			}
 		});
 	}
@@ -168,6 +186,17 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 				cbFullScreen.setChecked(!cbFullScreen.isChecked());
+			}
+
+		});
+	}
+
+	private void rDarkTheme(RelativeLayout view) {
+		view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cbDarkTheme.setChecked(!cbDarkTheme.isChecked());
 			}
 
 		});
@@ -224,8 +253,8 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								mEditPrefs.putInt(PreferenceConstants.TEXT_SIZE, which + 1);
-								mEditPrefs.apply();
+								mPreferences.edit()
+										.putInt(PreferenceConstants.TEXT_SIZE, which + 1).apply();
 
 							}
 						});
