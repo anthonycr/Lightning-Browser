@@ -12,12 +12,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.webkit.*;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -25,7 +23,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PrivacySettingsActivity extends ActionBarActivity {
+public class PrivacySettingsActivity extends ThemableActivity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -39,10 +37,6 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.privacy_settings);
 
@@ -52,13 +46,9 @@ public class PrivacySettingsActivity extends ActionBarActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-
 		// TODO WARNING: SharedPreferences.edit() without a corresponding
 		// commit() or apply() call
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 
 		mSystemBrowser = mPreferences.getBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);

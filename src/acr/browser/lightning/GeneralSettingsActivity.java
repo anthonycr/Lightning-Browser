@@ -10,14 +10,12 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -26,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class GeneralSettingsActivity extends ActionBarActivity {
+public class GeneralSettingsActivity extends ThemableActivity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -44,10 +42,6 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.general_settings);
 
@@ -57,13 +51,9 @@ public class GeneralSettingsActivity extends ActionBarActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-
 		// TODO WARNING: SharedPreferences.edit() without a corresponding
 		// commit() or apply() call
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 
 		mActivity = this;

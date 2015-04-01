@@ -15,12 +15,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -28,24 +26,18 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends ThemableActivity {
 
 	private static int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences.Editor mEditPrefs;
 	private SharedPreferences mPreferences;
 	private Context mContext;
 	private Activity mActivity;
-	private boolean mDark;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
-		mDark = mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false);
 		mContext = this;
 		mActivity = this;
 		init();
@@ -57,15 +49,6 @@ public class SettingsActivity extends ActionBarActivity {
 		return true;
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (mPreferences != null
-				&& mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false) != mDark) {
-			this.recreate();
-		}
-	}
-
 	@SuppressLint("NewApi")
 	public void init() {
 		// set up ActionBar
@@ -75,11 +58,7 @@ public class SettingsActivity extends ActionBarActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// mPreferences storage
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mEditPrefs = mPreferences.edit();
 
 		// initialize UI

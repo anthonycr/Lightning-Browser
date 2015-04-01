@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +18,7 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class BookmarkActivity extends ActionBarActivity implements OnClickListener {
+public class BookmarkActivity extends ThemableActivity implements OnClickListener {
 
 	private BookmarkManager mBookmarkManager;
 	private boolean mSystemBrowser;
@@ -31,10 +30,6 @@ public class BookmarkActivity extends ActionBarActivity implements OnClickListen
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bookmark_settings);
 
@@ -52,6 +47,8 @@ public class BookmarkActivity extends ActionBarActivity implements OnClickListen
 
 		mBookmarkManager = new BookmarkManager(this);
 
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+
 		mSystemBrowser = mPreferences.getBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
 
 		exportBackup.setOnClickListener(this);
@@ -63,7 +60,6 @@ public class BookmarkActivity extends ActionBarActivity implements OnClickListen
 		} else {
 			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
 		}
-
 	}
 
 	@Override
