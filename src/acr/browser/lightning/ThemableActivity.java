@@ -1,5 +1,6 @@
 package acr.browser.lightning;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -36,7 +37,16 @@ public abstract class ThemableActivity extends ActionBarActivity {
 		if (mPreferences != null
 				&& mPreferences.getBoolean(PreferenceConstants.DARK_THEME,
 						false) != mDark) {
-			this.recreate();
+			restart();
 		}
+	}
+
+	protected void restart() {
+		final Bundle outState = new Bundle();
+		onSaveInstanceState(outState);
+		final Intent intent = new Intent(this, getClass());
+		finish();
+		overridePendingTransition(0, 0);
+		startActivity(intent);
 	}
 }

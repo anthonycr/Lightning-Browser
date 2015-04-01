@@ -121,7 +121,7 @@ public class DisplaySettingsActivity extends ThemableActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mPreferences.edit().putBoolean(PreferenceConstants.DARK_THEME, isChecked).apply();
-				mActivity.recreate();
+				restart();
 			}
 
 		});
