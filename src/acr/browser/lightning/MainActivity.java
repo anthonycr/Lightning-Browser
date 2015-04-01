@@ -13,16 +13,11 @@ public class MainActivity extends BrowserActivity {
 
 	SharedPreferences mPreferences;
 	CookieManager mCookieManager;
-	private boolean mDark;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mDark = mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false);
-		if (mDark) {
-			this.setTheme(R.style.Theme_DarkTheme);
-		}
 		super.onCreate(savedInstanceState);
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 	}
 
 	@Override
@@ -60,15 +55,6 @@ public class MainActivity extends BrowserActivity {
 	protected void onPause() {
 		super.onPause();
 		saveOpenTabs();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (mPreferences != null
-				&& mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false) != mDark) {
-			this.recreate();
-		}
 	}
 
 	@Override

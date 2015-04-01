@@ -55,7 +55,6 @@ import android.webkit.*;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebView.HitTestResult;
 import android.widget.*;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -72,7 +71,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
-public class BrowserActivity extends ActionBarActivity implements BrowserController, OnClickListener {
+public class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerListLeft, mDrawerListRight;
@@ -641,12 +640,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		} else if (mBrowserFrame.findViewById(R.id.toolbar_layout) != null) {
 			mBrowserFrame.removeView(mToolbarLayout);
 			mUiLayout.addView(mToolbarLayout, 0);
-		}
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		} else {
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 
 		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
