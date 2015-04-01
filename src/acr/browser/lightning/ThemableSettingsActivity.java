@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-public abstract class ThemableActivity extends ActionBarActivity {
+public abstract class ThemableSettingsActivity extends ActionBarActivity {
 
 	private SharedPreferences mPreferences;
 	private boolean mDark;
@@ -17,7 +17,7 @@ public abstract class ThemableActivity extends ActionBarActivity {
 
 		// set the theme
 		if (mDark) {
-			setTheme(R.style.Theme_DarkTheme);
+			setTheme(R.style.Theme_SettingsTheme_Dark);
 		}
 		super.onCreate(savedInstanceState);
 	}

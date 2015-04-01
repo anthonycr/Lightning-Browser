@@ -23,7 +23,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PrivacySettingsActivity extends ThemableActivity {
+public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;

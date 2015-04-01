@@ -16,7 +16,7 @@ import android.view.View.OnClickListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AboutSettingsActivity extends ThemableActivity {
+public class AboutSettingsActivity extends ThemableSettingsActivity {
 
 	private int mEasterEggCounter;
 	private Context mContext;

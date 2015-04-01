@@ -18,7 +18,7 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class BookmarkActivity extends ThemableActivity implements OnClickListener {
+public class BookmarkActivity extends ThemableSettingsActivity implements OnClickListener {
 
 	private BookmarkManager mBookmarkManager;
 	private boolean mSystemBrowser;

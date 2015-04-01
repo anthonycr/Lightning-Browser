@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AdvancedSettingsActivity extends ThemableActivity {
+public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 
 	private SharedPreferences mPreferences;
 	private CheckBox cbAllowPopups, cbAllowCookies, cbAllowIncognitoCookies, cbRestoreTabs;

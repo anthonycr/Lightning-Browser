@@ -15,7 +15,7 @@ import android.view.View;
  *under which this code is licensed. Unless you plan on providing other attribution in the app to 
  *the original source in another visible way, it is advised against the removal of this Activity.
  */
-public class LicenseActivity extends ThemableActivity implements View.OnClickListener {
+public class LicenseActivity extends ThemableSettingsActivity implements View.OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -17,20 +16,17 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 
-public class DisplaySettingsActivity extends ThemableActivity {
+public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 	// mPreferences variables
 	private SharedPreferences mPreferences;
 	private CheckBox cbHideStatusBar, cbFullScreen, cbWideViewPort, cbOverView, cbTextReflow,
 			cbDarkTheme;
-	private Activity mActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.display_settings);
-
-		mActivity = this;
 
 		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 

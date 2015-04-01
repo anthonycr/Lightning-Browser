@@ -26,7 +26,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class SettingsActivity extends ThemableActivity {
+public class SettingsActivity extends ThemableSettingsActivity {
 
 	private static int API = android.os.Build.VERSION.SDK_INT;
 	private SharedPreferences.Editor mEditPrefs;

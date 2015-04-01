@@ -641,6 +641,12 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			mBrowserFrame.removeView(mToolbarLayout);
 			mUiLayout.addView(mToolbarLayout, 0);
 		}
+		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		} else {
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
 
 		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
 			case 0:
@@ -1374,6 +1380,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				}
 			}
 		}
+		
+		supportInvalidateOptionsMenu();
 	}
 
 	/**
