@@ -744,24 +744,27 @@ public class LightningView {
 
 		}
 
-		boolean isRunning = false;
+		private boolean mIsRunning = false;
+		private float mZoomScale = 0.0f;
 
 		@Override
 		public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
 			if (view.isShown() && mTextReflow && API >= android.os.Build.VERSION_CODES.KITKAT) {
-				view.invalidate();
-				if (isRunning)
+				if (mIsRunning)
 					return;
-				isRunning = view.postDelayed(new Runnable() {
+				if (Math.abs(mZoomScale - newScale) > 0.01f) {
+					mIsRunning = view.postDelayed(new Runnable() {
 
-					@Override
-					public void run() {
-						// TODO
-						view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
-						isRunning = false;
-					}
+						@Override
+						public void run() {
+							mZoomScale = newScale;
+							view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
+							Log.d("YOLO", "SCALE CHANGING " + newScale);
+							mIsRunning = false;
+						}
 
-				}, 100);
+					}, 100);
+				}
 
 			}
 		}
