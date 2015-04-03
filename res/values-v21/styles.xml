@@ -57,6 +57,8 @@
         <item name="deleteDrawable">@drawable/ic_action_delete</item>
         <item name="starDrawable">@drawable/ic_action_star</item>
         <item name="dividerColor">@color/divider_light</item>
+        <item name="tabDrawable">@drawable/ic_action_tabs_light</item>
+        <item name="selectedBackground">@drawable/list_bg_light</item>
     </style>
 
     <style name="Theme.DarkTheme" parent="Theme.AppCompat">
@@ -83,6 +85,8 @@
         <item name="deleteDrawable">@drawable/ic_action_delete_dark</item>
         <item name="starDrawable">@drawable/ic_action_star_dark</item>
         <item name="dividerColor">@color/divider_dark</item>
+        <item name="tabDrawable">@drawable/ic_action_tabs_dark</item>
+        <item name="selectedBackground">@drawable/list_bg_dark</item>
     </style>
 
 </resources>

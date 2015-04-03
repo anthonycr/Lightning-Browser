@@ -28,4 +28,8 @@
     <color name="divider_dark">#1EFFFFFF</color>
     <color name="divider_light">#1E000000</color>
     
+    
+    <color name="selected_dark">#0FFFFFFF</color>
+    <color name="selected_light">#0F000000</color>
+    
 </resources>

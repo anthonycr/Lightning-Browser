@@ -125,7 +125,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@SuppressWarnings("deprecation")
 	private synchronized void initialize() {
 		setContentView(R.layout.activity_main);
-
+		getWindow().setBackgroundDrawable(null);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
@@ -147,7 +147,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
-		getWindow().setBackgroundDrawable(null);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
 		mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
 		mPageLayout = (LinearLayout) findViewById(R.id.main_layout);
@@ -896,7 +895,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			mIsNewIntent = false;
-			selectItem(position);
+			showTab(mWebViews.get(position));
 		}
 	}
 
@@ -1107,18 +1106,10 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		// don't delete the tab because the browser will close and mess stuff up
 	}
 
-	private void selectItem(final int position) {
-		// update selected item and title, then close the drawer
-
-		showTab(mWebViews.get(position));
-
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onTrimMemory(int level) {
-		if (level > TRIM_MEMORY_RUNNING_MODERATE
-				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+		if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
 			Log.d(Constants.TAG, "Low Memory, Free Memory");
 			for (LightningView view : mWebViews) {
 				view.getWebView().freeMemory();
@@ -1380,7 +1371,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				}
 			}
 		}
-		
+
 		supportInvalidateOptionsMenu();
 	}
 
@@ -1553,8 +1544,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 						});
 
-						mToolbarLayout.setBackgroundColor(finalColor);
-						mPageLayout.setBackgroundColor(finalColor);
 						anim.setDuration(300);
 						anim.start();
 					}
@@ -1778,23 +1767,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	@Override
 	public void updateProgress(int n) {
-		/*
-		 * if (n > mProgressBar.getProgress()) { ObjectAnimator animator =
-		 * ObjectAnimator.ofInt(mProgressBar, "progress", n);
-		 * animator.setDuration(200); animator.setInterpolator(new
-		 * DecelerateInterpolator()); animator.start(); } else if (n <
-		 * mProgressBar.getProgress()) { ObjectAnimator animator =
-		 * ObjectAnimator.ofInt(mProgressBar, "progress", 0, n);
-		 * animator.setDuration(200); animator.setInterpolator(new
-		 * DecelerateInterpolator()); animator.start(); } if (n >= 100) {
-		 * Handler handler = new Handler(); handler.postDelayed(new Runnable() {
-		 * 
-		 * @Override public void run() {
-		 * mProgressBar.setVisibility(View.INVISIBLE); setIsFinishedLoading(); }
-		 * }, 200);
-		 * 
-		 * } else { mProgressBar.setVisibility(View.VISIBLE); setIsLoading(); }
-		 */
 		if (n >= 100) {
 			setIsFinishedLoading();
 		} else {
@@ -2534,42 +2506,42 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.action_back:
-			if (mCurrentView != null) {
-				if (mCurrentView.canGoBack()) {
-					mCurrentView.goBack();
+			case R.id.action_back:
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoBack()) {
+						mCurrentView.goBack();
+					} else {
+						deleteTab(mDrawerListLeft.getCheckedItemPosition());
+					}
+				}
+				break;
+			case R.id.action_forward:
+				if (mCurrentView != null) {
+					if (mCurrentView.canGoForward()) {
+						mCurrentView.goForward();
+					}
+				}
+				break;
+			case R.id.arrow_button:
+				if (mSearch != null && mSearch.hasFocus()) {
+					mCurrentView.requestFocus();
 				} else {
-					deleteTab(mDrawerListLeft.getCheckedItemPosition());
+					mDrawerLayout.openDrawer(mDrawerLeft);
 				}
-			}
-			break;
-		case R.id.action_forward:
-			if (mCurrentView != null) {
-				if (mCurrentView.canGoForward()) {
-					mCurrentView.goForward();
-				}
-			}
-			break;
-		case R.id.arrow_button:
-			if (mSearch != null && mSearch.hasFocus()) {
-				mCurrentView.requestFocus();
-			} else {
-				mDrawerLayout.openDrawer(mDrawerLeft);
-			}
-			break;
-		case R.id.new_tab_button:
-			newTab(null, true);
-			break;
-		case R.id.button_next:
-			mCurrentView.getWebView().findNext(false);
-			break;
-		case R.id.button_back:
-			mCurrentView.getWebView().findNext(true);
-			break;
-		case R.id.button_quit:
-			mCurrentView.getWebView().clearMatches();
-			mSearchBar.setVisibility(View.GONE);
-			break;
+				break;
+			case R.id.new_tab_button:
+				newTab(null, true);
+				break;
+			case R.id.button_next:
+				mCurrentView.getWebView().findNext(false);
+				break;
+			case R.id.button_back:
+				mCurrentView.getWebView().findNext(true);
+				break;
+			case R.id.button_quit:
+				mCurrentView.getWebView().clearMatches();
+				mSearchBar.setVisibility(View.GONE);
+				break;
 		}
 	}
 }

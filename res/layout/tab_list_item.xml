@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
-    android:background="@drawable/list_bg"
+    android:background="?attr/selectedBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
@@ -23,6 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_toLeftOf="@+id/deleteButton"
         android:layout_toRightOf="@+id/faviconTab"
         android:ellipsize="end"
@@ -35,16 +37,15 @@
 
     <ImageView
         android:id="@+id/deleteButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="13dp"
-        android:alpha="0.5"
+        android:layout_marginRight="4dp"
         android:background="?attr/actionBarItemBackground"
         android:contentDescription="Delete Tab"
         android:gravity="center_vertical"
-        android:padding="3dp"
+        android:padding="12dp"
         android:src="?attr/deleteDrawable" >
     </ImageView>
 

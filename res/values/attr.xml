@@ -16,7 +16,9 @@
     <attr name="plusDrawable" format="reference|color" />
     <attr name="deleteDrawable" format="reference|color" />
     <attr name="starDrawable" format="reference|color" />
+    <attr name="tabDrawable" format="reference|color" />
     <attr name="dividerColor" format="reference|color" />
+    <attr name="selectedBackground" format="reference|color" />
 
     <declare-styleable name="AnimatedProgressBar">
         <attr name="progressColor" format="color" />
