@@ -5,33 +5,24 @@ package acr.browser.lightning;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AboutSettingsActivity extends ActionBarActivity {
+public class AboutSettingsActivity extends ThemableSettingsActivity {
 
-	// mPreferences variables
-	private SharedPreferences mPreferences;
 	private int mEasterEggCounter;
 	private Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about_settings);
 
@@ -40,11 +31,6 @@ public class AboutSettingsActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
 
 		mContext = this;
 		initialize();

@@ -4,10 +4,8 @@
 package acr.browser.lightning;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,14 +15,10 @@ import android.view.View;
  *under which this code is licensed. Unless you plan on providing other attribution in the app to 
  *the original source in another visible way, it is advised against the removal of this Activity.
  */
-public class LicenseActivity extends ActionBarActivity implements View.OnClickListener {
+public class LicenseActivity extends ThemableSettingsActivity implements View.OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SharedPreferences preferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (preferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.license_activity);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

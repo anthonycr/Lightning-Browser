@@ -55,7 +55,6 @@ import android.webkit.*;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebView.HitTestResult;
 import android.widget.*;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -72,14 +71,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
-public class BrowserActivity extends ActionBarActivity implements BrowserController {
+public class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
 
 	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerListLeft;
-	private LinearLayout mDrawerLeft;
-	private LinearLayout mDrawerRight;
-	private ListView mDrawerListRight;
-	private RelativeLayout mNewTab;
+	private ListView mDrawerListLeft, mDrawerListRight;
+	private LinearLayout mDrawerLeft, mDrawerRight, mPageLayout, mUiLayout, mToolbarLayout;
+	private RelativeLayout mNewTab, mSearchBar;
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
 	private LightningView mCurrentView;
 	private int mIdGenerator;
@@ -94,42 +91,29 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	private AnimatedProgressBar mProgressBar;
 	private boolean mSystemBrowser = false;
 	private ValueCallback<Uri> mUploadMessage;
-	private View mCustomView;
-	private int mOriginalOrientation;
-	private int mBackgroundColor;
+	private View mCustomView, mVideoProgressView;
+	private int mOriginalOrientation, mBackgroundColor;
 	private ActionBar mActionBar;
-	private boolean mFullScreen;
-	private boolean mColorMode;
+	private boolean mFullScreen, mColorMode, mDarkTheme;
 	private FrameLayout mBrowserFrame;
-	private LinearLayout mPageLayout;
-	private LinearLayout mUiLayout;
 	private FullscreenHolder mFullscreenContainer;
 	private CustomViewCallback mCustomViewCallback;
 	private final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-	private Bitmap mDefaultVideoPoster;
-	private View mVideoProgressView;
-	private LinearLayout mToolbarLayout;
+	private Bitmap mDefaultVideoPoster, mWebpageBitmap;
 	private HistoryDatabase mHistoryDatabase;
 	private SharedPreferences mPreferences;
 	private Context mContext;
-	private Bitmap mWebpageBitmap;
-	private String mSearchText;
-	private String mUntitledTitle;
+	private String mSearchText, mUntitledTitle, mHomepage;
 	private Activity mActivity;
 	private final int API = android.os.Build.VERSION.SDK_INT;
-	private Drawable mDeleteIcon;
-	private Drawable mRefreshIcon;
-	private Drawable mCopyIcon;
-	private Drawable mIcon;
-	private String mHomepage;
+	private Drawable mDeleteIcon, mRefreshIcon, mCopyIcon, mIcon;
 	private boolean mIsNewIntent = false;
 	private VideoView mVideoView;
 	private static SearchAdapter mSearchAdapter;
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
 	private BookmarkManager mBookmarkManager;
-	private boolean mDarkTheme;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +195,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mHistoryDatabase = HistoryDatabase.getInstance(this);
 
 		// set display options of the ActionBar
-
 		mActionBar.setDisplayShowTitleEnabled(false);
 		mActionBar.setHomeButtonEnabled(false);
 		mActionBar.setDisplayShowHomeEnabled(false);
@@ -233,51 +216,13 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		mArrowImage.setImageDrawable(mArrowDrawable);
 		LinearLayout arrowButton = (LinearLayout) mActionBar.getCustomView().findViewById(
 				R.id.arrow_button);
-		arrowButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (mSearch != null && mSearch.hasFocus()) {
-					mCurrentView.requestFocus();
-				} else {
-					mDrawerLayout.openDrawer(mDrawerLeft);
-				}
-			}
-
-		});
+		arrowButton.setOnClickListener(this);
 
 		RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
+		back.setOnClickListener(this);
+
 		RelativeLayout forward = (RelativeLayout) findViewById(R.id.action_forward);
-		if (back != null) {
-			back.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (mCurrentView != null) {
-						if (mCurrentView.canGoBack()) {
-							mCurrentView.goBack();
-						} else {
-							deleteTab(mDrawerListLeft.getCheckedItemPosition());
-						}
-					}
-				}
-
-			});
-		}
-		if (forward != null) {
-			forward.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (mCurrentView != null) {
-						if (mCurrentView.canGoForward()) {
-							mCurrentView.goForward();
-						}
-					}
-				}
-
-			});
-		}
+		forward.setOnClickListener(this);
 
 		// create the search EditText in the ToolBar
 		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
@@ -316,15 +261,7 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		});
 		initialize.run();
 
-		mNewTab.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				newTab(null, true);
-			}
-
-		});
-
+		mNewTab.setOnClickListener(this);
 		mNewTab.setOnLongClickListener(new OnLongClickListener() {
 
 			@Override
@@ -351,7 +288,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		}
 
 		checkForTor();
-
 	}
 
 	private class SearchClass {
@@ -538,92 +474,6 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		public void onDrawerStateChanged(int arg) {
 		}
 
-	}
-
-	public boolean handleMenuItemClick(MenuItem item) {
-		// Handle action buttons
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-					mDrawerLayout.closeDrawer(mDrawerRight);
-				}
-				// mDrawerToggle.syncState();
-				return true;
-			case R.id.action_back:
-				if (mCurrentView != null) {
-					if (mCurrentView.canGoBack()) {
-						mCurrentView.goBack();
-					}
-				}
-				return true;
-			case R.id.action_forward:
-				if (mCurrentView != null) {
-					if (mCurrentView.canGoForward()) {
-						mCurrentView.goForward();
-					}
-				}
-				return true;
-			case R.id.action_new_tab:
-				newTab(null, true);
-				return true;
-			case R.id.action_incognito:
-				startActivity(new Intent(this, IncognitoActivity.class));
-				return true;
-			case R.id.action_share:
-				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-					Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-					shareIntent.setType("text/plain");
-					shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-							mCurrentView.getTitle());
-					String shareMessage = mCurrentView.getUrl();
-					shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
-					startActivity(Intent.createChooser(shareIntent,
-							getResources().getString(R.string.dialog_title_share)));
-				}
-				return true;
-			case R.id.action_bookmarks:
-				openBookmarks();
-				return true;
-			case R.id.action_copy:
-				if (mCurrentView != null) {
-					if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-						ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-						ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl());
-						clipboard.setPrimaryClip(clip);
-						Utils.showToast(mContext,
-								mContext.getResources().getString(R.string.message_link_copied));
-					}
-				}
-				return true;
-			case R.id.action_settings:
-				startActivity(new Intent(this, SettingsActivity.class));
-				return true;
-			case R.id.action_history:
-				openHistory();
-				return true;
-			case R.id.action_add_bookmark:
-				if (!mCurrentView.getUrl().startsWith(Constants.FILE)) {
-					HistoryItem bookmark = new HistoryItem(mCurrentView.getUrl(),
-							mCurrentView.getTitle());
-					if (mBookmarkManager.addBookmark(bookmark)) {
-						mBookmarkList.add(bookmark);
-						Collections.sort(mBookmarkList, new SortIgnoreCase());
-						notifyBookmarkDataSetChanged();
-						mSearchAdapter.refreshBookmarks();
-					}
-				}
-				return true;
-			case R.id.action_find:
-				findInPage();
-				return true;
-			case R.id.action_reading_mode:
-				Intent read = new Intent(this, ReadingActivity.class);
-				read.putExtra(Constants.LOAD_READING_URL, mCurrentView.getUrl());
-				startActivity(read);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
 	}
 
 	/*
@@ -997,35 +847,20 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 		if (mCurrentView != null) {
 			mCurrentView.find(text);
 		}
-		final RelativeLayout bar = (RelativeLayout) findViewById(R.id.search_bar);
-		bar.setVisibility(View.VISIBLE);
+		mSearchBar = (RelativeLayout) findViewById(R.id.search_bar);
+		mSearchBar.setVisibility(View.VISIBLE);
 
 		TextView tw = (TextView) findViewById(R.id.search_query);
 		tw.setText("'" + text + "'");
 
 		ImageButton up = (ImageButton) findViewById(R.id.button_next);
-		up.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mCurrentView.getWebView().findNext(false);
-			}
-		});
+		up.setOnClickListener(this);
+
 		ImageButton down = (ImageButton) findViewById(R.id.button_back);
-		down.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mCurrentView.getWebView().findNext(true);
-			}
-		});
+		down.setOnClickListener(this);
 
 		ImageButton quit = (ImageButton) findViewById(R.id.button_quit);
-		quit.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mCurrentView.getWebView().clearMatches();
-				bar.setVisibility(View.GONE);
-			}
-		});
+		quit.setOnClickListener(this);
 	}
 
 	private void showCloseDialog(final int position) {
@@ -1545,6 +1380,8 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 				}
 			}
 		}
+		
+		supportInvalidateOptionsMenu();
 	}
 
 	/**
@@ -2692,5 +2529,47 @@ public class BrowserActivity extends ActionBarActivity implements BrowserControl
 	@Override
 	public int getMenu() {
 		return R.menu.main;
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.action_back:
+			if (mCurrentView != null) {
+				if (mCurrentView.canGoBack()) {
+					mCurrentView.goBack();
+				} else {
+					deleteTab(mDrawerListLeft.getCheckedItemPosition());
+				}
+			}
+			break;
+		case R.id.action_forward:
+			if (mCurrentView != null) {
+				if (mCurrentView.canGoForward()) {
+					mCurrentView.goForward();
+				}
+			}
+			break;
+		case R.id.arrow_button:
+			if (mSearch != null && mSearch.hasFocus()) {
+				mCurrentView.requestFocus();
+			} else {
+				mDrawerLayout.openDrawer(mDrawerLeft);
+			}
+			break;
+		case R.id.new_tab_button:
+			newTab(null, true);
+			break;
+		case R.id.button_next:
+			mCurrentView.getWebView().findNext(false);
+			break;
+		case R.id.button_back:
+			mCurrentView.getWebView().findNext(true);
+			break;
+		case R.id.button_quit:
+			mCurrentView.getWebView().clearMatches();
+			mSearchBar.setVisibility(View.GONE);
+			break;
+		}
 	}
 }

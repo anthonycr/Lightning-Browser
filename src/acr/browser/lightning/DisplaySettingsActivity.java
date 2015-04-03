@@ -3,40 +3,32 @@
  */
 package acr.browser.lightning;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 
-public class DisplaySettingsActivity extends ActionBarActivity {
+public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 	// mPreferences variables
 	private SharedPreferences mPreferences;
 	private CheckBox cbHideStatusBar, cbFullScreen, cbWideViewPort, cbOverView, cbTextReflow,
 			cbDarkTheme;
-	private Activity mActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		if (mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)) {
-			this.setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.display_settings);
 
-		mActivity = this;
+		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 
 		// set up ActionBar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,10 +36,6 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
 		initialize();
 	}
 
@@ -129,7 +117,7 @@ public class DisplaySettingsActivity extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mPreferences.edit().putBoolean(PreferenceConstants.DARK_THEME, isChecked).apply();
-				mActivity.recreate();
+				restart();
 			}
 
 		});
