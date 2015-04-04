@@ -18,8 +18,8 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <string name="drawer_open">Navigációs oldasáv megnyitása</string>
+    <string name="drawer_close">Navigációs oldalsáv bezárása</string>
     <string name="action_websearch">Internetes kereső</string>
     <string name="action_refresh">Frissít</string>
     <string name="action_new_tab">Új Lap</string>
