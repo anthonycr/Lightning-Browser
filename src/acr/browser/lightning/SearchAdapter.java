@@ -53,11 +53,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
 	private static final long INTERVAL_DAY = 86400000;
-	private XmlPullParserFactory mFactory;
-	private XmlPullParser mXpp;
 	private String mSearchSubtitle;
 	private static final int API = Build.VERSION.SDK_INT;
 	private Theme mTheme;
+	private SearchFilter mFilter;
 
 	public SearchAdapter(Context context, boolean dark) {
 		mDatabaseHandler = HistoryDatabase.getInstance(context);
@@ -213,7 +212,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public Filter getFilter() {
-		return new SearchFilter();
+		if (mFilter == null) {
+			mFilter = new SearchFilter();
+		}
+		return mFilter;
 	}
 
 	public class SearchFilter extends Filter {
@@ -268,16 +270,16 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	}
 
 	private class SuggestionHolder {
-
 		ImageView mImage;
-
 		TextView mTitle;
-
 		TextView mUrl;
 	}
 
 	private class RetrieveSearchSuggestions extends AsyncTask<String, Void, List<HistoryItem>> {
 
+		private XmlPullParserFactory mFactory;
+		private XmlPullParser mXpp;
+		
 		@Override
 		protected List<HistoryItem> doInBackground(String... arg0) {
 			mIsExecuting = true;

@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
@@ -75,7 +76,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerListLeft, mDrawerListRight;
-	private LinearLayout mDrawerLeft, mDrawerRight, mPageLayout, mUiLayout, mToolbarLayout;
+	private LinearLayout mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
 	private RelativeLayout mNewTab, mSearchBar;
 	private List<LightningView> mWebViews = new ArrayList<LightningView>();
 	private LightningView mCurrentView;
@@ -114,6 +115,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private static LayoutParams mMatchParent = new LayoutParams(LayoutParams.MATCH_PARENT,
 			LayoutParams.MATCH_PARENT);
 	private BookmarkManager mBookmarkManager;
+	private ColorDrawable mBackground = new ColorDrawable();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +127,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@SuppressWarnings("deprecation")
 	private synchronized void initialize() {
 		setContentView(R.layout.activity_main);
-		getWindow().setBackgroundDrawable(null);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
@@ -149,7 +150,14 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		mClickHandler = new ClickHandler(this);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
 		mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
-		mPageLayout = (LinearLayout) findViewById(R.id.main_layout);
+		// initialize background ColorDrawable
+		mBackground.setColor(((ColorDrawable) mToolbarLayout.getBackground()).getColor());
+		LinearLayout background = (LinearLayout) findViewById(R.id.main_layout);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			background.setBackground(null);
+		} else {
+			background.setBackgroundDrawable(null);
+		}
 		mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
 		mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
@@ -1429,12 +1437,14 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		Paint paint;
 		int layoutResourceId;
 		List<LightningView> data = null;
+		CloseTabListener mExitListener;
 
 		public LightningViewAdapter(Context context, int layoutResourceId, List<LightningView> data) {
 			super(context, layoutResourceId, data);
 			this.layoutResourceId = layoutResourceId;
 			this.context = context;
 			this.data = data;
+			this.mExitListener = new CloseTabListener();
 		}
 
 		@Override
@@ -1455,14 +1465,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				holder = (LightningViewHolder) row.getTag();
 			}
 
-			holder.exit.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View view) {
-					deleteTab(position);
-				}
-
-			});
+			holder.exit.setTag(position);
+			holder.exit.setOnClickListener(mExitListener);
 
 			ViewCompat.jumpDrawablesToCurrentState(holder.exit);
 
@@ -1500,13 +1504,19 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 
 		class LightningViewHolder {
-
 			TextView txtTitle;
-
 			ImageView favicon;
-
 			ImageView exit;
 		}
+	}
+	
+	private class CloseTabListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			deleteTab((int) v.getTag());
+		}
+		
 	}
 
 	private void changeToolbarBackground(Bitmap favicon) {
@@ -1529,16 +1539,16 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 							finalColor = color;
 						}
 
-						ColorDrawable draw = (ColorDrawable) mPageLayout.getBackground();
 						ValueAnimator anim = ValueAnimator.ofObject(new ArgbEvaluator(),
-								draw.getColor(), finalColor);
+								mBackground.getColor(), finalColor);
 
 						anim.addUpdateListener(new AnimatorUpdateListener() {
 
 							@Override
 							public void onAnimationUpdate(ValueAnimator animation) {
 								int color = (Integer) animation.getAnimatedValue();
-								mPageLayout.setBackgroundColor(color);
+								mBackground.setColor(color);
+								getWindow().setBackgroundDrawable(mBackground);
 								mToolbarLayout.setBackgroundColor(color);
 							}
 
