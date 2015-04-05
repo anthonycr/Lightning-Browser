@@ -18,8 +18,8 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Navigációs oldasáv megnyitása</string>
-    <string name="drawer_close">Navigációs oldalsáv bezárása</string>
+    <string name="drawer_open">Navigációs fiók megnyitása</string>
+    <string name="drawer_close">Navigációs fiók bezárása</string>
     <string name="action_websearch">Internetes kereső</string>
     <string name="action_refresh">Frissít</string>
     <string name="action_new_tab">Új Lap</string>
@@ -65,7 +65,7 @@
     <string name="recommended">Ajánlott</string>
     <string name="search">Keresőmotor</string>
     <string name="search_hint">Keresés</string>
-    <string name="wideViewPort">Széles nézetablak használata</string>
+    <string name="wideViewPort">Széles nézőport használata</string>
     <string name="overViewMode">Oldalak betöltése áttekinthető módban</string>
     <string name="restore">Elvesztett lapok visszaállítása induláskor</string>
     <string name="stock_browser_unavailable">Nincs gyári böngésző észlelve</string>
@@ -125,7 +125,7 @@
     <string name="download_no_sdcard_dlg_title" >Nincs SD kártya</string>
     <string name="download_no_sdcard_dlg_msg" >USB tárolóra van szükség a fájl letöltéséhez.</string>
     <string name="download_sdcard_busy_dlg_title">USB-tár nem elérhető</string>
-    <string name="download_sdcard_busy_dlg_msg" >A tároló dolgozik .Hogy engedélyezze a letöltéseket , érintse meg az USB-tár kikapcsolását az értesítésnél.</string>
+    <string name="download_sdcard_busy_dlg_msg" >A tároló dolgozik.Hogy engedélyezze a letöltéseket , érintse meg az USB-tár kikapcsolását az értesítésnél.</string>
     <string name="incognito_cookies">Cookie-k engedélyezése inkognitó módban</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Kézi</string>
@@ -141,7 +141,7 @@
     <string name="message_text_copied">Szöveg másolva a vágólapra</string>
     <string name="message_link_copied">Link másolva a vágólapra</string>
     <string name="custom_url">Egyéni URL</string>
-    <string name="message_blocked_local">Helyi fájlok blokkolva vannak a betöltésből</string>
+    <string name="message_blocked_local">Helyi fájl betöltése blokkolva</string>
     <string name="licenses">Nyílt forráskódú licencek</string>
     <string name="suggestion">Keresés</string>
     <string name="block_ads">Reklámok blokkolása</string>
@@ -155,7 +155,7 @@
     <string name="hint_username">Felhasználónév</string>
     <string name="hint_password">Jelszó</string>
     <string name="google_suggestions">Keresési javaslatok</string>
-    <string name="powered_by_google">Powered by Google</string>
+    <string name="powered_by_google"A Google támogatásával</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">Az AdBlock jelenleg csak a Lightning Browser + fizetős változatban érhető el.Ez letölthető a Google Play Áruházból.</string>
     <string name="enable_orbot">Orbot bekapcsolása</string>
