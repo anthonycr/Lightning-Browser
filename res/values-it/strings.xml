@@ -39,7 +39,7 @@
     <string name="search_hint">Cerca</string>
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
-    <string name="restore">Ricarica le schede perse all'avvio</string>
+    <string name="restore">Ricarica le schede perse all\'avvio</string>
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
@@ -106,7 +106,7 @@
     <string name="settings_display">Impostazioni Display</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_about">Informazioni</string>
-    <string name="settings_about_explain">Informazioni sull'autore, versione e license.</string>
+    <string name="settings_about_explain">Informazioni sull\'autore, versione e license.</string>
     <string name="rendering_mode">Rendering Mode</string>
     <string name="name_inverted">Inversa</string>
     <string name="name_grayscale">Scala di grigi</string>
