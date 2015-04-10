@@ -155,7 +155,7 @@
     <string name="hint_username">Felhasználónév</string>
     <string name="hint_password">Jelszó</string>
     <string name="google_suggestions">Keresési javaslatok</string>
-    <string name="powered_by_google"A Google támogatásával</string>
+    <string name="powered_by_google">A Google támogatásával</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">Az AdBlock jelenleg csak a Lightning Browser + fizetős változatban érhető el.Ez letölthető a Google Play Áruházból.</string>
     <string name="enable_orbot">Orbot bekapcsolása</string>
@@ -174,9 +174,9 @@
     <string name="hphosts_ad_server_list">hpHosts Ad Server Lista</string>
     <string name="deleted_tab">Régi lapok megnyitása</string>
     <string name="rendering_mode">Megjelenítési mód</string>
-    <string name="name_inverted">Fordított</string>
+    <string name="name_inverted">Negatív</string>
     <string name="name_grayscale">Szürkeárnyalatos</string>
-    <string name="name_inverted_grayscale">Fordított szürkeárnyalatos</string>
+    <string name="name_inverted_grayscale">Negatív szürkeárnyalatos</string>
     <string name="name_normal">Normál</string>
     <string name="sync_history">Előzmények szinkronizálása Google-val</string>
     <string name="title_file_chooser">Fájl választó</string>
