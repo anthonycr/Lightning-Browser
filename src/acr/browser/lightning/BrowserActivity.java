@@ -18,7 +18,6 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
@@ -139,13 +138,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		} else {
 			mWebViews = new ArrayList<LightningView>();
 		}
-		mBookmarkManager = new BookmarkManager(this);
-		if (!mPreferences.getBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, false)) {
-			List<HistoryItem> old = Utils.getOldBookmarks(this);
-			mBookmarkManager.addBookmarkList(old);
-			mPreferences.edit().putBoolean(PreferenceConstants.OLD_BOOKMARKS_IMPORTED, true)
-					.apply();
-		}
+
 		mActivity = this;
 		mClickHandler = new ClickHandler(this);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
@@ -193,13 +186,10 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		mDrawerListLeft.setOnItemClickListener(new DrawerItemClickListener());
 		mDrawerListLeft.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
-		mBookmarkList = mBookmarkManager.getBookmarks(true);
-		mBookmarkAdapter = new BookmarkViewAdapter(this, R.layout.bookmark_list_item, mBookmarkList);
-		mDrawerListRight.setAdapter(mBookmarkAdapter);
 		mDrawerListRight.setOnItemClickListener(new BookmarkItemClickListener());
 		mDrawerListRight.setOnItemLongClickListener(new BookmarkItemLongClickListener());
 
-		mHistoryDatabase = HistoryDatabase.getInstance(this);
+		mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
 
 		// set display options of the ActionBar
 		mActionBar.setDisplayShowTitleEnabled(false);
@@ -262,6 +252,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 			@Override
 			public void run() {
+				mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
+				mBookmarkList = mBookmarkManager.getBookmarks(true);
+				mBookmarkAdapter = new BookmarkViewAdapter(mActivity, R.layout.bookmark_list_item,
+						mBookmarkList);
+				mDrawerListRight.setAdapter(mBookmarkAdapter);
 				initializeSearchSuggestions(mSearch);
 			}
 
@@ -611,6 +606,9 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			int count = 0;
 			for (int n = 0; n < array.length; n++) {
 				if (array[n].length() > 0) {
+					if (url != null && url.compareTo(array[n]) == 0) {
+						url = null;
+					}
 					newTab(array[n], true);
 					count++;
 				}
@@ -1365,7 +1363,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			mCurrentView.resumeTimers();
 			mCurrentView.onResume();
 
-			mHistoryDatabase = HistoryDatabase.getInstance(this);
+			mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
 			mBookmarkList = mBookmarkManager.getBookmarks(true);
 			notifyBookmarkDataSetChanged();
 		}
@@ -1509,14 +1507,14 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			ImageView exit;
 		}
 	}
-	
-	private class CloseTabListener implements OnClickListener{
+
+	private class CloseTabListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
 			deleteTab((int) v.getTag());
 		}
-		
+
 	}
 
 	private void changeToolbarBackground(Bitmap favicon) {
@@ -1592,10 +1590,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
 
 		Context context;
-
-		int layoutResourceId;
-
 		List<HistoryItem> data = null;
+		int layoutResourceId;
 
 		public BookmarkViewAdapter(Context context, int layoutResourceId, List<HistoryItem> data) {
 			super(context, layoutResourceId, data);
@@ -1889,7 +1885,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		});
 
 		getUrl.setSelectAllOnFocus(true);
-		mSearchAdapter = new SearchAdapter(mContext, isIncognito() || mDarkTheme);
+		mSearchAdapter = new SearchAdapter(mContext, mDarkTheme, isIncognito());
 		getUrl.setAdapter(mSearchAdapter);
 	}
 

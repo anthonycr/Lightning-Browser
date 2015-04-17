@@ -50,6 +50,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private boolean mUseGoogle = true;
 	private boolean mIsExecuting = false;
 	private boolean mDarkTheme;
+	private boolean mIncognito;
 	private BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
 	private static final long INTERVAL_DAY = 86400000;
@@ -58,20 +59,21 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private Theme mTheme;
 	private SearchFilter mFilter;
 
-	public SearchAdapter(Context context, boolean dark) {
-		mDatabaseHandler = HistoryDatabase.getInstance(context);
+	public SearchAdapter(Context context, boolean dark, boolean incognito) {
+		mDatabaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
 		mTheme = context.getTheme();
 		mFilteredList = new ArrayList<HistoryItem>();
 		mHistory = new ArrayList<HistoryItem>();
 		mBookmarks = new ArrayList<HistoryItem>();
 		mSuggestions = new ArrayList<HistoryItem>();
-		mBookmarkManager = new BookmarkManager(context);
+		mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
 		mAllBookmarks = mBookmarkManager.getBookmarks(true);
 		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
 		mContext = context;
 		mSearchSubtitle = mContext.getString(R.string.suggestion);
-		mDarkTheme = dark;
+		mDarkTheme = dark || incognito;
+		mIncognito = incognito;
 		Thread delete = new Thread(new Runnable() {
 
 			@Override
@@ -227,7 +229,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 				return results;
 			}
 			String query = constraint.toString().toLowerCase(Locale.getDefault());
-			if (mUseGoogle && !mDarkTheme && !mIsExecuting) {
+			if (mUseGoogle && !mIncognito && !mIsExecuting) {
 				new RetrieveSearchSuggestions().execute(query);
 			}
 
@@ -248,7 +250,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 			}
 			if (mDatabaseHandler == null) {
-				mDatabaseHandler = HistoryDatabase.getInstance(mContext);
+				mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
 			}
 			mHistory = mDatabaseHandler.findItemsContaining(constraint.toString());
 
@@ -405,7 +407,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize)
 				: 2;
 
-		if (!mUseGoogle || mDarkTheme) {
+		if (!mUseGoogle || mIncognito) {
 			maxHistory++;
 			maxBookmarks++;
 		}

@@ -86,7 +86,7 @@ public class LightningView {
 		mActivity = activity;
 		mWebView = new WebView(activity);
 		mTitle = new Title(activity, darkTheme);
-		mAdBlock = new AdBlock(activity);
+		mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
 
 		if (darkTheme) {
 			mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
