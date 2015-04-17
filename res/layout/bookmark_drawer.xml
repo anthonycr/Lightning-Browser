@@ -53,8 +53,8 @@
         android:id="@+id/right_drawer_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#bababa"
-        android:dividerHeight="1dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:listSelector="?attr/listBackground" />
 
 </LinearLayout>
