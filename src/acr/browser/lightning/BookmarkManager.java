@@ -34,16 +34,8 @@ public class BookmarkManager {
 	private static final String FILE_BOOKMARKS = "bookmarks.dat";
 	private static SortedMap<String, Integer> mBookmarkMap = new TreeMap<String, Integer>(
 			String.CASE_INSENSITIVE_ORDER);
-	private static BookmarkManager mInstance;
 
-	public static BookmarkManager getInstance(Context context) {
-		if (mInstance == null) {
-			mInstance = new BookmarkManager(context);
-		}
-		return mInstance;
-	}
-
-	private BookmarkManager(Context context) {
+	public BookmarkManager(Context context) {
 		mContext = context;
 		mBookmarkMap = getBookmarkUrls();
 	}

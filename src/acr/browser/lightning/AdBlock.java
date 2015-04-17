@@ -22,16 +22,8 @@ public class AdBlock {
 	private SharedPreferences mPreferences;
 	private boolean mBlockAds;
 	private static final Locale mLocale = Locale.getDefault();
-	private static AdBlock mInstance;
 
-	public static AdBlock getInstance(Context context) {
-		if (mInstance == null) {
-			mInstance = new AdBlock(context);
-		}
-		return mInstance;
-	}
-
-	private AdBlock(Context context) {
+	public AdBlock(Context context) {
 		if (mBlockedDomainsList.isEmpty()) {
 			loadBlockedDomainsList(context);
 		}
