@@ -5,9 +5,9 @@
     <string name="google">Google</string>
     <string name="settings">Impostazioni del browser</string>
     <string name="location">Accedere alla tua posizione</string>
-    <string name="password">Salva le tue password</string>
+    <string name="password">Salva password</string>
     <string name="agent">User Agent</string>
-    <string name="history">Cancella cronologia all\'uscita</string>
+    <string name="history">Cancella cronologia</string>
     <string name="email">Email me</string>
     <string name="flash">Abilita Adobe Flash</string>
     <string name="mobile">Visualizza come mobile</string>
@@ -20,14 +20,15 @@
     <string name="action_bookmarks">Segnalibri</string>
     <string name="action_share">Condividi</string>
     <string name="action_settings">Impostazioni</string>
-    <string name="action_incognito">Incognito tab</string>
+    <string name="action_incognito">Nuova scheda in incognito</string>
     <string name="action_new_tab">Nuova Scheda</string>
+    <string name="action_copy">Copia URL</string>
     <string name="action_add_bookmark">Aggiungi Segnalibro</string>
     <string name="action_websearch">Ricerca</string>
     <string name="action_refresh">Ricarica</string>
     <string name="download">Percorso Download</string>
     <string name="version">Versione Applicazione</string>
-    <string name="cache">Cancella cache alla chiusura</string>
+    <string name="cache">Pulisci cache alla chiusura</string>
     <string name="reflow">Abilità reflow del testo</string>
     <string name="window">Consenti ai siti di aprire nuove finestr</string>
     <string name="cookies">Abilita Cookies</string>
@@ -38,7 +39,7 @@
     <string name="search_hint">Cerca</string>
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
-    <string name="restore">Restore lost tabs on start</string>
+    <string name="restore">Ricarica le schede perse all\'avvio</string>
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
@@ -58,8 +59,6 @@
     <string name="title_search_engine">Motore di ricerca</string>
     <string name="action_ok">OK</string>
     <string name="dialog_download">Vuoi scaricare questo file?</string>
-    <string name="title_clear_history">Cancella Cronologia</string>
-    <string name="title_clear_cookies">Cancella Cookies</string>
     <string name="dialog_history">Vorresti eliminare tutta la cronologia del browser?</string>
     <string name="dialog_cookies">Vorresti eliminare tutti i cookie del browser?</string>
     <string name="action_yes">Si</string>
@@ -79,13 +78,13 @@
     <string name="action_homepage">Default</string>
     <string name="action_back">Indietro</string>
     <string name="action_find">Trova nella pagina</string>
-    <string name="incognito_cookies">Abilita Cookies in Incognito Mode</string>
+    <string name="incognito_cookies">Abilita Cookies in modalità incognito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuale</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contattami</string>
     <string name="url_twitter">twitter.com/ACRDevelopment</string>
-    <string name="clear_cache">Cancella Cache</string>
+    <string name="clear_cache">Pulisci Cache</string>
     <string name="message_cache_cleared">Cache Cancellata</string>
     <string name="message_import">Segnalibri importati!</string>
     <string name="message_clear_history">Cronologia Cancellata</string>
@@ -101,5 +100,26 @@
     <string name="bookmark_export_path">Segnalibri esportati</string>
     <string name="bookmark_settings">Impostazioni Segnalibri</string>
     <string name="title_chooser">Seleziona un file</string>
-
+    <string name="block">Blocca le immagini</string>
+    <string name="install_orbot">Installa Orbot per attivare questa funzione.</string>
+    <string name="settings_general">Impostazioni Generali</string>
+    <string name="settings_display">Impostazioni Display</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_about_explain">Informazioni sull\'autore, versione e license.</string>
+    <string name="rendering_mode">Rendering Mode</string>
+    <string name="name_inverted">Inversa</string>
+    <string name="name_grayscale">Scala di grigi</string>
+    <string name="name_inverted_grayscale">Scala di grigi inversa</string>
+    <string name="name_normal">Normale</string>
+    <string name="clear_cookies_exit">Cancella cookie alla chiusura</string>
+    <string name="clear_history_exit">Cancella cronologia alla chiusura</string>
+    <string name="title_clear_history">Cancella Cronologia</string>
+    <string name="title_clear_cookies">Cancella Cookies</string>
+    <string name="google_suggestions">Suggerimenti di ricerca</string>
+    <string name="powered_by_google">Powered by Google</string>
+    <string name="licenses">Licenze Open Source</string>
+    <string name="action_webpage">Pagina Web</string>
+    <string name="fullscreen">Modalità a schermo intero</string>
+    
 </resources>
