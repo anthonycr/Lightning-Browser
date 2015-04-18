@@ -146,97 +146,91 @@ public class LightningView {
 	}
 
 	public String getHomepage() {
-		String home;
-		home = HomepageVariables.HEAD;
+		StringBuilder homepageBuilder = new StringBuilder();
+		homepageBuilder.append(HomepageVariables.HEAD);
+		String icon;
+		String searchUrl;
 		switch (mPreferences.getSearchChoice()) {
 			case 0:
 				// CUSTOM SEARCH
-				home = home + "file:///android_asset/lightning.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + mPreferences.getSearchUrl();
+				icon = "file:///android_asset/lightning.png";
+				searchUrl = mPreferences.getSearchUrl();
 				break;
 			case 1:
 				// GOOGLE_SEARCH;
-				home = home + "file:///android_asset/google.png";
-				// + "https://www.google.com/images/srpr/logo11w.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.GOOGLE_SEARCH;
+				icon = "file:///android_asset/google.png";
+				// "https://www.google.com/images/srpr/logo11w.png";
+				searchUrl = Constants.GOOGLE_SEARCH;
 				break;
 			case 2:
 				// ANDROID SEARCH;
-				home = home + "file:///android_asset/ask.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.ASK_SEARCH;
+				icon = "file:///android_asset/ask.png";
+				searchUrl = Constants.ASK_SEARCH;
 				break;
 			case 3:
 				// BING_SEARCH;
-				home = home + "file:///android_asset/bing.png";
-				// +
+				icon = "file:///android_asset/bing.png";
 				// "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.BING_SEARCH;
+				searchUrl = Constants.BING_SEARCH;
 				break;
 			case 4:
 				// YAHOO_SEARCH;
-				home = home + "file:///android_asset/yahoo.png";
-				// +
+				icon = "file:///android_asset/yahoo.png";
 				// "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.YAHOO_SEARCH;
+				searchUrl = Constants.YAHOO_SEARCH;
 				break;
 			case 5:
 				// STARTPAGE_SEARCH;
-				home = home + "file:///android_asset/startpage.png";
-				// + "https://startpage.com/graphics/startp_logo.gif";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.STARTPAGE_SEARCH;
+				icon = "file:///android_asset/startpage.png";
+				// "https://startpage.com/graphics/startp_logo.gif";
+				searchUrl = Constants.STARTPAGE_SEARCH;
 				break;
 			case 6:
 				// STARTPAGE_MOBILE
-				home = home + "file:///android_asset/startpage.png";
-				// + "https://startpage.com/graphics/startp_logo.gif";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.STARTPAGE_MOBILE_SEARCH;
+				icon = "file:///android_asset/startpage.png";
+				// "https://startpage.com/graphics/startp_logo.gif";
+				searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
 			case 7:
 				// DUCK_SEARCH;
-				home = home + "file:///android_asset/duckduckgo.png";
-				// +
+				icon = "file:///android_asset/duckduckgo.png";
 				// "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.DUCK_SEARCH;
+				searchUrl = Constants.DUCK_SEARCH;
 				break;
 			case 8:
 				// DUCK_LITE_SEARCH;
-				home = home + "file:///android_asset/duckduckgo.png";
-				// +
+				icon = "file:///android_asset/duckduckgo.png";
 				// "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.DUCK_LITE_SEARCH;
+				searchUrl = Constants.DUCK_LITE_SEARCH;
 				break;
 			case 9:
 				// BAIDU_SEARCH;
-				home = home + "file:///android_asset/baidu.png";
-				// + "http://www.baidu.com/img/bdlogo.gif";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.BAIDU_SEARCH;
+				icon = "file:///android_asset/baidu.png";
+				// "http://www.baidu.com/img/bdlogo.gif";
+				searchUrl = Constants.BAIDU_SEARCH;
 				break;
 			case 10:
 				// YANDEX_SEARCH;
-				home = home + "file:///android_asset/yandex.png";
-				// +
+				icon = "file:///android_asset/yandex.png";
 				// "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-				home = home + HomepageVariables.MIDDLE;
-				home = home + Constants.YANDEX_SEARCH;
+				searchUrl = Constants.YANDEX_SEARCH;
+				break;
+			default:
+				// DEFAULT GOOGLE_SEARCH;
+				icon = "file:///android_asset/google.png";
+				searchUrl = Constants.GOOGLE_SEARCH;
 				break;
 
 		}
 
-		home = home + HomepageVariables.END;
+		homepageBuilder.append(icon);
+		homepageBuilder.append(HomepageVariables.MIDDLE);
+		homepageBuilder.append(searchUrl);
+		homepageBuilder.append(HomepageVariables.END);
 
 		File homepage = new File(mActivity.getFilesDir(), "homepage.html");
 		try {
 			FileWriter hWriter = new FileWriter(homepage, false);
-			hWriter.write(home);
+			hWriter.write(homepageBuilder.toString());
 			hWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();

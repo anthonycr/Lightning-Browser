@@ -1917,19 +1917,25 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * open the HTML bookmarks page, parameter view is the WebView that should show the page
 	 */
 	public void openBookmarkPage(WebView view) {
-		String bookmarkHtml = BookmarkPage.HEADING;
+		StringBuilder bookmarkBuilder = new StringBuilder();
+		bookmarkBuilder.append(BookmarkPage.HEADING);
 		Iterator<HistoryItem> iter = mBookmarkList.iterator();
 		HistoryItem helper;
 		while (iter.hasNext()) {
 			helper = iter.next();
-			bookmarkHtml += (BookmarkPage.PART1 + helper.getUrl() + BookmarkPage.PART2
-					+ helper.getUrl() + BookmarkPage.PART3 + helper.getTitle() + BookmarkPage.PART4);
+			bookmarkBuilder.append(BookmarkPage.PART1);
+			bookmarkBuilder.append(helper.getUrl());
+			bookmarkBuilder.append(BookmarkPage.PART2);
+			bookmarkBuilder.append(helper.getUrl());
+			bookmarkBuilder.append(BookmarkPage.PART3);
+			bookmarkBuilder.append(helper.getTitle());
+			bookmarkBuilder.append(BookmarkPage.PART4);
 		}
-		bookmarkHtml += BookmarkPage.END;
+		bookmarkBuilder.append(BookmarkPage.END);
 		File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 		try {
 			FileWriter bookWriter = new FileWriter(bookmarkWebPage, false);
-			bookWriter.write(bookmarkHtml);
+			bookWriter.write(bookmarkBuilder.toString());
 			bookWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();

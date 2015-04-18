@@ -45,7 +45,8 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 		TextView importBookmarks = (TextView) findViewById(R.id.isImportBrowserAvailable);
 
 		mBookmarkManager = BookmarkManager.getInstance(getApplicationContext());
-
+		mPreferences = PreferenceManager.getInstance();
+		
 		mSystemBrowser = mPreferences.getSystemBrowserPresent();
 
 		exportBackup.setOnClickListener(this);

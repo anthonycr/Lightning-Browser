@@ -30,21 +30,27 @@ public class HistoryPage {
 	private static final String END = "</div></body></html>";
 
 	public static String getHistoryPage(Context context) {
-		String historyHtml = HistoryPage.HEADING;
+		StringBuilder historyBuilder = new StringBuilder();
+		historyBuilder.append(HistoryPage.HEADING);
 		List<HistoryItem> historyList = getWebHistory(context);
 		Iterator<HistoryItem> it = historyList.iterator();
 		HistoryItem helper;
 		while (it.hasNext()) {
 			helper = it.next();
-			historyHtml += HistoryPage.PART1 + helper.getUrl() + HistoryPage.PART2
-					+ helper.getTitle() + HistoryPage.PART3 + helper.getUrl() + HistoryPage.PART4;
+			historyBuilder.append(HistoryPage.PART1);
+			historyBuilder.append(helper.getUrl());
+			historyBuilder.append(HistoryPage.PART2);
+			historyBuilder.append(helper.getTitle());
+			historyBuilder.append(HistoryPage.PART3);
+			historyBuilder.append(helper.getUrl());
+			historyBuilder.append(HistoryPage.PART4);
 		}
 
-		historyHtml += HistoryPage.END;
+		historyBuilder.append(HistoryPage.END);
 		File historyWebPage = new File(context.getFilesDir(), FILENAME);
 		try {
 			FileWriter historyWriter = new FileWriter(historyWebPage, false);
-			historyWriter.write(historyHtml);
+			historyWriter.write(historyBuilder.toString());
 			historyWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -53,7 +59,8 @@ public class HistoryPage {
 	}
 
 	private static List<HistoryItem> getWebHistory(Context context) {
-		HistoryDatabase databaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
+		HistoryDatabase databaseHandler = HistoryDatabase.getInstance(context
+				.getApplicationContext());
 		return databaseHandler.getLastHundredItems();
 	}
 }

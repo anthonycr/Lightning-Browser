@@ -22,7 +22,7 @@ public class HomepageVariables {
 			+ "#search_submit{outline:none;height:37px;float:right;color:#404040;font-size:16px;font-weight:bold;border:none;"
 			+ "background-color:transparent;}.outer { display: table; position: absolute; height: 100%; width: 100%;}"
 			+ ".middle { display: table-cell; vertical-align: middle;}.inner { margin-left: auto; margin-right: auto; "
-			+ "margin-bottom:10%; <!-->maybe bad for small screens</!--> width: 100%;}img.smaller{width:50%;max-width:300px;}"
+			+ "margin-bottom:10%; width: 100%;}img.smaller{width:50%;max-width:300px;}"
 			+ ".box { vertical-align:middle;position:relative; display: block; margin: 10px;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;"
 			+ " background-color:#fff;box-shadow: 0px 3px rgba( 0, 0, 0, 0.1 );font-family: Arial;color: #444;"
 			+ "font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;"

@@ -5,7 +5,7 @@ import android.os.Environment;
 
 public class PreferenceManager {
 
-	private class Name {
+	private static class Name {
 		public static final String ADOBE_FLASH_SUPPORT = "enableflash";
 		public static final String BLOCK_ADS = "AdBlock";
 		public static final String BLOCK_IMAGES = "blockimages";
