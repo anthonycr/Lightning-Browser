@@ -1,7 +1,6 @@
 package acr.browser.lightning;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,27 +10,21 @@ import android.webkit.CookieSyncManager;
 @SuppressWarnings("deprecation")
 public class IncognitoActivity extends BrowserActivity {
 
-	SharedPreferences mPreferences;
-
 	CookieManager mCookieManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
 	}
 
 	@Override
 	public void updateCookiePreference() {
-		if (mPreferences == null) {
-			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		}
 		mCookieManager = CookieManager.getInstance();
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			CookieSyncManager.createInstance(this);
 		}
-		mCookieManager.setAcceptCookie(mPreferences.getBoolean(
-				PreferenceConstants.INCOGNITO_COOKIES, false));
+		mCookieManager
+				.setAcceptCookie(PreferenceManager.getInstance().getIncognitoCookiesEnabled());
 		super.updateCookiePreference();
 	}
 

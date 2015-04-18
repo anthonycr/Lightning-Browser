@@ -19,7 +19,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ColorMatrix;
@@ -66,7 +65,7 @@ public class LightningView {
 	private static String mHomepage;
 	private static String mDefaultUserAgent;
 	private static Bitmap mWebpageBitmap;
-	private static SharedPreferences mPreferences;
+	private static PreferenceManager mPreferences;
 	private AdBlock mAdBlock;
 	private boolean isForegroundTab;
 	private IntentUtils mIntentUtils;
@@ -149,14 +148,12 @@ public class LightningView {
 	public String getHomepage() {
 		String home;
 		home = HomepageVariables.HEAD;
-		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
+		switch (mPreferences.getSearchChoice()) {
 			case 0:
 				// CUSTOM SEARCH
 				home = home + "file:///android_asset/lightning.png";
 				home = home + HomepageVariables.MIDDLE;
-				home = home
-						+ mPreferences.getString(PreferenceConstants.SEARCH_URL,
-								Constants.GOOGLE_SEARCH);
+				home = home + mPreferences.getSearchUrl();
 				break;
 			case 1:
 				// GOOGLE_SEARCH;
@@ -251,8 +248,8 @@ public class LightningView {
 	@SuppressWarnings("deprecation")
 	@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
 	public synchronized void initializePreferences(Context context) {
-		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
+		mPreferences = PreferenceManager.getInstance();
+		mHomepage = mPreferences.getHomepage();
 		mAdBlock.updatePreference();
 		if (mSettings == null && mWebView != null) {
 			mSettings = mWebView.getSettings();
@@ -260,16 +257,15 @@ public class LightningView {
 			return;
 		}
 
-		setColorMode(mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0));
+		setColorMode(mPreferences.getRenderingMode());
 
 		if (!mBrowserController.isIncognito()) {
-			mSettings.setGeolocationEnabled(mPreferences.getBoolean(PreferenceConstants.LOCATION,
-					false));
+			mSettings.setGeolocationEnabled(mPreferences.getLocationEnabled());
 		} else {
 			mSettings.setGeolocationEnabled(false);
 		}
 		if (API < 19) {
-			switch (mPreferences.getInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0)) {
+			switch (mPreferences.getFlashSupport()) {
 				case 0:
 					mSettings.setPluginState(PluginState.OFF);
 					break;
@@ -284,7 +280,7 @@ public class LightningView {
 			}
 		}
 
-		switch (mPreferences.getInt(PreferenceConstants.USER_AGENT, 1)) {
+		switch (mPreferences.getUserAgentChoice()) {
 			case 1:
 				if (API > 16) {
 					mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
@@ -299,13 +295,11 @@ public class LightningView {
 				mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
 				break;
 			case 4:
-				mSettings.setUserAgentString(mPreferences.getString(
-						PreferenceConstants.USER_AGENT_STRING, mDefaultUserAgent));
+				mSettings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
 				break;
 		}
 
-		if (mPreferences.getBoolean(PreferenceConstants.SAVE_PASSWORDS, false)
-				&& !mBrowserController.isIncognito()) {
+		if (mPreferences.getSavePasswordsEnabled() && !mBrowserController.isIncognito()) {
 			if (API < 18) {
 				mSettings.setSavePassword(true);
 			}
@@ -317,12 +311,12 @@ public class LightningView {
 			mSettings.setSaveFormData(false);
 		}
 
-		if (mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT, true)) {
+		if (mPreferences.getJavaScriptEnabled()) {
 			mSettings.setJavaScriptEnabled(true);
 			mSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 		}
 
-		if (mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW, false)) {
+		if (mPreferences.getTextReflowEnabled()) {
 			mTextReflow = true;
 			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
 			if (API >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -339,15 +333,11 @@ public class LightningView {
 			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 		}
 
-		mSettings.setBlockNetworkImage(mPreferences.getBoolean(PreferenceConstants.BLOCK_IMAGES,
-				false));
-		mSettings.setSupportMultipleWindows(mPreferences.getBoolean(PreferenceConstants.POPUPS,
-				true));
-		mSettings.setUseWideViewPort(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT,
-				true));
-		mSettings.setLoadWithOverviewMode(mPreferences.getBoolean(
-				PreferenceConstants.OVERVIEW_MODE, true));
-		switch (mPreferences.getInt(PreferenceConstants.TEXT_SIZE, 3)) {
+		mSettings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
+		mSettings.setSupportMultipleWindows(mPreferences.getPopupsEnabled());
+		mSettings.setUseWideViewPort(mPreferences.getUseWideViewportEnabled());
+		mSettings.setLoadWithOverviewMode(mPreferences.getOverviewModeEnabled());
+		switch (mPreferences.getTextSize()) {
 			case 1:
 				mSettings.setTextZoom(200);
 				break;
@@ -366,7 +356,7 @@ public class LightningView {
 		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
-					!mPreferences.getBoolean(PreferenceConstants.BLOCK_THIRD_PARTY, false));
+					!mPreferences.getBlockThirdPartyCookiesEnabled());
 		}
 	}
 
@@ -759,7 +749,6 @@ public class LightningView {
 						public void run() {
 							mZoomScale = newScale;
 							view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
-							Log.d("YOLO", "SCALE CHANGING " + newScale);
 							mIsRunning = false;
 						}
 

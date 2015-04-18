@@ -321,8 +321,7 @@ public class BookmarkManager {
 	 * permanent bookmark storage
 	 */
 	public synchronized void importBookmarksFromBrowser() {
-		if (mContext.getSharedPreferences(PreferenceConstants.PREFERENCES, 0).getBoolean(
-				PreferenceConstants.SYSTEM_BROWSER_PRESENT, false)) {
+		if (PreferenceManager.getInstance().getSystemBrowserPresent()) {
 
 			List<HistoryItem> bookmarkList = new ArrayList<HistoryItem>();
 			String[] columns = new String[] { Browser.BookmarkColumns.TITLE,

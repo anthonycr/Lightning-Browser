@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -29,8 +28,7 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 public class SettingsActivity extends ThemableSettingsActivity {
 
 	private static int API = android.os.Build.VERSION.SDK_INT;
-	private SharedPreferences.Editor mEditPrefs;
-	private SharedPreferences mPreferences;
+	private PreferenceManager mPreferences;
 	private Context mContext;
 	private Activity mActivity;
 
@@ -58,8 +56,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// mPreferences storage
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mEditPrefs = mPreferences.edit();
+		mPreferences = PreferenceManager.getInstance();
 
 		// initialize UI
 		RelativeLayout layoutFlash = (RelativeLayout) findViewById(R.id.layoutFlash);
@@ -80,12 +77,11 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		});
 
 		if (API >= 19) {
-			mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-			mEditPrefs.apply();
+			mPreferences.setFlashSupport(0);
 		}
-		int flashNum = mPreferences.getInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-		boolean imagesBool = mPreferences.getBoolean(PreferenceConstants.BLOCK_IMAGES, false);
-		boolean enableJSBool = mPreferences.getBoolean(PreferenceConstants.JAVASCRIPT, true);
+		int flashNum = mPreferences.getFlashSupport();
+		boolean imagesBool = mPreferences.getBlockImagesEnabled();
+		boolean enableJSBool = mPreferences.getJavaScriptEnabled();
 
 		CheckBox flash = (CheckBox) findViewById(R.id.cbFlash);
 		CheckBox adblock = (CheckBox) findViewById(R.id.cbAdblock);
@@ -101,9 +97,9 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		} else {
 			flash.setChecked(false);
 		}
-		adblock.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false));
-		orbot.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false));
-		color.setChecked(mPreferences.getBoolean(PreferenceConstants.ENABLE_COLOR_MODE, true));
+		adblock.setChecked(mPreferences.getAdBlockEnabled());
+		orbot.setChecked(mPreferences.getUseProxy());
+		color.setChecked(mPreferences.getColorModeEnabled());
 
 		initCheckBox(flash, adblock, images, enablejs, orbot, color);
 		clickListenerForCheckBoxes(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS,
@@ -197,8 +193,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 				if (isChecked) {
 					getFlashChoice();
 				} else {
-					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-					mEditPrefs.apply();
+					mPreferences.setFlashSupport(0);
 				}
 
 				boolean flashInstalled = false;
@@ -216,8 +211,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 							getResources().getString(R.string.title_warning), getResources()
 									.getString(R.string.dialog_adobe_not_installed));
 					buttonView.setChecked(false);
-					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-					mEditPrefs.apply();
+					mPreferences.setFlashSupport(0);
 
 				} else if ((API >= 17) && isChecked) {
 					Utils.createInformativeDialog(SettingsActivity.this,
@@ -231,8 +225,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_ADS, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setAdBlockEnabled(isChecked);
 			}
 
 		});
@@ -240,8 +233,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_IMAGES, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setBlockImagesEnabled(isChecked);
 
 			}
 
@@ -250,9 +242,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.JAVASCRIPT, isChecked);
-				mEditPrefs.apply();
-
+				mPreferences.setJavaScriptEnabled(isChecked);
 			}
 
 		});
@@ -265,8 +255,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.USE_PROXY, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setUseProxy(isChecked);
 
 			}
 
@@ -275,8 +264,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.ENABLE_COLOR_MODE, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setColorModeEnabled(isChecked);
 
 			}
 
@@ -292,8 +280,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 1);
-								mEditPrefs.apply();
+								mPreferences.setFlashSupport(1);
 							}
 						})
 				.setNegativeButton(getResources().getString(R.string.action_auto),
@@ -301,15 +288,13 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 2);
-								mEditPrefs.apply();
+								mPreferences.setFlashSupport(2);
 							}
 						}).setOnCancelListener(new OnCancelListener() {
 
 					@Override
 					public void onCancel(DialogInterface dialog) {
-						mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-						mEditPrefs.apply();
+						mPreferences.setFlashSupport(0);
 					}
 
 				});
@@ -317,71 +302,12 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		alert.show();
 	}
 
-	public void initCheckBox(CheckBox flash, CheckBox images, CheckBox enablejs) {
-		flash.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				int n = 0;
-				if (isChecked) {
-					n = 1;
-				}
-				mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, n);
-				mEditPrefs.apply();
-				boolean flashInstalled = false;
-				try {
-					PackageManager pm = getPackageManager();
-					ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
-					if (ai != null) {
-						flashInstalled = true;
-					}
-				} catch (NameNotFoundException e) {
-					flashInstalled = false;
-				}
-				if (!flashInstalled && isChecked) {
-					Utils.createInformativeDialog(SettingsActivity.this,
-							getResources().getString(R.string.title_warning), getResources()
-									.getString(R.string.dialog_adobe_not_installed));
-					buttonView.setChecked(false);
-					mEditPrefs.putInt(PreferenceConstants.ADOBE_FLASH_SUPPORT, 0);
-					mEditPrefs.apply();
-
-				} else if ((API > 17) && isChecked) {
-					Utils.createInformativeDialog(SettingsActivity.this,
-							getResources().getString(R.string.title_warning), getResources()
-									.getString(R.string.dialog_adobe_unsupported));
-				}
-			}
-
-		});
-		images.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_IMAGES, isChecked);
-				mEditPrefs.apply();
-
-			}
-
-		});
-		enablejs.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.JAVASCRIPT, isChecked);
-				mEditPrefs.apply();
-
-			}
-
-		});
-	}
-
 	public void agentPicker() {
 		final AlertDialog.Builder agentStringPicker = new AlertDialog.Builder(mActivity);
 
 		agentStringPicker.setTitle(getResources().getString(R.string.title_user_agent));
 		final EditText getAgent = new EditText(this);
-		getAgent.append(mPreferences.getString(PreferenceConstants.USER_AGENT_STRING, ""));
+		getAgent.append(mPreferences.getUserAgentString(""));
 		agentStringPicker.setView(getAgent);
 		agentStringPicker.setPositiveButton(getResources().getString(R.string.action_ok),
 				new DialogInterface.OnClickListener() {
@@ -389,8 +315,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getAgent.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.USER_AGENT_STRING, text);
-						mEditPrefs.apply();
+						mPreferences.setUserAgentString(text);
 						getAgent.setText(getResources().getString(R.string.agent_custom));
 					}
 				});

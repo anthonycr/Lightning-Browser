@@ -27,7 +27,6 @@ public class DownloadHandler {
 
 	private static final String LOGTAG = "DLHandler";
 
-	private static Activity mActivity;
 
 	/**
 	 * Notify the host application a download should be done, or that the data
@@ -48,7 +47,6 @@ public class DownloadHandler {
 	 */
 	public static void onDownloadStart(Activity activity, String url, String userAgent,
 			String contentDisposition, String mimetype, boolean privateBrowsing) {
-		mActivity = activity;
 		// if we're dealing wih A/V content that's not explicitly marked
 		// for download, check if it's streamable.
 		if (contentDisposition == null
@@ -183,8 +181,7 @@ public class DownloadHandler {
 		// or, should it be set to one of several Environment.DIRECTORY* dirs
 		// depending on mimetype?
 
-		String location = mActivity.getSharedPreferences(PreferenceConstants.PREFERENCES, 0)
-				.getString(PreferenceConstants.DOWNLOAD_DIRECTORY, Environment.DIRECTORY_DOWNLOADS);
+		String location = PreferenceManager.getInstance().getDownloadDirectory();
 		request.setDestinationInExternalPublicDir(location, filename);
 		// let this downloaded file be scanned by MediaScanner - so that it can
 		// show up in Gallery app, for example.

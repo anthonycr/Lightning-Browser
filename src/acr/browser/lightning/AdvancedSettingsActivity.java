@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -22,13 +21,13 @@ import android.widget.TextView;
 
 public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 
-	private SharedPreferences mPreferences;
 	private CheckBox cbAllowPopups, cbAllowCookies, cbAllowIncognitoCookies, cbRestoreTabs;
 	private Context mContext;
 	private TextView mRenderText;
 	private TextView mUrlText;
 	private Activity mActivity;
 	private CharSequence[] mUrlOptions;
+	private PreferenceManager mPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,8 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 	}
 
 	private void initialize() {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+
+		mPreferences = PreferenceManager.getInstance();
 
 		RelativeLayout rAllowPopups, rAllowCookies, rAllowIncognitoCookies, rRestoreTabs;
 		LinearLayout lRenderPicker, lUrlContent;
@@ -70,17 +70,15 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 		cbAllowIncognitoCookies = (CheckBox) findViewById(R.id.cbAllowIncognitoCookies);
 		cbRestoreTabs = (CheckBox) findViewById(R.id.cbRestoreTabs);
 
-		cbAllowPopups.setChecked(mPreferences.getBoolean(PreferenceConstants.POPUPS, true));
-		cbAllowCookies.setChecked(mPreferences.getBoolean(PreferenceConstants.COOKIES, true));
-		cbAllowIncognitoCookies.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.INCOGNITO_COOKIES, false));
-		cbRestoreTabs.setChecked(mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS,
-				true));
+		cbAllowPopups.setChecked(mPreferences.getPopupsEnabled());
+		cbAllowCookies.setChecked(mPreferences.getCookiesEnabled());
+		cbAllowIncognitoCookies.setChecked(mPreferences.getIncognitoCookiesEnabled());
+		cbRestoreTabs.setChecked(mPreferences.getRestoreLostTabsEnabled());
 
 		mRenderText = (TextView) findViewById(R.id.renderText);
 		mUrlText = (TextView) findViewById(R.id.urlText);
 
-		switch (mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0)) {
+		switch (mPreferences.getRenderingMode()) {
 			case 0:
 				mRenderText.setText(mContext.getString(R.string.name_normal));
 				break;
@@ -96,7 +94,7 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 		}
 
 		mUrlOptions = this.getResources().getStringArray(R.array.url_content_array);
-		int option = mPreferences.getInt(PreferenceConstants.URL_BOX_CONTENTS, 0);
+		int option = mPreferences.getUrlBoxContentChoice();
 		mUrlText.setText(mUrlOptions[option]);
 
 		LayoutClickListener listener = new LayoutClickListener();
@@ -150,18 +148,16 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			switch (buttonView.getId()) {
 				case R.id.cbAllowPopups:
-					mPreferences.edit().putBoolean(PreferenceConstants.POPUPS, isChecked).apply();
+					mPreferences.setPopupsEnabled(isChecked);
 					break;
 				case R.id.cbAllowCookies:
-					mPreferences.edit().putBoolean(PreferenceConstants.COOKIES, isChecked).apply();
+					mPreferences.setCookiesEnabled(isChecked);
 					break;
 				case R.id.cbAllowIncognitoCookies:
-					mPreferences.edit()
-							.putBoolean(PreferenceConstants.INCOGNITO_COOKIES, isChecked).apply();
+					mPreferences.setIncognitoCookiesEnabled(isChecked);
 					break;
 				case R.id.cbRestoreTabs:
-					mPreferences.edit()
-							.putBoolean(PreferenceConstants.RESTORE_LOST_TABS, isChecked).apply();
+					mPreferences.setRestoreLostTabsEnabled(isChecked);
 					break;
 			}
 		}
@@ -177,13 +173,13 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 				mContext.getString(R.string.name_grayscale),
 				mContext.getString(R.string.name_inverted_grayscale) };
 
-		int n = mPreferences.getInt(PreferenceConstants.RENDERING_MODE, 0);
+		int n = mPreferences.getRenderingMode();
 
 		picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mPreferences.edit().putInt(PreferenceConstants.RENDERING_MODE, which).apply();
+				mPreferences.setRenderingMode(which);
 				switch (which) {
 					case 0:
 						mRenderText.setText(mContext.getString(R.string.name_normal));
@@ -216,13 +212,13 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 		AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 		picker.setTitle(getResources().getString(R.string.url_contents));
 
-		int n = mPreferences.getInt(PreferenceConstants.URL_BOX_CONTENTS, 0);
+		int n = mPreferences.getUrlBoxContentChoice();
 
 		picker.setSingleChoiceItems(mUrlOptions, n, new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mPreferences.edit().putInt(PreferenceConstants.URL_BOX_CONTENTS, which).apply();
+				mPreferences.setUrlBoxContentChoice(which);
 				if (which < mUrlOptions.length) {
 					mUrlText.setText(mUrlOptions[which]);
 				}

@@ -6,7 +6,6 @@ package acr.browser.lightning;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,8 +27,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
-	private SharedPreferences mPreferences;
-	private SharedPreferences.Editor mEditPrefs;
+	private PreferenceManager mPreferences;
 	private int mAgentChoice;
 	private String mHomepage;
 	private TextView mAgentTextView;
@@ -51,10 +49,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// TODO WARNING: SharedPreferences.edit() without a corresponding
-		// commit() or apply() call
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mEditPrefs = mPreferences.edit();
+		mPreferences = PreferenceManager.getInstance();
 
 		mActivity = this;
 		initialize();
@@ -70,7 +65,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 		mSearchText = (TextView) findViewById(R.id.searchText);
 
-		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
+		switch (mPreferences.getSearchChoice()) {
 			case 0:
 				mSearchText.setText(getResources().getString(R.string.custom_url));
 				break;
@@ -108,10 +103,9 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 		mAgentTextView = (TextView) findViewById(R.id.agentText);
 		mHomepageText = (TextView) findViewById(R.id.homepageText);
 		mDownloadTextView = (TextView) findViewById(R.id.downloadText);
-		mAgentChoice = mPreferences.getInt(PreferenceConstants.USER_AGENT, 1);
-		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
-		mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
-				Environment.DIRECTORY_DOWNLOADS);
+		mAgentChoice = mPreferences.getUserAgentChoice();
+		mHomepage = mPreferences.getHomepage();
+		mDownloadLocation = mPreferences.getDownloadDirectory();
 
 		mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/' + mDownloadLocation);
 
@@ -144,8 +138,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 		cbSearchSuggestions = (CheckBox) findViewById(R.id.cbGoogleSuggestions);
 
-		cbSearchSuggestions.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true));
+		cbSearchSuggestions.setChecked(mPreferences.getGoogleSearchSuggestionsEnabled());
 
 		RelativeLayout agent = (RelativeLayout) findViewById(R.id.layoutUserAgent);
 		RelativeLayout download = (RelativeLayout) findViewById(R.id.layoutDownload);
@@ -173,14 +166,13 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 						"DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
 						"Yandex (Russian)" };
 
-				int n = mPreferences.getInt(PreferenceConstants.SEARCH, 1);
+				int n = mPreferences.getSearchChoice();
 
 				picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						mEditPrefs.putInt(PreferenceConstants.SEARCH, which);
-						mEditPrefs.apply();
+						mPreferences.setSearchChoice(which);
 						switch (which) {
 							case 0:
 								searchUrlPicker();
@@ -237,8 +229,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 		urlPicker.setTitle(getResources().getString(R.string.custom_url));
 		final EditText getSearchUrl = new EditText(this);
 
-		String mSearchUrl = mPreferences.getString(PreferenceConstants.SEARCH_URL,
-				Constants.GOOGLE_SEARCH);
+		String mSearchUrl = mPreferences.getSearchUrl();
 		getSearchUrl.setText(mSearchUrl);
 		urlPicker.setView(getSearchUrl);
 		urlPicker.setPositiveButton(getResources().getString(R.string.action_ok),
@@ -247,8 +238,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getSearchUrl.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.SEARCH_URL, text);
-						mEditPrefs.apply();
+						mPreferences.setSearchUrl(text);
 						mSearchText.setText(getResources().getString(R.string.custom_url) + ": "
 								+ text);
 					}
@@ -263,14 +253,13 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 			public void onClick(View v) {
 				AlertDialog.Builder agentPicker = new AlertDialog.Builder(mActivity);
 				agentPicker.setTitle(getResources().getString(R.string.title_user_agent));
-				mAgentChoice = mPreferences.getInt(PreferenceConstants.USER_AGENT, 1);
+				mAgentChoice = mPreferences.getUserAgentChoice();
 				agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								mEditPrefs.putInt(PreferenceConstants.USER_AGENT, which + 1);
-								mEditPrefs.apply();
+								mPreferences.setUserAgentChoice(which + 1);
 								switch (which + 1) {
 									case 1:
 										mAgentTextView.setText(getResources().getString(
@@ -329,8 +318,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getAgent.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.USER_AGENT_STRING, text);
-						mEditPrefs.apply();
+						mPreferences.setUserAgentString(text);
 						mAgentTextView.setText(getResources().getString(R.string.agent_custom));
 					}
 				});
@@ -345,8 +333,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(R.string.title_download_location));
-				mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
-						Environment.DIRECTORY_DOWNLOADS);
+				mDownloadLocation = mPreferences.getDownloadDirectory();
 				int n;
 				if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
 					n = 1;
@@ -362,10 +349,8 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 								switch (which + 1) {
 									case 1:
-										mEditPrefs.putString(
-												PreferenceConstants.DOWNLOAD_DIRECTORY,
-												Environment.DIRECTORY_DOWNLOADS);
-										mEditPrefs.apply();
+										mPreferences
+												.setDownloadDirectory(Environment.DIRECTORY_DOWNLOADS);
 										mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/'
 												+ Environment.DIRECTORY_DOWNLOADS);
 										break;
@@ -394,7 +379,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 		final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
 		homePicker.setTitle(getResources().getString(R.string.title_custom_homepage));
 		final EditText getHome = new EditText(this);
-		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
+		mHomepage = mPreferences.getHomepage();
 		if (!mHomepage.startsWith("about:")) {
 			getHome.setText(mHomepage);
 		} else {
@@ -407,8 +392,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getHome.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.HOMEPAGE, text);
-						mEditPrefs.apply();
+						mPreferences.setHomepage(text);
 						mHomepageText.setText(text);
 					}
 				});
@@ -422,8 +406,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 		downLocationPicker.setTitle(getResources().getString(R.string.title_download_location));
 		final EditText getDownload = new EditText(this);
 		getDownload.setBackgroundResource(0);
-		mDownloadLocation = mPreferences.getString(PreferenceConstants.DOWNLOAD_DIRECTORY,
-				Environment.DIRECTORY_DOWNLOADS);
+		mDownloadLocation = mPreferences.getDownloadDirectory();
 		int padding = Utils.convertDpToPixels(10);
 
 		LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
@@ -453,8 +436,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String text = getDownload.getText().toString();
-						mEditPrefs.putString(PreferenceConstants.DOWNLOAD_DIRECTORY, text);
-						mEditPrefs.apply();
+						mPreferences.setDownloadDirectory(text);
 						mDownloadTextView.setText(Constants.EXTERNAL_STORAGE + '/' + text);
 					}
 				});
@@ -468,8 +450,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 			public void onClick(View v) {
 				AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
 				picker.setTitle(getResources().getString(R.string.home));
-				mHomepage = mPreferences
-						.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
+				mHomepage = mPreferences.getHomepage();
 				int n;
 				if (mHomepage.contains("about:home")) {
 					n = 1;
@@ -489,23 +470,17 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 								switch (which + 1) {
 									case 1:
-										mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
-												"about:home");
-										mEditPrefs.apply();
+										mPreferences.setHomepage("about:home");
 										mHomepageText.setText(getResources().getString(
 												R.string.action_homepage));
 										break;
 									case 2:
-										mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
-												"about:blank");
-										mEditPrefs.apply();
+										mPreferences.setHomepage("about:blank");
 										mHomepageText.setText(getResources().getString(
 												R.string.action_blank));
 										break;
 									case 3:
-										mEditPrefs.putString(PreferenceConstants.HOMEPAGE,
-												"about:bookmarks");
-										mEditPrefs.apply();
+										mPreferences.setHomepage("about:bookmarks");
 										mHomepageText.setText(getResources().getString(
 												R.string.action_bookmarks));
 
@@ -536,8 +511,7 @@ public class GeneralSettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setGoogleSearchSuggestionsEnabled(isChecked);
 			}
 
 		});

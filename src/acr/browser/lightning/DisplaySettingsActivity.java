@@ -5,7 +5,6 @@ package acr.browser.lightning;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -19,7 +18,7 @@ import android.widget.RelativeLayout;
 public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 	// mPreferences variables
-	private SharedPreferences mPreferences;
+	private PreferenceManager mPreferences;
 	private CheckBox cbHideStatusBar, cbFullScreen, cbWideViewPort, cbOverView, cbTextReflow,
 			cbDarkTheme;
 
@@ -28,7 +27,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.display_settings);
 
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
+		mPreferences = PreferenceManager.getInstance();
 
 		// set up ActionBar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -64,14 +63,12 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 		cbTextReflow = (CheckBox) findViewById(R.id.cbTextReflow);
 		cbDarkTheme = (CheckBox) findViewById(R.id.cbDarkTheme);
 
-		cbHideStatusBar.setChecked(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR,
-				false));
-		cbFullScreen.setChecked(mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false));
-		cbWideViewPort.setChecked(mPreferences.getBoolean(PreferenceConstants.USE_WIDE_VIEWPORT,
-				true));
-		cbOverView.setChecked(mPreferences.getBoolean(PreferenceConstants.OVERVIEW_MODE, true));
-		cbTextReflow.setChecked(mPreferences.getBoolean(PreferenceConstants.TEXT_REFLOW, false));
-		cbDarkTheme.setChecked(mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false));
+		cbHideStatusBar.setChecked(mPreferences.getHideStatusBarEnabled());
+		cbFullScreen.setChecked(mPreferences.getFullScreenEnabled());
+		cbWideViewPort.setChecked(mPreferences.getUseWideViewportEnabled());
+		cbOverView.setChecked(mPreferences.getOverviewModeEnabled());
+		cbTextReflow.setChecked(mPreferences.getTextReflowEnabled());
+		cbDarkTheme.setChecked(mPreferences.getUseDarkTheme());
 
 		rHideStatusBar(rHideStatusBar);
 		rFullScreen(rFullScreen);
@@ -93,8 +90,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.edit().putBoolean(PreferenceConstants.HIDE_STATUS_BAR, isChecked)
-						.apply();
+				mPreferences.setHideStatusBarEnabled(isChecked);
 			}
 
 		});
@@ -105,7 +101,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.edit().putBoolean(PreferenceConstants.FULL_SCREEN, isChecked).apply();
+				mPreferences.setFullScreenEnabled(isChecked);
 			}
 
 		});
@@ -116,7 +112,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.edit().putBoolean(PreferenceConstants.DARK_THEME, isChecked).apply();
+				mPreferences.setUseDarkTheme(isChecked);
 				restart();
 			}
 
@@ -128,8 +124,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.edit().putBoolean(PreferenceConstants.USE_WIDE_VIEWPORT, isChecked)
-						.apply();
+				mPreferences.setUseWideViewportEnabled(isChecked);
 			}
 
 		});
@@ -140,8 +135,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.edit().putBoolean(PreferenceConstants.OVERVIEW_MODE, isChecked)
-						.apply();
+				mPreferences.setOverviewModeEnabled(isChecked);
 			}
 
 		});
@@ -152,7 +146,7 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.edit().putBoolean(PreferenceConstants.TEXT_REFLOW, isChecked).apply();
+				mPreferences.setTextReflowEnabled(isChecked);
 			}
 		});
 	}
@@ -234,15 +228,14 @@ public class DisplaySettingsActivity extends ThemableSettingsActivity {
 				AlertDialog.Builder picker = new AlertDialog.Builder(DisplaySettingsActivity.this);
 				picker.setTitle(getResources().getString(R.string.title_text_size));
 
-				int n = mPreferences.getInt(PreferenceConstants.TEXT_SIZE, 3);
+				int n = mPreferences.getTextSize();
 
 				picker.setSingleChoiceItems(R.array.text_size, n - 1,
 						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								mPreferences.edit()
-										.putInt(PreferenceConstants.TEXT_SIZE, which + 1).apply();
+								mPreferences.setTextSize(which + 1);
 
 							}
 						});

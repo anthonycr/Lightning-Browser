@@ -6,7 +6,6 @@ package acr.browser.lightning;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,8 +26,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 	// mPreferences variables
 	private static final int API = android.os.Build.VERSION.SDK_INT;
-	private SharedPreferences mPreferences;
-	private SharedPreferences.Editor mEditPrefs;
+	private PreferenceManager mPreferences;
 	private CheckBox cbLocation, cbSavePasswords, cbClearCacheExit, cbClearHistoryExit,
 			cbClearCookiesExit, cbThirdParty;
 	private Context mContext;
@@ -48,10 +46,9 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 		// TODO WARNING: SharedPreferences.edit() without a corresponding
 		// commit() or apply() call
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mEditPrefs = mPreferences.edit();
+		mPreferences = PreferenceManager.getInstance();
 
-		mSystemBrowser = mPreferences.getBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
+		mSystemBrowser = mPreferences.getSystemBrowserPresent();
 		mContext = this;
 		initialize();
 	}
@@ -83,17 +80,12 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 		cbClearCookiesExit = (CheckBox) findViewById(R.id.cbClearCookiesExit);
 		cbThirdParty = (CheckBox) findViewById(R.id.cbThirdParty);
 
-		cbLocation.setChecked(mPreferences.getBoolean(PreferenceConstants.LOCATION, false));
-		cbSavePasswords.setChecked(mPreferences
-				.getBoolean(PreferenceConstants.SAVE_PASSWORDS, true));
-		cbClearCacheExit.setChecked(mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT,
-				false));
-		cbClearHistoryExit.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.CLEAR_HISTORY_EXIT, false));
-		cbClearCookiesExit.setChecked(mPreferences.getBoolean(
-				PreferenceConstants.CLEAR_COOKIES_EXIT, false));
-		cbThirdParty.setChecked(mPreferences.getBoolean(PreferenceConstants.BLOCK_THIRD_PARTY,
-				false));
+		cbLocation.setChecked(mPreferences.getLocationEnabled());
+		cbSavePasswords.setChecked(mPreferences.getSavePasswordsEnabled());
+		cbClearCacheExit.setChecked(mPreferences.getClearCacheExit());
+		cbClearHistoryExit.setChecked(mPreferences.getClearHistoryExitEnabled());
+		cbClearCookiesExit.setChecked(mPreferences.getClearCookiesExitEnabled());
+		cbThirdParty.setChecked(mPreferences.getBlockThirdPartyCookiesEnabled());
 
 		cbThirdParty.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
@@ -129,7 +121,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.SYNC_HISTORY, isChecked).apply();
+				mPreferences.setSyncHistoryEnabled(isChecked);
 			}
 
 		});
@@ -140,8 +132,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 			syncHistory.setText(getResources().getString(R.string.stock_browser_unavailable));
 		} else {
 			cbSyncHistory.setEnabled(true);
-			cbSyncHistory.setChecked(mPreferences
-					.getBoolean(PreferenceConstants.SYNC_HISTORY, true));
+			cbSyncHistory.setChecked(mPreferences.getSyncHistoryEnabled());
 			syncHistory.setText(getResources().getString(R.string.stock_browser_available));
 		}
 
@@ -180,8 +171,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.LOCATION, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setLocationEnabled(isChecked);
 			}
 
 		});
@@ -192,8 +182,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.SAVE_PASSWORDS, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setSavePasswordsEnabled(isChecked);
 			}
 
 		});
@@ -204,8 +193,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setClearCacheExit(isChecked);
 			}
 
 		});
@@ -216,8 +204,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setClearHistoryExitEnabled(isChecked);
 			}
 
 		});
@@ -228,8 +215,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.BLOCK_THIRD_PARTY, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setBlockThirdPartyCookiesEnabled(isChecked);
 			}
 
 		});
@@ -240,8 +226,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mEditPrefs.putBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, isChecked);
-				mEditPrefs.apply();
+				mPreferences.setClearCookiesExitEnabled(isChecked);
 			}
 
 		});

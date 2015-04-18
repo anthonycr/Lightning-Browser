@@ -21,7 +21,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources.Theme;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -45,7 +44,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private List<HistoryItem> mFilteredList;
 	private List<HistoryItem> mAllBookmarks;
 	private HistoryDatabase mDatabaseHandler;
-	private SharedPreferences mPreferences;
 	private Context mContext;
 	private boolean mUseGoogle = true;
 	private boolean mIsExecuting = false;
@@ -68,8 +66,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		mSuggestions = new ArrayList<HistoryItem>();
 		mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
 		mAllBookmarks = mBookmarkManager.getBookmarks(true);
-		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
+		mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
 		mContext = context;
 		mSearchSubtitle = mContext.getString(R.string.suggestion);
 		mDarkTheme = dark || incognito;
@@ -109,7 +106,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	}
 
 	public void refreshPreferences() {
-		mUseGoogle = mPreferences.getBoolean(PreferenceConstants.GOOGLE_SEARCH_SUGGESTIONS, true);
+		mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
 		if (!mUseGoogle && mSuggestions != null) {
 			mSuggestions.clear();
 		}
@@ -281,7 +278,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
 		private XmlPullParserFactory mFactory;
 		private XmlPullParser mXpp;
-		
+
 		@Override
 		protected List<HistoryItem> doInBackground(String... arg0) {
 			mIsExecuting = true;

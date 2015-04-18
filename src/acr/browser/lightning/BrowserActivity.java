@@ -117,7 +117,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	// Storage
 	private HistoryDatabase mHistoryDatabase;
 	private BookmarkManager mBookmarkManager;
-	private SharedPreferences mPreferences;
+	private PreferenceManager mPreferences;
 
 	// Image
 	private Bitmap mDefaultVideoPoster, mWebpageBitmap;
@@ -145,9 +145,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mDarkTheme = mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false)
-				|| isIncognito();
+		mPreferences = PreferenceManager.getInstance();
+		mDarkTheme = mPreferences.getUseDarkTheme() || isIncognito();
 		mActivity = this;
 		mWebViews.clear();
 
@@ -182,7 +181,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 		mActionBar = getSupportActionBar();
 
-		mHomepage = mPreferences.getString(PreferenceConstants.HOMEPAGE, Constants.HOMEPAGE);
+		mHomepage = mPreferences.getHomepage();
 
 		mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViews);
 		mDrawerListLeft.setAdapter(mTitleAdapter);
@@ -272,12 +271,12 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 			@Override
 			public boolean onLongClick(View v) {
-				String url = mPreferences.getString(PreferenceConstants.SAVE_URL, null);
+				String url = mPreferences.getSavedUrl();
 				if (url != null) {
 					newTab(url, true);
 					Toast.makeText(mActivity, R.string.deleted_tab, Toast.LENGTH_SHORT).show();
 				}
-				mPreferences.edit().putString(PreferenceConstants.SAVE_URL, null).apply();
+				mPreferences.setSavedUrl(null);
 				return true;
 			}
 
@@ -487,25 +486,21 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * proxying for this session
 	 */
 	public boolean checkForTor() {
-		boolean useProxy = mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false);
+		boolean useProxy = mPreferences.getUseProxy();
 
 		OrbotHelper oh = new OrbotHelper(this);
-		if (oh.isOrbotInstalled()
-				&& !mPreferences.getBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR, false)) {
-			mPreferences.edit().putBoolean(PreferenceConstants.INITIAL_CHECK_FOR_TOR, true).apply();
+		if (oh.isOrbotInstalled() && !mPreferences.getCheckedForTor()) {
+			mPreferences.setCheckedForTor(true);
 			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					switch (which) {
 						case DialogInterface.BUTTON_POSITIVE:
-							mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, true)
-									.apply();
-
+							mPreferences.setUseProxy(true);
 							initializeTor();
 							break;
 						case DialogInterface.BUTTON_NEGATIVE:
-							mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, false)
-									.apply();
+							mPreferences.setUseProxy(false);
 							break;
 					}
 				}
@@ -520,7 +515,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		} else if (oh.isOrbotInstalled() & useProxy) {
 			return true;
 		} else {
-			mPreferences.edit().putBoolean(PreferenceConstants.USE_PROXY, false).apply();
+			mPreferences.setUseProxy(false);
 			return false;
 		}
 	}
@@ -535,8 +530,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			oh.requestOrbotStart(this);
 		}
 		try {
-			String host = mPreferences.getString(PreferenceConstants.USE_PROXY_HOST, "localhost");
-			int port = mPreferences.getInt(PreferenceConstants.USE_PROXY_PORT, 8118);
+			String host = mPreferences.getProxyHost();
+			int port = mPreferences.getProxyPort();
 			WebkitProxy.setProxy(this.getPackageName() + ".BrowserApp", getApplicationContext(),
 					host, port);
 		} catch (Exception e) {
@@ -602,9 +597,9 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				}
 			}
 		}
-		if (mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true)) {
-			String mem = mPreferences.getString(PreferenceConstants.URL_MEMORY, "");
-			mPreferences.edit().putString(PreferenceConstants.URL_MEMORY, "").apply();
+		if (mPreferences.getRestoreLostTabsEnabled()) {
+			String mem = mPreferences.getMemoryUrl();
+			mPreferences.setMemoryUrl("");
 			String[] array = Utils.getArray(mem);
 			int count = 0;
 			for (int n = 0; n < array.length; n++) {
@@ -627,11 +622,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	public void initializePreferences() {
-		if (mPreferences == null) {
-			mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		}
-		mFullScreen = mPreferences.getBoolean(PreferenceConstants.FULL_SCREEN, false);
-		mColorMode = mPreferences.getBoolean(PreferenceConstants.ENABLE_COLOR_MODE, true);
+		mFullScreen = mPreferences.getFullScreenEnabled();
+		mColorMode = mPreferences.getColorModeEnabled();
 		mColorMode &= !mDarkTheme;
 
 		if (!isIncognito() && !mColorMode && !mDarkTheme && mWebpageBitmap != null) {
@@ -649,17 +641,16 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			mBrowserFrame.removeView(mToolbarLayout);
 			mUiLayout.addView(mToolbarLayout, 0);
 		}
-		if (mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false)) {
+		if (mPreferences.getHideStatusBarEnabled()) {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 
-		switch (mPreferences.getInt(PreferenceConstants.SEARCH, 1)) {
+		switch (mPreferences.getSearchChoice()) {
 			case 0:
-				mSearchText = mPreferences.getString(PreferenceConstants.SEARCH_URL,
-						Constants.GOOGLE_SEARCH);
+				mSearchText = mPreferences.getSearchUrl();
 				if (!mSearchText.startsWith(Constants.HTTP)
 						&& !mSearchText.startsWith(Constants.HTTPS)) {
 					mSearchText = Constants.GOOGLE_SEARCH;
@@ -698,7 +689,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 
 		updateCookiePreference();
-		if (mPreferences.getBoolean(PreferenceConstants.USE_PROXY, false)) {
+		if (mPreferences.getUseProxy()) {
 			initializeTor();
 		} else {
 			try {
@@ -1155,7 +1146,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			return;
 		}
 		if (reference.getUrl() != null && !reference.getUrl().startsWith(Constants.FILE)) {
-			mPreferences.edit().putString(PreferenceConstants.SAVE_URL, reference.getUrl()).apply();
+			mPreferences.setSavedUrl(reference.getUrl());
 		}
 		boolean isShown = reference.isShown();
 		if (isShown) {
@@ -1191,20 +1182,17 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				closeActivity();
 			} else {
 				mWebViews.remove(position);
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
-						&& mCurrentView != null && !isIncognito()) {
+				if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
 					mCurrentView.clearCache(true);
 					Log.d(Constants.TAG, "Cache Cleared");
 
 				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
-						&& !isIncognito()) {
+				if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
 					clearHistory();
 					Log.d(Constants.TAG, "History Cleared");
 
 				}
-				if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
-						&& !isIncognito()) {
+				if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
 					clearCookies();
 					Log.d(Constants.TAG, "Cookies Cleared");
 
@@ -1237,20 +1225,17 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	private void closeBrowser() {
 		mBrowserFrame.setBackgroundColor(mBackgroundColor);
-		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_CACHE_EXIT, false)
-				&& mCurrentView != null && !isIncognito()) {
+		if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
 			mCurrentView.clearCache(true);
 			Log.d(Constants.TAG, "Cache Cleared");
 
 		}
-		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_HISTORY_EXIT, false)
-				&& !isIncognito()) {
+		if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
 			clearHistory();
 			Log.d(Constants.TAG, "History Cleared");
 
 		}
-		if (mPreferences.getBoolean(PreferenceConstants.CLEAR_COOKIES_EXIT, false)
-				&& !isIncognito()) {
+		if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
 			clearCookies();
 			Log.d(Constants.TAG, "Cookies Cleared");
 
@@ -1335,14 +1320,14 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	public void saveOpenTabs() {
-		if (mPreferences.getBoolean(PreferenceConstants.RESTORE_LOST_TABS, true)) {
+		if (mPreferences.getRestoreLostTabsEnabled()) {
 			String s = "";
 			for (int n = 0; n < mWebViews.size(); n++) {
 				if (mWebViews.get(n).getUrl() != null) {
 					s = s + mWebViews.get(n).getUrl() + "|$|SEPARATOR|$|";
 				}
 			}
-			mPreferences.edit().putString(PreferenceConstants.URL_MEMORY, s).apply();
+			mPreferences.setMemoryUrl(s);
 		}
 	}
 
@@ -1749,7 +1734,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			return;
 		}
 		if (shortUrl && !url.startsWith(Constants.FILE)) {
-			switch (mPreferences.getInt(PreferenceConstants.URL_BOX_CONTENTS, 0)) {
+			switch (mPreferences.getUrlBoxContentChoice()) {
 				case 0: // Default, show only the domain
 					url = url.replaceFirst(Constants.HTTP, "");
 					url = Utils.getDomainName(url);
@@ -1794,8 +1779,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		Runnable update = new Runnable() {
 			@Override
 			public void run() {
-				if (isSystemBrowserAvailable()
-						&& mPreferences.getBoolean(PreferenceConstants.SYNC_HISTORY, true)) {
+				if (isSystemBrowserAvailable() && mPreferences.getSyncHistoryEnabled()) {
 					try {
 						Browser.updateVisitedHistory(getContentResolver(), url, true);
 					} catch (NullPointerException ignored) {
@@ -1848,8 +1832,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			c.close();
 			c = null;
 		}
-		mPreferences.edit().putBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, browserFlag)
-				.apply();
+		mPreferences.setSystemBrowserPresent(browserFlag);
 		return browserFlag;
 	}
 
@@ -2051,7 +2034,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		} catch (SecurityException e) {
 			Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
 		}
-		setFullscreen(mPreferences.getBoolean(PreferenceConstants.HIDE_STATUS_BAR, false));
+		setFullscreen(mPreferences.getHideStatusBarEnabled());
 		FrameLayout decor = (FrameLayout) getWindow().getDecorView();
 		if (decor != null) {
 			decor.removeView(mFullscreenContainer);

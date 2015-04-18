@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.Toolbar;
@@ -21,8 +20,8 @@ import android.widget.TextView;
 public class BookmarkActivity extends ThemableSettingsActivity implements OnClickListener {
 
 	private BookmarkManager mBookmarkManager;
+	private PreferenceManager mPreferences;
 	private boolean mSystemBrowser;
-	private SharedPreferences mPreferences;
 	private File[] mFileList;
 	private String[] mFileNameList;
 	private File mPath = new File(Environment.getExternalStorageDirectory().toString());
@@ -47,9 +46,7 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 
 		mBookmarkManager = BookmarkManager.getInstance(getApplicationContext());
 
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-
-		mSystemBrowser = mPreferences.getBoolean(PreferenceConstants.SYSTEM_BROWSER_PRESENT, false);
+		mSystemBrowser = mPreferences.getSystemBrowserPresent();
 
 		exportBackup.setOnClickListener(this);
 		importBackup.setOnClickListener(this);

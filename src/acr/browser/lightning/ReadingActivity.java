@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -31,7 +30,7 @@ public class ReadingActivity extends ActionBarActivity {
 	private TextView mBody;
 	private boolean mInvert;
 	private String mUrl = null;
-	private SharedPreferences mPreferences;
+	private PreferenceManager mPreferences;
 	private int mTextSize;
 	private static final float XXLARGE = 30.0f;
 	private static final float XLARGE = 26.0f;
@@ -42,9 +41,8 @@ public class ReadingActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mPreferences = getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		boolean initInvert = mPreferences.getBoolean(PreferenceConstants.DARK_THEME, false);
-		mInvert = mPreferences.getBoolean(PreferenceConstants.INVERT_COLORS, initInvert);
+		mPreferences = PreferenceManager.getInstance();
+		mInvert = mPreferences.getInvertColors();
 		if (mInvert) {
 			this.setTheme(R.style.Theme_SettingsTheme_Dark);
 		}
@@ -58,7 +56,7 @@ public class ReadingActivity extends ActionBarActivity {
 		mTitle = (TextView) findViewById(R.id.textViewTitle);
 		mBody = (TextView) findViewById(R.id.textViewBody);
 
-		mTextSize = mPreferences.getInt(PreferenceConstants.READING_TEXT_SIZE, 2);
+		mTextSize = mPreferences.getReadingTextSize();
 		mBody.setTextSize(getTextSize(mTextSize));
 		mTitle.setText(getString(R.string.untitled));
 		mBody.setText(getString(R.string.loading));
@@ -198,7 +196,7 @@ public class ReadingActivity extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.invert_item:
-				mPreferences.edit().putBoolean(PreferenceConstants.INVERT_COLORS, !mInvert).apply();
+				mPreferences.setInvertColors(!mInvert);
 				Intent read = new Intent(this, ReadingActivity.class);
 				read.putExtra(Constants.LOAD_READING_URL, mUrl);
 				startActivity(read);
@@ -235,9 +233,7 @@ public class ReadingActivity extends ActionBarActivity {
 					public void onClick(DialogInterface arg0, int arg1) {
 						mTextSize = bar.getProgress();
 						mBody.setTextSize(getTextSize(mTextSize));
-						mPreferences.edit()
-								.putInt(PreferenceConstants.READING_TEXT_SIZE, bar.getProgress())
-								.apply();
+						mPreferences.setReadingTextSize(bar.getProgress());
 					}
 
 				});

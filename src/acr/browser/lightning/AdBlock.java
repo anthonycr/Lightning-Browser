@@ -1,7 +1,6 @@
 package acr.browser.lightning;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -19,7 +18,6 @@ public class AdBlock {
 	private static final String TAG = "AdBlock";
 	private static final String BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt";
 	private static final Set<String> mBlockedDomainsList = new HashSet<String>();
-	private SharedPreferences mPreferences;
 	private boolean mBlockAds;
 	private static final Locale mLocale = Locale.getDefault();
 	private static AdBlock mInstance;
@@ -35,12 +33,11 @@ public class AdBlock {
 		if (mBlockedDomainsList.isEmpty()) {
 			loadBlockedDomainsList(context);
 		}
-		mPreferences = context.getSharedPreferences(PreferenceConstants.PREFERENCES, 0);
-		mBlockAds = mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false);
+		mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
 	}
 
 	public void updatePreference() {
-		mBlockAds = mPreferences.getBoolean(PreferenceConstants.BLOCK_ADS, false);
+		mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
 	}
 
 	private void loadBlockedDomainsList(final Context context) {
