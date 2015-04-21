@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,8 +11,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.webkit.URLUtil;
@@ -20,7 +23,9 @@ import android.widget.Toast;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public final class Utils {
@@ -71,7 +76,7 @@ public final class Utils {
 	 */
 	public static int convertDpToPixels(int dp) {
 		DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-	    return (int) (dp * metrics.density + 0.5f);
+		return (int) (dp * metrics.density + 0.5f);
 	}
 
 	public static String getDomainName(String url) {
@@ -98,7 +103,7 @@ public final class Utils {
 		else
 			return domain.startsWith("www.") ? domain.substring(4) : domain;
 	}
-	
+
 	public static String getProtocol(String url) {
 		int index = url.indexOf('/');
 		return url.substring(0, index + 2);
@@ -174,4 +179,36 @@ public final class Utils {
 
 		return paddedBitmap;
 	}
+
+	@SuppressLint("SimpleDateFormat")
+	public static File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		File imageFile = File.createTempFile(imageFileName, /* prefix */
+				".jpg", /* suffix */
+				storageDir /* directory */
+		);
+		return imageFile;
+	}
+
+	public static Bitmap getWebpageBitmap(Resources resources, boolean dark) {
+		if (dark) {
+			if (mWebIconDark == null) {
+				mWebIconDark = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage_dark);
+			}
+			return mWebIconDark;
+		} else {
+			if (mWebIconLight == null) {
+				mWebIconLight = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage);
+			}
+			return mWebIconLight;
+		}
+	}
+
+	private static Bitmap mWebIconLight;
+	private static Bitmap mWebIconDark;
+
 }

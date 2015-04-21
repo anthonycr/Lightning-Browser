@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
@@ -87,13 +86,7 @@ public class LightningView {
 		mTitle = new Title(activity, darkTheme);
 		mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
 
-		if (darkTheme) {
-			mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
-					R.drawable.ic_webpage_dark);
-		} else {
-			mWebpageBitmap = BitmapFactory.decodeResource(activity.getResources(),
-					R.drawable.ic_webpage);
-		}
+		mWebpageBitmap = Utils.getWebpageBitmap(activity.getResources(), darkTheme);
 
 		try {
 			mBrowserController = (BrowserController) activity;
@@ -933,6 +926,12 @@ public class LightningView {
 			mBrowserController.openFileChooser(uploadMsg);
 		}
 
+		public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
+				WebChromeClient.FileChooserParams fileChooserParams) {
+			mBrowserController.showFileChooser(filePathCallback);
+			return true;
+		}
+
 		@Override
 		public Bitmap getDefaultVideoPoster() {
 			return mBrowserController.getDefaultVideoPoster();
@@ -1002,13 +1001,7 @@ public class LightningView {
 		private Bitmap mDefaultIcon;
 
 		public Title(Context context, boolean darkTheme) {
-			if (darkTheme) {
-				mDefaultIcon = BitmapFactory.decodeResource(context.getResources(),
-						R.drawable.ic_webpage_dark);
-			} else {
-				mDefaultIcon = BitmapFactory.decodeResource(context.getResources(),
-						R.drawable.ic_webpage);
-			}
+			mDefaultIcon = Utils.getWebpageBitmap(context.getResources(), darkTheme);
 			mFavicon = mDefaultIcon;
 			mTitle = mActivity.getString(R.string.action_new_tab);
 		}

@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
+import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -104,6 +105,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private ClickHandler mClickHandler;
 	private CustomViewCallback mCustomViewCallback;
 	private ValueCallback<Uri> mUploadMessage;
+	private ValueCallback<Uri[]> mFilePathCallback;
 
 	// Context
 	private Activity mActivity;
@@ -112,7 +114,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode,
 			mDarkTheme;
 	private int mOriginalOrientation, mBackgroundColor, mIdGenerator;
-	private String mSearchText, mUntitledTitle, mHomepage;
+	private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
 	// Storage
 	private HistoryDatabase mHistoryDatabase;
@@ -144,13 +146,13 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		setContentView(R.layout.activity_main);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
+		mActionBar = getSupportActionBar();
 
 		mPreferences = PreferenceManager.getInstance();
 		mDarkTheme = mPreferences.getUseDarkTheme() || isIncognito();
 		mActivity = this;
 		mWebViews.clear();
 
-		mActivity = this;
 		mClickHandler = new ClickHandler(this);
 		mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
 		mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
@@ -161,9 +163,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
 		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
 		mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
-		mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null); // Drawer
-																	// stutters
-																	// otherwise
+		// Drawer stutters otherwise
+		mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerListLeft = (ListView) findViewById(R.id.left_drawer_list);
 		mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
@@ -173,13 +174,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		setNavigationDrawerWidth();
 		mDrawerLayout.setDrawerListener(new DrawerLocker());
 
-		if (mDarkTheme) {
-			mWebpageBitmap = BitmapFactory.decodeResource(getResources(),
-					R.drawable.ic_webpage_dark);
-		} else {
-			mWebpageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_webpage);
-		}
-		mActionBar = getSupportActionBar();
+		mWebpageBitmap = Utils.getWebpageBitmap(getResources(), mDarkTheme);
 
 		mHomepage = mPreferences.getHomepage();
 
@@ -195,11 +190,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 		// set display options of the ActionBar
 		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setHomeButtonEnabled(false);
 		mActionBar.setDisplayShowHomeEnabled(false);
-		mActionBar.setDisplayHomeAsUpEnabled(false);
-		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setDisplayUseLogoEnabled(false);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		mActionBar.setCustomView(R.layout.toolbar_content);
 
@@ -282,10 +273,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 		});
 
-		// mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START);
-		initializePreferences();
 		initializeTabs();
 
 		if (API <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -622,6 +611,9 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	public void initializePreferences() {
+		if (mPreferences == null) {
+			mPreferences = PreferenceManager.getInstance();
+		}
 		mFullScreen = mPreferences.getFullScreenEnabled();
 		mColorMode = mPreferences.getColorModeEnabled();
 		mColorMode &= !mDarkTheme;
@@ -731,7 +723,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
 					mDrawerLayout.closeDrawer(mDrawerRight);
 				}
-				// mDrawerToggle.syncState();
 				return true;
 			case R.id.action_back:
 				if (mCurrentView != null) {
@@ -1968,15 +1959,90 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * used to allow uploading into the browser
 	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (requestCode == 1) {
-			if (null == mUploadMessage) {
-				return;
-			}
-			Uri result = intent == null || resultCode != RESULT_OK ? null : intent.getData();
-			mUploadMessage.onReceiveValue(result);
-			mUploadMessage = null;
+		if (API < Build.VERSION_CODES.LOLLIPOP) {
+			if (requestCode == 1) {
+				if (null == mUploadMessage) {
+					return;
+				}
+				Uri result = intent == null || resultCode != RESULT_OK ? null : intent.getData();
+				mUploadMessage.onReceiveValue(result);
+				mUploadMessage = null;
 
+			}
 		}
+
+		if (requestCode != 1 || mFilePathCallback == null) {
+			super.onActivityResult(requestCode, resultCode, intent);
+			return;
+		}
+
+		Uri[] results = null;
+
+		// Check that the response is a good one
+		if (resultCode == Activity.RESULT_OK) {
+			if (intent == null) {
+				// If there is not data, then we may have taken a photo
+				if (mCameraPhotoPath != null) {
+					results = new Uri[] { Uri.parse(mCameraPhotoPath) };
+				}
+			} else {
+				String dataString = intent.getDataString();
+				if (dataString != null) {
+					results = new Uri[] { Uri.parse(dataString) };
+				}
+			}
+		}
+
+		mFilePathCallback.onReceiveValue(results);
+		mFilePathCallback = null;
+		return;
+	}
+
+	@Override
+	public void showFileChooser(ValueCallback<Uri[]> filePathCallback) {
+		if (mFilePathCallback != null) {
+			mFilePathCallback.onReceiveValue(null);
+		}
+		mFilePathCallback = filePathCallback;
+
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+			// Create the File where the photo should go
+			File photoFile = null;
+			try {
+				photoFile = Utils.createImageFile();
+				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
+			} catch (IOException ex) {
+				// Error occurred while creating the File
+				Log.e(Constants.TAG, "Unable to create Image File", ex);
+			}
+
+			// Continue only if the File was successfully created
+			if (photoFile != null) {
+				mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
+				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+			} else {
+				takePictureIntent = null;
+			}
+		}
+
+		Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+		contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+		contentSelectionIntent.setType("image/*");
+
+		Intent[] intentArray;
+		if (takePictureIntent != null) {
+			intentArray = new Intent[] { takePictureIntent };
+		} else {
+			intentArray = new Intent[0];
+		}
+
+		Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+		chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+		chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+
+		mActivity.startActivityForResult(chooserIntent, 1);
 	}
 
 	@Override

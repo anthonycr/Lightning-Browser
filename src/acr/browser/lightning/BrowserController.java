@@ -23,7 +23,7 @@ public interface BrowserController {
 	public void openFileChooser(ValueCallback<Uri> uploadMsg);
 
 	public void update();
-	
+
 	public void onLongPress();
 
 	public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback);
@@ -41,17 +41,18 @@ public interface BrowserController {
 	public void hideActionBar();
 
 	public void showActionBar();
-	
+
 	public void toggleActionBar();
 
 	public void longClickPage(String url);
 
 	public void openBookmarkPage(WebView view);
 
+	public void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 
 	public void closeEmptyTab();
 
 	public boolean isIncognito();
-	
+
 	public int getMenu();
 }
