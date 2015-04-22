@@ -60,17 +60,19 @@ public class LightningView {
 	private GestureDetector mGestureDetector;
 	private Activity mActivity;
 	private WebSettings mSettings;
-	private static int API = android.os.Build.VERSION.SDK_INT;
 	private static String mHomepage;
 	private static String mDefaultUserAgent;
 	private static Bitmap mWebpageBitmap;
 	private static PreferenceManager mPreferences;
 	private AdBlock mAdBlock;
-	private boolean isForegroundTab;
 	private IntentUtils mIntentUtils;
-	private Paint mPaint = new Paint();
+	private final Paint mPaint = new Paint();
+	private boolean isForegroundTab;
 	private boolean mTextReflow = false;
 	private boolean mInvertPage = false;
+	private static final int API = android.os.Build.VERSION.SDK_INT;
+	private static final int SCROLL_UP_THRESHOLD = Utils.convertDpToPixels(10);
+	private static final int SCROLL_DOWN_THRESHOLD = Utils.convertDpToPixels(100);
 	private static final float[] mNegativeColorArray = { -1.0f, 0, 0, 0, 255, // red
 			0, -1.0f, 0, 0, 255, // green
 			0, 0, -1.0f, 0, 255, // blue
@@ -691,7 +693,9 @@ public class LightningView {
 			passLayout.addView(password);
 
 			name.setHint(mActivity.getString(R.string.hint_username));
+			name.setSingleLine();
 			password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+			password.setSingleLine();
 			password.setTransformationMethod(new PasswordTransformationMethod());
 			password.setHint(mActivity.getString(R.string.hint_password));
 			builder.setTitle(mActivity.getString(R.string.title_sign_in));
@@ -1043,10 +1047,9 @@ public class LightningView {
 	}
 
 	private class TouchListener implements OnTouchListener {
+
 		float mLocation;
-
 		float mY;
-
 		int mAction;
 
 		@SuppressLint("ClickableViewAccessibility")
@@ -1060,13 +1063,13 @@ public class LightningView {
 			if (mAction == MotionEvent.ACTION_DOWN) {
 				mLocation = mY;
 			} else if (mAction == MotionEvent.ACTION_UP) {
-				if ((mY - mLocation) > 10) {
+				if ((mY - mLocation) > SCROLL_DOWN_THRESHOLD) {
 					if (mWebView.getScrollY() != 0) {
 						mBrowserController.showActionBar();
 					} else {
 						mBrowserController.toggleActionBar();
 					}
-				} else if ((mY - mLocation) < -10) {
+				} else if ((mY - mLocation) < -SCROLL_UP_THRESHOLD) {
 					mBrowserController.hideActionBar();
 				}
 				mLocation = 0;
