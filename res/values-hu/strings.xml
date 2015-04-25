@@ -41,7 +41,7 @@
     <string name="desk">Megtekintés asztali nézetben</string>
     <string name="custom">Megtekintés asztali nézetben</string>
     <string name="home">Főoldal</string>
-    <string name="settingshelp">Főoldal</string>
+    <string name="settingshelp">A beállítások csak az új lapokra érvényes</string>
     <string name="fullscreen">Teljes képernyős mód</string>
     <string name="java">JavaScript bekapcsolása</string>
     <string name="saveTab">Lapok helyreállítása ha elvesznek</string>
