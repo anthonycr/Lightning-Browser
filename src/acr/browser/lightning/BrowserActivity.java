@@ -248,6 +248,16 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			public void run() {
 				mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
 				mBookmarkList = mBookmarkManager.getBookmarks(true);
+				if (mBookmarkList.size() == 0 && mPreferences.getDefaultBookmarks()) {
+					for (String[] array : BookmarkManager.DEFAULT_BOOKMARKS) {
+						HistoryItem bookmark = new HistoryItem(array[0], array[1]);
+						if (mBookmarkManager.addBookmark(bookmark)) {
+							mBookmarkList.add(bookmark);
+						}
+					}
+					Collections.sort(mBookmarkList, new SortIgnoreCase());
+					mPreferences.setDefaultBookmarks(false);
+				}
 				mBookmarkAdapter = new BookmarkViewAdapter(mActivity, R.layout.bookmark_list_item,
 						mBookmarkList);
 				mDrawerListRight.setAdapter(mBookmarkAdapter);

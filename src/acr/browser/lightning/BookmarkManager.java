@@ -443,4 +443,17 @@ public class BookmarkManager {
 		}
 
 	}
+
+	private static final String[] DEV = {"https://twitter.com/RestainoAnthony", "The Developer"};
+	private static final String[] FACEBOOK = {"https://www.facebook.com/", "Facebook"};
+	private static final String[] TWITTER = {"https://twitter.com", "Twitter"};
+	private static final String[] GOOGLE = {"https://www.google.com/", "Google"};
+	private static final String[] YAHOO = {"https://www.yahoo.com/", "Yahoo"};
+	public static final String[][] DEFAULT_BOOKMARKS = { 
+		DEV,
+		FACEBOOK,
+		TWITTER,
+		GOOGLE,
+		YAHOO
+	};
 }
