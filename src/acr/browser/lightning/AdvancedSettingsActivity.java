@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +24,6 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 	private Context mContext;
 	private TextView mRenderText;
 	private TextView mUrlText;
-	private Activity mActivity;
 	private CharSequence[] mUrlOptions;
 	private PreferenceManager mPreferences;
 
@@ -34,14 +32,12 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.advanced_settings);
 
-		// set up ActionBar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mContext = this;
-		mActivity = this;
 		initialize();
 	}
 
@@ -166,7 +162,7 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 
 	public void renderPicker() {
 
-		AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+		AlertDialog.Builder picker = new AlertDialog.Builder(mContext);
 		picker.setTitle(getResources().getString(R.string.rendering_mode));
 		CharSequence[] chars = { mContext.getString(R.string.name_normal),
 				mContext.getString(R.string.name_inverted),
@@ -209,7 +205,7 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 
 	public void urlBoxPicker() {
 
-		AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+		AlertDialog.Builder picker = new AlertDialog.Builder(mContext);
 		picker.setTitle(getResources().getString(R.string.url_contents));
 
 		int n = mPreferences.getUrlBoxContentChoice();

@@ -24,7 +24,7 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 	private boolean mSystemBrowser;
 	private File[] mFileList;
 	private String[] mFileNameList;
-	private File mPath = new File(Environment.getExternalStorageDirectory().toString());
+	private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
 	private static final int DIALOG_LOAD_FILE = 1000;
 
 	@Override
@@ -32,7 +32,6 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bookmark_settings);
 
-		// set up ActionBar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
