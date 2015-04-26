@@ -62,8 +62,8 @@
     <string name="recommended">推奨</string>
     <string name="search">検索エンジン</string>
     <string name="search_hint">検索</string>
-    <string name="wideViewPort">Use wide viewport</string>
-    <string name="overViewMode">Load pages in overview mode</string>
+    <string name="wideViewPort">ワイドビューモードを使用する</string>
+    <string name="overViewMode">オーバービューモードでページを読み込む</string>
     <string name="restore">開始時に前のタブを修復する</string>
     <string name="stock_browser_unavailable">読み込み可能なブラウザはありません</string>
     <string name="stock_browser_available">読み込み可能なブラウザがあります</string>
@@ -88,7 +88,7 @@
     <string name="title_warning">警告</string>
     <string name="dialog_adobe_dead">申し訳ありませんが、Googleの仕様変更のため、Adobe FlashはAndroid 4.4以上に対応していません。</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Playerをインストールしてください</string>
-    <string name="dialog_adobe_unsupported">Adobe FlashはAndroid 4.2以上に対応していません。ブラウザが強制終了します。Flashを有効にしたことによる強制終了については報告しないでください。</string>
+    <string name="dialog_adobe_unsupported">Adobe FlashはAndroid 4.2以降に対応していません。ブラウザが強制終了します。Flashを有効にしたことによる強制終了については報告しないでください。</string>
     <string name="title_user_agent">ユーザーエージェント</string>
     <string name="title_download_location">ダウンロード先</string>
     <string name="title_custom_homepage">カスタムスタートページ</string>
@@ -114,7 +114,7 @@
     <string name="action_edit">編集</string>
     <string name="action_incognito">新しいシークレットタブ</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_homepage">ひょ</string>
+    <string name="action_homepage">標準</string>
     <string name="action_back">戻る</string>
     <string name="action_find">ページ内検索</string>
     <string name="download_pending">Starting download\u2026</string>
@@ -169,7 +169,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Reopened old tab</string>
+    <string name="deleted_tab">古いタブをもう1度開く</string>
     <string name="rendering_mode">レンダリングモード</string>
     <string name="name_inverted">反転</string>
     <string name="name_grayscale">グレースケール</string>
