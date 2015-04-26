@@ -38,7 +38,7 @@
     <string name="search">Motore di ricerca</string>
     <string name="search_hint">Cerca</string>
     <string name="wideViewPort">Use wide viewport</string>
-    <string name="overViewMode">Load pages in overview mode</string>
+    <string name="overViewMode">Carica le pagine in modalità overview</string>
     <string name="restore">Ricarica le schede perse all\'avvio</string>
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
@@ -55,7 +55,7 @@
     <string name="agent_default">Default</string>
     <string name="agent_desktop">Desktop</string>
     <string name="agent_mobile">Mobile</string>
-    <string name="agent_custom">Custom</string>
+    <string name="agent_custom">Personale</string>
     <string name="title_search_engine">Motore di ricerca</string>
     <string name="action_ok">OK</string>
     <string name="dialog_download">Vuoi scaricare questo file?</string>
@@ -84,7 +84,7 @@
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contattami</string>
     <string name="url_twitter">twitter.com/ACRDevelopment</string>
-    <string name="clear_cache">Pulisci Cache</string>
+    <string name="clear_cache">Pulisci la Cache</string>
     <string name="message_cache_cleared">Cache Cancellata</string>
     <string name="message_import">Segnalibri importati!</string>
     <string name="message_clear_history">Cronologia Cancellata</string>
@@ -95,7 +95,7 @@
     <string name="block_ads">Blocca Annunci</string>
     <string name="enable_orbot">Abilita Orbot</string>
     <string name="sync_history">Sincronizza cronologia con Google</string>
-    <string name="export_bookmarks">Esporta segnalibri da backup</string>
+    <string name="export_bookmarks">Esporta segnalibri</string>
     <string name="import_backup">Importa segnalibri da backup</string>
     <string name="bookmark_export_path">Segnalibri esportati</string>
     <string name="bookmark_settings">Impostazioni Segnalibri</string>
@@ -107,8 +107,8 @@
     <string name="settings_privacy">Privacy</string>
     <string name="settings_about">Informazioni</string>
     <string name="settings_about_explain">Informazioni sull\'autore, versione e license.</string>
-    <string name="rendering_mode">Rendering Mode</string>
-    <string name="name_inverted">Inversa</string>
+    <string name="rendering_mode">Rendering</string>
+    <string name="name_inverted">Inverso</string>
     <string name="name_grayscale">Scala di grigi</string>
     <string name="name_inverted_grayscale">Scala di grigi inversa</string>
     <string name="name_normal">Normale</string>
