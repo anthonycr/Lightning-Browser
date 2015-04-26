@@ -716,8 +716,23 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			if (mSearch.hasFocus()) {
 				searchTheWeb(mSearch.getText().toString());
 			}
+		} else if ((keyCode == KeyEvent.KEYCODE_MENU) && (Build.VERSION.SDK_INT <= 16)
+				&& (Build.MANUFACTURER.compareTo("LGE") == 0)) {
+			// Workaround for stupid LG devices that crash
+			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if ((keyCode == KeyEvent.KEYCODE_MENU) && (Build.VERSION.SDK_INT <= 16)
+				&& (Build.MANUFACTURER.compareTo("LGE") == 0)) {
+			// Workaround for stupid LG devices that crash
+			openOptionsMenu();
+			return true;
+		}
+		return super.onKeyUp(keyCode, event);
 	}
 
 	@Override
