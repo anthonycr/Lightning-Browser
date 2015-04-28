@@ -21,7 +21,7 @@
     <string name="drawer_open">Navigációs fiók megnyitása</string>
     <string name="drawer_close">Navigációs fiók bezárása</string>
     <string name="action_websearch">Internetes kereső</string>
-    <string name="action_refresh">Internetes kereső</string>
+    <string name="action_refresh">Frissít</string>
     <string name="action_new_tab">Új Lap</string>
     <string name="action_share">Megosztás</string>
     <string name="action_history">Előzmények</string>
@@ -39,7 +39,7 @@
     <string name="flash">Adobe Flash bekapcsolása</string>
     <string name="mobile">Megtekintés mobil nézetben</string>
     <string name="desk">Megtekintés asztali nézetben</string>
-    <string name="custom">Megtekintés asztali nézetben</string>
+    <string name="custom">Megtekintés egyéni nézetben</string>
     <string name="home">Főoldal</string>
     <string name="settingshelp">A beállítások csak az új lapokra érvényes</string>
     <string name="fullscreen">Teljes képernyős mód</string>
@@ -171,7 +171,7 @@
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android nyílt forráskódú projekt</string>
-    <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server Lista</string>
     <string name="deleted_tab">Régi lapok megnyitása</string>
     <string name="rendering_mode">Megjelenítési mód</string>
     <string name="name_inverted">Negatív</string>
