@@ -196,7 +196,7 @@
     <string name="close_tab">Lap bezárása</string>
     <string name="close_all_tabs">Összes lap bezárása</string>
     <string name="third_party">Harmadik féltől származó Cookie-k letiltása</string>
-    <string name="available_lollipop">Ez csak a 5.0 fölött érhető el</string>
+    <string name="available_lollipop">Ez csak Android  5.0-ás verzió fölött érhető el</string>
     <string name="color_mode">Színes mód engedélyezése</string>
     <string name="reading_mode">Olvasó mód</string>
     <string name="loading">Betöltés&#8230;</string>
