@@ -1135,6 +1135,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	protected synchronized boolean newTab(String url, boolean show) {
+		// Limit number of tabs for limited version of app
+		if (!Constants.FULL_VERSION && mWebViews.size() >= 10) {
+			Utils.showToast(this, this.getString(R.string.max_tabs));
+			return false;
+		}
 		mIsNewIntent = false;
 		LightningView startingTab = new LightningView(mActivity, url, mDarkTheme);
 		if (mIdGenerator == 0) {

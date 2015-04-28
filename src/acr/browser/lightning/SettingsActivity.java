@@ -61,6 +61,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		// initialize UI
 		RelativeLayout layoutFlash = (RelativeLayout) findViewById(R.id.layoutFlash);
 		RelativeLayout layoutBlockAds = (RelativeLayout) findViewById(R.id.layoutAdBlock);
+		layoutBlockAds.setEnabled(Constants.FULL_VERSION);
 		RelativeLayout layoutImages = (RelativeLayout) findViewById(R.id.layoutImages);
 		RelativeLayout layoutEnableJS = (RelativeLayout) findViewById(R.id.layoutEnableJS);
 		RelativeLayout layoutOrbot = (RelativeLayout) findViewById(R.id.layoutUseOrbot);
@@ -85,6 +86,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 		CheckBox flash = (CheckBox) findViewById(R.id.cbFlash);
 		CheckBox adblock = (CheckBox) findViewById(R.id.cbAdblock);
+		adblock.setEnabled(Constants.FULL_VERSION);
 		CheckBox images = (CheckBox) findViewById(R.id.cbImageBlock);
 		CheckBox enablejs = (CheckBox) findViewById(R.id.cbJavascript);
 		CheckBox orbot = (CheckBox) findViewById(R.id.cbOrbot);

@@ -30,7 +30,7 @@ public class AdBlock {
 	}
 
 	private AdBlock(Context context) {
-		if (mBlockedDomainsList.isEmpty()) {
+		if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
 			loadBlockedDomainsList(context);
 		}
 		mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
