@@ -39,7 +39,7 @@
     <string name="flash">Adobe Flash bekapcsolása</string>
     <string name="mobile">Megtekintés mobil nézetben</string>
     <string name="desk">Megtekintés asztali nézetben</string>
-    <string name="custom">Megtekintés egyéni felhasználó ügynökként</string>
+    <string name="custom">Megtekintés egyéni felhasználói ügynökként</string>
     <string name="home">Főoldal</string>
     <string name="settingshelp">A beállítások csak az új lapokra érvényes</string>
     <string name="fullscreen">Teljes képernyős mód</string>
