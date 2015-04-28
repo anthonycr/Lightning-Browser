@@ -67,7 +67,7 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 				onCreateDialog(DIALOG_LOAD_FILE);
 				break;
 			case R.id.importFromBrowser:
-				mBookmarkManager.importBookmarksFromBrowser();
+				mBookmarkManager.importBookmarksFromBrowser(BookmarkActivity.this);
 				break;
 			case R.id.exportBackup:
 				mBookmarkManager.exportBookmarks();
@@ -152,7 +152,7 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 							builder.setItems(mFileNameList, this);
 							builder.show();
 						} else {
-							mBookmarkManager.importBookmarksFromFile(mFileList[which]);
+							mBookmarkManager.importBookmarksFromFile(mFileList[which], BookmarkActivity.this);
 						}
 					}
 
