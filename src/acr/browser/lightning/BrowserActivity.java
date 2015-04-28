@@ -1161,7 +1161,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		if (reference == null) {
 			return;
 		}
-		if (reference.getUrl() != null && !reference.getUrl().startsWith(Constants.FILE)) {
+		if (reference.getUrl() != null && !reference.getUrl().startsWith(Constants.FILE)
+				&& !isIncognito()) {
 			mPreferences.setSavedUrl(reference.getUrl());
 		}
 		boolean isShown = reference.isShown();
