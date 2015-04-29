@@ -134,7 +134,7 @@
     <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Gyorsítótár törlése</string>
     <string name="message_cache_cleared">Gyorsítótár törölve</string>
-    <string name="message_import">Könyvjelzők importálv</string>
+    <string name="message_import">Könyvjelzők importálva</string>
     <string name="message_clear_history">Előzmények törölve</string>
     <string name="message_cookies_cleared">Cookie-k törölve</string>
     <string name="max_tabs">Maximálisan megnyitható lapok száma elérve</string>
