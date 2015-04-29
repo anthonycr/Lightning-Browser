@@ -142,7 +142,7 @@
     <string name="message_link_copied">Link másolva a vágólapra</string>
     <string name="custom_url">Egyéni URL</string>
     <string name="message_blocked_local">Helyi fájl betöltése blokkolva</string>
-    <string name="licenses">Nyílt forráskódú licenszek</string>
+    <string name="licenses">Nyílt forráskódú licencek</string>
     <string name="suggestion">Keresés</string>
     <string name="block_ads">Reklámok blokkolása</string>
     <string name="message_untrusted_certificate">Az oldal tanusítványa nem megfelelő.Folytatja mindenképpen?</string>
@@ -170,7 +170,7 @@
     <string name="untitled">Névtelen</string>
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
-    <string name="android_open_source_project">Android nyílt forráskódú projekt</string>
+    <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server Lista</string>
     <string name="deleted_tab">Régi lapok megnyitása</string>
     <string name="rendering_mode">Megjelenítési mód</string>
@@ -192,7 +192,7 @@
     <string name="settings_display">Megjelenítési Beállítások</string>
     <string name="settings_privacy">Adatvédelmi Beállítások</string>
     <string name="settings_about">Névjegy</string>
-    <string name="settings_about_explain">Részletek az alkalmazás verziószámáról, a készítőről és a licenszekről.</string>
+    <string name="settings_about_explain">Részletek az alkalmazás verziószámáról, a készítőről és a licencekről.</string>
     <string name="close_tab">Lap bezárása</string>
     <string name="close_all_tabs">Összes lap bezárása</string>
     <string name="third_party">Harmadik féltől származó Cookie-k letiltása</string>
@@ -206,9 +206,9 @@
     <string name="mit_license">MIT License</string>
     <string name="url_contents">URL doboz tartalma</string>
     <string-array name="url_content_array">
-        <item >Domain (default)</item>
+        <item >Domain (alapértelmezett)</item>
         <item >URL</item>
-        <item >Title</item>
+        <item >Cím</item>
     </string-array>
         <string name="invert_color">Negatív szín</string>
         <string name="dark_theme">Sötét téma használata</string>
