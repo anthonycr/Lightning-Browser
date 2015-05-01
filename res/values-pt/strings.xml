@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2013 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<resources>
+
+    <string name="app_name">Lightning</string>
+    <string name="drawer_open">Abrir menu de navegação</string>
+    <string name="drawer_close">Fechar menu de navegação</string>
+    <string name="action_websearch">Pesquisa web</string>
+    <string name="action_refresh">Recarregar</string>
+    <string name="action_new_tab">Novo separador</string>
+    <string name="action_share">Partilhar</string>
+    <string name="action_history">Histórico</string>
+    <string name="action_bookmarks">Marcadores</string>
+    <string name="action_add_bookmark">Adicionar marcador</string>
+    <string name="action_copy">Copiar ligação</string>
+    <string name="action_forward">Avançar</string>
+    <string name="google">Google</string>
+    <string name="settings">Definições</string>
+    <string name="location">Acesso de localização</string>
+    <string name="password">Guardar palavras-passe</string>
+    <string name="agent">Agente</string>
+    <string name="history">Limpar histórico</string>
+    <string name="email">Escreva-me um e-mail</string>
+    <string name="flash">Ativar Adobe Flash</string>
+    <string name="mobile">Ver como Mobile</string>
+    <string name="desk">Ver como Desktop</string>
+    <string name="custom">Ver como agente de utilizador</string>
+    <string name="home">Página inicial</string>
+    <string name="settingshelp">Definições apenas aplicáveis a novos separadores</string>
+    <string name="fullscreen">Modo de ecrã completo</string>
+    <string name="java">Ativar JavaScript</string>
+    <string name="saveTab">Restaurar separadores perdidos</string>
+    <string name="settings_title">Definições</string>
+    <string name="download">Local de transferências</string>
+    <string name="settings_advanced">Definições avançadas</string>
+    <string name="source">Código fonte</string>
+    <string name="license">Licença</string>
+    <string name="github">github.com/anthonycr/Lightning-Browser</string>
+    <string name="apache">Apache License 2.0</string>
+    <string name="title_activity_new_settings">NewSettings</string>
+    <string name="action_settings">Definições</string>
+    <string name="version">Versão da aplicação</string>
+    <string name="cache">Limpar cache ao sair</string>
+    <string name="reflow">Ativar ajuste de texto</string>
+    <string name="block">Bloquear imagens</string>
+    <string name="window">Permitir que os sítios web abram novas janelas</string>
+    <string name="cookies">Ativar cookies</string>
+    <string name="importbookmarks">Importar marcadores do navegador</string>
+    <string name="size">Tamanho do texto</string>
+    <string name="recommended">Recomendado</string>
+    <string name="search">Mecanismo de pesquisa</string>
+    <string name="search_hint">Pesquisa</string>
+    <string name="wideViewPort">Utilizar viewport amplo</string>
+    <string name="overViewMode">Carregar páginas no modo panorâmico</string>
+    <string name="restore">Restaurar separadores ao iniciar</string>
+    <string name="stock_browser_unavailable">Navegador não detetado</string>
+    <string name="stock_browser_available">Navegador detetado</string>
+    <string name="fullScreenOption">Ocultar barra de estado ao navegar</string>
+    <string name="clear_cookies">Limpar cookies</string>
+    <string name="dialog_image">O que gostaria de fazer com esta imagem?</string>
+    <string name="action_download">Transferir</string>
+    <string name="action_open">Abrir</string>
+    <string name="dialog_link">O que gostaria de fazer com esta ligação?</string>
+    <string name="dialog_title_share">Partilhar esta página</string>
+    <string name="dialog_bookmark">O que gostaria de fazer com este marcador?</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_blank">Página vazia</string>
+    <string name="agent_default">Padrão</string>
+    <string name="agent_desktop">Desktop</string>
+    <string name="agent_mobile">Mobile</string>
+    <string name="agent_custom">Personalizado</string>
+    <string name="title_search_engine">Mecanismo de pesquisa</string>
+    <string name="action_ok">OK</string>
+    <string name="dialog_download">Gostaria de transferir este ficheiro?</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="title_warning">Aviso</string>
+    <string name="dialog_adobe_dead">Desculpe mas a Google fez algumas alterações e o Adobe Flash Player já não funciona em versões Android 4.4+.</string>
+    <string name="dialog_adobe_not_installed">O Adobe Flash Player não foi detetado.\nTem que instalar o Flash Player.</string>
+    <string name="dialog_adobe_unsupported">O Adobe Flash Player não funciona em sistemas Andoid 4.2+ e irá terminar a aplicação. Por favor não reporte os erros que ocorram se ativar o Adobe Flash Player.</string>
+    <string name="title_user_agent">Agente de utilizador</string>
+    <string name="title_download_location">Local das transferências</string>
+    <string name="title_custom_homepage">Página inicial personalizada</string>
+    <string name="action_webpage">Página web</string>
+    <string name="dialog_reflow_warning">Desculpe mas a Google fez algumas alterações e o ajuste de texto já não funciona em versões Android 4.4+.</string>
+    <string name="title_clear_history">Limpar histórico</string>
+    <string name="title_clear_cookies">Limpar cookies</string>
+    <string name="dialog_history">Gostaria de limpar todo o histórico do navegador?</string>
+    <string name="dialog_cookies">Gostaria de limpar todos os cookies do navegador?</string>
+    <string name="action_yes">Sim</string>
+    <string name="action_no">Não</string>
+    <string name="title_text_size">Tamanho do texto</string>
+    <string name="size_largest">Maior</string>
+    <string name="size_large">Grande</string>
+    <string name="size_normal">Normal</string>
+    <string name="size_small">Pequeno</string>
+    <string name="size_smallest">Manor</string>
+    <string name="title_error">Erro</string>
+    <string name="dialog_import_error">Não foi detetado qualquer navegador para importar os marcadores.</string>
+    <string name="hint_title">Título</string>
+    <string name="hint_url">URL</string>
+    <string name="title_edit_bookmark">Editar marcador</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_incognito">Novo separador incógnito</string>
+    <string name="hello_world">Olá mundo!</string>
+    <string name="action_homepage">Padrão</string>
+    <string name="action_back">Recuar</string>
+    <string name="action_find">Localizar na página</string>
+    <string name="download_pending">A iniciar transferência\u2026</string>
+    <string name="cannot_download">Apenas possível para os URL \"http\" ou \"https\".</string>
+    <string name="download_no_sdcard_dlg_title" >Cartão SD não encontrado</string>
+    <string name="download_no_sdcard_dlg_msg" >Necessita de um cartão SD para guardar o ficheiro transferido.</string>
+    <string name="download_sdcard_busy_dlg_title">Cartão SD não disponível</string>
+    <string name="download_sdcard_busy_dlg_msg" >O cartão SD está ocupado. Para poder transferir ficheiros, desative a opção Desativar armazenamento USB na notificação.</string>
+    <string name="incognito_cookies">Permitir cookies no modo incógnito</string>
+    <string name="title_flash">Adobe Flash</string>
+    <string name="action_manual">Manual</string>
+    <string name="action_auto">Automático</string>
+    <string name="action_follow_me">Contactos</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="clear_cache">Limpar cache</string>
+    <string name="message_cache_cleared">Cache limpa</string>
+    <string name="message_import">Marcadores importados</string>
+    <string name="message_clear_history">Histórico removido</string>
+    <string name="message_cookies_cleared">Cookies removidos</string>
+    <string name="max_tabs">Atingido número máximo de separadores</string>
+    <string name="message_text_copied">Texto copiado para a área de transferência</string>
+    <string name="message_link_copied">Ligação copiada para a área de transferência</string>
+    <string name="custom_url">URL personalizado</string>
+    <string name="message_blocked_local">Bloqueado o carregamento do ficheiro local</string>
+    <string name="licenses">Licenças Open Source</string>
+    <string name="suggestion">Pesquisar por</string>
+    <string name="block_ads">Bloquear anúncios</string>
+    <string name="message_untrusted_certificate">O certificado deste sítio web não é fiável. Continuar?</string>
+    <string name="title_form_resubmission">Submissão de formulário</string>
+    <string name="message_form_resubmission">Gostaria de reenviar os dados?</string>
+    <string name="message_location">\nGostaria de utilizar a sua localização</string>
+    <string name="action_allow">Sim</string>
+    <string name="action_dont_allow">Não</string>
+    <string name="title_sign_in">Iniciar sessão</string>
+    <string name="hint_username">Utilizador</string>
+    <string name="hint_password">Palavra-passe</string>
+    <string name="google_suggestions">Sugestões de pesquisa</string>
+    <string name="powered_by_google">Disponibilizado por Google</string>
+    <string name="title_adblock">AdBlock</string>
+    <string name="message_adblock">O AdBlock apenas está disponível na versão paga, o Lightning Browser+. Esta versão está disponível na loja Google.</string>
+    <string name="enable_orbot">Ativar Orbot</string>
+    <string name="use_tor_prompt">Parece que você tem o Orbot instalado. Gostaria de utilizar a rede Tor?</string>
+    <string name="install_orbot">Por favor instale o Orbot para poder utilizar a rede Tor.</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="clear_cookies_exit">Limpar cookies ao sair</string>
+    <string name="clear_history_exit">Limpar histórico ao sair</string>
+    <string name="folder_default">Padrão</string>
+    <string name="folder_custom">Personalizada</string>
+    <string name="untitled">Sem título</string>
+    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="freeware">Freeware</string>
+    <string name="android_open_source_project">Projeto Android Open Source</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
+    <string name="deleted_tab">Reabrir último separador</string>
+    <string name="rendering_mode">Modo de processamento</string>
+    <string name="name_inverted">Invertido</string>
+    <string name="name_grayscale">Escala de cinzento</string>
+    <string name="name_inverted_grayscale">Escala de cinzento invertida</string>
+    <string name="name_normal">Normal</string>
+    <string name="sync_history">Sincronizar histórico com Google</string>
+    <string name="title_file_chooser">Seletor de ficheiros</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="export_bookmarks">Exportar marcadores para backup</string>
+    <string name="import_backup">Importar marcadores de backup</string>
+    <string name="bookmark_export_path">Marcadores guardados em</string>
+    <string name="bookmark_settings">Definições de marcadores</string>
+    <string name="import_bookmark_error">Não foi possível importar os marcadores do ficheiro</string>
+    <string name="title_chooser">Escolha um ficheiro</string>
+    <string name="settings_general">Definições gerais</string>
+    <string name="settings_display">Definições de exibição</string>
+    <string name="settings_privacy">Definições de privacidade</string>
+    <string name="settings_about">Sobre</string>
+    <string name="settings_about_explain">Detalhes da versão, do autor e da licença</string>
+    <string name="close_tab">Fechar separador</string>
+    <string name="close_all_tabs">Fechar todos os separadores</string>
+    <string name="third_party">Bloquear cookies de terceiros</string>
+    <string name="available_lollipop">Funcionalidade apenas disponíveis para Android 5.0+</string>
+    <string name="color_mode">Ativar modo de cor</string>
+    <string name="reading_mode">Modo de leitura</string>
+    <string name="loading">A carregar&#8230;</string>
+    <string name="loading_failed">A página não foi carregada.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT License</string>
+    <string name="url_contents">URL Box Contents</string>
+    <string-array name="url_content_array">
+        <item >Domínio (padrão)</item>
+        <item >URL</item>
+        <item >Título</item>
+    </string-array>
+        <string name="invert_color">Inverter cores</string>
+        <string name="dark_theme">Utilizar tema escuro</string>
+        <string name="change_after_restart">Esta opção será aplicada depois de reiniciar a aplicação.</string>
+        <string name="tabs">Separadores</string>
+</resources>
