@@ -206,9 +206,9 @@
     <string name="mit_license">MIT License</string>
     <string name="url_contents">URL doboz tartalma</string>
     <string-array name="url_content_array">
-        <item >Domain (default)</item>
+        <item >Domain (alapértelmezett)</item>
         <item >URL</item>
-        <item >Title</item>
+        <item >Cím</item>
     </string-array>
         <string name="invert_color">Negatív szín</string>
         <string name="dark_theme">Sötét téma használata</string>
