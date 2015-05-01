@@ -1295,6 +1295,10 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	public void clearCookies() {
+		// TODO Break out web storage deletion into its own option/action
+		// TODO clear web storage for all sites that are visited in Incognito mode
+		WebStorage storage = WebStorage.getInstance();
+		storage.deleteAllData();
 		CookieManager c = CookieManager.getInstance();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			c.removeAllCookies(null);

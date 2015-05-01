@@ -44,8 +44,6 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// TODO WARNING: SharedPreferences.edit() without a corresponding
-		// commit() or apply() call
 		mPreferences = PreferenceManager.getInstance();
 
 		mSystemBrowser = mPreferences.getSystemBrowserPresent();
@@ -429,6 +427,10 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 	@SuppressWarnings("deprecation")
 	public void clearCookies() {
+		// TODO Break out web storage deletion into its own option/action
+		// TODO clear web storage for all sites that are visited in Incognito mode
+		WebStorage storage = WebStorage.getInstance();
+		storage.deleteAllData();
 		CookieManager c = CookieManager.getInstance();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
