@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2014  The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<resources>
+
+    <string name="app_name">Lightning</string>
+    <string name="drawer_open">Navigation-Drawer öffnen</string>
+    <string name="drawer_close">Navigation-Drawer schließen</string>
+    <string name="action_websearch">Websuche</string>
+    <string name="action_refresh">Aktualisieren</string>
+    <string name="action_new_tab">Neuer Tab</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_history">Verlauf</string>
+    <string name="action_bookmarks">Lesezeichen</string>
+    <string name="action_add_bookmark">Lesezeichen hinzufügen</string>
+    <string name="action_copy">Link kopieren</string>
+    <string name="action_forward">Weiter</string>
+    <string name="google">Google</string>
+    <string name="settings">Einstellungen</string>
+    <string name="location">Standortzugriff erlauben</string>
+    <string name="password">Passwörter speichern</string>
+    <string name="agent">User-Agent</string>
+    <string name="history">Verlauf leeren</string>
+    <string name="email">Kontakt</string>
+    <string name="flash">Adobe Flash aktivieren</string>
+    <string name="mobile">Mobile Ansicht</string>
+    <string name="desk">Desktop Ansicht</string>
+    <string name="custom">Benutzerdefinierte Ansicht</string>
+    <string name="home">Startseite</string>
+    <string name="settingshelp">Einstellungen nur für neue Tabs gültig</string>
+    <string name="fullscreen">Vollbildmodus aktivieren</string>
+    <string name="java">JavaScript aktivieren</string>
+    <string name="saveTab">Geschlossene Tab wiederherstellen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="download">Download-Verzeichnis</string>
+    <string name="settings_advanced">Erweitert</string>
+    <string name="source">Quelltext</string>
+    <string name="license">Lizenz</string>
+    <string name="github">github.com/anthonycr/Lightning-Browser</string>
+    <string name="apache">Apache License 2.0</string>
+    <string name="title_activity_new_settings">Neue Einstellungen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="version">Programmversion</string>
+    <string name="cache">Cache beim Beenden leeren</string>
+    <string name="reflow">Textfluß anpassen</string>
+    <string name="block">Bilder blockieren</string>
+    <string name="window">Seiten erlauben ein neues Fenster zu öffnen</string>
+    <string name="cookies">Cookies erlauben</string>
+    <string name="importbookmarks">Lesezeichen vom Standardbrowser importieren</string>
+    <string name="size">Textgröße</string>
+    <string name="recommended">(Empfohlen)</string>
+    <string name="search">Suchdienst</string>
+    <string name="search_hint">Suche</string>
+    <string name="wideViewPort">Breiten Anzeigebereich verwenden</string>
+    <string name="overViewMode">Seiten in der Übersicht öffnen</string>
+    <string name="restore">Tab beim Start wiederherstellen</string>
+    <string name="stock_browser_unavailable">(Kein unterstützter Standardbrowser gefunden)</string>
+    <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
+    <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
+    <string name="clear_cookies">Cookies löschen</string>
+    <string name="dialog_image">Was möchten Sie mit diesem Bild tun?</string>
+    <string name="action_download">Herunterladen</string>
+    <string name="action_open">Öffnen</string>
+    <string name="dialog_link">Was möchten Sie mit diesem Link tun?</string>
+    <string name="dialog_title_share">Diese Webseite teilen</string>
+    <string name="dialog_bookmark">Was möchten Sie mit diesem Lesezeichen tun?</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_blank">Leere Seite</string>
+    <string name="agent_default">Standard</string>
+    <string name="agent_desktop">Desktop</string>
+    <string name="agent_mobile">Mobile</string>
+    <string name="agent_custom">Andere</string>
+    <string name="title_search_engine">Suchmaschine</string>
+    <string name="action_ok">Ok</string>
+    <string name="dialog_download">Möchten Sie diese Datei herunterladen?</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="title_warning">Warnung</string>
+    <string name="dialog_adobe_dead">Hinweis: Google hat einige Änderungen in Android 4.4+ eingeführt und Adobe Flash ist dadurch nicht mehr möglich!</string>
+    <string name="dialog_adobe_not_installed">Adobe Flash Player wurde nicht erkannt.\nBitte installieren Sie den Flash Player.</string>
+    <string name="dialog_adobe_unsupported">Adobe Flash unterstützt Andoid 4.2 und höher nicht mehr und kann zu Abstürzen führen. Bitte melden Sie keine Probleme, wenn Sie Flash aktiviert haben!</string>
+    <string name="title_user_agent">User-Agent</string>
+    <string name="title_download_location">Download-Verzeichnis festlegen</string>
+    <string name="title_custom_homepage">Benutzerdefinierte Startseite</string>
+    <string name="action_webpage">Webseite</string>
+    <string name="dialog_reflow_warning">Hinweis: Google hat einige Änderungen in Android 4.4+ eingeführt und eine Textumformierung ist nicht mehr möglich!</string>
+    <string name="title_clear_history">Verlauf löschen</string>
+    <string name="title_clear_cookies">Cookies löschen</string>
+    <string name="dialog_history">Möchten Sie den gesamten Verlauf sicher löschen?</string>
+    <string name="dialog_cookies">Möchten Sie alle Cookies sicher löschen?</string>
+    <string name="action_yes">Ja</string>
+    <string name="action_no">Nein</string>
+    <string name="title_text_size">Textgröße</string>
+    <string name="size_largest">Sehr groß</string>
+    <string name="size_large">Groß</string>
+    <string name="size_normal">Standard</string>
+    <string name="size_small">Klein</string>
+    <string name="size_smallest">Sehr klein</string>
+    <string name="title_error">Fehler</string>
+    <string name="dialog_import_error">Kein Browser zum Importieren der Lesezeichen vorhanden!</string>
+    <string name="hint_title">Titel</string>
+    <string name="hint_url">URL</string>
+    <string name="title_edit_bookmark">Lesezeichen bearbeiten</string>
+    <string name="action_edit">Bearbeiten</string>
+    <string name="action_incognito">Neuer Inkognito-Tab</string>
+    <string name="hello_world">Hallo Welt!</string>
+    <string name="action_homepage">Standard</string>
+    <string name="action_back">Zurück</string>
+    <string name="action_find">Auf Seite suchen</string>
+    <string name="download_pending">Herunterladen läuft\u2026</string>
+    <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
+    <string name="download_no_sdcard_dlg_title" >Keine SD-Karte</string>
+    <string name="download_no_sdcard_dlg_msg" >USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
+    <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar!</string>
+    <string name="download_sdcard_busy_dlg_msg" >Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
+    <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
+    <string name="title_flash">Adobe Flash</string>
+    <string name="action_manual">Manuell</string>
+    <string name="action_auto">Auto</string>
+    <string name="action_follow_me">Kontakt</string>
+    <string name="url_twitter">twitter.com/ACRDevelopment</string>
+    <string name="clear_cache">Cache löschen</string>
+    <string name="message_cache_cleared">Cache gelöscht</string>
+    <string name="message_import">Lesezeichen wurden importiert</string>
+    <string name="message_clear_history">Verlauf gelöscht</string>
+    <string name="message_cookies_cleared">Cookies gelöscht</string>
+    <string name="max_tabs">Maximale Reiteranzahl erreicht!</string>
+    <string name="message_text_copied">Text in Zwischenablage kopiert</string>
+    <string name="message_link_copied">Link in Zwischenablage kopiert</string>
+    <string name="custom_url">Benutzerdefinierte URL</string>
+    <string name="message_blocked_local">Lokale Datei wurde beim Laden blockiert!</string>
+    <string name="licenses">Open Source-Lizenzen</string>
+    <string name="suggestion">Suche nach</string>
+    <string name="block_ads">Werbung blockieren</string>
+    <string name="message_untrusted_certificate">Das Zertifikat dieser Webseite ist nicht vertrauenswürdig. Trotzdem fortsetzen?</string>
+    <string name="title_form_resubmission">Formularneuzustellung</string>
+    <string name="message_form_resubmission">Daten erneut senden?</string>
+    <string name="message_location">\nMeine Position verwenden?</string>
+    <string name="action_allow">Erlauben</string>
+    <string name="action_dont_allow">Nicht erlauben</string>
+    <string name="title_sign_in">Anmelden</string>
+    <string name="hint_username">Benutzername</string>
+    <string name="hint_password">Passwort</string>
+    <string name="google_suggestions">Suchvorschläge</string>
+    <string name="powered_by_google">Unterstützt durch Google</string>
+    <string name="title_adblock">Werbeblocker</string>
+    <string name="message_adblock">Der Werbeblocker ist nur in Lightning Browser+ verfügbar und kann im Google Play Store gekauft werden!</string>
+    <string name="enable_orbot">Orbot aktivieren</string>
+    <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
+    <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="clear_cookies_exit">Cookies beim Beenden löschen</string>
+    <string name="clear_history_exit">Verlauf beim Beenden löschen</string>
+    <string name="folder_default">Standard</string>
+    <string name="folder_custom">Andere</string>
+    <string name="untitled">Ohne Titel</string>
+    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="freeware">Freeware</string>
+    <string name="android_open_source_project">Android Open Source Project</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server Liste</string>
+    <string name="deleted_tab">Alten Tab geöffnet</string>
+    <string name="rendering_mode">Rendering Modus</string>
+    <string name="name_inverted">Invertiert</string>
+    <string name="name_grayscale">Graustufen</string>
+    <string name="name_inverted_grayscale">Invertierte Graustufen</string>
+    <string name="name_normal">Normal</string>
+    <string name="sync_history">Verlauf mit Google synchronisieren</string>
+    <string name="title_file_chooser">Dateiauswahl</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="export_bookmarks">Exportiere Backup</string>
+    <string name="import_backup">Importiere Backup</string>
+    <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
+    <string name="bookmark_settings">Lesezeichen</string>
+    <string name="import_bookmark_error">Lesezeichen konnten nicht imprortiert werden</string>
+    <string name="title_chooser">Wähle Datei aus</string>
+    <string name="settings_general">Allgemein</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_privacy">Privatsphäre</string>
+    <string name="settings_about">Über</string>
+    <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
+    <string name="close_tab">Tab schließen</string>
+    <string name="close_all_tabs">Alle Tabs schließen</string>
+    <string name="third_party">Drittanbieter Cookies blockieren</string>
+    <string name="available_lollipop">Dieses Feature ist nur ab Android 5.0+ verfügbar</string>
+    <string name="color_mode">Farbmodus aktivieren</string>
+    <string name="reading_mode">Lesemodus</string>
+    <string name="loading">Lade&#8230;</string>
+    <string name="loading_failed">Es konnte nichts von der Seite geladen werden.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT Lizenz</string>
+    <string name="url_contents">URL-Box Inhalt</string>
+    <string-array name="url_content_array">
+        <item >Domain (Standard)</item>
+        <item >URL</item>
+        <item >Titel</item>
+    </string-array>
+</resources>
