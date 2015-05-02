@@ -10,6 +10,5 @@ android:
 before_install:
   - git submodule update --init --recursive
 install:
-  - ./setup-ant.sh
+  - ./gradlew
 script:
-  - ant debug && lint -w --exitcode --disable MissingTranslation .
