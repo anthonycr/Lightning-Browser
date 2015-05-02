@@ -9,6 +9,8 @@ android:
     - '.*intel.+'
 before_install:
   - chmod +x gradlew
+  - android update sdk --filter extra-android-support --no-ui --force > /dev/null
+  - android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
   - git submodule update --init --recursive
 install:
   - ./gradlew
