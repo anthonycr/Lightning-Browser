@@ -193,4 +193,25 @@
     <string name="settings_privacy">Поставке приватности</string>
     <string name="settings_about">О програму</string>
     <string name="settings_about_explain">Детаљи о издању, аутору и лиценци.</string>
+    <string name="close_tab">Затвори језичак</string>
+    <string name="close_all_tabs">Затвори све језичке</string>
+    <string name="third_party">Блокирај колачиће треће стране</string>
+    <string name="available_lollipop">Доступно само на Андроиду 5.0+</string>
+    <string name="color_mode">Режим боје</string>
+    <string name="reading_mode">Режим исцртавања</string>
+    <string name="loading">Учитавам&#8230;</string>
+    <string name="loading_failed">Нисам могао ништа да учитам са странице.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Јава ХТМЛ рашчлањивач</string>
+    <string name="mit_license">МИТ лиценца</string>
+    <string name="url_contents">Садржај УРЛ бокса</string>
+    <string-array name="url_content_array">
+        <item >Домен (подраз.)</item>
+        <item >УРЛ</item>
+        <item >Наслов</item>
+    </string-array>
+        <string name="invert_color">Обрнута боја</string>
+        <string name="dark_theme">Тамна тема</string>
+        <string name="change_after_restart">Промена теме ће бити извршена по поновном покретању прегледача.</string>
+        <string name="tabs">Језичци</string>
 </resources>
