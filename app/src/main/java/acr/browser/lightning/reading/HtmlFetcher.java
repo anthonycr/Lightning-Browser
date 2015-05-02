@@ -33,7 +33,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import acr.browser.lightning.Constants;
+import acr.browser.lightning.constant.Constants;
 import android.util.Log;
 
 /**

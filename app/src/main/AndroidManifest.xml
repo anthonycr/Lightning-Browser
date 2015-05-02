@@ -29,13 +29,13 @@
         android:targetSdkVersion="22" />
 
     <application
-        android:name="acr.browser.lightning.BrowserApp"
+        android:name=".activity.BrowserApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name="acr.browser.lightning.MainActivity"
+            android:name=".activity.MainActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
@@ -62,7 +62,9 @@
             </intent-filter>
             <!--
                   For these schemes where any of these particular MIME types
-                  have been supplied, we are a good candidate.
+                  have been supplied, we are a good candidate.
+
+
             -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -102,7 +104,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings"
             android:theme="@style/Theme.SettingsTheme" >
@@ -113,7 +115,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.GeneralSettingsActivity"
+            android:name=".activity.GeneralSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_general"
             android:theme="@style/Theme.SettingsTheme" >
@@ -124,7 +126,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.DisplaySettingsActivity"
+            android:name=".activity.DisplaySettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_display"
             android:theme="@style/Theme.SettingsTheme" >
@@ -135,7 +137,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.PrivacySettingsActivity"
+            android:name=".activity.PrivacySettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_privacy"
             android:theme="@style/Theme.SettingsTheme" >
@@ -146,7 +148,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.AdvancedSettingsActivity"
+            android:name=".activity.AdvancedSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_advanced"
             android:theme="@style/Theme.SettingsTheme" >
@@ -157,7 +159,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.AboutSettingsActivity"
+            android:name=".activity.AboutSettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/settings_about"
             android:theme="@style/Theme.SettingsTheme" >
@@ -168,7 +170,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.IncognitoActivity"
+            android:name=".activity.IncognitoActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
@@ -182,7 +184,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.LicenseActivity"
+            android:name=".activity.LicenseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/licenses"
             android:theme="@style/Theme.SettingsTheme" >
@@ -193,7 +195,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.BookmarkActivity"
+            android:name=".activity.BookmarkActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/bookmark_settings"
             android:theme="@style/Theme.SettingsTheme" >
@@ -204,7 +206,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="acr.browser.lightning.ReadingActivity"
+            android:name=".activity.ReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/reading_mode"
             android:theme="@style/Theme.SettingsTheme" >

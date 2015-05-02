@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/progressBackgroundColor" >
 
-        <acr.browser.lightning.AnimatedProgressBar
+        <acr.browser.lightning.view.AnimatedProgressBar
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="2dp"

@@ -20,7 +20,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import acr.browser.lightning.Constants;
+import acr.browser.lightning.constant.Constants;
 import android.util.Log;
 
 /**
