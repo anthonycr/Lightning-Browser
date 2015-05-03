@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2013 The Android Open Source Project
-
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
       http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -193,4 +190,25 @@
     <string name="settings_privacy">Поставке приватности</string>
     <string name="settings_about">О програму</string>
     <string name="settings_about_explain">Детаљи о издању, аутору и лиценци.</string>
+    <string name="close_tab">Затвори језичак</string>
+    <string name="close_all_tabs">Затвори све језичке</string>
+    <string name="third_party">Блокирај колачиће треће стране</string>
+    <string name="available_lollipop">Доступно само на Андроиду 5.0+</string>
+    <string name="color_mode">Режим боје</string>
+    <string name="reading_mode">Режим исцртавања</string>
+    <string name="loading">Учитавам&#8230;</string>
+    <string name="loading_failed">Нисам могао ништа да учитам са странице.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Јава ХТМЛ рашчлањивач</string>
+    <string name="mit_license">МИТ лиценца</string>
+    <string name="url_contents">Садржај УРЛ бокса</string>
+    <string-array name="url_content_array">
+        <item >Домен (подраз.)</item>
+        <item >УРЛ</item>
+        <item >Наслов</item>
+    </string-array>
+    <string name="invert_color">Обрнута боја</string>
+    <string name="dark_theme">Тамна тема</string>
+    <string name="change_after_restart">Промена теме ће бити извршена по поновном покретању прегледача.</string>
+    <string name="tabs">Језичци</string>
 </resources>
