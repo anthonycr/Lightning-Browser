@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="app_name">Lightning</string>
     <string name="drawer_open">Open navigation drawer</string>
