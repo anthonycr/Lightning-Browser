@@ -77,15 +77,6 @@ public class AnimatedProgressBar extends LinearLayout {
 
     }
 
-    /**
-     * Returns the current progress value between 0 and 100
-     *
-     * @return progress of the view
-     */
-    public int getProgress() {
-        return mProgress;
-    }
-
     private final Paint mPaint = new Paint();
     private final Rect mRect = new Rect();
 
@@ -127,9 +118,9 @@ public class AnimatedProgressBar extends LinearLayout {
             // previous progress
             mDrawWidth = 0;
         } else if (progress == mProgress) {     // we don't need to go any farther if the progress is unchanged
-        	if (progress == 100) {
-        		fadeOut();
-        	}
+            if (progress == 100) {
+                fadeOut();
+            }
             return;
         }
 

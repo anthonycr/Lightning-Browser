@@ -3,6 +3,6 @@
     android:id="@+id/progress_background"
     android:layout_width="match_parent"
     android:layout_height="5dp"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
 </LinearLayout>

@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar_settings" />
 
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/rLocation"
@@ -24,7 +24,7 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/textView1"
@@ -60,7 +60,7 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -95,14 +95,14 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textView2"
@@ -147,7 +147,7 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/textView4"
@@ -183,7 +183,7 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -218,7 +218,7 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -253,14 +253,14 @@
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -302,7 +302,7 @@
                 android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -328,7 +328,7 @@
                 android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -354,7 +354,7 @@
                 android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -7,7 +7,7 @@
     android:background="?attr/drawerBackground"
     android:clickable="true"
     android:fitsSystemWindows="true"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/bookmark_title"
@@ -15,7 +15,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/dividerColor"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/starIcon"
@@ -27,8 +27,7 @@
             android:layout_marginRight="15dp"
             android:contentDescription="Favicon"
             android:gravity="center_vertical"
-            android:src="?attr/starDrawable" >
-        </ImageView>
+            android:src="?attr/starDrawable" />
 
         <TextView
             android:layout_width="match_parent"

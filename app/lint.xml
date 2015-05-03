@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<lint>
-    <issue id="all">
-        <ignore path="external/**" />
-    </issue>
-    <issue id="NewApi" severity="ignore" />
-</lint>

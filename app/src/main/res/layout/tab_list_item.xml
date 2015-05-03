@@ -4,7 +4,7 @@
     android:layout_height="56dp"
     android:background="?attr/selectedBackground"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/faviconTab"
@@ -15,8 +15,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:contentDescription="Favicon"
-        android:gravity="center_vertical" >
-    </ImageView>
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/textTab"
@@ -46,7 +45,6 @@
         android:contentDescription="Delete Tab"
         android:gravity="center_vertical"
         android:padding="12dp"
-        android:src="?attr/deleteDrawable" >
-    </ImageView>
+        android:src="?attr/deleteDrawable" />
 
 </RelativeLayout>
