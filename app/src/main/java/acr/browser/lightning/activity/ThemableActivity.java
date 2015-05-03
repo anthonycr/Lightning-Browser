@@ -2,12 +2,12 @@ package acr.browser.lightning.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.R;
+import acr.browser.lightning.preference.PreferenceManager;
 
-public abstract class ThemableActivity extends ActionBarActivity {
+public abstract class ThemableActivity extends AppCompatActivity {
 
 	private boolean mDark;
 
