@@ -16,14 +16,13 @@
 package acr.browser.lightning.reading;
 
 /**
- * 
  * @author Peter Karich
  */
 public interface SCache {
 
-	JResult get(String url);
+    JResult get(String url);
 
-	void put(String url, JResult res);
+    void put(String url, JResult res);
 
-	int getSize();
+    int getSize();
 }

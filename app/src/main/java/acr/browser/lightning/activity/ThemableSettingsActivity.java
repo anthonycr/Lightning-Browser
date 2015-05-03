@@ -9,33 +9,33 @@ import acr.browser.lightning.preference.PreferenceManager;
 
 public abstract class ThemableSettingsActivity extends AppCompatActivity {
 
-	private boolean mDark;
+    private boolean mDark;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		mDark = PreferenceManager.getInstance().getUseDarkTheme();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        mDark = PreferenceManager.getInstance().getUseDarkTheme();
 
-		// set the theme
-		if (mDark) {
-			setTheme(R.style.Theme_SettingsTheme_Dark);
-		}
-		super.onCreate(savedInstanceState);
-	}
+        // set the theme
+        if (mDark) {
+            setTheme(R.style.Theme_SettingsTheme_Dark);
+        }
+        super.onCreate(savedInstanceState);
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (PreferenceManager.getInstance().getUseDarkTheme() != mDark) {
-			restart();
-		}
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (PreferenceManager.getInstance().getUseDarkTheme() != mDark) {
+            restart();
+        }
+    }
 
-	protected void restart() {
-		final Bundle outState = new Bundle();
-		onSaveInstanceState(outState);
-		final Intent intent = new Intent(this, getClass());
-		finish();
-		overridePendingTransition(0, 0);
-		startActivity(intent);
-	}
+    protected void restart() {
+        final Bundle outState = new Bundle();
+        onSaveInstanceState(outState);
+        final Intent intent = new Intent(this, getClass());
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+    }
 }

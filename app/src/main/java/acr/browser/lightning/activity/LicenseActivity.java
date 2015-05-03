@@ -19,54 +19,54 @@ import acr.browser.lightning.R;
  */
 public class LicenseActivity extends ThemableSettingsActivity implements View.OnClickListener {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.license_activity);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.license_activity);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		findViewById(R.id.browserLicense).setOnClickListener(this);
-		findViewById(R.id.licenseAOSP).setOnClickListener(this);
-		findViewById(R.id.licenseHosts).setOnClickListener(this);
-		findViewById(R.id.licenseOrbot).setOnClickListener(this);
-		findViewById(R.id.licenseSnactory).setOnClickListener(this);
-		findViewById(R.id.licenseJsoup).setOnClickListener(this);
-	}
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.browserLicense).setOnClickListener(this);
+        findViewById(R.id.licenseAOSP).setOnClickListener(this);
+        findViewById(R.id.licenseHosts).setOnClickListener(this);
+        findViewById(R.id.licenseOrbot).setOnClickListener(this);
+        findViewById(R.id.licenseSnactory).setOnClickListener(this);
+        findViewById(R.id.licenseJsoup).setOnClickListener(this);
+    }
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.browserLicense:
-				actionView("http://www.mozilla.org/MPL/2.0/");
-				break;
-			case R.id.licenseAOSP:
-				actionView("http://www.apache.org/licenses/LICENSE-2.0");
-				break;
-			case R.id.licenseHosts:
-				actionView("http://hosts-file.net/");
-				break;
-			case R.id.licenseOrbot:
-				actionView("http://www.gnu.org/licenses/lgpl.html");
-				break;
-			case R.id.licenseSnactory:
-				actionView("http://www.apache.org/licenses/LICENSE-2.0");
-				break;
-			case R.id.licenseJsoup:
-				actionView("http://jsoup.org/license");
-				break;
-		}
-	}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.browserLicense:
+                actionView("http://www.mozilla.org/MPL/2.0/");
+                break;
+            case R.id.licenseAOSP:
+                actionView("http://www.apache.org/licenses/LICENSE-2.0");
+                break;
+            case R.id.licenseHosts:
+                actionView("http://hosts-file.net/");
+                break;
+            case R.id.licenseOrbot:
+                actionView("http://www.gnu.org/licenses/lgpl.html");
+                break;
+            case R.id.licenseSnactory:
+                actionView("http://www.apache.org/licenses/LICENSE-2.0");
+                break;
+            case R.id.licenseJsoup:
+                actionView("http://jsoup.org/license");
+                break;
+        }
+    }
 
-	private void actionView(String url) {
-		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), this, MainActivity.class));
-		finish();
-	}
+    private void actionView(String url) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url), this, MainActivity.class));
+        finish();
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		finish();
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        return super.onOptionsItemSelected(item);
+    }
 }
