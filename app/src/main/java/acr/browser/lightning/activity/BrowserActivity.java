@@ -547,7 +547,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		try {
 			String host = mPreferences.getProxyHost();
 			int port = mPreferences.getProxyPort();
-			WebkitProxy.setProxy(this.getPackageName() + ".BrowserApp", getApplicationContext(),
+			WebkitProxy.setProxy(BrowserApp.class.getName(), getApplicationContext(),
 					host, port);
 		} catch (Exception e) {
 			Log.d(Constants.TAG, "error enabling web proxying", e);
@@ -710,7 +710,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			initializeTor();
 		} else {
 			try {
-				WebkitProxy.resetProxy(mActivity.getPackageName() + ".BrowserApp",
+				WebkitProxy.resetProxy(BrowserApp.class.getName(),
 						getApplicationContext());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1010,7 +1010,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	/**
 	 * Takes in the id of which bookmark was selected and shows a dialog that
 	 * allows the user to rename and change the url of the bookmark
-	 * 
+	 *
 	 * @param id
 	 *            which id in the list was chosen
 	 */
@@ -1054,7 +1054,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	/**
 	 * displays the WebView contained in the LightningView Also handles the
 	 * removal of previous views
-	 * 
+	 *
 	 * @param view
 	 *            the LightningView to show
 	 */
@@ -2196,7 +2196,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	/**
 	 * turns on fullscreen mode in the app
-	 * 
+	 *
 	 * @param enabled
 	 *            whether to enable fullscreen or not
 	 */
@@ -2373,7 +2373,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	@Override
 	/**
-	 * handles a long click on the page, parameter String url 
+	 * handles a long click on the page, parameter String url
 	 * is the url that should have been obtained from the WebView touch node
 	 * thingy, if it is null, this method tries to deal with it and find a workaround
 	 */
@@ -2586,7 +2586,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	/**
 	 * handle presses on the refresh icon in the search bar, if the page is
 	 * loading, stop the page, if it is done loading refresh the page.
-	 * 
+	 *
 	 * See setIsFinishedLoading and setIsLoading for displaying the correct icon
 	 */
 	public void refreshOrStop() {
