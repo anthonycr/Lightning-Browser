@@ -8,19 +8,25 @@ android {
         applicationId "acr.browser.lightning"
         minSdkVersion 14
         targetSdkVersion 22
+        versionCode 77
+        versionName "4.0.9a"
     }
 
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            proguardFiles 'proguard-project.txt'
         }
         debug {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            proguardFiles 'proguard-project.txt'
         }
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
