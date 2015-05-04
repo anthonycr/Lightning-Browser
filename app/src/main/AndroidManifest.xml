@@ -24,10 +24,6 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
 
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="22" />
-
     <application
         android:name=".activity.BrowserApp"
         android:allowBackup="true"

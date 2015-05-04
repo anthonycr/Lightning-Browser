@@ -115,7 +115,7 @@ public final class Utils {
 	}
 
 	public static List<HistoryItem> getOldBookmarks(Context context) {
-		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
+		List<HistoryItem> bookmarks = new ArrayList<>();
 		File bookUrl = new File(context.getFilesDir(), "bookurl");
 		File book = new File(context.getFilesDir(), "bookmarks");
 		try {
@@ -128,8 +128,8 @@ public final class Utils {
 			}
 			readBook.close();
 			readUrl.close();
-		} catch (FileNotFoundException ignored) {
-		} catch (IOException ignored) {
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return bookmarks;
 	}
@@ -192,11 +192,10 @@ public final class Utils {
 		String imageFileName = "JPEG_" + timeStamp + "_";
 		File storageDir = Environment
 				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		File imageFile = File.createTempFile(imageFileName, /* prefix */
+		return File.createTempFile(imageFileName, /* prefix */
 				".jpg", /* suffix */
 				storageDir /* directory */
 		);
-		return imageFile;
 	}
 
 	public static Bitmap getWebpageBitmap(Resources resources, boolean dark) {

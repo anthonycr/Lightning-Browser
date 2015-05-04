@@ -26,15 +26,15 @@ import acr.browser.lightning.R;
  */
 public class FetchUrlMimeType extends Thread {
 
-	private Context mContext;
+	private final Context mContext;
 
-	private DownloadManager.Request mRequest;
+	private final DownloadManager.Request mRequest;
 
-	private String mUri;
+	private final String mUri;
 
-	private String mCookies;
+	private final String mCookies;
 
-	private String mUserAgent;
+	private final String mUserAgent;
 
 	public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
 			String cookies, String userAgent) {
@@ -78,10 +78,7 @@ public class FetchUrlMimeType extends Thread {
 					contentDisposition = contentDispositionHeader;
 				}
 			}
-		} catch (IllegalArgumentException ex) {
-			if (connection != null)
-				connection.disconnect();
-		} catch (IOException ex) {
+		} catch (IllegalArgumentException | IOException ex) {
 			if (connection != null)
 				connection.disconnect();
 		} finally {

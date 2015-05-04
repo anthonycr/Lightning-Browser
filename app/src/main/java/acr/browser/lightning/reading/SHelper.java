@@ -279,11 +279,10 @@ public class SHelper {
 		if (url.startsWith("http://www.google.com/url?")) {
 			url = url.substring("http://www.google.com/url?".length());
 			String arr[] = urlDecode(url).split("\\&");
-			if (arr != null)
-				for (String str : arr) {
-					if (str.startsWith("q="))
-						return str.substring("q=".length());
-				}
+			for (String str : arr) {
+                if (str.startsWith("q="))
+                    return str.substring("q=".length());
+            }
 		}
 
 		return null;
@@ -382,6 +381,7 @@ public class SHelper {
 					try {
 						day = Integer.parseInt(str);
 					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 					if (day < 1 || day > 31) {
 						day = -1;

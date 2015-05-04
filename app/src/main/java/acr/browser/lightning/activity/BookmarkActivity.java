@@ -24,8 +24,6 @@ import acr.browser.lightning.R;
 public class BookmarkActivity extends ThemableSettingsActivity implements OnClickListener {
 
 	private BookmarkManager mBookmarkManager;
-	private PreferenceManager mPreferences;
-	private boolean mSystemBrowser;
 	private File[] mFileList;
 	private String[] mFileNameList;
 	private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
@@ -48,15 +46,15 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 		TextView importBookmarks = (TextView) findViewById(R.id.isImportBrowserAvailable);
 
 		mBookmarkManager = BookmarkManager.getInstance(getApplicationContext());
-		mPreferences = PreferenceManager.getInstance();
-		
-		mSystemBrowser = mPreferences.getSystemBrowserPresent();
+		PreferenceManager mPreferences = PreferenceManager.getInstance();
+
+		boolean systemBrowser = mPreferences.getSystemBrowserPresent();
 
 		exportBackup.setOnClickListener(this);
 		importBackup.setOnClickListener(this);
 		importFromBrowser.setOnClickListener(this);
 
-		if (mSystemBrowser) {
+		if (systemBrowser) {
 			importBookmarks.setText(getResources().getString(R.string.stock_browser_available));
 		} else {
 			importBookmarks.setText(getResources().getString(R.string.stock_browser_unavailable));
@@ -116,7 +114,7 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 		}
 	}
 	
-	public class SortName implements Comparator<File> {
+	private class SortName implements Comparator<File> {
 
 		@Override
 		public int compare(File a, File b) {
@@ -137,7 +135,7 @@ public class BookmarkActivity extends ThemableSettingsActivity implements OnClic
 	}
 
 	protected Dialog onCreateDialog(int id) {
-		Dialog dialog = null;
+		Dialog dialog;
 		final AlertDialog.Builder builder = new Builder(this);
 
 		switch (id) {

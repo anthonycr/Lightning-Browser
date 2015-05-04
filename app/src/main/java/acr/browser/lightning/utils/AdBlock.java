@@ -20,7 +20,7 @@ public class AdBlock {
 
 	private static final String TAG = "AdBlock";
 	private static final String BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt";
-	private static final Set<String> mBlockedDomainsList = new HashSet<String>();
+	private static final Set<String> mBlockedDomainsList = new HashSet<>();
 	private boolean mBlockAds;
 	private static final Locale mLocale = Locale.getDefault();
 	private static AdBlock mInstance;

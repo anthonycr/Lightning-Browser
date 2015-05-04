@@ -131,8 +131,8 @@ public class DownloadHandler {
 	 *            If the request is coming from a private browsing tab.
 	 */
 	/* package */
-	static void onDownloadStartNoStream(Activity activity, String url, String userAgent,
-			String contentDisposition, String mimetype, boolean privateBrowsing) {
+	private static void onDownloadStartNoStream(Activity activity, String url, String userAgent,
+												String contentDisposition, String mimetype, boolean privateBrowsing) {
 
 		String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 

@@ -32,7 +32,7 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
-	private static int API = android.os.Build.VERSION.SDK_INT;
+	private static final int API = android.os.Build.VERSION.SDK_INT;
 	private PreferenceManager mPreferences;
 	private Context mContext;
 	private Activity mActivity;

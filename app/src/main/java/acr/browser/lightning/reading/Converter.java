@@ -15,13 +15,17 @@
  */
 package acr.browser.lightning.reading;
 
-import java.io.*;
-import java.net.SocketTimeoutException;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
 import acr.browser.lightning.constant.Constants;
-import android.util.Log;
 
 /**
  * This class is not thread safe. Use one new instance every time due to
@@ -156,8 +160,6 @@ public class Converter {
 			}
 
 			return output.toString(encoding);
-		} catch (SocketTimeoutException e) {
-			Log.e(Constants.TAG, e.toString() + " url:" + url);
 		} catch (IOException e) {
 			Log.e(Constants.TAG, e.toString() + " url:" + url);
 		} finally {
@@ -165,6 +167,7 @@ public class Converter {
 				try {
 					in.close();
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}

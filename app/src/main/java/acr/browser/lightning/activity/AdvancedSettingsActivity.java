@@ -163,7 +163,7 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 
 	}
 
-	public void renderPicker() {
+	private void renderPicker() {
 
 		AlertDialog.Builder picker = new AlertDialog.Builder(mContext);
 		picker.setTitle(getResources().getString(R.string.rendering_mode));
@@ -206,7 +206,7 @@ public class AdvancedSettingsActivity extends ThemableSettingsActivity {
 		picker.show();
 	}
 
-	public void urlBoxPicker() {
+	private void urlBoxPicker() {
 
 		AlertDialog.Builder picker = new AlertDialog.Builder(mContext);
 		picker.setTitle(getResources().getString(R.string.url_contents));

@@ -92,6 +92,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 		} else {
 			addHistoryItem(new HistoryItem(url, title));
 		}
+		q.close();
 	}
 
 	public synchronized void addHistoryItem(HistoryItem item) {
@@ -116,7 +117,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 	}
 
 	public List<HistoryItem> findItemsContaining(String search) {
-		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
+		List<HistoryItem> itemList = new ArrayList<>();
 		String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%"
 				+ search + "%' OR " + KEY_URL + " LIKE '%" + search + "%' " + "ORDER BY "
 				+ KEY_TIME_VISITED + " DESC LIMIT 5";
@@ -139,7 +140,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 	}
 
 	public List<HistoryItem> getLastHundredItems() {
-		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
+		List<HistoryItem> itemList = new ArrayList<>();
 		String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
 				+ " DESC";
 
@@ -161,7 +162,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 	}
 
 	public List<HistoryItem> getAllHistoryItems() {
-		List<HistoryItem> itemList = new ArrayList<HistoryItem>();
+		List<HistoryItem> itemList = new ArrayList<>();
 		String selectQuery = "SELECT  * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
 				+ " DESC";
 

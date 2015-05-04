@@ -1,9 +1,17 @@
 package acr.browser.lightning.database;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.os.Environment;
+import android.provider.Browser;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,15 +23,6 @@ import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.os.Environment;
-import android.provider.Browser;
-import android.widget.Toast;
-
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -31,13 +30,13 @@ import acr.browser.lightning.utils.Utils;
 
 public class BookmarkManager {
 
-	private Context mContext;
+	private final Context mContext;
 	private static final String TITLE = "title";
 	private static final String URL = "url";
 	private static final String FOLDER = "folder";
 	private static final String ORDER = "order";
 	private static final String FILE_BOOKMARKS = "bookmarks.dat";
-	private static SortedMap<String, Integer> mBookmarkMap = new TreeMap<String, Integer>(
+	private static SortedMap<String, Integer> mBookmarkMap = new TreeMap<>(
 			String.CASE_INSENSITIVE_ORDER);
 	private static BookmarkManager mInstance;
 
@@ -74,9 +73,7 @@ public class BookmarkManager {
 			bookmarkWriter.newLine();
 			bookmarkWriter.close();
 			mBookmarkMap.put(item.getUrl(), 1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 		return true;
@@ -104,9 +101,7 @@ public class BookmarkManager {
 				}
 			}
 			bookmarkWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 	}
@@ -117,7 +112,7 @@ public class BookmarkManager {
 	 * @param url
 	 */
 	public synchronized boolean deleteBookmark(String url) {
-		List<HistoryItem> list = new ArrayList<HistoryItem>();
+		List<HistoryItem> list;
 		if (url == null) {
 			return false;
 		}
@@ -141,9 +136,7 @@ public class BookmarkManager {
 				}
 			}
 			fileWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 		return bookmarkDeleted;
@@ -182,9 +175,7 @@ public class BookmarkManager {
 					mContext,
 					mContext.getString(R.string.bookmark_export_path) + " "
 							+ bookmarksExport.getPath(), Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 
@@ -196,7 +187,7 @@ public class BookmarkManager {
 	 * @return
 	 */
 	public synchronized List<HistoryItem> getBookmarks(boolean sort) {
-		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
+		List<HistoryItem> bookmarks = new ArrayList<>();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
@@ -212,11 +203,7 @@ public class BookmarkManager {
 				bookmarks.add(item);
 			}
 			bookmarksReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 		if (sort) {
@@ -232,7 +219,7 @@ public class BookmarkManager {
 	 * @return
 	 */
 	public synchronized List<HistoryItem> getBookmarksFromFolder(String folder) {
-		List<HistoryItem> bookmarks = new ArrayList<HistoryItem>();
+		List<HistoryItem> bookmarks = new ArrayList<>();
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
@@ -250,11 +237,7 @@ public class BookmarkManager {
 				}
 			}
 			bookmarksReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 		return bookmarks;
@@ -266,7 +249,7 @@ public class BookmarkManager {
 	 * @return
 	 */
 	private synchronized SortedMap<String, Integer> getBookmarkUrls() {
-		SortedMap<String, Integer> map = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
+		SortedMap<String, Integer> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
@@ -276,11 +259,7 @@ public class BookmarkManager {
 				map.put(object.getString(URL), 1);
 			}
 			bookmarksReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (JSONException | IOException e) {
 			e.printStackTrace();
 		}
 		return map;
@@ -292,8 +271,8 @@ public class BookmarkManager {
 	 * @return
 	 */
 	public synchronized List<HistoryItem> getFolders() {
-		List<HistoryItem> folders = new ArrayList<HistoryItem>();
-		SortedMap<String, Integer> folderMap = new TreeMap<String, Integer>(
+		List<HistoryItem> folders = new ArrayList<>();
+		SortedMap<String, Integer> folderMap = new TreeMap<>(
 				String.CASE_INSENSITIVE_ORDER);
 		File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
 		try {
@@ -311,11 +290,7 @@ public class BookmarkManager {
 				}
 			}
 			bookmarksReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 		return folders;
@@ -328,7 +303,7 @@ public class BookmarkManager {
 	public synchronized void importBookmarksFromBrowser(Context context) {
 		if (PreferenceManager.getInstance().getSystemBrowserPresent()) {
 
-			List<HistoryItem> bookmarkList = new ArrayList<HistoryItem>();
+			List<HistoryItem> bookmarkList = new ArrayList<>();
 			String[] columns = new String[] { Browser.BookmarkColumns.TITLE,
 					Browser.BookmarkColumns.URL };
 			String selection = Browser.BookmarkColumns.BOOKMARK + " = 1";
@@ -372,7 +347,7 @@ public class BookmarkManager {
 		if (file == null) {
 			return;
 		}
-		List<HistoryItem> list = new ArrayList<HistoryItem>();
+		List<HistoryItem> list = new ArrayList<>();
 		try {
 			BufferedReader bookmarksReader = new BufferedReader(new FileReader(file));
 			String line;
@@ -391,17 +366,7 @@ public class BookmarkManager {
 			addBookmarkList(list);
 			Utils.showToast(mContext,
 					number + " " + mContext.getResources().getString(R.string.message_import));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			Utils.createInformativeDialog(context,
-					mContext.getResources().getString(R.string.title_error), mContext
-							.getResources().getString(R.string.import_bookmark_error));
-		} catch (IOException e) {
-			e.printStackTrace();
-			Utils.createInformativeDialog(context,
-					mContext.getResources().getString(R.string.title_error), mContext
-							.getResources().getString(R.string.import_bookmark_error));
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 			Utils.createInformativeDialog(context,
 					mContext.getResources().getString(R.string.title_error), mContext
@@ -430,9 +395,7 @@ public class BookmarkManager {
 				bookmarkWriter.newLine();
 			}
 			bookmarkWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 	}

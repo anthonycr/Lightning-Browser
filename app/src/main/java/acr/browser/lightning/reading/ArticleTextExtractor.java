@@ -153,7 +153,7 @@ public class ArticleTextExtractor {
 		}
 
 		if (bestMatchElement != null) {
-			List<ImageResult> images = new ArrayList<ImageResult>();
+			List<ImageResult> images = new ArrayList<>();
 			Element imgEl = determineImageSource(bestMatchElement, images);
 			if (imgEl != null) {
 				res.setImageUrl(SHelper.replaceSpaces(imgEl.attr("src")));
@@ -321,7 +321,7 @@ public class ArticleTextExtractor {
 	protected int weightChildNodes(Element rootEl) {
 		int weight = 0;
 		Element caption = null;
-		List<Element> pEls = new ArrayList<Element>(5);
+		List<Element> pEls = new ArrayList<>(5);
 		for (Element child : rootEl.children()) {
 			String ownText = child.ownText();
 			int ownTextLength = ownText.length();
@@ -373,6 +373,7 @@ public class ArticleTextExtractor {
 		try {
 			old = Integer.parseInt(el.attr("gravityScore"));
 		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return old;
 	}
@@ -444,6 +445,7 @@ public class ArticleTextExtractor {
 				else
 					weight -= 20;
 			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 
 			int width = 0;
@@ -454,6 +456,7 @@ public class ArticleTextExtractor {
 				else
 					weight -= 20;
 			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 			String alt = e.attr("alt");
 			if (alt.length() > 35)
@@ -463,7 +466,7 @@ public class ArticleTextExtractor {
 			if (title.length() > 35)
 				weight += 20;
 
-			String rel = null;
+			String rel;
 			boolean noFollow = false;
 			if (e.parent() != null) {
 				rel = e.parent().attr("rel");
@@ -561,7 +564,7 @@ public class ArticleTextExtractor {
 	 * @return a set of all important nodes
 	 */
 	public Collection<Element> getNodes(Document doc) {
-		Set<Element> nodes = new HashSet<Element>(64);
+		Set<Element> nodes = new HashSet<>(64);
 		int score = 100;
 		for (Element el : doc.select("body").select("*")) {
 			if (NODES.matcher(el.tagName()).matches()) {

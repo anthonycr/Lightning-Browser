@@ -9,13 +9,13 @@ import org.jsoup.nodes.Element;
  */
 public class ImageResult {
 
-	public String src;
-	public Integer weight;
-	public String title;
-	public int height;
-	public int width;
-	public String alt;
-	public boolean noFollow;
+	public final String src;
+	public final Integer weight;
+	public final String title;
+	public final int height;
+	public final int width;
+	public final String alt;
+	public final boolean noFollow;
 	public Element element;
 
 	public ImageResult(String src, Integer weight, String title, int height, int width, String alt,

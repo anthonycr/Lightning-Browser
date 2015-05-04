@@ -4,6 +4,7 @@
 package acr.browser.lightning.database;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
 public class HistoryItem implements Comparable<HistoryItem> {
 
@@ -112,7 +113,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 	}
 
 	@Override
-	public int compareTo(HistoryItem another) {
+	public int compareTo(@NonNull HistoryItem another) {
 		return mTitle.compareTo(another.mTitle);
 	}
 
@@ -137,10 +138,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 		if (mBitmap != null ? !mBitmap.equals(that.mBitmap) : that.mBitmap != null) {
 			return false;
 		}
-		if (!mTitle.equals(that.mTitle)) {
-			return false;
-		}
-		return mUrl.equals(that.mUrl);
+		return mTitle.equals(that.mTitle) && mUrl.equals(that.mUrl);
 	}
 
 	@Override

@@ -96,19 +96,16 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private FullscreenHolder mFullscreenContainer;
 	private ListView mDrawerListLeft, mDrawerListRight;
 	private LinearLayout mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
-	private RelativeLayout mNewTab, mSearchBar;
+	private RelativeLayout mSearchBar;
 
 	// List
-	private final List<LightningView> mWebViews = new ArrayList<LightningView>();
+	private final List<LightningView> mWebViews = new ArrayList<>();
 	private List<HistoryItem> mBookmarkList;
 	private LightningView mCurrentView;
 
-	// View
-	private ActionBar mActionBar;
 	private AnimatedProgressBar mProgressBar;
 	private AutoCompleteTextView mSearch;
 	private ImageView mArrowImage;
-	private Toolbar mToolbar;
 	private VideoView mVideoView;
 	private View mCustomView, mVideoProgressView;
 
@@ -160,9 +157,9 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@SuppressWarnings("deprecation")
 	private synchronized void initialize() {
 		setContentView(R.layout.activity_main);
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(mToolbar);
-		mActionBar = getSupportActionBar();
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		ActionBar actionBar = getSupportActionBar();
 
 		mPreferences = PreferenceManager.getInstance();
 		mDarkTheme = mPreferences.getUseDarkTheme() || isIncognito();
@@ -177,7 +174,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 		mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
 		mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
-		mNewTab = (RelativeLayout) findViewById(R.id.new_tab_button);
+		RelativeLayout newTab = (RelativeLayout) findViewById(R.id.new_tab_button);
 		mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
 		// Drawer stutters otherwise
 		mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -205,22 +202,22 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
 
 		// set display options of the ActionBar
-		mActionBar.setDisplayShowTitleEnabled(false);
-		mActionBar.setDisplayShowHomeEnabled(false);
-		mActionBar.setDisplayShowCustomEnabled(true);
-		mActionBar.setCustomView(R.layout.toolbar_content);
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowCustomEnabled(true);
+		actionBar.setCustomView(R.layout.toolbar_content);
 
-		View v = mActionBar.getCustomView();
+		View v = actionBar.getCustomView();
 		LayoutParams lp = v.getLayoutParams();
 		lp.width = LayoutParams.MATCH_PARENT;
 		v.setLayoutParams(lp);
 
 		mArrowDrawable = new DrawerArrowDrawable(this);
-		mArrowImage = (ImageView) mActionBar.getCustomView().findViewById(R.id.arrow);
+		mArrowImage = (ImageView) actionBar.getCustomView().findViewById(R.id.arrow);
 		// Use hardware acceleration for the animation
 		mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		mArrowImage.setImageDrawable(mArrowDrawable);
-		LinearLayout arrowButton = (LinearLayout) mActionBar.getCustomView().findViewById(
+		LinearLayout arrowButton = (LinearLayout) actionBar.getCustomView().findViewById(
 				R.id.arrow_button);
 		arrowButton.setOnClickListener(this);
 
@@ -231,8 +228,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		forward.setOnClickListener(this);
 
 		// create the search EditText in the ToolBar
-		mSearch = (AutoCompleteTextView) mActionBar.getCustomView().findViewById(R.id.search);
-		mUntitledTitle = (String) getString(R.string.untitled);
+		mSearch = (AutoCompleteTextView) actionBar.getCustomView().findViewById(R.id.search);
+		mUntitledTitle = getString(R.string.untitled);
 		mBackgroundColor = getResources().getColor(R.color.primary_color);
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
@@ -283,8 +280,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		});
 		initialize.run();
 
-		mNewTab.setOnClickListener(this);
-		mNewTab.setOnLongClickListener(new OnLongClickListener() {
+		newTab.setOnClickListener(this);
+		newTab.setOnLongClickListener(new OnLongClickListener() {
 
 			@Override
 			public boolean onLongClick(View v) {
@@ -500,7 +497,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * If Orbot/Tor is installed, prompt the user if they want to enable
 	 * proxying for this session
 	 */
-	public boolean checkForTor() {
+	private boolean checkForTor() {
 		boolean useProxy = mPreferences.getUseProxy();
 
 		OrbotHelper oh = new OrbotHelper(this);
@@ -538,7 +535,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	/*
 	 * Initialize WebKit Proxying for Tor
 	 */
-	public void initializeTor() {
+	private void initializeTor() {
 
 		OrbotHelper oh = new OrbotHelper(this);
 		if (!oh.isOrbotRunning()) {
@@ -617,12 +614,12 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			mPreferences.setMemoryUrl("");
 			String[] array = Utils.getArray(mem);
 			int count = 0;
-			for (int n = 0; n < array.length; n++) {
-				if (array[n].length() > 0) {
-					if (url != null && url.compareTo(array[n]) == 0) {
+			for (String urlString : array) {
+				if (urlString.length() > 0) {
+					if (url != null && url.compareTo(urlString) == 0) {
 						url = null;
 					}
-					newTab(array[n], true);
+					newTab(urlString, true);
 					count++;
 				}
 			}
@@ -1459,13 +1456,13 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	public class LightningViewAdapter extends ArrayAdapter<LightningView> {
 
-		Context context;
+		final Context context;
 		ColorMatrix colorMatrix;
 		ColorMatrixColorFilter filter;
 		Paint paint;
-		int layoutResourceId;
+		final int layoutResourceId;
 		List<LightningView> data = null;
-		CloseTabListener mExitListener;
+		final CloseTabListener mExitListener;
 
 		public LightningViewAdapter(Context context, int layoutResourceId, List<LightningView> data) {
 			super(context, layoutResourceId, data);
@@ -1478,7 +1475,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			View row = convertView;
-			LightningViewHolder holder = null;
+			LightningViewHolder holder;
 			if (row == null) {
 				LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 				row = inflater.inflate(layoutResourceId, parent, false);
@@ -1591,11 +1588,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	public static boolean isColorTooDark(int color) {
 		final byte RED_CHANNEL = 16;
 		final byte GREEN_CHANNEL = 8;
-		final byte BLUE_CHANNEL = 0;
+		//final byte BLUE_CHANNEL = 0;
 
 		int r = ((int) ((float) (color >> RED_CHANNEL & 0xff) * 0.3f)) & 0xff;
 		int g = ((int) ((float) (color >> GREEN_CHANNEL & 0xff) * 0.59)) & 0xff;
-		int b = ((int) ((float) (color >> BLUE_CHANNEL & 0xff) * 0.11)) & 0xff;
+		int b = ((int) ((float) (color & 0xff) * 0.11)) & 0xff;
 		int gr = (r + g + b) & 0xff;
 		int gray = gr + (gr << GREEN_CHANNEL) + (gr << RED_CHANNEL);
 
@@ -1606,7 +1603,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		final byte ALPHA_CHANNEL = 24;
 		final byte RED_CHANNEL = 16;
 		final byte GREEN_CHANNEL = 8;
-		final byte BLUE_CHANNEL = 0;
+		//final byte BLUE_CHANNEL = 0;
 
 		final float inverseAmount = 1.0f - amount;
 
@@ -1614,14 +1611,14 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		int g = ((int) (((float) (color1 >> GREEN_CHANNEL & 0xff) * amount) + ((float) (color2 >> GREEN_CHANNEL & 0xff) * inverseAmount))) & 0xff;
 		int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
 
-		return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b << BLUE_CHANNEL;
+		return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
 	}
 
 	public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
 
-		Context context;
+		final Context context;
 		List<HistoryItem> data = null;
-		int layoutResourceId;
+		final int layoutResourceId;
 
 		public BookmarkViewAdapter(Context context, int layoutResourceId, List<HistoryItem> data) {
 			super(context, layoutResourceId, data);
@@ -1633,7 +1630,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = convertView;
-			BookmarkViewHolder holder = null;
+			BookmarkViewHolder holder;
 
 			if (row == null) {
 				LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -1670,8 +1667,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
-		ImageView bmImage;
-		HistoryItem mWeb;
+		final ImageView bmImage;
+		final HistoryItem mWeb;
 
 		public DownloadImageTask(ImageView bmImage, HistoryItem web) {
 			this.bmImage = bmImage;
@@ -1852,14 +1849,13 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	public boolean getSystemBrowser() {
 		Cursor c = null;
 		String[] columns = new String[] { "url", "title" };
-		boolean browserFlag = false;
+		boolean browserFlag;
 		try {
 
 			Uri bookmarks = Browser.BOOKMARKS_URI;
 			c = getContentResolver().query(bookmarks, columns, null, null, null);
-		} catch (SQLiteException ignored) {
-		} catch (IllegalStateException ignored) {
-		} catch (NullPointerException ignored) {
+		} catch (SQLiteException | IllegalStateException | NullPointerException e) {
+			e.printStackTrace();
 		}
 
 		if (c != null) {
@@ -1871,7 +1867,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 		if (c != null) {
 			c.close();
-			c = null;
 		}
 		mPreferences.setSystemBrowserPresent(browserFlag);
 		return browserFlag;
@@ -1899,7 +1894,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 						getUrl.setText(url);
 					}
 					searchTheWeb(url);
-					url = null;
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
 					if (mCurrentView != null) {
@@ -2045,7 +2039,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 		mFilePathCallback.onReceiveValue(results);
 		mFilePathCallback = null;
-		return;
 	}
 
 	@Override

@@ -14,45 +14,45 @@ import android.webkit.WebView;
 
 public interface BrowserController {
 
-	public void updateUrl(String title, boolean shortUrl);
+	void updateUrl(String title, boolean shortUrl);
 
-	public void updateProgress(int n);
+	void updateProgress(int n);
 
-	public void updateHistory(String title, String url);
+	void updateHistory(String title, String url);
 
-	public void openFileChooser(ValueCallback<Uri> uploadMsg);
+	void openFileChooser(ValueCallback<Uri> uploadMsg);
 
-	public void update();
+	void update();
 
-	public void onLongPress();
+	void onLongPress();
 
-	public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback);
+	void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback);
 
-	public void onHideCustomView();
+	void onHideCustomView();
 
-	public Bitmap getDefaultVideoPoster();
+	Bitmap getDefaultVideoPoster();
 
-	public View getVideoLoadingProgressView();
+	View getVideoLoadingProgressView();
 
-	public void onCreateWindow(boolean isUserGesture, Message resultMsg);
+	void onCreateWindow(boolean isUserGesture, Message resultMsg);
 
-	public Activity getActivity();
+	Activity getActivity();
 
-	public void hideActionBar();
+	void hideActionBar();
 
-	public void showActionBar();
+	void showActionBar();
 
-	public void toggleActionBar();
+	void toggleActionBar();
 
-	public void longClickPage(String url);
+	void longClickPage(String url);
 
-	public void openBookmarkPage(WebView view);
+	void openBookmarkPage(WebView view);
 
-	public void showFileChooser(ValueCallback<Uri[]> filePathCallback);
+	void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 
-	public void closeEmptyTab();
+	void closeEmptyTab();
 
-	public boolean isIncognito();
+	boolean isIncognito();
 
-	public int getMenu();
+	int getMenu();
 }

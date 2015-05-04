@@ -51,8 +51,8 @@ public class HtmlFetcher {
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader reader = new BufferedReader(new FileReader("urls.txt"));
-		String line = null;
-		Set<String> existing = new LinkedHashSet<String>();
+		String line;
+		Set<String> existing = new LinkedHashSet<>();
 		while ((line = reader.readLine()) != null) {
 			int index1 = line.indexOf("\"");
 			int index2 = line.indexOf("\"", index1 + 1);
@@ -81,10 +81,10 @@ public class HtmlFetcher {
 	private String accept = "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
 	private String charset = "UTF-8";
 	private SCache cache;
-	private AtomicInteger cacheCounter = new AtomicInteger(0);
+	private final AtomicInteger cacheCounter = new AtomicInteger(0);
 	private int maxTextLength = -1;
 	private ArticleTextExtractor extractor = new ArticleTextExtractor();
-	private Set<String> furtherResolveNecessary = new LinkedHashSet<String>() {
+	private final Set<String> furtherResolveNecessary = new LinkedHashSet<String>() {
 		{
 			add("bit.ly");
 			add("cli.gs");

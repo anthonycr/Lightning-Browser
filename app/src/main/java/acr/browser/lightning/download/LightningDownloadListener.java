@@ -16,7 +16,7 @@ import acr.browser.lightning.download.DownloadHandler;
 
 public class LightningDownloadListener implements DownloadListener {
 
-	private Activity mActivity;
+	private final Activity mActivity;
 
 	public LightningDownloadListener(Activity activity) {
 		mActivity = activity;

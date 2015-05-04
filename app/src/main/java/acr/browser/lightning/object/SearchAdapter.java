@@ -50,26 +50,26 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	private List<HistoryItem> mFilteredList;
 	private List<HistoryItem> mAllBookmarks;
 	private HistoryDatabase mDatabaseHandler;
-	private Context mContext;
+	private final Context mContext;
 	private boolean mUseGoogle = true;
 	private boolean mIsExecuting = false;
-	private boolean mDarkTheme;
-	private boolean mIncognito;
-	private BookmarkManager mBookmarkManager;
+	private final boolean mDarkTheme;
+	private final boolean mIncognito;
+	private final BookmarkManager mBookmarkManager;
 	private static final String ENCODING = "ISO-8859-1";
 	private static final long INTERVAL_DAY = 86400000;
-	private String mSearchSubtitle;
+	private final String mSearchSubtitle;
 	private static final int API = Build.VERSION.SDK_INT;
-	private Theme mTheme;
+	private final Theme mTheme;
 	private SearchFilter mFilter;
 
 	public SearchAdapter(Context context, boolean dark, boolean incognito) {
 		mDatabaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
 		mTheme = context.getTheme();
-		mFilteredList = new ArrayList<HistoryItem>();
-		mHistory = new ArrayList<HistoryItem>();
-		mBookmarks = new ArrayList<HistoryItem>();
-		mSuggestions = new ArrayList<HistoryItem>();
+		mFilteredList = new ArrayList<>();
+		mHistory = new ArrayList<>();
+		mBookmarks = new ArrayList<>();
+		mSuggestions = new ArrayList<>();
 		mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
 		mAllBookmarks = mBookmarkManager.getBookmarks(true);
 		mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
@@ -146,7 +146,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
-		SuggestionHolder holder = null;
+		SuggestionHolder holder;
 
 		if (row == null) {
 			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -228,7 +228,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			FilterResults results = new FilterResults();
-			if (constraint == null || constraint.toString() == null) {
+			if (constraint == null) {
 				return results;
 			}
 			String query = constraint.toString().toLowerCase(Locale.getDefault());
@@ -237,7 +237,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 			}
 
 			int counter = 0;
-			mBookmarks = new ArrayList<HistoryItem>();
+			mBookmarks = new ArrayList<>();
 			for (int n = 0; n < mAllBookmarks.size(); n++) {
 				if (counter >= 5) {
 					break;
@@ -289,7 +289,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		protected List<HistoryItem> doInBackground(String... arg0) {
 			mIsExecuting = true;
 
-			List<HistoryItem> filter = new ArrayList<HistoryItem>();
+			List<HistoryItem> filter = new ArrayList<>();
 			String query = arg0[0];
 			try {
 				query = query.replace(" ", "+");
@@ -397,7 +397,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 	}
 
 	public List<HistoryItem> getSuggestions() {
-		List<HistoryItem> filteredList = new ArrayList<HistoryItem>();
+		List<HistoryItem> filteredList = new ArrayList<>();
 
 		int suggestionsSize = (mSuggestions == null) ? 0 : mSuggestions.size();
 		int historySize = (mHistory == null) ? 0 : mHistory.size();

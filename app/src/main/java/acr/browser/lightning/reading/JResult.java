@@ -133,7 +133,7 @@ public class JResult implements Serializable {
 
 	public List<String> getTextList() {
 		if (this.textList == null)
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		return this.textList;
 	}
 

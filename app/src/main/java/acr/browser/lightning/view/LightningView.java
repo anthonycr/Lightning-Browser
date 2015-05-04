@@ -4,14 +4,6 @@
 
 package acr.browser.lightning.view;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,6 +20,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -52,29 +45,36 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import acr.browser.lightning.controller.BrowserController;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.R;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningView {
 
-	private Title mTitle;
+	private final Title mTitle;
 	private WebView mWebView;
 	private BrowserController mBrowserController;
 	private GestureDetector mGestureDetector;
-	private Activity mActivity;
+	private final Activity mActivity;
 	private WebSettings mSettings;
 	private static String mHomepage;
 	private static String mDefaultUserAgent;
 	private static Bitmap mWebpageBitmap;
 	private static PreferenceManager mPreferences;
-	private AdBlock mAdBlock;
+	private final AdBlock mAdBlock;
 	private IntentUtils mIntentUtils;
 	private final Paint mPaint = new Paint();
 	private boolean isForegroundTab;
@@ -195,6 +195,7 @@ public class LightningView {
 				icon = "file:///android_asset/startpage.png";
 				// "https://startpage.com/graphics/startp_logo.gif";
 				searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
+				break;
 			case 7:
 				// DUCK_SEARCH;
 				icon = "file:///android_asset/duckduckgo.png";
@@ -539,8 +540,6 @@ public class LightningView {
 			icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
 			fos.flush();
 			fos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -637,7 +636,7 @@ public class LightningView {
 
 	public class LightningWebClient extends WebViewClient {
 
-		Context mActivity;
+		final Context mActivity;
 
 		LightningWebClient(Context context) {
 			mActivity = context;
@@ -690,7 +689,7 @@ public class LightningView {
 		}
 
 		@Override
-		public void onReceivedHttpAuthRequest(final WebView view, final HttpAuthHandler handler,
+		public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
 				final String host, final String realm) {
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
@@ -760,7 +759,7 @@ public class LightningView {
 		}
 
 		@Override
-		public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
+		public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, SslError error) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 			builder.setTitle(mActivity.getString(R.string.title_warning));
 			builder.setMessage(mActivity.getString(R.string.message_untrusted_certificate))
@@ -789,7 +788,7 @@ public class LightningView {
 		}
 
 		@Override
-		public void onFormResubmission(WebView view, final Message dontResend, final Message resend) {
+		public void onFormResubmission(WebView view, @NonNull final Message dontResend, final Message resend) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 			builder.setTitle(mActivity.getString(R.string.title_form_resubmission));
 			builder.setMessage(mActivity.getString(R.string.message_form_resubmission))
@@ -830,7 +829,7 @@ public class LightningView {
 				view.reload();
 				return true;
 			} else if (url.startsWith("intent://")) {
-				Intent intent = null;
+				Intent intent;
 				try {
 					intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
 				} catch (URISyntaxException ex) {
@@ -851,7 +850,7 @@ public class LightningView {
 
 	public class LightningChromeClient extends WebChromeClient {
 
-		Context mActivity;
+		final Context mActivity;
 
 		LightningChromeClient(Context context) {
 			mActivity = context;
@@ -888,7 +887,7 @@ public class LightningView {
 			final boolean remember = true;
 			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 			builder.setTitle(mActivity.getString(R.string.location));
-			String org = null;
+			String org;
 			if (origin.length() > 50) {
 				org = origin.subSequence(0, 50) + "...";
 			} else {
@@ -1012,7 +1011,7 @@ public class LightningView {
 
 		private Bitmap mFavicon;
 		private String mTitle;
-		private Bitmap mDefaultIcon;
+		private final Bitmap mDefaultIcon;
 
 		public Title(Context context, boolean darkTheme) {
 			mDefaultIcon = Utils.getWebpageBitmap(context.getResources(), darkTheme);

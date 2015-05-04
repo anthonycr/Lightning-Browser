@@ -19,7 +19,7 @@ import acr.browser.lightning.controller.BrowserController;
 
 public class IntentUtils {
 
-	private Activity mActivity;
+	private final Activity mActivity;
 
 	static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
 			+ // switch on case insensitive matching

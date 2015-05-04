@@ -74,7 +74,7 @@ public class OutputFormatter {
 	 * Takes an element and returns a list of texts extracted from the P tags
 	 */
 	public List<String> getTextList(Element topNode) {
-		List<String> texts = new ArrayList<String>();
+		List<String> texts = new ArrayList<>();
 		for (Element element : topNode.select(this.nodesToKeepCssSelector)) {
 			if (element.hasText()) {
 				texts.add(element.text());

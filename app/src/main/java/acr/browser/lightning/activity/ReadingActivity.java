@@ -1,14 +1,5 @@
 package acr.browser.lightning.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.R;
-import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.reading.HtmlFetcher;
-import acr.browser.lightning.reading.JResult;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -18,7 +9,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +19,17 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class ReadingActivity extends ActionBarActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.reading.HtmlFetcher;
+import acr.browser.lightning.reading.JResult;
+import acr.browser.lightning.utils.Utils;
+
+public class ReadingActivity extends AppCompatActivity {
 
 	private TextView mTitle;
 	private TextView mBody;
@@ -114,7 +115,7 @@ public class ReadingActivity extends ActionBarActivity {
 
 	private class PageLoader extends AsyncTask<String, Void, Void> {
 
-		private Context mContext;
+		private final Context mContext;
 		private ProgressDialog mProgressDialog;
 		private String mTitleText;
 		private List<String> mBodyText;
