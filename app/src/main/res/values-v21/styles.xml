@@ -5,7 +5,7 @@
 
         <!-- customize the color palette -->
         <item name="toolbarSettingsBackground">@color/primary_color</item>
-        <item name="listBackground">@drawable/list_bg</item>
+        <item name="listBackground">?attr/listChoiceBackgroundIndicator</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/secondary_color_settings</item>
         <item name="colorAccent">@color/accent_color</item>
@@ -21,7 +21,7 @@
 
         <!-- customize the color palette -->
         <item name="toolbarSettingsBackground">@color/primary_color_dark</item>
-        <item name="listBackground">@drawable/list_bg</item>
+        <item name="listBackground">?attr/listChoiceBackgroundIndicator</item>
         <item name="colorPrimary">@color/primary_color_dark</item>
         <item name="colorPrimaryDark">@color/secondary_color_settings_dark</item>
         <item name="colorAccent">@color/accent_color</item>

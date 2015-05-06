@@ -127,7 +127,7 @@ public class ArticleTextExtractor {
 	}
 
 	public JResult extractContent(JResult res, Document doc, OutputFormatter formatter)
-			throws Exception {
+			throws NullPointerException {
 		if (doc == null)
 			throw new NullPointerException("missing document");
 

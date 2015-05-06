@@ -298,13 +298,13 @@ public class HtmlFetcher {
 		return SHelper.useDomainOfFirstArg4Second(url, urlOrPath);
 	}
 
-	public String fetchAsString(String urlAsString, int timeout) throws MalformedURLException,
+	public String fetchAsString(String urlAsString, int timeout) throws
 			IOException {
 		return fetchAsString(urlAsString, timeout, true);
 	}
 
 	public String fetchAsString(String urlAsString, int timeout, boolean includeSomeGooseOptions)
-			throws MalformedURLException, IOException {
+			throws IOException {
 		HttpURLConnection hConn = createUrlConnection(urlAsString, timeout, includeSomeGooseOptions);
 		hConn.setInstanceFollowRedirects(true);
 		String encoding = hConn.getContentEncoding();
@@ -401,7 +401,7 @@ public class HtmlFetcher {
 	}
 
 	protected HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
-			boolean includeSomeGooseOptions) throws MalformedURLException, IOException {
+			boolean includeSomeGooseOptions) throws IOException {
 		URL url = new URL(urlAsStr);
 		// using proxy may increase latency
 		HttpURLConnection hConn = (HttpURLConnection) url.openConnection(Proxy.NO_PROXY);
