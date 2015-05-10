@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "acr.browser.lightning"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 78
+        versionName "4.0.10a"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles 'proguard-project.txt'
+        }
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles 'proguard-project.txt'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile(project(':libnetcipher')) {
+        // Exclude any support-v4 modules because appcompat-v7 will import the latest
+        exclude module: 'support-v4'
+        exclude module: 'android-support-v4'
+    }
+    compile 'com.android.support:palette-v7:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile files('libs/jsoup-1.8.1.jar')
+}
