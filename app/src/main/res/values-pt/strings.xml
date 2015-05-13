@@ -108,7 +108,7 @@
     <string name="size_large">Grande</string>
     <string name="size_normal">Normal</string>
     <string name="size_small">Pequeno</string>
-    <string name="size_smallest">Manor</string>
+    <string name="size_smallest">Menor</string>
     <string name="title_error">Erro</string>
     <string name="dialog_import_error">Não foi detetado qualquer navegador para importar os marcadores.</string>
     <string name="hint_title">Título</string>
@@ -166,7 +166,7 @@
     <string name="clear_cookies_exit">Limpar cookies ao sair</string>
     <string name="clear_history_exit">Limpar histórico ao sair</string>
     <string name="folder_default">Padrão</string>
-    <string name="folder_custom">Personalizada</string>
+    <string name="folder_custom">Personalizado</string>
     <string name="untitled">Sem título</string>
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
@@ -183,7 +183,7 @@
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
     <string name="export_bookmarks">Exportar marcadores para backup</string>
-    <string name="import_backup">Importar marcadores de backup</string>
+    <string name="import_backup">Importar marcadores de um backup</string>
     <string name="bookmark_export_path">Marcadores guardados em</string>
     <string name="bookmark_settings">Definições de marcadores</string>
     <string name="import_bookmark_error">Não foi possível importar os marcadores do ficheiro</string>
@@ -196,7 +196,7 @@
     <string name="close_tab">Fechar separador</string>
     <string name="close_all_tabs">Fechar todos os separadores</string>
     <string name="third_party">Bloquear cookies de terceiros</string>
-    <string name="available_lollipop">Funcionalidade apenas disponíveis para Android 5.0+</string>
+    <string name="available_lollipop">Funcionalidades apenas disponíveis para Android 5.0+</string>
     <string name="color_mode">Ativar modo de cor</string>
     <string name="reading_mode">Modo de leitura</string>
     <string name="loading">A carregar&#8230;</string>
@@ -204,7 +204,7 @@
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
-    <string name="url_contents">URL Box Contents</string>
+    <string name="url_contents">Conteúdo da caixa do URL</string>
     <string-array name="url_content_array">
         <item >Domínio (padrão)</item>
         <item >URL</item>
