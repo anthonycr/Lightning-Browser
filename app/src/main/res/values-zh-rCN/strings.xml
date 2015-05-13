@@ -36,7 +36,7 @@
     <string name="license">许可</string>
     <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">NewSettings</string>
+    <string name="title_activity_new_settings">新设置</string>
     <string name="action_settings">应用设置</string>
     <string name="version">当前版本</string>
     <string name="cache">退出时清理缓存</string>
@@ -139,7 +139,7 @@
     <string name="hint_username">用户名</string>
     <string name="hint_password">密码</string>
     <string name="google_suggestions">搜索建议</string>
-    <string name="powered_by_google">由 Google 提供劫持</string>
+    <string name="powered_by_google">由 Google 提供支持</string>
     <string name="title_adblock">广告拦截</string>
     <string name="message_adblock">广告拦截现在只能在付费版的浏览器 - Lightning Browser+ 中使用。你可以在 Google Play 中下载它。</string>
     <string name="enable_orbot">启用 Orbot</string>
@@ -172,5 +172,30 @@
     <string name="bookmark_settings">书签设置</string>
     <string name="import_bookmark_error">无法从文件导入书签</string>
     <string name="title_chooser">选择一个文件</string>
+    <string name="available_lollipop">此功能仅在 Android 5.0+ 版本中可用</string>
+    <string name="change_after_restart">主题变更将在你重启浏览器后生效。</string>
+    <string name="close_all_tabs">关闭所有标签</string>
+    <string name="close_tab">关闭标签</string>
+    <string name="color_mode">启用色彩模式</string>
+    <string name="dark_theme">使用深色主题</string>
+    <string name="invert_color">反转颜色</string>
+    <string name="jsoup">jsoup: Java HTML 解析器</string>
+    <string name="loading">正在加载&#8230;</string>
+    <string name="loading_failed">无法从页面上加载任何东西。</string>
+    <string name="mit_license">MIT 许可</string>
+    <string name="reading_mode">阅读模式</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_about_explain">关于版本，作者和许可的详细信息。</string>
+    <string name="settings_display">显示设置</string>
+    <string name="settings_general">常规设置</string>
+    <string-array name="url_content_array">
+        <item >域 (默认)</item>
+        <item >URL</item>
+        <item >标题</item>
+    </string-array>
+    <string name="settings_privacy">隐私设置</string>
+    <string name="tabs">标签</string>
+    <string name="third_party">阻止第三方 Cookies</string>
+    <string name="url_contents">URL 框内容</string>
     <!-- <string name="exit">退出</string> -->
 </resources>
