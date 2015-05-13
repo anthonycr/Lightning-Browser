@@ -45,7 +45,7 @@ public class PreferenceManager {
 		public static final String URL_BOX_CONTENTS = "urlContent";
 		public static final String INVERT_COLORS = "invertColors";
 		public static final String READING_TEXT_SIZE = "readingTextSize";
-		public static final String DARK_THEME = "darkTheme";
+		public static final String THEME = "Theme";
 		public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
 
 		public static final String USE_PROXY = "useProxy";
@@ -218,8 +218,8 @@ public class PreferenceManager {
 		return mPrefs.getInt(Name.URL_BOX_CONTENTS, 0);
 	}
 
-	public boolean getUseDarkTheme() {
-		return mPrefs.getBoolean(Name.DARK_THEME, false);
+	public int getUseTheme() {
+		return mPrefs.getInt(Name.THEME, 0);
 	}
 
 	public boolean getUseProxy() {
@@ -390,8 +390,8 @@ public class PreferenceManager {
 		putInt(Name.URL_BOX_CONTENTS, choice);
 	}
 
-	public void setUseDarkTheme(boolean use) {
-		putBoolean(Name.DARK_THEME, use);
+	public void setUseTheme(int theme) {
+		putInt(Name.THEME, theme);
 	}
 
 	public void setUseProxy(boolean enable) {

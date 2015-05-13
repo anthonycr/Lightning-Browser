@@ -208,7 +208,7 @@
         <item >Наслов</item>
     </string-array>
     <string name="invert_color">Обрнута боја</string>
-    <string name="dark_theme">Тамна тема</string>
     <string name="change_after_restart">Промена теме ће бити извршена по поновном покретању прегледача.</string>
     <string name="tabs">Језичци</string>
+    <string name="dark_theme">Тамна тема</string>
 </resources>

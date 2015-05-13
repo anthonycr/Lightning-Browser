@@ -162,7 +162,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		ActionBar actionBar = getSupportActionBar();
 
 		mPreferences = PreferenceManager.getInstance();
-		mDarkTheme = mPreferences.getUseDarkTheme() || isIncognito();
+		//TODO make sure dark theme flag gets set correctly
+		mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
 		mActivity = this;
 		mWebViews.clear();
 

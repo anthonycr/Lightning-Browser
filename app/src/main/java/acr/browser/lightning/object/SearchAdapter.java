@@ -116,6 +116,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		if (!mUseGoogle && mSuggestions != null) {
 			mSuggestions.clear();
 		}
+		mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
 	}
 
 	public void refreshBookmarks() {

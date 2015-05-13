@@ -211,7 +211,7 @@
         <item >Título</item>
     </string-array>
         <string name="invert_color">Inverter cores</string>
-        <string name="dark_theme">Utilizar tema escuro</string>
+        <string name="dark_theme">Tema escuro</string>
         <string name="change_after_restart">Esta opção será aplicada depois de reiniciar a aplicação.</string>
         <string name="tabs">Separadores</string>
 </resources>

@@ -211,7 +211,10 @@
         <item >Title</item>
     </string-array>
         <string name="invert_color">Invert color</string>
-        <string name="dark_theme">Use Dark Theme</string>
+        <string name="dark_theme">Dark Theme</string>
         <string name="change_after_restart">The theme change will take effect after you restart the browser.</string>
         <string name="tabs">Tabs</string>
+    <string name="theme">App Theme</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="black_theme">Black Theme (AMOLED)</string>
 </resources>

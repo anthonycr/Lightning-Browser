@@ -211,7 +211,7 @@
         <item >Cím</item>
     </string-array>
         <string name="invert_color">Negatív szín</string>
-        <string name="dark_theme">Sötét téma használata</string>
+        <string name="dark_theme">Sötét téma </string>
         <string name="change_after_restart">A téma megváltoztatásának érvénybelépéséhez indítsa újra a böngészőt.</string>
         <string name="tabs">Lapok</string>
 </resources>
