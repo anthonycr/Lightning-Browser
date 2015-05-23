@@ -48,7 +48,6 @@
     <string name="recommended">(Recomendado)</string>
     <string name="search">Motor de búsqueda</string>
     <string name="search_hint">Buscar</string>
-    <string name="custom_url">URL personalizada</string>
     <string name="wideViewPort">Utilizar viewport normal</string>
     <string name="overViewMode">Visualizar la página de lejos al cargar</string>
     <string name="restore">Restaurar pestañas cerradas al iniciar</string>
@@ -188,14 +187,14 @@
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
-<string name="url_contents">Contenido de la caja de la URL</string>
+    <string name="url_contents">Contenido de la caja de la URL</string>
     <string-array name="url_content_array">
         <item >Dominio (por defecto)</item>
         <item >URL</item>
         <item >Título</item>
     </string-array>
-        <string name="invert_color">Invertir color</string>
-        <string name="dark_theme">Usar tema oscuro</string>
-        <string name="change_after_restart">El cambio de tema tendrá lugar después de reiniciar el navegador.</string>
-        <string name="tabs">Pestañas</string>
+    <string name="invert_color">Invertir color</string>
+    <string name="dark_theme">Usar tema oscuro</string>
+    <string name="change_after_restart">El cambio de tema tendrá lugar después de reiniciar el navegador.</string>
+    <string name="tabs">Pestañas</string>
 </resources>
