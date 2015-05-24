@@ -22,11 +22,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import net.i2p.android.ui.I2PAndroidHelper;
+
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.R;
 import acr.browser.lightning.utils.Utils;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
@@ -36,6 +40,8 @@ public class SettingsActivity extends ThemableSettingsActivity {
 	private PreferenceManager mPreferences;
 	private Context mContext;
 	private Activity mActivity;
+	private CharSequence[] mProxyChoices;
+	private TextView mProxyChoiceName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +75,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		layoutBlockAds.setEnabled(Constants.FULL_VERSION);
 		RelativeLayout layoutImages = (RelativeLayout) findViewById(R.id.layoutImages);
 		RelativeLayout layoutEnableJS = (RelativeLayout) findViewById(R.id.layoutEnableJS);
-		RelativeLayout layoutOrbot = (RelativeLayout) findViewById(R.id.layoutUseOrbot);
+		LinearLayout layoutProxyChoice = (LinearLayout) findViewById(R.id.layoutProxyChoice);
 		RelativeLayout layoutColor = (RelativeLayout) findViewById(R.id.layoutColorMode);
 		RelativeLayout layoutBookmarks = (RelativeLayout) findViewById(R.id.layoutBookmarks);
 
@@ -89,12 +95,16 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		boolean imagesBool = mPreferences.getBlockImagesEnabled();
 		boolean enableJSBool = mPreferences.getJavaScriptEnabled();
 
+		mProxyChoiceName = (TextView) findViewById(R.id.proxyChoiceName);
+		mProxyChoices = this.getResources().getStringArray(R.array.proxy_choices_array);
+		int choice = mPreferences.getProxyChoice();
+		mProxyChoiceName.setText(mProxyChoices[choice]);
+
 		CheckBox flash = (CheckBox) findViewById(R.id.cbFlash);
 		CheckBox adblock = (CheckBox) findViewById(R.id.cbAdblock);
 		adblock.setEnabled(Constants.FULL_VERSION);
 		CheckBox images = (CheckBox) findViewById(R.id.cbImageBlock);
 		CheckBox enablejs = (CheckBox) findViewById(R.id.cbJavascript);
-		CheckBox orbot = (CheckBox) findViewById(R.id.cbOrbot);
 		CheckBox color = (CheckBox) findViewById(R.id.cbColorMode);
 
 		images.setChecked(imagesBool);
@@ -105,12 +115,11 @@ public class SettingsActivity extends ThemableSettingsActivity {
 			flash.setChecked(false);
 		}
 		adblock.setChecked(mPreferences.getAdBlockEnabled());
-		orbot.setChecked(mPreferences.getUseProxy());
 		color.setChecked(mPreferences.getColorModeEnabled());
 
-		initCheckBox(flash, adblock, images, enablejs, orbot, color);
+		initCheckBox(flash, adblock, images, enablejs, color);
 		clickListenerForCheckBoxes(layoutFlash, layoutBlockAds, layoutImages, layoutEnableJS,
-				layoutOrbot, layoutColor, flash, adblock, images, enablejs, orbot, color);
+				layoutProxyChoice, layoutColor, flash, adblock, images, enablejs, color);
 
 		RelativeLayout general = (RelativeLayout) findViewById(R.id.layoutGeneral);
 		RelativeLayout display = (RelativeLayout) findViewById(R.id.layoutDisplay);
@@ -127,9 +136,9 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 	public void clickListenerForCheckBoxes(RelativeLayout layoutFlash,
 			RelativeLayout layoutBlockAds, RelativeLayout layoutImages,
-			RelativeLayout layoutEnableJS, RelativeLayout layoutOrbot, RelativeLayout layoutColor,
+			RelativeLayout layoutEnableJS, LinearLayout layoutProxyChoice, RelativeLayout layoutColor,
 			final CheckBox flash, final CheckBox adblock, final CheckBox images,
-			final CheckBox enablejs, final CheckBox orbot, final CheckBox color) {
+			final CheckBox enablejs, final CheckBox color) {
 		layoutFlash.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -168,17 +177,12 @@ public class SettingsActivity extends ThemableSettingsActivity {
 			}
 
 		});
-		layoutOrbot.setOnClickListener(new OnClickListener() {
+		layoutProxyChoice.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
-				if (orbot.isEnabled()) {
-					orbot.setChecked(!orbot.isChecked());
-				} else {
-					Utils.showToast(mContext, getResources().getString(R.string.install_orbot));
-				}
+			public void onClick(View view) {
+				proxyChoicePicker();
 			}
-
 		});
 		layoutColor.setOnClickListener(new OnClickListener() {
 
@@ -191,7 +195,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 	}
 
 	public void initCheckBox(CheckBox flash, CheckBox adblock, CheckBox images, CheckBox enablejs,
-			CheckBox orbot, CheckBox color) {
+			CheckBox color) {
 		flash.setEnabled(API < 19);
 		flash.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -253,20 +257,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 			}
 
 		});
-		OrbotHelper oh = new OrbotHelper(this);
-		if (!oh.isOrbotInstalled()) {
-			orbot.setEnabled(false);
-		}
 
-		orbot.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				mPreferences.setUseProxy(isChecked);
-
-			}
-
-		});
 		color.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -307,6 +298,51 @@ public class SettingsActivity extends ThemableSettingsActivity {
 				});
 		AlertDialog alert = builder.create();
 		alert.show();
+	}
+
+	private void proxyChoicePicker() {
+		AlertDialog.Builder picker = new AlertDialog.Builder(mContext);
+		picker.setTitle(getResources().getString(R.string.http_proxy));
+		picker.setSingleChoiceItems(mProxyChoices, mPreferences.getProxyChoice(),
+				new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				setProxyChoice(which);
+			}
+		});
+		picker.setNeutralButton(getResources().getString(R.string.action_ok),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+		picker.show();
+	}
+
+	private void setProxyChoice(int choice) {
+		switch (choice) {
+			case 1:
+				OrbotHelper oh = new OrbotHelper(this);
+				if (!oh.isOrbotInstalled()) {
+					choice = 0;
+					Utils.showToast(mContext, getResources().getString(R.string.install_orbot));
+				}
+				break;
+
+			case 2:
+				I2PAndroidHelper ih = new I2PAndroidHelper(this);
+				if (!ih.isI2PAndroidInstalled()) {
+					choice = 0;
+					ih.promptToInstall(this);
+				}
+				break;
+		}
+
+		mPreferences.setUseProxy(choice != 0);
+		mPreferences.setProxyChoice(choice);
+		if (choice < mProxyChoices.length)
+			mProxyChoiceName.setText(mProxyChoices[choice]);
 	}
 
 	public void agentPicker() {

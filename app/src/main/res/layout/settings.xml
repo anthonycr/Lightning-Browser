@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <include layout="@layout/toolbar_settings" />
 
@@ -159,33 +160,32 @@
                 android:layout_marginRight="10dp"
                 android:background="?attr/dividerColor" />
 
-            <RelativeLayout
-                android:id="@+id/layoutUseOrbot"
+            <LinearLayout
+                android:id="@+id/layoutProxyChoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/listChoiceBackgroundIndicator"
                 android:minHeight="60dp"
+                android:orientation="vertical"
                 android:paddingBottom="10dp"
-                android:paddingRight="10dp"
                 android:paddingTop="10dp" >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
                     android:paddingLeft="16dp"
-                    android:paddingRight="60dp"
-                    android:text="@string/enable_orbot"
+                    android:text="@string/http_proxy"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <CheckBox
-                    android:id="@+id/cbOrbot"
+                <TextView
+                    android:id="@+id/proxyChoiceName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true" />
-            </RelativeLayout>
+                    android:paddingLeft="16dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/light"
+                    tools:text="Disabled" />
+            </LinearLayout>
             
             <LinearLayout
                 android:layout_width="match_parent"

@@ -49,6 +49,7 @@ public class PreferenceManager {
 		public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
 
 		public static final String USE_PROXY = "useProxy";
+		public static final String PROXY_CHOICE = "proxyChoice";
 		public static final String USE_PROXY_HOST = "useProxyHost";
 		public static final String USE_PROXY_PORT = "useProxyPort";
 		public static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
@@ -226,6 +227,10 @@ public class PreferenceManager {
 		return mPrefs.getBoolean(Name.USE_PROXY, false);
 	}
 
+	public int getProxyChoice() {
+		return mPrefs.getInt(Name.PROXY_CHOICE, 0);
+	}
+
 	public int getUserAgentChoice() {
 		return mPrefs.getInt(Name.USER_AGENT, 1);
 	}
@@ -396,6 +401,10 @@ public class PreferenceManager {
 
 	public void setUseProxy(boolean enable) {
 		putBoolean(Name.USE_PROXY, enable);
+	}
+
+	public void setProxyChoice(int choice) {
+		putInt(Name.PROXY_CHOICE, choice);
 	}
 
 	public void setUserAgentChoice(int choice) {

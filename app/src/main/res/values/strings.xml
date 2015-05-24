@@ -158,7 +158,12 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock is currently only available in the browser\'s paid version, Lightning Browser+. It is available to download on Google Play.</string>
-    <string name="enable_orbot">Enable Orbot</string>
+    <string name="http_proxy">HTTP proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>None</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+    </string-array>
     <string name="use_tor_prompt">It looks like you have Orbot installed. Do you want to use Tor?</string>
     <string name="install_orbot">Please install Orbot in order to proxy with Tor.</string>
     <string name="yes">Yes</string>
