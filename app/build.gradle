@@ -5,23 +5,36 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "acr.browser.lightning"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 78
         versionName "4.0.10a"
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles 'proguard-project.txt'
+        }
+
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles 'proguard-project.txt'
         }
-        debug {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles 'proguard-project.txt'
+    }
+
+    productFlavors {
+        LightningPlus {
+            buildConfigField "boolean", "FULL_VERSION", "true"
+            applicationId "acr.browser.lightning"
+            versionCode 78
+        }
+
+        LightningFree {
+            buildConfigField "boolean", "FULL_VERSION", "false"
+            applicationId "acr.browser.barebones"
+            versionCode 81
         }
     }
 
