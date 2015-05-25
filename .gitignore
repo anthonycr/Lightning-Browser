@@ -24,7 +24,6 @@ gradle.properties
 .directory
 
 # Intellij project files
-*.iml
 *.ipr
 *.iws
 .idea/
@@ -32,3 +31,22 @@ gradle.properties
 # Gradle
 build
 .gradle
+
+# https://gist.github.com/AltNico/c581f370b3f88715876b
+*.apk
+*.ap_
+*.dex
+*.class
+build.xml
+.DS_Store
+gen/
+.gradle/
+proguard/
+out
+.settings/
+*.swp
+*~
+
+# Source:
+# https://raw.githubusercontent.com/github/gitignore/master/Android.gitignore
+# https://gitlab.com/fdroid/fdroidclient/raw/master/.gitignore
