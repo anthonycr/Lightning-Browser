@@ -10,7 +10,11 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.*;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.database.Cursor;
@@ -36,15 +40,26 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -52,41 +67,68 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.*;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
+import android.webkit.WebIconDatabase;
+import android.webkit.WebStorage;
+import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
-import android.widget.*;
-import android.support.v7.app.ActionBar;
-import android.support.v7.graphics.Palette;
-import android.support.v7.widget.Toolbar;
+import android.webkit.WebViewDatabase;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+import android.widget.VideoView;
 
-import acr.browser.lightning.view.AnimatedProgressBar;
-import acr.browser.lightning.database.BookmarkManager;
-import acr.browser.lightning.constant.BookmarkPage;
-import acr.browser.lightning.controller.BrowserController;
-import acr.browser.lightning.object.ClickHandler;
-import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.object.DrawerArrowDrawable;
-import acr.browser.lightning.database.HistoryDatabase;
-import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.constant.HistoryPage;
-import acr.browser.lightning.view.LightningView;
-import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.R;
-import acr.browser.lightning.object.SearchAdapter;
-import acr.browser.lightning.utils.Utils;
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
+import net.i2p.android.ui.I2PAndroidHelper;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import acr.browser.lightning.R;
+import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
+import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.database.BookmarkManager;
+import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.object.ClickHandler;
+import acr.browser.lightning.object.DrawerArrowDrawable;
+import acr.browser.lightning.object.SearchAdapter;
+import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.view.AnimatedProgressBar;
+import acr.browser.lightning.view.LightningView;
+import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.onionkit.web.WebkitProxy;
 
 public class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
 
@@ -139,6 +181,9 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private final ColorDrawable mBackground = new ColorDrawable();
 	private Drawable mDeleteIcon, mRefreshIcon, mCopyIcon, mIcon;
 	private DrawerArrowDrawable mArrowDrawable;
+
+	// Helper
+	private I2PAndroidHelper mI2PHelper;
 
 	// Constant
 	private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -220,6 +265,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		LinearLayout arrowButton = (LinearLayout) actionBar.getCustomView().findViewById(
 				R.id.arrow_button);
 		arrowButton.setOnClickListener(this);
+
+		mI2PHelper = new I2PAndroidHelper(this);
 
 		RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
 		back.setOnClickListener(this);
@@ -304,7 +351,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
 		}
 
-		checkForTor();
+		checkForProxy();
 	}
 
 	private class SearchClass {
@@ -494,56 +541,104 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	/*
-	 * If Orbot/Tor is installed, prompt the user if they want to enable
+	 * If Orbot/Tor or I2P is installed, prompt the user if they want to enable
 	 * proxying for this session
 	 */
-	private boolean checkForTor() {
+	private void checkForProxy() {
 		boolean useProxy = mPreferences.getUseProxy();
 
 		OrbotHelper oh = new OrbotHelper(this);
-		if (oh.isOrbotInstalled() && !mPreferences.getCheckedForTor()) {
-			mPreferences.setCheckedForTor(true);
-			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-						case DialogInterface.BUTTON_POSITIVE:
-							mPreferences.setUseProxy(true);
-							initializeTor();
-							break;
-						case DialogInterface.BUTTON_NEGATIVE:
-							mPreferences.setUseProxy(false);
-							break;
-					}
-				}
-			};
+		final boolean orbotInstalled = oh.isOrbotInstalled();
+		boolean orbotChecked = mPreferences.getCheckedForTor();
+		boolean orbot = orbotInstalled && !orbotChecked;
 
+		boolean i2pInstalled = mI2PHelper.isI2PAndroidInstalled();
+		boolean i2pChecked = mPreferences.getCheckedForI2P();
+		boolean i2p = i2pInstalled && !i2pChecked;
+
+		// TODO Is the idea to show this per-session, or only once?
+		if (!useProxy && (orbot || i2p)) {
+			if (orbot) mPreferences.setCheckedForTor(true);
+			if (i2p) mPreferences.setCheckedForI2P(true);
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.use_tor_prompt)
-					.setPositiveButton(R.string.yes, dialogClickListener)
-					.setNegativeButton(R.string.no, dialogClickListener).show();
 
-			return true;
-		} else if (oh.isOrbotInstalled() & useProxy) {
-			return true;
-		} else {
-			mPreferences.setUseProxy(false);
-			return false;
+			if (orbotInstalled && i2pInstalled) {
+				String[] proxyChoices = this.getResources().getStringArray(R.array.proxy_choices_array);
+				builder.setTitle(getResources().getString(R.string.http_proxy))
+						.setSingleChoiceItems(proxyChoices, mPreferences.getProxyChoice(),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										mPreferences.setProxyChoice(which);
+									}
+								})
+						.setNeutralButton(getResources().getString(R.string.action_ok),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										if (mPreferences.getUseProxy())
+											initializeProxy();
+									}
+								});
+			} else {
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+							case DialogInterface.BUTTON_POSITIVE:
+								mPreferences.setProxyChoice(orbotInstalled ? 1 : 2);
+								initializeProxy();
+								break;
+							case DialogInterface.BUTTON_NEGATIVE:
+								mPreferences.setProxyChoice(0);
+								break;
+						}
+					}
+				};
+
+				builder.setMessage(orbotInstalled ? R.string.use_tor_prompt : R.string.use_i2p_prompt)
+						.setPositiveButton(R.string.yes, dialogClickListener)
+						.setNegativeButton(R.string.no, dialogClickListener);
+			}
+			builder.show();
 		}
 	}
 
 	/*
-	 * Initialize WebKit Proxying for Tor
+	 * Initialize WebKit Proxying
 	 */
-	private void initializeTor() {
+	private void initializeProxy() {
+		String host;
+		int port;
 
-		OrbotHelper oh = new OrbotHelper(this);
-		if (!oh.isOrbotRunning()) {
-			oh.requestOrbotStart(this);
+		switch (mPreferences.getProxyChoice()) {
+			case 0:
+				// We shouldn't be here
+				return;
+
+			case 1:
+				OrbotHelper oh = new OrbotHelper(this);
+				if (!oh.isOrbotRunning()) {
+					oh.requestOrbotStart(this);
+				}
+				host = "localhost";
+				port = 8118;
+				break;
+
+			case 2:
+				if (!mI2PHelper.isI2PAndroidRunning()) {
+					mI2PHelper.requestI2PAndroidStart(this);
+				}
+				host = "localhost";
+				port = 4444;
+				break;
+
+			default:
+				host = mPreferences.getProxyHost();
+				port = mPreferences.getProxyPort();
 		}
+
 		try {
-			String host = mPreferences.getProxyHost();
-			int port = mPreferences.getProxyPort();
 			WebkitProxy.setProxy(BrowserApp.class.getName(), getApplicationContext(),
 					host, port);
 		} catch (Exception e) {
@@ -704,7 +799,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 		updateCookiePreference();
 		if (mPreferences.getUseProxy()) {
-			initializeTor();
+			initializeProxy();
 		} else {
 			try {
 				WebkitProxy.resetProxy(BrowserApp.class.getName(),
@@ -1370,12 +1465,27 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	@Override
+	protected void onStop() {
+		super.onStop();
+		mI2PHelper.unbind();
+	}
+
+	@Override
 	protected void onDestroy() {
 		Log.d(Constants.TAG, "onDestroy");
 		if (mHistoryDatabase != null) {
 			mHistoryDatabase.close();
 		}
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		if (mPreferences.getProxyChoice() == 2) {
+			// Try to bind to I2P Android
+			mI2PHelper.bind();
+		}
 	}
 
 	@Override

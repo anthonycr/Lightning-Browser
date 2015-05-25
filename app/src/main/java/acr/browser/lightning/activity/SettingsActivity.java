@@ -339,7 +339,6 @@ public class SettingsActivity extends ThemableSettingsActivity {
 				break;
 		}
 
-		mPreferences.setUseProxy(choice != 0);
 		mPreferences.setProxyChoice(choice);
 		if (choice < mProxyChoices.length)
 			mProxyChoiceName.setText(mProxyChoices[choice]);

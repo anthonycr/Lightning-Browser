@@ -165,6 +165,7 @@
         <item>I2P</item>
     </string-array>
     <string name="use_tor_prompt">It looks like you have Orbot installed. Do you want to use Tor?</string>
+    <string name="use_i2p_prompt">It looks like you have I2P installed. Do you want to use I2P?</string>
     <string name="install_orbot">Please install Orbot in order to proxy with Tor.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

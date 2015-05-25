@@ -53,6 +53,7 @@ public class PreferenceManager {
 		public static final String USE_PROXY_HOST = "useProxyHost";
 		public static final String USE_PROXY_PORT = "useProxyPort";
 		public static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
+		public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
 	}
 
 	private static PreferenceManager mInstance;
@@ -85,6 +86,10 @@ public class PreferenceManager {
 
 	public boolean getCheckedForTor() {
 		return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_TOR, false);
+	}
+
+	public boolean getCheckedForI2P() {
+		return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
 	}
 
 	public boolean getClearCacheExit() {
@@ -271,6 +276,10 @@ public class PreferenceManager {
 		putBoolean(Name.INITIAL_CHECK_FOR_TOR, check);
 	}
 
+	public void setCheckedForI2P(boolean check) {
+		putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
+	}
+
 	public void setClearCacheExit(boolean enable) {
 		putBoolean(Name.CLEAR_CACHE_EXIT, enable);
 	}
@@ -399,11 +408,13 @@ public class PreferenceManager {
 		putBoolean(Name.DARK_THEME, use);
 	}
 
-	public void setUseProxy(boolean enable) {
-		putBoolean(Name.USE_PROXY, enable);
-	}
-
+	/**
+	 * 0: None. 1: Orbot. 2: I2P.
+	 *
+	 * @param choice the proxy to use.
+	 */
 	public void setProxyChoice(int choice) {
+		putBoolean(Name.USE_PROXY, choice != 0);
 		putInt(Name.PROXY_CHOICE, choice);
 	}
 
