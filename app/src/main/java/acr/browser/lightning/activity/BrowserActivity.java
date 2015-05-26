@@ -184,6 +184,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	// Helper
 	private I2PAndroidHelper mI2PHelper;
+	private boolean mI2PHelperBound;
+	private boolean mI2PProxyInitialized;
 
 	// Constant
 	private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -626,7 +628,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				break;
 
 			case 2:
-				if (!mI2PHelper.isI2PAndroidRunning()) {
+				mI2PProxyInitialized = true;
+				if (mI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
 					mI2PHelper.requestI2PAndroidStart(this);
 				}
 				host = "localhost";
@@ -807,6 +810,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			mI2PProxyInitialized = false;
 		}
 	}
 
@@ -1468,6 +1472,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	protected void onStop() {
 		super.onStop();
 		mI2PHelper.unbind();
+		mI2PHelperBound = false;
 	}
 
 	@Override
@@ -1484,7 +1489,14 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		super.onStart();
 		if (mPreferences.getProxyChoice() == 2) {
 			// Try to bind to I2P Android
-			mI2PHelper.bind();
+			mI2PHelper.bind(new I2PAndroidHelper.Callback() {
+				@Override
+				public void onI2PAndroidBound() {
+					mI2PHelperBound = true;
+					if (mI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
+						mI2PHelper.requestI2PAndroidStart(BrowserActivity.this);
+				}
+			});
 		}
 	}
 
