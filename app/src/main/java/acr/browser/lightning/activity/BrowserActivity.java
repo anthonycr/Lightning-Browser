@@ -588,11 +588,12 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
 							case DialogInterface.BUTTON_POSITIVE:
-								mPreferences.setProxyChoice(orbotInstalled ? 1 : 2);
+								mPreferences.setProxyChoice(orbotInstalled ?
+										Constants.PROXY_ORBOT : Constants.PROXY_I2P);
 								initializeProxy();
 								break;
 							case DialogInterface.BUTTON_NEGATIVE:
-								mPreferences.setProxyChoice(0);
+								mPreferences.setProxyChoice(Constants.NO_PROXY);
 								break;
 						}
 					}

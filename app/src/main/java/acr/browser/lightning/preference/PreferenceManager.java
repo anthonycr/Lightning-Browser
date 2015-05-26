@@ -233,7 +233,7 @@ public class PreferenceManager {
 	}
 
 	public int getProxyChoice() {
-		return mPrefs.getInt(Name.PROXY_CHOICE, 0);
+		return mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
 	}
 
 	public int getUserAgentChoice() {
@@ -409,12 +409,17 @@ public class PreferenceManager {
 	}
 
 	/**
-	 * 0: None. 1: Orbot. 2: I2P.
+	 * Valid choices:
+	 * <ul>
+	 *     <li>{@link Constants#NO_PROXY}</li>
+	 *     <li>{@link Constants#PROXY_ORBOT}</li>
+	 *     <li>{@link Constants#PROXY_I2P}</li>
+	 * </ul>
 	 *
 	 * @param choice the proxy to use.
 	 */
 	public void setProxyChoice(int choice) {
-		putBoolean(Name.USE_PROXY, choice != 0);
+		putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
 		putInt(Name.PROXY_CHOICE, choice);
 	}
 
