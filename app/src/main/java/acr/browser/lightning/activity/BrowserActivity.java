@@ -650,6 +650,20 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	}
 
+	public boolean isProxyReady() {
+		if (mPreferences.getProxyChoice() == 2) {
+			if (!mI2PHelper.isI2PAndroidRunning()) {
+				Utils.showToast(this, getString(R.string.i2p_not_running));
+				return false;
+			} else if (!mI2PHelper.areTunnelsActive()) {
+				Utils.showToast(this, getString(R.string.i2p_tunnels_not_ready));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private boolean isTablet() {
 		return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
 	}
