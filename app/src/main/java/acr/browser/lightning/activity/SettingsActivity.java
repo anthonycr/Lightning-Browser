@@ -322,18 +322,18 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
 	private void setProxyChoice(int choice) {
 		switch (choice) {
-			case 1:
+			case Constants.PROXY_ORBOT:
 				OrbotHelper oh = new OrbotHelper(this);
 				if (!oh.isOrbotInstalled()) {
-					choice = 0;
+					choice = Constants.NO_PROXY;
 					Utils.showToast(mContext, getResources().getString(R.string.install_orbot));
 				}
 				break;
 
-			case 2:
+			case Constants.PROXY_I2P:
 				I2PAndroidHelper ih = new I2PAndroidHelper(this);
 				if (!ih.isI2PAndroidInstalled()) {
-					choice = 0;
+					choice = Constants.NO_PROXY;
 					ih.promptToInstall(this);
 				}
 				break;

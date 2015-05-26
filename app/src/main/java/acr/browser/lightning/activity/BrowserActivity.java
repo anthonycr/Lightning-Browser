@@ -614,11 +614,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		int port;
 
 		switch (mPreferences.getProxyChoice()) {
-			case 0:
+			case Constants.NO_PROXY:
 				// We shouldn't be here
 				return;
 
-			case 1:
+			case Constants.PROXY_ORBOT:
 				OrbotHelper oh = new OrbotHelper(this);
 				if (!oh.isOrbotRunning()) {
 					oh.requestOrbotStart(this);
@@ -627,7 +627,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				port = 8118;
 				break;
 
-			case 2:
+			case Constants.PROXY_I2P:
 				mI2PProxyInitialized = true;
 				if (mI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
 					mI2PHelper.requestI2PAndroidStart(this);
@@ -651,7 +651,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	public boolean isProxyReady() {
-		if (mPreferences.getProxyChoice() == 2) {
+		if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
 			if (!mI2PHelper.isI2PAndroidRunning()) {
 				Utils.showToast(this, getString(R.string.i2p_not_running));
 				return false;
@@ -1501,7 +1501,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if (mPreferences.getProxyChoice() == 2) {
+		if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
 			// Try to bind to I2P Android
 			mI2PHelper.bind(new I2PAndroidHelper.Callback() {
 				@Override
