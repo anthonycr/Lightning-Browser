@@ -5,7 +5,7 @@
     <string name="google">Google</string>
     <string name="settings">Impostazioni del browser</string>
     <string name="location">Accesso alla posizione</string>
-    <string name="password">Ricorda Password</string>
+    <string name="password">Salva Password</string>
     <string name="agent">User Agent</string>
     <string name="history">Cancella cronologia</string>
     <string name="email">Email me</string>
