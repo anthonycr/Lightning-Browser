@@ -130,11 +130,6 @@
     <string name="invert_color">Inverti colori</string>
     <string name="dark_theme">Usa il tema scuro</string>
     <string name="change_after_restart">Il cambiamento di tema avrà effetto dopo il riavvio del browser.</string>
-    <string name="settings_general">General Settings</string>
-    <string name="settings_display">Display Settings</string>
-    <string name="settings_privacy">Privacy Settings</string>
-    <string name="settings_about">About</string>
-    <string name="settings_about_explain">Details about version, author and license.</string>
     <string name="close_tab">Chiudi la scheda</string>
     <string name="close_all_tabs">Chiudi tute le schede</string>
     <string name="third_party">Blocca cookies di terze parti.</string>
