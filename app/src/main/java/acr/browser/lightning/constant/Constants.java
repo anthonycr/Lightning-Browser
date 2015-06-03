@@ -43,4 +43,5 @@ public final class Constants {
 	public static final int NO_PROXY = 0;
 	public static final int PROXY_ORBOT = 1;
 	public static final int PROXY_I2P = 2;
+	public static final int PROXY_MANUAL = 3;
 }

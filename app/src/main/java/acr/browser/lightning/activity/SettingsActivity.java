@@ -98,7 +98,10 @@ public class SettingsActivity extends ThemableSettingsActivity {
 		mProxyChoiceName = (TextView) findViewById(R.id.proxyChoiceName);
 		mProxyChoices = this.getResources().getStringArray(R.array.proxy_choices_array);
 		int choice = mPreferences.getProxyChoice();
-		mProxyChoiceName.setText(mProxyChoices[choice]);
+		if (choice == Constants.PROXY_MANUAL)
+			mProxyChoiceName.setText(mPreferences.getProxyHost() + ":" + mPreferences.getProxyPort());
+		else
+			mProxyChoiceName.setText(mProxyChoices[choice]);
 
 		CheckBox flash = (CheckBox) findViewById(R.id.cbFlash);
 		CheckBox adblock = (CheckBox) findViewById(R.id.cbAdblock);
@@ -337,11 +340,38 @@ public class SettingsActivity extends ThemableSettingsActivity {
 					ih.promptToInstall(this);
 				}
 				break;
+
+			case Constants.PROXY_MANUAL:
+				manualProxyPicker();
+				break;
 		}
 
 		mPreferences.setProxyChoice(choice);
 		if (choice < mProxyChoices.length)
 			mProxyChoiceName.setText(mProxyChoices[choice]);
+	}
+
+	public void manualProxyPicker() {
+		View v = getLayoutInflater().inflate(R.layout.picker_manual_proxy, null);
+		final EditText eProxyHost = (EditText) v.findViewById(R.id.proxyHost);
+		final EditText eProxyPort = (EditText) v.findViewById(R.id.proxyPort);
+		eProxyHost.setText(mPreferences.getProxyHost());
+		eProxyPort.setText(Integer.toString(mPreferences.getProxyPort()));
+
+		new AlertDialog.Builder(mActivity)
+				.setTitle(R.string.manual_proxy)
+				.setView(v)
+				.setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						String proxyHost = eProxyHost.getText().toString();
+						int proxyPort = Integer.parseInt(eProxyPort.getText().toString());
+						mPreferences.setProxyHost(proxyHost);
+						mPreferences.setProxyPort(proxyPort);
+						mProxyChoiceName.setText(proxyHost + ":" + proxyPort);
+					}
+				})
+				.show();
 	}
 
 	public void agentPicker() {

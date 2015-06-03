@@ -423,6 +423,14 @@ public class PreferenceManager {
 		putInt(Name.PROXY_CHOICE, choice);
 	}
 
+	public void setProxyHost(String proxyHost) {
+		putString(Name.USE_PROXY_HOST, proxyHost);
+	}
+
+	public void setProxyPort(int proxyPort) {
+		putInt(Name.USE_PROXY_PORT, proxyPort);
+	}
+
 	public void setUserAgentChoice(int choice) {
 		putInt(Name.USER_AGENT, choice);
 	}
