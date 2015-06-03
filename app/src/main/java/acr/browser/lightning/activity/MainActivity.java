@@ -13,7 +13,7 @@ import acr.browser.lightning.R;
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {
 
-	CookieManager mCookieManager;
+	private CookieManager mCookieManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

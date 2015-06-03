@@ -27,7 +27,7 @@ import java.util.Map;
 public class MapEntry<K, V> implements Map.Entry<K, V>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private K key;
+	private final K key;
 	private V value;
 
 	public MapEntry(K key, V value) {

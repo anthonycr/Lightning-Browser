@@ -53,7 +53,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 	}
 
 	@SuppressLint("NewApi")
-	public void init() {
+	private void init() {
 		// set up ActionBar
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);

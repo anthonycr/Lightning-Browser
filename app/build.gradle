@@ -49,7 +49,7 @@ dependencies {
         exclude module: 'support-v4'
         exclude module: 'android-support-v4'
     }
-    compile 'com.android.support:palette-v7:22.1.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:palette-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'org.jsoup:jsoup:1.8.1'
 }

@@ -140,7 +140,7 @@ public class ReadingActivity extends AppCompatActivity {
 
 			HtmlFetcher fetcher = new HtmlFetcher();
 			try {
-				JResult result = fetcher.fetchAndExtract(params[0], 5000, true);
+				JResult result = fetcher.fetchAndExtract(params[0], 2500, true);
 				mTitleText = result.getTitle();
 				mBodyText = result.getTextList();
 			} catch (Exception e) {

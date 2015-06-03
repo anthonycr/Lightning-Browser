@@ -224,7 +224,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		return mFilter;
 	}
 
-	public class SearchFilter extends Filter {
+	private class SearchFilter extends Filter {
 
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
@@ -397,7 +397,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 		return connectivity.getActiveNetworkInfo();
 	}
 
-	public List<HistoryItem> getSuggestions() {
+	//TODO Write simpler algorithm
+	private List<HistoryItem> getSuggestions() {
 		List<HistoryItem> filteredList = new ArrayList<>();
 
 		int suggestionsSize = (mSuggestions == null) ? 0 : mSuggestions.size();

@@ -150,7 +150,7 @@ public class LightningView {
 		}
 	}
 
-	public String getHomepage() {
+	private String getHomepage() {
 		StringBuilder homepageBuilder = new StringBuilder();
 		homepageBuilder.append(StartPage.HEAD);
 		String icon;
@@ -362,7 +362,7 @@ public class LightningView {
 
 	@SuppressWarnings("deprecation")
 	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
-	public void initializeSettings(WebSettings settings, Context context) {
+	private void initializeSettings(WebSettings settings, Context context) {
 		if (API < 18) {
 			settings.setAppCacheMaxSize(Long.MAX_VALUE);
 		}

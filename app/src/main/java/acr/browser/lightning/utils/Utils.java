@@ -63,11 +63,11 @@ public final class Utils {
 		builder.setMessage(message)
 				.setCancelable(true)
 				.setPositiveButton(context.getResources().getString(R.string.action_ok),
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-							}
-						});
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -135,7 +135,7 @@ public final class Utils {
 	}
 
 	public static String[] getArray(String input) {
-		return input.split("\\|\\$\\|SEPARATOR\\|\\$\\|");
+		return input.split(Constants.SEPARATOR);
 	}
 
 	public static void trimCache(Context context) {
@@ -183,6 +183,35 @@ public final class Utils {
 		canvas.drawBitmap(bitmap, padding / 2, padding / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
 
 		return paddedBitmap;
+	}
+
+    public static boolean isColorTooDark(int color) {
+        final byte RED_CHANNEL = 16;
+        final byte GREEN_CHANNEL = 8;
+        //final byte BLUE_CHANNEL = 0;
+
+        int r = ((int) ((float) (color >> RED_CHANNEL & 0xff) * 0.3f)) & 0xff;
+        int g = ((int) ((float) (color >> GREEN_CHANNEL & 0xff) * 0.59)) & 0xff;
+        int b = ((int) ((float) (color /* >> BLUE_CHANNEL */ & 0xff) * 0.11)) & 0xff;
+        int gr = (r + g + b) & 0xff;
+        int gray = gr /* << BLUE_CHANNEL */ + (gr << GREEN_CHANNEL) + (gr << RED_CHANNEL);
+
+        return gray < 0x727272;
+    }
+
+	public static int mixTwoColors(int color1, int color2, float amount) {
+		final byte ALPHA_CHANNEL = 24;
+		final byte RED_CHANNEL = 16;
+		final byte GREEN_CHANNEL = 8;
+		//final byte BLUE_CHANNEL = 0;
+
+		final float inverseAmount = 1.0f - amount;
+
+		int r = ((int) (((float) (color1 >> RED_CHANNEL & 0xff) * amount) + ((float) (color2 >> RED_CHANNEL & 0xff) * inverseAmount))) & 0xff;
+		int g = ((int) (((float) (color1 >> GREEN_CHANNEL & 0xff) * amount) + ((float) (color2 >> GREEN_CHANNEL & 0xff) * inverseAmount))) & 0xff;
+		int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
+
+		return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
 	}
 
 	@SuppressLint("SimpleDateFormat")
