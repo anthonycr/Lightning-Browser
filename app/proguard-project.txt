@@ -77,3 +77,9 @@
 # Don't warn about those in case this app is linking against an older
 # platform version.  We know about them, and they are safe.
 -dontwarn android.support.**
+
+# The I2P Java API bundled inside the I2P Android client library contains
+# references to javax.naming classes that Android doesn't have. But those
+# classes are never used on Android, and it is safe to ignore the warnings.
+-dontwarn net.i2p.crypto.CertUtil
+-dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier

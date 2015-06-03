@@ -52,4 +52,5 @@ dependencies {
     compile 'com.android.support:palette-v7:22.2.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'org.jsoup:jsoup:1.8.1'
+    compile 'net.i2p.android:client:0.7@aar'
 }
