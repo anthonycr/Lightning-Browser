@@ -4,8 +4,8 @@
     <string name="app_name">Lightning</string>
     <string name="google">Google</string>
     <string name="settings">Impostazioni del browser</string>
-    <string name="location">Accedere alla tua posizione</string>
-    <string name="password">Salva password</string>
+    <string name="location">Accesso alla posizione</string>
+    <string name="password">Salva Password</string>
     <string name="agent">User Agent</string>
     <string name="history">Cancella cronologia</string>
     <string name="email">Email me</string>
@@ -21,16 +21,16 @@
     <string name="action_share">Condividi</string>
     <string name="action_settings">Impostazioni</string>
     <string name="action_incognito">Nuova scheda in incognito</string>
-    <string name="action_new_tab">Nuova Scheda</string>
+    <string name="action_new_tab">Nuova scheda</string>
     <string name="action_copy">Copia URL</string>
-    <string name="action_add_bookmark">Aggiungi Segnalibro</string>
+    <string name="action_add_bookmark">Aggiungi ai segnalibri</string>
     <string name="action_websearch">Ricerca</string>
     <string name="action_refresh">Ricarica</string>
     <string name="download">Percorso Download</string>
     <string name="version">Versione Applicazione</string>
-    <string name="cache">Pulisci cache alla chiusura</string>
+    <string name="cache">Pulisci la cache alla chiusura</string>
     <string name="reflow">Abilità reflow del testo</string>
-    <string name="window">Consenti ai siti di aprire nuove finestr</string>
+    <string name="window">Consenti l'apertura di nuove finestre</string>
     <string name="cookies">Abilita Cookies</string>
     <string name="importbookmarks">Importa Segnalibri</string>
     <string name="size">Dimensione testo</string>
@@ -43,7 +43,7 @@
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
-    <string name="clear_cookies">Cancella cookie del browser</string>
+    <string name="clear_cookies">Cancella i cookies del browser</string>
     <string name="dialog_image">Cosa vorresti fare con questa immagine?</string>
     <string name="action_download">Scarica</string>
     <string name="action_open">Apri</string>
@@ -55,7 +55,7 @@
     <string name="agent_default">Default</string>
     <string name="agent_desktop">Desktop</string>
     <string name="agent_mobile">Mobile</string>
-    <string name="agent_custom">Personale</string>
+    <string name="agent_custom">Personalizzato</string>
     <string name="title_search_engine">Motore di ricerca</string>
     <string name="action_ok">OK</string>
     <string name="dialog_download">Vuoi scaricare questo file?</string>
@@ -64,8 +64,8 @@
     <string name="action_yes">Si</string>
     <string name="action_no">No</string>
     <string name="title_text_size">Dimensione testo</string>
-    <string name="size_largest">Più Largo</string>
-    <string name="size_large">Largo</string>
+    <string name="size_largest">Più Grande</string>
+    <string name="size_large">Grande</string>
     <string name="size_normal">Normale</string>
     <string name="size_small">Piccolo</string>
     <string name="size_smallest">Più Piccolo</string>
@@ -98,12 +98,12 @@
     <string name="export_bookmarks">Esporta segnalibri</string>
     <string name="import_backup">Importa segnalibri da backup</string>
     <string name="bookmark_export_path">Segnalibri esportati</string>
-    <string name="bookmark_settings">Impostazioni Segnalibri</string>
+    <string name="bookmark_settings">Segnalibri</string>
     <string name="title_chooser">Seleziona un file</string>
     <string name="block">Blocca le immagini</string>
     <string name="install_orbot">Installa Orbot per attivare questa funzione.</string>
-    <string name="settings_general">Impostazioni Generali</string>
-    <string name="settings_display">Impostazioni Display</string>
+    <string name="settings_general">Generali</string>
+    <string name="settings_display">Display</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_about">Informazioni</string>
     <string name="settings_about_explain">Informazioni sull\'autore, versione e license.</string>
@@ -112,8 +112,8 @@
     <string name="name_grayscale">Scala di grigi</string>
     <string name="name_inverted_grayscale">Scala di grigi inversa</string>
     <string name="name_normal">Normale</string>
-    <string name="clear_cookies_exit">Cancella cookie alla chiusura</string>
-    <string name="clear_history_exit">Cancella cronologia alla chiusura</string>
+    <string name="clear_cookies_exit">Elimina i cookies alla chiusura</string>
+    <string name="clear_history_exit">Elimina la cronologia alla chiusura</string>
     <string name="title_clear_history">Cancella Cronologia</string>
     <string name="title_clear_cookies">Cancella Cookies</string>
     <string name="google_suggestions">Suggerimenti di ricerca</string>
@@ -121,5 +121,20 @@
     <string name="licenses">Licenze Open Source</string>
     <string name="action_webpage">Pagina Web</string>
     <string name="fullscreen">Modalità a schermo intero</string>
+    <string name="settings_advanced">Avanzate</string>
+    <string name="url_contents">Contenuto box URL</string>
+    <string-array name="url_content_array">
+        <item >Dominio (default)</item>
+        <item >URL</item>
+        <item >Titolo</item>
+    <string name="invert_color">Inverti colori</string>
+    <string name="dark_theme">Usa il tema scuro</string>
+    <string name="change_after_restart">Il cambiamento di tema avrà effetto dopo il riavvio del browser.</string>
+    <string name="close_tab">Chiudi la scheda</string>
+    <string name="close_all_tabs">Chiudi tute le schede</string>
+    <string name="third_party">Blocca cookies di terze parti.</string>
+    <string name="available_lollipop">Questa feature è disponibile solo su Android 5.0+</string>
+    <string name="color_mode">Attiva la modalità a colori.</string>
+    <string name="reading_mode">Modalità reader</string>
     
 </resources>
