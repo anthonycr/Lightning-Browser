@@ -127,6 +127,7 @@
         <item >Dominio (default)</item>
         <item >URL</item>
         <item >Titolo</item>
+    </string-array>
     <string name="invert_color">Inverti colori</string>
     <string name="dark_theme">Usa il tema scuro</string>
     <string name="change_after_restart">Il cambiamento di tema avrà effetto dopo il riavvio del browser.</string>
