@@ -38,4 +38,10 @@ public final class Constants {
 	public static final String FILE = "file://";
 	public static final String FOLDER = "folder://";
 	public static final String TAG = "Lightning";
+
+	// These should match the order of @array/proxy_choices_array
+	public static final int NO_PROXY = 0;
+	public static final int PROXY_ORBOT = 1;
+	public static final int PROXY_I2P = 2;
+	public static final int PROXY_MANUAL = 3;
 }

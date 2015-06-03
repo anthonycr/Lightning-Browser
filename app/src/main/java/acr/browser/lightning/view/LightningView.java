@@ -526,6 +526,12 @@ public class LightningView {
 	}
 
 	public synchronized void reload() {
+		// Check if configured proxy is available
+		if (!mBrowserController.isProxyReady()) {
+			// User has been notified
+			return;
+		}
+
 		if (mWebView != null) {
 			mWebView.reload();
 		}
@@ -611,6 +617,12 @@ public class LightningView {
 	}
 
 	public synchronized void loadUrl(String url) {
+		// Check if configured proxy is available
+		if (!mBrowserController.isProxyReady()) {
+			// User has been notified
+			return;
+		}
+
 		if (mWebView != null) {
 			mWebView.loadUrl(url);
 		}
@@ -815,6 +827,12 @@ public class LightningView {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			// Check if configured proxy is available
+			if (!mBrowserController.isProxyReady()) {
+				// User has been notified
+				return true;
+			}
+
 			if (mBrowserController.isIncognito()) {
 				return super.shouldOverrideUrlLoading(view, url);
 			}

@@ -54,5 +54,7 @@ public interface BrowserController {
 
 	boolean isIncognito();
 
+	boolean isProxyReady();
+
 	int getMenu();
 }

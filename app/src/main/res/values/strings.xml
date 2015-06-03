@@ -158,9 +158,21 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock is currently only available in the browser\'s paid version, Lightning Browser+. It is available to download on Google Play.</string>
-    <string name="enable_orbot">Enable Orbot</string>
+    <string name="http_proxy">HTTP proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>None</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manual</item>
+    </string-array>
+    <string name="manual_proxy">Manual proxy</string>
+    <string name="host">Host:</string>
+    <string name="port">Port:</string>
     <string name="use_tor_prompt">It looks like you have Orbot installed. Do you want to use Tor?</string>
+    <string name="use_i2p_prompt">It looks like you have I2P installed. Do you want to use I2P?</string>
     <string name="install_orbot">Please install Orbot in order to proxy with Tor.</string>
+    <string name="i2p_not_running">I2P is not running.</string>
+    <string name="i2p_tunnels_not_ready">I2P tunnels are not ready yet.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="clear_cookies_exit">Clear cookies on exit</string>

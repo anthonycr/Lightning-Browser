@@ -49,9 +49,11 @@ public class PreferenceManager {
 		public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
 
 		public static final String USE_PROXY = "useProxy";
+		public static final String PROXY_CHOICE = "proxyChoice";
 		public static final String USE_PROXY_HOST = "useProxyHost";
 		public static final String USE_PROXY_PORT = "useProxyPort";
 		public static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
+		public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
 	}
 
 	private static PreferenceManager mInstance;
@@ -84,6 +86,10 @@ public class PreferenceManager {
 
 	public boolean getCheckedForTor() {
 		return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_TOR, false);
+	}
+
+	public boolean getCheckedForI2P() {
+		return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
 	}
 
 	public boolean getClearCacheExit() {
@@ -226,6 +232,10 @@ public class PreferenceManager {
 		return mPrefs.getBoolean(Name.USE_PROXY, false);
 	}
 
+	public int getProxyChoice() {
+		return mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
+	}
+
 	public int getUserAgentChoice() {
 		return mPrefs.getInt(Name.USER_AGENT, 1);
 	}
@@ -264,6 +274,10 @@ public class PreferenceManager {
 
 	public void setCheckedForTor(boolean check) {
 		putBoolean(Name.INITIAL_CHECK_FOR_TOR, check);
+	}
+
+	public void setCheckedForI2P(boolean check) {
+		putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
 	}
 
 	public void setClearCacheExit(boolean enable) {
@@ -394,8 +408,27 @@ public class PreferenceManager {
 		putBoolean(Name.DARK_THEME, use);
 	}
 
-	public void setUseProxy(boolean enable) {
-		putBoolean(Name.USE_PROXY, enable);
+	/**
+	 * Valid choices:
+	 * <ul>
+	 *     <li>{@link Constants#NO_PROXY}</li>
+	 *     <li>{@link Constants#PROXY_ORBOT}</li>
+	 *     <li>{@link Constants#PROXY_I2P}</li>
+	 * </ul>
+	 *
+	 * @param choice the proxy to use.
+	 */
+	public void setProxyChoice(int choice) {
+		putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
+		putInt(Name.PROXY_CHOICE, choice);
+	}
+
+	public void setProxyHost(String proxyHost) {
+		putString(Name.USE_PROXY_HOST, proxyHost);
+	}
+
+	public void setProxyPort(int proxyPort) {
+		putInt(Name.USE_PROXY_PORT, proxyPort);
 	}
 
 	public void setUserAgentChoice(int choice) {
