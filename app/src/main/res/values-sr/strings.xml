@@ -155,7 +155,6 @@
     <string name="powered_by_google">Погоњено Гуглом</string>
     <string name="title_adblock">Адблок</string>
     <string name="message_adblock">Адблок је доступан само у плаћеном издању прегледача, „Lightning Browser+“. Доступан је за преузимање на Гугловом Плеју.</string>
-    <string name="enable_orbot">Омогући Орбот</string>
     <string name="use_tor_prompt">Изгледа да имате Орбот инсталиран. Желите ли да користите Тор?</string>
     <string name="install_orbot">Инсталирајте Орбот да бисте користили Тор.</string>
     <string name="yes">Да</string>

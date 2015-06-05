@@ -142,7 +142,6 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock şu anda yalnızca ücretli sürüm olan Lightning Browser+ ile kullanılabilir. Ücretli sürümü Google Play aracılığı ile indirebilirsin.</string>
-    <string name="enable_orbot">Orbot\'u kullan</string>
     <string name="use_tor_prompt">Cihazında Orbot yüklü görünüyor. Tor kullanmak ister misin?</string>
     <string name="install_orbot">Tor proxy ağı ile gezinmek için Orbot yüklemelisin.</string>
     <string name="yes">Evet</string>

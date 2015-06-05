@@ -158,7 +158,6 @@
     <string name="powered_by_google">Disponibilizado por Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">O AdBlock apenas está disponível na versão paga, o Lightning Browser+. Esta versão está disponível na loja Google.</string>
-    <string name="enable_orbot">Ativar Orbot</string>
     <string name="use_tor_prompt">Parece que você tem o Orbot instalado. Gostaria de utilizar a rede Tor?</string>
     <string name="install_orbot">Por favor instale o Orbot para poder utilizar a rede Tor.</string>
     <string name="yes">Sim</string>

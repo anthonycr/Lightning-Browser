@@ -141,7 +141,6 @@
     <string name="powered_by_google">Используя Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock в настоящее время доступен только в платной версии браузера Lightning Browser+. Он доступен для загрузки в Google Play.</string>
-    <string name="enable_orbot">Использовать Orbot</string>
     <string name="use_tor_prompt">Похоже, установлен Orbot. Вы хотите использовать Tor?</string>
     <string name="install_orbot">Пожалуйста, установите Orbot для проксирования через Tor.</string>
     <string name="yes">Да</string>

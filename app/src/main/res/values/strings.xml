@@ -158,7 +158,7 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">AdBlock is currently only available in the browser\'s paid version, Lightning Browser+. It is available to download on Google Play.</string>
-    <string name="http_proxy">HTTP proxy</string>
+    <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
         <item>None</item>
         <item>Orbot</item>

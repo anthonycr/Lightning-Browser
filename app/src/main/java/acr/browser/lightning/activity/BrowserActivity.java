@@ -92,8 +92,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import net.i2p.android.ui.I2PAndroidHelper;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -124,11 +122,10 @@ import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.DrawerArrowDrawable;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
 
 public class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
 
@@ -165,7 +162,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	// Context
 	private Activity mActivity;
 
-	// Native
+	// Primatives
 	private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode,
 			mDarkTheme;
 	private int mOriginalOrientation, mBackgroundColor, mIdGenerator;
@@ -182,10 +179,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private Drawable mDeleteIcon, mRefreshIcon, mCopyIcon, mIcon;
 	private DrawerArrowDrawable mArrowDrawable;
 
-	// Helper
-	private I2PAndroidHelper mI2PHelper;
-	private boolean mI2PHelperBound;
-	private boolean mI2PProxyInitialized;
+	// Proxy
+	private ProxyUtils mProxyUtils;
 
 	// Constant
 	private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -269,7 +264,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				R.id.arrow_button);
 		arrowButton.setOnClickListener(this);
 
-		mI2PHelper = new I2PAndroidHelper(this);
+		mProxyUtils = ProxyUtils.getInstance(this);
 
 		RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
 		back.setOnClickListener(this);
@@ -354,7 +349,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
 		}
 
-		checkForProxy();
+		mProxyUtils.checkForProxy(this);
 	}
 
 	private class SearchClass {
@@ -543,129 +538,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	}
 
-	/*
-	 * If Orbot/Tor or I2P is installed, prompt the user if they want to enable
-	 * proxying for this session
-	 */
-	private void checkForProxy() {
-		boolean useProxy = mPreferences.getUseProxy();
-
-		OrbotHelper oh = new OrbotHelper(this);
-		final boolean orbotInstalled = oh.isOrbotInstalled();
-		boolean orbotChecked = mPreferences.getCheckedForTor();
-		boolean orbot = orbotInstalled && !orbotChecked;
-
-		boolean i2pInstalled = mI2PHelper.isI2PAndroidInstalled();
-		boolean i2pChecked = mPreferences.getCheckedForI2P();
-		boolean i2p = i2pInstalled && !i2pChecked;
-
-		// TODO Is the idea to show this per-session, or only once?
-		if (!useProxy && (orbot || i2p)) {
-			if (orbot) mPreferences.setCheckedForTor(true);
-			if (i2p) mPreferences.setCheckedForI2P(true);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-			if (orbotInstalled && i2pInstalled) {
-				String[] proxyChoices = this.getResources().getStringArray(R.array.proxy_choices_array);
-				builder.setTitle(getResources().getString(R.string.http_proxy))
-						.setSingleChoiceItems(proxyChoices, mPreferences.getProxyChoice(),
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										mPreferences.setProxyChoice(which);
-									}
-								})
-						.setNeutralButton(getResources().getString(R.string.action_ok),
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										if (mPreferences.getUseProxy())
-											initializeProxy();
-									}
-								});
-			} else {
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-							case DialogInterface.BUTTON_POSITIVE:
-								mPreferences.setProxyChoice(orbotInstalled ?
-										Constants.PROXY_ORBOT : Constants.PROXY_I2P);
-								initializeProxy();
-								break;
-							case DialogInterface.BUTTON_NEGATIVE:
-								mPreferences.setProxyChoice(Constants.NO_PROXY);
-								break;
-						}
-					}
-				};
-
-				builder.setMessage(orbotInstalled ? R.string.use_tor_prompt : R.string.use_i2p_prompt)
-						.setPositiveButton(R.string.yes, dialogClickListener)
-						.setNegativeButton(R.string.no, dialogClickListener);
-			}
-			builder.show();
-		}
-	}
-
-	/*
-	 * Initialize WebKit Proxying
-	 */
-	private void initializeProxy() {
-		String host;
-		int port;
-
-		switch (mPreferences.getProxyChoice()) {
-			case Constants.NO_PROXY:
-				// We shouldn't be here
-				return;
-
-			case Constants.PROXY_ORBOT:
-				OrbotHelper oh = new OrbotHelper(this);
-				if (!oh.isOrbotRunning()) {
-					oh.requestOrbotStart(this);
-				}
-				host = "localhost";
-				port = 8118;
-				break;
-
-			case Constants.PROXY_I2P:
-				mI2PProxyInitialized = true;
-				if (mI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
-					mI2PHelper.requestI2PAndroidStart(this);
-				}
-				host = "localhost";
-				port = 4444;
-				break;
-
-			default:
-				host = mPreferences.getProxyHost();
-				port = mPreferences.getProxyPort();
-		}
-
-		try {
-			WebkitProxy.setProxy(BrowserApp.class.getName(), getApplicationContext(),
-					host, port);
-		} catch (Exception e) {
-			Log.d(Constants.TAG, "error enabling web proxying", e);
-		}
-
-	}
-
-	public boolean isProxyReady() {
-		if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
-			if (!mI2PHelper.isI2PAndroidRunning()) {
-				Utils.showToast(this, getString(R.string.i2p_not_running));
-				return false;
-			} else if (!mI2PHelper.areTunnelsActive()) {
-				Utils.showToast(this, getString(R.string.i2p_tunnels_not_ready));
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	private boolean isTablet() {
 		return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
 	}
@@ -817,17 +689,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 
 		updateCookiePreference();
-		if (mPreferences.getUseProxy()) {
-			initializeProxy();
-		} else {
-			try {
-				WebkitProxy.resetProxy(BrowserApp.class.getName(),
-						getApplicationContext());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			mI2PProxyInitialized = false;
-		}
+		mProxyUtils.updateProxySettings(this);
 	}
 
 	/*
@@ -1487,8 +1349,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	protected void onStop() {
 		super.onStop();
-		mI2PHelper.unbind();
-		mI2PHelperBound = false;
+		mProxyUtils.onStop();
 	}
 
 	@Override
@@ -1503,17 +1364,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
-			// Try to bind to I2P Android
-			mI2PHelper.bind(new I2PAndroidHelper.Callback() {
-				@Override
-				public void onI2PAndroidBound() {
-					mI2PHelperBound = true;
-					if (mI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
-						mI2PHelper.requestI2PAndroidStart(BrowserActivity.this);
-				}
-			});
-		}
+		mProxyUtils.onStart(this);
 	}
 
 	@Override
@@ -2023,6 +1874,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	public boolean isIncognito() {
 		return false;
+	}
+
+	@Override
+	public boolean isProxyReady() {
+		return mProxyUtils.isProxyReady(this);
 	}
 
 	/**

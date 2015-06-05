@@ -141,7 +141,6 @@
     <string name="powered_by_google">Dostarczane przez Google</string>
     <string name="title_adblock">Blokowanie reklam</string>
     <string name="message_adblock">Blokowanie reklam jest obecnie dostępne tylko w płatnej wersji przeglądarki, Lightning Browser+. Jest ona dostępna do pobrania w sklepie Google Play.</string>
-    <string name="enable_orbot">Włącz Orbota</string>
     <string name="use_tor_prompt">Wygląda na to że Orbot jest zainstalowany. Chciałbyś go włączyć i użyć sieci Tor do łączenia się z internetem?</string>
     <string name="install_orbot">Zanistaluj Orbota by móc używać sieci Tor do łączenia się z internetem.</string>
     <string name="yes">Tak</string>

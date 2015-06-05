@@ -142,7 +142,6 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">Το AdBlock είναι προς το παρόν διαθέσιμο μόνο στην πληρωμένη έκδοση του browser, Lightning Browser+. Είναι διαθέσιμη για κατέβασμα στο Google Play.</string>
-    <string name="enable_orbot">Ενεργοποίηση Orbot</string>
     <string name="use_tor_prompt">Φαίνεται οτι έχετε εγκατεστημένο το Orbot. Θα θέλατε να χρησιμοποιήσετε το Tor?</string>
     <string name="install_orbot">Παρακαλώ εγκαταστήστε το Orbot για να χρησιμοποιήσετε το Tor.</string>
     <string name="yes">Ναι</string>

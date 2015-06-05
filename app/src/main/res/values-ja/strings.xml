@@ -155,7 +155,6 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="title_adblock">広告ブロック</string>
     <string name="message_adblock">広告ブロックは有料版のLightning Browser+でのみ利用可能です。Google Playからダウンロードできます。</string>
-    <string name="enable_orbot">Orbot</string>
     <string name="use_tor_prompt">Orbotがインストールされています。Torを使用しますか?</string>
     <string name="install_orbot">Torでプロキシを有効にするにはOrbotをインストールしてください</string>
     <string name="yes">はい</string>
