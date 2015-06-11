@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,17 +22,15 @@ import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.download.DownloadHandler;
 
 public final class Utils {
@@ -63,11 +63,11 @@ public final class Utils {
 		builder.setMessage(message)
 				.setCancelable(true)
 				.setPositiveButton(context.getResources().getString(R.string.action_ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						});
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -112,26 +112,6 @@ public final class Utils {
 	public static String getProtocol(String url) {
 		int index = url.indexOf('/');
 		return url.substring(0, index + 2);
-	}
-
-	public static List<HistoryItem> getOldBookmarks(Context context) {
-		List<HistoryItem> bookmarks = new ArrayList<>();
-		File bookUrl = new File(context.getFilesDir(), "bookurl");
-		File book = new File(context.getFilesDir(), "bookmarks");
-		try {
-			BufferedReader readUrl = new BufferedReader(new FileReader(bookUrl));
-			BufferedReader readBook = new BufferedReader(new FileReader(book));
-			String u, t;
-			while ((u = readUrl.readLine()) != null && (t = readBook.readLine()) != null) {
-				HistoryItem map = new HistoryItem(u, t, R.drawable.ic_bookmark);
-				bookmarks.add(map);
-			}
-			readBook.close();
-			readUrl.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return bookmarks;
 	}
 
 	public static String[] getArray(String input) {
@@ -225,6 +205,19 @@ public final class Utils {
 				".jpg", /* suffix */
 				storageDir /* directory */
 		);
+	}
+
+	public static boolean isFlashInstalled(Context context) {
+		try {
+			PackageManager pm = context.getPackageManager();
+			ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
+			if (ai != null) {
+				return true;
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			return false;
+		}
+		return false;
 	}
 
 	public static Bitmap getWebpageBitmap(Resources resources, boolean dark) {
