@@ -3,11 +3,11 @@
 
     <PreferenceCategory android:title="@string/settings_privacy">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="location"
             android:title="@string/location" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="third_party"
             android:title="@string/third_party" />
         <CheckBoxPreference
@@ -16,7 +16,7 @@
             android:title="@string/password"
             android:summary="@string/recommended" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="clear_cache_exit"
             android:title="@string/cache" />
         <CheckBoxPreference

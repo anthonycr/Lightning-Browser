@@ -6,12 +6,18 @@ package acr.browser.lightning.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
@@ -27,13 +33,21 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private static final String SETTINGS_IMAGES = "cb_images";
     private static final String SETTINGS_JAVASCRIPT = "cb_javascript";
     private static final String SETTINGS_COLORMODE = "cb_colormode";
+    private static final String SETTINGS_USERAGENT = "agent";
+    private static final String SETTINGS_DOWNLOAD = "download";
+    private static final String SETTINGS_HOME = "home";
+    private static final String SETTINGS_SEARCHENGINE = "search";
+    private static final String SETTINGS_GOOGLESUGGESTIONS = "google_suggestions";
 
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private PreferenceManager mPreferences;
     private CharSequence[] mProxyChoices;
-    private Preference proxy;
-    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode;
+    private Preference proxy, useragent, downloadloc, home, searchengine;
+    private String mDownloadLocation;
+    private int mAgentChoice;
+    private String mHomepage;
+    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,20 +65,34 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         mPreferences = PreferenceManager.getInstance();
 
         proxy = findPreference(SETTINGS_PROXY);
+        useragent = findPreference(SETTINGS_USERAGENT);
+        downloadloc = findPreference(SETTINGS_DOWNLOAD);
+        home = findPreference(SETTINGS_HOME);
+        searchengine = findPreference(SETTINGS_SEARCHENGINE);
         cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
         cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
         cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
         cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
         cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
+        cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
 
         proxy.setOnPreferenceClickListener(this);
+        useragent.setOnPreferenceClickListener(this);
+        downloadloc.setOnPreferenceClickListener(this);
+        home.setOnPreferenceClickListener(this);
+        searchengine.setOnPreferenceClickListener(this);
         cbFlash.setOnPreferenceChangeListener(this);
         cbAds.setOnPreferenceChangeListener(this);
         cbImages.setOnPreferenceChangeListener(this);
         cbJsScript.setOnPreferenceChangeListener(this);
         cbColorMode.setOnPreferenceChangeListener(this);
+        cbgooglesuggest.setOnPreferenceChangeListener(this);
 
+        mAgentChoice = mPreferences.getUserAgentChoice();
+        mHomepage = mPreferences.getHomepage();
+        mDownloadLocation = mPreferences.getDownloadDirectory();
         mProxyChoices = getResources().getStringArray(R.array.proxy_choices_array);
+
         int choice = mPreferences.getProxyChoice();
         if (choice == Constants.PROXY_MANUAL) {
             proxy.setSummary(mPreferences.getProxyHost() + ":" + mPreferences.getProxyPort());
@@ -74,6 +102,34 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
         if (API >= 19) {
             mPreferences.setFlashSupport(0);
+        }
+
+        setSearchEngineSummary(mPreferences.getSearchChoice());
+
+        downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/' + mDownloadLocation);
+
+        if (mHomepage.contains("about:home")) {
+            home.setSummary(getResources().getString(R.string.action_homepage));
+        } else if (mHomepage.contains("about:blank")) {
+            home.setSummary(getResources().getString(R.string.action_blank));
+        } else if (mHomepage.contains("about:bookmarks")) {
+            home.setSummary(getResources().getString(R.string.action_bookmarks));
+        } else {
+            home.setSummary(mHomepage);
+        }
+
+        switch (mAgentChoice) {
+            case 1:
+                useragent.setSummary(getResources().getString(R.string.agent_default));
+                break;
+            case 2:
+                useragent.setSummary(getResources().getString(R.string.agent_desktop));
+                break;
+            case 3:
+                useragent.setSummary(getResources().getString(R.string.agent_mobile));
+                break;
+            case 4:
+                useragent.setSummary(getResources().getString(R.string.agent_custom));
         }
 
         int flashNum = mPreferences.getFlashSupport();
@@ -89,6 +145,27 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbFlash.setChecked(flashNum > 0);
         cbAds.setChecked(Constants.FULL_VERSION && mPreferences.getAdBlockEnabled());
         cbColorMode.setChecked(mPreferences.getColorModeEnabled());
+        cbgooglesuggest.setChecked(mPreferences.getGoogleSearchSuggestionsEnabled());
+    }
+
+    public void searchUrlPicker() {
+        final AlertDialog.Builder urlPicker = new AlertDialog.Builder(mActivity);
+        urlPicker.setTitle(getResources().getString(R.string.custom_url));
+        final EditText getSearchUrl = new EditText(mActivity);
+        String mSearchUrl = mPreferences.getSearchUrl();
+        getSearchUrl.setText(mSearchUrl);
+        urlPicker.setView(getSearchUrl);
+        urlPicker.setPositiveButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = getSearchUrl.getText().toString();
+                        mPreferences.setSearchUrl(text);
+                        searchengine.setSummary(getResources().getString(R.string.custom_url) + ": "
+                                + text);
+                    }
+                });
+        urlPicker.show();
     }
 
     private void getFlashChoice() {
@@ -184,11 +261,285 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 .show();
     }
 
+    public void searchDialog() {
+        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+        picker.setTitle(getResources().getString(R.string.title_search_engine));
+        CharSequence[] chars = {getResources().getString(R.string.custom_url), "Google",
+                "Ask", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
+                "DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
+                "Yandex (Russian)"};
+
+        int n = mPreferences.getSearchChoice();
+
+        picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mPreferences.setSearchChoice(which);
+                setSearchEngineSummary(which);
+            }
+        });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        picker.show();
+    }
+
+    public void homepageDialog() {
+        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+        picker.setTitle(getResources().getString(R.string.home));
+        mHomepage = mPreferences.getHomepage();
+        int n;
+        if (mHomepage.contains("about:home")) {
+            n = 1;
+        } else if (mHomepage.contains("about:blank")) {
+            n = 2;
+        } else if (mHomepage.contains("about:bookmarks")) {
+            n = 3;
+        } else {
+            n = 4;
+        }
+
+        picker.setSingleChoiceItems(R.array.homepage, n - 1,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which + 1) {
+                            case 1:
+                                mPreferences.setHomepage("about:home");
+                                home.setSummary(getResources().getString(R.string.action_homepage));
+                                break;
+                            case 2:
+                                mPreferences.setHomepage("about:blank");
+                                home.setSummary(getResources().getString(R.string.action_blank));
+                                break;
+                            case 3:
+                                mPreferences.setHomepage("about:bookmarks");
+                                home.setSummary(getResources().getString(R.string.action_bookmarks));
+                                break;
+                            case 4:
+                                homePicker();
+                                break;
+                        }
+                    }
+                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        picker.show();
+    }
+
+    public void homePicker() {
+        final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
+        homePicker.setTitle(getResources().getString(R.string.title_custom_homepage));
+        final EditText getHome = new EditText(mActivity);
+        mHomepage = mPreferences.getHomepage();
+        if (!mHomepage.startsWith("about:")) {
+            getHome.setText(mHomepage);
+        } else {
+            getHome.setText("http://www.google.com");
+        }
+        homePicker.setView(getHome);
+        homePicker.setPositiveButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = getHome.getText().toString();
+                        mPreferences.setHomepage(text);
+                        home.setSummary(text);
+                    }
+                });
+        homePicker.show();
+    }
+
+    public void downloadLocDialog() {
+        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+        picker.setTitle(getResources().getString(R.string.title_download_location));
+        mDownloadLocation = mPreferences.getDownloadDirectory();
+        int n;
+        if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
+            n = 1;
+        } else {
+            n = 2;
+        }
+
+        picker.setSingleChoiceItems(R.array.download_folder, n - 1,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which + 1) {
+                            case 1:
+                                mPreferences.setDownloadDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/'
+                                        + Environment.DIRECTORY_DOWNLOADS);
+                                break;
+                            case 2:
+                                downPicker();
+                                break;
+                        }
+                    }
+                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        picker.show();
+    }
+
+    public void agentDialog() {
+        AlertDialog.Builder agentPicker = new AlertDialog.Builder(mActivity);
+        agentPicker.setTitle(getResources().getString(R.string.title_user_agent));
+        mAgentChoice = mPreferences.getUserAgentChoice();
+        agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPreferences.setUserAgentChoice(which + 1);
+                        switch (which + 1) {
+                            case 1:
+                                useragent.setSummary(getResources().getString(R.string.agent_default));
+                                break;
+                            case 2:
+                                useragent.setSummary(getResources().getString(R.string.agent_desktop));
+                                break;
+                            case 3:
+                                useragent.setSummary(getResources().getString(R.string.agent_mobile));
+                                break;
+                            case 4:
+                                useragent.setSummary(getResources().getString(R.string.agent_custom));
+                                agentPicker();
+                                break;
+                        }
+                    }
+                });
+        agentPicker.setNeutralButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        agentPicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                Log.i("Cancelled", "");
+            }
+        });
+        agentPicker.show();
+    }
+
+    public void agentPicker() {
+        final AlertDialog.Builder agentStringPicker = new AlertDialog.Builder(mActivity);
+        agentStringPicker.setTitle(getResources().getString(R.string.title_user_agent));
+        final EditText getAgent = new EditText(mActivity);
+        agentStringPicker.setView(getAgent);
+        agentStringPicker.setPositiveButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = getAgent.getText().toString();
+                        mPreferences.setUserAgentString(text);
+                        useragent.setSummary(getResources().getString(R.string.agent_custom));
+                    }
+                });
+        agentStringPicker.show();
+    }
+
+    public void downPicker() {
+        final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(mActivity);
+        LinearLayout layout = new LinearLayout(mActivity);
+        downLocationPicker.setTitle(getResources().getString(R.string.title_download_location));
+        final EditText getDownload = new EditText(mActivity);
+        getDownload.setText(mPreferences.getDownloadDirectory());
+
+        int padding = Utils.convertDpToPixels(10);
+
+        TextView v = new TextView(mActivity);
+        v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        v.setTextColor(Color.DKGRAY);
+        v.setText(Constants.EXTERNAL_STORAGE + '/');
+        v.setPadding(padding, padding, 0, padding);
+        layout.addView(v);
+        layout.addView(getDownload);
+        if (API < 16) {
+            layout.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
+        } else {
+            layout.setBackground(getResources().getDrawable(android.R.drawable.edit_text));
+        }
+        downLocationPicker.setView(layout);
+        downLocationPicker.setPositiveButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = getDownload.getText().toString();
+                        mPreferences.setDownloadDirectory(text);
+                        downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/' + text);
+                    }
+                });
+        downLocationPicker.show();
+    }
+
+    private void setSearchEngineSummary(int which) {
+        switch (which) {
+            case 0:
+                searchUrlPicker();
+                break;
+            case 1:
+                searchengine.setSummary("Google");
+                break;
+            case 2:
+                searchengine.setSummary("Ask");
+                break;
+            case 3:
+                searchengine.setSummary("Bing");
+                break;
+            case 4:
+                searchengine.setSummary("Yahoo");
+                break;
+            case 5:
+                searchengine.setSummary("StartPage");
+                break;
+            case 6:
+                searchengine.setSummary("StartPage (Mobile)");
+                break;
+            case 7:
+                searchengine.setSummary("DuckDuckGo");
+                break;
+            case 8:
+                searchengine.setSummary("DuckDuckGo Lite");
+                break;
+            case 9:
+                searchengine.setSummary("Baidu");
+                break;
+            case 10:
+                searchengine.setSummary("Yandex");
+        }
+    }
+
     @Override
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_PROXY:
                 proxyChoicePicker();
+                return true;
+            case SETTINGS_USERAGENT:
+                agentDialog();
+                return true;
+            case SETTINGS_DOWNLOAD:
+                downloadLocDialog();
+                return true;
+            case SETTINGS_HOME:
+                homepageDialog();
+                return true;
+            case SETTINGS_SEARCHENGINE:
+                searchDialog();
                 return true;
             default:
                 return false;
@@ -206,7 +557,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     mPreferences.setFlashSupport(0);
                 }
 
-                // TODO: fix toast on flash cb click
+                // TODO: fix open info dialog on flash ceckbox click
                 if (!Utils.isFlashInstalled(mActivity) && cbFlash.isChecked()) {
                     Utils.createInformativeDialog(mActivity,
                             mActivity.getResources().getString(R.string.title_warning),
@@ -235,6 +586,10 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
             case SETTINGS_COLORMODE:
                 mPreferences.setColorModeEnabled((Boolean) newValue);
                 cbColorMode.setChecked((Boolean) newValue);
+                return true;
+            case SETTINGS_GOOGLESUGGESTIONS:
+                mPreferences.setGoogleSearchSuggestionsEnabled((Boolean) newValue);
+                cbgooglesuggest.setChecked((Boolean) newValue);
                 return true;
             default:
                 return false;
