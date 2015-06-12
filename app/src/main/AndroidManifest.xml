@@ -56,8 +56,6 @@
             <!--
                   For these schemes where any of these particular MIME types
                   have been supplied, we are a good candidate.
-
-
             -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -114,17 +112,6 @@
             android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.GENERAL_SETTINGS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.DisplaySettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/settings_display"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.DISPLAY_SETTINGS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

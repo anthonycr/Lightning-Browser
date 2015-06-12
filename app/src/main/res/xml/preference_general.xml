@@ -31,11 +31,6 @@
             android:targetPackage="acr.browser.lightning"
             android:targetClass="acr.browser.lightning.activity.GeneralSettingsActivity" />
     </Preference>
-    <Preference android:title="@string/settings_display">
-        <intent
-            android:targetPackage="acr.browser.lightning"
-            android:targetClass="acr.browser.lightning.activity.DisplaySettingsActivity" />
-    </Preference>
     <Preference android:title="@string/settings_privacy">
         <intent
             android:targetPackage="acr.browser.lightning"
