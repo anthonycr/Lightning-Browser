@@ -106,39 +106,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.GeneralSettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/settings_general"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.GENERAL_SETTINGS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.PrivacySettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/settings_privacy"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.PRIVACY_SETTINGS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.AdvancedSettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/settings_advanced"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.ADVANCED_SETTINGS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activity.IncognitoActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
