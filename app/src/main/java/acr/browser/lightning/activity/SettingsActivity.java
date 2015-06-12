@@ -4,22 +4,35 @@
 package acr.browser.lightning.activity;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import acr.browser.lightning.R;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
+    private static List<String> fragments = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings);
+        // TODO: set up ToolBar
+    }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    @Override
+    public void onBuildHeaders(List<Header> target) {
+        loadHeadersFromResource(R.xml.preferences_headers, target);
+        fragments.clear();
+        for (Header header : target) {
+            fragments.add(header.fragment);
+        }
+    }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        return fragments.contains(fragmentName);
     }
 
     @Override

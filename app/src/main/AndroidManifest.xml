@@ -152,17 +152,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.AboutSettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/settings_about"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.ABOUT_SETTINGS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activity.IncognitoActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
@@ -183,17 +172,6 @@
             android:theme="@style/Theme.SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.LICENSE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.BookmarkActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/bookmark_settings"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOKMARK" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

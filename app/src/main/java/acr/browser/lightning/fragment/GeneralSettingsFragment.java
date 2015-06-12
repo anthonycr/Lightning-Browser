@@ -6,8 +6,6 @@ package acr.browser.lightning.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -21,18 +19,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 
-public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
-
-    // TODO:    - fix toast on flash cb click
-    //          - test proxy settings
-    //          - test flash settings
-
-    private Activity mActivity;
-    private static final int API = android.os.Build.VERSION.SDK_INT;
-    private PreferenceManager mPreferences;
-    private CharSequence[] mProxyChoices;
-    private Preference proxy, version;
-    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode;
+public class GeneralSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_PROXY = "proxy";
     private static final String SETTINGS_FLASH = "cb_flash";
@@ -40,13 +27,19 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private static final String SETTINGS_IMAGES = "cb_images";
     private static final String SETTINGS_JAVASCRIPT = "cb_javascript";
     private static final String SETTINGS_COLORMODE = "cb_colormode";
-    private static final String SETTINGS_VERSION = "pref_version";
+
+    private Activity mActivity;
+    private static final int API = android.os.Build.VERSION.SDK_INT;
+    private PreferenceManager mPreferences;
+    private CharSequence[] mProxyChoices;
+    private Preference proxy;
+    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.main_preferences);
+        addPreferencesFromResource(R.xml.preference_general);
 
         mActivity = getActivity();
 
@@ -58,21 +51,18 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         mPreferences = PreferenceManager.getInstance();
 
         proxy = findPreference(SETTINGS_PROXY);
-        version = findPreference(SETTINGS_VERSION);
         cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
         cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
         cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
         cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
         cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
 
-        proxy.setOnPreferenceChangeListener(this);
+        proxy.setOnPreferenceClickListener(this);
         cbFlash.setOnPreferenceChangeListener(this);
         cbAds.setOnPreferenceChangeListener(this);
         cbImages.setOnPreferenceChangeListener(this);
         cbJsScript.setOnPreferenceChangeListener(this);
         cbColorMode.setOnPreferenceChangeListener(this);
-
-        version.setSummary(getVersion());
 
         mProxyChoices = getResources().getStringArray(R.array.proxy_choices_array);
         int choice = mPreferences.getProxyChoice();
@@ -194,16 +184,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 .show();
     }
 
-    private String getVersion() {
-        try {
-            PackageInfo p = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), 0);
-            return p.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return "1.0";
-    }
-
     @Override
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
@@ -226,6 +206,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                     mPreferences.setFlashSupport(0);
                 }
 
+                // TODO: fix toast on flash cb click
                 if (!Utils.isFlashInstalled(mActivity) && cbFlash.isChecked()) {
                     Utils.createInformativeDialog(mActivity,
                             mActivity.getResources().getString(R.string.title_warning),

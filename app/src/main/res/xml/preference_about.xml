@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_about">
+        <Preference
+            android:title="@string/action_follow_me"
+            android:summary="@string/url_twitter">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://twitter.com/RestainoAnthony" />
+        </Preference>
+        <Preference android:title="@string/licenses">
+            <intent
+                android:targetPackage="acr.browser.lightning"
+                android:targetClass="acr.browser.lightning.activity.LicenseActivity" />
+        </Preference>
+        <Preference
+            android:title="@string/version"
+            android:key="pref_version" />
+    </PreferenceCategory>
+</PreferenceScreen>

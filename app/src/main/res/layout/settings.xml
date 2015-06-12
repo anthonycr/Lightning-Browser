@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar_settings" />
 
     <fragment
-        android:name="acr.browser.lightning.fragment.SettingsFragment"
+        android:name="acr.browser.lightning.fragment.GeneralSettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:tag="settingsFragment" />
