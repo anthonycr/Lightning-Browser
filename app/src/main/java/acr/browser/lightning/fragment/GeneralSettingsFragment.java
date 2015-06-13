@@ -556,18 +556,12 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 } else {
                     mPreferences.setFlashSupport(0);
                 }
-
-                // TODO: fix open info dialog on flash ceckbox click
                 if (!Utils.isFlashInstalled(mActivity) && cbFlash.isChecked()) {
                     Utils.createInformativeDialog(mActivity,
                             mActivity.getResources().getString(R.string.title_warning),
                             mActivity.getResources().getString(R.string.dialog_adobe_not_installed));
                     cbFlash.setEnabled(false);
                     mPreferences.setFlashSupport(0);
-                } else if ((API >= 17) && cbFlash.isChecked()) {
-                    Utils.createInformativeDialog(mActivity,
-                            mActivity.getResources().getString(R.string.title_warning),
-                            mActivity.getResources().getString(R.string.dialog_adobe_unsupported));
                 }
                 cbFlash.setChecked((Boolean) newValue);
                 return true;
