@@ -4,7 +4,11 @@
 package acr.browser.lightning.activity;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +22,19 @@ public class SettingsActivity extends ThemableSettingsActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: set up ToolBar
+        // this is a workaround for the Toolbar in PreferenceActitivty
+        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        LinearLayout content = (LinearLayout) root.getChildAt(0);
+        LinearLayout toolbarContainer = (LinearLayout) View.inflate(this, R.layout.toolbar_settings, null);
+
+        root.removeAllViews();
+        toolbarContainer.addView(content);
+        root.addView(toolbarContainer);
+
+        // now we can set the Toolbar using AppCompatPreferenceActivity
+        Toolbar toolbar = (Toolbar) toolbarContainer.findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

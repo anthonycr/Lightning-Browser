@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="?toolbarSettingsBackground"
-    android:elevation="2dp"
-    android:minHeight="?attr/actionBarSize"
-    custom:contentInsetEnd="0dp"
-    custom:contentInsetStart="0dp" />
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?toolbarSettingsBackground"
+        android:elevation="2dp"
+        android:minHeight="?attr/actionBarSize"
+        custom:contentInsetEnd="0dp"
+        custom:contentInsetStart="0dp" />
+
+</LinearLayout>
