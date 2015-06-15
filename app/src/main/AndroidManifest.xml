@@ -120,17 +120,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LicenseActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
-            android:label="@string/licenses"
-            android:theme="@style/Theme.SettingsTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.LICENSE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activity.ReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/reading_mode"
