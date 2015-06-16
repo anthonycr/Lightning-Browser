@@ -9,11 +9,6 @@
                 android:action="android.intent.action.VIEW"
                 android:data="http://twitter.com/RestainoAnthony" />
         </Preference>
-        <Preference android:title="@string/licenses">
-            <intent
-                android:targetPackage="acr.browser.lightning"
-                android:targetClass="acr.browser.lightning.activity.LicenseActivity" />
-        </Preference>
         <Preference
             android:title="@string/version"
             android:key="pref_version" />
