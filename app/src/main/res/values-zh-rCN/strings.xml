@@ -142,7 +142,6 @@
     <string name="powered_by_google">由 Google 提供支持</string>
     <string name="title_adblock">广告拦截</string>
     <string name="message_adblock">广告拦截现在只能在付费版的浏览器 - Lightning Browser+ 中使用。你可以在 Google Play 中下载它。</string>
-    <string name="enable_orbot">启用 Orbot</string>
     <string name="use_tor_prompt">看起来你已经安装了 Orbot. 你想要使用 Tor 吗？</string>
     <string name="install_orbot">请安装 Orbot 以便通过 Tor 全使用代理。</string>
     <string name="yes">是</string>

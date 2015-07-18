@@ -92,8 +92,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import net.i2p.android.ui.I2PAndroidHelper;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -124,11 +122,10 @@ import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.DrawerArrowDrawable;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
 
 public class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
 
@@ -165,7 +162,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	// Context
 	private Activity mActivity;
 
-	// Native
+	// Primatives
 	private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode,
 			mDarkTheme;
 	private int mOriginalOrientation, mBackgroundColor, mIdGenerator;
@@ -182,10 +179,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	private Drawable mDeleteIcon, mRefreshIcon, mCopyIcon, mIcon;
 	private DrawerArrowDrawable mArrowDrawable;
 
-	// Helper
-	private I2PAndroidHelper mI2PHelper;
-	private boolean mI2PHelperBound;
-	private boolean mI2PProxyInitialized;
+	// Proxy
+	private ProxyUtils mProxyUtils;
 
 	// Constant
 	private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -209,7 +204,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		ActionBar actionBar = getSupportActionBar();
 
 		mPreferences = PreferenceManager.getInstance();
-		mDarkTheme = mPreferences.getUseDarkTheme() || isIncognito();
+		//TODO make sure dark theme flag gets set correctly
+		mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
 		mActivity = this;
 		mWebViews.clear();
 
@@ -268,7 +264,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 				R.id.arrow_button);
 		arrowButton.setOnClickListener(this);
 
-		mI2PHelper = new I2PAndroidHelper(this);
+		mProxyUtils = ProxyUtils.getInstance(this);
 
 		RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
 		back.setOnClickListener(this);
@@ -353,7 +349,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 			WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
 		}
 
-		checkForProxy();
+		mProxyUtils.checkForProxy(this);
 	}
 
 	private class SearchClass {
@@ -542,129 +538,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	}
 
-	/*
-	 * If Orbot/Tor or I2P is installed, prompt the user if they want to enable
-	 * proxying for this session
-	 */
-	private void checkForProxy() {
-		boolean useProxy = mPreferences.getUseProxy();
-
-		OrbotHelper oh = new OrbotHelper(this);
-		final boolean orbotInstalled = oh.isOrbotInstalled();
-		boolean orbotChecked = mPreferences.getCheckedForTor();
-		boolean orbot = orbotInstalled && !orbotChecked;
-
-		boolean i2pInstalled = mI2PHelper.isI2PAndroidInstalled();
-		boolean i2pChecked = mPreferences.getCheckedForI2P();
-		boolean i2p = i2pInstalled && !i2pChecked;
-
-		// TODO Is the idea to show this per-session, or only once?
-		if (!useProxy && (orbot || i2p)) {
-			if (orbot) mPreferences.setCheckedForTor(true);
-			if (i2p) mPreferences.setCheckedForI2P(true);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-			if (orbotInstalled && i2pInstalled) {
-				String[] proxyChoices = this.getResources().getStringArray(R.array.proxy_choices_array);
-				builder.setTitle(getResources().getString(R.string.http_proxy))
-						.setSingleChoiceItems(proxyChoices, mPreferences.getProxyChoice(),
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										mPreferences.setProxyChoice(which);
-									}
-								})
-						.setNeutralButton(getResources().getString(R.string.action_ok),
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										if (mPreferences.getUseProxy())
-											initializeProxy();
-									}
-								});
-			} else {
-				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-							case DialogInterface.BUTTON_POSITIVE:
-								mPreferences.setProxyChoice(orbotInstalled ?
-										Constants.PROXY_ORBOT : Constants.PROXY_I2P);
-								initializeProxy();
-								break;
-							case DialogInterface.BUTTON_NEGATIVE:
-								mPreferences.setProxyChoice(Constants.NO_PROXY);
-								break;
-						}
-					}
-				};
-
-				builder.setMessage(orbotInstalled ? R.string.use_tor_prompt : R.string.use_i2p_prompt)
-						.setPositiveButton(R.string.yes, dialogClickListener)
-						.setNegativeButton(R.string.no, dialogClickListener);
-			}
-			builder.show();
-		}
-	}
-
-	/*
-	 * Initialize WebKit Proxying
-	 */
-	private void initializeProxy() {
-		String host;
-		int port;
-
-		switch (mPreferences.getProxyChoice()) {
-			case Constants.NO_PROXY:
-				// We shouldn't be here
-				return;
-
-			case Constants.PROXY_ORBOT:
-				OrbotHelper oh = new OrbotHelper(this);
-				if (!oh.isOrbotRunning()) {
-					oh.requestOrbotStart(this);
-				}
-				host = "localhost";
-				port = 8118;
-				break;
-
-			case Constants.PROXY_I2P:
-				mI2PProxyInitialized = true;
-				if (mI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
-					mI2PHelper.requestI2PAndroidStart(this);
-				}
-				host = "localhost";
-				port = 4444;
-				break;
-
-			default:
-				host = mPreferences.getProxyHost();
-				port = mPreferences.getProxyPort();
-		}
-
-		try {
-			WebkitProxy.setProxy(BrowserApp.class.getName(), getApplicationContext(),
-					host, port);
-		} catch (Exception e) {
-			Log.d(Constants.TAG, "error enabling web proxying", e);
-		}
-
-	}
-
-	public boolean isProxyReady() {
-		if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
-			if (!mI2PHelper.isI2PAndroidRunning()) {
-				Utils.showToast(this, getString(R.string.i2p_not_running));
-				return false;
-			} else if (!mI2PHelper.areTunnelsActive()) {
-				Utils.showToast(this, getString(R.string.i2p_tunnels_not_ready));
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	private boolean isTablet() {
 		return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
 	}
@@ -746,7 +619,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 	}
 
-	public void initializePreferences() {
+	private void initializePreferences() {
 		if (mPreferences == null) {
 			mPreferences = PreferenceManager.getInstance();
 		}
@@ -816,17 +689,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 
 		updateCookiePreference();
-		if (mPreferences.getUseProxy()) {
-			initializeProxy();
-		} else {
-			try {
-				WebkitProxy.resetProxy(BrowserApp.class.getName(),
-						getApplicationContext());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			mI2PProxyInitialized = false;
-		}
+		mProxyUtils.updateProxySettings(this);
 	}
 
 	/*
@@ -1125,7 +988,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * @param id
 	 *            which id in the list was chosen
 	 */
-	public synchronized void editBookmark(final int id) {
+	private synchronized void editBookmark(final int id) {
 		final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
 		homePicker.setTitle(getResources().getString(R.string.title_edit_bookmark));
 		final EditText getTitle = new EditText(mActivity);
@@ -1400,7 +1263,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	}
 
 	@SuppressWarnings("deprecation")
-	public void clearHistory() {
+	private void clearHistory() {
 		this.deleteDatabase(HistoryDatabase.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
@@ -1420,7 +1283,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
-	public void clearCookies() {
+	private void clearCookies() {
 		// TODO Break out web storage deletion into its own option/action
 		// TODO clear web storage for all sites that are visited in Incognito mode
 		WebStorage storage = WebStorage.getInstance();
@@ -1486,8 +1349,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	protected void onStop() {
 		super.onStop();
-		mI2PHelper.unbind();
-		mI2PHelperBound = false;
+		mProxyUtils.onStop();
 	}
 
 	@Override
@@ -1502,17 +1364,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
-			// Try to bind to I2P Android
-			mI2PHelper.bind(new I2PAndroidHelper.Callback() {
-				@Override
-				public void onI2PAndroidBound() {
-					mI2PHelperBound = true;
-					if (mI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
-						mI2PHelper.requestI2PAndroidStart(BrowserActivity.this);
-				}
-			});
-		}
+		mProxyUtils.onStart(this);
 	}
 
 	@Override
@@ -1549,7 +1401,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * searches the web for the query fixing any and all problems with the input
 	 * checks if it is a search, url, etc.
 	 */
-	void searchTheWeb(String query) {
+	private void searchTheWeb(String query) {
 		if (query.equals("")) {
 			return;
 		}
@@ -1692,8 +1544,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 				int finalColor; // Lighten up the dark color if it is
 				// too dark
-				if (isColorTooDark(color)) {
-					finalColor = mixTwoColors(
+				if (Utils.isColorTooDark(color)) {
+					finalColor = Utils.mixTwoColors(
 							mActivity.getResources().getColor(R.color.primary_color),
 							color, 0.25f);
 				} else {
@@ -1720,35 +1572,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 
 			}
 		});
-	}
-
-	public static boolean isColorTooDark(int color) {
-		final byte RED_CHANNEL = 16;
-		final byte GREEN_CHANNEL = 8;
-		//final byte BLUE_CHANNEL = 0;
-
-		int r = ((int) ((float) (color >> RED_CHANNEL & 0xff) * 0.3f)) & 0xff;
-		int g = ((int) ((float) (color >> GREEN_CHANNEL & 0xff) * 0.59)) & 0xff;
-		int b = ((int) ((float) (color & 0xff) * 0.11)) & 0xff;
-		int gr = (r + g + b) & 0xff;
-		int gray = gr + (gr << GREEN_CHANNEL) + (gr << RED_CHANNEL);
-
-		return gray < 0x727272;
-	}
-
-	public static int mixTwoColors(int color1, int color2, float amount) {
-		final byte ALPHA_CHANNEL = 24;
-		final byte RED_CHANNEL = 16;
-		final byte GREEN_CHANNEL = 8;
-		//final byte BLUE_CHANNEL = 0;
-
-		final float inverseAmount = 1.0f - amount;
-
-		int r = ((int) (((float) (color1 >> RED_CHANNEL & 0xff) * amount) + ((float) (color2 >> RED_CHANNEL & 0xff) * inverseAmount))) & 0xff;
-		int g = ((int) (((float) (color1 >> GREEN_CHANNEL & 0xff) * amount) + ((float) (color2 >> GREEN_CHANNEL & 0xff) * inverseAmount))) & 0xff;
-		int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
-
-		return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
 	}
 
 	public class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
@@ -1894,7 +1717,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 	}
 
-	static String getDomainName(String url) throws URISyntaxException {
+	private static String getDomainName(String url) throws URISyntaxException {
 		URI uri = new URI(url);
 		String domain = uri.getHost();
 		if (domain == null) {
@@ -1979,11 +1802,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		}
 	}
 
-	public boolean isSystemBrowserAvailable() {
+	private boolean isSystemBrowserAvailable() {
 		return mSystemBrowser;
 	}
 
-	public boolean getSystemBrowser() {
+	private boolean getSystemBrowser() {
 		Cursor c = null;
 		String[] columns = new String[] { "url", "title" };
 		boolean browserFlag;
@@ -2051,6 +1874,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	@Override
 	public boolean isIncognito() {
 		return false;
+	}
+
+	@Override
+	public boolean isProxyReady() {
+		return mProxyUtils.isProxyReady(this);
 	}
 
 	/**
@@ -2330,7 +2158,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * @param enabled
 	 *            whether to enable fullscreen or not
 	 */
-	public void setFullscreen(boolean enabled) {
+	private void setFullscreen(boolean enabled) {
 		Window win = getWindow();
 		WindowManager.LayoutParams winParams = win.getAttributes();
 		final int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;
@@ -2695,7 +2523,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * and that it should display the stop icon to indicate to the user that
 	 * pressing it stops the page from loading
 	 */
-	public void setIsLoading() {
+	private void setIsLoading() {
 		if (!mSearch.hasFocus()) {
 			mIcon = mDeleteIcon;
 			mSearch.setCompoundDrawables(null, null, mDeleteIcon, null);
@@ -2706,7 +2534,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 * This tells the search bar that the page is finished loading and it should
 	 * display the refresh icon
 	 */
-	public void setIsFinishedLoading() {
+	private void setIsFinishedLoading() {
 		if (!mSearch.hasFocus()) {
 			mIcon = mRefreshIcon;
 			mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
@@ -2719,7 +2547,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 	 *
 	 * See setIsFinishedLoading and setIsLoading for displaying the correct icon
 	 */
-	public void refreshOrStop() {
+	private void refreshOrStop() {
 		if (mCurrentView != null) {
 			if (mCurrentView.getProgress() < 100) {
 				mCurrentView.stopLoading();
@@ -2734,7 +2562,7 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 		finish();
 	}
 
-	public class SortIgnoreCase implements Comparator<HistoryItem> {
+	private class SortIgnoreCase implements Comparator<HistoryItem> {
 
 		public int compare(HistoryItem o1, HistoryItem o2) {
 			return o1.getTitle().toLowerCase(Locale.getDefault())

@@ -158,7 +158,6 @@
     <string name="powered_by_google">A Google támogatásával</string>
     <string name="title_adblock">AdBlock</string>
     <string name="message_adblock">Az AdBlock jelenleg csak a Lightning Browser + fizetős változatban érhető el.Ez letölthető a Google Play Áruházból.</string>
-    <string name="enable_orbot">Orbot bekapcsolása</string>
     <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot.Szeretné használni Tor-t?</string>
     <string name="install_orbot">Kérjük telepítse az Orbot-ot annak érdekében, hogy működjön a proxy a Tor-ral.</string>
     <string name="yes">Igen</string>
@@ -211,7 +210,7 @@
         <item >Cím</item>
     </string-array>
         <string name="invert_color">Negatív szín</string>
-        <string name="dark_theme">Sötét téma használata</string>
+        <string name="dark_theme">Sötét téma </string>
         <string name="change_after_restart">A téma megváltoztatásának érvénybelépéséhez indítsa újra a böngészőt.</string>
         <string name="tabs">Lapok</string>
 </resources>

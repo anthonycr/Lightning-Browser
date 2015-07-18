@@ -403,7 +403,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 
 	}
 
-	public void clearCache() {
+	private void clearCache() {
 		WebView webView = new WebView(this);
 		webView.clearCache(true);
 		webView.destroy();
@@ -411,7 +411,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void clearHistory() {
+	private void clearHistory() {
 		deleteDatabase(HistoryDatabase.DATABASE_NAME);
 		WebViewDatabase m = WebViewDatabase.getInstance(this);
 		m.clearFormData();
@@ -431,7 +431,7 @@ public class PrivacySettingsActivity extends ThemableSettingsActivity {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void clearCookies() {
+	private void clearCookies() {
 		// TODO Break out web storage deletion into its own option/action
 		// TODO clear web storage for all sites that are visited in Incognito mode
 		WebStorage storage = WebStorage.getInstance();

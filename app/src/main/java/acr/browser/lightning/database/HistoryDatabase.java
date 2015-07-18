@@ -23,15 +23,15 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 	public static final String DATABASE_NAME = "historyManager";
 
 	// HistoryItems table name
-	public static final String TABLE_HISTORY = "history";
+	private static final String TABLE_HISTORY = "history";
 
 	// HistoryItems Table Columns names
-	public static final String KEY_ID = "id";
-	public static final String KEY_URL = "url";
-	public static final String KEY_TITLE = "title";
-	public static final String KEY_TIME_VISITED = "time";
+	private static final String KEY_ID = "id";
+	private static final String KEY_URL = "url";
+	private static final String KEY_TITLE = "title";
+	private static final String KEY_TIME_VISITED = "time";
 
-	public static SQLiteDatabase mDatabase;
+	private static SQLiteDatabase mDatabase;
 
 	private static HistoryDatabase mInstance;
 

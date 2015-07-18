@@ -93,7 +93,6 @@
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
     <string name="block_ads">Blocca Annunci</string>
-    <string name="enable_orbot">Abilita Orbot</string>
     <string name="sync_history">Sincronizza cronologia con Google</string>
     <string name="export_bookmarks">Esporta segnalibri</string>
     <string name="import_backup">Importa segnalibri da backup</string>

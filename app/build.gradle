@@ -5,23 +5,36 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "acr.browser.lightning"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 78
         versionName "4.0.10a"
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles 'proguard-project.txt'
+        }
+
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles 'proguard-project.txt'
         }
-        debug {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles 'proguard-project.txt'
+    }
+
+    productFlavors {
+        lightningPlus {
+            buildConfigField "boolean", "FULL_VERSION", "true"
+            applicationId "acr.browser.lightning"
+            versionCode 78
+        }
+
+        lightningLite {
+            buildConfigField "boolean", "FULL_VERSION", "false"
+            applicationId "acr.browser.barebones"
+            versionCode 81
         }
     }
 
@@ -31,13 +44,10 @@ android {
 }
 
 dependencies {
-    compile(project(':libnetcipher')) {
-        // Exclude any support-v4 modules because appcompat-v7 will import the latest
-        exclude module: 'support-v4'
-        exclude module: 'android-support-v4'
-    }
-    compile 'com.android.support:palette-v7:22.1.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:palette-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'org.jsoup:jsoup:1.8.1'
-    compile 'net.i2p.android:client:0.7@aar'
+
+    lightningPlusCompile 'net.i2p.android:client:0.7'
+    lightningPlusCompile(project(':libnetcipher'))
 }
