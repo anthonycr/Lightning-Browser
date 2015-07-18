@@ -4,15 +4,14 @@
 package acr.browser.lightning.download;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.download.DownloadHandler;
 
 public class LightningDownloadListener implements DownloadListener {
 
@@ -32,7 +31,7 @@ public class LightningDownloadListener implements DownloadListener {
 				switch (which) {
 					case DialogInterface.BUTTON_POSITIVE:
 						DownloadHandler.onDownloadStart(mActivity, url, userAgent,
-								contentDisposition, mimetype, false);
+								contentDisposition, mimetype);
 						break;
 
 					case DialogInterface.BUTTON_NEGATIVE:

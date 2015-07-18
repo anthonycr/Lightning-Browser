@@ -95,11 +95,10 @@ public class ArticleTextExtractor {
 	}
 
 	/**
-	 * @param html
+	 * @param doc the document to extract
 	 *            extracts article text from given html string. wasn't tested
 	 *            with improper HTML, although jSoup should be able to handle
 	 *            minor stuff.
-	 * @returns extracted article, all HTML tags stripped
 	 */
 	public JResult extractContent(Document doc) throws Exception {
 		return extractContent(new JResult(), doc, formatter);
@@ -235,14 +234,12 @@ public class ArticleTextExtractor {
 	protected Collection<String> extractKeywords(Document doc) {
 		String content = SHelper.innerTrim(doc.select("head meta[name=keywords]").attr("content"));
 
-		if (content != null) {
-			if (content.startsWith("[") && content.endsWith("]"))
-				content = content.substring(1, content.length() - 1);
+		if (content.startsWith("[") && content.endsWith("]"))
+            content = content.substring(1, content.length() - 1);
 
-			String[] split = content.split("\\s*,\\s*");
-			if (split.length > 1 || (split.length > 0 && !"".equals(split[0])))
-				return Arrays.asList(split);
-		}
+		String[] split = content.split("\\s*,\\s*");
+		if (split.length > 1 || (split.length > 0 && !"".equals(split[0])))
+            return Arrays.asList(split);
 		return Collections.emptyList();
 	}
 

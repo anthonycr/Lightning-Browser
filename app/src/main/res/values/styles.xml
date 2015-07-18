@@ -4,6 +4,7 @@
     <style name="Theme.SettingsTheme" parent="Theme.AppCompat.Light">
 
         <!-- customize the color palette -->
+        <item name="android:windowBackground">@color/transparent</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate</item>
         <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color</item>
@@ -20,6 +21,7 @@
     <style name="Theme.SettingsTheme.Dark" parent="Theme.AppCompat">
 
         <!-- customize the color palette -->
+        <item name="android:windowBackground">@color/transparent</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_dark</item>
         <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color_dark</item>
@@ -36,6 +38,7 @@
     <style name="Theme.SettingsTheme.Black" parent="Theme.AppCompat">
 
         <!-- customize the color palette -->
+        <item name="android:windowBackground">@color/transparent</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_black</item>
         <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/black</item>
@@ -53,13 +56,13 @@
 
         <!-- customize the color palette -->
         <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/secondary_color</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="progressBackgroundColor">@color/secondary_color</item>
-        <item name="listBackground">@drawable/list_bg</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="progressColor">@color/gray_medium</item>
         <item name="numberColor">@color/gray_dark</item>

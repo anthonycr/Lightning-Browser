@@ -94,7 +94,7 @@ public class Converter {
 	/**
 	 * reads bytes off the string and returns a string
 	 * 
-	 * @param is
+	 * @param is input stream to read
 	 * @param maxBytes
 	 *            The max bytes that we want to read from the input stream
 	 * @return String

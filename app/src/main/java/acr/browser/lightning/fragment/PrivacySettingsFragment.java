@@ -4,7 +4,6 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -15,6 +14,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.provider.Browser;
+import android.support.v7.app.AlertDialog;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebIconDatabase;
@@ -45,7 +45,6 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
     private PreferenceManager mPreferences;
     private CheckBoxPreference cblocation, cb3cookies, cbsavepasswords, cbcacheexit, cbhistoryexit,
             cbcookiesexit, cbsynchistory;
-    private Preference clearcache, clearhistory, clearcookies;
     private boolean mSystemBrowser;
     private Handler messageHandler;
 
@@ -65,9 +64,9 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
         mPreferences = PreferenceManager.getInstance();
         mSystemBrowser = mPreferences.getSystemBrowserPresent();
 
-        clearcache = findPreference(SETTINGS_CLEARCACHE);
-        clearhistory = findPreference(SETTINGS_CLEARHISTORY);
-        clearcookies = findPreference(SETTINGS_CLEARCOOKIES);
+        Preference clearcache = findPreference(SETTINGS_CLEARCACHE);
+        Preference clearhistory = findPreference(SETTINGS_CLEARHISTORY);
+        Preference clearcookies = findPreference(SETTINGS_CLEARCOOKIES);
         cblocation = (CheckBoxPreference) findPreference(SETTINGS_LOCATION);
         cb3cookies = (CheckBoxPreference) findPreference(SETTINGS_THIRDPCOOKIES);
         cbsavepasswords = (CheckBoxPreference) findPreference(SETTINGS_SAVEPASSWORD);

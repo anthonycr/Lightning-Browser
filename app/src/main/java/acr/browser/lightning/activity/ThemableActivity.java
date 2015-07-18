@@ -33,9 +33,7 @@ public abstract class ThemableActivity extends AppCompatActivity {
     }
 
     protected void restart() {
-        final Bundle outState = new Bundle();
-        onSaveInstanceState(outState);
-        final Intent intent = new Intent(this, getClass());
+        Intent intent = getIntent();
         finish();
         overridePendingTransition(0, 0);
         startActivity(intent);

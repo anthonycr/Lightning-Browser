@@ -26,7 +26,7 @@ public interface BrowserController {
 
 	void onLongPress();
 
-	void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback);
+	void onShowCustomView(View view, CustomViewCallback callback);
 
 	void onHideCustomView();
 
@@ -34,7 +34,7 @@ public interface BrowserController {
 
 	View getVideoLoadingProgressView();
 
-	void onCreateWindow(boolean isUserGesture, Message resultMsg);
+	void onCreateWindow(Message resultMsg);
 
 	Activity getActivity();
 

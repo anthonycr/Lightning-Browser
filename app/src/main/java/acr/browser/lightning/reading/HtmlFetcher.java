@@ -230,7 +230,7 @@ public class HtmlFetcher {
 			}
 
 			// if resolved url is longer then use it!
-			if (resUrl != null && resUrl.trim().length() > url.length()) {
+			if (resUrl.trim().length() > url.length()) {
 				// this is necessary e.g. for some homebaken url resolvers which
 				// return
 				// the resolved url relative to url!

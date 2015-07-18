@@ -4,13 +4,12 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,12 +26,10 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private static final String SETTINGS_BROWSER_IMPORT = "import_browser_bookmark";
 
     private Activity mActivity;
-    private PreferenceManager mPreferences;
     private BookmarkManager mBookmarkManager;
     private File[] mFileList;
     private String[] mFileNameList;
     private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
-    private static final int DIALOG_LOAD_FILE = 1000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,14 +39,14 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         mActivity = getActivity();
 
-        mBookmarkManager = BookmarkManager.getInstance(mActivity);
+        mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
 
         initPrefs();
     }
 
     private void initPrefs() {
         // mPreferences storage
-        mPreferences = PreferenceManager.getInstance();
+        PreferenceManager mPreferences = PreferenceManager.getInstance();
 
         Preference exportpref = findPreference(SETTINGS_EXPORT);
         Preference importpref = findPreference(SETTINGS_IMPORT);
@@ -74,10 +71,10 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                 return true;
             case SETTINGS_IMPORT:
                 loadFileList(null);
-                onCreateDialog(DIALOG_LOAD_FILE);
+                createDialog();
                 return true;
             case SETTINGS_BROWSER_IMPORT:
-                mBookmarkManager.importBookmarksFromBrowser(mActivity);
+                mBookmarkManager.importBookmarksFromBrowser(getActivity());
                 return true;
             default:
                 return false;
@@ -135,34 +132,29 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         }
     }
 
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog;
+    protected void createDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
-        switch (id) {
-            case DIALOG_LOAD_FILE:
-                builder.setTitle(R.string.title_chooser);
-                if (mFileList == null) {
-                    dialog = builder.create();
-                    return dialog;
-                }
-                builder.setItems(mFileNameList, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mFileList[which].isDirectory()) {
-                            loadFileList(mFileList[which]);
-                            builder.setItems(mFileNameList, this);
-                            builder.show();
-                        } else {
-                            mBookmarkManager.importBookmarksFromFile(mFileList[which], mActivity);
-                        }
-                    }
-
-                });
-                break;
+        final String title = getString(R.string.title_chooser);
+        builder.setTitle(title + ": " + Environment.getExternalStorageDirectory());
+        if (mFileList == null) {
+            builder.show();
         }
-        dialog = builder.show();
-        return dialog;
+        builder.setItems(mFileNameList, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mFileList[which].isDirectory()) {
+                    builder.setTitle(title + ": " + mFileList[which]);
+                    loadFileList(mFileList[which]);
+                    builder.setItems(mFileNameList, this);
+                    builder.show();
+                } else {
+                    mBookmarkManager.importBookmarksFromFile(mFileList[which], getActivity());
+                }
+            }
+
+        });
+        builder.show();
     }
 }

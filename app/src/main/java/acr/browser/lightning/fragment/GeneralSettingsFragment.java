@@ -4,14 +4,16 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -468,10 +470,16 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         v.setPadding(padding, padding, 0, padding);
         layout.addView(v);
         layout.addView(getDownload);
-        if (API < 16) {
+        if (API < Build.VERSION_CODES.JELLY_BEAN) {
             layout.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
         } else {
-            layout.setBackground(getResources().getDrawable(android.R.drawable.edit_text));
+            Drawable drawable;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                drawable = getResources().getDrawable(android.R.drawable.edit_text, getActivity().getTheme());
+            } else {
+                drawable = getResources().getDrawable(android.R.drawable.edit_text);
+            }
+            layout.setBackground(drawable);
         }
         downLocationPicker.setView(layout);
         downLocationPicker.setPositiveButton(getResources().getString(R.string.action_ok),

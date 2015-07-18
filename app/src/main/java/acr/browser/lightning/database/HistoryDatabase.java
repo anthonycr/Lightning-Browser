@@ -65,7 +65,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public boolean isClosed() {
+	private boolean isClosed() {
 		return mDatabase == null || !mDatabase.isOpen();
 	}
 
@@ -95,7 +95,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 		q.close();
 	}
 
-	public synchronized void addHistoryItem(HistoryItem item) {
+	private synchronized void addHistoryItem(HistoryItem item) {
 		ContentValues values = new ContentValues();
 		values.put(KEY_URL, item.getUrl());
 		values.put(KEY_TITLE, item.getTitle());

@@ -164,7 +164,7 @@ public class SHelper {
 	 *            extract the domain from this url
 	 * @param path
 	 *            this url does not have a domain
-	 * @return
+	 * @return returns the domain
 	 */
 	public static String useDomainOfFirstArg4Second(String urlForDomain, String path) {
 		if (path.startsWith("http"))
@@ -257,8 +257,7 @@ public class SHelper {
 	}
 
 	/**
-	 * @see http
-	 *      ://blogs.sun.com/CoreJavaTechTips/entry/cookie_handling_in_java_se
+	 * http://blogs.sun.com/CoreJavaTechTips/entry/cookie_handling_in_java_se
 	 */
 	public static void enableCookieMgmt() {
 		CookieManager manager = new CookieManager();
@@ -267,9 +266,7 @@ public class SHelper {
 	}
 
 	/**
-	 * @see http
-	 *      ://stackoverflow.com/questions/2529682/setting-user-agent-of-a-java
-	 *      -urlconnection
+	 * http://stackoverflow.com/questions/2529682/setting-user-agent-of-a-java-urlconnection
 	 */
 	public static void enableUserAgentOverwrite() {
 		System.setProperty("http.agent", "");

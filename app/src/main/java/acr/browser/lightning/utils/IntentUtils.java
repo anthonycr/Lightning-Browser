@@ -21,7 +21,7 @@ public class IntentUtils {
 
 	private final Activity mActivity;
 
-	static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
+	private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
 			+ // switch on case insensitive matching
 			"("
 			+ // begin group for schema

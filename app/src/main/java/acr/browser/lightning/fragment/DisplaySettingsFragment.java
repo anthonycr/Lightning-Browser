@@ -4,15 +4,14 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.SettingsActivity;
 import acr.browser.lightning.preference.PreferenceManager;
 
 public class DisplaySettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -28,7 +27,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
     private Activity mActivity;
     private PreferenceManager mPreferences;
     private CheckBoxPreference cbstatus, cbfullscreen, cbviewport, cboverview, cbreflow;
-    private Preference theme, textsize;
+    private Preference theme;
     private String[] mThemeOptions;
     private int mCurrentTheme;
 
@@ -50,7 +49,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         mCurrentTheme = mPreferences.getUseTheme();
 
         theme = findPreference(SETTINGS_THEME);
-        textsize = findPreference(SETTINGS_TEXTSIZE);
+        Preference textsize = findPreference(SETTINGS_TEXTSIZE);
         cbstatus = (CheckBoxPreference) findPreference(SETTINGS_HIDESTATUSBAR);
         cbfullscreen = (CheckBoxPreference) findPreference(SETTINGS_FULLSCREEN);
         cbviewport = (CheckBoxPreference) findPreference(SETTINGS_VIEWPORT);
@@ -163,7 +162,8 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (mCurrentTheme != mPreferences.getUseTheme()) {
-                            ((SettingsActivity) getActivity()).restart();
+//                            ((SettingsActivity) getActivity()).restart();
+                            getActivity().onBackPressed();
                         }
                     }
                 });
@@ -171,7 +171,8 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
             @Override
             public void onCancel(DialogInterface dialog) {
                 if (mCurrentTheme != mPreferences.getUseTheme()) {
-                    ((SettingsActivity) getActivity()).restart();
+//                    ((SettingsActivity) getActivity()).restart();
+                    getActivity().onBackPressed();
                 }
             }
         });

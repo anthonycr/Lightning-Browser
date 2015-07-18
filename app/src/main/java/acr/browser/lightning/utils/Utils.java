@@ -5,7 +5,6 @@ package acr.browser.lightning.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,11 +16,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Environment;
+import android.support.annotation.StringRes;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -39,15 +41,15 @@ public final class Utils {
 	}
 
 	public static void downloadFile(final Activity activity, final String url,
-			final String userAgent, final String contentDisposition, final boolean privateBrowsing) {
+                                    final String userAgent, final String contentDisposition) {
 		String fileName = URLUtil.guessFileName(url, null, null);
-		DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null,
-				privateBrowsing);
+		DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null
+        );
 		Log.i(Constants.TAG, "Downloading" + fileName);
 	}
 
-	public static Intent newEmailIntent(Context context, String address, String subject,
-			String body, String cc) {
+	public static Intent newEmailIntent(String address, String subject,
+                                        String body, String cc) {
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
 		intent.putExtra(Intent.EXTRA_TEXT, body);
@@ -63,11 +65,11 @@ public final class Utils {
 		builder.setMessage(message)
 				.setCancelable(true)
 				.setPositiveButton(context.getResources().getString(R.string.action_ok),
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-							}
-						});
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
@@ -75,6 +77,10 @@ public final class Utils {
 	public static void showToast(Context context, String message) {
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
+
+    public static void showToast(Context context, @StringRes int resource) {
+        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
+    }
 
 	/**
 	 * Returns the number of pixels corresponding to the passed density pixels
@@ -237,4 +243,13 @@ public final class Utils {
 	private static Bitmap mWebIconLight;
 	private static Bitmap mWebIconDark;
 
+	public static void close(Closeable closeable) {
+		if (closeable == null)
+			return;
+		try {
+			closeable.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -12,10 +12,12 @@
         <option name="SELECTED_TEST_ARTIFACT" value="_android_test_" />
         <option name="ASSEMBLE_TASK_NAME" value="assembleLightningPlusDebug" />
         <option name="COMPILE_JAVA_TASK_NAME" value="compileLightningPlusDebugSources" />
-        <option name="SOURCE_GEN_TASK_NAME" value="generateLightningPlusDebugSources" />
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleLightningPlusDebugAndroidTest" />
         <option name="COMPILE_JAVA_TEST_TASK_NAME" value="compileLightningPlusDebugAndroidTestSources" />
-        <option name="TEST_SOURCE_GEN_TASK_NAME" value="generateLightningPlusDebugAndroidTestSources" />
+        <afterSyncTasks>
+          <task>generateLightningPlusDebugAndroidTestSources</task>
+          <task>generateLightningPlusDebugSources</task>
+        </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
@@ -24,7 +26,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/lightningPlus/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/androidTest/lightningPlus/debug" />
     <exclude-output />
@@ -48,13 +50,13 @@
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/lightningPlus/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/lightningPlus/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/generated/androidTest/lightningPlus/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/aidl" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/jni" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/assets" type="java-test-resource" />
@@ -109,7 +111,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 22 Platform (1)" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="client-0.7" level="project" />
     <orderEntry type="library" exported="" name="palette-v7-22.2.0" level="project" />

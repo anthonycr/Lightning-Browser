@@ -12,8 +12,8 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles 'proguard-project.txt'
         }
 
@@ -48,6 +48,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'org.jsoup:jsoup:1.8.1'
 
+    // Only Lightning Plus needs the proxy libraries
     lightningPlusCompile 'net.i2p.android:client:0.7'
     lightningPlusCompile(project(':libnetcipher'))
 }

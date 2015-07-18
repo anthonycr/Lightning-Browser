@@ -357,7 +357,7 @@ public class PreferenceManager {
 	}
 
 	public void setReadingTextSize(int size) {
-		putInt(Name.READING_TEXT_SIZE, 2);
+		putInt(Name.READING_TEXT_SIZE, size);
 	}
 
 	public void setRenderingMode(int mode) {
