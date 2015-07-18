@@ -3,12 +3,11 @@ package acr.browser.lightning.activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.preference.PreferenceManager;
 
-public abstract class ThemableSettingsActivity extends AppCompatActivity {
+public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivity  {
 
     private int mTheme;
 
@@ -34,7 +33,7 @@ public abstract class ThemableSettingsActivity extends AppCompatActivity {
         }
     }
 
-    protected void restart() {
+    public void restart() {
         final Bundle outState = new Bundle();
         onSaveInstanceState(outState);
         final Intent intent = new Intent(this, getClass());
