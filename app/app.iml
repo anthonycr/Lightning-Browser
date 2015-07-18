@@ -52,9 +52,9 @@
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/generated/androidTest/lightningPlus/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/assets" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/res" type="java-test-resource" />

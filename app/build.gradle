@@ -51,4 +51,6 @@ dependencies {
     // Only Lightning Plus needs the proxy libraries
     lightningPlusCompile 'net.i2p.android:client:0.7'
     lightningPlusCompile(project(':libnetcipher'))
+    // git submodule foreach git reset --hard
+    // git submodule update --remote
 }

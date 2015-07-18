@@ -3,6 +3,7 @@ package acr.browser.lightning.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -12,8 +13,8 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import info.guardianproject.netcipher.web.WebkitProxy;
 
 /**
  * 6/4/2015 Anthony Restaino
@@ -45,8 +46,7 @@ public class ProxyUtils {
     public void checkForProxy(final Activity activity) {
         boolean useProxy = mPreferences.getUseProxy();
 
-        OrbotHelper oh = new OrbotHelper(activity.getApplicationContext());
-        final boolean orbotInstalled = oh.isOrbotInstalled();
+        final boolean orbotInstalled = OrbotHelper.isOrbotInstalled(activity);
         boolean orbotChecked = mPreferences.getCheckedForTor();
         boolean orbot = orbotInstalled && !orbotChecked;
 
@@ -116,10 +116,8 @@ public class ProxyUtils {
                 return;
 
             case Constants.PROXY_ORBOT:
-                OrbotHelper oh = new OrbotHelper(activity.getApplicationContext());
-                if (!oh.isOrbotRunning()) {
-                    oh.requestOrbotStart(activity);
-                }
+                if (!OrbotHelper.isOrbotRunning(activity))
+                    OrbotHelper.requestShowOrbotStart(activity);
                 host = "localhost";
                 port = 8118;
                 break;
@@ -139,8 +137,7 @@ public class ProxyUtils {
         }
 
         try {
-            WebkitProxy.setProxy(BrowserApp.class.getName(), activity.getApplicationContext(),
-                    host, port);
+            WebkitProxy.setProxy(BrowserApp.class.getName(), activity.getApplicationContext(), null, host, port);
         } catch (Exception e) {
             Log.d(Constants.TAG, "error enabling web proxying", e);
         }
@@ -165,11 +162,18 @@ public class ProxyUtils {
         if (mPreferences.getUseProxy()) {
             initializeProxy(activity);
         } else {
-            try {
-                WebkitProxy.resetProxy(BrowserApp.class.getName(),
-                        activity.getApplicationContext());
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
+                try {
+                    WebkitProxy.resetProxy(BrowserApp.class.getName(), activity.getApplicationContext());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    WebkitProxy.resetLollipopProxy(BrowserApp.class.getName(), activity.getApplicationContext());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             mI2PProxyInitialized = false;
         }
@@ -197,8 +201,7 @@ public class ProxyUtils {
     public int setProxyChoice(int choice, Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
-                OrbotHelper oh = new OrbotHelper(activity.getApplicationContext());
-                if (!oh.isOrbotInstalled()) {
+                if (!OrbotHelper.isOrbotInstalled(activity)) {
                     choice = Constants.NO_PROXY;
                     Utils.showToast(activity, activity.getResources().getString(R.string.install_orbot));
                 }
