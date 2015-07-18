@@ -49,7 +49,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -128,7 +127,7 @@ import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
 
-public class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
+public abstract class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
 
     // Layout
     private DrawerLayout mDrawerLayout;
@@ -191,14 +190,23 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
     private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
+    public abstract boolean isIncognito();
+
+    abstract void initializeTabs();
+
+    abstract void closeActivity();
+
+    abstract int getMenu();
+
+    public abstract void updateHistory(final String title, final String url);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initialize();
     }
 
-    @SuppressLint("NewApi")
-    @SuppressWarnings("deprecation")
     private synchronized void initialize() {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -580,13 +588,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
         }
     }
 
-    /*
-     * Override this class
-     */
-    synchronized void initializeTabs() {
-
-    }
-
     void restoreOrNewTab() {
         mIdGenerator = 0;
 
@@ -747,11 +748,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action buttons
         switch (item.getItemId()) {
@@ -778,14 +774,11 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
                 return true;
             case R.id.action_share:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
-                    Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
-                    shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                            mCurrentView.getTitle());
-                    String shareMessage = mCurrentView.getUrl();
-                    shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareMessage);
-                    startActivity(Intent.createChooser(shareIntent,
-                            getResources().getString(R.string.dialog_title_share)));
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, mCurrentView.getTitle());
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, mCurrentView.getUrl());
+                    startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.dialog_title_share)));
                 }
                 return true;
             case R.id.action_bookmarks:
@@ -1109,14 +1102,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
 //            }
 //        }, 300);
 
-    }
-
-    /**
-     * creates a new tab with the passed in URL if it isn't null
-     */
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
     }
 
     void handleNewIntent(Intent intent) {
@@ -1808,11 +1793,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
         mProgressBar.setProgress(n);
     }
 
-    @Override
-    public void updateHistory(final String title, final String url) {
-
-    }
-
     void addItemToHistory(final String title, final String url) {
         Runnable update = new Runnable() {
             @Override
@@ -1912,13 +1892,8 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
     }
 
     @Override
-    public boolean isIncognito() {
-        return false;
-    }
-
-    @Override
-    public boolean isProxyReady() {
-        return mProxyUtils.isProxyReady(this);
+    public boolean proxyIsNotReady() {
+        return !mProxyUtils.isProxyReady(this);
     }
 
     /**
@@ -2282,10 +2257,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
         return mActivity;
     }
 
-    private boolean isToolbarVisible() {
-        return mToolbarLayout.getTranslationY() > -0.01f;
-    }
-
     /**
      * it hides the action bar, seriously what else were you expecting
      */
@@ -2323,21 +2294,10 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
         }
     }
 
-    @Override
-    public void toggleActionBar() {
-        if (mFullScreen) {
-            if (!isToolbarVisible()) {
-                showActionBar();
-            } else {
-                hideActionBar();
-            }
-        }
-    }
-
-    @Override
     /**
      * obviously it shows the action bar if it's hidden
      */
+    @Override
     public void showActionBar() {
         if (mFullScreen) {
 
@@ -2610,11 +2570,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
         }
     }
 
-    // Override this, use finish() for Incognito, moveTaskToBack for Main
-    void closeActivity() {
-        finish();
-    }
-
     private class SortIgnoreCase implements Comparator<HistoryItem> {
 
         public int compare(HistoryItem o1, HistoryItem o2) {
@@ -2622,11 +2577,6 @@ public class BrowserActivity extends ThemableActivity implements BrowserControll
                     .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
         }
 
-    }
-
-    @Override
-    public int getMenu() {
-        return R.menu.main;
     }
 
     @Override

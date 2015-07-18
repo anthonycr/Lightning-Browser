@@ -42,8 +42,6 @@ public interface BrowserController {
 
 	void showActionBar();
 
-	void toggleActionBar();
-
 	void longClickPage(String url);
 
 	void openBookmarkPage(WebView view);
@@ -54,7 +52,6 @@ public interface BrowserController {
 
 	boolean isIncognito();
 
-	boolean isProxyReady();
+	boolean proxyIsNotReady();
 
-	int getMenu();
 }

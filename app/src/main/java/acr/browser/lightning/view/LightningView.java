@@ -85,7 +85,6 @@ public class LightningView {
     private static float mMaxFling;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.convertDpToPixels(10);
-    private static final int SCROLL_DOWN_THRESHOLD = Utils.convertDpToPixels(100);
     private static final float[] mNegativeColorArray = {-1.0f, 0, 0, 0, 255, // red
             0, -1.0f, 0, 0, 255, // green
             0, 0, -1.0f, 0, 255, // blue
@@ -447,11 +446,11 @@ public class LightningView {
         }
     }
 
-    public void setHardwareRendering() {
+    private void setHardwareRendering() {
         mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, mPaint);
     }
 
-    public void setNormalRendering() {
+    private void setNormalRendering() {
         mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
     }
 
@@ -535,7 +534,7 @@ public class LightningView {
 
     public synchronized void reload() {
         // Check if configured proxy is available
-        if (!mBrowserController.isProxyReady()) {
+        if (mBrowserController.proxyIsNotReady()) {
             // User has been notified
             return;
         }
@@ -571,11 +570,6 @@ public class LightningView {
                 mWebView.findAll(text);
             }
         }
-    }
-
-    @Nullable
-    public Activity getActivity() {
-        return mActivity;
     }
 
     public synchronized void onDestroy() {
@@ -630,7 +624,7 @@ public class LightningView {
 
     public synchronized void loadUrl(String url) {
         // Check if configured proxy is available
-        if (!mBrowserController.isProxyReady()) {
+        if (mBrowserController.proxyIsNotReady()) {
             // User has been notified
             return;
         }
@@ -842,7 +836,7 @@ public class LightningView {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // Check if configured proxy is available
-            if (!mBrowserController.isProxyReady()) {
+            if (mBrowserController.proxyIsNotReady()) {
                 // User has been notified
                 return true;
             }
@@ -1010,7 +1004,6 @@ public class LightningView {
             // video.setVisibility(View.GONE);
             // }
             // } else {
-//            Activity activity = mBrowserController.getActivity();
             mBrowserController.onShowCustomView(view, callback);
 
             // }
@@ -1128,15 +1121,10 @@ public class LightningView {
     }
 
     private class CustomGestureListener extends SimpleOnGestureListener {
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             int power = (int) (velocityY * 100 / mMaxFling);
-            Log.e("YOLO", "POWER: " + power);
             if (power < -10) {
                 mBrowserController.hideActionBar();
             } else if (power > 15) {

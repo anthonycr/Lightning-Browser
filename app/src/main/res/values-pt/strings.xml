@@ -18,10 +18,6 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Abrir menu de navegação</string>
-    <string name="drawer_close">Fechar menu de navegação</string>
-    <string name="action_websearch">Pesquisa web</string>
-    <string name="action_refresh">Recarregar</string>
     <string name="action_new_tab">Novo separador</string>
     <string name="action_share">Partilhar</string>
     <string name="action_history">Histórico</string>
@@ -29,31 +25,17 @@
     <string name="action_add_bookmark">Adicionar marcador</string>
     <string name="action_copy">Copiar ligação</string>
     <string name="action_forward">Avançar</string>
-    <string name="google">Google</string>
     <string name="settings">Definições</string>
     <string name="location">Acesso de localização</string>
     <string name="password">Guardar palavras-passe</string>
     <string name="agent">Agente</string>
-    <string name="history">Limpar histórico</string>
-    <string name="email">Escreva-me um e-mail</string>
     <string name="flash">Ativar Adobe Flash</string>
-    <string name="mobile">Ver como Mobile</string>
-    <string name="desk">Ver como Desktop</string>
-    <string name="custom">Ver como agente de utilizador</string>
     <string name="home">Página inicial</string>
-    <string name="settingshelp">Definições apenas aplicáveis a novos separadores</string>
     <string name="fullscreen">Modo de ecrã completo</string>
     <string name="java">Ativar JavaScript</string>
-    <string name="saveTab">Restaurar separadores perdidos</string>
-    <string name="settings_title">Definições</string>
     <string name="download">Local de transferências</string>
     <string name="settings_advanced">Definições avançadas</string>
-    <string name="source">Código fonte</string>
-    <string name="license">Licença</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">NewSettings</string>
-    <string name="action_settings">Definições</string>
     <string name="version">Versão da aplicação</string>
     <string name="cache">Limpar cache ao sair</string>
     <string name="reflow">Ativar ajuste de texto</string>
@@ -89,14 +71,11 @@
     <string name="dialog_download">Gostaria de transferir este ficheiro?</string>
     <string name="action_cancel">Cancelar</string>
     <string name="title_warning">Aviso</string>
-    <string name="dialog_adobe_dead">Desculpe mas a Google fez algumas alterações e o Adobe Flash Player já não funciona em versões Android 4.4+.</string>
     <string name="dialog_adobe_not_installed">O Adobe Flash Player não foi detetado.\nTem que instalar o Flash Player.</string>
-    <string name="dialog_adobe_unsupported">O Adobe Flash Player não funciona em sistemas Andoid 4.2+ e irá terminar a aplicação. Por favor não reporte os erros que ocorram se ativar o Adobe Flash Player.</string>
     <string name="title_user_agent">Agente de utilizador</string>
     <string name="title_download_location">Local das transferências</string>
     <string name="title_custom_homepage">Página inicial personalizada</string>
     <string name="action_webpage">Página web</string>
-    <string name="dialog_reflow_warning">Desculpe mas a Google fez algumas alterações e o ajuste de texto já não funciona em versões Android 4.4+.</string>
     <string name="title_clear_history">Limpar histórico</string>
     <string name="title_clear_cookies">Limpar cookies</string>
     <string name="dialog_history">Gostaria de limpar todo o histórico do navegador?</string>
@@ -116,7 +95,6 @@
     <string name="title_edit_bookmark">Editar marcador</string>
     <string name="action_edit">Editar</string>
     <string name="action_incognito">Novo separador incógnito</string>
-    <string name="hello_world">Olá mundo!</string>
     <string name="action_homepage">Padrão</string>
     <string name="action_back">Recuar</string>
     <string name="action_find">Localizar na página</string>
@@ -156,8 +134,6 @@
     <string name="hint_password">Palavra-passe</string>
     <string name="google_suggestions">Sugestões de pesquisa</string>
     <string name="powered_by_google">Disponibilizado por Google</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">O AdBlock apenas está disponível na versão paga, o Lightning Browser+. Esta versão está disponível na loja Google.</string>
     <string name="use_tor_prompt">Parece que você tem o Orbot instalado. Gostaria de utilizar a rede Tor?</string>
     <string name="install_orbot">Por favor instale o Orbot para poder utilizar a rede Tor.</string>
     <string name="yes">Sim</string>
@@ -195,7 +171,6 @@
     <string name="close_tab">Fechar separador</string>
     <string name="close_all_tabs">Fechar todos os separadores</string>
     <string name="third_party">Bloquear cookies de terceiros</string>
-    <string name="available_lollipop">Funcionalidades apenas disponíveis para Android 5.0+</string>
     <string name="color_mode">Ativar modo de cor</string>
     <string name="reading_mode">Modo de leitura</string>
     <string name="loading">A carregar&#8230;</string>
@@ -211,6 +186,5 @@
     </string-array>
         <string name="invert_color">Inverter cores</string>
         <string name="dark_theme">Tema escuro</string>
-        <string name="change_after_restart">Esta opção será aplicada depois de reiniciar a aplicação.</string>
         <string name="tabs">Separadores</string>
 </resources>

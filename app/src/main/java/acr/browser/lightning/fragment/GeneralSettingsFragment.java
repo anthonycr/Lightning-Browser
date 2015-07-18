@@ -150,7 +150,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbgooglesuggest.setChecked(mPreferences.getGoogleSearchSuggestionsEnabled());
     }
 
-    public void searchUrlPicker() {
+    private void searchUrlPicker() {
         final AlertDialog.Builder urlPicker = new AlertDialog.Builder(mActivity);
         urlPicker.setTitle(getResources().getString(R.string.custom_url));
         final EditText getSearchUrl = new EditText(mActivity);
@@ -240,7 +240,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
             proxy.setSummary(mProxyChoices[choice]);
     }
 
-    public void manualProxyPicker() {
+    private void manualProxyPicker() {
         View v = mActivity.getLayoutInflater().inflate(R.layout.picker_manual_proxy, null);
         final EditText eProxyHost = (EditText) v.findViewById(R.id.proxyHost);
         final EditText eProxyPort = (EditText) v.findViewById(R.id.proxyPort);
@@ -263,7 +263,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 .show();
     }
 
-    public void searchDialog() {
+    private void searchDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.title_search_engine));
         CharSequence[] chars = {getResources().getString(R.string.custom_url), "Google",
@@ -290,7 +290,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         picker.show();
     }
 
-    public void homepageDialog() {
+    private void homepageDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.home));
         mHomepage = mPreferences.getHomepage();
@@ -337,7 +337,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         picker.show();
     }
 
-    public void homePicker() {
+    private void homePicker() {
         final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
         homePicker.setTitle(getResources().getString(R.string.title_custom_homepage));
         final EditText getHome = new EditText(mActivity);
@@ -360,7 +360,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         homePicker.show();
     }
 
-    public void downloadLocDialog() {
+    private void downloadLocDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.title_download_location));
         mDownloadLocation = mPreferences.getDownloadDirectory();
@@ -396,7 +396,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         picker.show();
     }
 
-    public void agentDialog() {
+    private void agentDialog() {
         AlertDialog.Builder agentPicker = new AlertDialog.Builder(mActivity);
         agentPicker.setTitle(getResources().getString(R.string.title_user_agent));
         mAgentChoice = mPreferences.getUserAgentChoice();
@@ -437,7 +437,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         agentPicker.show();
     }
 
-    public void agentPicker() {
+    private void agentPicker() {
         final AlertDialog.Builder agentStringPicker = new AlertDialog.Builder(mActivity);
         agentStringPicker.setTitle(getResources().getString(R.string.title_user_agent));
         final EditText getAgent = new EditText(mActivity);
@@ -454,7 +454,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         agentStringPicker.show();
     }
 
-    public void downPicker() {
+    private void downPicker() {
         final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(mActivity);
         LinearLayout layout = new LinearLayout(mActivity);
         downLocationPicker.setTitle(getResources().getString(R.string.title_download_location));

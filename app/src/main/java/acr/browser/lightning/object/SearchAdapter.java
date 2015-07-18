@@ -198,12 +198,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    public void setContents(List<HistoryItem> list) {
-        mFilteredList.clear();
-        mFilteredList.addAll(list);
-        notifyDataSetChanged();
-    }
-
     @Override
     public Filter getFilter() {
         if (mFilter == null) {

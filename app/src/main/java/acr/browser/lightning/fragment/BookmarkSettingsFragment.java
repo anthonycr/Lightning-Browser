@@ -132,7 +132,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         }
     }
 
-    protected void createDialog() {
+    private void createDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
         final String title = getString(R.string.title_chooser);

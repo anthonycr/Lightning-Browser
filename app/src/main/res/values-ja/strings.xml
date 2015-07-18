@@ -15,10 +15,6 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">ナビドロワーを開く</string>
-    <string name="drawer_close">ナビドロワーを閉じる</string>
-    <string name="action_websearch">ウェブ検索</string>
-    <string name="action_refresh">更新</string>
     <string name="action_new_tab">新しいタブ</string>
     <string name="action_share">共有</string>
     <string name="action_history">履歴</string>
@@ -26,31 +22,17 @@
     <string name="action_add_bookmark">ブックマークに追加</string>
     <string name="action_copy">リンクをコピー</string>
     <string name="action_forward">進む</string>
-    <string name="google">Google</string>
     <string name="settings">設定</string>
     <string name="location">位置情報</string>
     <string name="password">パスワードを記憶する</string>
     <string name="agent">ユーザーエージェント</string>
-    <string name="history">履歴を消去する</string>
-    <string name="email">Email me</string>
     <string name="flash">Adobe Flash</string>
-    <string name="mobile">モバイル</string>
-    <string name="desk">デスクトップ</string>
-    <string name="custom">カスタム</string>
     <string name="home">スタートページ</string>
-    <string name="settingshelp">設定は新しいタブから適用されます</string>
     <string name="fullscreen">全画面モード</string>
     <string name="java">JavaScript</string>
-    <string name="saveTab">開始時に前回のタブを修復する</string>
-    <string name="settings_title">設定</string>
     <string name="download">ダウンロード先のフォルダ</string>
     <string name="settings_advanced">高度な設定</string>
-    <string name="source">ソースコード</string>
-    <string name="license">ライセンス</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">新しい設定</string>
-    <string name="action_settings">設定</string>
     <string name="version">アプリケーションのバージョン</string>
     <string name="cache">終了時にキャッシュを消去する</string>
     <string name="reflow">文字を右端で折り返す</string>
@@ -86,14 +68,11 @@
     <string name="dialog_download">このファイルをダウンロードしますか?</string>
     <string name="action_cancel">キャンセル</string>
     <string name="title_warning">警告</string>
-    <string name="dialog_adobe_dead">申し訳ありませんが、Googleの仕様変更のため、Adobe FlashはAndroid 4.4以上に対応していません。</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Playerをインストールしてください</string>
-    <string name="dialog_adobe_unsupported">Adobe FlashはAndroid 4.2以降に対応していません。ブラウザが強制終了します。Flashを有効にしたことによる強制終了については報告しないでください。</string>
     <string name="title_user_agent">ユーザーエージェント</string>
     <string name="title_download_location">ダウンロード先</string>
     <string name="title_custom_homepage">カスタムスタートページ</string>
     <string name="action_webpage">Webpage</string>
-    <string name="dialog_reflow_warning">申し訳ありませんが、Googleの仕様変更によりAndroid 4.4+では文字の折り返しはできません。</string>
     <string name="title_clear_history">履歴を消去する</string>
     <string name="title_clear_cookies">Cookiesを消去する</string>
     <string name="dialog_history">すべての履歴を消去しますか?</string>
@@ -113,7 +92,6 @@
     <string name="title_edit_bookmark">ブックマークを編集する</string>
     <string name="action_edit">編集</string>
     <string name="action_incognito">新しいシークレットタブ</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_homepage">標準</string>
     <string name="action_back">戻る</string>
     <string name="action_find">ページ内検索</string>
@@ -153,8 +131,6 @@
     <string name="hint_password">パスワード</string>
     <string name="google_suggestions">検索候補を表示する</string>
     <string name="powered_by_google">Powered by Google</string>
-    <string name="title_adblock">広告ブロック</string>
-    <string name="message_adblock">広告ブロックは有料版のLightning Browser+でのみ利用可能です。Google Playからダウンロードできます。</string>
     <string name="use_tor_prompt">Orbotがインストールされています。Torを使用しますか?</string>
     <string name="install_orbot">Torでプロキシを有効にするにはOrbotをインストールしてください</string>
     <string name="yes">はい</string>

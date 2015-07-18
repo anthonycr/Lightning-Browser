@@ -32,7 +32,7 @@ public abstract class ThemableActivity extends AppCompatActivity {
         }
     }
 
-    protected void restart() {
+    private void restart() {
         Intent intent = getIntent();
         finish();
         overridePendingTransition(0, 0);

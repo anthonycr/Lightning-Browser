@@ -2,10 +2,6 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Άνοιγμα πλοήγησης</string>
-    <string name="drawer_close">Κλείσιμο πλοήγησης</string>
-    <string name="action_websearch">Αναζήτηση Ιστού</string>
-    <string name="action_refresh">Ανανέωση</string>
     <string name="action_new_tab">Νέα καρτέλα</string>
     <string name="action_share">Κοινοποίηση</string>
     <string name="action_history">Ιστορικό</string>
@@ -13,31 +9,17 @@
     <string name="action_add_bookmark">Προσθήκη σελιδοδείκτη</string>
     <string name="action_copy">Αντιγραφή Συνδέσμου</string>
     <string name="action_forward">Εμπρός</string>
-    <string name="google">Google</string>
     <string name="settings">Ρυθμίσειs</string>
     <string name="location">Πρόσβαση σε τοποθεσία</string>
     <string name="password">Αποθήκευση κωδικών</string>
     <string name="agent">User Agent</string>
-    <string name="history">Καθαρισμός Ιστορικού</string>
-    <string name="email">Στείλτε μου email</string>
     <string name="flash">Ενεργοποίηση Adobe Flash</string>
-    <string name="mobile">Προβολή ως κινητό</string>
-    <string name="desk">Προβολή ως Desktop</string>
-    <string name="custom">Προβολή ως συγκεκριμένος  user agent</string>
     <string name="home">Αρχική σελίδα</string>
-    <string name="settingshelp">Οι ρυθμίσεις ισχύουν μόνο για νέες καρτέλες</string>
     <string name="fullscreen">Λειτουργία πλήρης οθόνης</string>
     <string name="java">Ενεργοποίηση JavaScript</string>
-    <string name="saveTab">Επαναφορά καρτελών εάν χαθούν.</string>
-    <string name="settings_title">Ρυθμίσεις</string>
     <string name="download">Κατέβασμα τοποθεσίας</string>
     <string name="settings_advanced">Προχωρημένες ρυθμίσεις</string>
-    <string name="source">Πηγαίος κώδικας</string>
-    <string name="license">Άδεια</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">Νέες ρυθμίσεις</string>
-    <string name="action_settings">Ρυθμίσεις</string>
     <string name="version">Έκδοση εφαρμογής</string>
     <string name="cache">Καθαρισμός cache στο κλείσιμο</string>
     <string name="reflow">Ενεργοποίηση αναδιαμόρφωσης κειμένου</string>
@@ -73,14 +55,11 @@
     <string name="dialog_download">Θα θέλατε να κατεβάσετε αυτό το αρχείο;</string>
     <string name="action_cancel">Ακύρωση</string>
     <string name="title_warning">Προσοχή</string>
-    <string name="dialog_adobe_dead">Λυπούμαστε η Google έκανε κάποιες αλλαγές και πλέον ο Adobe Flash δεν λειτουργεί σε Android 4.4+</string>
     <string name="dialog_adobe_not_installed">Δεν ανιχνεύτηκε ο Adobe Flash Player.\nΠαρακαλώ εγκαταστήστε τον Flash Player.</string>
-    <string name="dialog_adobe_unsupported">Ο Adobe Flash δεν υποστηρίζει Andoid 4.2 και πάνω, και θα προκαλέσει προβλήματα. Παρακαλώ μην αναφέρετε σαν σφάλμα οποιοδήποτε θέμα δημιουργηθεί αν ενεργοποιήσετε το Flash.</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Τοποθεσία λήψης</string>
     <string name="title_custom_homepage">Συγκεκριμένη Αρχική Σελίδα</string>
     <string name="action_webpage">Σελίδα</string>
-    <string name="dialog_reflow_warning">Λυπούμαστε, η Google έκανε κάποιες αλλαγές και πλέον το Text Reflow δεν δουλεύει σε Android 4.4+</string>
     <string name="title_clear_history">Καθαρισμός Ιστορικού</string>
     <string name="title_clear_cookies">Καθαρισμός Cookies</string>
     <string name="dialog_history">Θα θέλατε να καθαρίσετε όλο το ιστορικό;</string>
@@ -100,7 +79,6 @@
     <string name="title_edit_bookmark">Επεξεργασία σελιδοδείκτη</string>
     <string name="action_edit">Επεξεργασία</string>
     <string name="action_incognito">Νέα ανώνυμη καρτέλα</string>
-    <string name="hello_world">Γεία σου κόσμε!</string>
     <string name="action_homepage">Προεπιλογή</string>
     <string name="action_back">Πίσω</string>
     <string name="action_find">Αναζήτηση στην σελίδα</string>
@@ -140,8 +118,6 @@
     <string name="hint_password">Κώδικός</string>
     <string name="google_suggestions">Προτάσεις αναζήτησης</string>
     <string name="powered_by_google">Powered by Google</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">Το AdBlock είναι προς το παρόν διαθέσιμο μόνο στην πληρωμένη έκδοση του browser, Lightning Browser+. Είναι διαθέσιμη για κατέβασμα στο Google Play.</string>
     <string name="use_tor_prompt">Φαίνεται οτι έχετε εγκατεστημένο το Orbot. Θα θέλατε να χρησιμοποιήσετε το Tor?</string>
     <string name="install_orbot">Παρακαλώ εγκαταστήστε το Orbot για να χρησιμοποιήσετε το Tor.</string>
     <string name="yes">Ναι</string>

@@ -15,10 +15,6 @@
 <resources>
 
     <string name="app_name">Муња</string>
-    <string name="drawer_open">Отвори ладицу навигације</string>
-    <string name="drawer_close">Затвори ладицу навигације</string>
-    <string name="action_websearch">Веб претрага</string>
-    <string name="action_refresh">Освежи</string>
     <string name="action_new_tab">Нови језичак</string>
     <string name="action_share">Подели</string>
     <string name="action_history">Историјат</string>
@@ -26,31 +22,17 @@
     <string name="action_add_bookmark">Додај обележивач</string>
     <string name="action_copy">Копирај везу</string>
     <string name="action_forward">Напред</string>
-    <string name="google">Гугл</string>
     <string name="settings">Поставке</string>
     <string name="location">Приступ локацији</string>
     <string name="password">Сачувај лозинке</string>
     <string name="agent">Идентификација</string>
-    <string name="history">Очисти историјат</string>
-    <string name="email">Контакт</string>
     <string name="flash">Адобов Флеш</string>
-    <string name="mobile">Мобилни приказ</string>
-    <string name="desk">Нормални приказ</string>
-    <string name="custom">Приказ са посебном ид.</string>
     <string name="home">Почетна страница</string>
-    <string name="settingshelp">Поставке се примењују само на нове језичке</string>
     <string name="fullscreen">Цео екран</string>
     <string name="java">Омогући јаваскрипте</string>
-    <string name="saveTab">Врати језичке ако су изгубљени</string>
-    <string name="settings_title">Поставке</string>
     <string name="download">Фасцикла преузимања</string>
     <string name="settings_advanced">Напредне поставке</string>
-    <string name="source">Изворни кôд</string>
-    <string name="license">Лиценца</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Апачи лиценца 2.0</string>
-    <string name="title_activity_new_settings">Нове поставке</string>
-    <string name="action_settings">Поставке</string>
     <string name="version">Издање апликације</string>
     <string name="cache">Очисти кеш по затварању</string>
     <string name="reflow">Прилагођавање текста</string>
@@ -86,14 +68,11 @@
     <string name="dialog_download">Желите ли да преузмете овај фајл?</string>
     <string name="action_cancel">Одустани</string>
     <string name="title_warning">Упозорење</string>
-    <string name="dialog_adobe_dead">Нажалост, услед измена које је Гугл урадио, Адобов Флеш више не ради на Андроиду 4.4+</string>
     <string name="dialog_adobe_not_installed">Адобов Флеш није откривен.\nИнсталирајте Флеш Плејер.</string>
-    <string name="dialog_adobe_unsupported">Адобов Флеш не подржава Андроид 4.2 и новији, и срушиће прегледач. Не пријављујте грешке које се дешавају ако укључите Флеш.</string>
     <string name="title_user_agent">Идентификација</string>
     <string name="title_download_location">Фасцикла преузимања</string>
     <string name="title_custom_homepage">Посебна домаћа страница</string>
     <string name="action_webpage">Веб страница</string>
-    <string name="dialog_reflow_warning">Нажалост, услед измена које је Гугл урадио, прилагођење текста више не ради на Андроиду 4.4+</string>
     <string name="title_clear_history">Чишћење историјата</string>
     <string name="title_clear_cookies">Чишћење колачића</string>
     <string name="dialog_history">Желите ли да очистите сав историјат прегледача?</string>
@@ -113,7 +92,6 @@
     <string name="title_edit_bookmark">Уређивање обележивача</string>
     <string name="action_edit">Уреди</string>
     <string name="action_incognito">Нови приватни језичак</string>
-    <string name="hello_world">Здраво свете!</string>
     <string name="action_homepage">Подразумевана</string>
     <string name="action_back">Назад</string>
     <string name="action_find">Нађи на страници</string>
@@ -153,8 +131,6 @@
     <string name="hint_password">Лозинка</string>
     <string name="google_suggestions">Предлози претраге</string>
     <string name="powered_by_google">Погоњено Гуглом</string>
-    <string name="title_adblock">Адблок</string>
-    <string name="message_adblock">Адблок је доступан само у плаћеном издању прегледача, „Lightning Browser+“. Доступан је за преузимање на Гугловом Плеју.</string>
     <string name="use_tor_prompt">Изгледа да имате Орбот инсталиран. Желите ли да користите Тор?</string>
     <string name="install_orbot">Инсталирајте Орбот да бисте користили Тор.</string>
     <string name="yes">Да</string>
@@ -192,7 +168,6 @@
     <string name="close_tab">Затвори језичак</string>
     <string name="close_all_tabs">Затвори све језичке</string>
     <string name="third_party">Блокирај колачиће треће стране</string>
-    <string name="available_lollipop">Доступно само на Андроиду 5.0+</string>
     <string name="color_mode">Режим боје</string>
     <string name="reading_mode">Режим исцртавања</string>
     <string name="loading">Учитавам&#8230;</string>
@@ -207,7 +182,6 @@
         <item >Наслов</item>
     </string-array>
     <string name="invert_color">Обрнута боја</string>
-    <string name="change_after_restart">Промена теме ће бити извршена по поновном покретању прегледача.</string>
     <string name="tabs">Језичци</string>
     <string name="dark_theme">Тамна тема</string>
 </resources>

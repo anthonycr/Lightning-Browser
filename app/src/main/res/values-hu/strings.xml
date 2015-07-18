@@ -18,10 +18,6 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Navigációs fiók megnyitása</string>
-    <string name="drawer_close">Navigációs fiók bezárása</string>
-    <string name="action_websearch">Internetes kereső</string>
-    <string name="action_refresh">Frissít</string>
     <string name="action_new_tab">Új Lap</string>
     <string name="action_share">Megosztás</string>
     <string name="action_history">Előzmények</string>
@@ -29,31 +25,17 @@
     <string name="action_add_bookmark">Hozzáadás a könyvjelzőkhöz</string>
     <string name="action_copy">Link másolása</string>
     <string name="action_forward">Előre</string>
-    <string name="google">Google</string>
     <string name="settings">Beállítások</string>
     <string name="location">Hely hozzáférés</string>
     <string name="password">Jelszavak mentése</string>
     <string name="agent">Felhasználó Ügynök</string>
-    <string name="history">Előzmények törlése</string>
-    <string name="email">Írj E-Mail-t nekem</string>
     <string name="flash">Adobe Flash bekapcsolása</string>
-    <string name="mobile">Megtekintés mobil nézetben</string>
-    <string name="desk">Megtekintés asztali nézetben</string>
-    <string name="custom">Megtekintés egyéni felhasználói ügynökként</string>
     <string name="home">Főoldal</string>
-    <string name="settingshelp">A beállítások csak az új lapokra érvényes</string>
     <string name="fullscreen">Teljes képernyős mód</string>
     <string name="java">JavaScript bekapcsolása</string>
-    <string name="saveTab">Lapok helyreállítása ha elvesznek</string>
-    <string name="settings_title">Beállítások</string>
     <string name="download">Letöltési hely</string>
     <string name="settings_advanced">Speciális Beállítások</string>
-    <string name="source">Forráskód</string>
-    <string name="license">Licensz</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">Új beállítások</string>
-    <string name="action_settings">Beállítások</string>
     <string name="version">Alkalmazás Verzió</string>
     <string name="cache">Gyorsítótár törlése kilépéskor</string>
     <string name="reflow">Szövegtördelés bekapcsolása</string>
@@ -89,14 +71,11 @@
     <string name="dialog_download">Le szeretnéd tölteni ezt a fájlt?</string>
     <string name="action_cancel">Mégse</string>
     <string name="title_warning">Figyelmeztetés</string>
-    <string name="dialog_adobe_dead">Elnézést kérünk,de a Google néhány változtatást hajtott végre , ezért az Adobe Flash már nem működik Android 4.4-en és a fölött.</string>
     <string name="dialog_adobe_not_installed">Az Adobe Flash Player nincs észlelve.\nKérjük telepítse a Flash Player-t.</string>
-    <string name="dialog_adobe_unsupported">Az Adobe Flash nem támogatott az Andoid 4.2-őn és a fölött, és a böngésző összeomolhat. Kérjük, ne jelentsen semmilyen összeomlást , ami előfordulhat , ha engedélyezi a Flash-t.</string>
     <string name="title_user_agent">Felhasználói ügynök</string>
     <string name="title_download_location">Letöltési hely</string>
     <string name="title_custom_homepage">Egyéni honlap</string>
     <string name="action_webpage">Honlap</string>
-    <string name="dialog_reflow_warning">Elnézést kérünk , de a Google néhány változtatást hajtott végre , ezért a szövegtördelés nem működik Android 4.4-en és a fölött.</string>
     <string name="title_clear_history">Előzmények törlése</string>
     <string name="title_clear_cookies">Cookie-k törlése</string>
     <string name="dialog_history">Szeretnéd törölni az összes keresési előzményeket?</string>
@@ -116,7 +95,6 @@
     <string name="title_edit_bookmark">Könyvjelző szerkesztése</string>
     <string name="action_edit">Szerkesztés</string>
     <string name="action_incognito">Új Inkognitó Lap</string>
-    <string name="hello_world">Hello világ!</string>
     <string name="action_homepage">Alapértelmezett</string>
     <string name="action_back">Vissza</string>
     <string name="action_find">Keresés az oldalon</string>
@@ -156,8 +134,6 @@
     <string name="hint_password">Jelszó</string>
     <string name="google_suggestions">Keresési javaslatok</string>
     <string name="powered_by_google">A Google támogatásával</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">Az AdBlock jelenleg csak a Lightning Browser + fizetős változatban érhető el.Ez letölthető a Google Play Áruházból.</string>
     <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot.Szeretné használni Tor-t?</string>
     <string name="install_orbot">Kérjük telepítse az Orbot-ot annak érdekében, hogy működjön a proxy a Tor-ral.</string>
     <string name="yes">Igen</string>
@@ -195,7 +171,6 @@
     <string name="close_tab">Lap bezárása</string>
     <string name="close_all_tabs">Összes lap bezárása</string>
     <string name="third_party">Harmadik féltől származó Cookie-k letiltása</string>
-    <string name="available_lollipop">Ez csak Android  5.0-ás verzió fölött érhető el</string>
     <string name="color_mode">Színes mód engedélyezése</string>
     <string name="reading_mode">Olvasó mód</string>
     <string name="loading">Betöltés&#8230;</string>
@@ -211,6 +186,5 @@
     </string-array>
         <string name="invert_color">Negatív szín</string>
         <string name="dark_theme">Sötét téma </string>
-        <string name="change_after_restart">A téma megváltoztatásának érvénybelépéséhez indítsa újra a böngészőt.</string>
         <string name="tabs">Lapok</string>
 </resources>

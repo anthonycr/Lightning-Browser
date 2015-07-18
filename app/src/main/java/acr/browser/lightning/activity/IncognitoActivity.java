@@ -14,11 +14,6 @@ import acr.browser.lightning.R;
 public class IncognitoActivity extends BrowserActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void updateCookiePreference() {
         CookieManager cookieManager = CookieManager.getInstance();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -30,10 +25,7 @@ public class IncognitoActivity extends BrowserActivity {
 
     @Override
     public synchronized void initializeTabs() {
-        super.initializeTabs();
-        // restoreOrNewTab();
         newTab(null, true);
-        // if incognito mode use newTab(null, true); instead
     }
 
     @Override
@@ -56,7 +48,6 @@ public class IncognitoActivity extends BrowserActivity {
 
     @Override
     public void updateHistory(String title, String url) {
-        super.updateHistory(title, url);
         // addItemToHistory(title, url);
     }
 

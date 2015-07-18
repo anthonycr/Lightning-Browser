@@ -162,7 +162,6 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (mCurrentTheme != mPreferences.getUseTheme()) {
-//                            ((SettingsActivity) getActivity()).restart();
                             getActivity().onBackPressed();
                         }
                     }
@@ -171,7 +170,6 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
             @Override
             public void onCancel(DialogInterface dialog) {
                 if (mCurrentTheme != mPreferences.getUseTheme()) {
-//                    ((SettingsActivity) getActivity()).restart();
                     getActivity().onBackPressed();
                 }
             }

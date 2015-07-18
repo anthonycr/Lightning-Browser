@@ -1,10 +1,6 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">開啟導覽側欄</string>
-    <string name="drawer_close">關閉導覽側欄</string>
-    <string name="action_websearch">網路搜尋</string>
-    <string name="action_refresh">重新整理</string>
     <string name="action_new_tab">新分頁</string>
     <string name="action_share">分享</string>
     <string name="action_history">記錄</string>
@@ -12,32 +8,18 @@
     <string name="action_add_bookmark">新增書籤</string>
     <string name="action_copy">複製連結</string>
     <string name="action_forward">下一頁</string>
-    <string name="google">Google</string>
     <string name="settings">設定</string>
     <string name="location">存取地理資訊</string>
     <string name="password">儲存密碼</string>
     <!-- <string name="keep_last_tab">不關閉最後一個標籤</string> -->
     <string name="agent">User Agent</string>
-    <string name="history">清除記錄</string>
-    <string name="email">Email 給我</string>
     <string name="flash">啟用 Adobe Flash</string>
-    <string name="mobile">以行動裝置方式瀏覽</string>
-    <string name="desk">以桌上型電腦方式瀏覽</string>
-    <string name="custom">以自定 user agent 瀏覽</string>
     <string name="home">首頁</string>
-    <string name="settingshelp">設定僅會套用到新分頁</string>
     <string name="fullscreen">全螢幕模式</string>
     <string name="java">啟用 JavaScript</string>
-    <string name="saveTab">重新啟動時還原分頁</string>
-    <string name="settings_title">偏好設定</string>
     <string name="download">下載資料夾位置</string>
     <string name="settings_advanced">進階設定</string>
-    <string name="source">原始碼</string>
-    <string name="license">版權資訊</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">新設定</string>
-    <string name="action_settings">設定</string>
     <string name="version">應用程式版本</string>
     <string name="cache">離開時清除快取</string>
     <string name="reflow">啟動文字自動重新排列</string>
@@ -74,14 +56,11 @@
     <string name="dialog_download">您是否想要下載這個檔案？</string>
     <string name="action_cancel">取消</string>
     <string name="title_warning">警告</string>
-    <string name="dialog_adobe_dead">我們很抱歉，由於 Google 的更動，Adobe Flash 與 Android 4.4+ 不再支援。</string>
     <string name="dialog_adobe_not_installed">沒有偵測到 Adobe Flash Player。\n請安裝  Flash Player。</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash 不支援 Andoid 4.2 及以上，若啟用會導致瀏覽器停止回應，請不要回報任何關於次問題的相關錯誤。</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">下載資料夾位置</string>
     <string name="title_custom_homepage">自定首頁</string>
     <string name="action_webpage">網頁</string>
-    <string name="dialog_reflow_warning">我們很抱歉，由於 Google 的更動，文字重新排列於 Android 4.4 及以上 無法使用。</string>
     <string name="title_clear_history">清除記錄</string>
     <string name="title_clear_cookies">清除 Cookies</string>
     <string name="dialog_history">您是否要清除所有瀏覽記錄？</string>
@@ -101,7 +80,6 @@
     <string name="title_edit_bookmark">編輯書籤</string>
     <string name="action_edit">編輯</string>
     <string name="action_incognito">新無痕式分頁</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_homepage">預設</string>
     <string name="action_back">上一頁</string>
     <string name="action_find">於頁面中搜尋</string>

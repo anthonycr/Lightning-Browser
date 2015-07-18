@@ -2,19 +2,12 @@
 <resources>
 
     <string name="app_name">Lightning</string>
-    <string name="google">Google</string>
     <string name="settings">הגדרות דפדפן</string>
     <string name="location">מאפשר לאתרים לגשת למיקומך</string>
     <string name="password">שמור את הסיסמאות שלך</string>
     <string name="agent">סוכן משתמש</string>
-    <string name="history">מחק הסטוריה ביציאה</string>
-    <string name="email">שלח לי דוא\"ל</string>
     <string name="flash">הפעל תכני פלאש (אם מותקן)</string>
-    <string name="mobile">הצג כנייד</string>
-    <string name="desk">הצג כמחשב</string>
-    <string name="custom">הצג כסוכן משתמש מותאם אישית</string>
     <string name="home">דף הבית</string>
-    <string name="settingshelp">הגדות מוחלות על כרטיסיות חדשות בלבד</string>
     <string name="fullscreen">הפעל מצב מסך מלא</string>
     <string name="java">הפעל JavaScript</string>
 

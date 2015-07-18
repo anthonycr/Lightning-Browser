@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Otwórz szufladę nawigacyjną</string>
-    <string name="drawer_close">Zamknij szufladę nawigacyjną</string>
-    <string name="action_websearch">Wyszukiwarka internetowa</string>
-    <string name="action_refresh">Odśwież</string>
     <string name="action_new_tab">Nowa karta</string>
     <string name="action_share">Udostępnij</string>
     <string name="action_history">Historia</string>
@@ -12,31 +8,17 @@
     <string name="action_add_bookmark">Dodaj do zakładek</string>
     <string name="action_copy">Kopiuj link</string>
     <string name="action_forward">Dalej</string>
-    <string name="google">Google</string>
     <string name="settings">Ustawienia</string>
     <string name="location">Dostęp do geolokalizacji</string>
     <string name="password">Zapisuj hasła</string>
     <string name="agent">Przedstawiaj się jako</string>
-    <string name="history">Wyczyść historię</string>
-    <string name="email">Wyslij mi e-mail</string>
     <string name="flash">Włącz Adobe Flash</string>
-    <string name="mobile">Przeglądarka mobilna</string>
-    <string name="desk">Przeglądarka desktopowa</string>
-    <string name="custom">Własna lokalizacja</string>
     <string name="home">Strona domowa</string>
-    <string name="settingshelp">Ustawienia będą aktywne tylko dla nowootwartych kart</string>
     <string name="fullscreen">Tryb pełnoekranowy</string>
     <string name="java">Włącz Javascript</string>
-    <string name="saveTab">Przwraca otwarte karty</string>
-    <string name="settings_title">Ustawienia</string>
     <string name="download">Miejsce zapisu pobieranych plików</string>
     <string name="settings_advanced">Zaawansowane</string>
-    <string name="source">Kod źródłowy</string>
-    <string name="license">Licencja</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">NoweUstawienia</string>
-    <string name="action_settings">Ustawienia</string>
     <string name="version">Wersja aplikacji</string>
     <string name="cache">Wyczyść pamięć podręczną po zamknięciu</string>
     <string name="reflow">Zawijaj tekst do rozmiaru ekranu</string>
@@ -72,14 +54,11 @@
     <string name="dialog_download">Czy chcesz pobrać ten plik?</string>
     <string name="action_cancel">Anuluj</string>
     <string name="title_warning">Ostrzeżenie</string>
-    <string name="dialog_adobe_dead">Przepraszamy, Adobe Flash nie jest wspierany na urządzeniach z Androidem 4.4 i nowszym</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player nie został wykryty.\nProszę go zainstalować.</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash nie jest oficjalnie wspierany na urządzeniach z Andoidem 4.2 i nowszym, i może zawiesić przegldarkę. Proszę nie zgłaszać awarii przegladarki mających miejsce po jego włączeniu.</string>
     <string name="title_user_agent">Przedstawiaj się jako</string>
     <string name="title_download_location">Miejsce zapisu pobieranych plików</string>
     <string name="title_custom_homepage">Adres strony domowej</string>
     <string name="action_webpage">Własny adres</string>
-    <string name="dialog_reflow_warning">Przepraszamy, ta funkcja nie działa na urządzeniach z Androidem 4.4 i nowszym</string>
     <string name="title_clear_history">Wyczyść historię</string>
     <string name="title_clear_cookies">Wyczyść ciasteczka</string>
     <string name="dialog_history">Czy chciałbyś wyczyścić całą historię przeglądarki?</string>
@@ -99,7 +78,6 @@
     <string name="title_edit_bookmark">Edytuj zakładkę</string>
     <string name="action_edit">Edytuj</string>
     <string name="action_incognito">Nowa karta Incognito</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_homepage">Domyślna</string>
     <string name="action_back">Wstecz</string>
     <string name="action_find">Znajdź na stronie</string>
@@ -139,8 +117,6 @@
     <string name="hint_password">Hasło</string>
     <string name="google_suggestions">Podpowiedzi wyszukiwania</string>
     <string name="powered_by_google">Dostarczane przez Google</string>
-    <string name="title_adblock">Blokowanie reklam</string>
-    <string name="message_adblock">Blokowanie reklam jest obecnie dostępne tylko w płatnej wersji przeglądarki, Lightning Browser+. Jest ona dostępna do pobrania w sklepie Google Play.</string>
     <string name="use_tor_prompt">Wygląda na to że Orbot jest zainstalowany. Chciałbyś go włączyć i użyć sieci Tor do łączenia się z internetem?</string>
     <string name="install_orbot">Zanistaluj Orbota by móc używać sieci Tor do łączenia się z internetem.</string>
     <string name="yes">Tak</string>
@@ -178,6 +154,5 @@
     <string name="close_tab">Zamknij kartę</string>
     <string name="close_all_tabs">Zamknij wszystkie karty</string>
     <string name="third_party">Blokuj ciasteczka z innych witryn</string>
-    <string name="available_lollipop">Ta opcja jest dostępna tylko na Androidzie 5.0+</string>
     <string name="color_mode">Włącz Tryb zmieniania koloru</string>
 </resources>
