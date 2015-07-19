@@ -89,7 +89,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -348,7 +347,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 String url = mPreferences.getSavedUrl();
                 if (url != null) {
                     newTab(url, true);
-                    Toast.makeText(mActivity, R.string.deleted_tab, Toast.LENGTH_SHORT).show();
+                    Utils.showSnackbar(mActivity, R.string.deleted_tab);
                 }
                 mPreferences.setSavedUrl(null);
                 return true;

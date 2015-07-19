@@ -23,7 +23,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import java.io.Closeable;
 import java.io.File;
@@ -74,14 +73,6 @@ public final class Utils {
                         });
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static void showToast(Context context, @StringRes int resource) {
-        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
     }
 
     public static void showSnackbar(Activity activity, @StringRes int resource) {

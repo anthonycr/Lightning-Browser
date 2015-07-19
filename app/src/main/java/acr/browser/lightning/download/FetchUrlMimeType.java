@@ -3,18 +3,19 @@
  */
 package acr.browser.lightning.download;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.utils.Utils;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -36,14 +37,14 @@ public class FetchUrlMimeType extends Thread {
 
     private final String mUserAgent;
 
-    public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
+    public FetchUrlMimeType(Activity activity, DownloadManager.Request request, String uri,
                             String cookies, String userAgent) {
-        mContext = context.getApplicationContext();
+        mContext = activity.getApplicationContext();
         mRequest = request;
         mUri = uri;
         mCookies = cookies;
         mUserAgent = userAgent;
-        Toast.makeText(mContext, R.string.download_pending, Toast.LENGTH_SHORT).show();
+        Utils.showSnackbar(activity, R.string.download_pending);
     }
 
     @Override

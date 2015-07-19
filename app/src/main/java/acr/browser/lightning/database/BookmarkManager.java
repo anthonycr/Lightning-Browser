@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
 import android.provider.Browser;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,7 +153,7 @@ public class BookmarkManager {
      * This method exports the stored bookmarks to a text file in the device's
      * external download directory
      */
-    public synchronized void exportBookmarks() {
+    public synchronized void exportBookmarks(Activity activity) {
         List<HistoryItem> bookmarkList = getBookmarks(true);
         File bookmarksExport = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -179,11 +178,8 @@ public class BookmarkManager {
                 bookmarkWriter.write(object.toString());
                 bookmarkWriter.newLine();
             }
-            if (mContext != null)
-                Toast.makeText(
-                        mContext,
-                        mContext.getString(R.string.bookmark_export_path) + ' '
-                                + bookmarksExport.getPath(), Toast.LENGTH_SHORT).show();
+            Utils.showSnackbar(activity, activity.getString(R.string.bookmark_export_path)
+                    + ' ' + bookmarksExport.getPath());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         } finally {

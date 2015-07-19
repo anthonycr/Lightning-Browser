@@ -67,7 +67,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
-                mBookmarkManager.exportBookmarks();
+                mBookmarkManager.exportBookmarks(getActivity());
                 return true;
             case SETTINGS_IMPORT:
                 loadFileList(null);

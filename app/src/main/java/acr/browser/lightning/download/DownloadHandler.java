@@ -18,7 +18,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -163,7 +162,7 @@ public class DownloadHandler {
         try {
             request = new DownloadManager.Request(uri);
         } catch (IllegalArgumentException e) {
-            Toast.makeText(activity, R.string.cannot_download, Toast.LENGTH_SHORT).show();
+            Utils.showSnackbar(activity, R.string.cannot_download);
             return;
         }
         request.setMimeType(mimetype);
@@ -204,7 +203,7 @@ public class DownloadHandler {
                     }
                 }
             }.start();
-            Toast.makeText(activity, R.string.download_pending, Toast.LENGTH_SHORT).show();
+            Utils.showSnackbar(activity, R.string.download_pending);
         }
 
     }
