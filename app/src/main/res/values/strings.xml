@@ -53,7 +53,7 @@
     <string name="stock_browser_unavailable">No stock browser detected</string>
     <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
-    <string name="clear_cookies">Clear browser cookies</string>
+    <string name="clear_cookies">Clear Browser Cookies</string>
     <string name="dialog_image">What would you like to do with this image?</string>
     <string name="action_download">Download</string>
     <string name="action_open">Open</string>
@@ -110,7 +110,7 @@
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contact Me</string>
     <string name="url_twitter">twitter.com/RestainoAnthony</string>
-    <string name="clear_cache">Clear cache</string>
+    <string name="clear_cache">Clear Cache</string>
     <string name="message_cache_cleared">Cache Cleared</string>
     <string name="message_import">Bookmarks Were Imported</string>
     <string name="message_clear_history">History Cleared</string>

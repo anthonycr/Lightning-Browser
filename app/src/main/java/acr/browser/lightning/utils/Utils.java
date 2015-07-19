@@ -17,9 +17,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Environment;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
@@ -37,139 +39,146 @@ import acr.browser.lightning.download.DownloadHandler;
 
 public final class Utils {
 
-	private Utils() {
-	}
+    private Utils() {
+    }
 
-	public static void downloadFile(final Activity activity, final String url,
+    public static void downloadFile(final Activity activity, final String url,
                                     final String userAgent, final String contentDisposition) {
-		String fileName = URLUtil.guessFileName(url, null, null);
-		DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null
+        String fileName = URLUtil.guessFileName(url, null, null);
+        DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null
         );
-		Log.i(Constants.TAG, "Downloading" + fileName);
-	}
+        Log.i(Constants.TAG, "Downloading" + fileName);
+    }
 
-	public static Intent newEmailIntent(String address, String subject,
+    public static Intent newEmailIntent(String address, String subject,
                                         String body, String cc) {
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
-		intent.putExtra(Intent.EXTRA_TEXT, body);
-		intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-		intent.putExtra(Intent.EXTRA_CC, cc);
-		intent.setType("message/rfc822");
-		return intent;
-	}
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_CC, cc);
+        intent.setType("message/rfc822");
+        return intent;
+    }
 
-	public static void createInformativeDialog(Context context, String title, String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle(title);
-		builder.setMessage(message)
-				.setCancelable(true)
-				.setPositiveButton(context.getResources().getString(R.string.action_ok),
+    public static void createInformativeDialog(Context context, String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message)
+                .setCancelable(true)
+                .setPositiveButton(context.getResources().getString(R.string.action_ok),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                             }
                         });
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
-	public static void showToast(Context context, String message) {
-		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-	}
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
 
     public static void showToast(Context context, @StringRes int resource) {
         Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
     }
 
-	/**
-	 * Returns the number of pixels corresponding to the passed density pixels
-	 */
-	public static int convertDpToPixels(int dp) {
-		DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-		return (int) (dp * metrics.density + 0.5f);
-	}
+    public static void showSnackBar(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+    }
 
-	public static String getDomainName(String url) {
-		boolean ssl = url.startsWith(Constants.HTTPS);
-		int index = url.indexOf('/', 8);
-		if (index != -1) {
-			url = url.substring(0, index);
-		}
+    public static void showSnackBar(View view, @StringRes int resource) {
+        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
+    }
 
-		URI uri;
-		String domain = null;
-		try {
-			uri = new URI(url);
-			domain = uri.getHost();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+    /**
+     * Returns the number of pixels corresponding to the passed density pixels
+     */
+    public static int convertDpToPixels(int dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return (int) (dp * metrics.density + 0.5f);
+    }
 
-		if (domain == null || domain.isEmpty()) {
-			return url;
-		}
-		if (ssl)
-			return Constants.HTTPS + domain;
-		else
-			return domain.startsWith("www.") ? domain.substring(4) : domain;
-	}
+    public static String getDomainName(String url) {
+        boolean ssl = url.startsWith(Constants.HTTPS);
+        int index = url.indexOf('/', 8);
+        if (index != -1) {
+            url = url.substring(0, index);
+        }
 
-	public static String getProtocol(String url) {
-		int index = url.indexOf('/');
-		return url.substring(0, index + 2);
-	}
+        URI uri;
+        String domain = null;
+        try {
+            uri = new URI(url);
+            domain = uri.getHost();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
-	public static String[] getArray(String input) {
-		return input.split(Constants.SEPARATOR);
-	}
+        if (domain == null || domain.isEmpty()) {
+            return url;
+        }
+        if (ssl)
+            return Constants.HTTPS + domain;
+        else
+            return domain.startsWith("www.") ? domain.substring(4) : domain;
+    }
 
-	public static void trimCache(Context context) {
-		try {
-			File dir = context.getCacheDir();
+    public static String getProtocol(String url) {
+        int index = url.indexOf('/');
+        return url.substring(0, index + 2);
+    }
 
-			if (dir != null && dir.isDirectory()) {
-				deleteDir(dir);
-			}
-		} catch (Exception ignored) {
+    public static String[] getArray(String input) {
+        return input.split(Constants.SEPARATOR);
+    }
 
-		}
-	}
+    public static void trimCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
 
-	public static boolean deleteDir(File dir) {
-		if (dir != null && dir.isDirectory()) {
-			String[] children = dir.list();
-			for (String aChildren : children) {
-				boolean success = deleteDir(new File(dir, aChildren));
-				if (!success) {
-					return false;
-				}
-			}
-		}
-		// The directory is now empty so delete it
-		return dir != null && dir.delete();
-	}
+            if (dir != null && dir.isDirectory()) {
+                deleteDir(dir);
+            }
+        } catch (Exception ignored) {
 
-	/**
-	 * Creates and returns a new favicon which is the same as the provided
-	 * favicon but with horizontal or vertical padding of 4dp
-	 * 
-	 * @param bitmap
-	 *            is the bitmap to pad.
-	 * @return the padded bitmap.
-	 */
-	public static Bitmap padFavicon(Bitmap bitmap) {
-		int padding = Utils.convertDpToPixels(4);
+        }
+    }
 
-		Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
-				+ padding, Bitmap.Config.ARGB_8888);
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String aChildren : children) {
+                boolean success = deleteDir(new File(dir, aChildren));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        // The directory is now empty so delete it
+        return dir != null && dir.delete();
+    }
 
-		Canvas canvas = new Canvas(paddedBitmap);
-		canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
-		canvas.drawBitmap(bitmap, padding / 2, padding / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+    /**
+     * Creates and returns a new favicon which is the same as the provided
+     * favicon but with horizontal or vertical padding of 4dp
+     *
+     * @param bitmap is the bitmap to pad.
+     * @return the padded bitmap.
+     */
+    public static Bitmap padFavicon(Bitmap bitmap) {
+        int padding = Utils.convertDpToPixels(4);
 
-		return paddedBitmap;
-	}
+        Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
+                + padding, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(paddedBitmap);
+        canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
+        canvas.drawBitmap(bitmap, padding / 2, padding / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return paddedBitmap;
+    }
 
     public static boolean isColorTooDark(int color) {
         final byte RED_CHANNEL = 16;
@@ -185,71 +194,71 @@ public final class Utils {
         return gray < 0x727272;
     }
 
-	public static int mixTwoColors(int color1, int color2, float amount) {
-		final byte ALPHA_CHANNEL = 24;
-		final byte RED_CHANNEL = 16;
-		final byte GREEN_CHANNEL = 8;
-		//final byte BLUE_CHANNEL = 0;
+    public static int mixTwoColors(int color1, int color2, float amount) {
+        final byte ALPHA_CHANNEL = 24;
+        final byte RED_CHANNEL = 16;
+        final byte GREEN_CHANNEL = 8;
+        //final byte BLUE_CHANNEL = 0;
 
-		final float inverseAmount = 1.0f - amount;
+        final float inverseAmount = 1.0f - amount;
 
-		int r = ((int) (((float) (color1 >> RED_CHANNEL & 0xff) * amount) + ((float) (color2 >> RED_CHANNEL & 0xff) * inverseAmount))) & 0xff;
-		int g = ((int) (((float) (color1 >> GREEN_CHANNEL & 0xff) * amount) + ((float) (color2 >> GREEN_CHANNEL & 0xff) * inverseAmount))) & 0xff;
-		int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
+        int r = ((int) (((float) (color1 >> RED_CHANNEL & 0xff) * amount) + ((float) (color2 >> RED_CHANNEL & 0xff) * inverseAmount))) & 0xff;
+        int g = ((int) (((float) (color1 >> GREEN_CHANNEL & 0xff) * amount) + ((float) (color2 >> GREEN_CHANNEL & 0xff) * inverseAmount))) & 0xff;
+        int b = ((int) (((float) (color1 & 0xff) * amount) + ((float) (color2 & 0xff) * inverseAmount))) & 0xff;
 
-		return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
-	}
+        return 0xff << ALPHA_CHANNEL | r << RED_CHANNEL | g << GREEN_CHANNEL | b;
+    }
 
-	@SuppressLint("SimpleDateFormat")
-	public static File createImageFile() throws IOException {
-		// Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		String imageFileName = "JPEG_" + timeStamp + "_";
-		File storageDir = Environment
-				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		return File.createTempFile(imageFileName, /* prefix */
-				".jpg", /* suffix */
-				storageDir /* directory */
-		);
-	}
+    @SuppressLint("SimpleDateFormat")
+    public static File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+        );
+    }
 
-	public static boolean isFlashInstalled(Context context) {
-		try {
-			PackageManager pm = context.getPackageManager();
-			ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
-			if (ai != null) {
-				return true;
-			}
-		} catch (PackageManager.NameNotFoundException e) {
-			return false;
-		}
-		return false;
-	}
+    public static boolean isFlashInstalled(Context context) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
+            if (ai != null) {
+                return true;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+        return false;
+    }
 
-	public static Bitmap getWebpageBitmap(Resources resources, boolean dark) {
-		if (dark) {
-			if (mWebIconDark == null) {
-				mWebIconDark = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage_dark);
-			}
-			return mWebIconDark;
-		} else {
-			if (mWebIconLight == null) {
-				mWebIconLight = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage);
-			}
-			return mWebIconLight;
-		}
-	}
+    public static Bitmap getWebpageBitmap(Resources resources, boolean dark) {
+        if (dark) {
+            if (mWebIconDark == null) {
+                mWebIconDark = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage_dark);
+            }
+            return mWebIconDark;
+        } else {
+            if (mWebIconLight == null) {
+                mWebIconLight = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage);
+            }
+            return mWebIconLight;
+        }
+    }
 
-	private static Bitmap mWebIconLight;
-	private static Bitmap mWebIconDark;
+    private static Bitmap mWebIconLight;
+    private static Bitmap mWebIconDark;
 
-	public static void close(Closeable closeable) {
-		if (closeable == null)
-			return;
-		try {
-			closeable.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void close(Closeable closeable) {
+        if (closeable == null)
+            return;
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

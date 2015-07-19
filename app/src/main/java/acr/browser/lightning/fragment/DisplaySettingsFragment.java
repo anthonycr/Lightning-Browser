@@ -143,7 +143,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
 
     private void themePicker() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-        picker.setTitle(getResources().getString(R.string.url_contents));
+        picker.setTitle(getResources().getString(R.string.theme));
 
         int n = mPreferences.getUseTheme();
         picker.setSingleChoiceItems(mThemeOptions, n, new DialogInterface.OnClickListener() {

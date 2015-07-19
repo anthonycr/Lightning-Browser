@@ -139,7 +139,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     // List
     private final List<LightningView> mWebViewList = new ArrayList<>();
-    private List<HistoryItem> mBookmarkList;
+    private final List<HistoryItem> mBookmarkList = new ArrayList<>();
     private LightningView mCurrentView;
     private WebView mWebView;
 
@@ -164,8 +164,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     private Activity mActivity;
 
     // Primatives
-    private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode,
-            mDarkTheme;
+    private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode, mDarkTheme;
     private int mOriginalOrientation, mBackgroundColor, mIdGenerator;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
@@ -199,6 +198,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     abstract int getMenu();
 
     public abstract void updateHistory(final String title, final String url);
+
+    abstract void updateCookiePreference();
 
 
     @Override
@@ -318,7 +319,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             @Override
             public void run() {
                 mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
-                mBookmarkList = mBookmarkManager.getBookmarks(true);
+                mBookmarkList.clear();
+                mBookmarkList.addAll(mBookmarkManager.getBookmarks(true));
                 if (mBookmarkList.size() == 0 && mPreferences.getDefaultBookmarks()) {
                     for (String[] array : BookmarkManager.DEFAULT_BOOKMARKS) {
                         HistoryItem bookmark = new HistoryItem(array[0], array[1]);
@@ -715,13 +717,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mProxyUtils.updateProxySettings(this);
     }
 
-    /*
-     * Override this if class overrides BrowserActivity
-     */
-    void updateCookiePreference() {
-
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -803,7 +798,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
                     HistoryItem bookmark = new HistoryItem(mCurrentView.getUrl(),
                             mCurrentView.getTitle());
-                    if (mBookmarkManager.addBookmark(bookmark) && mBookmarkList != null) {
+                    if (mBookmarkManager.addBookmark(bookmark)) {
                         mBookmarkList.add(bookmark);
                         Collections.sort(mBookmarkList, new SortIgnoreCase());
                         notifyBookmarkDataSetChanged();
@@ -829,8 +824,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
      * adapter doesn't always change when notifyDataChanged gets called.
      */
     private void notifyBookmarkDataSetChanged() {
-        mBookmarkAdapter.clear();
-        mBookmarkAdapter.addAll(mBookmarkList);
         mBookmarkAdapter.notifyDataSetChanged();
     }
 
@@ -1111,8 +1104,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             url = intent.getDataString();
         }
         int num = 0;
+        String source = null;
         if (intent != null && intent.getExtras() != null) {
             num = intent.getExtras().getInt(getPackageName() + ".Origin");
+            source = intent.getExtras().getString("SOURCE");
         }
         if (num == 1) {
             mCurrentView.loadUrl(url);
@@ -1122,7 +1117,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 url = null;
             }
             newTab(url, true);
-            mIsNewIntent = true;
+            mIsNewIntent = (source == null);
         }
     }
 
@@ -1403,19 +1398,17 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         if (mCurrentView != null) {
             mCurrentView.resumeTimers();
             mCurrentView.onResume();
-
-            mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
-            mBookmarkList = mBookmarkManager.getBookmarks(true);
-            notifyBookmarkDataSetChanged();
         }
+        mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
+        mBookmarkList.clear();
+        mBookmarkList.addAll(mBookmarkManager.getBookmarks(true));
+        notifyBookmarkDataSetChanged();
         initializePreferences();
-        if (mWebViewList != null) {
-            for (int n = 0; n < mWebViewList.size(); n++) {
-                if (mWebViewList.get(n) != null) {
-                    mWebViewList.get(n).initializePreferences(this);
-                } else {
-                    mWebViewList.remove(n);
-                }
+        for (int n = 0; n < mWebViewList.size(); n++) {
+            if (mWebViewList.get(n) != null) {
+                mWebViewList.get(n).initializePreferences(this);
+            } else {
+                mWebViewList.remove(n);
             }
         }
 

@@ -20,7 +20,6 @@ public class MainActivity extends BrowserActivity {
             CookieSyncManager.createInstance(this);
         }
         cookieManager.setAcceptCookie(PreferenceManager.getInstance().getCookiesEnabled());
-        super.updateCookiePreference();
     }
 
     @Override
