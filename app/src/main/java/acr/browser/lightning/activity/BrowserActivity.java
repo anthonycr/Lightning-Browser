@@ -506,10 +506,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                                 ClipData clip = ClipData.newPlainText("label", mSearch.getText()
                                         .toString());
                                 clipboard.setPrimaryClip(clip);
-                                Utils.showToast(
-                                        mActivity,
-                                        mActivity.getResources().getString(
-                                                R.string.message_text_copied));
+                                Utils.showSnackbar(mActivity, R.string.message_text_copied);
                             } else {
                                 refreshOrStop();
                             }
@@ -598,7 +595,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             url = getIntent().getDataString();
             if (url != null) {
                 if (url.startsWith(Constants.FILE)) {
-                    Utils.showToast(this, getResources().getString(R.string.message_blocked_local));
+                    Utils.showSnackbar(this, R.string.message_blocked_local);
                     url = null;
                 }
             }
@@ -784,8 +781,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl());
                     clipboard.setPrimaryClip(clip);
-                    Utils.showToast(mActivity,
-                            mActivity.getResources().getString(R.string.message_link_copied));
+                    Utils.showSnackbar(mActivity, R.string.message_link_copied);
                 }
                 return true;
             case R.id.action_settings:
@@ -1113,7 +1109,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             mCurrentView.loadUrl(url);
         } else if (url != null) {
             if (url.startsWith(Constants.FILE)) {
-                Utils.showToast(this, getResources().getString(R.string.message_blocked_local));
+                Utils.showSnackbar(this, R.string.message_blocked_local);
                 url = null;
             }
             newTab(url, true);
@@ -1146,7 +1142,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     synchronized boolean newTab(String url, boolean show) {
         // Limit number of tabs for limited version of app
         if (!Constants.FULL_VERSION && mWebViewList.size() >= 10) {
-            Utils.showToast(this, this.getString(R.string.max_tabs));
+            Utils.showSnackbar(this, R.string.max_tabs);
             return false;
         }
         mIsNewIntent = false;

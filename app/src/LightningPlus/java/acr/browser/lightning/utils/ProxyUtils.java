@@ -144,13 +144,13 @@ public class ProxyUtils {
 
     }
 
-    public boolean isProxyReady(Context context) {
+    public boolean isProxyReady(Activity activity) {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                Utils.showToast(context, context.getString(R.string.i2p_not_running));
+                Utils.showSnackbar(activity, R.string.i2p_not_running);
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                Utils.showToast(context, context.getString(R.string.i2p_tunnels_not_ready));
+                Utils.showSnackbar(activity, R.string.i2p_tunnels_not_ready);
                 return false;
             }
         }
@@ -203,7 +203,7 @@ public class ProxyUtils {
             case Constants.PROXY_ORBOT:
                 if (!OrbotHelper.isOrbotInstalled(activity)) {
                     choice = Constants.NO_PROXY;
-                    Utils.showToast(activity, activity.getResources().getString(R.string.install_orbot));
+                    Utils.showSnackbar(activity, R.string.install_orbot);
                 }
                 break;
 

@@ -200,7 +200,7 @@ public class DownloadHandler {
                     } catch (IllegalArgumentException e) {
                         // Probably got a bad URL or something
                         e.printStackTrace();
-                        Utils.showToast(activity, R.string.cannot_download);
+                        Utils.showSnackbar(activity, R.string.cannot_download);
                     }
                 }
             }.start();

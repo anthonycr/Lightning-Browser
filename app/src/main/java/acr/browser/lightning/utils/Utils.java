@@ -84,12 +84,18 @@ public final class Utils {
         Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
     }
 
-    public static void showSnackBar(View view, String message) {
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+    public static void showSnackbar(Activity activity, @StringRes int resource) {
+        if (activity == null) return;
+        View view = activity.findViewById(android.R.id.content);
+        if (view == null) return;
+        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
     }
 
-    public static void showSnackBar(View view, @StringRes int resource) {
-        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
+    public static void showSnackbar(Activity activity, String message) {
+        if (activity == null) return;
+        View view = activity.findViewById(android.R.id.content);
+        if (view == null) return;
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 
     /**

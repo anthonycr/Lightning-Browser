@@ -1,5 +1,6 @@
 package acr.browser.lightning.database;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
@@ -320,7 +321,7 @@ public class BookmarkManager {
      * This method imports all bookmarks that are included in the device's
      * permanent bookmark storage
      */
-    public synchronized void importBookmarksFromBrowser(Context context) {
+    public synchronized void importBookmarksFromBrowser(Activity activity) {
         if (PreferenceManager.getInstance().getSystemBrowserPresent()) {
 
             List<HistoryItem> bookmarkList = new ArrayList<>();
@@ -348,12 +349,11 @@ public class BookmarkManager {
             cursor.close();
             addBookmarkList(bookmarkList);
 
-            Utils.showToast(context,
-                    number + " " + mContext.getResources().getString(R.string.message_import));
+            Utils.showSnackbar(activity, number + " " + mContext.getResources().getString(R.string.message_import));
         } else {
-            Utils.createInformativeDialog(context,
-                    mContext.getResources().getString(R.string.title_error), mContext
-                            .getResources().getString(R.string.dialog_import_error));
+            String title = activity.getResources().getString(R.string.title_error);
+            String message = activity.getResources().getString(R.string.dialog_import_error);
+            Utils.createInformativeDialog(activity, title, message);
         }
     }
 
@@ -363,7 +363,7 @@ public class BookmarkManager {
      *
      * @param file the file to attempt to import bookmarks from
      */
-    public synchronized void importBookmarksFromFile(File file, Context context) {
+    public synchronized void importBookmarksFromFile(File file, Activity activity) {
         if (file == null) {
             return;
         }
@@ -384,13 +384,13 @@ public class BookmarkManager {
                 number++;
             }
             addBookmarkList(list);
-            Utils.showToast(context,
-                    number + " " + mContext.getResources().getString(R.string.message_import));
+            String message = activity.getResources().getString(R.string.message_import);
+            Utils.showSnackbar(activity, number + " " + message);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            Utils.createInformativeDialog(context,
-                    mContext.getResources().getString(R.string.title_error), mContext
-                            .getResources().getString(R.string.import_bookmark_error));
+            String title = activity.getResources().getString(R.string.title_error);
+            String message = activity.getResources().getString(R.string.import_bookmark_error);
+            Utils.createInformativeDialog(activity, title, message);
         } finally {
             Utils.close(bookmarksReader);
         }

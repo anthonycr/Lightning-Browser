@@ -1105,11 +1105,7 @@ public class LightningView {
             } else if (mAction == MotionEvent.ACTION_UP) {
                 final float distance = (mY - mLocation);
                 if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
-//                    if (mWebView.getScrollY() != 0) {
                     mBrowserController.showActionBar();
-//                    } else {
-//                        mBrowserController.toggleActionBar();
-//                    }
                 } else if (distance < -SCROLL_UP_THRESHOLD) {
                     mBrowserController.hideActionBar();
                 }

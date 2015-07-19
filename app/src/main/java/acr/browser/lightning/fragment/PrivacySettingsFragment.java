@@ -4,7 +4,6 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -110,9 +109,9 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
 
     private static class MessageHandler extends Handler {
 
-        final Context mHandlerContext;
+        final Activity mHandlerContext;
 
-        public MessageHandler(Context context) {
+        public MessageHandler(Activity context) {
             this.mHandlerContext = context;
         }
 
@@ -120,12 +119,10 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    Utils.showToast(mHandlerContext, mHandlerContext.getResources()
-                            .getString(R.string.message_clear_history));
+                    Utils.showSnackbar(mHandlerContext, R.string.message_clear_history);
                     break;
                 case 2:
-                    Utils.showToast(mHandlerContext, mHandlerContext.getResources().getString(
-                            R.string.message_cookies_cleared));
+                    Utils.showSnackbar(mHandlerContext, R.string.message_cookies_cleared);
                     break;
             }
             super.handleMessage(msg);
@@ -203,7 +200,7 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
         WebView webView = new WebView(mActivity);
         webView.clearCache(true);
         webView.destroy();
-        Utils.showToast(mActivity, getResources().getString(R.string.message_cache_cleared));
+        Utils.showSnackbar(mActivity, R.string.message_cache_cleared);
     }
 
     @SuppressWarnings("deprecation")
