@@ -2,8 +2,7 @@
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="navigation_width">260dp</dimen>
-	<dimen name="search_bar_height">48dp</dimen>
-	
-        <dimen name="abc_action_button_min_width_overflow_material">48dp</dimen>
+    <dimen name="search_bar_height">48dp</dimen>
+    <dimen name="abc_action_button_min_width_overflow_material">48dp</dimen>
 
 </resources>

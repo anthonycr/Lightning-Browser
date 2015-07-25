@@ -10,6 +10,14 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -23,6 +31,12 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
     private static final String SETTINGS_REFLOW = "text_reflow";
     private static final String SETTINGS_THEME = "app_theme";
     private static final String SETTINGS_TEXTSIZE = "text_size";
+    private static final float XXLARGE = 30.0f;
+    private static final float XLARGE = 26.0f;
+    private static final float LARGE = 22.0f;
+    private static final float MEDIUM = 18.0f;
+    private static final float SMALL = 14.0f;
+    private static final float XSMALL = 10.0f;
 
     private Activity mActivity;
     private PreferenceManager mPreferences;
@@ -117,28 +131,64 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
     }
 
     private void textSizePicker() {
-        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-        picker.setTitle(getResources().getString(R.string.title_text_size));
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.seek_layout, null);
+        final SeekBar bar = (SeekBar) view.findViewById(R.id.text_size_seekbar);
+        final TextView sample = new TextView(getActivity());
+        sample.setText(R.string.untitled);
+        sample.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT));
+        sample.setGravity(Gravity.CENTER_HORIZONTAL);
+        view.addView(sample);
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-        int n = mPreferences.getTextSize();
+            @Override
+            public void onProgressChanged(SeekBar view, int size, boolean user) {
+                sample.setTextSize(getTextSize(size));
+            }
 
-        picker.setSingleChoiceItems(R.array.text_size, n - 1,
-                new DialogInterface.OnClickListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar arg0) {
+            }
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPreferences.setTextSize(which + 1);
-                    }
-                });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar arg0) {
+            }
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        });
+        final int MAX = 5;
+        bar.setMax(MAX);
+        bar.setProgress(MAX - mPreferences.getTextSize());
+        builder.setView(view);
+        builder.setTitle(R.string.title_text_size);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
-                    }
-                });
-        picker.show();
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                mPreferences.setTextSize(MAX - bar.getProgress());
+            }
+
+        });
+        builder.show();
+    }
+
+    private float getTextSize(int size) {
+        switch (size) {
+            case 0:
+                return XSMALL;
+            case 1:
+                return SMALL;
+            case 2:
+                return MEDIUM;
+            case 3:
+                return LARGE;
+            case 4:
+                return XLARGE;
+            case 5:
+                return XXLARGE;
+            default:
+                return MEDIUM;
+        }
     }
 
     private void themePicker() {

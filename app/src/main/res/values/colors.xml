@@ -30,4 +30,7 @@
 
     <color name="transparent">#00000000</color>
 
+    <color name="icon_light_theme">#8A000000</color>
+    <color name="icon_dark_theme">#FFFFFFFF</color>
+
 </resources>

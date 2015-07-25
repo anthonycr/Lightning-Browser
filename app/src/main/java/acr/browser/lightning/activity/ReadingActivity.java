@@ -1,11 +1,13 @@
 package acr.browser.lightning.activity;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +29,7 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
+import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class ReadingActivity extends AppCompatActivity {
@@ -37,6 +40,8 @@ public class ReadingActivity extends AppCompatActivity {
     private String mUrl = null;
     private PreferenceManager mPreferences;
     private int mTextSize;
+    private ProgressDialog mProgressDialog;
+
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
     private static final float LARGE = 22.0f;
@@ -48,11 +53,19 @@ public class ReadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         mPreferences = PreferenceManager.getInstance();
         mInvert = mPreferences.getInvertColors();
+        final int color;
         if (mInvert) {
-            this.setTheme(R.style.Theme_SettingsTheme_Dark);
+            setTheme(R.style.Theme_SettingsTheme_Dark);
+            color = ThemeUtils.getPrimaryColorDark(this);
+            getWindow().setBackgroundDrawable(new ColorDrawable(color));
+        } else {
+            setTheme(R.style.Theme_SettingsTheme);
+            color = ThemeUtils.getPrimaryColor(this);
+            getWindow().setBackgroundDrawable(new ColorDrawable(color));
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reading_view);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -98,6 +111,13 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.reading, menu);
+        MenuItem invert = menu.findItem(R.id.invert_item);
+        MenuItem textSize = menu.findItem(R.id.text_size_item);
+        int iconColor = mInvert ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
+        if (invert != null && invert.getIcon() != null)
+            invert.getIcon().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+        if (textSize != null && textSize.getIcon() != null)
+            textSize.getIcon().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -117,23 +137,22 @@ public class ReadingActivity extends AppCompatActivity {
 
     private class PageLoader extends AsyncTask<String, Void, Void> {
 
-        private final Context mContext;
-        private ProgressDialog mProgressDialog;
+        private final Activity mActivity;
         private String mTitleText;
         private List<String> mBodyText;
 
-        public PageLoader(Context context) {
-            mContext = context;
+        public PageLoader(Activity activity) {
+            mActivity = activity;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(mContext);
+            mProgressDialog = new ProgressDialog(mActivity);
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.setCancelable(false);
             mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setMessage(mContext.getString(R.string.loading));
+            mProgressDialog.setMessage(mActivity.getString(R.string.loading));
             mProgressDialog.show();
         }
 
@@ -160,7 +179,10 @@ public class ReadingActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            mProgressDialog.dismiss();
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
             if (mTitleText.isEmpty() || mBodyText.isEmpty()) {
                 setText(getString(R.string.untitled), getString(R.string.loading_failed));
             } else {
@@ -176,6 +198,8 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void setText(String title, String body) {
+        if (mTitle == null || mBody == null)
+            return;
         if (mTitle.getVisibility() == View.INVISIBLE) {
             mTitle.setAlpha(0.0f);
             mTitle.setVisibility(View.VISIBLE);
@@ -197,6 +221,15 @@ public class ReadingActivity extends AppCompatActivity {
         } else {
             mBody.setText(body);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+        super.onDestroy();
     }
 
     @Override

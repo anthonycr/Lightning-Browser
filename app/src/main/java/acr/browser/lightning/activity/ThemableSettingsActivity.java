@@ -39,11 +39,6 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
     }
 
     private void restart() {
-        final Bundle outState = new Bundle();
-        onSaveInstanceState(outState);
-        final Intent intent = new Intent(this, getClass());
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(intent);
+        recreate();
     }
 }

@@ -15,7 +15,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IntegerRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -37,9 +42,6 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.download.DownloadHandler;
 
 public final class Utils {
-
-    private Utils() {
-    }
 
     public static void downloadFile(final Activity activity, final String url,
                                     final String userAgent, final String contentDisposition) {
@@ -75,15 +77,13 @@ public final class Utils {
         alert.show();
     }
 
-    public static void showSnackbar(Activity activity, @StringRes int resource) {
-        if (activity == null) return;
+    public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
         View view = activity.findViewById(android.R.id.content);
         if (view == null) return;
         Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
     }
 
-    public static void showSnackbar(Activity activity, String message) {
-        if (activity == null) return;
+    public static void showSnackbar(@NonNull Activity activity, String message) {
         View view = activity.findViewById(android.R.id.content);
         if (view == null) return;
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
@@ -232,23 +232,6 @@ public final class Utils {
         return false;
     }
 
-    public static Bitmap getWebpageBitmap(Resources resources, boolean dark) {
-        if (dark) {
-            if (mWebIconDark == null) {
-                mWebIconDark = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage_dark);
-            }
-            return mWebIconDark;
-        } else {
-            if (mWebIconLight == null) {
-                mWebIconLight = BitmapFactory.decodeResource(resources, R.drawable.ic_webpage);
-            }
-            return mWebIconLight;
-        }
-    }
-
-    private static Bitmap mWebIconLight;
-    private static Bitmap mWebIconDark;
-
     public static void close(Closeable closeable) {
         if (closeable == null)
             return;
@@ -258,4 +241,13 @@ public final class Utils {
             e.printStackTrace();
         }
     }
+
+    public static Drawable getDrawable(Context context, @DrawableRes int res) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return context.getDrawable(res);
+        } else {
+            return context.getResources().getDrawable(res);
+        }
+    }
+
 }

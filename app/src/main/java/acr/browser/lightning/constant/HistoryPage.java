@@ -15,6 +15,7 @@ import acr.browser.lightning.activity.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.utils.Utils;
 
 public class HistoryPage {
 
@@ -53,12 +54,14 @@ public class HistoryPage {
 
         historyBuilder.append(HistoryPage.END);
         File historyWebPage = new File(context.getFilesDir(), FILENAME);
+        FileWriter historyWriter = null;
         try {
-            FileWriter historyWriter = new FileWriter(historyWebPage, false);
+            historyWriter = new FileWriter(historyWebPage, false);
             historyWriter.write(historyBuilder.toString());
-            historyWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Utils.close(historyWriter);
         }
         return Constants.FILE + historyWebPage;
     }

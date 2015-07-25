@@ -19,7 +19,7 @@ import org.jsoup.select.Elements;
 
 /**
  * This class is thread safe.
- * 
+ *
  * @author Alex P (ifesdjeen from jreadability)
  * @author Peter Karich
  */
@@ -246,7 +246,7 @@ public class ArticleTextExtractor {
     /**
      * Tries to extract an image url from metadata if determineImageSource
      * failed
-     * 
+     *
      * @return image url or empty str
      */
     protected String extractImageUrl(Document doc) {
@@ -291,7 +291,7 @@ public class ArticleTextExtractor {
      * weighting child nodes. Since it's impossible to predict which exactly
      * names, ids or class names will be used in HTML, major role is played by
      * child nodes
-     * 
+     *
      * @param e
      *            Element to weight, along with child nodes
      */
@@ -311,7 +311,7 @@ public class ArticleTextExtractor {
      * 3 points for every element that's nested 2 levels deep. This way we give
      * more chances to extract the element that has less nested levels,
      * increasing probability of the correct extraction.
-     * 
+     *
      * @param rootEl
      *            Element, who's child nodes will be weighted
      */
@@ -493,7 +493,7 @@ public class ArticleTextExtractor {
      * Prepares document. Currently only stipping unlikely candidates, since
      * from time to time they're getting more score than good ones especially in
      * cases when major text is short.
-     * 
+     *
      * @param doc
      *            document to prepare. Passed as reference, and changed inside
      *            of function
@@ -506,7 +506,7 @@ public class ArticleTextExtractor {
     /**
      * Removes unlikely candidates from HTML. Currently takes id and class name
      * and matches them against list of patterns
-     * 
+     *
      * @param doc
      *            document to strip unlikely candidates from
      */
@@ -601,9 +601,9 @@ public class ArticleTextExtractor {
 
     /**
      * Comparator for Image by weight
-     * 
+     *
      * @author Chris Alexander, chris@chris-alexander.co.uk
-     * 
+     *
      */
     public class ImageComparator implements Comparator<ImageResult> {
 

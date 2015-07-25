@@ -6,7 +6,7 @@
         android:id="@+id/action_back"
         android:checkable="false"
         android:enabled="true"
-        android:icon="?arrowBackDrawable"
+        android:icon="@drawable/ic_action_back"
         android:title="@string/action_back"
         android:visible="true"
         app:showAsAction="ifRoom"/>
@@ -14,7 +14,7 @@
         android:id="@+id/action_forward"
         android:checkable="false"
         android:enabled="true"
-        android:icon="?arrowForwardDrawable"
+        android:icon="@drawable/ic_action_forward"
         android:title="@string/action_forward"
         android:visible="true"
         app:showAsAction="ifRoom"/>

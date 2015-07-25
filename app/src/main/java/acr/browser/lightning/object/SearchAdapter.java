@@ -1,10 +1,10 @@
 package acr.browser.lightning.object;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources.Theme;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -40,6 +40,7 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
@@ -59,15 +60,15 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
     private final String mSearchSubtitle;
-    private static final int API = Build.VERSION.SDK_INT;
-    private final Theme mTheme;
     private SearchFilter mFilter;
+    private final Drawable mSearchDrawable;
+    private final Drawable mHistoryDrawable;
+    private final Drawable mBookmarkDrawable;
 
     public SearchAdapter(Context context, boolean dark, boolean incognito) {
         mDatabaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
-        mTheme = context.getTheme();
         mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
-        mAllBookmarks.addAll(mBookmarkManager.getBookmarks(true));
+        mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
         mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
         mContext = context;
         mSearchSubtitle = mContext.getString(R.string.suggestion);
@@ -81,6 +82,21 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             }
 
         });
+        int color = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(context) : ThemeUtils.getIconLightThemeColor(context);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mSearchDrawable = context.getDrawable(R.drawable.ic_search);
+            mBookmarkDrawable = context.getDrawable(R.drawable.ic_bookmark);
+            mHistoryDrawable = context.getDrawable(R.drawable.ic_history);
+        } else {
+            mSearchDrawable = context.getResources().getDrawable(R.drawable.ic_search);
+            mBookmarkDrawable = context.getResources().getDrawable(R.drawable.ic_bookmark);
+            mHistoryDrawable = context.getResources().getDrawable(R.drawable.ic_history);
+        }
+        if (mSearchDrawable != null && mBookmarkDrawable != null && mHistoryDrawable != null) {
+            mSearchDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            mBookmarkDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            mHistoryDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        }
         delete.start();
     }
 
@@ -117,7 +133,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     public void refreshBookmarks() {
         mAllBookmarks.clear();
-        mAllBookmarks.addAll(mBookmarkManager.getBookmarks(true));
+        mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
     }
 
     @Override
@@ -135,8 +151,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return 0;
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         SuggestionHolder holder;
@@ -158,42 +172,34 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         holder.mTitle.setText(web.getTitle());
         holder.mUrl.setText(web.getUrl());
 
-        int imageId = R.drawable.ic_bookmark;
+        Drawable image;
         switch (web.getImageId()) {
             case R.drawable.ic_bookmark: {
-                if (!mDarkTheme) {
-                    imageId = R.drawable.ic_bookmark;
-                } else {
+                if (mDarkTheme)
                     holder.mTitle.setTextColor(Color.WHITE);
-                    imageId = R.drawable.ic_bookmark_dark;
-                }
+                image = mBookmarkDrawable;
                 break;
             }
             case R.drawable.ic_search: {
-                if (!mDarkTheme) {
-                    imageId = R.drawable.ic_search;
-                } else {
+                if (mDarkTheme)
                     holder.mTitle.setTextColor(Color.WHITE);
-                    imageId = R.drawable.ic_search_dark;
-                }
+                image = mSearchDrawable;
                 break;
             }
             case R.drawable.ic_history: {
-                if (!mDarkTheme) {
-                    imageId = R.drawable.ic_history;
-                } else {
+                if (mDarkTheme)
                     holder.mTitle.setTextColor(Color.WHITE);
-                    imageId = R.drawable.ic_history_dark;
-                }
+                image = mHistoryDrawable;
                 break;
             }
+            default:
+                if (mDarkTheme)
+                    holder.mTitle.setTextColor(Color.WHITE);
+                image = mSearchDrawable;
+                break;
         }
 
-        if (API < Build.VERSION_CODES.LOLLIPOP) {
-            holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId));
-        } else {
-            holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId, mTheme));
-        }
+        holder.mImage.setImageDrawable(image);
 
         return convertView;
     }
@@ -339,26 +345,30 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         if (!isNetworkConnected(mContext)) {
             return cacheFile;
         }
+        InputStream in = null;
+        FileOutputStream fos = null;
         try {
             URL url = new URL("http://google.com/complete/search?q=" + query
                     + "&output=toolbar&hl=en");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
-            InputStream in = connection.getInputStream();
+            in = connection.getInputStream();
 
             if (in != null) {
-                FileOutputStream fos = new FileOutputStream(cacheFile);
+                fos = new FileOutputStream(cacheFile);
                 int buffer;
                 while ((buffer = in.read()) != -1) {
                     fos.write(buffer);
                 }
                 fos.flush();
-                fos.close();
             }
             cacheFile.setLastModified(System.currentTimeMillis());
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            Utils.close(in);
+            Utils.close(fos);
         }
         return cacheFile;
     }

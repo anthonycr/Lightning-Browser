@@ -54,4 +54,6 @@ public interface BrowserController {
 
     boolean proxyIsNotReady();
 
+    void updateBookmarkIndicator(String url);
+
 }

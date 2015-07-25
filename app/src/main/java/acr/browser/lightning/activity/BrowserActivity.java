@@ -8,13 +8,13 @@ import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.database.Cursor;
@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -36,6 +37,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
 import android.provider.MediaStore;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
@@ -49,6 +51,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,6 +64,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
@@ -121,12 +125,14 @@ import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.DrawerArrowDrawable;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
 
-public abstract class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener {
+public abstract class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener, OnLongClickListener {
 
     // Layout
     private DrawerLayout mDrawerLayout;
@@ -144,7 +150,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     private AnimatedProgressBar mProgressBar;
     private AutoCompleteTextView mSearch;
-    private ImageView mArrowImage;
+    private ImageView mArrowImage, mBookmarkTitleImage, mBookmarkImage;
     private VideoView mVideoView;
     private View mCustomView, mVideoProgressView;
 
@@ -164,7 +170,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     // Primatives
     private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode, mDarkTheme;
-    private int mOriginalOrientation, mBackgroundColor, mIdGenerator;
+    private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
     // Storage
@@ -173,7 +179,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     private PreferenceManager mPreferences;
 
     // Image
-    private Bitmap mDefaultVideoPoster, mWebpageBitmap;
+    private Bitmap mDefaultVideoPoster, mWebpageBitmap, mFolderBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
     private Drawable mDeleteIcon, mRefreshIcon, mCopyIcon, mIcon;
     private DrawerArrowDrawable mArrowDrawable;
@@ -183,6 +189,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     // Constant
     private static final int API = android.os.Build.VERSION.SDK_INT;
+    private static final String NETWORK_BROADCAST_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
     private static final LayoutParams MATCH_PARENT = new LayoutParams(LayoutParams.MATCH_PARENT,
             LayoutParams.MATCH_PARENT);
     private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
@@ -216,6 +223,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mPreferences = PreferenceManager.getInstance();
         //TODO make sure dark theme flag gets set correctly
         mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
+        mIconColor = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
         mActivity = this;
         mWebViewList.clear();
 
@@ -227,7 +235,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
         mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
-        RelativeLayout newTab = (RelativeLayout) findViewById(R.id.new_tab_button);
+        setupFrameLayoutButton(R.id.new_tab_button, R.id.icon_plus);
         mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -236,11 +244,16 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
         mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mDrawerListRight = (ListView) findViewById(R.id.right_drawer_list);
+        mBookmarkTitleImage = (ImageView) findViewById(R.id.starIcon);
+        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+        ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
+        tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
 
         setNavigationDrawerWidth();
         mDrawerLayout.setDrawerListener(new DrawerLocker());
 
-        mWebpageBitmap = Utils.getWebpageBitmap(getResources(), mDarkTheme);
+        mWebpageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, mDarkTheme);
+        mFolderBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_folder, mDarkTheme);
 
         mHomepage = mPreferences.getHomepage();
 
@@ -273,34 +286,29 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         // Use hardware acceleration for the animation
         mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mArrowImage.setImageDrawable(mArrowDrawable);
-        LinearLayout arrowButton = (LinearLayout) actionBar.getCustomView().findViewById(
+        FrameLayout arrowButton = (FrameLayout) actionBar.getCustomView().findViewById(
                 R.id.arrow_button);
         arrowButton.setOnClickListener(this);
 
         mProxyUtils = ProxyUtils.getInstance(this);
 
-        RelativeLayout back = (RelativeLayout) findViewById(R.id.action_back);
-        back.setOnClickListener(this);
+        setupFrameLayoutButton(R.id.action_back, R.id.icon_back);
+        setupFrameLayoutButton(R.id.action_forward, R.id.icon_forward);
+        setupFrameLayoutButton(R.id.action_add_bookmark, R.id.icon_star);
+        setupFrameLayoutButton(R.id.action_toggle_desktop, R.id.icon_desktop);
+        setupFrameLayoutButton(R.id.action_reading, R.id.icon_reading);
 
-        RelativeLayout forward = (RelativeLayout) findViewById(R.id.action_forward);
-        forward.setOnClickListener(this);
+        mBookmarkImage = (ImageView) findViewById(R.id.icon_star);
 
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) actionBar.getCustomView().findViewById(R.id.search);
         mUntitledTitle = getString(R.string.untitled);
         mBackgroundColor = getResources().getColor(R.color.primary_color);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete);
-            mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh);
-            mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy);
-        } else {
-            Theme theme = getTheme();
-            mDeleteIcon = getResources().getDrawable(R.drawable.ic_action_delete, theme);
-            mRefreshIcon = getResources().getDrawable(R.drawable.ic_action_refresh, theme);
-            mCopyIcon = getResources().getDrawable(R.drawable.ic_action_copy, theme);
-        }
+        mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
+        mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
+        mCopyIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_copy);
 
-        int iconBounds = Utils.convertDpToPixels(24);
+        int iconBounds = Utils.convertDpToPixels(30);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
         mRefreshIcon.setBounds(0, 0, iconBounds, iconBounds);
         mCopyIcon.setBounds(0, 0, iconBounds, iconBounds);
@@ -318,8 +326,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             @Override
             public void run() {
                 mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
-                mBookmarkList.clear();
-                mBookmarkList.addAll(mBookmarkManager.getBookmarks(true));
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
                 if (mBookmarkList.size() == 0 && mPreferences.getDefaultBookmarks()) {
                     for (String[] array : BookmarkManager.DEFAULT_BOOKMARKS) {
                         HistoryItem bookmark = new HistoryItem(array[0], array[1]);
@@ -339,20 +346,16 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         });
         initialize.run();
 
-        newTab.setOnClickListener(this);
-        newTab.setOnLongClickListener(new OnLongClickListener() {
-
+        View view = findViewById(R.id.bookmark_back_button);
+        view.setOnClickListener(new OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                String url = mPreferences.getSavedUrl();
-                if (url != null) {
-                    newTab(url, true);
-                    Utils.showSnackbar(mActivity, R.string.deleted_tab);
+            public void onClick(View v) {
+                if (mBookmarkManager == null)
+                    return;
+                if (!mBookmarkManager.isRootFolder()) {
+                    setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
                 }
-                mPreferences.setSavedUrl(null);
-                return true;
             }
-
         });
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
@@ -492,7 +495,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         public class TouchListener implements OnTouchListener {
 
-            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (mSearch.getCompoundDrawables()[2] != null) {
@@ -791,14 +793,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 return true;
             case R.id.action_add_bookmark:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
-                    HistoryItem bookmark = new HistoryItem(mCurrentView.getUrl(),
-                            mCurrentView.getTitle());
-                    if (mBookmarkManager.addBookmark(bookmark)) {
-                        mBookmarkList.add(bookmark);
-                        Collections.sort(mBookmarkList, new SortIgnoreCase());
-                        notifyBookmarkDataSetChanged();
-                        mSearchAdapter.refreshBookmarks();
-                    }
+                    addBookmark(mCurrentView.getTitle(), mCurrentView.getUrl());
                 }
                 return true;
             case R.id.action_find:
@@ -819,7 +814,69 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
      * adapter doesn't always change when notifyDataChanged gets called.
      */
     private void notifyBookmarkDataSetChanged() {
+        if (mBookmarkAdapter == null)
+            return;
         mBookmarkAdapter.notifyDataSetChanged();
+    }
+
+    private void addBookmark(String title, String url) {
+        HistoryItem bookmark = new HistoryItem(url, title);
+        if (mBookmarkManager.addBookmark(bookmark)) {
+            mBookmarkList.add(bookmark);
+            Collections.sort(mBookmarkList, new SortIgnoreCase());
+            notifyBookmarkDataSetChanged();
+            mSearchAdapter.refreshBookmarks();
+            updateBookmarkIndicator(mCurrentView.getUrl());
+        }
+    }
+
+    private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
+        mBookmarkList.clear();
+        mBookmarkList.addAll(items);
+        if (mBookmarkAdapter != null)
+            mBookmarkAdapter.notifyDataSetChanged();
+        final int resource;
+        if (mBookmarkManager.isRootFolder())
+            resource = R.drawable.ic_action_star;
+        else
+            resource = R.drawable.ic_action_back;
+
+        final Animation startRotation = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                mBookmarkTitleImage.setRotationY(90 * interpolatedTime);
+            }
+        };
+        final Animation finishRotation = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                mBookmarkTitleImage.setRotationY((-90) + (90 * interpolatedTime));
+            }
+        };
+        startRotation.setAnimationListener(new AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mBookmarkTitleImage.setImageResource(resource);
+                mBookmarkTitleImage.startAnimation(finishRotation);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        startRotation.setInterpolator(new AccelerateInterpolator());
+        finishRotation.setInterpolator(new DecelerateInterpolator());
+        startRotation.setDuration(250);
+        finishRotation.setDuration(250);
+
+        if (animate)
+            mBookmarkTitleImage.startAnimation(startRotation);
+        else
+            mBookmarkTitleImage.setImageResource(resource);
     }
 
     /**
@@ -918,6 +975,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mBookmarkList.get(position).getIsFolder()) {
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(mBookmarkList.get(position).getUrl(), true), true);
+                return;
+            }
             if (mCurrentView != null) {
                 mCurrentView.loadUrl(mBookmarkList.get(position).getUrl());
             }
@@ -938,6 +999,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         @Override
         public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
 
+            if (mBookmarkList.get(position).getIsFolder())
+                return true;
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle(mActivity.getResources().getString(R.string.action_bookmarks));
             builder.setMessage(getResources().getString(R.string.dialog_bookmark))
@@ -955,12 +1018,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position)
-                                            .getUrl())) {
+                                    if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position))) {
                                         mBookmarkList.remove(position);
                                         notifyBookmarkDataSetChanged();
                                         mSearchAdapter.refreshBookmarks();
                                         openBookmarks();
+                                        if (mCurrentView != null) {
+                                            updateBookmarkIndicator(mCurrentView.getUrl());
+                                        }
                                     }
                                 }
                             })
@@ -985,38 +1050,58 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
      * @param id which id in the list was chosen
      */
     private synchronized void editBookmark(final int id) {
-        final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
-        homePicker.setTitle(getResources().getString(R.string.title_edit_bookmark));
+        final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(mActivity);
+        editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
         final EditText getTitle = new EditText(mActivity);
-        getTitle.setHint(getResources().getString(R.string.hint_title));
+        getTitle.setHint(R.string.hint_title);
         getTitle.setText(mBookmarkList.get(id).getTitle());
         getTitle.setSingleLine();
         final EditText getUrl = new EditText(mActivity);
-        getUrl.setHint(getResources().getString(R.string.hint_url));
+        getUrl.setHint(R.string.hint_url);
         getUrl.setText(mBookmarkList.get(id).getUrl());
         getUrl.setSingleLine();
+        final EditText getFolder = new EditText(mActivity);
+        getFolder.setHint(R.string.folder);
+        getFolder.setText(mBookmarkList.get(id).getFolder());
+        getFolder.setSingleLine();
         LinearLayout layout = new LinearLayout(mActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
+        int padding = Utils.convertDpToPixels(10);
+        layout.setPadding(padding, padding, padding, padding);
         layout.addView(getTitle);
         layout.addView(getUrl);
-        homePicker.setView(layout);
-        homePicker.setPositiveButton(getResources().getString(R.string.action_ok),
+        layout.addView(getFolder);
+        editBookmarkDialog.setView(layout);
+        editBookmarkDialog.setPositiveButton(getResources().getString(R.string.action_ok),
                 new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mBookmarkList.get(id).setTitle(getTitle.getText().toString());
-                        mBookmarkList.get(id).setUrl(getUrl.getText().toString());
-                        mBookmarkManager.overwriteBookmarks(mBookmarkList);
+                        HistoryItem item = new HistoryItem();
+                        String currentFolder = mBookmarkList.get(id).getFolder();
+                        item.setTitle(getTitle.getText().toString());
+                        item.setUrl(getUrl.getText().toString());
+                        item.setFolder(getFolder.getText().toString());
+                        mBookmarkManager.editBookmark(mBookmarkList.get(id), item);
+
+                        List<HistoryItem> list = mBookmarkManager.getBookmarksFromFolder(currentFolder, true);
+                        if (list.size() == 0) {
+                            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+                        } else {
+                            setBookmarkDataSet(list, false);
+                        }
+
                         Collections.sort(mBookmarkList, new SortIgnoreCase());
-                        notifyBookmarkDataSetChanged();
                         if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
                                 && mCurrentView.getUrl().endsWith("bookmarks.html")) {
                             openBookmarkPage(mWebView);
                         }
+                        if (mCurrentView != null) {
+                            updateBookmarkIndicator(mCurrentView.getUrl());
+                        }
                     }
                 });
-        homePicker.show();
+        editBookmarkDialog.show();
     }
 
     /**
@@ -1080,6 +1165,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             }
         }, 150);
 
+        updateBookmarkIndicator(mWebView.getUrl());
 
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
@@ -1296,7 +1382,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         Utils.trimCache(this);
     }
 
-    @SuppressLint("NewApi")
     @SuppressWarnings("deprecation")
     private void clearCookies() {
         // TODO Break out web storage deletion into its own option/action
@@ -1317,7 +1402,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
             mDrawerLayout.closeDrawer(mDrawerLeft);
         } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-            mDrawerLayout.closeDrawer(mDrawerRight);
+            if (!mBookmarkManager.isRootFolder()) {
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+            } else {
+                mDrawerLayout.closeDrawer(mDrawerRight);
+            }
         } else {
             if (mCurrentView != null) {
                 Log.d(Constants.TAG, "onBackPressed");
@@ -1347,6 +1436,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             mCurrentView.pauseTimers();
             mCurrentView.onPause();
         }
+        try {
+            unregisterReceiver(mNetworkReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     void saveOpenTabs() {
@@ -1372,6 +1466,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         Log.d(Constants.TAG, "onDestroy");
         if (mHistoryDatabase != null) {
             mHistoryDatabase.close();
+            mHistoryDatabase = null;
         }
         super.onDestroy();
     }
@@ -1395,9 +1490,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             mCurrentView.onResume();
         }
         mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
-        mBookmarkList.clear();
-        mBookmarkList.addAll(mBookmarkManager.getBookmarks(true));
-        notifyBookmarkDataSetChanged();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
         initializePreferences();
         for (int n = 0; n < mWebViewList.size(); n++) {
             if (mWebViewList.get(n) != null) {
@@ -1408,6 +1501,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         }
 
         supportInvalidateOptionsMenu();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(NETWORK_BROADCAST_ACTION);
+        registerReceiver(mNetworkReceiver, filter);
     }
 
     /**
@@ -1486,14 +1583,15 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 holder.txtTitle = (TextView) row.findViewById(R.id.textTab);
                 holder.favicon = (ImageView) row.findViewById(R.id.faviconTab);
                 holder.exit = (ImageView) row.findViewById(R.id.deleteButton);
-                holder.exit.setTag(position);
+                holder.exitButton = (FrameLayout) row.findViewById(R.id.deleteAction);
+                holder.exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
                 row.setTag(holder);
             } else {
                 holder = (LightningViewHolder) row.getTag();
             }
 
-            holder.exit.setTag(position);
-            holder.exit.setOnClickListener(mExitListener);
+            holder.exitButton.setTag(position);
+            holder.exitButton.setOnClickListener(mExitListener);
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exit);
 
@@ -1534,6 +1632,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             TextView txtTitle;
             ImageView favicon;
             ImageView exit;
+            FrameLayout exitButton;
         }
     }
 
@@ -1592,12 +1691,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         final Context context;
         List<HistoryItem> data = null;
         final int layoutResourceId;
+        final Bitmap folderIcon;
 
         public BookmarkViewAdapter(Context context, int layoutResourceId, List<HistoryItem> data) {
             super(context, layoutResourceId, data);
             this.layoutResourceId = layoutResourceId;
             this.context = context;
             this.data = data;
+            this.folderIcon = mFolderBitmap;
         }
 
         @Override
@@ -1617,10 +1718,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 holder = (BookmarkViewHolder) row.getTag();
             }
 
+            ViewCompat.jumpDrawablesToCurrentState(row);
+
             HistoryItem web = data.get(position);
             holder.txtTitle.setText(web.getTitle());
             holder.favicon.setImageBitmap(mWebpageBitmap);
-            if (web.getBitmap() == null) {
+            if (web.getIsFolder()) {
+                holder.favicon.setImageBitmap(this.folderIcon);
+            } else if (web.getBitmap() == null) {
                 getImage(holder.favicon, web);
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
@@ -1663,34 +1768,40 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             }
             // checks to see if the image exists
             if (!image.exists()) {
+                FileOutputStream fos = null;
+                InputStream in = null;
                 try {
                     // if not, download it...
                     URL urlDownload = new URL(urldisplay);
                     HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
                     connection.setDoInput(true);
                     connection.connect();
-                    InputStream in = connection.getInputStream();
+                    in = connection.getInputStream();
 
                     if (in != null) {
                         mIcon = BitmapFactory.decodeStream(in);
                     }
                     // ...and cache it
                     if (mIcon != null) {
-                        FileOutputStream fos = new FileOutputStream(image);
+                        fos = new FileOutputStream(image);
                         mIcon.compress(Bitmap.CompressFormat.PNG, 100, fos);
                         fos.flush();
-                        fos.close();
                         Log.d(Constants.TAG, "Downloaded: " + urldisplay);
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                } finally {
+                    Utils.close(in);
+                    Utils.close(fos);
                 }
             } else {
                 // if it exists, retrieve it from the cache
                 mIcon = BitmapFactory.decodeFile(image.getPath());
             }
             if (mIcon == null) {
+                InputStream in = null;
+                FileOutputStream fos = null;
                 try {
                     // if not, download it...
                     URL urlDownload = new URL("https://www.google.com/s2/favicons?domain_url="
@@ -1698,21 +1809,23 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                     HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
                     connection.setDoInput(true);
                     connection.connect();
-                    InputStream in = connection.getInputStream();
+                    in = connection.getInputStream();
 
                     if (in != null) {
                         mIcon = BitmapFactory.decodeStream(in);
                     }
                     // ...and cache it
                     if (mIcon != null) {
-                        FileOutputStream fos = new FileOutputStream(image);
+                        fos = new FileOutputStream(image);
                         mIcon.compress(Bitmap.CompressFormat.PNG, 100, fos);
                         fos.flush();
-                        fos.close();
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                } finally {
+                    Utils.close(in);
+                    Utils.close(fos);
                 }
             }
             if (mIcon == null) {
@@ -1793,7 +1906,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 }
                 try {
                     if (mHistoryDatabase == null) {
-                        mHistoryDatabase = HistoryDatabase.getInstance(mActivity);
+                        mHistoryDatabase = HistoryDatabase.getInstance(mActivity.getApplicationContext());
                     }
                     mHistoryDatabase.visitHistoryItem(url, title);
                 } catch (IllegalStateException e) {
@@ -1916,9 +2029,20 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem back = menu.findItem(R.id.action_back);
+        MenuItem forward = menu.findItem(R.id.action_forward);
+        if (back != null && back.getIcon() != null)
+            back.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+        if (forward != null && forward.getIcon() != null)
+            forward.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     /**
      * open the HTML bookmarks page, parameter view is the WebView that should show the page
      */
+    @Override
     public void openBookmarkPage(WebView view) {
         StringBuilder bookmarkBuilder = new StringBuilder();
         bookmarkBuilder.append(BookmarkPage.HEADING);
@@ -1936,12 +2060,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         }
         bookmarkBuilder.append(BookmarkPage.END);
         File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
+        FileWriter bookWriter = null;
         try {
-            FileWriter bookWriter = new FileWriter(bookmarkWebPage, false);
+            bookWriter = new FileWriter(bookmarkWebPage, false);
             bookWriter.write(bookmarkBuilder.toString());
-            bookWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Utils.close(bookWriter);
         }
 
         view.loadUrl(Constants.FILE + bookmarkWebPage);
@@ -2187,7 +2313,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             setBackgroundColor(ctx.getResources().getColor(android.R.color.black));
         }
 
-        @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouchEvent(@NonNull MotionEvent evt) {
             return true;
@@ -2208,7 +2333,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         return mDefaultVideoPoster;
     }
 
-    @SuppressLint("InflateParams")
     @Override
     /**
      * dumb method that returns the loading progress for a video
@@ -2558,6 +2682,17 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         }
     }
 
+    @Override
+    public void updateBookmarkIndicator(String url) {
+        if (url == null || !mBookmarkManager.isBookmark(url)) {
+            mBookmarkImage.setImageResource(R.drawable.ic_action_star);
+            mBookmarkImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+        } else {
+            mBookmarkImage.setImageResource(R.drawable.ic_bookmark);
+            mBookmarkImage.setColorFilter(ThemeUtils.getAccentColor(this), PorterDuff.Mode.SRC_IN);
+        }
+    }
+
     private class SortIgnoreCase implements Comparator<HistoryItem> {
 
         public int compare(HistoryItem o1, HistoryItem o2) {
@@ -2606,6 +2741,58 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 mWebView.clearMatches();
                 mSearchBar.setVisibility(View.GONE);
                 break;
+            case R.id.action_reading:
+                Intent read = new Intent(this, ReadingActivity.class);
+                read.putExtra(Constants.LOAD_READING_URL, mCurrentView.getUrl());
+                startActivity(read);
+                break;
+            case R.id.action_toggle_desktop:
+                mCurrentView.toggleDesktopUA(this);
+                mCurrentView.reload();
+                closeDrawers();
+                break;
+            case R.id.action_add_bookmark:
+                if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
+                    addBookmark(mCurrentView.getTitle(), mCurrentView.getUrl());
+                }
+                break;
         }
     }
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.new_tab_button:
+                String url = mPreferences.getSavedUrl();
+                if (url != null) {
+                    newTab(url, true);
+                    Utils.showSnackbar(mActivity, R.string.deleted_tab);
+                }
+                mPreferences.setSavedUrl(null);
+                break;
+        }
+        return true;
+    }
+
+    private void setupFrameLayoutButton(@IdRes int buttonId, @IdRes int imageId) {
+        FrameLayout frameButton = (FrameLayout) findViewById(buttonId);
+        frameButton.setOnClickListener(this);
+        frameButton.setOnLongClickListener(this);
+        ImageView buttonImage = (ImageView) findViewById(imageId);
+        buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+    }
+
+    private NetworkReceiver mNetworkReceiver = new NetworkReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+            boolean isConnected = isConnected(context);
+            Log.d("Lightning", "Network Connected: " + String.valueOf(isConnected));
+            for (int n = 0; n < mWebViewList.size(); n++) {
+                WebView view = mWebViewList.get(n).getWebView();
+                if (view != null)
+                    view.setNetworkAvailable(isConnected);
+            }
+        }
+    };
 }

@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:background="?attr/selectedBackground"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/faviconTab"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:contentDescription="Favicon"
-        android:gravity="center_vertical" >
-    </ImageView>
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/textTab"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/deleteButton"
-        android:layout_toRightOf="@+id/faviconTab"
+        android:layout_weight="1"
         android:ellipsize="end"
         android:fontFamily="sans-serif-light"
         android:gravity="center_vertical"
@@ -35,18 +31,22 @@
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceListItemSmall" />
 
-    <ImageView
-        android:id="@+id/deleteButton"
+    <FrameLayout
+        android:id="@+id/deleteAction"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginRight="4dp"
         android:background="?attr/actionBarItemBackground"
-        android:contentDescription="Delete Tab"
-        android:gravity="center_vertical"
-        android:padding="12dp"
-        android:src="?attr/deleteDrawable" >
-    </ImageView>
+        android:gravity="center">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="Delete Tab"
+            android:src="@drawable/ic_action_delete" />
+    </FrameLayout>
+
+</LinearLayout>

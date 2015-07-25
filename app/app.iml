@@ -50,13 +50,13 @@
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/lightningPlus/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/lightningPlus/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/generated/androidTest/lightningPlus/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/aidl" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/jni" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/lightningPlus/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LightningPlus/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTestLightningPlus/assets" type="java-test-resource" />

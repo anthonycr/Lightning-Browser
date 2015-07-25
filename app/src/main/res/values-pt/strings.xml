@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2013 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,10 +99,10 @@
     <string name="action_find">Localizar na página</string>
     <string name="download_pending">A iniciar transferência\u2026</string>
     <string name="cannot_download">Apenas possível para os URL \"http\" ou \"https\".</string>
-    <string name="download_no_sdcard_dlg_title" >Cartão SD não encontrado</string>
-    <string name="download_no_sdcard_dlg_msg" >Necessita de um cartão SD para guardar o ficheiro transferido.</string>
+    <string name="download_no_sdcard_dlg_title">Cartão SD não encontrado</string>
+    <string name="download_no_sdcard_dlg_msg">Necessita de um cartão SD para guardar o ficheiro transferido.</string>
     <string name="download_sdcard_busy_dlg_title">Cartão SD não disponível</string>
-    <string name="download_sdcard_busy_dlg_msg" >O cartão SD está ocupado. Para poder transferir ficheiros, desative a opção Desativar armazenamento USB na notificação.</string>
+    <string name="download_sdcard_busy_dlg_msg">O cartão SD está ocupado. Para poder transferir ficheiros, desative a opção Desativar armazenamento USB na notificação.</string>
     <string name="incognito_cookies">Permitir cookies no modo incógnito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -134,9 +133,6 @@
     <string name="hint_password">Palavra-passe</string>
     <string name="google_suggestions">Sugestões de pesquisa</string>
     <string name="powered_by_google">Disponibilizado por Google</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">O AdBlock apenas está disponível na versão paga, o Lightning Browser+. Esta versão está disponível na loja Google.</string>
-    <string name="enable_orbot">Ativar Orbot</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">
         <item>Não</item>
@@ -147,12 +143,12 @@
     <string name="manual_proxy">Proxy manual</string>
     <string name="host">Servidor:</string>
     <string name="port">Porta:</string>
-	<string name="use_tor_prompt">Parece que você tem o Orbot instalado. Gostaria de utilizar a rede Tor?</string>
-	<string name="use_i2p_prompt">Parece que você tem o I2P instalado. Gostaria de utilizar a rede I2P?</string>
+    <string name="use_tor_prompt">Parece que você tem o Orbot instalado. Gostaria de utilizar a rede Tor?</string>
+    <string name="use_i2p_prompt">Parece que você tem o I2P instalado. Gostaria de utilizar a rede I2P?</string>
     <string name="install_orbot">Por favor instale o Orbot para poder utilizar a rede Tor.</string>
     <string name="i2p_not_running">I2P não está a ser executado.</string>
     <string name="i2p_tunnels_not_ready">Os canais I2P ainda não estão prontos.</string>
-    	<string name="yes">Sim</string>
+    <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="clear_cookies_exit">Limpar cookies ao sair</string>
     <string name="clear_history_exit">Limpar histórico ao sair</string>
@@ -196,11 +192,11 @@
     <string name="mit_license">MIT License</string>
     <string name="url_contents">Conteúdo da caixa do URL</string>
     <string-array name="url_content_array">
-        <item >Domínio (padrão)</item>
-        <item >URL</item>
-        <item >Título</item>
+        <item>Domínio (padrão)</item>
+        <item>URL</item>
+        <item>Título</item>
     </string-array>
-        <string name="invert_color">Inverter cores</string>
-        <string name="dark_theme">Tema escuro</string>
-        <string name="tabs">Separadores</string>
+    <string name="invert_color">Inverter cores</string>
+    <string name="dark_theme">Tema escuro</string>
+    <string name="tabs">Separadores</string>
 </resources>

@@ -2,13 +2,12 @@ package acr.browser.lightning.activity;
 
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.R;
+import acr.browser.lightning.preference.PreferenceManager;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {

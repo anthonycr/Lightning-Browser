@@ -203,4 +203,5 @@
     <string name="theme">App Theme</string>
     <string name="light_theme">Light Theme</string>
     <string name="black_theme">Black Theme (AMOLED)</string>
+    <string name="folder">Folder Name</string>
 </resources>

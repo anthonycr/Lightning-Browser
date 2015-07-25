@@ -62,6 +62,7 @@ import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
+import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningView {
@@ -82,6 +83,7 @@ public class LightningView {
     private boolean isForegroundTab;
     private boolean mTextReflow = false;
     private boolean mInvertPage = false;
+    private boolean mToggleDesktop = false;
     private static float mMaxFling;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.convertDpToPixels(10);
@@ -91,8 +93,6 @@ public class LightningView {
             0, 0, 0, 1.0f, 0 // alpha
     };
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean darkTheme) {
 
         mActivity = activity;
@@ -100,7 +100,7 @@ public class LightningView {
         mTitle = new Title(activity, darkTheme);
         mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
 
-        mWebpageBitmap = Utils.getWebpageBitmap(activity.getResources(), darkTheme);
+        mWebpageBitmap = mTitle.mDefaultIcon;
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
@@ -119,7 +119,7 @@ public class LightningView {
         mWebView.setAlwaysDrawnWithCacheEnabled(false);
         mWebView.setBackgroundColor(0);
 
-        if (API > 15) {
+        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
             mWebView.setBackground(null);
             mWebView.getRootView().setBackground(null);
         } else if (mWebView.getRootView() != null) {
@@ -127,6 +127,7 @@ public class LightningView {
         }
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
+        mWebView.setNetworkAvailable(true);
         mWebView.setWebChromeClient(new LightningChromeClient(activity));
         mWebView.setWebViewClient(new LightningWebClient(activity));
         mWebView.setDownloadListener(new LightningDownloadListener(activity));
@@ -238,12 +239,14 @@ public class LightningView {
         homepageBuilder.append(StartPage.END);
 
         File homepage = new File(mActivity.getFilesDir(), "homepage.html");
+        FileWriter hWriter = null;
         try {
-            FileWriter hWriter = new FileWriter(homepage, false);
+            hWriter = new FileWriter(homepage, false);
             hWriter.write(homepageBuilder.toString());
-            hWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            Utils.close(hWriter);
         }
 
         return Constants.FILE + homepage;
@@ -284,24 +287,7 @@ public class LightningView {
             }
         }
 
-        switch (mPreferences.getUserAgentChoice()) {
-            case 1:
-                if (API > 16) {
-                    mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
-                } else {
-                    mSettings.setUserAgentString(mDefaultUserAgent);
-                }
-                break;
-            case 2:
-                mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
-                break;
-            case 3:
-                mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
-                break;
-            case 4:
-                mSettings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
-                break;
-        }
+        setUserAgent(context, mPreferences.getUserAgentChoice());
 
         if (mPreferences.getSavePasswordsEnabled() && !mBrowserController.isIncognito()) {
             if (API < 18) {
@@ -342,11 +328,14 @@ public class LightningView {
         mSettings.setUseWideViewPort(mPreferences.getUseWideViewportEnabled());
         mSettings.setLoadWithOverviewMode(mPreferences.getOverviewModeEnabled());
         switch (mPreferences.getTextSize()) {
-            case 1:
+            case 0:
                 mSettings.setTextZoom(200);
                 break;
-            case 2:
+            case 1:
                 mSettings.setTextZoom(150);
+                break;
+            case 2:
+                mSettings.setTextZoom(125);
                 break;
             case 3:
                 mSettings.setTextZoom(100);
@@ -401,6 +390,37 @@ public class LightningView {
         settings.setGeolocationDatabasePath(context.getDir("geolocation", 0).getPath());
         if (API < Build.VERSION_CODES.KITKAT) {
             settings.setDatabasePath(context.getDir("databases", 0).getPath());
+        }
+    }
+
+    public void toggleDesktopUA(@NonNull Context context) {
+        if (mWebView == null)
+            return;
+        if (!mToggleDesktop)
+            mWebView.getSettings().setUserAgentString(Constants.DESKTOP_USER_AGENT);
+        else
+            setUserAgent(context, mPreferences.getUserAgentChoice());
+        mToggleDesktop = !mToggleDesktop;
+    }
+
+    public void setUserAgent(Context context, int choice) {
+        switch (choice) {
+            case 1:
+                if (API > 16) {
+                    mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
+                } else {
+                    mSettings.setUserAgentString(mDefaultUserAgent);
+                }
+                break;
+            case 2:
+                mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
+                break;
+            case 3:
+                mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
+                break;
+            case 4:
+                mSettings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
+                break;
         }
     }
 
@@ -685,6 +705,7 @@ public class LightningView {
         public void onPageFinished(WebView view, String url) {
             if (view.isShown()) {
                 mBrowserController.updateUrl(url, true);
+                mBrowserController.updateBookmarkIndicator(url);
                 view.postInvalidate();
             }
             if (view.getTitle() == null || view.getTitle().isEmpty()) {
@@ -702,6 +723,7 @@ public class LightningView {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (isShown()) {
                 mBrowserController.updateUrl(url, false);
+                mBrowserController.updateBookmarkIndicator(url);
                 mBrowserController.showActionBar();
             }
             mTitle.setFavicon(mWebpageBitmap);
@@ -1042,7 +1064,7 @@ public class LightningView {
         private final Bitmap mDefaultIcon;
 
         public Title(Context context, boolean darkTheme) {
-            mDefaultIcon = Utils.getWebpageBitmap(context.getResources(), darkTheme);
+            mDefaultIcon = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
             mFavicon = mDefaultIcon;
             mTitle = mActivity.getString(R.string.action_new_tab);
         }
