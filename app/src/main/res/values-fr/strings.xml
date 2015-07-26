@@ -40,7 +40,6 @@
     <string name="settings_display">Affichage</string>
     <string name="settings_privacy">Vie privée</string>
     <string name="settings_about">A propos</string>
-    <string name="settings_about_explain">Tout savoir sur la version, l'auteur et la licence.</
-string>
+    <string name="settings_about_explain">Tout savoir sur la version, l'auteur et la licence.</string>
 
 </resources>
