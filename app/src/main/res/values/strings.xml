@@ -205,4 +205,8 @@
     <string name="light_theme">Light Theme</string>
     <string name="black_theme">Black Theme (AMOLED)</string>
     <string name="folder">Folder Name</string>
+    <string name="action_folder">Folder</string>
+    <string name="action_rename">Rename</string>
+    <string name="title_rename_folder">Rename Folder</string>
+    <string name="dialog_folder">What would you like to do with this folder?</string>
 </resources>

@@ -72,6 +72,22 @@ public class ThemeUtils {
     }
 
     @Nullable
+    public static Drawable getThemedDrawable(@NonNull Context context, @DrawableRes int res, boolean dark){
+        int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
+        final Drawable drawable;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = context.getResources().getDrawable(res);
+        } else {
+            drawable = context.getDrawable(res);
+        }
+        if (drawable == null)
+            return null;
+        drawable.mutate();
+        drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        return drawable;
+    }
+
+    @Nullable
     public static Drawable getLightThemedDrawable(@NonNull Context context, @DrawableRes int res){
         final Drawable drawable;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {

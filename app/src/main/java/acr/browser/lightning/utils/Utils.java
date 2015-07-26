@@ -62,7 +62,7 @@ public final class Utils {
         return intent;
     }
 
-    public static void createInformativeDialog(Context context, String title, String message) {
+    public static void createInformativeDialog(Context context, @StringRes int title, @StringRes int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message)

@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
 import android.provider.Browser;
+import android.support.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.ls.LSInput;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,11 +21,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 
@@ -126,38 +130,52 @@ public class BookmarkManager {
      * @param deleteItem the bookmark item to delete
      */
     public synchronized boolean deleteBookmark(HistoryItem deleteItem) {
-        List<HistoryItem> list;
         if (deleteItem == null || deleteItem.getIsFolder()) {
             return false;
         }
         mBookmarkSearchSet.remove(deleteItem.getUrl());
         mBookmarkList.remove(deleteItem);
-        list = getAllBookmarks(false);
-        File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
-        boolean bookmarkDeleted = false;
-        BufferedWriter fileWriter = null;
-        String url = deleteItem.getUrl();
-        try {
-            fileWriter = new BufferedWriter(new FileWriter(bookmarksFile, false));
-            JSONObject object = new JSONObject();
-            for (HistoryItem item : list) {
-                if (!item.getUrl().equalsIgnoreCase(url)) {
-                    object.put(TITLE, item.getTitle());
-                    object.put(URL, item.getUrl());
-                    object.put(FOLDER, item.getFolder());
-                    object.put(ORDER, item.getOrder());
-                    fileWriter.write(object.toString());
-                    fileWriter.newLine();
-                } else {
-                    bookmarkDeleted = true;
-                }
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(fileWriter);
+        overwriteBookmarks(mBookmarkList);
+        return true;
+    }
+
+    /**
+     * renames a folder and moves all it's contents to that folder
+     *
+     * @param oldName the folder to be renamed
+     * @param newName the new name of the folder
+     */
+    public synchronized void renameFolder(@NonNull String oldName, @NonNull String newName) {
+        if (newName.length() == 0) {
+            return;
         }
-        return bookmarkDeleted;
+        for (int n = 0; n < mBookmarkList.size(); n++) {
+            if (mBookmarkList.get(n).getFolder().equals(oldName)) {
+                mBookmarkList.get(n).setFolder(newName);
+            } else if (mBookmarkList.get(n).getIsFolder() && mBookmarkList.get(n).getTitle().equals(oldName)) {
+                mBookmarkList.get(n).setTitle(newName);
+                mBookmarkList.get(n).setUrl(Constants.FOLDER + newName);
+            }
+        }
+        overwriteBookmarks(mBookmarkList);
+    }
+
+    /**
+     * Delete the folder and move all bookmarks to the top level
+     *
+     * @param name the name of the folder to be deleted
+     */
+    public synchronized void deleteFolder(@NonNull String name) {
+        Iterator<HistoryItem> iterator = mBookmarkList.iterator();
+        while (iterator.hasNext()) {
+            HistoryItem item = iterator.next();
+            if (!item.getIsFolder() && item.getFolder().equals(name)) {
+                item.setFolder("");
+            } else if (item.getTitle().equals(name)) {
+                iterator.remove();
+            }
+        }
+        overwriteBookmarks(mBookmarkList);
     }
 
     /**
@@ -167,7 +185,6 @@ public class BookmarkManager {
      * @param newItem This is the new item that will overwrite the old item
      */
     public synchronized void editBookmark(HistoryItem oldItem, HistoryItem newItem) {
-        List<HistoryItem> list;
         if (oldItem == null || newItem == null || oldItem.getIsFolder()) {
             return;
         }
@@ -185,33 +202,7 @@ public class BookmarkManager {
         if (newItem.getTitle().length() == 0) {
             newItem.setTitle(mContext.getString(R.string.untitled));
         }
-        list = getAllBookmarks(false);
-        File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
-        BufferedWriter fileWriter = null;
-        try {
-            fileWriter = new BufferedWriter(new FileWriter(bookmarksFile, false));
-            JSONObject object = new JSONObject();
-            final String url = oldItem.getUrl();
-            for (HistoryItem item : list) {
-                if (!item.getUrl().equalsIgnoreCase(url)) {
-                    object.put(TITLE, item.getTitle());
-                    object.put(URL, item.getUrl());
-                    object.put(FOLDER, item.getFolder());
-                    object.put(ORDER, item.getOrder());
-                } else {
-                    object.put(TITLE, newItem.getTitle());
-                    object.put(URL, newItem.getUrl());
-                    object.put(FOLDER, newItem.getFolder());
-                    object.put(ORDER, newItem.getOrder());
-                }
-                fileWriter.write(object.toString());
-                fileWriter.newLine();
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(fileWriter);
-        }
+        overwriteBookmarks(mBookmarkList);
     }
 
     /**
@@ -380,7 +371,7 @@ public class BookmarkManager {
                 if (!folderName.isEmpty() && !folderMap.contains(folderName)) {
                     HistoryItem item = new HistoryItem();
                     item.setTitle(folderName);
-                    item.setUrl(folderName);
+                    item.setUrl(Constants.FOLDER + folderName);
                     item.setIsFolder(true);
                     folderMap.add(folderName);
                     folders.add(item);
@@ -431,9 +422,7 @@ public class BookmarkManager {
 
             Utils.showSnackbar(activity, number + " " + mContext.getResources().getString(R.string.message_import));
         } else {
-            String title = activity.getResources().getString(R.string.title_error);
-            String message = activity.getResources().getString(R.string.dialog_import_error);
-            Utils.createInformativeDialog(activity, title, message);
+            Utils.createInformativeDialog(activity, R.string.title_error, R.string.dialog_import_error);
         }
     }
 
@@ -468,9 +457,7 @@ public class BookmarkManager {
             Utils.showSnackbar(activity, number + " " + message);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            String title = activity.getResources().getString(R.string.title_error);
-            String message = activity.getResources().getString(R.string.import_bookmark_error);
-            Utils.createInformativeDialog(activity, title, message);
+            Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error);
         } finally {
             Utils.close(bookmarksReader);
         }
@@ -483,13 +470,14 @@ public class BookmarkManager {
      *
      * @param list the list of bookmarks to overwrite the old ones with
      */
-    public synchronized void overwriteBookmarks(List<HistoryItem> list) {
+    private synchronized void overwriteBookmarks(List<HistoryItem> list) {
         File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
         BufferedWriter bookmarkWriter = null;
         try {
             bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksFile, false));
             JSONObject object = new JSONObject();
-            for (HistoryItem item : list) {
+            for (int n = 0; n < list.size(); n++) {
+                HistoryItem item = list.get(n);
                 if (!item.getIsFolder()) {
                     object.put(TITLE, item.getTitle());
                     object.put(URL, item.getUrl());

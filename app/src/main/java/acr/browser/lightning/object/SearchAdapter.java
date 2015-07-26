@@ -82,21 +82,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             }
 
         });
-        int color = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(context) : ThemeUtils.getIconLightThemeColor(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mSearchDrawable = context.getDrawable(R.drawable.ic_search);
-            mBookmarkDrawable = context.getDrawable(R.drawable.ic_bookmark);
-            mHistoryDrawable = context.getDrawable(R.drawable.ic_history);
-        } else {
-            mSearchDrawable = context.getResources().getDrawable(R.drawable.ic_search);
-            mBookmarkDrawable = context.getResources().getDrawable(R.drawable.ic_bookmark);
-            mHistoryDrawable = context.getResources().getDrawable(R.drawable.ic_history);
-        }
-        if (mSearchDrawable != null && mBookmarkDrawable != null && mHistoryDrawable != null) {
-            mSearchDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            mBookmarkDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            mHistoryDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-        }
+        mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
+        mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
+        mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
         delete.start();
     }
 

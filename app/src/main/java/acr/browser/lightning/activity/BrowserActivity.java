@@ -9,6 +9,7 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -16,7 +17,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.content.res.Resources.Theme;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
@@ -95,7 +95,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -119,7 +118,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
-import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
@@ -324,7 +322,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mSearch.setOnTouchListener(search.new TouchListener());
 
         mSystemBrowser = getSystemBrowser();
-        Thread initialize = new Thread(new Runnable() {
+        new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -346,8 +344,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 initializeSearchSuggestions(mSearch);
             }
 
-        });
-        initialize.run();
+        }).run();
 
         View view = findViewById(R.id.bookmark_back_button);
         view.setOnClickListener(new OnClickListener() {
@@ -817,9 +814,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
      * adapter doesn't always change when notifyDataChanged gets called.
      */
     private void notifyBookmarkDataSetChanged() {
-        if (mBookmarkAdapter == null)
-            return;
-        mBookmarkAdapter.notifyDataSetChanged();
+        if (mBookmarkAdapter != null)
+            mBookmarkAdapter.notifyDataSetChanged();
     }
 
     private void addBookmark(String title, String url) {
@@ -836,8 +832,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
         mBookmarkList.clear();
         mBookmarkList.addAll(items);
-        if (mBookmarkAdapter != null)
-            mBookmarkAdapter.notifyDataSetChanged();
+        notifyBookmarkDataSetChanged();
         final int resource;
         if (mBookmarkManager.isRootFolder())
             resource = R.drawable.ic_action_star;
@@ -876,10 +871,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         startRotation.setDuration(250);
         finishRotation.setDuration(250);
 
-        if (animate)
+        if (animate) {
             mBookmarkTitleImage.startAnimation(startRotation);
-        else
+        } else {
             mBookmarkTitleImage.setImageResource(resource);
+        }
     }
 
     /**
@@ -979,7 +975,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mBookmarkList.get(position).getIsFolder()) {
-                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(mBookmarkList.get(position).getUrl(), true), true);
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(mBookmarkList.get(position).getTitle(), true), true);
                 return;
             }
             if (mCurrentView != null) {
@@ -1001,49 +997,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         @Override
         public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
-
-            if (mBookmarkList.get(position).getIsFolder())
-                return true;
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setTitle(mActivity.getResources().getString(R.string.action_bookmarks));
-            builder.setMessage(getResources().getString(R.string.dialog_bookmark))
-                    .setCancelable(true)
-                    .setPositiveButton(getResources().getString(R.string.action_new_tab),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    newTab(mBookmarkList.get(position).getUrl(), false);
-                                    mDrawerLayout.closeDrawers();
-                                }
-                            })
-                    .setNegativeButton(getResources().getString(R.string.action_delete),
-                            new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position))) {
-                                        mBookmarkList.remove(position);
-                                        notifyBookmarkDataSetChanged();
-                                        mSearchAdapter.refreshBookmarks();
-                                        openBookmarks();
-                                        if (mCurrentView != null) {
-                                            updateBookmarkIndicator(mCurrentView.getUrl());
-                                        }
-                                    }
-                                }
-                            })
-                    .setNeutralButton(getResources().getString(R.string.action_edit),
-                            new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    editBookmark(position);
-                                }
-                            });
-            AlertDialog alert = builder.create();
-            alert.show();
+            longPressBookmarkLink(mBookmarkList.get(position).getUrl());
             return true;
         }
+
     }
 
     /**
@@ -1105,6 +1062,49 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                     }
                 });
         editBookmarkDialog.show();
+    }
+
+    /**
+     * Show a dialog to rename a folder
+     *
+     * @param id the position of the HistoryItem (folder) in the bookmark list
+     */
+    private synchronized void renameFolder(final int id) {
+        final AlertDialog.Builder editFolderDialog = new AlertDialog.Builder(mActivity);
+        editFolderDialog.setTitle(R.string.title_rename_folder);
+        final EditText getTitle = new EditText(mActivity);
+        getTitle.setHint(R.string.hint_title);
+        getTitle.setText(mBookmarkList.get(id).getTitle());
+        getTitle.setSingleLine();
+        LinearLayout layout = new LinearLayout(mActivity);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        int padding = Utils.convertDpToPixels(10);
+        layout.setPadding(padding, padding, padding, padding);
+        layout.addView(getTitle);
+        editFolderDialog.setView(layout);
+        editFolderDialog.setPositiveButton(getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String oldTitle = mBookmarkList.get(id).getTitle();
+                        String newTitle = getTitle.getText().toString();
+
+                        mBookmarkManager.renameFolder(oldTitle, newTitle);
+
+                        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+
+                        Collections.sort(mBookmarkList, new SortIgnoreCase());
+                        if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
+                                && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
+                            openBookmarkPage(mWebView);
+                        }
+                        if (mCurrentView != null) {
+                            updateBookmarkIndicator(mCurrentView.getUrl());
+                        }
+                    }
+                });
+        editFolderDialog.show();
     }
 
     /**
@@ -1366,7 +1366,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         finish();
     }
 
-    @SuppressWarnings("deprecation")
     private void clearHistory() {
         this.deleteDatabase(HistoryDatabase.DATABASE_NAME);
         WebViewDatabase m = WebViewDatabase.getInstance(this);
@@ -1385,7 +1384,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         Utils.trimCache(this);
     }
 
-    @SuppressWarnings("deprecation")
     private void clearCookies() {
         // TODO Break out web storage deletion into its own option/action
         // TODO clear web storage for all sites that are visited in Incognito mode
@@ -2528,7 +2526,51 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         }
     }
 
+    private void longPressFolder(String url) {
+        final int position = BookmarkManager.getIndexOfBookmark(mBookmarkList, url);
+        if (position == -1) {
+            return;
+        }
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        renameFolder(position);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        mBookmarkManager.deleteFolder(mBookmarkList.get(position).getTitle());
+
+                        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+
+                        Collections.sort(mBookmarkList, new SortIgnoreCase());
+                        if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
+                                && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
+                            openBookmarkPage(mWebView);
+                        }
+                        if (mCurrentView != null) {
+                            updateBookmarkIndicator(mCurrentView.getUrl());
+                        }
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(R.string.action_folder)
+                .setMessage(R.string.dialog_folder)
+                .setCancelable(true)
+                .setPositiveButton(R.string.action_rename, dialogClickListener)
+                .setNegativeButton(R.string.action_delete, dialogClickListener)
+                .show();
+    }
+
     private void longPressBookmarkLink(final String url) {
+        if (url.startsWith(Constants.FOLDER)) {
+            longPressFolder(url);
+            return;
+        }
         final int position = BookmarkManager.getIndexOfBookmark(mBookmarkList, url);
         if (position == -1) {
             return;
@@ -2541,7 +2583,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                         newTab(mBookmarkList.get(position).getUrl(), false);
                         mDrawerLayout.closeDrawers();
                         break;
-
                     case DialogInterface.BUTTON_NEGATIVE:
                         if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position))) {
                             mBookmarkList.remove(position);
@@ -2553,7 +2594,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                             }
                         }
                         break;
-
                     case DialogInterface.BUTTON_NEUTRAL:
                         editBookmark(position);
                         break;
@@ -2562,8 +2602,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(R.string.action_bookmarks);
-        builder.setMessage(R.string.dialog_bookmark)
+        builder.setTitle(R.string.action_bookmarks)
+                .setMessage(R.string.dialog_bookmark)
                 .setCancelable(true)
                 .setPositiveButton(R.string.action_new_tab, dialogClickListener)
                 .setNegativeButton(R.string.action_delete, dialogClickListener)
@@ -2596,8 +2636,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(R.string.action_history);
-        builder.setMessage(R.string.dialog_history_long_press)
+        builder.setTitle(R.string.action_history)
+                .setMessage(R.string.dialog_history_long_press)
                 .setCancelable(true)
                 .setPositiveButton(R.string.action_new_tab, dialogClickListener)
                 .setNegativeButton(R.string.action_delete, dialogClickListener)
@@ -2814,7 +2854,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         public void onReceive(Context context, Intent intent) {
             super.onReceive(context, intent);
             boolean isConnected = isConnected(context);
-            Log.d("Lightning", "Network Connected: " + String.valueOf(isConnected));
+            Log.d(Constants.TAG, "Network Connected: " + String.valueOf(isConnected));
             for (int n = 0; n < mWebViewList.size(); n++) {
                 WebView view = mWebViewList.get(n).getWebView();
                 if (view != null)

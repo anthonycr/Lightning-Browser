@@ -565,9 +565,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     mPreferences.setFlashSupport(0);
                 }
                 if (!Utils.isFlashInstalled(mActivity) && cbFlash.isChecked()) {
-                    Utils.createInformativeDialog(mActivity,
-                            mActivity.getResources().getString(R.string.title_warning),
-                            mActivity.getResources().getString(R.string.dialog_adobe_not_installed));
+                    Utils.createInformativeDialog(mActivity, R.string.title_warning, R.string.dialog_adobe_not_installed);
                     cbFlash.setEnabled(false);
                     mPreferences.setFlashSupport(0);
                 }
