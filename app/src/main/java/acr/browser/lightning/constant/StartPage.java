@@ -8,6 +8,8 @@ import acr.browser.lightning.R;
 
 public class StartPage {
 
+    public static final String FILENAME = "homepage.html";
+
     public static final String HEAD = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
             + "<head>"
             + "<meta content=\"en-us\" http-equiv=\"Content-Language\" />"

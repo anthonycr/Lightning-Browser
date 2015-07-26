@@ -506,6 +506,22 @@ public class BookmarkManager {
         }
     }
 
+    /**
+     * find the index of a bookmark in a list using only its URL
+     *
+     * @param list the list to search
+     * @param url  the url to compare
+     * @return returns the index of the bookmark or -1 if none was found
+     */
+    public static int getIndexOfBookmark(final List<HistoryItem> list, final String url) {
+        for (int n = 0; n < list.size(); n++) {
+            if (list.get(n).getUrl().equals(url)) {
+                return n;
+            }
+        }
+        return -1;
+    }
+
     private class SortIgnoreCase implements Comparator<HistoryItem> {
 
         public int compare(HistoryItem o1, HistoryItem o2) {

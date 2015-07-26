@@ -59,6 +59,7 @@
     <string name="action_open">Open</string>
     <string name="dialog_link">What would you like to do with this link?</string>
     <string name="dialog_title_share">Share this page</string>
+    <string name="dialog_history_long_press">What would you like to do with this history item?</string>
     <string name="dialog_bookmark">What would you like to do with this bookmark?</string>
     <string name="action_delete">Delete</string>
     <string name="action_blank">Blank Page</string>

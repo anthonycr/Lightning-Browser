@@ -238,7 +238,7 @@ public class LightningView {
         homepageBuilder.append(searchUrl);
         homepageBuilder.append(StartPage.END);
 
-        File homepage = new File(mActivity.getFilesDir(), "homepage.html");
+        File homepage = new File(mActivity.getFilesDir(), StartPage.FILENAME);
         FileWriter hWriter = null;
         try {
             hWriter = new FileWriter(homepage, false);

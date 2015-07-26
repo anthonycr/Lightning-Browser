@@ -16,11 +16,13 @@ public class BookmarkPage {
 
     public static final String PART1 = "<div class=\"box\"><a href=\"";
 
-    public static final String PART2 = "\" ></a><div class=\"stuff\" ><img height=\"20\" width=\"20\" src='http://www.google.com/s2/favicons?domain=";
+    public static final String PART2 = "\" ></a><div class=\"stuff\" ><img height=\"20\" width=\"20\" src='";
 
-    public static final String PART3 = "' /><p class=\"ellipses\">";
+    public static final String PART3 = "http://www.google.com/s2/favicons?domain=";
 
-    public static final String PART4 = "</p></div></div>";
+    public static final String PART4 = "' /><p class=\"ellipses\">";
+
+    public static final String PART5 = "</p></div></div>";
 
     public static final String END = "</div></body></html>";
     
