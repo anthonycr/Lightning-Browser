@@ -335,7 +335,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                             mBookmarkList.add(bookmark);
                         }
                     }
-                    Collections.sort(mBookmarkList, new SortIgnoreCase());
+                    Collections.sort(mBookmarkList, new BookmarkManager.SortIgnoreCase());
                     mPreferences.setDefaultBookmarks(false);
                 }
                 mBookmarkAdapter = new BookmarkViewAdapter(mActivity, R.layout.bookmark_list_item,
@@ -822,7 +822,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         HistoryItem bookmark = new HistoryItem(url, title);
         if (mBookmarkManager.addBookmark(bookmark)) {
             mBookmarkList.add(bookmark);
-            Collections.sort(mBookmarkList, new SortIgnoreCase());
+            Collections.sort(mBookmarkList, new BookmarkManager.SortIgnoreCase());
             notifyBookmarkDataSetChanged();
             mSearchAdapter.refreshBookmarks();
             updateBookmarkIndicator(mCurrentView.getUrl());
@@ -1041,6 +1041,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                         String currentFolder = mBookmarkList.get(id).getFolder();
                         item.setTitle(getTitle.getText().toString());
                         item.setUrl(getUrl.getText().toString());
+                        item.setUrl(getUrl.getText().toString());
                         item.setFolder(getFolder.getText().toString());
                         mBookmarkManager.editBookmark(mBookmarkList.get(id), item);
 
@@ -1051,7 +1052,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                             setBookmarkDataSet(list, false);
                         }
 
-                        Collections.sort(mBookmarkList, new SortIgnoreCase());
                         if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
                                 && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
                             openBookmarkPage(mWebView);
@@ -1094,7 +1094,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
                         setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
 
-                        Collections.sort(mBookmarkList, new SortIgnoreCase());
                         if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
                                 && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
                             openBookmarkPage(mWebView);
@@ -2544,7 +2543,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
                         setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
 
-                        Collections.sort(mBookmarkList, new SortIgnoreCase());
                         if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
                                 && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
                             openBookmarkPage(mWebView);
@@ -2758,15 +2756,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             mBookmarkImage.setImageResource(R.drawable.ic_bookmark);
             mBookmarkImage.setColorFilter(ThemeUtils.getAccentColor(this), PorterDuff.Mode.SRC_IN);
         }
-    }
-
-    private class SortIgnoreCase implements Comparator<HistoryItem> {
-
-        public int compare(HistoryItem o1, HistoryItem o2) {
-            return o1.getTitle().toLowerCase(Locale.getDefault())
-                    .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
-        }
-
     }
 
     @Override

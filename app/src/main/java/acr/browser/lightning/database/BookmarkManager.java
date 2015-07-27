@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.ls.LSInput;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -290,8 +289,6 @@ public class BookmarkManager {
      */
     public synchronized List<HistoryItem> getBookmarksFromFolder(String folder, boolean sort) {
         List<HistoryItem> bookmarks = new ArrayList<>();
-//        File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
-//        BufferedReader bookmarksReader = null;
         if (folder == null || folder.length() == 0) {
             bookmarks.addAll(getFolders(sort));
             folder = "";
@@ -301,26 +298,6 @@ public class BookmarkManager {
             if (mBookmarkList.get(n).getFolder().equals(folder))
                 bookmarks.add(mBookmarkList.get(n));
         }
-//        try {
-//            bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
-//            String line;
-//            while ((line = bookmarksReader.readLine()) != null) {
-//                JSONObject object = new JSONObject(line);
-//                if (object.getString(FOLDER).equals(folder)) {
-//                    HistoryItem item = new HistoryItem();
-//                    item.setTitle(object.getString(TITLE));
-//                    item.setUrl(object.getString(URL));
-//                    item.setFolder(object.getString(FOLDER));
-//                    item.setOrder(object.getInt(ORDER));
-//                    item.setImageId(R.drawable.ic_bookmark);
-//                    bookmarks.add(item);
-//                }
-//            }
-//        } catch (IOException | JSONException e) {
-//            e.printStackTrace();
-//        } finally {
-//            Utils.close(bookmarksReader);
-//        }
         if (sort) {
             Collections.sort(bookmarks, new SortIgnoreCase());
         }
@@ -510,14 +487,22 @@ public class BookmarkManager {
         return -1;
     }
 
-    private class SortIgnoreCase implements Comparator<HistoryItem> {
+    /**
+     * This class sorts bookmarks alphabetically, with folders coming after bookmarks
+     */
+    public static class SortIgnoreCase implements Comparator<HistoryItem> {
 
         public int compare(HistoryItem o1, HistoryItem o2) {
             if (o1 == null || o2 == null || o1.getTitle() == null || o2.getTitle() == null) {
                 return 0;
             }
-            return o1.getTitle().toLowerCase(Locale.getDefault())
-                    .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
+            if (o1.getIsFolder() == o2.getIsFolder()) {
+                return o1.getTitle().toLowerCase(Locale.getDefault())
+                        .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
+
+            } else {
+                return o1.getIsFolder() ? 1 : -1;
+            }
         }
 
     }
