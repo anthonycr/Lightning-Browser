@@ -59,9 +59,4 @@ public class IncognitoActivity extends BrowserActivity {
         closeDrawers();
         finish();
     }
-
-    @Override
-    public int getMenu() {
-        return R.menu.incognito;
-    }
 }

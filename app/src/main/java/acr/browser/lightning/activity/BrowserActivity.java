@@ -9,7 +9,6 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -109,10 +108,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.BookmarkPage;
@@ -201,8 +197,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     abstract void initializeTabs();
 
     abstract void closeActivity();
-
-    abstract int getMenu();
 
     public abstract void updateHistory(final String title, final String url);
 
@@ -974,7 +968,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (mBookmarkList.get(position).getIsFolder()) {
+            if (mBookmarkList.get(position).isFolder()) {
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(mBookmarkList.get(position).getTitle(), true), true);
                 return;
             }
@@ -1723,7 +1717,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             HistoryItem web = data.get(position);
             holder.txtTitle.setText(web.getTitle());
             holder.favicon.setImageBitmap(mWebpageBitmap);
-            if (web.getIsFolder()) {
+            if (web.isFolder()) {
                 holder.favicon.setImageBitmap(this.folderIcon);
             } else if (web.getBitmap() == null) {
                 getImage(holder.favicon, web);
@@ -2058,28 +2052,46 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         } finally {
             Utils.close(outputStream);
         }
-        StringBuilder bookmarkBuilder = new StringBuilder();
-        bookmarkBuilder.append(BookmarkPage.HEADING);
-        Iterator<HistoryItem> iter = mBookmarkList.iterator();
-        HistoryItem helper;
-        String folderPath = Constants.FILE + mActivity.getCacheDir() + "/folder.png";
-        while (iter.hasNext()) {
-            helper = iter.next();
+        File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
+
+        buildBookmarkPage(null, mBookmarkManager.getBookmarksFromFolder(null, true));
+        view.loadUrl(Constants.FILE + bookmarkWebPage);
+    }
+
+    private void buildBookmarkPage(final String folder, final List<HistoryItem> list) {
+        File bookmarkWebPage;
+        if (folder == null || folder.length() == 0) {
+            bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
+        } else {
+            bookmarkWebPage = new File(mActivity.getFilesDir(), folder + '-' + BookmarkPage.FILENAME);
+        }
+        final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
+
+        String folderIconPath = Constants.FILE + mActivity.getCacheDir() + "/folder.png";
+        for (int n = 0; n < list.size(); n++) {
+            final HistoryItem item = list.get(n);
             bookmarkBuilder.append(BookmarkPage.PART1);
-            bookmarkBuilder.append(helper.getUrl());
-            bookmarkBuilder.append(BookmarkPage.PART2);
-            if (helper.getIsFolder()) {
-                bookmarkBuilder.append(folderPath);
+            if (item.isFolder()) {
+                File folderPage = new File(mActivity.getFilesDir(), item.getTitle() + '-' + BookmarkPage.FILENAME);
+                bookmarkBuilder.append(Constants.FILE).append(folderPage);
+                bookmarkBuilder.append(BookmarkPage.PART2);
+                bookmarkBuilder.append(folderIconPath);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        buildBookmarkPage(item.getTitle(), mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true));
+                    }
+                }).run();
             } else {
-                bookmarkBuilder.append(BookmarkPage.PART3);
-                bookmarkBuilder.append(helper.getUrl());
+                bookmarkBuilder.append(item.getUrl());
+                bookmarkBuilder.append(BookmarkPage.PART2).append(BookmarkPage.PART3);
+                bookmarkBuilder.append(item.getUrl());
             }
             bookmarkBuilder.append(BookmarkPage.PART4);
-            bookmarkBuilder.append(helper.getTitle());
+            bookmarkBuilder.append(item.getTitle());
             bookmarkBuilder.append(BookmarkPage.PART5);
         }
         bookmarkBuilder.append(BookmarkPage.END);
-        File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
         FileWriter bookWriter = null;
         try {
             bookWriter = new FileWriter(bookmarkWebPage, false);
@@ -2089,8 +2101,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         } finally {
             Utils.close(bookWriter);
         }
-
-        view.loadUrl(Constants.FILE + bookmarkWebPage);
     }
 
     @Override
@@ -2526,7 +2536,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     private void longPressFolder(String url) {
-        final int position = BookmarkManager.getIndexOfBookmark(mBookmarkList, url);
+        // We are getting the title from the url
+        // Strip '-bookmarks.html' from the end of the url
+        String title = url.substring(0, url.length() - BookmarkPage.FILENAME.length() - 1);
+
+        // Strip the beginning of the url off and leave only the title
+        title = title.substring(Constants.FILE.length() + mActivity.getFilesDir().toString().length() + 1);
+
+        final int position = BookmarkManager.getIndexOfBookmark(mBookmarkList, Constants.FOLDER + title);
         if (position == -1) {
             return;
         }
@@ -2565,7 +2582,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     private void longPressBookmarkLink(final String url) {
-        if (url.startsWith(Constants.FOLDER)) {
+        if (url.startsWith(Constants.FILE)) {
             longPressFolder(url);
             return;
         }
@@ -2838,7 +2855,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
-    private NetworkReceiver mNetworkReceiver = new NetworkReceiver() {
+    private final NetworkReceiver mNetworkReceiver = new NetworkReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             super.onReceive(context, intent);

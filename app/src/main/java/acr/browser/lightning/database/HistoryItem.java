@@ -120,7 +120,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
         mIsFolder = isFolder;
     }
 
-    public boolean getIsFolder() {
+    public boolean isFolder() {
         return mIsFolder;
     }
 

@@ -129,7 +129,7 @@ public class BookmarkManager {
      * @param deleteItem the bookmark item to delete
      */
     public synchronized boolean deleteBookmark(HistoryItem deleteItem) {
-        if (deleteItem == null || deleteItem.getIsFolder()) {
+        if (deleteItem == null || deleteItem.isFolder()) {
             return false;
         }
         mBookmarkSearchSet.remove(deleteItem.getUrl());
@@ -151,7 +151,7 @@ public class BookmarkManager {
         for (int n = 0; n < mBookmarkList.size(); n++) {
             if (mBookmarkList.get(n).getFolder().equals(oldName)) {
                 mBookmarkList.get(n).setFolder(newName);
-            } else if (mBookmarkList.get(n).getIsFolder() && mBookmarkList.get(n).getTitle().equals(oldName)) {
+            } else if (mBookmarkList.get(n).isFolder() && mBookmarkList.get(n).getTitle().equals(oldName)) {
                 mBookmarkList.get(n).setTitle(newName);
                 mBookmarkList.get(n).setUrl(Constants.FOLDER + newName);
             }
@@ -168,7 +168,7 @@ public class BookmarkManager {
         Iterator<HistoryItem> iterator = mBookmarkList.iterator();
         while (iterator.hasNext()) {
             HistoryItem item = iterator.next();
-            if (!item.getIsFolder() && item.getFolder().equals(name)) {
+            if (!item.isFolder() && item.getFolder().equals(name)) {
                 item.setFolder("");
             } else if (item.getTitle().equals(name)) {
                 iterator.remove();
@@ -184,7 +184,7 @@ public class BookmarkManager {
      * @param newItem This is the new item that will overwrite the old item
      */
     public synchronized void editBookmark(HistoryItem oldItem, HistoryItem newItem) {
-        if (oldItem == null || newItem == null || oldItem.getIsFolder()) {
+        if (oldItem == null || newItem == null || oldItem.isFolder()) {
             return;
         }
         mBookmarkList.remove(oldItem);
@@ -321,7 +321,7 @@ public class BookmarkManager {
     private static Set<String> getBookmarkUrls(List<HistoryItem> list) {
         Set<String> set = new HashSet<>();
         for (int n = 0; n < list.size(); n++) {
-            if (!mBookmarkList.get(n).getIsFolder())
+            if (!mBookmarkList.get(n).isFolder())
                 set.add(mBookmarkList.get(n).getUrl());
         }
         return set;
@@ -455,7 +455,7 @@ public class BookmarkManager {
             JSONObject object = new JSONObject();
             for (int n = 0; n < list.size(); n++) {
                 HistoryItem item = list.get(n);
-                if (!item.getIsFolder()) {
+                if (!item.isFolder()) {
                     object.put(TITLE, item.getTitle());
                     object.put(URL, item.getUrl());
                     object.put(FOLDER, item.getFolder());
@@ -496,12 +496,12 @@ public class BookmarkManager {
             if (o1 == null || o2 == null || o1.getTitle() == null || o2.getTitle() == null) {
                 return 0;
             }
-            if (o1.getIsFolder() == o2.getIsFolder()) {
+            if (o1.isFolder() == o2.isFolder()) {
                 return o1.getTitle().toLowerCase(Locale.getDefault())
                         .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
 
             } else {
-                return o1.getIsFolder() ? 1 : -1;
+                return o1.isFolder() ? 1 : -1;
             }
         }
 
