@@ -2535,13 +2535,19 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     private void longPressFolder(String url) {
-        // We are getting the title from the url
-        // Strip '-bookmarks.html' from the end of the url
-        String title = url.substring(0, url.length() - BookmarkPage.FILENAME.length() - 1);
+        String title;
+        if (url.startsWith(Constants.FILE)) {
+            // We are getting the title from the url
+            // Strip '-bookmarks.html' from the end of the url
+            title = url.substring(0, url.length() - BookmarkPage.FILENAME.length() - 1);
 
-        // Strip the beginning of the url off and leave only the title
-        title = title.substring(Constants.FILE.length() + mActivity.getFilesDir().toString().length() + 1);
-
+            // Strip the beginning of the url off and leave only the title
+            title = title.substring(Constants.FILE.length() + mActivity.getFilesDir().toString().length() + 1);
+        } else if (url.startsWith(Constants.FOLDER)) {
+            title = url.substring(Constants.FOLDER.length());
+        } else {
+            title = url;
+        }
         final int position = BookmarkManager.getIndexOfBookmark(mBookmarkList, Constants.FOLDER + title);
         if (position == -1) {
             return;
@@ -2581,7 +2587,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     private void longPressBookmarkLink(final String url) {
-        if (url.startsWith(Constants.FILE)) {
+        if (url.startsWith(Constants.FILE) || url.startsWith(Constants.FOLDER)) {
             longPressFolder(url);
             return;
         }
