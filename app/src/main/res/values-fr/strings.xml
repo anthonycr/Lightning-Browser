@@ -1,13 +1,19 @@
 <resources>
     <string name="app_name">Lightning</string>
     <string name="google">Google</string>
+    <string name="tabs">Onglets</string>
     <string name="settings">Paramètres</string>
     <string name="location">Accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">User Agent</string>
-    <string name="history">Effacer l\'historique à la sortie</string>
+    <string name="history">Effacer l\'historique</string>
+    <string name="clear_cookies_exit">Effacer les cookies en quittant</string>
+    <string name="clear_history_exit">Effacer l\'historique en quittant</string>
     <string name="email">Contactez moi</string>
     <string name="flash">Activer Adobe Flash Player</string>
+    <string name="block_ads">Bloquer les publicités</string>
+    <string name="block">Bloquer les images</string>
+    <string name="third_party">Bloquer les cookies tiers</string>
     <string name="mobile">Voir la version mobile</string>
     <string name="desk">Voir la version ordinateur</string>
     <string name="custom">Utiliser un User Agent personnalisé</string>
@@ -15,10 +21,24 @@
     <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
+    <string name="invert_color">Inverser les couleurs</string>
+    <string name="dark_theme">Utiliser le thème sombre</string>
     <string name="action_history">Historique</string>
     <string name="action_bookmarks">Favoris</string>
+    <string name="action_add_bookmark">Ajouter aux favoris</string>
+    <string name="action_copy">Copier l\'URL</string>
     <string name="action_share">Partager</string>
     <string name="action_settings">Paramètres</string>
     <string name="action_incognito">Onglet incognito</string>
     <string name="action_new_tab">Nouvel onglet</string>
+    <string name="action_find">Rechercher dans la page</string>
+    <string name="reading_mode">Passer en mode lecture</string>
+    <string name="message_text_copied">Texte copié</string>
+    <string name="message_link_copied">URL copiée</string>
+    <string name="settings_general">Général</string>
+    <string name="bookmark_settings">Favoris</string>
+    <string name="settings_display">Affichage</string>
+    <string name="settings_privacy">Vie privée</string>
+    <string name="settings_about">A propos</string>
+    <string name="settings_about_explain">Tout savoir sur la version, l\'auteur et la licence.</string>
 </resources>
