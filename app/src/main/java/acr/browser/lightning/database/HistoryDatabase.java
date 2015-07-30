@@ -65,7 +65,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    private boolean isClosed() {
+    public boolean isClosed() {
         return mDatabase == null || !mDatabase.isOpen();
     }
 

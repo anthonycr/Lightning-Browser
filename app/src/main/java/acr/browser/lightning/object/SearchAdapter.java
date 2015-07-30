@@ -232,7 +232,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 }
 
             }
-            if (mDatabaseHandler == null) {
+            if (mDatabaseHandler == null || mDatabaseHandler.isClosed()) {
                 mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
             }
             List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(constraint.toString());
