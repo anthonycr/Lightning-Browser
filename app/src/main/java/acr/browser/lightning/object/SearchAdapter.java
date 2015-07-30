@@ -3,12 +3,10 @@ package acr.browser.lightning.object;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +30,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,6 +60,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final BookmarkManager mBookmarkManager;
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
+    private static final int MAX_SUGGESTIONS = 5;
+    private final SuggestionsComparator mComparator = new SuggestionsComparator();
     private final String mSearchSubtitle;
     private SearchFilter mFilter;
     private final Drawable mSearchDrawable;
@@ -247,7 +250,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             mFilteredList.clear();
-            mFilteredList.addAll(getSuggestions());
+            List<HistoryItem> filtered = getFilteredList();
+            Collections.sort(filtered, mComparator);
+            mFilteredList.addAll(filtered);
             notifyDataSetChanged();
         }
 
@@ -318,7 +323,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             mSuggestions.clear();
             mSuggestions.addAll(result);
             mFilteredList.clear();
-            mFilteredList.addAll(getSuggestions());
+            List<HistoryItem> filtered = getFilteredList();
+            Collections.sort(filtered, mComparator);
+            mFilteredList.addAll(filtered);
             notifyDataSetChanged();
             mIsExecuting = false;
         }
@@ -376,32 +383,64 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     }
 
     //TODO Write simpler algorithm
-    private List<HistoryItem> getSuggestions() {
-        List<HistoryItem> filteredList = new ArrayList<>();
+//    private List<HistoryItem> getSuggestions() {
+//        List<HistoryItem> filteredList = new ArrayList<>();
+//
+//        int suggestionsSize = mSuggestions.size();
+//        int historySize = mHistory.size();
+//        int bookmarkSize = mBookmarks.size();
+//
+//        int maxSuggestions = (bookmarkSize + historySize < 3) ? (5 - bookmarkSize - historySize) : (bookmarkSize < 2) ? (4 - bookmarkSize) : (historySize < 1) ? 3 : 2;
+//        int maxHistory = (suggestionsSize + bookmarkSize < 4) ? (5 - suggestionsSize - bookmarkSize) : 1;
+//        int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize) : 2;
+//
+//        for (int n = 0; n < bookmarkSize && n < maxBookmarks; n++) {
+//            filteredList.add(mBookmarks.get(n));
+//        }
+//
+//        for (int n = 0; n < historySize && n < maxHistory; n++) {
+//            filteredList.add(mHistory.get(n));
+//        }
+//
+//        for (int n = 0; n < suggestionsSize && n < maxSuggestions; n++) {
+//            filteredList.add(mSuggestions.get(n));
+//        }
+//        return filteredList;
+//    }
 
-        int suggestionsSize = mSuggestions.size();
-        int historySize = mHistory.size();
-        int bookmarkSize = mBookmarks.size();
+    private List<HistoryItem> getFilteredList() {
+        List<HistoryItem> list = new ArrayList<>();
+        Iterator<HistoryItem> bookmark = mBookmarks.iterator();
+        Iterator<HistoryItem> history = mHistory.iterator();
+        Iterator<HistoryItem> suggestion = mSuggestions.listIterator();
+        while (list.size() < MAX_SUGGESTIONS) {
+            if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
+                return list;
+            }
+            if (bookmark.hasNext()) {
+                list.add(bookmark.next());
+            }
+            if (suggestion.hasNext() && list.size() < MAX_SUGGESTIONS) {
+                list.add(suggestion.next());
+            }
+            if (history.hasNext() && list.size() < MAX_SUGGESTIONS) {
+                list.add(history.next());
+            }
 
-        int maxSuggestions = (bookmarkSize + historySize < 3) ? (5 - bookmarkSize - historySize)
-                : (bookmarkSize < 2) ? (4 - bookmarkSize) : (historySize < 1) ? 3 : 2;
-        int maxHistory = (suggestionsSize + bookmarkSize < 4) ? (5 - suggestionsSize - bookmarkSize)
-                : 1;
-        int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize)
-                : 2;
-
-        for (int n = 0; n < bookmarkSize && n < maxBookmarks; n++) {
-            filteredList.add(mBookmarks.get(n));
         }
+        return list;
+    }
 
-        for (int n = 0; n < historySize && n < maxHistory; n++) {
-            filteredList.add(mHistory.get(n));
-        }
+    private class SuggestionsComparator implements Comparator<HistoryItem> {
 
-        for (int n = 0; n < suggestionsSize && n < maxSuggestions; n++) {
-            filteredList.add(mSuggestions.get(n));
+        @Override
+        public int compare(HistoryItem lhs, HistoryItem rhs) {
+            if (lhs.getImageId() == rhs.getImageId()) return 0;
+            if (lhs.getImageId() == R.drawable.ic_bookmark) return -1;
+            if (rhs.getImageId() == R.drawable.ic_bookmark) return 1;
+            if (lhs.getImageId() == R.drawable.ic_history) return -1;
+            return 1;
         }
-        return filteredList;
     }
 
 }

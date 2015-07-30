@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 A.C.R. Development
+ * Copyright 2015 Anthony Restaino
  */
 
 package acr.browser.lightning.activity;
@@ -1209,7 +1209,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         // don't delete the tab because the browser will close and mess stuff up
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onTrimMemory(int level) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
@@ -2108,12 +2107,12 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mTitleAdapter.notifyDataSetChanged();
     }
 
-    @Override
     /**
      * opens a file chooser
      * param ValueCallback is the message from the WebView indicating a file chooser
      * should be opened
      */
+    @Override
     public void openFileChooser(ValueCallback<Uri> uploadMsg) {
         mUploadMessage = uploadMsg;
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
@@ -2122,10 +2121,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         startActivityForResult(Intent.createChooser(i, getString(R.string.title_file_chooser)), 1);
     }
 
-    @Override
     /**
      * used to allow uploading into the browser
      */
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (API < Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode == 1) {
@@ -2212,12 +2211,12 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mActivity.startActivityForResult(chooserIntent, 1);
     }
 
-    @Override
     /**
      * handles long presses for the browser, tries to get the
      * url of the item that was clicked and sends it (it can be null)
      * to the click handler that does cool stuff with it
      */
+    @Override
     public void onLongPress() {
         if (mClickHandler == null) {
             mClickHandler = new ClickHandler(mActivity);
@@ -2350,11 +2349,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     }
 
-    @Override
     /**
      * a stupid method that returns the bitmap image to display in place of
      * a loading video
      */
+    @Override
     public Bitmap getDefaultVideoPoster() {
         if (mDefaultVideoPoster == null) {
             mDefaultVideoPoster = BitmapFactory.decodeResource(getResources(),
@@ -2363,10 +2362,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         return mDefaultVideoPoster;
     }
 
-    @Override
     /**
      * dumb method that returns the loading progress for a video
      */
+    @Override
     public View getVideoLoadingProgressView() {
         if (mVideoProgressView == null) {
             LayoutInflater inflater = LayoutInflater.from(this);
@@ -2375,10 +2374,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         return mVideoProgressView;
     }
 
-    @Override
     /**
      * handles javascript requests to create a new window in the browser
      */
+    @Override
     public void onCreateWindow(Message resultMsg) {
         if (resultMsg == null) {
             return;
@@ -2390,11 +2389,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         }
     }
 
-    @Override
     /**
      * returns the Activity instance for this activity,
      * very helpful when creating things in other classes... I think
      */
+    @Override
     public Activity getActivity() {
         return mActivity;
     }
@@ -2484,12 +2483,12 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         }
     }
 
-    @Override
     /**
      * handles a long click on the page, parameter String url
      * is the url that should have been obtained from the WebView touch node
      * thingy, if it is null, this method tries to deal with it and find a workaround
      */
+    @Override
     public void longClickPage(final String url) {
         HitTestResult result = null;
         String currentUrl = null;
