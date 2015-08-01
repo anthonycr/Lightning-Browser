@@ -1014,10 +1014,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         getUrl.setHint(R.string.hint_url);
         getUrl.setText(mBookmarkList.get(id).getUrl());
         getUrl.setSingleLine();
-        final EditText getFolder = new EditText(mActivity);
+        final AutoCompleteTextView getFolder = new AutoCompleteTextView(mActivity);
         getFolder.setHint(R.string.folder);
         getFolder.setText(mBookmarkList.get(id).getFolder());
         getFolder.setSingleLine();
+        List<String> folders = mBookmarkManager.getFolderTitles();
+        ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, folders);
+        getFolder.setThreshold(1);
+        getFolder.setAdapter(suggestionsAdapter);
         LinearLayout layout = new LinearLayout(mActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
         int padding = Utils.convertDpToPixels(10);

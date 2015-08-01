@@ -366,6 +366,36 @@ public class BookmarkManager {
     }
 
     /**
+     * returns a list of folder titles that can be used for suggestions in a
+     * simple list adapter
+     *
+     * @return a list of folder title strings
+     */
+    public synchronized List<String> getFolderTitles() {
+        List<String> folders = new ArrayList<>();
+        Set<String> folderMap = new HashSet<>();
+        File bookmarksFile = new File(mContext.getFilesDir(), FILE_BOOKMARKS);
+        BufferedReader bookmarksReader = null;
+        try {
+            bookmarksReader = new BufferedReader(new FileReader(bookmarksFile));
+            String line;
+            while ((line = bookmarksReader.readLine()) != null) {
+                JSONObject object = new JSONObject(line);
+                String folderName = object.getString(FOLDER);
+                if (!folderName.isEmpty() && !folderMap.contains(folderName)) {
+                    folders.add(folderName);
+                    folderMap.add(folderName);
+                }
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.close(bookmarksReader);
+        }
+        return folders;
+    }
+
+    /**
      * This method imports all bookmarks that are included in the device's
      * permanent bookmark storage
      */
