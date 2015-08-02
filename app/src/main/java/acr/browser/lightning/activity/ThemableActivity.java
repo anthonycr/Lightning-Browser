@@ -33,6 +33,8 @@ public abstract class ThemableActivity extends AppCompatActivity {
     }
 
     private void restart() {
-        recreate();
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

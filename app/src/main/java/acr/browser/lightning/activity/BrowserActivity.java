@@ -145,6 +145,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     private LightningView mCurrentView;
     private WebView mWebView;
 
+    // Views
     private AnimatedProgressBar mProgressBar;
     private AutoCompleteTextView mSearch;
     private ImageView mArrowImage, mBookmarkTitleImage, mBookmarkImage;
@@ -166,7 +167,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     private Activity mActivity;
 
     // Primatives
-    private boolean mSystemBrowser = false, mIsNewIntent = false, mFullScreen, mColorMode, mDarkTheme;
+    private boolean mFullScreen, mColorMode, mDarkTheme,
+            mSystemBrowser = false,
+            mIsNewIntent = false,
+            mIsFullScreen = false,
+            mIsImmersive = false;
     private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
@@ -658,12 +663,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             if (mWebView != null)
                 mWebView.setTranslationY(0);
         }
-        if (mPreferences.getHideStatusBarEnabled()) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
+        setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
 
         switch (mPreferences.getSearchChoice()) {
             case 0:
@@ -2252,7 +2252,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mCustomView = view;
         mFullscreenContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
         decor.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
-        setFullscreen(true);
+        setFullscreen(true, true);
         mCurrentView.setVisibility(View.GONE);
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
@@ -2276,7 +2276,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         } catch (SecurityException e) {
             Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
         }
-        setFullscreen(mPreferences.getHideStatusBarEnabled());
+        setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
         FrameLayout decor = (FrameLayout) getWindow().getDecorView();
         if (decor != null) {
             decor.removeView(mFullscreenContainer);
@@ -2314,26 +2314,39 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            setFullscreen(mIsFullScreen, mIsImmersive);
+        }
+    }
+
     /**
      * turns on fullscreen mode in the app
      *
      * @param enabled whether to enable fullscreen or not
      */
-    private void setFullscreen(boolean enabled) {
-        Window win = getWindow();
-        WindowManager.LayoutParams winParams = win.getAttributes();
-        final int bits = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+    private void setFullscreen(boolean enabled, boolean immersive) {
+        mIsFullScreen = enabled;
+        mIsImmersive = immersive;
+        Window window = getWindow();
+        View decor = window.getDecorView();
         if (enabled) {
-            winParams.flags |= bits;
-        } else {
-            winParams.flags &= ~bits;
-            if (mCustomView != null) {
-                mCustomView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-            } else {
-                mBrowserFrame.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if (immersive) {
+                decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             }
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         }
-        win.setAttributes(winParams);
     }
 
     /**
