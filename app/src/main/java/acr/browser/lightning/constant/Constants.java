@@ -13,7 +13,7 @@ public final class Constants {
     }
 
     public static final boolean FULL_VERSION = BuildConfig.FULL_VERSION;
-    
+
     public static final String DESKTOP_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36";
     public static final String MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; U; Android 4.4; en-us; Nexus 4 Build/JOP24G) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
     public static final String YAHOO_SEARCH = "https://search.yahoo.com/search?p=";
@@ -46,4 +46,8 @@ public final class Constants {
     public static final int PROXY_ORBOT = 1;
     public static final int PROXY_I2P = 2;
     public static final int PROXY_MANUAL = 3;
+
+    public static final String DEFAULT_ENCODING = "UTF-8";
+
+    public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", "UTF-8", "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
 }

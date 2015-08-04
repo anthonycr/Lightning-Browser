@@ -5,13 +5,13 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="allow_new_window"
-            android:title="@string/window"
-            android:summary="@string/recommended" />
+            android:summary="@string/recommended"
+            android:title="@string/window" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="allow_cookies"
-            android:title="@string/cookies"
-            android:summary="@string/recommended" />
+            android:summary="@string/recommended"
+            android:title="@string/cookies" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="incognito_cookies"
@@ -20,6 +20,9 @@
             android:defaultValue="true"
             android:key="restore_tabs"
             android:title="@string/restore" />
+        <Preference
+            android:key="text_encoding"
+            android:title="@string/text_encoding" />
         <Preference
             android:key="rendering_mode"
             android:title="@string/rendering_mode" />

@@ -252,10 +252,10 @@ public class LightningView {
         return Constants.FILE + homepage;
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
     public synchronized void initializePreferences(Context context) {
         mPreferences = PreferenceManager.getInstance();
+
+        mSettings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
         mHomepage = mPreferences.getHomepage();
         mAdBlock.updatePreference();
         if (mSettings == null && mWebView != null) {
@@ -353,8 +353,6 @@ public class LightningView {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint({"SetJavaScriptEnabled", "NewApi"})
     private void initializeSettings(WebSettings settings, Context context) {
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -380,7 +378,6 @@ public class LightningView {
         settings.setDisplayZoomControls(false);
         settings.setAllowContentAccess(true);
         settings.setAllowFileAccess(true);
-        settings.setDefaultTextEncodingName("utf-8");
         if (API >= Build.VERSION_CODES.JELLY_BEAN) {
             settings.setAllowFileAccessFromFileURLs(false);
             settings.setAllowUniversalAccessFromFileURLs(false);

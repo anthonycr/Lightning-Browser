@@ -3,13 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionName "4.0.10a"
+        versionName "4.1.0a"
     }
-
     buildTypes {
         debug {
             minifyEnabled false
@@ -23,32 +21,28 @@ android {
             proguardFiles 'proguard-project.txt'
         }
     }
-
     productFlavors {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
             applicationId "acr.browser.lightning"
-            versionCode 78
+            versionCode 79
         }
-
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
             applicationId "acr.browser.barebones"
             versionCode 81
         }
     }
-
     lintOptions {
         abortOnError false
     }
 }
 
 dependencies {
-    compile 'com.android.support:palette-v7:22.2.0'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:palette-v7:22.2.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
     compile 'org.jsoup:jsoup:1.8.1'
-
     // Only Lightning Plus needs the proxy libraries
     lightningPlusCompile 'net.i2p.android:client:0.7'
     lightningPlusCompile(project(':libnetcipher'))

@@ -47,6 +47,7 @@ public class PreferenceManager {
         public static final String READING_TEXT_SIZE = "readingTextSize";
         public static final String THEME = "Theme";
         public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
+        public static final String TEXT_ENCODING = "textEncoding";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -248,6 +249,10 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_WIDE_VIEWPORT, true);
     }
 
+    public String getTextEncoding() {
+        return mPrefs.getString(Name.TEXT_ENCODING, Constants.DEFAULT_ENCODING);
+    }
+
     private void putBoolean(String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -258,6 +263,10 @@ public class PreferenceManager {
 
     private void putString(String name, String value) {
         mPrefs.edit().putString(name, value).apply();
+    }
+
+    public void setTextEncoding(String encoding) {
+        putString(Name.TEXT_ENCODING, encoding);
     }
 
     public void setAdBlockEnabled(boolean enable) {
@@ -411,9 +420,9 @@ public class PreferenceManager {
     /**
      * Valid choices:
      * <ul>
-     *     <li>{@link Constants#NO_PROXY}</li>
-     *     <li>{@link Constants#PROXY_ORBOT}</li>
-     *     <li>{@link Constants#PROXY_I2P}</li>
+     * <li>{@link Constants#NO_PROXY}</li>
+     * <li>{@link Constants#PROXY_ORBOT}</li>
+     * <li>{@link Constants#PROXY_I2P}</li>
      * </ul>
      *
      * @param choice the proxy to use.
