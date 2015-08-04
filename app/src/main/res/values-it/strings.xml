@@ -3,7 +3,7 @@
   Copyright 2013 The Android Open Source Project
   
   Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
+  you may not use this file except in compliance with trehe License.
   You may obtain a copy of the License at
   
       http://www.apache.org/licenses/LICENSE-2.0
@@ -96,7 +96,7 @@
     <string name="title_download_location">Percorso download</string>
     <string name="title_custom_homepage">Homepage personale</string>
     <string name="action_webpage">Pagina web</string>
-    <string name="dialog_reflow_warning">Spiacenti, Google ha fatto alcune modifiche e Text Reflow non funziona più in Android 4.4+</string>
+    <string name="dialog_reflow_warning">Spiacenti, Google ha fatto alcune modifiche e il reflow del testo non funziona più in Android 4.4+</string>
     <string name="title_clear_history">Cancella cronologia</string>
     <string name="title_clear_cookies">Cancella i cookie</string>
     <string name="dialog_history">Vorresti eliminare tutta la cronologia del browser?</string>
