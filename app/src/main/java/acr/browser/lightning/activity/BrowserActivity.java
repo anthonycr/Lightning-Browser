@@ -70,15 +70,11 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
-import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
-import android.webkit.WebViewDatabase;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -126,6 +122,7 @@ import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
 
@@ -1291,21 +1288,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 closeActivity();
             } else {
                 mWebViewList.remove(position);
-                if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
-                    mCurrentView.clearCache(true);
-                    Log.d(Constants.TAG, "Cache Cleared");
-
-                }
-                if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
-                    clearHistory();
-                    Log.d(Constants.TAG, "History Cleared");
-
-                }
-                if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
-                    clearCookies();
-                    Log.d(Constants.TAG, "Cookies Cleared");
-
-                }
+                performExitCleanUp();
                 reference.pauseTimers();
                 reference.onDestroy();
                 mCurrentView = null;
@@ -1325,6 +1308,30 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         Log.d(Constants.TAG, "deleted tab");
     }
 
+    public void performExitCleanUp() {
+        if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
+            WebUtils.clearCache(mCurrentView.getWebView());
+            Log.d(Constants.TAG, "Cache Cleared");
+
+        }
+        if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
+            WebUtils.clearHistory(this, mSystemBrowser);
+            Log.d(Constants.TAG, "History Cleared");
+
+        }
+        if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
+            WebUtils.clearCookies(this);
+            Log.d(Constants.TAG, "Cookies Cleared");
+
+        }
+        if (mPreferences.getClearWebStorageExitEnabled() && !isIncognito()) {
+            WebUtils.clearWebStorage();
+            Log.d(Constants.TAG, "WebStorage Cleared");
+        } else if (isIncognito()) {
+            WebUtils.clearWebStorage();     // We want to make sure incognito mode is secure
+        }
+    }
+
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -1335,21 +1342,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     private void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
-        if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
-            mCurrentView.clearCache(true);
-            Log.d(Constants.TAG, "Cache Cleared");
-
-        }
-        if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
-            clearHistory();
-            Log.d(Constants.TAG, "History Cleared");
-
-        }
-        if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
-            clearCookies();
-            Log.d(Constants.TAG, "Cookies Cleared");
-
-        }
+        performExitCleanUp();
         mCurrentView = null;
         mWebView = null;
         for (int n = 0; n < mWebViewList.size(); n++) {
@@ -1360,38 +1353,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mWebViewList.clear();
         mTitleAdapter.notifyDataSetChanged();
         finish();
-    }
-
-    private void clearHistory() {
-        this.deleteDatabase(HistoryDatabase.DATABASE_NAME);
-        WebViewDatabase m = WebViewDatabase.getInstance(this);
-        m.clearFormData();
-        m.clearHttpAuthUsernamePassword();
-        if (API < 18) {
-            m.clearUsernamePassword();
-            WebIconDatabase.getInstance().removeAllIcons();
-        }
-        if (mSystemBrowser) {
-            try {
-                Browser.clearHistory(getContentResolver());
-            } catch (NullPointerException ignored) {
-            }
-        }
-        Utils.trimCache(this);
-    }
-
-    private void clearCookies() {
-        // TODO Break out web storage deletion into its own option/action
-        // TODO clear web storage for all sites that are visited in Incognito mode
-        WebStorage storage = WebStorage.getInstance();
-        storage.deleteAllData();
-        CookieManager c = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            c.removeAllCookies(null);
-        } else {
-            CookieSyncManager.createInstance(this);
-            c.removeAllCookie();
-        }
     }
 
     @Override

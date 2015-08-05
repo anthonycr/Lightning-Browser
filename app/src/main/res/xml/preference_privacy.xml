@@ -13,8 +13,8 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="password"
-            android:title="@string/password"
-            android:summary="@string/recommended" />
+            android:summary="@string/recommended"
+            android:title="@string/password" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="clear_cache_exit"
@@ -29,6 +29,10 @@
             android:title="@string/clear_cookies_exit" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="clear_webstorage_exit"
+            android:title="@string/clear_web_storage_exit" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="sync_history"
             android:title="@string/sync_history" />
         <Preference
@@ -40,5 +44,8 @@
         <Preference
             android:key="clear_cookies"
             android:title="@string/clear_cookies" />
+        <Preference
+            android:key="clear_webstorage"
+            android:title="@string/clear_web_storage" />
     </PreferenceCategory>
 </PreferenceScreen>

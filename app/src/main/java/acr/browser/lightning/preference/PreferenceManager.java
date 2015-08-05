@@ -48,6 +48,7 @@ public class PreferenceManager {
         public static final String THEME = "Theme";
         public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
         public static final String TEXT_ENCODING = "textEncoding";
+        public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -99,6 +100,10 @@ public class PreferenceManager {
 
     public boolean getClearCookiesExitEnabled() {
         return mPrefs.getBoolean(Name.CLEAR_COOKIES_EXIT, false);
+    }
+
+    public boolean getClearWebStorageExitEnabled() {
+        return mPrefs.getBoolean(Name.CLEAR_WEBSTORAGE_EXIT, false);
     }
 
     public boolean getClearHistoryExitEnabled() {
@@ -295,6 +300,10 @@ public class PreferenceManager {
 
     public void setClearCookiesExitEnabled(boolean enable) {
         putBoolean(Name.CLEAR_COOKIES_EXIT, enable);
+    }
+
+    public void setClearWebStorageExitEnabled(boolean enable) {
+        putBoolean(Name.CLEAR_WEBSTORAGE_EXIT, enable);
     }
 
     public void setClearHistoryExitEnabled(boolean enable) {
