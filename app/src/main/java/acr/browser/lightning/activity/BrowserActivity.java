@@ -1859,7 +1859,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 if (isSystemBrowserAvailable() && mPreferences.getSyncHistoryEnabled()) {
                     try {
                         Browser.updateVisitedHistory(getContentResolver(), url, true);
-                    } catch (NullPointerException ignored) {
+                    } catch (Exception ignored) {
+                        // ignored
                     }
                 }
                 try {
@@ -1890,10 +1891,9 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         String[] columns = new String[]{"url", "title"};
         boolean browserFlag;
         try {
-
             Uri bookmarks = Browser.BOOKMARKS_URI;
             c = getContentResolver().query(bookmarks, columns, null, null, null);
-        } catch (SQLiteException | IllegalStateException | NullPointerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

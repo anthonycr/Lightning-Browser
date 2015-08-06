@@ -399,7 +399,7 @@ public class BookmarkManager {
      * This method imports all bookmarks that are included in the device's
      * permanent bookmark storage
      */
-    public synchronized void importBookmarksFromBrowser(Activity activity) {
+    public synchronized void importBookmarksFromBrowser(Activity activity) throws Exception{
         if (PreferenceManager.getInstance().getSystemBrowserPresent()) {
 
             List<HistoryItem> bookmarkList = new ArrayList<>();

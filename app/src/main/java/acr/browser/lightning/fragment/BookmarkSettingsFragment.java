@@ -74,7 +74,11 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                 createDialog();
                 return true;
             case SETTINGS_BROWSER_IMPORT:
-                mBookmarkManager.importBookmarksFromBrowser(getActivity());
+                try {
+                    mBookmarkManager.importBookmarksFromBrowser(getActivity());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return true;
             default:
                 return false;

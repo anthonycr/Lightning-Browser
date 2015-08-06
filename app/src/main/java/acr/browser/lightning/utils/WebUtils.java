@@ -44,7 +44,7 @@ public class WebUtils {
         if (systemBrowserPresent) {
             try {
                 Browser.clearHistory(context.getContentResolver());
-            } catch (NullPointerException ignored) {
+            } catch (Exception ignored) {
                 // ignored
             }
         }
