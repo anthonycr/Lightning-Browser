@@ -163,19 +163,12 @@ public class ProxyUtils {
         if (mPreferences.getUseProxy()) {
             initializeProxy(activity);
         } else {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH) {
-                try {
-                    WebkitProxy.resetProxy(BrowserApp.class.getName(), activity.getApplicationContext());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    WebkitProxy.resetLollipopProxy(BrowserApp.class.getName(), activity.getApplicationContext());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                WebkitProxy.resetProxy(BrowserApp.class.getName(), activity.getApplicationContext());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
             mI2PProxyInitialized = false;
         }
     }
