@@ -6,7 +6,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionName "4.1.0a"
+        versionName "4.1.1a"
     }
     buildTypes {
         debug {
@@ -25,7 +25,7 @@ android {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
             applicationId "acr.browser.lightning"
-            versionCode 79
+            versionCode 80
         }
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
