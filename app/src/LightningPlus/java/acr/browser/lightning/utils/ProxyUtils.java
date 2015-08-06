@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -32,7 +33,7 @@ public class ProxyUtils {
         mI2PHelper = new I2PAndroidHelper(context);
     }
 
-    public static ProxyUtils getInstance(Context context) {
+    public static ProxyUtils getInstance(@NonNull Context context) {
         if (mInstance == null) {
             mInstance = new ProxyUtils(context);
         }

@@ -96,6 +96,8 @@ public final class Utils {
     }
 
     public static String getDomainName(String url) {
+        if (url == null || url.isEmpty()) return "";
+
         boolean ssl = url.startsWith(Constants.HTTPS);
         int index = url.indexOf('/', 8);
         if (index != -1) {
@@ -103,12 +105,13 @@ public final class Utils {
         }
 
         URI uri;
-        String domain = null;
+        String domain;
         try {
             uri = new URI(url);
             domain = uri.getHost();
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            domain = null;
         }
 
         if (domain == null || domain.isEmpty()) {

@@ -14,6 +14,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -244,6 +245,15 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         View v = mActivity.getLayoutInflater().inflate(R.layout.picker_manual_proxy, null);
         final EditText eProxyHost = (EditText) v.findViewById(R.id.proxyHost);
         final EditText eProxyPort = (EditText) v.findViewById(R.id.proxyPort);
+
+        // Limit the number of characters since the port needs to be of type int
+        // Use input filters to limite the EditText length and determine the max
+        // length by using length of integer MAX_VALUE
+        int maxCharacters = Integer.toString(Integer.MAX_VALUE).length();
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(maxCharacters - 1);
+        eProxyPort.setFilters(filterArray);
+
         eProxyHost.setText(mPreferences.getProxyHost());
         eProxyPort.setText(Integer.toString(mPreferences.getProxyPort()));
 
@@ -254,13 +264,19 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String proxyHost = eProxyHost.getText().toString();
-                        int proxyPort = Integer.parseInt(eProxyPort.getText().toString());
+                        int proxyPort;
+                        try {
+                            // Try/Catch in case the user types an empty string or a number
+                            // larger than max integer
+                            proxyPort = Integer.parseInt(eProxyPort.getText().toString());
+                        } catch (NumberFormatException ignored) {
+                            proxyPort = mPreferences.getProxyPort();
+                        }
                         mPreferences.setProxyHost(proxyHost);
                         mPreferences.setProxyPort(proxyPort);
                         proxy.setSummary(proxyHost + ":" + proxyPort);
                     }
-                })
-                .show();
+                }).show();
     }
 
     private void searchDialog() {

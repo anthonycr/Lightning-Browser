@@ -543,12 +543,6 @@ public class LightningView {
         }
     }
 
-    public void clearCache(boolean disk) {
-        if (mWebView != null) {
-            mWebView.clearCache(disk);
-        }
-    }
-
     public synchronized void reload() {
         // Check if configured proxy is available
         if (mBrowserController.proxyIsNotReady()) {
@@ -562,6 +556,8 @@ public class LightningView {
     }
 
     private void cacheFavicon(Bitmap icon) {
+        if (icon == null) return;
+
         String hash = String.valueOf(Utils.getDomainName(getUrl()).hashCode());
         Log.d(Constants.TAG, "Caching icon for " + Utils.getDomainName(getUrl()));
         FileOutputStream fos = null;
@@ -577,8 +573,6 @@ public class LightningView {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
     public synchronized void find(String text) {
         if (mWebView != null) {
             if (API > 16) {
