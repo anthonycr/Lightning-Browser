@@ -194,7 +194,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-    public abstract boolean isIncognito();
+    abstract boolean isIncognito();
 
     abstract void initializeTabs();
 
@@ -356,11 +356,12 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START);
-        initializeTabs();
 
         if (API <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
+
+        initializeTabs();
 
         mProxyUtils.checkForProxy(this);
     }
@@ -1227,7 +1228,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             return false;
         }
         mIsNewIntent = false;
-        LightningView startingTab = new LightningView(mActivity, url, mDarkTheme);
+        LightningView startingTab = new LightningView(mActivity, url, mDarkTheme, isIncognito());
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
@@ -1452,7 +1453,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         initializePreferences();
         for (int n = 0; n < mWebViewList.size(); n++) {
             if (mWebViewList.get(n) != null) {
-                mWebViewList.get(n).initializePreferences(this);
+                mWebViewList.get(n).initializePreferences(null, this);
             } else {
                 mWebViewList.remove(n);
             }

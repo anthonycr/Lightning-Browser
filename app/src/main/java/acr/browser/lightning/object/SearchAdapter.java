@@ -51,6 +51,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final List<HistoryItem> mSuggestions = new ArrayList<>();
     private final List<HistoryItem> mFilteredList = new ArrayList<>();
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>();
+    private final Object mLock = new Object();
     private HistoryDatabase mDatabaseHandler;
     private final Context mContext;
     private boolean mUseGoogle = true;
@@ -58,6 +59,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final boolean mDarkTheme;
     private final boolean mIncognito;
     private final BookmarkManager mBookmarkManager;
+    private static final String CACHE_FILE_TYPE = ".sgg";
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
     private static final int MAX_SUGGESTIONS = 5;
@@ -105,11 +107,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private class NameFilter implements FilenameFilter {
 
-        private static final String ext = ".sgg";
-
         @Override
         public boolean accept(File dir, String filename) {
-            return filename.endsWith(ext);
+            return filename.endsWith(CACHE_FILE_TYPE);
         }
 
     }
@@ -117,14 +117,18 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     public void refreshPreferences() {
         mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
         if (!mUseGoogle) {
-            mSuggestions.clear();
+            synchronized (mSuggestions) {
+                mSuggestions.clear();
+            }
         }
         mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
     }
 
     public void refreshBookmarks() {
-        mAllBookmarks.clear();
-        mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
+        synchronized (mLock) {
+            mAllBookmarks.clear();
+            mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
+        }
     }
 
     @Override
@@ -217,27 +221,33 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             }
 
             int counter = 0;
-            mBookmarks.clear();
-            for (int n = 0; n < mAllBookmarks.size(); n++) {
-                if (counter >= 5) {
-                    break;
-                }
-                if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
-                        .startsWith(query)) {
-                    mBookmarks.add(mAllBookmarks.get(n));
-                    counter++;
-                } else if (mAllBookmarks.get(n).getUrl().contains(query)) {
-                    mBookmarks.add(mAllBookmarks.get(n));
-                    counter++;
-                }
+            synchronized (mBookmarks) {
+                mBookmarks.clear();
+                synchronized (mLock) {
+                    for (int n = 0; n < mAllBookmarks.size(); n++) {
+                        if (counter >= 5) {
+                            break;
+                        }
+                        if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
+                                .startsWith(query)) {
+                            mBookmarks.add(mAllBookmarks.get(n));
+                            counter++;
+                        } else if (mAllBookmarks.get(n).getUrl().contains(query)) {
+                            mBookmarks.add(mAllBookmarks.get(n));
+                            counter++;
+                        }
 
+                    }
+                }
             }
             if (mDatabaseHandler == null || mDatabaseHandler.isClosed()) {
                 mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
             }
             List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(constraint.toString());
-            mHistory.clear();
-            mHistory.addAll(historyList);
+            synchronized (mHistory) {
+                mHistory.clear();
+                mHistory.addAll(historyList);
+            }
             results.count = 1;
             return results;
         }
@@ -249,10 +259,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mFilteredList.clear();
-            List<HistoryItem> filtered = getFilteredList();
-            Collections.sort(filtered, mComparator);
-            mFilteredList.addAll(filtered);
+            synchronized (mFilteredList) {
+                mFilteredList.clear();
+                List<HistoryItem> filtered = getFilteredList();
+                Collections.sort(filtered, mComparator);
+                mFilteredList.addAll(filtered);
+            }
             notifyDataSetChanged();
         }
 
@@ -320,20 +332,24 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void onPostExecute(List<HistoryItem> result) {
-            mSuggestions.clear();
-            mSuggestions.addAll(result);
-            mFilteredList.clear();
-            List<HistoryItem> filtered = getFilteredList();
-            Collections.sort(filtered, mComparator);
-            mFilteredList.addAll(filtered);
-            notifyDataSetChanged();
+            synchronized (mSuggestions) {
+                mSuggestions.clear();
+                mSuggestions.addAll(result);
+            }
+            synchronized (mFilteredList) {
+                mFilteredList.clear();
+                List<HistoryItem> filtered = getFilteredList();
+                Collections.sort(filtered, mComparator);
+                mFilteredList.addAll(filtered);
+                notifyDataSetChanged();
+            }
             mIsExecuting = false;
         }
 
     }
 
     private File downloadSuggestionsForQuery(String query) {
-        File cacheFile = new File(mContext.getCacheDir(), query.hashCode() + ".sgg");
+        File cacheFile = new File(mContext.getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
@@ -410,23 +426,28 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private List<HistoryItem> getFilteredList() {
         List<HistoryItem> list = new ArrayList<>();
-        Iterator<HistoryItem> bookmark = mBookmarks.iterator();
-        Iterator<HistoryItem> history = mHistory.iterator();
-        Iterator<HistoryItem> suggestion = mSuggestions.listIterator();
-        while (list.size() < MAX_SUGGESTIONS) {
-            if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
-                return list;
+        synchronized (mBookmarks) {
+            synchronized (mHistory) {
+                synchronized (mSuggestions) {
+                    Iterator<HistoryItem> bookmark = mBookmarks.iterator();
+                    Iterator<HistoryItem> history = mHistory.iterator();
+                    Iterator<HistoryItem> suggestion = mSuggestions.listIterator();
+                    while (list.size() < MAX_SUGGESTIONS) {
+                        if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
+                            return list;
+                        }
+                        if (bookmark.hasNext()) {
+                            list.add(bookmark.next());
+                        }
+                        if (suggestion.hasNext() && list.size() < MAX_SUGGESTIONS) {
+                            list.add(suggestion.next());
+                        }
+                        if (history.hasNext() && list.size() < MAX_SUGGESTIONS) {
+                            list.add(history.next());
+                        }
+                    }
+                }
             }
-            if (bookmark.hasNext()) {
-                list.add(bookmark.next());
-            }
-            if (suggestion.hasNext() && list.size() < MAX_SUGGESTIONS) {
-                list.add(suggestion.next());
-            }
-            if (history.hasNext() && list.size() < MAX_SUGGESTIONS) {
-                list.add(history.next());
-            }
-
         }
         return list;
     }

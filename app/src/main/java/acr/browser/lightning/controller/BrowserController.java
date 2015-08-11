@@ -50,8 +50,6 @@ public interface BrowserController {
 
     void closeEmptyTab();
 
-    boolean isIncognito();
-
     boolean proxyIsNotReady();
 
     void updateBookmarkIndicator(String url);

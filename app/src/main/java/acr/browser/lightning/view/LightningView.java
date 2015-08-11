@@ -69,10 +69,10 @@ public class LightningView {
 
     private final Title mTitle;
     private WebView mWebView;
+    private boolean mIsIncognitoTab;
     private BrowserController mBrowserController;
     private GestureDetector mGestureDetector;
     private final Activity mActivity;
-    private WebSettings mSettings;
     private static String mHomepage;
     private static String mDefaultUserAgent;
     private static Bitmap mWebpageBitmap;
@@ -93,10 +93,11 @@ public class LightningView {
             0, 0, 0, 1.0f, 0 // alpha
     };
 
-    public LightningView(Activity activity, String url, boolean darkTheme) {
+    public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
 
         mActivity = activity;
         mWebView = new WebView(activity);
+        mIsIncognitoTab = isIncognito;
         mTitle = new Title(activity, darkTheme);
         mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
 
@@ -134,9 +135,8 @@ public class LightningView {
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
         mDefaultUserAgent = mWebView.getSettings().getUserAgentString();
-        mSettings = mWebView.getSettings();
         initializeSettings(mWebView.getSettings(), activity);
-        initializePreferences(activity);
+        initializePreferences(mWebView.getSettings(), activity);
 
         if (url != null) {
             if (!url.trim().isEmpty()) {
@@ -155,6 +155,12 @@ public class LightningView {
         }
     }
 
+    /**
+     * This method builds the homepage and returns the local URL to be loaded
+     * when it finishes building.
+     *
+     * @return the URL to load
+     */
     private String getHomepage() {
         StringBuilder homepageBuilder = new StringBuilder();
         homepageBuilder.append(StartPage.HEAD);
@@ -252,35 +258,42 @@ public class LightningView {
         return Constants.FILE + homepage;
     }
 
-    public synchronized void initializePreferences(Context context) {
+    /**
+     * Initialize the preference driven settings of the WebView
+     *
+     * @param settings the WebSettings object to use, you can pass in null
+     *                 if you don't have a reference to them
+     * @param context the context in which the WebView was created
+     */
+    public synchronized void initializePreferences(@Nullable WebSettings settings, Context context) {
+        if (settings == null && mWebView == null) {
+            return;
+        } else if (settings == null) {
+            settings = mWebView.getSettings();
+        }
         mPreferences = PreferenceManager.getInstance();
 
-        mSettings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
+        settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
         mHomepage = mPreferences.getHomepage();
         mAdBlock.updatePreference();
-        if (mSettings == null && mWebView != null) {
-            mSettings = mWebView.getSettings();
-        } else if (mSettings == null) {
-            return;
-        }
 
         setColorMode(mPreferences.getRenderingMode());
 
-        if (!mBrowserController.isIncognito()) {
-            mSettings.setGeolocationEnabled(mPreferences.getLocationEnabled());
+        if (!mIsIncognitoTab) {
+            settings.setGeolocationEnabled(mPreferences.getLocationEnabled());
         } else {
-            mSettings.setGeolocationEnabled(false);
+            settings.setGeolocationEnabled(false);
         }
         if (API < 19) {
             switch (mPreferences.getFlashSupport()) {
                 case 0:
-                    mSettings.setPluginState(PluginState.OFF);
+                    settings.setPluginState(PluginState.OFF);
                     break;
                 case 1:
-                    mSettings.setPluginState(PluginState.ON_DEMAND);
+                    settings.setPluginState(PluginState.ON_DEMAND);
                     break;
                 case 2:
-                    mSettings.setPluginState(PluginState.ON);
+                    settings.setPluginState(PluginState.ON);
                     break;
                 default:
                     break;
@@ -289,29 +302,29 @@ public class LightningView {
 
         setUserAgent(context, mPreferences.getUserAgentChoice());
 
-        if (mPreferences.getSavePasswordsEnabled() && !mBrowserController.isIncognito()) {
+        if (mPreferences.getSavePasswordsEnabled() && !mIsIncognitoTab) {
             if (API < 18) {
-                mSettings.setSavePassword(true);
+                settings.setSavePassword(true);
             }
-            mSettings.setSaveFormData(true);
+            settings.setSaveFormData(true);
         } else {
             if (API < 18) {
-                mSettings.setSavePassword(false);
+                settings.setSavePassword(false);
             }
-            mSettings.setSaveFormData(false);
+            settings.setSaveFormData(false);
         }
 
         if (mPreferences.getJavaScriptEnabled()) {
-            mSettings.setJavaScriptEnabled(true);
-            mSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+            settings.setJavaScriptEnabled(true);
+            settings.setJavaScriptCanOpenWindowsAutomatically(true);
         }
 
         if (mPreferences.getTextReflowEnabled()) {
             mTextReflow = true;
-            mSettings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
+            settings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
             if (API >= android.os.Build.VERSION_CODES.KITKAT) {
                 try {
-                    mSettings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+                    settings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
                 } catch (Exception e) {
                     // This shouldn't be necessary, but there are a number
                     // of KitKat devices that crash trying to set this
@@ -320,31 +333,35 @@ public class LightningView {
             }
         } else {
             mTextReflow = false;
-            mSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
+            settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
         }
 
-        mSettings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
-        mSettings.setSupportMultipleWindows(mPreferences.getPopupsEnabled());
-        mSettings.setUseWideViewPort(mPreferences.getUseWideViewportEnabled());
-        mSettings.setLoadWithOverviewMode(mPreferences.getOverviewModeEnabled());
+        settings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
+        if (!mIsIncognitoTab) {
+            settings.setSupportMultipleWindows(mPreferences.getPopupsEnabled());
+        } else {
+            settings.setSupportMultipleWindows(false);
+        }
+        settings.setUseWideViewPort(mPreferences.getUseWideViewportEnabled());
+        settings.setLoadWithOverviewMode(mPreferences.getOverviewModeEnabled());
         switch (mPreferences.getTextSize()) {
             case 0:
-                mSettings.setTextZoom(200);
+                settings.setTextZoom(200);
                 break;
             case 1:
-                mSettings.setTextZoom(150);
+                settings.setTextZoom(150);
                 break;
             case 2:
-                mSettings.setTextZoom(125);
+                settings.setTextZoom(125);
                 break;
             case 3:
-                mSettings.setTextZoom(100);
+                settings.setTextZoom(100);
                 break;
             case 4:
-                mSettings.setTextZoom(75);
+                settings.setTextZoom(75);
                 break;
             case 5:
-                mSettings.setTextZoom(50);
+                settings.setTextZoom(50);
                 break;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -353,6 +370,13 @@ public class LightningView {
         }
     }
 
+    /**
+     * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
+     * be altered by the user. Distinguish between Incognito and Regular tabs here.
+     *
+     * @param settings the WebSettings object to use.
+     * @param context the Context which was used to construct the WebView.
+     */
     private void initializeSettings(WebSettings settings, Context context) {
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -363,16 +387,23 @@ public class LightningView {
         if (API > Build.VERSION_CODES.JELLY_BEAN) {
             settings.setMediaPlaybackRequiresUserGesture(true);
         }
-        if (API >= Build.VERSION_CODES.LOLLIPOP && !mBrowserController.isIncognito()) {
+        if (API >= Build.VERSION_CODES.LOLLIPOP && !mIsIncognitoTab) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         } else if (API >= Build.VERSION_CODES.LOLLIPOP) {
             // We're in Incognito mode, reject
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
-        settings.setDomStorageEnabled(true);
-        settings.setAppCacheEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setDatabaseEnabled(true);
+        if (!mIsIncognitoTab) {
+            settings.setDomStorageEnabled(true);
+            settings.setAppCacheEnabled(true);
+            settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+            settings.setDatabaseEnabled(true);
+        } else {
+            settings.setDomStorageEnabled(false);
+            settings.setAppCacheEnabled(false);
+            settings.setDatabaseEnabled(false);
+            settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        }
         settings.setSupportZoom(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
@@ -401,22 +432,24 @@ public class LightningView {
     }
 
     public void setUserAgent(Context context, int choice) {
+        if (mWebView == null) return;
+        WebSettings settings = mWebView.getSettings();
         switch (choice) {
             case 1:
                 if (API > 16) {
-                    mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
+                    settings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
                 } else {
-                    mSettings.setUserAgentString(mDefaultUserAgent);
+                    settings.setUserAgentString(mDefaultUserAgent);
                 }
                 break;
             case 2:
-                mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
+                settings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
                 break;
             case 3:
-                mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
+                settings.setUserAgentString(Constants.MOBILE_USER_AGENT);
                 break;
             case 4:
-                mSettings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
+                settings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
                 break;
         }
     }
@@ -854,7 +887,7 @@ public class LightningView {
                 return true;
             }
 
-            if (mBrowserController.isIncognito()) {
+            if (mIsIncognitoTab) {
                 return super.shouldOverrideUrlLoading(view, url);
             }
             if (url.startsWith("about:")) {
