@@ -998,8 +998,7 @@ public class LightningView {
 
         @Override
         public void onCloseWindow(WebView window) {
-            // TODO Auto-generated method stub
-            super.onCloseWindow(window);
+            mBrowserController.onCloseWindow(LightningView.this);
         }
 
         public void openFileChooser(ValueCallback<Uri> uploadMsg) {

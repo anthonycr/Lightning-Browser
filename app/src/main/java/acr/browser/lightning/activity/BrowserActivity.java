@@ -2369,6 +2369,15 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     /**
+     * Closes the specified view, implementing the JavaScript callback to close a window
+     * @param view the LightningView to close
+     */
+    @Override
+    public void onCloseWindow(LightningView view) {
+        deleteTab(mWebViewList.indexOf(view));
+    }
+
+    /**
      * returns the Activity instance for this activity,
      * very helpful when creating things in other classes... I think
      */

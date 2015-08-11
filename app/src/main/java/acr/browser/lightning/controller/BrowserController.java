@@ -12,6 +12,8 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebView;
 
+import acr.browser.lightning.view.LightningView;
+
 public interface BrowserController {
 
     void updateUrl(String title, boolean shortUrl);
@@ -35,6 +37,8 @@ public interface BrowserController {
     View getVideoLoadingProgressView();
 
     void onCreateWindow(Message resultMsg);
+
+    void onCloseWindow(LightningView view);
 
     Activity getActivity();
 
