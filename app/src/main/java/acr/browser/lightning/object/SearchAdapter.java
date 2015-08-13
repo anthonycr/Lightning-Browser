@@ -90,6 +90,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
+        delete.setPriority(Thread.MIN_PRIORITY);
         delete.start();
     }
 

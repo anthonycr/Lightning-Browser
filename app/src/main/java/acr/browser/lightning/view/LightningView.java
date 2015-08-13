@@ -317,6 +317,9 @@ public class LightningView {
         if (mPreferences.getJavaScriptEnabled()) {
             settings.setJavaScriptEnabled(true);
             settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        } else {
+            settings.setJavaScriptEnabled(false);
+            settings.setJavaScriptCanOpenWindowsAutomatically(false);
         }
 
         if (mPreferences.getTextReflowEnabled()) {
@@ -707,12 +710,12 @@ public class LightningView {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 if (mAdBlock.isAd(request.getUrl().getHost())) {
                     ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
                     return new WebResourceResponse("text/plain", "utf-8", EMPTY);
                 }
-
+            }
             return super.shouldInterceptRequest(view, request);
         }
 
