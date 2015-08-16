@@ -711,7 +711,7 @@ public class LightningView {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (mAdBlock.isAd(request.getUrl().getHost())) {
+                if (mAdBlock.isAd(request.getUrl().toString())) {
                     ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
                     return new WebResourceResponse("text/plain", "utf-8", EMPTY);
                 }

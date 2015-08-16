@@ -20,6 +20,13 @@ public class AdBlock {
 
     private static final String TAG = "AdBlock";
     private static final String BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt";
+    private static final String LOCAL_IP_V4 = "127.0.0.1";
+    private static final String LOCAL_IP_V6 = "::1";
+    private static final String LOCALHOST = "localhost";
+    private static final String COMMENT = "#";
+    private static final String TAB = "\t";
+    private static final String SPACE = " ";
+    private static final String EMPTY = "";
     private static final Set<String> mBlockedDomainsList = new HashSet<>();
     private boolean mBlockAds;
     private static final Locale mLocale = Locale.getDefault();
@@ -34,7 +41,7 @@ public class AdBlock {
 
     private AdBlock(Context context) {
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
-            loadBlockedDomainsList(context);
+            loadHostsFile(context);
         }
         mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
     }
@@ -98,5 +105,45 @@ public class AdBlock {
         }
 
         return domain.startsWith("www.") ? domain.substring(4) : domain;
+    }
+
+    private void loadHostsFile(final Context context) {
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                AssetManager asset = context.getAssets();
+                BufferedReader reader = null;
+                try {
+                    reader = new BufferedReader(new InputStreamReader(
+                            asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (!line.isEmpty() && !line.startsWith(COMMENT)) {
+                            line = line.replace(LOCAL_IP_V4, EMPTY).replace(LOCAL_IP_V6, EMPTY).replace(TAB, EMPTY);
+                            int comment = line.indexOf(COMMENT);
+                            if (comment >= 0) {
+                                line = line.substring(0, comment);
+                            }
+                            line = line.trim();
+                            if (!line.isEmpty() && !line.equals(LOCALHOST)) {
+                                while (line.contains(SPACE)) {
+                                    String host = line.substring(0, line.indexOf(SPACE));
+                                    mBlockedDomainsList.add(host.trim());
+                                    line = line.substring(line.indexOf(SPACE), line.length()).trim();
+                                }
+                                mBlockedDomainsList.add(line.trim());
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    Log.wtf(TAG, "Reading blocked domains list from file '"
+                            + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
+                } finally {
+                    Utils.close(reader);
+                }
+            }
+        });
+        thread.start();
     }
 }
