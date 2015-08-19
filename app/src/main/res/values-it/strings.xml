@@ -33,7 +33,7 @@
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
-    <string name="clear_cookies">Cancella i cookies del browser</string>
+    <string name="clear_cookies">Cancella i cookies</string>
     <string name="dialog_image">Cosa vorresti fare con questa immagine?</string>
     <string name="action_download">Scarica</string>
     <string name="action_open">Apri</string>
@@ -100,10 +100,10 @@
     <string name="name_grayscale">Scala di grigi</string>
     <string name="name_inverted_grayscale">Scala di grigi inversa</string>
     <string name="name_normal">Normale</string>
-    <string name="clear_cookies_exit">Elimina i cookies alla chiusura</string>
-    <string name="clear_history_exit">Elimina la cronologia alla chiusura</string>
-    <string name="title_clear_history">Cancella Cronologia</string>
-    <string name="title_clear_cookies">Cancella Cookies</string>
+    <string name="clear_cookies_exit">Cancella i cookies alla chiusura</string>
+    <string name="clear_history_exit">Cancella la cronologia alla chiusura</string>
+    <string name="title_clear_history">Cancella la cronologia</string>
+    <string name="title_clear_cookies">Cancella i cookies</string>
     <string name="google_suggestions">Suggerimenti di ricerca</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="licenses">Licenze Open Source</string>
@@ -117,11 +117,26 @@
         <item >Titolo</item>
     </string-array>
     <string name="invert_color">Inverti colori</string>
-    <string name="dark_theme">Usa il tema scuro</string>
-    <string name="close_tab">Chiudi la scheda</string>
-    <string name="close_all_tabs">Chiudi tute le schede</string>
-    <string name="third_party">Blocca cookies di terze parti.</string>
-    <string name="color_mode">Attiva la modalità a colori.</string>
-    <string name="reading_mode">Modalità reader</string>
+    <string name="dark_theme">Tema Scuro</string>
+    <string name="change_after_restart">La modifica del tema avrà effetto al prossimo riavvio del browser.</string>
+    <string name="tabs">Schede</string>
+    <string name="theme">Temi</string>
+    <string name="light_theme">Tema Chiaro</string>
+    <string name="black_theme">Tema Nero (AMOLED)</string>
+    <string name="folder">Nomne Cartella</string>
+    <string name="action_folder">Cartella</string>
+    <string name="action_rename">Rinomina</string>
+    <string name="title_rename_folder">Rinomina Cartellar</string>
+    <string name="dialog_folder">Cosa vorresti fare con questa cartella?</string>
+    <string name="clear_web_storage">Clear Web Storage</string>
+    <string name="clear_web_storage_exit">Clear web storage on exit</string>
+    <string name="message_web_storage_cleared">Web Storage Cleared</string
+        <string name="http_proxy">Proxy HTTP</string>
+    <string-array name="proxy_choices_array">
+        <item>Nessuno</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manuale</item>
+    </string-array>
     
 </resources>
