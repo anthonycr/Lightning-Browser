@@ -1487,7 +1487,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         boolean containsPeriod = query.contains(".");
         boolean isIPAddress = (TextUtils.isDigitsOnly(query.replace(".", ""))
                 && (query.replace(".", "").length() >= 4) && query.contains("."));
-        boolean aboutScheme = query.contains("about:");
+        boolean aboutScheme = query.startsWith("about:");
         boolean validURL = (query.startsWith("ftp://") || query.startsWith(Constants.HTTP)
                 || query.startsWith(Constants.FILE) || query.startsWith(Constants.HTTPS))
                 || isIPAddress;
