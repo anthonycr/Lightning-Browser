@@ -51,6 +51,11 @@
 * Please contribute code back if you can. The code isn't perfect.
 * Please add translations/translation fixes as you see need
 
+####Contributing
+* Contributions are always welcome
+* If you want a feature and can code, feel free to fork and add the change yourself and make a pull request
+* PLEASE use the ````dev```` branch when contributing as the ````master```` branch is supposed to be for stable builds. I will not reject your pull request if you make it on master, but it will annoy me and make my life harder.
+
 ####Setting Up the Project
 Due to the inclusion of the netcipher library for Orbot proxy support, importing the project will show you some errors. To fix this, first run the following git command in your project folder (NOTE: You need the git command installed to use this):
 ````
