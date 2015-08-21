@@ -17,10 +17,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Apri drawer navigazione</string>
-    <string name="drawer_close">Chiudi drawer navigazione</string>
-    <string name="action_websearch">Ricerca web</string>
-    <string name="action_refresh">Ricarica</string>
     <string name="action_new_tab">Nuova scheda</string>
     <string name="action_share">Condividi</string>
     <string name="action_history">Cronologia</string>
@@ -28,26 +24,17 @@
     <string name="action_add_bookmark">Aggiungi segnalibro</string>
     <string name="action_copy">Copia link</string>
     <string name="action_forward">Avanti</string>
-    <string name="google">Google</string>
     <string name="settings">Impostazioni del browser</string>
     <string name="location">Accesso alla posizione</string>
     <string name="password">Salva Password</string>
     <string name="agent">User Agent</string>
     <string name="flash">Abilita Adobe Flash</string>
     <string name="home">Homepage</string>
-    <string name="settingshelp">Impostazioni valgono solo per le nuove schede</string>
     <string name="fullscreen">Mod. Schermo intero</string>
     <string name="java">Abilita JavaScript</string>
-    <string name="saveTab">Ripristina le schede se vengono perse</string>
-    <string name="settings_title">Impostazioni</string>
     <string name="download">Percorso download</string>
     <string name="settings_advanced">Impostazioni avanzate</string>
-    <string name="source">Codice sorgente</string>
-    <string name="license">Licenza</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Licenza Apache 2.0</string>
-    <string name="title_activity_new_settings">NuoveImpostazioni</string>
-    <string name="action_settings">Impostazioni</string>
     <string name="version">Versione Applicazione</string>
     <string name="cache">Pulisci la cache alla chiusura</string>
     <string name="reflow">Abilità reflow del testo</string>
@@ -83,13 +70,10 @@
     <string name="dialog_download">Vuoi scaricare questo file?</string>
     <string name="action_cancel">Annulla</string>
     <string name="title_warning">Attenzione</string>
-    <string name="dialog_adobe_dead">Spiacenti, Google ha fatto alcune modifiche e Adobe Flash non funziona più in Android 4.4+</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player non rilevato.\nSi prega di installare Flash Player.</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash non supporta Android 4.2 o superiori e bloccherà il browser. Per favore non segnalare alcun errore riscontrato quando attivi Flash.</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Percorso download</string>
     <string name="title_custom_homepage">Homepage personale</string>
-    <string name="dialog_reflow_warning">Spiacenti, Google ha fatto alcune modifiche e il reflow del testo non funziona più in Android 4.4+</string>
     <string name="title_clear_history">Cancella cronologia</string>
     <string name="title_clear_cookies">Cancella i cookie</string>
     <string name="dialog_history">Vorresti eliminare tutta la cronologia del browser?</string>
@@ -147,8 +131,6 @@
     <string name="hint_password">Password</string>
     <string name="google_suggestions">Suggerimenti di ricerca</string>
     <string name="powered_by_google">In collaborazione con Google</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">AdBlock è disponibile solo nella versione a pagamento del browser, Lightning Browser+. È disponibile da scaricare in Google Play.</string>
     <string name="manual_proxy">Proxy manuale</string>
     <string name="host">Host:</string>
     <string name="port">Porta:</string>
@@ -194,7 +176,6 @@
     <string name="close_tab">Chiudi scheda</string>
     <string name="close_all_tabs">Chiudi tutte le schede</string>
     <string name="third_party">Blocca i cookie di terze parti</string>
-    <string name="available_lollipop">Questa funzione è disponibile solo in Android 5.0+</string>
     <string name="color_mode">Attiva modalità colore</string>
     <string name="reading_mode">Modalità lettura</string>
     <string name="loading">Caricamento&#8230;</string>
@@ -210,7 +191,6 @@
     </string-array>
     <string name="invert_color">Inverti colori</string>
     <string name="dark_theme">Tema Scuro</string>
-    <string name="change_after_restart">La modifica del tema avrà effetto al prossimo riavvio del browser.</string>
     <string name="tabs">Schede</string>
     <string name="theme">Temi</string>
     <string name="light_theme">Tema Chiaro</string>
