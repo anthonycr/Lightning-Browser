@@ -385,12 +385,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return cacheFile;
     }
 
-    private boolean isNetworkConnected(Context context) {
+    private static boolean isNetworkConnected(Context context) {
         NetworkInfo networkInfo = getActiveNetworkInfo(context);
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    private NetworkInfo getActiveNetworkInfo(Context context) {
+    private static NetworkInfo getActiveNetworkInfo(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {

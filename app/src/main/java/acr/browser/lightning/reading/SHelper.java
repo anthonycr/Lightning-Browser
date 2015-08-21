@@ -328,12 +328,12 @@ public class SHelper {
             sb.append(' ');
         }
         sb.append(root.tagName());
-        sb.append(":");
+        sb.append(':');
         sb.append(root.ownText());
-        sb.append("\n");
+        sb.append('\n');
         for (Element el : root.children()) {
             sb.append(printNode(el, indentation + 1));
-            sb.append("\n");
+            sb.append('\n');
         }
         return sb.toString();
     }
@@ -392,8 +392,7 @@ public class SHelper {
         if (year < 0)
             return null;
 
-        StringBuilder str = new StringBuilder();
-        str.append(year);
+        StringBuilder str = new StringBuilder(year);
         if (month < 1)
             return str.toString();
 

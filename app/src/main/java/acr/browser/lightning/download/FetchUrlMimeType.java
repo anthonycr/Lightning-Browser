@@ -57,7 +57,7 @@ public class FetchUrlMimeType extends Thread {
         try {
             URL url = new URL(mUri);
             connection = (HttpURLConnection) url.openConnection();
-            if (mCookies != null && mCookies.length() > 0) {
+            if (mCookies != null && !mCookies.isEmpty()) {
                 connection.addRequestProperty("Cookie", mCookies);
                 connection.setRequestProperty("User-Agent", mUserAgent);
             }

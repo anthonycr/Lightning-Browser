@@ -74,7 +74,7 @@ public class HtmlFetcher {
     }
 
     private String referrer = "https://github.com/karussell/snacktory";
-    private String userAgent = "Mozilla/5.0 (compatible; Snacktory; +" + referrer + ")";
+    private String userAgent = "Mozilla/5.0 (compatible; Snacktory; +" + referrer + ')';
     private String cacheControl = "max-age=0";
     private String language = "en-us";
     private String accept = "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
@@ -308,9 +308,9 @@ public class HtmlFetcher {
         hConn.setInstanceFollowRedirects(true);
         String encoding = hConn.getContentEncoding();
         InputStream is;
-        if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
+        if ("gzip".equalsIgnoreCase(encoding)) {
             is = new GZIPInputStream(hConn.getInputStream());
-        } else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
+        } else if ("deflate".equalsIgnoreCase(encoding)) {
             is = new InflaterInputStream(hConn.getInputStream(), new Inflater(true));
         } else {
             is = hConn.getInputStream();

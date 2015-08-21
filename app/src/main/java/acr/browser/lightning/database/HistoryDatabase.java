@@ -50,9 +50,9 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + "(" + KEY_ID
+        String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + '(' + KEY_ID
                 + " INTEGER PRIMARY KEY," + KEY_URL + " TEXT," + KEY_TITLE + " TEXT,"
-                + KEY_TIME_VISITED + " INTEGER" + ")";
+                + KEY_TIME_VISITED + " INTEGER" + ')';
         db.execSQL(CREATE_HISTORY_TABLE);
     }
 

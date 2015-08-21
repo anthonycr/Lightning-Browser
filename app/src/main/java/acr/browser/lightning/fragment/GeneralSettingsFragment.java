@@ -102,7 +102,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
         int choice = mPreferences.getProxyChoice();
         if (choice == Constants.PROXY_MANUAL) {
-            proxy.setSummary(mPreferences.getProxyHost() + ":" + mPreferences.getProxyPort());
+            proxy.setSummary(mPreferences.getProxyHost() + ':' + mPreferences.getProxyPort());
         } else {
             proxy.setSummary(mProxyChoices[choice]);
         }
@@ -279,7 +279,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                         }
                         mPreferences.setProxyHost(proxyHost);
                         mPreferences.setProxyPort(proxyPort);
-                        proxy.setSummary(proxyHost + ":" + proxyPort);
+                        proxy.setSummary(proxyHost + ':' + proxyPort);
                     }
                 }).show();
     }

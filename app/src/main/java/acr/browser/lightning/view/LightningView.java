@@ -69,14 +69,14 @@ public class LightningView {
 
     private final Title mTitle;
     private WebView mWebView;
-    private boolean mIsIncognitoTab;
+    private final boolean mIsIncognitoTab;
     private BrowserController mBrowserController;
     private GestureDetector mGestureDetector;
     private final Activity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
     // TODO fix so that mWebpageBitmap can be static - static changes the icon when switching from light to dark and then back to light
-    private Bitmap mWebpageBitmap;
+    private final Bitmap mWebpageBitmap;
     private static PreferenceManager mPreferences;
     private final AdBlock mAdBlock;
     private IntentUtils mIntentUtils;
@@ -163,8 +163,7 @@ public class LightningView {
      * @return the URL to load
      */
     private String getHomepage() {
-        StringBuilder homepageBuilder = new StringBuilder();
-        homepageBuilder.append(StartPage.HEAD);
+        StringBuilder homepageBuilder = new StringBuilder(StartPage.HEAD);
         String icon;
         String searchUrl;
         switch (mPreferences.getSearchChoice()) {
@@ -440,7 +439,7 @@ public class LightningView {
         WebSettings settings = mWebView.getSettings();
         switch (choice) {
             case 1:
-                if (API > 16) {
+                if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     settings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
                 } else {
                     settings.setUserAgentString(mDefaultUserAgent);
@@ -612,7 +611,7 @@ public class LightningView {
 
     public synchronized void find(String text) {
         if (mWebView != null) {
-            if (API > 16) {
+            if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 mWebView.findAllAsync(text);
             } else {
                 mWebView.findAll(text);

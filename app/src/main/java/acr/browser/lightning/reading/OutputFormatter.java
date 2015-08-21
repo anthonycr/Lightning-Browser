@@ -138,9 +138,9 @@ public class OutputFormatter {
             } else if (child instanceof Element) {
                 Element element = (Element) child;
                 if (accum.length() > 0 && element.isBlock() && !lastCharIsWhitespace(accum))
-                    accum.append(" ");
+                    accum.append(' ');
                 else if (element.tagName().equals("br"))
-                    accum.append(" ");
+                    accum.append(' ');
                 appendTextSkipHidden(element, accum);
             }
         }
@@ -166,6 +166,6 @@ public class OutputFormatter {
     }
 
     public OutputFormatter appendUnlikelyPattern(String str) {
-        return setUnlikelyPattern(unlikelyPattern.toString() + "|" + str);
+        return setUnlikelyPattern(unlikelyPattern.toString() + '|' + str);
     }
 }

@@ -71,7 +71,7 @@ public class Converter {
         }
 
         // http1.1 says ISO-8859-1 is the default charset
-        if (charset.length() == 0)
+        if (charset.isEmpty())
             charset = ISO;
 
         return charset;
@@ -133,7 +133,7 @@ public class Converter {
             } catch (UnsupportedEncodingException e) {
                 Log.d(Constants.TAG,
                         "Using default encoding:" + UTF8 + " problem:" + e.getMessage()
-                                + " encoding:" + encoding + " " + url);
+                                + " encoding:" + encoding + ' ' + url);
                 encoding = UTF8;
             }
 
@@ -237,7 +237,7 @@ public class Converter {
                     return tmpEnc;
                 } catch (IOException ex) {
                     Log.e(Constants.TAG, "Couldn't reset stream to re-read with new encoding "
-                            + tmpEnc + " " + ex.toString());
+                            + tmpEnc + ' ' + ex.toString());
                 }
             }
         }

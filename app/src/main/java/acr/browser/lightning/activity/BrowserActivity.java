@@ -980,8 +980,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mIsNewIntent = false;
-            showTab(mWebViewList.get(position));
+            if (mCurrentView != mWebViewList.get(position)) {
+                mIsNewIntent = false;
+                showTab(mWebViewList.get(position));
+            }
         }
     }
 
@@ -2113,7 +2115,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void buildBookmarkPage(final String folder, final List<HistoryItem> list) {
         File bookmarkWebPage;
-        if (folder == null || folder.length() == 0) {
+        if (folder == null || folder.isEmpty()) {
             bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
         } else {
             bookmarkWebPage = new File(mActivity.getFilesDir(), folder + '-' + BookmarkPage.FILENAME);

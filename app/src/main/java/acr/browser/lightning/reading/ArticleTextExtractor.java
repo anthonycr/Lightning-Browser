@@ -66,7 +66,7 @@ public class ArticleTextExtractor {
     }
 
     public ArticleTextExtractor addUnlikely(String unlikelyMatches) {
-        return setUnlikely(unlikelyStr + "|" + unlikelyMatches);
+        return setUnlikely(unlikelyStr + '|' + unlikelyMatches);
     }
 
     public ArticleTextExtractor setPositive(String positiveStr) {
@@ -76,7 +76,7 @@ public class ArticleTextExtractor {
     }
 
     public ArticleTextExtractor addPositive(String pos) {
-        return setPositive(positiveStr + "|" + pos);
+        return setPositive(positiveStr + '|' + pos);
     }
 
     public ArticleTextExtractor setNegative(String negativeStr) {
@@ -86,7 +86,7 @@ public class ArticleTextExtractor {
     }
 
     public ArticleTextExtractor addNegative(String neg) {
-        setNegative(negativeStr + "|" + neg);
+        setNegative(negativeStr + '|' + neg);
         return this;
     }
 
@@ -590,7 +590,7 @@ public class ArticleTextExtractor {
                 continue;
 
             if (counter > 0)
-                res.append("|");
+                res.append('|');
 
             res.append(part);
             counter++;

@@ -21,10 +21,10 @@ import info.guardianproject.netcipher.web.WebkitProxy;
  */
 public class ProxyUtils {
     // Helper
-    private static I2PAndroidHelper mI2PHelper;
+    private I2PAndroidHelper mI2PHelper;
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
-    private static PreferenceManager mPreferences;
+    private PreferenceManager mPreferences;
     private static ProxyUtils mInstance;
 
     private ProxyUtils(Context context) {

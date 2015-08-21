@@ -38,9 +38,9 @@ public class BookmarkManager {
     private static final String FOLDER = "folder";
     private static final String ORDER = "order";
     private static final String FILE_BOOKMARKS = "bookmarks.dat";
-    private static Set<String> mBookmarkSearchSet = new HashSet<>();
-    private static final List<HistoryItem> mBookmarkList = new ArrayList<>();
-    private static String mCurrentFolder = "";
+    private Set<String> mBookmarkSearchSet = new HashSet<>();
+    private final List<HistoryItem> mBookmarkList = new ArrayList<>();
+    private String mCurrentFolder = "";
     private static BookmarkManager mInstance;
 
     public static BookmarkManager getInstance(Context context) {
@@ -145,7 +145,7 @@ public class BookmarkManager {
      * @param newName the new name of the folder
      */
     public synchronized void renameFolder(@NonNull String oldName, @NonNull String newName) {
-        if (newName.length() == 0) {
+        if (newName.isEmpty()) {
             return;
         }
         for (int n = 0; n < mBookmarkList.size(); n++) {
@@ -194,11 +194,11 @@ public class BookmarkManager {
             mBookmarkSearchSet.remove(oldItem.getUrl());
             mBookmarkSearchSet.add(newItem.getUrl());
         }
-        if (newItem.getUrl().length() == 0) {
+        if (newItem.getUrl().isEmpty()) {
             deleteBookmark(oldItem);
             return;
         }
-        if (newItem.getTitle().length() == 0) {
+        if (newItem.getTitle().isEmpty()) {
             newItem.setTitle(mContext.getString(R.string.untitled));
         }
         overwriteBookmarks(mBookmarkList);
@@ -289,7 +289,7 @@ public class BookmarkManager {
      */
     public synchronized List<HistoryItem> getBookmarksFromFolder(String folder, boolean sort) {
         List<HistoryItem> bookmarks = new ArrayList<>();
-        if (folder == null || folder.length() == 0) {
+        if (folder == null || folder.isEmpty()) {
             bookmarks.addAll(getFolders(sort));
             folder = "";
         }
@@ -310,7 +310,7 @@ public class BookmarkManager {
      * @return returns true if you are in the root folder
      */
     public boolean isRootFolder() {
-        return mCurrentFolder.length() == 0;
+        return mCurrentFolder.isEmpty();
     }
 
     /**
@@ -318,7 +318,7 @@ public class BookmarkManager {
      *
      * @return a sorted map of all bookmarks, useful for seeing if a bookmark exists
      */
-    private static Set<String> getBookmarkUrls(List<HistoryItem> list) {
+    private Set<String> getBookmarkUrls(List<HistoryItem> list) {
         Set<String> set = new HashSet<>();
         for (int n = 0; n < list.size(); n++) {
             if (!mBookmarkList.get(n).isFolder())

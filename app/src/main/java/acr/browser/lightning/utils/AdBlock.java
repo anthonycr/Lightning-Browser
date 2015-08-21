@@ -28,7 +28,7 @@ public class AdBlock {
     private static final String TAB = "\t";
     private static final String SPACE = " ";
     private static final String EMPTY = "";
-    private static final Set<String> mBlockedDomainsList = new HashSet<>();
+    private final Set<String> mBlockedDomainsList = new HashSet<>();
     private boolean mBlockAds;
     private static final Locale mLocale = Locale.getDefault();
     private static AdBlock mInstance;

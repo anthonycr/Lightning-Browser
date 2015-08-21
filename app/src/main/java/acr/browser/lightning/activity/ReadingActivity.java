@@ -89,7 +89,7 @@ public class ReadingActivity extends AppCompatActivity {
         }
     }
 
-    private float getTextSize(int size) {
+    private static float getTextSize(int size) {
         switch (size) {
             case 0:
                 return XSMALL;
