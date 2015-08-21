@@ -1,6 +1,5 @@
 package acr.browser.lightning.activity;
 
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 

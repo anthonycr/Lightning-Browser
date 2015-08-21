@@ -3,7 +3,6 @@ package acr.browser.lightning.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -42,8 +41,8 @@ public class ProxyUtils {
 
     /*
      * If Orbot/Tor or I2P is installed, prompt the user if they want to enable
-	 * proxying for this session
-	 */
+     * proxying for this session
+     */
     public void checkForProxy(final Activity activity) {
         boolean useProxy = mPreferences.getUseProxy();
 
@@ -106,7 +105,7 @@ public class ProxyUtils {
 
     /*
      * Initialize WebKit Proxying
-	 */
+     */
     private void initializeProxy(Activity activity) {
         String host;
         int port;

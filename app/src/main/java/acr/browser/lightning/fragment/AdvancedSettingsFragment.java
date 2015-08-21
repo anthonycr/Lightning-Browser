@@ -11,7 +11,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

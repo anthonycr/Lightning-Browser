@@ -97,7 +97,7 @@ public class WebAddress {
         /*
          * Get port from scheme or scheme from port, if necessary and possible
          */
-        if (mPort == 443 && "".equals(mScheme)) {
+        if (mPort == 443 && mScheme != null && mScheme.isEmpty()) {
             mScheme = "https";
         } else if (mPort == -1) {
             if ("https".equals(mScheme)) {
@@ -106,7 +106,7 @@ public class WebAddress {
                 mPort = 80; // default
             }
         }
-        if ("".equals(mScheme)) {
+        if (mScheme != null && mScheme.isEmpty()) {
             mScheme = "http";
         }
     }

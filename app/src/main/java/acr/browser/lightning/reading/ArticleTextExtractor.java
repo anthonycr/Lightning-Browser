@@ -238,7 +238,7 @@ public class ArticleTextExtractor {
             content = content.substring(1, content.length() - 1);
 
         String[] split = content.split("\\s*,\\s*");
-        if (split.length > 1 || (split.length > 0 && !"".equals(split[0])))
+        if (split.length > 1 || (split.length > 0 && split[0] != null && !split[0].isEmpty()))
             return Arrays.asList(split);
         return Collections.emptyList();
     }

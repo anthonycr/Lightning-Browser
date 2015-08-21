@@ -53,7 +53,7 @@ public class MapEntry<K, V> implements Map.Entry<K, V>, Serializable {
 
     @Override
     public String toString() {
-        return getKey() + ", " + getValue();
+        return key + ", " + value;
     }
 
     @Override
