@@ -50,3 +50,18 @@ dependencies {
     // git submodule foreach git reset --hard
     // git submodule update --remote
 }
+
+android.applicationVariants.all { variant ->
+    switch (variant.name) {
+        case "lightningPlus":
+            variant.mergeResources.doFirst {
+                android.sourceSets.debug.setRoot("src/LightningPlus")
+            }
+            break;
+        case "lightningLite":
+            variant.mergeResources.doFirst {
+                android.sourceSets.debug.setRoot("src/LightningLite")
+            }
+            break;
+    }
+}
