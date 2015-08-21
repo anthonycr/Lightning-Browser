@@ -31,7 +31,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     private static final String KEY_TITLE = "title";
     private static final String KEY_TIME_VISITED = "time";
 
-    private static SQLiteDatabase mDatabase;
+    private SQLiteDatabase mDatabase;
 
     private static HistoryDatabase mInstance;
 
@@ -63,6 +63,12 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HISTORY);
         // Create tables again
         onCreate(db);
+    }
+
+    public void deleteHistory() {
+        mDatabase.delete(TABLE_HISTORY, null, null);
+        mDatabase.close();
+        mDatabase = this.getWritableDatabase();
     }
 
     public boolean isClosed() {
