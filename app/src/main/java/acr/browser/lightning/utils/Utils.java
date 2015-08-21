@@ -13,7 +13,11 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
@@ -88,9 +92,12 @@ public final class Utils {
     }
 
     /**
-     * Returns the number of pixels corresponding to the passed density pixels
+     * Converts Density Pixels (DP) to Pixels (PX)
+     *
+     * @param dp the number of density pixels to convert
+     * @return the number of pixels
      */
-    public static int convertDpToPixels(int dp) {
+    public static int dpToPx(int dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return (int) (dp * metrics.density + 0.5f);
     }
@@ -166,7 +173,7 @@ public final class Utils {
      * @return the padded bitmap.
      */
     public static Bitmap padFavicon(Bitmap bitmap) {
-        int padding = Utils.convertDpToPixels(4);
+        int padding = Utils.dpToPx(4);
 
         Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
                 + padding, Bitmap.Config.ARGB_8888);
@@ -220,6 +227,12 @@ public final class Utils {
         );
     }
 
+    /**
+     * Checks if flash player is installed
+     *
+     * @param context the context needed to obtain the PackageManager
+     * @return true if flash is installed, false otherwise
+     */
     public static boolean isFlashInstalled(Context context) {
         try {
             PackageManager pm = context.getPackageManager();
@@ -233,6 +246,12 @@ public final class Utils {
         return false;
     }
 
+    /**
+     * Quietly closes a closeable object like an InputStream or OutputStream without
+     * throwing any errors or requiring you do do any checks.
+     *
+     * @param closeable the object to close
+     */
     public static void close(Closeable closeable) {
         if (closeable == null)
             return;
@@ -249,6 +268,45 @@ public final class Utils {
         } else {
             return context.getResources().getDrawable(res);
         }
+    }
+
+    /**
+     * Draws the trapezoid background for the horizontal tabs on a canvas object using
+     * the specified color.
+     *
+     * @param canvas the canvas to draw upon
+     * @param color  the color to use to draw the tab
+     */
+    public static void drawTrapezoid(Canvas canvas, int color, boolean withShader) {
+
+        Paint paint = new Paint();
+        paint.setColor(color);
+        paint.setStyle(Paint.Style.FILL);
+//        paint.setFilterBitmap(true);
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        if (withShader) {
+            paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
+                    0, canvas.getHeight(),
+                    color, mixTwoColors(Color.BLACK, color, 0.5f),
+                    Shader.TileMode.CLAMP));
+        } else {
+            paint.setShader(null);
+        }
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+        double radians = Math.PI / 3;
+        int base = (int) (height / Math.tan(radians));
+
+        Path wallpath = new Path();
+        wallpath.reset();
+        wallpath.moveTo(0, height);
+        wallpath.lineTo(width, height);
+        wallpath.lineTo(width - base, 0);
+        wallpath.lineTo(base, 0);
+        wallpath.close();
+
+        canvas.drawPath(wallpath, paint);
     }
 
 }

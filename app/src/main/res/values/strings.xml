@@ -213,4 +213,7 @@
     <string name="clear_web_storage">Clear Web Storage</string>
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
     <string name="message_web_storage_cleared">Web Storage Cleared</string>
+    <string name="hosts_source">Hosts File Ad Blocking Source</string>
+    <string name="settings_adblock">Ad Block Settings</string>
+    <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
 </resources>

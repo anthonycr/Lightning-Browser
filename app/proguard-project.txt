@@ -35,6 +35,7 @@
 -keep public class * extends android.preference.Preference
 -keep public class com.android.vending.licensing.ILicensingService
 -keep public class acr.browser.lightning.reading.*
+-keep class org.lucasr.twowayview.** { *; }
 
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
@@ -45,14 +46,14 @@
 
 # this will fix a force close in ReadingActivity
 -keep public class org.jsoup.** {
-	public *;
+    public *;
 }
 
 # Without this rule, openFileChooser does not get called on KitKat
 -keep class acr.browser.lightning.view.LightningView$LightningChromeClient {
-	void openFileChooser(android.webkit.ValueCallback);
-	void openFileChooser(android.webkit.ValueCallback, java.lang.String);
-	void openFileChooser(android.webkit.ValueCallback, java.lang.String, java.lang.String);
+    void openFileChooser(android.webkit.ValueCallback);
+    void openFileChooser(android.webkit.ValueCallback, java.lang.String);
+    void openFileChooser(android.webkit.ValueCallback, java.lang.String, java.lang.String);
 }
 
 -keepclasseswithmembernames class * {

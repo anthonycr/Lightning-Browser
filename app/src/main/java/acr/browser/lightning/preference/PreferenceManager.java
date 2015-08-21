@@ -49,6 +49,7 @@ public class PreferenceManager {
         public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
         public static final String TEXT_ENCODING = "textEncoding";
         public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
+        public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -258,6 +259,10 @@ public class PreferenceManager {
         return mPrefs.getString(Name.TEXT_ENCODING, Constants.DEFAULT_ENCODING);
     }
 
+    public boolean getShowTabsInDrawer(boolean defaultValue){
+        return mPrefs.getBoolean(Name.SHOW_TABS_IN_DRAWER, defaultValue);
+    }
+
     private void putBoolean(String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -268,6 +273,10 @@ public class PreferenceManager {
 
     private void putString(String name, String value) {
         mPrefs.edit().putString(name, value).apply();
+    }
+
+    public void setShowTabsInDrawer(boolean show){
+        putBoolean(Name.SHOW_TABS_IN_DRAWER, show);
     }
 
     public void setTextEncoding(String encoding) {

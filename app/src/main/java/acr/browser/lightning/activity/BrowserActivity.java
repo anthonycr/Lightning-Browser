@@ -15,16 +15,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -38,6 +39,7 @@ import android.provider.Browser;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -90,6 +92,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
+import org.lucasr.twowayview.TwoWayView;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -126,13 +130,14 @@ import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
 
-public abstract class BrowserActivity extends ThemableActivity implements BrowserController, OnClickListener, OnLongClickListener {
+public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserController, OnClickListener, OnLongClickListener {
 
     // Layout
     private DrawerLayout mDrawerLayout;
     private FrameLayout mBrowserFrame;
     private FullscreenHolder mFullscreenContainer;
-    private ListView mDrawerListLeft, mDrawerListRight;
+    private ListView mDrawerListRight;
+    private TwoWayView mDrawerListLeft;
     private LinearLayout mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
     private RelativeLayout mSearchBar;
 
@@ -168,7 +173,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             mSystemBrowser = false,
             mIsNewIntent = false,
             mIsFullScreen = false,
-            mIsImmersive = false;
+            mIsImmersive = false,
+            mShowTabsInDrawer;
     private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
@@ -221,6 +227,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         //TODO make sure dark theme flag gets set correctly
         mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
         mIconColor = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
+        mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
+
         mActivity = this;
         mWebViewList.clear();
 
@@ -237,7 +245,6 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerListLeft = (ListView) findViewById(R.id.left_drawer_list);
         mDrawerRight = (LinearLayout) findViewById(R.id.right_drawer);
         mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mDrawerListRight = (ListView) findViewById(R.id.right_drawer_list);
@@ -245,6 +252,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
         tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mShowTabsInDrawer) {
+            getWindow().setStatusBarColor(Color.BLACK);
+        }
 
         setNavigationDrawerWidth();
         mDrawerLayout.setDrawerListener(new DrawerLocker());
@@ -254,7 +265,20 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         mHomepage = mPreferences.getHomepage();
 
-        mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViewList);
+        TwoWayView horizontalListView = (TwoWayView) findViewById(R.id.twv_list);
+
+        if (mShowTabsInDrawer) {
+            mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViewList);
+            mDrawerListLeft = (TwoWayView) findViewById(R.id.left_drawer_list);
+            mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+            mToolbarLayout.removeView(horizontalListView);
+        } else {
+            mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, mWebViewList);
+            mDrawerListLeft = horizontalListView;
+            mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_NEVER);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
+        }
+
         mDrawerListLeft.setAdapter(mTitleAdapter);
         mDrawerListLeft.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerListLeft.setOnItemLongClickListener(new DrawerItemLongClickListener());
@@ -276,7 +300,14 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         View v = actionBar.getCustomView();
         LayoutParams lp = v.getLayoutParams();
         lp.width = LayoutParams.MATCH_PARENT;
+        lp.height = LayoutParams.MATCH_PARENT;
         v.setLayoutParams(lp);
+
+        LinearLayout searchContainer = (LinearLayout) v.findViewById(R.id.search_container);
+        LinearLayout.LayoutParams p = (LinearLayout.LayoutParams) searchContainer.getLayoutParams();
+        int leftMargin = !mShowTabsInDrawer ? Utils.dpToPx(10) : Utils.dpToPx(2);
+        p.setMargins(leftMargin, Utils.dpToPx(8), Utils.dpToPx(2), Utils.dpToPx(6));
+        searchContainer.setLayoutParams(p);
 
         mArrowDrawable = new DrawerArrowDrawable(this);
         mArrowImage = (ImageView) actionBar.getCustomView().findViewById(R.id.arrow);
@@ -285,7 +316,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mArrowImage.setImageDrawable(mArrowDrawable);
         FrameLayout arrowButton = (FrameLayout) actionBar.getCustomView().findViewById(
                 R.id.arrow_button);
-        arrowButton.setOnClickListener(this);
+        if (mShowTabsInDrawer) {
+            arrowButton.setOnClickListener(this);
+        } else {
+            arrowButton.setVisibility(View.GONE);
+        }
 
         mProxyUtils = ProxyUtils.getInstance(this);
 
@@ -305,7 +340,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
         mCopyIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_copy);
 
-        int iconBounds = Utils.convertDpToPixels(30);
+        int iconBounds = Utils.dpToPx(30);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
         mRefreshIcon.setBounds(0, 0, iconBounds, iconBounds);
         mCopyIcon.setBounds(0, 0, iconBounds, iconBounds);
@@ -522,7 +557,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
         @Override
         public void onDrawerClosed(View v) {
-            if (v == mDrawerRight) {
+            if (v == mDrawerRight && mShowTabsInDrawer) {
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerLeft);
             } else {
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerRight);
@@ -548,17 +583,13 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     }
 
-    private boolean isTablet() {
-        return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
     private void setNavigationDrawerWidth() {
-        int width = getResources().getDisplayMetrics().widthPixels - Utils.convertDpToPixels(56);
+        int width = getResources().getDisplayMetrics().widthPixels - Utils.dpToPx(56);
         int maxWidth;
         if (isTablet()) {
-            maxWidth = Utils.convertDpToPixels(320);
+            maxWidth = Utils.dpToPx(320);
         } else {
-            maxWidth = Utils.convertDpToPixels(300);
+            maxWidth = Utils.dpToPx(300);
         }
         if (width > maxWidth) {
             DrawerLayout.LayoutParams params = (android.support.v4.widget.DrawerLayout.LayoutParams) mDrawerLeft
@@ -630,10 +661,11 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mColorMode = mPreferences.getColorModeEnabled();
         mColorMode &= !mDarkTheme;
         if (!isIncognito() && !mColorMode && !mDarkTheme && mWebpageBitmap != null) {
-            changeToolbarBackground(mWebpageBitmap);
+            //TODO fix toolbar coloring
+//            changeToolbarBackground(mWebpageBitmap, null);
         } else if (!isIncognito() && mCurrentView != null && !mDarkTheme
                 && mCurrentView.getFavicon() != null) {
-            changeToolbarBackground(mCurrentView.getFavicon());
+//            changeToolbarBackground(mCurrentView.getFavicon(), null);
         }
 
         if (mFullScreen) {
@@ -914,6 +946,9 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     }
 
     private void showCloseDialog(final int position) {
+        if (position < 0) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity,
                 android.R.layout.simple_dropdown_item_1line);
@@ -1022,7 +1057,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         getFolder.setAdapter(suggestionsAdapter);
         LinearLayout layout = new LinearLayout(mActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.convertDpToPixels(10);
+        int padding = Utils.dpToPx(10);
         layout.setPadding(padding, padding, padding, padding);
         layout.addView(getTitle);
         layout.addView(getUrl);
@@ -1074,7 +1109,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         getTitle.setSingleLine();
         LinearLayout layout = new LinearLayout(mActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.convertDpToPixels(10);
+        int padding = Utils.dpToPx(10);
         layout.setPadding(padding, padding, padding, padding);
         layout.addView(getTitle);
         editFolderDialog.setView(layout);
@@ -1240,6 +1275,13 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             mDrawerListLeft.setItemChecked(mWebViewList.size() - 1, true);
             showTab(startingTab);
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerListLeft.smoothScrollToPosition(mWebViewList.size() - 1);
+            }
+        }, 300);
+
         return true;
     }
 
@@ -1248,7 +1290,10 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             return;
         }
 
-        int current = mDrawerListLeft.getCheckedItemPosition();
+        int current = mWebViewList.indexOf(mCurrentView);
+        if (current < 0) {
+            return;
+        }
         LightningView reference = mWebViewList.get(position);
         if (reference == null) {
             return;
@@ -1336,7 +1381,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            showCloseDialog(mDrawerListLeft.getCheckedItemPosition());
+            showCloseDialog(mWebViewList.indexOf(mCurrentView));
         }
         return true;
     }
@@ -1378,7 +1423,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                         mCurrentView.goBack();
                     }
                 } else {
-                    deleteTab(mDrawerListLeft.getCheckedItemPosition());
+                    deleteTab(mWebViewList.indexOf(mCurrentView));
                 }
             } else {
                 Log.e(Constants.TAG, "This shouldn't happen ever");
@@ -1470,8 +1515,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
      * searches the web for the query fixing any and all problems with the input
      * checks if it is a search, url, etc.
      */
-    private void searchTheWeb(String query) {
-        if (query.equals("")) {
+    private void searchTheWeb(@NonNull String query) {
+        if (query.isEmpty()) {
             return;
         }
         String SEARCH = mSearchText;
@@ -1521,6 +1566,8 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         final int layoutResourceId;
         List<LightningView> data = null;
         final CloseTabListener mExitListener;
+        private final Drawable mBackgroundTabDrawable;
+        private final Drawable mForegroundTabDrawable;
 
         public LightningViewAdapter(Context context, int layoutResourceId, List<LightningView> data) {
             super(context, layoutResourceId, data);
@@ -1528,6 +1575,17 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             this.context = context;
             this.data = data;
             this.mExitListener = new CloseTabListener();
+
+
+            int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(mActivity), Color.BLACK, 0.75f);
+            Bitmap backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
+            Utils.drawTrapezoid(new Canvas(backgroundTabBitmap), backgroundColor, true);
+            mBackgroundTabDrawable = new BitmapDrawable(getResources(), backgroundTabBitmap);
+
+            int foregroundColor = ThemeUtils.getPrimaryColor(context);
+            Bitmap foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
+            Utils.drawTrapezoid(new Canvas(foregroundTabBitmap), foregroundColor, false);
+            mForegroundTabDrawable = new BitmapDrawable(getResources(), foregroundTabBitmap);
         }
 
         @Override
@@ -1535,13 +1593,16 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             View row = convertView;
             LightningViewHolder holder;
             if (row == null) {
-                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+                LayoutInflater inflater = LayoutInflater.from(context);
                 row = inflater.inflate(layoutResourceId, parent, false);
 
                 holder = new LightningViewHolder();
                 holder.txtTitle = (TextView) row.findViewById(R.id.textTab);
                 holder.favicon = (ImageView) row.findViewById(R.id.faviconTab);
                 holder.exit = (ImageView) row.findViewById(R.id.deleteButton);
+                if (!mShowTabsInDrawer) {
+                    holder.layout = (LinearLayout) row.findViewById(R.id.tab_item_background);
+                }
                 holder.exitButton = (FrameLayout) row.findViewById(R.id.deleteAction);
                 holder.exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
                 row.setTag(holder);
@@ -1552,23 +1613,35 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             holder.exitButton.setTag(position);
             holder.exitButton.setOnClickListener(mExitListener);
 
-            ViewCompat.jumpDrawablesToCurrentState(holder.exit);
+            ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
 
             LightningView web = data.get(position);
             holder.txtTitle.setText(web.getTitle());
-            if (web.isForegroundTab()) {
-                holder.txtTitle.setTextAppearance(context, R.style.boldText);
-            } else {
-                holder.txtTitle.setTextAppearance(context, R.style.normalText);
-            }
 
             Bitmap favicon = web.getFavicon();
             if (web.isForegroundTab()) {
-
+                holder.txtTitle.setTextAppearance(context, R.style.boldText);
                 holder.favicon.setImageBitmap(favicon);
-                if (!isIncognito() && mColorMode)
-                    changeToolbarBackground(favicon);
+                if (!mShowTabsInDrawer) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        holder.layout.setBackground(mForegroundTabDrawable);
+                    } else {
+                        holder.layout.setBackgroundDrawable(mForegroundTabDrawable);
+                    }
+                }
+                if (!isIncognito() && mColorMode) {
+                    // TODO fix toolbar coloring
+//                    changeToolbarBackground(favicon, mForegroundTabDrawable);
+                }
             } else {
+                holder.txtTitle.setTextAppearance(context, R.style.normalText);
+                if (!mShowTabsInDrawer) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        holder.layout.setBackground(mBackgroundTabDrawable);
+                    } else {
+                        holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
+                    }
+                }
                 Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
                         favicon.getHeight(), Bitmap.Config.ARGB_8888);
 
@@ -1576,7 +1649,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                 if (colorMatrix == null || filter == null || paint == null) {
                     paint = new Paint();
                     colorMatrix = new ColorMatrix();
-                    colorMatrix.setSaturation(0);
+                    colorMatrix.setSaturation(0.5f);
                     filter = new ColorMatrixColorFilter(colorMatrix);
                     paint.setColorFilter(filter);
                 }
@@ -1592,6 +1665,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             ImageView favicon;
             ImageView exit;
             FrameLayout exitButton;
+            LinearLayout layout;
         }
     }
 
@@ -1604,7 +1678,15 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     }
 
-    private void changeToolbarBackground(Bitmap favicon) {
+    /**
+     * Animates the color of the toolbar from one color to another. Optionally animates
+     * the color of the tab background, for use when the tabs are displayed on the top
+     * of the screen.
+     *
+     * @param favicon       the Bitmap to extract the color from
+     * @param tabBackground the optional LinearLayout to color
+     */
+    private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
         Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
@@ -1625,22 +1707,28 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
                 ValueAnimator anim = ValueAnimator.ofObject(new ArgbEvaluator(),
                         mBackground.getColor(), finalColor);
-
+                final Window window = getWindow();
+                if (!mShowTabsInDrawer) {
+                    window.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+                }
                 anim.addUpdateListener(new AnimatorUpdateListener() {
 
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        int color = (Integer) animation.getAnimatedValue();
-                        mBackground.setColor(color);
-                        getWindow().setBackgroundDrawable(mBackground);
+                        final int color = (Integer) animation.getAnimatedValue();
+                        if (mShowTabsInDrawer) {
+                            mBackground.setColor(color);
+                            window.setBackgroundDrawable(mBackground);
+                        }
                         mToolbarLayout.setBackgroundColor(color);
+                        if (tabBackground != null) {
+                            tabBackground.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                        }
                     }
 
                 });
-
                 anim.setDuration(300);
                 anim.start();
-
             }
         });
     }
@@ -2138,7 +2226,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
         mFilePathCallback = filePathCallback;
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        if (takePictureIntent.resolveActivity(mActivity.getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
             try {
@@ -2370,6 +2458,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
 
     /**
      * Closes the specified view, implementing the JavaScript callback to close a window
+     *
      * @param view the LightningView to close
      */
     @Override
@@ -2776,7 +2865,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
                     if (mCurrentView.canGoBack()) {
                         mCurrentView.goBack();
                     } else {
-                        deleteTab(mDrawerListLeft.getCheckedItemPosition());
+                        deleteTab(mWebViewList.indexOf(mCurrentView));
                     }
                 }
                 break;
@@ -2790,7 +2879,7 @@ public abstract class BrowserActivity extends ThemableActivity implements Browse
             case R.id.arrow_button:
                 if (mSearch != null && mSearch.hasFocus()) {
                     mCurrentView.requestFocus();
-                } else {
+                } else if (mShowTabsInDrawer) {
                     mDrawerLayout.openDrawer(mDrawerLeft);
                 }
                 break;

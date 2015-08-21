@@ -41,6 +41,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private static final String SETTINGS_HOME = "home";
     private static final String SETTINGS_SEARCHENGINE = "search";
     private static final String SETTINGS_GOOGLESUGGESTIONS = "google_suggestions";
+    private static final String SETTINGS_DRAWERTABS = "cb_drawertabs";
 
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -50,7 +51,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private String mDownloadLocation;
     private int mAgentChoice;
     private String mHomepage;
-    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest;
+    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest, cbDrawerTabs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,12 +73,14 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         downloadloc = findPreference(SETTINGS_DOWNLOAD);
         home = findPreference(SETTINGS_HOME);
         searchengine = findPreference(SETTINGS_SEARCHENGINE);
+
         cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
         cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
         cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
         cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
         cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
         cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
+        cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
 
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);
@@ -90,6 +93,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbJsScript.setOnPreferenceChangeListener(this);
         cbColorMode.setOnPreferenceChangeListener(this);
         cbgooglesuggest.setOnPreferenceChangeListener(this);
+        cbDrawerTabs.setOnPreferenceChangeListener(this);
 
         mAgentChoice = mPreferences.getUserAgentChoice();
         mHomepage = mPreferences.getHomepage();
@@ -149,6 +153,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbAds.setChecked(Constants.FULL_VERSION && mPreferences.getAdBlockEnabled());
         cbColorMode.setChecked(mPreferences.getColorModeEnabled());
         cbgooglesuggest.setChecked(mPreferences.getGoogleSearchSuggestionsEnabled());
+        cbDrawerTabs.setChecked(mPreferences.getShowTabsInDrawer(true));
     }
 
     private void searchUrlPicker() {
@@ -477,7 +482,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         final EditText getDownload = new EditText(mActivity);
         getDownload.setText(mPreferences.getDownloadDirectory());
 
-        int padding = Utils.convertDpToPixels(10);
+        int padding = Utils.dpToPx(10);
 
         TextView v = new TextView(mActivity);
         v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
@@ -607,6 +612,9 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 mPreferences.setGoogleSearchSuggestionsEnabled((Boolean) newValue);
                 cbgooglesuggest.setChecked((Boolean) newValue);
                 return true;
+            case  SETTINGS_DRAWERTABS:
+                mPreferences.setShowTabsInDrawer((Boolean) newValue);
+                cbDrawerTabs.setChecked((Boolean) newValue);
             default:
                 return false;
         }

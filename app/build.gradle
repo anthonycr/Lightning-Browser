@@ -43,6 +43,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
     compile 'org.jsoup:jsoup:1.8.1'
+    compile 'org.lucasr.twowayview:twowayview:0.1.4'
     // Only Lightning Plus needs the proxy libraries
     lightningPlusCompile 'net.i2p.android:client:0.7'
     lightningPlusCompile(project(':libnetcipher'))

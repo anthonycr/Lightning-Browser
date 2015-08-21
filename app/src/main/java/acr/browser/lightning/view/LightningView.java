@@ -75,7 +75,8 @@ public class LightningView {
     private final Activity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
-    private static Bitmap mWebpageBitmap;
+    // TODO fix so that mWebpageBitmap can be static - static changes the icon when switching from light to dark and then back to light
+    private Bitmap mWebpageBitmap;
     private static PreferenceManager mPreferences;
     private final AdBlock mAdBlock;
     private IntentUtils mIntentUtils;
@@ -86,7 +87,7 @@ public class LightningView {
     private boolean mToggleDesktop = false;
     private static float mMaxFling;
     private static final int API = android.os.Build.VERSION.SDK_INT;
-    private static final int SCROLL_UP_THRESHOLD = Utils.convertDpToPixels(10);
+    private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
     private static final float[] mNegativeColorArray = {-1.0f, 0, 0, 0, 255, // red
             0, -1.0f, 0, 0, 255, // green
             0, 0, -1.0f, 0, 255, // blue

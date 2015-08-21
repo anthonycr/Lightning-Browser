@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tab_item_background"
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:background="?attr/selectedBackground"
+    android:layout_width="175dp"
+    android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:weightSum="1">
 
     <ImageView
         android:id="@+id/faviconTab"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:contentDescription="Favicon"
         android:gravity="center_vertical" />
 
@@ -21,8 +22,6 @@
         android:id="@+id/textTab"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_weight="1"
         android:ellipsize="end"
         android:fontFamily="sans-serif-light"
@@ -30,21 +29,20 @@
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <FrameLayout
         android:id="@+id/deleteAction"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="4dp"
         android:background="?attr/actionBarItemBackground"
         android:gravity="center">
 
         <ImageView
             android:id="@+id/deleteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
             android:contentDescription="Delete Tab"
             android:src="@drawable/ic_action_delete" />

@@ -8,6 +8,19 @@
     android:elevation="2dp"
     android:orientation="vertical">
 
+    <org.lucasr.twowayview.TwoWayView
+        android:id="@+id/twv_list"
+        style="@style/TwoWayView"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/black"
+        android:overScrollMode="never"
+        android:listSelector="?attr/listBackground"
+        android:scrollbars="none" />
+    <!--
+        TODO fucking fix the list selector aka remove it
+        -->
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

@@ -1,19 +1,22 @@
 package acr.browser.lightning.activity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.preference.PreferenceManager;
 
-public abstract class ThemableActivity extends AppCompatActivity {
+public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
     private int mTheme;
+    private boolean mShowTabsInDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mTheme = PreferenceManager.getInstance().getUseTheme();
+        mShowTabsInDrawer = PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
 
         // set the theme
         if (mTheme == 1) {
@@ -27,9 +30,15 @@ public abstract class ThemableActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (PreferenceManager.getInstance().getUseTheme() != mTheme) {
+        int theme = PreferenceManager.getInstance().getUseTheme();
+        boolean drawerTabs = PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
+        if (theme != mTheme || mShowTabsInDrawer != drawerTabs) {
             restart();
         }
+    }
+
+    public boolean isTablet() {
+        return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
     private void restart() {
