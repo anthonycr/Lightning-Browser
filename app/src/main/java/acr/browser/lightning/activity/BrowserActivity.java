@@ -359,7 +359,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             public void run() {
                 mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                if (mBookmarkList.size() == 0 && mPreferences.getDefaultBookmarks()) {
+                if (mBookmarkList.isEmpty() && mPreferences.getDefaultBookmarks()) {
                     for (String[] array : BookmarkManager.DEFAULT_BOOKMARKS) {
                         HistoryItem bookmark = new HistoryItem(array[0], array[1]);
                         if (mBookmarkManager.addBookmark(bookmark)) {
@@ -635,7 +635,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             String[] array = Utils.getArray(mem);
             int count = 0;
             for (String urlString : array) {
-                if (urlString.length() > 0) {
+                if (!urlString.isEmpty()) {
                     if (url != null && url.compareTo(urlString) == 0) {
                         url = null;
                     }
@@ -918,7 +918,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String query = getHome.getText().toString();
-                        if (query.length() > 0)
+                        if (!query.isEmpty())
                             showSearchInterfaceBar(query);
                     }
                 });
@@ -933,7 +933,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSearchBar.setVisibility(View.VISIBLE);
 
         TextView tw = (TextView) findViewById(R.id.search_query);
-        tw.setText("'" + text + "'");
+        tw.setText('\'' + text + '\'');
 
         ImageButton up = (ImageButton) findViewById(R.id.button_next);
         up.setOnClickListener(this);
@@ -1077,7 +1077,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         mBookmarkManager.editBookmark(mBookmarkList.get(id), item);
 
                         List<HistoryItem> list = mBookmarkManager.getBookmarksFromFolder(currentFolder, true);
-                        if (list.size() == 0) {
+                        if (list.isEmpty()) {
                             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
                         } else {
                             setBookmarkDataSet(list, false);
@@ -1451,7 +1451,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mPreferences.getRestoreLostTabsEnabled()) {
             String s = "";
             for (int n = 0; n < mWebViewList.size(); n++) {
-                if (mWebViewList.get(n).getUrl().length() > 0) {
+                if (!mWebViewList.get(n).getUrl().isEmpty()) {
                     s = s + mWebViewList.get(n).getUrl() + "|$|SEPARATOR|$|";
                 }
             }
