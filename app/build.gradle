@@ -8,6 +8,10 @@ android {
         targetSdkVersion 22
         versionName "4.1.1a"
     }
+    sourceSets {
+        lightningPlus.setRoot('src/LightningPlus')
+        lightningLite.setRoot('src/LightningLite')
+    }
     buildTypes {
         debug {
             minifyEnabled false
@@ -49,19 +53,4 @@ dependencies {
     lightningPlusCompile(project(':libnetcipher'))
     // git submodule foreach git reset --hard
     // git submodule update --remote
-}
-
-android.applicationVariants.all { variant ->
-    switch (variant.name) {
-        case "lightningPlus":
-            variant.mergeResources.doFirst {
-                android.sourceSets.debug.setRoot("src/LightningPlus")
-            }
-            break;
-        case "lightningLite":
-            variant.mergeResources.doFirst {
-                android.sourceSets.debug.setRoot("src/LightningLite")
-            }
-            break;
-    }
 }
