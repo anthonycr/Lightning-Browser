@@ -126,6 +126,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.AnimatedProgressBar;
@@ -1519,42 +1520,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (query.isEmpty()) {
             return;
         }
-        String SEARCH = mSearchText;
+        String searchUrl = mSearchText + UrlUtils.QUERY_PLACE_HOLDER;
         query = query.trim();
         mCurrentView.stopLoading();
-
-        if (query.startsWith("www.")) {
-            query = Constants.HTTP + query;
-        } else if (query.startsWith("ftp.")) {
-            query = "ftp://" + query;
-        }
-
-        boolean containsPeriod = query.contains(".");
-        boolean isIPAddress = (TextUtils.isDigitsOnly(query.replace(".", ""))
-                && (query.replace(".", "").length() >= 4) && query.contains("."));
-        boolean aboutScheme = query.startsWith("about:");
-        boolean validURL = (query.startsWith("ftp://") || query.startsWith(Constants.HTTP)
-                || query.startsWith(Constants.FILE) || query.startsWith(Constants.HTTPS))
-                || isIPAddress;
-        if (isIPAddress
-                && (!query.startsWith(Constants.HTTP) || !query.startsWith(Constants.HTTPS))) {
-            query = Constants.HTTP + query;
-        }
-
-        validURL |= Patterns.WEB_URL.matcher(query).matches();
-        boolean isSearch = !validURL;
-
-        if (isSearch) {
-            try {
-                query = URLEncoder.encode(query, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            mCurrentView.loadUrl(SEARCH + query);
-        } else if (!validURL) {
-            mCurrentView.loadUrl(Constants.HTTP + query);
-        } else {
-            mCurrentView.loadUrl(query);
+        if (mCurrentView != null) {
+            mCurrentView.loadUrl(UrlUtils.smartUrlFilter(query, true, searchUrl));
         }
     }
 
