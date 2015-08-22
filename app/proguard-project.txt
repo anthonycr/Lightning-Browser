@@ -91,3 +91,5 @@
 # classes are never used on Android, and it is safe to ignore the warnings.
 -dontwarn net.i2p.crypto.CertUtil
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
+
+-dontwarn org.apache.http.HttpHost
