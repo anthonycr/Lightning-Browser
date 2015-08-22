@@ -6,7 +6,7 @@
     android:layout_marginBottom="6dp"
     android:layout_marginLeft="2dp"
     android:layout_marginRight="2dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="6dp"
     android:layout_weight="1"
     android:background="?attr/searchBackground"
     android:clipChildren="false"
@@ -33,6 +33,6 @@
         android:singleLine="true"
         android:textColor="@color/gray_dark"
         android:textColorHint="@color/hint_text"
-        android:textCursorDrawable="@null"></AutoCompleteTextView>
+        android:textCursorDrawable="@null"/>
 
 </LinearLayout>

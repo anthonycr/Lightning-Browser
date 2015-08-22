@@ -14,8 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@color/black"
-        android:overScrollMode="never"
         android:listSelector="?attr/listBackground"
+        android:overScrollMode="never"
         android:scrollbars="none" />
     <!--
         TODO fucking fix the list selector aka remove it
@@ -25,6 +25,10 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="0dp"
         custom:contentInsetEnd="0dp"
         custom:contentInsetStart="0dp" />
 

@@ -8,7 +8,6 @@
         android:id="@+id/arrow_button"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="2dp"
         android:background="?attr/actionBarItemBackground"
         android:clickable="true"
         android:gravity="center" >
