@@ -11,10 +11,10 @@
 
     <ImageView
         android:id="@+id/faviconTab"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
         android:contentDescription="Favicon"
         android:gravity="center_vertical" />
 

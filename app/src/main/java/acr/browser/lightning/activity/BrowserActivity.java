@@ -50,6 +50,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -303,24 +304,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         lp.height = LayoutParams.MATCH_PARENT;
         v.setLayoutParams(lp);
 
-        LinearLayout searchContainer = (LinearLayout) v.findViewById(R.id.search_container);
-        LinearLayout.LayoutParams p = (LinearLayout.LayoutParams) searchContainer.getLayoutParams();
-        int leftMargin = !mShowTabsInDrawer ? Utils.dpToPx(10) : Utils.dpToPx(2);
-        p.setMargins(leftMargin, Utils.dpToPx(8), Utils.dpToPx(2), Utils.dpToPx(6));
-        searchContainer.setLayoutParams(p);
-
-        mArrowDrawable = new DrawerArrowDrawable(this);
         mArrowImage = (ImageView) actionBar.getCustomView().findViewById(R.id.arrow);
-        // Use hardware acceleration for the animation
-        mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        mArrowImage.setImageDrawable(mArrowDrawable);
         FrameLayout arrowButton = (FrameLayout) actionBar.getCustomView().findViewById(
                 R.id.arrow_button);
         if (mShowTabsInDrawer) {
-            arrowButton.setOnClickListener(this);
+            // Use hardware acceleration for the animation
+            mArrowDrawable = new DrawerArrowDrawable(this);
+            mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            mArrowImage.setImageDrawable(mArrowDrawable);
         } else {
-            arrowButton.setVisibility(View.GONE);
+            mArrowImage.setImageResource(R.drawable.ic_action_home);
+            mArrowImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         }
+        arrowButton.setOnClickListener(this);
 
         mProxyUtils = ProxyUtils.getInstance(this);
 
@@ -513,7 +509,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
                     @Override
                     public void run() {
-                        mArrowImage.startAnimation(anim);
+                        if (mArrowDrawable != null) {
+                            mArrowImage.startAnimation(anim);
+                        }
                     }
 
                 }, 100);
@@ -1538,12 +1536,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         boolean validURL = (query.startsWith("ftp://") || query.startsWith(Constants.HTTP)
                 || query.startsWith(Constants.FILE) || query.startsWith(Constants.HTTPS))
                 || isIPAddress;
-        boolean isSearch = ((query.contains(" ") || !containsPeriod) && !aboutScheme);
-
         if (isIPAddress
                 && (!query.startsWith(Constants.HTTP) || !query.startsWith(Constants.HTTPS))) {
             query = Constants.HTTP + query;
         }
+
+        validURL |= Patterns.WEB_URL.matcher(query).matches();
+        boolean isSearch = !validURL;
 
         if (isSearch) {
             try {
@@ -2883,6 +2882,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     mCurrentView.requestFocus();
                 } else if (mShowTabsInDrawer) {
                     mDrawerLayout.openDrawer(mDrawerLeft);
+                } else if (mCurrentView != null) {
+                    mCurrentView.loadHomepage();
                 }
                 break;
             case R.id.new_tab_button:

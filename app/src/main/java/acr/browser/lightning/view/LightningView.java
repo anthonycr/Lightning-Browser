@@ -146,13 +146,20 @@ public class LightningView {
                 // don't load anything, the user is looking for a blank tab
             }
         } else {
-            if (mHomepage.startsWith("about:home")) {
-                mWebView.loadUrl(getHomepage());
-            } else if (mHomepage.startsWith("about:bookmarks")) {
-                mBrowserController.openBookmarkPage(mWebView);
-            } else {
-                mWebView.loadUrl(mHomepage);
-            }
+            loadHomepage();
+        }
+    }
+
+    public void loadHomepage() {
+        if (mWebView == null) {
+            return;
+        }
+        if (mHomepage.startsWith("about:home")) {
+            mWebView.loadUrl(getHomepage());
+        } else if (mHomepage.startsWith("about:bookmarks")) {
+            mBrowserController.openBookmarkPage(mWebView);
+        } else {
+            mWebView.loadUrl(mHomepage);
         }
     }
 
@@ -263,7 +270,7 @@ public class LightningView {
      *
      * @param settings the WebSettings object to use, you can pass in null
      *                 if you don't have a reference to them
-     * @param context the context in which the WebView was created
+     * @param context  the context in which the WebView was created
      */
     public synchronized void initializePreferences(@Nullable WebSettings settings, Context context) {
         if (settings == null && mWebView == null) {
@@ -378,7 +385,7 @@ public class LightningView {
      * be altered by the user. Distinguish between Incognito and Regular tabs here.
      *
      * @param settings the WebSettings object to use.
-     * @param context the Context which was used to construct the WebView.
+     * @param context  the Context which was used to construct the WebView.
      */
     private void initializeSettings(WebSettings settings, Context context) {
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
