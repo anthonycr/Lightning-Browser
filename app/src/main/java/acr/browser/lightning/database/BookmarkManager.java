@@ -396,44 +396,6 @@ public class BookmarkManager {
     }
 
     /**
-     * This method imports all bookmarks that are included in the device's
-     * permanent bookmark storage
-     */
-    public synchronized void importBookmarksFromBrowser(Activity activity) throws Exception{
-        if (PreferenceManager.getInstance().getSystemBrowserPresent()) {
-
-            List<HistoryItem> bookmarkList = new ArrayList<>();
-            String[] columns = new String[]{Browser.BookmarkColumns.TITLE,
-                    Browser.BookmarkColumns.URL};
-            String selection = Browser.BookmarkColumns.BOOKMARK + " = 1";
-            Cursor cursor = mContext.getContentResolver().query(Browser.BOOKMARKS_URI, columns,
-                    selection, null, null);
-            if (cursor == null)
-                return;
-            String title, url;
-            int number = 0;
-            if (cursor.moveToFirst()) {
-                do {
-                    title = cursor.getString(0);
-                    url = cursor.getString(1);
-                    if (title.isEmpty()) {
-                        title = Utils.getDomainName(url);
-                    }
-                    number++;
-                    bookmarkList.add(new HistoryItem(url, title));
-                } while (cursor.moveToNext());
-            }
-
-            cursor.close();
-            addBookmarkList(bookmarkList);
-
-            Utils.showSnackbar(activity, number + " " + mContext.getResources().getString(R.string.message_import));
-        } else {
-            Utils.createInformativeDialog(activity, R.string.title_error, R.string.dialog_import_error);
-        }
-    }
-
-    /**
      * This method imports the bookmarks from a backup file that is located on
      * external storage
      *

@@ -67,14 +67,14 @@ public class DrawerArrowDrawable extends Drawable {
         mPaint.setAntiAlias(true);
         mPaint.setColor(typedArray.getColor(R.styleable.DrawerArrowToggle_color, 0));
         mSize = typedArray.getDimensionPixelSize(R.styleable.DrawerArrowToggle_drawableSize, 0);
-        mBarSize = typedArray.getDimension(R.styleable.DrawerArrowToggle_barSize, 0);
+        mBarSize = typedArray.getDimension(R.styleable.DrawerArrowToggle_barLength, 0);
         mTopBottomArrowSize = typedArray.getDimension(
-                R.styleable.DrawerArrowToggle_topBottomBarArrowSize, 0);
+                R.styleable.DrawerArrowToggle_arrowHeadLength, 0);
         mBarThickness = typedArray.getDimension(R.styleable.DrawerArrowToggle_thickness, 0);
         mBarGap = typedArray.getDimension(R.styleable.DrawerArrowToggle_gapBetweenBars, 0);
         mSpin = typedArray.getBoolean(R.styleable.DrawerArrowToggle_spinBars, true);
         mMiddleArrowSize = typedArray.getDimension(
-                R.styleable.DrawerArrowToggle_middleBarArrowSize, 0);
+                R.styleable.DrawerArrowToggle_arrowShaftLength, 0);
         typedArray.recycle();
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);

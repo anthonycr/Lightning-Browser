@@ -31,10 +31,6 @@
             android:defaultValue="false"
             android:key="clear_webstorage_exit"
             android:title="@string/clear_web_storage_exit" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="sync_history"
-            android:title="@string/sync_history" />
         <Preference
             android:key="clear_cache"
             android:title="@string/clear_cache" />

@@ -32,7 +32,7 @@ public class WebUtils {
         WebStorage.getInstance().deleteAllData();
     }
 
-    public static void clearHistory(@NonNull Context context, boolean systemBrowserPresent) {
+    public static void clearHistory(@NonNull Context context) {
         HistoryDatabase.getInstance(context).deleteHistory();
         WebViewDatabase m = WebViewDatabase.getInstance(context);
         m.clearFormData();
@@ -40,13 +40,6 @@ public class WebUtils {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             m.clearUsernamePassword();
             WebIconDatabase.getInstance().removeAllIcons();
-        }
-        if (systemBrowserPresent) {
-            try {
-                Browser.clearHistory(context.getContentResolver());
-            } catch (Exception ignored) {
-                // ignored
-            }
         }
         Utils.trimCache(context);
     }

@@ -28,19 +28,16 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
     private static final String SETTINGS_CACHEEXIT = "clear_cache_exit";
     private static final String SETTINGS_HISTORYEXIT = "clear_history_exit";
     private static final String SETTINGS_COOKIEEXIT = "clear_cookies_exit";
-    private static final String SETTINGS_SYNCHISTORY = "sync_history";
     private static final String SETTINGS_CLEARCACHE = "clear_cache";
     private static final String SETTINGS_CLEARHISTORY = "clear_history";
     private static final String SETTINGS_CLEARCOOKIES = "clear_cookies";
     private static final String SETTINGS_CLEARWEBSTORAGE = "clear_webstorage";
     private static final String SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit";
 
-    private static final int API = android.os.Build.VERSION.SDK_INT;
     private Activity mActivity;
     private PreferenceManager mPreferences;
     private CheckBoxPreference cblocation, cb3cookies, cbsavepasswords, cbcacheexit, cbhistoryexit,
-            cbcookiesexit, cbsynchistory, cbwebstorageexit;
-    private boolean mSystemBrowser;
+            cbcookiesexit, cbwebstorageexit;
     private Handler messageHandler;
 
     @Override
@@ -57,7 +54,6 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
     private void initPrefs() {
         // mPreferences storage
         mPreferences = PreferenceManager.getInstance();
-        mSystemBrowser = mPreferences.getSystemBrowserPresent();
 
         Preference clearcache = findPreference(SETTINGS_CLEARCACHE);
         Preference clearhistory = findPreference(SETTINGS_CLEARHISTORY);
@@ -70,7 +66,6 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
         cbcacheexit = (CheckBoxPreference) findPreference(SETTINGS_CACHEEXIT);
         cbhistoryexit = (CheckBoxPreference) findPreference(SETTINGS_HISTORYEXIT);
         cbcookiesexit = (CheckBoxPreference) findPreference(SETTINGS_COOKIEEXIT);
-        cbsynchistory = (CheckBoxPreference) findPreference(SETTINGS_SYNCHISTORY);
         cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
 
         clearcache.setOnPreferenceClickListener(this);
@@ -84,7 +79,6 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
         cbcacheexit.setOnPreferenceChangeListener(this);
         cbhistoryexit.setOnPreferenceChangeListener(this);
         cbcookiesexit.setOnPreferenceChangeListener(this);
-        cbsynchistory.setOnPreferenceChangeListener(this);
         cbwebstorageexit.setOnPreferenceChangeListener(this);
 
         cblocation.setChecked(mPreferences.getLocationEnabled());
@@ -96,16 +90,6 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
         cbwebstorageexit.setChecked(mPreferences.getClearWebStorageExitEnabled());
 
         cb3cookies.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-
-        if (!mSystemBrowser) {
-            cbsynchistory.setChecked(false);
-            cbsynchistory.setEnabled(false);
-            cbsynchistory.setSummary(getResources().getString(R.string.stock_browser_unavailable));
-        } else {
-            cbsynchistory.setEnabled(true);
-            cbsynchistory.setChecked(mPreferences.getSyncHistoryEnabled());
-            cbsynchistory.setSummary(getResources().getString(R.string.stock_browser_available));
-        }
 
         messageHandler = new MessageHandler(mActivity);
     }
@@ -210,7 +194,7 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
     }
 
     private void clearHistory() {
-        WebUtils.clearHistory(getActivity(), mSystemBrowser);
+        WebUtils.clearHistory(getActivity());
         messageHandler.sendEmptyMessage(1);
     }
 
@@ -255,10 +239,6 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
             case SETTINGS_WEBSTORAGEEXIT:
                 mPreferences.setClearWebStorageExitEnabled((Boolean) newValue);
                 cbwebstorageexit.setChecked((Boolean) newValue);
-                return true;
-            case SETTINGS_SYNCHISTORY:
-                mPreferences.setSyncHistoryEnabled((Boolean) newValue);
-                cbsynchistory.setChecked((Boolean) newValue);
                 return true;
             default:
                 return false;

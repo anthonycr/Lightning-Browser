@@ -23,7 +23,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     private static final String SETTINGS_EXPORT = "export_bookmark";
     private static final String SETTINGS_IMPORT = "import_bookmark";
-    private static final String SETTINGS_BROWSER_IMPORT = "import_browser_bookmark";
 
     private Activity mActivity;
     private BookmarkManager mBookmarkManager;
@@ -50,17 +49,9 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         Preference exportpref = findPreference(SETTINGS_EXPORT);
         Preference importpref = findPreference(SETTINGS_IMPORT);
-        Preference importBrowserpref = findPreference(SETTINGS_BROWSER_IMPORT);
 
         exportpref.setOnPreferenceClickListener(this);
         importpref.setOnPreferenceClickListener(this);
-        importBrowserpref.setOnPreferenceClickListener(this);
-
-        if (mPreferences.getSystemBrowserPresent()) {
-            importBrowserpref.setSummary(getResources().getString(R.string.stock_browser_available));
-        } else {
-            importBrowserpref.setSummary(getResources().getString(R.string.stock_browser_unavailable));
-        }
     }
 
     @Override
@@ -72,13 +63,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
             case SETTINGS_IMPORT:
                 loadFileList(null);
                 createDialog();
-                return true;
-            case SETTINGS_BROWSER_IMPORT:
-                try {
-                    mBookmarkManager.importBookmarksFromBrowser(getActivity());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 return true;
             default:
                 return false;

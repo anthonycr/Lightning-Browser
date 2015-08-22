@@ -27,7 +27,6 @@ public class PreferenceManager {
         public static final String SAVE_PASSWORDS = "passwords";
         public static final String SEARCH = "search";
         public static final String SEARCH_URL = "searchurl";
-        public static final String SYSTEM_BROWSER_PRESENT = "SystemBrowser";
         public static final String TEXT_REFLOW = "textreflow";
         public static final String TEXT_SIZE = "textsize";
         public static final String URL_MEMORY = "memory";
@@ -39,7 +38,6 @@ public class PreferenceManager {
         public static final String CLEAR_COOKIES_EXIT = "clearCookiesExit";
         public static final String SAVE_URL = "saveUrl";
         public static final String RENDERING_MODE = "renderMode";
-        public static final String SYNC_HISTORY = "syncHistory";
         public static final String BLOCK_THIRD_PARTY = "thirdParty";
         public static final String ENABLE_COLOR_MODE = "colorMode";
         public static final String URL_BOX_CONTENTS = "urlContent";
@@ -209,14 +207,6 @@ public class PreferenceManager {
 
     public String getSearchUrl() {
         return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
-    }
-
-    public boolean getSyncHistoryEnabled() {
-        return mPrefs.getBoolean(Name.SYNC_HISTORY, true);
-    }
-
-    public boolean getSystemBrowserPresent() {
-        return mPrefs.getBoolean(Name.SYSTEM_BROWSER_PRESENT, false);
     }
 
     public boolean getTextReflowEnabled() {
@@ -409,14 +399,6 @@ public class PreferenceManager {
 
     public void setSearchUrl(String url) {
         putString(Name.SEARCH_URL, url);
-    }
-
-    public void setSyncHistoryEnabled(boolean enable) {
-        putBoolean(Name.SYNC_HISTORY, enable);
-    }
-
-    public void setSystemBrowserPresent(boolean available) {
-        putBoolean(Name.SYSTEM_BROWSER_PRESENT, available);
     }
 
     public void setTextReflowEnabled(boolean enable) {

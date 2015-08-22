@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,7 +34,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Browser;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -48,9 +46,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -101,12 +97,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -172,7 +166,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // Primatives
     private boolean mFullScreen, mColorMode, mDarkTheme,
-            mSystemBrowser = false,
             mIsNewIntent = false,
             mIsFullScreen = false,
             mIsImmersive = false,
@@ -188,7 +181,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // Image
     private Bitmap mDefaultVideoPoster, mWebpageBitmap, mFolderBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
-    private Drawable mDeleteIcon, mRefreshIcon, mCopyIcon, mIcon;
+    private Drawable mDeleteIcon, mRefreshIcon, mSearchIcon, mIcon;
     private DrawerArrowDrawable mArrowDrawable;
 
     // Proxy
@@ -335,21 +328,20 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mBackgroundColor = getResources().getColor(R.color.primary_color);
         mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
         mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
-        mCopyIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_copy);
+        mSearchIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_forward);
 
         int iconBounds = Utils.dpToPx(30);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
         mRefreshIcon.setBounds(0, 0, iconBounds, iconBounds);
-        mCopyIcon.setBounds(0, 0, iconBounds, iconBounds);
+        mSearchIcon.setBounds(0, 0, iconBounds, iconBounds);
         mIcon = mRefreshIcon;
-        SearchClass search = new SearchClass();
+        SearchListenerClass search = new SearchListenerClass();
         mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
-        mSearch.setOnKeyListener(search.new KeyListener());
-        mSearch.setOnFocusChangeListener(search.new FocusChangeListener());
-        mSearch.setOnEditorActionListener(search.new EditorActionListener());
-        mSearch.setOnTouchListener(search.new TouchListener());
+        mSearch.setOnKeyListener(search);
+        mSearch.setOnFocusChangeListener(search);
+        mSearch.setOnEditorActionListener(search);
+        mSearch.setOnTouchListener(search);
 
-        mSystemBrowser = getSystemBrowser();
         new Thread(new Runnable() {
 
             @Override
@@ -398,40 +390,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mProxyUtils.checkForProxy(this);
     }
 
-    private class SearchClass {
+    private class SearchListenerClass implements OnKeyListener, OnEditorActionListener, OnFocusChangeListener, OnTouchListener {
 
-        public class KeyListener implements OnKeyListener {
+        @Override
+        public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
 
-            @Override
-            public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-
-                switch (arg1) {
-                    case KeyEvent.KEYCODE_ENTER:
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-                        searchTheWeb(mSearch.getText().toString());
-                        if (mCurrentView != null) {
-                            mCurrentView.requestFocus();
-                        }
-                        return true;
-                    default:
-                        break;
-                }
-                return false;
-            }
-
-        }
-
-        public class EditorActionListener implements OnEditorActionListener {
-            @Override
-            public boolean onEditorAction(TextView arg0, int actionId, KeyEvent arg2) {
-                // hide the keyboard and search the web when the enter key
-                // button is pressed
-                if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE
-                        || actionId == EditorInfo.IME_ACTION_NEXT
-                        || actionId == EditorInfo.IME_ACTION_SEND
-                        || actionId == EditorInfo.IME_ACTION_SEARCH
-                        || (arg2.getAction() == KeyEvent.KEYCODE_ENTER)) {
+            switch (arg1) {
+                case KeyEvent.KEYCODE_ENTER:
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
                     searchTheWeb(mSearch.getText().toString());
@@ -439,116 +404,132 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         mCurrentView.requestFocus();
                     }
                     return true;
+                default:
+                    break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onEditorAction(TextView arg0, int actionId, KeyEvent arg2) {
+            // hide the keyboard and search the web when the enter key
+            // button is pressed
+            if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE
+                    || actionId == EditorInfo.IME_ACTION_NEXT
+                    || actionId == EditorInfo.IME_ACTION_SEND
+                    || actionId == EditorInfo.IME_ACTION_SEARCH
+                    || (arg2.getAction() == KeyEvent.KEYCODE_ENTER)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+                searchTheWeb(mSearch.getText().toString());
+                if (mCurrentView != null) {
+                    mCurrentView.requestFocus();
                 }
-                return false;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onFocusChange(View v, final boolean hasFocus) {
+            if (!hasFocus && mCurrentView != null) {
+                if (mCurrentView.getProgress() < 100) {
+                    setIsLoading();
+                } else {
+                    setIsFinishedLoading();
+                }
+                updateUrl(mCurrentView.getUrl(), true);
+            } else if (hasFocus) {
+                String url = mCurrentView.getUrl();
+                if (url.startsWith(Constants.FILE)) {
+                    mSearch.setText("");
+                } else {
+                    mSearch.setText(url);
+                }
+                ((AutoCompleteTextView) v).selectAll(); // Hack to make sure
+                // the text gets
+                // selected
+                mIcon = mSearchIcon;
+                mSearch.setCompoundDrawables(null, null, mSearchIcon, null);
+            }
+            final Animation anim = new Animation() {
+
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    if (!hasFocus) {
+                        mArrowDrawable.setProgress(1.0f - interpolatedTime);
+                    } else {
+                        mArrowDrawable.setProgress(interpolatedTime);
+                    }
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+
+            };
+            anim.setDuration(300);
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.setAnimationListener(new AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (!hasFocus) {
+                        mArrowDrawable.setProgress(0.0f);
+                    } else {
+                        mArrowDrawable.setProgress(1.0f);
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+            });
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (mArrowDrawable != null) {
+                        mArrowImage.startAnimation(anim);
+                    }
+                }
+
+            }, 100);
+
+            if (!hasFocus) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
             }
         }
 
-        public class FocusChangeListener implements OnFocusChangeListener {
-            @Override
-            public void onFocusChange(View v, final boolean hasFocus) {
-                if (!hasFocus && mCurrentView != null) {
-                    if (mCurrentView.getProgress() < 100) {
-                        setIsLoading();
-                    } else {
-                        setIsFinishedLoading();
-                    }
-                    updateUrl(mCurrentView.getUrl(), true);
-                } else if (hasFocus) {
-                    String url = mCurrentView.getUrl();
-                    if (url.startsWith(Constants.FILE)) {
-                        mSearch.setText("");
-                    } else {
-                        mSearch.setText(url);
-                    }
-                    ((AutoCompleteTextView) v).selectAll(); // Hack to make sure
-                    // the text gets
-                    // selected
-                    mIcon = mCopyIcon;
-                    mSearch.setCompoundDrawables(null, null, mCopyIcon, null);
-                }
-                final Animation anim = new Animation() {
-
-                    @Override
-                    protected void applyTransformation(float interpolatedTime, Transformation t) {
-                        if (!hasFocus) {
-                            mArrowDrawable.setProgress(1.0f - interpolatedTime);
-                        } else {
-                            mArrowDrawable.setProgress(interpolatedTime);
-                        }
-                    }
-
-                    @Override
-                    public boolean willChangeBounds() {
-                        return true;
-                    }
-
-                };
-                anim.setDuration(300);
-                anim.setInterpolator(new DecelerateInterpolator());
-                anim.setAnimationListener(new AnimationListener() {
-
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        if (!hasFocus) {
-                            mArrowDrawable.setProgress(0.0f);
-                        } else {
-                            mArrowDrawable.setProgress(1.0f);
-                        }
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-
-                });
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (mArrowDrawable != null) {
-                            mArrowImage.startAnimation(anim);
-                        }
-                    }
-
-                }, 100);
-
-                if (!hasFocus) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-                }
-            }
-        }
-
-        public class TouchListener implements OnTouchListener {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mSearch.getCompoundDrawables()[2] != null) {
-                    boolean tappedX = event.getX() > (mSearch.getWidth()
-                            - mSearch.getPaddingRight() - mIcon.getIntrinsicWidth());
-                    if (tappedX) {
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            if (mSearch.hasFocus()) {
-                                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                                ClipData clip = ClipData.newPlainText("label", mSearch.getText()
-                                        .toString());
-                                clipboard.setPrimaryClip(clip);
-                                Utils.showSnackbar(mActivity, R.string.message_text_copied);
-                            } else {
-                                refreshOrStop();
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (mSearch.getCompoundDrawables()[2] != null) {
+                boolean tappedX = event.getX() > (mSearch.getWidth()
+                        - mSearch.getPaddingRight() - mIcon.getIntrinsicWidth());
+                if (tappedX) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (mSearch.hasFocus()) {
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+                            searchTheWeb(mSearch.getText().toString());
+                            if (mCurrentView != null) {
+                                mCurrentView.requestFocus();
                             }
+                        } else {
+                            refreshOrStop();
                         }
-                        return true;
                     }
+                    return true;
                 }
-                return false;
             }
-
+            return false;
         }
     }
 
@@ -1362,7 +1343,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         }
         if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
-            WebUtils.clearHistory(this, mSystemBrowser);
+            WebUtils.clearHistory(this);
             Log.d(Constants.TAG, "History Cleared");
 
         }
@@ -1916,13 +1897,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Runnable update = new Runnable() {
             @Override
             public void run() {
-                if (isSystemBrowserAvailable() && mPreferences.getSyncHistoryEnabled()) {
-                    try {
-                        Browser.updateVisitedHistory(getContentResolver(), url, true);
-                    } catch (Exception ignored) {
-                        // ignored
-                    }
-                }
                 try {
                     if (mHistoryDatabase == null) {
                         mHistoryDatabase = HistoryDatabase.getInstance(mActivity.getApplicationContext());
@@ -1940,35 +1914,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (url != null && !url.startsWith(Constants.FILE)) {
             new Thread(update).start();
         }
-    }
-
-    private boolean isSystemBrowserAvailable() {
-        return mSystemBrowser;
-    }
-
-    private boolean getSystemBrowser() {
-        Cursor c = null;
-        String[] columns = new String[]{"url", "title"};
-        boolean browserFlag;
-        try {
-            Uri bookmarks = Browser.BOOKMARKS_URI;
-            c = getContentResolver().query(bookmarks, columns, null, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (c != null) {
-            Log.d("Browser", "System Browser Available");
-            browserFlag = true;
-        } else {
-            Log.e("Browser", "System Browser Unavailable");
-            browserFlag = false;
-        }
-        if (c != null) {
-            c.close();
-        }
-        mPreferences.setSystemBrowserPresent(browserFlag);
-        return browserFlag;
     }
 
     /**
