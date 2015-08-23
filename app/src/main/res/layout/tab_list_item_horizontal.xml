@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:clickable="false"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:weightSum="1">

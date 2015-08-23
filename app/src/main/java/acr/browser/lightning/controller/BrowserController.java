@@ -24,7 +24,7 @@ public interface BrowserController {
 
     void openFileChooser(ValueCallback<Uri> uploadMsg);
 
-    void update();
+    void updateTabs();
 
     void onLongPress();
 

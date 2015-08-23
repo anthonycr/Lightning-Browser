@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
@@ -45,6 +46,8 @@ import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -89,8 +92,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
-import org.lucasr.twowayview.TwoWayView;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -134,7 +135,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private FrameLayout mBrowserFrame;
     private FullscreenHolder mFullscreenContainer;
     private ListView mDrawerListRight;
-    private TwoWayView mDrawerListLeft;
+    private RecyclerView mDrawerListLeft;
     private LinearLayout mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
     private RelativeLayout mSearchBar;
 
@@ -153,7 +154,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
-    private LightningViewAdapter mTitleAdapter;
+    private LightningViewAdapter mTabAdapter;
     private SearchAdapter mSearchAdapter;
 
     // Callback
@@ -261,23 +262,30 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mHomepage = mPreferences.getHomepage();
 
-        TwoWayView horizontalListView = (TwoWayView) findViewById(R.id.twv_list);
+        RecyclerView horizontalListView = (RecyclerView) findViewById(R.id.twv_list);
+
 
         if (mShowTabsInDrawer) {
-            mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViewList);
-            mDrawerListLeft = (TwoWayView) findViewById(R.id.left_drawer_list);
+            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViewList);
+            mDrawerListLeft = (RecyclerView) findViewById(R.id.left_drawer_list);
             mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mDrawerListLeft.setLayoutManager(layoutManager);
+            mDrawerListLeft.setHasFixedSize(true);
             mToolbarLayout.removeView(horizontalListView);
         } else {
-            mTitleAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, mWebViewList);
+            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, mWebViewList);
             mDrawerListLeft = horizontalListView;
             mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_NEVER);
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            mDrawerListLeft.setLayoutManager(layoutManager);
+            mDrawerListLeft.setHasFixedSize(true);
         }
 
-        mDrawerListLeft.setAdapter(mTitleAdapter);
-        mDrawerListLeft.setOnItemClickListener(new DrawerItemClickListener());
-        mDrawerListLeft.setOnItemLongClickListener(new DrawerItemLongClickListener());
+        mDrawerListLeft.setAdapter(mTabAdapter);
+//        mDrawerListLeft.setOnItemClickListener(new DrawerItemClickListener());
+//        mDrawerListLeft.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
         mDrawerListRight.setOnItemClickListener(new BookmarkItemClickListener());
         mDrawerListRight.setOnItemLongClickListener(new BookmarkItemLongClickListener());
@@ -957,10 +965,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     /**
      * The click listener for ListView in the navigation drawer
      */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+    private class DrawerItemClickListener implements OnClickListener {
 
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onClick(View v) {
+            int position = mDrawerListLeft.getChildAdapterPosition(v);
             if (mCurrentView != mWebViewList.get(position)) {
                 mIsNewIntent = false;
                 showTab(mWebViewList.get(position));
@@ -971,10 +980,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     /**
      * long click listener for Navigation Drawer
      */
-    private class DrawerItemLongClickListener implements ListView.OnItemLongClickListener {
+    private class DrawerItemLongClickListener implements OnLongClickListener {
 
         @Override
-        public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
+        public boolean onLongClick(View v) {
+            int position = mDrawerListLeft.getChildAdapterPosition(v);
             showCloseDialog(position);
             return true;
         }
@@ -1253,11 +1263,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mIdGenerator++;
         mWebViewList.add(startingTab);
 
-        mTitleAdapter.notifyDataSetChanged();
         if (show) {
-            mDrawerListLeft.setItemChecked(mWebViewList.size() - 1, true);
             showTab(startingTab);
         }
+        updateTabs();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1290,13 +1299,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         if (current > position) {
             mWebViewList.remove(position);
-            mDrawerListLeft.setItemChecked(current - 1, true);
+            showTab(mWebViewList.get(current - 1));
+            updateTabs();
             reference.onDestroy();
         } else if (mWebViewList.size() > position + 1) {
             if (current == position) {
                 showTab(mWebViewList.get(position + 1));
                 mWebViewList.remove(position);
-                mDrawerListLeft.setItemChecked(position, true);
+                showTab(mWebViewList.get(position));
+                updateTabs();
             } else {
                 mWebViewList.remove(position);
             }
@@ -1306,7 +1317,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (current == position) {
                 showTab(mWebViewList.get(position - 1));
                 mWebViewList.remove(position);
-                mDrawerListLeft.setItemChecked(position - 1, true);
+                showTab(mWebViewList.get(position - 1));
+                updateTabs();
             } else {
                 mWebViewList.remove(position);
             }
@@ -1322,12 +1334,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 reference.onDestroy();
                 mCurrentView = null;
                 mWebView = null;
-                mTitleAdapter.notifyDataSetChanged();
+                mTabAdapter.notifyDataSetChanged();
                 finish();
-
             }
         }
-        mTitleAdapter.notifyDataSetChanged();
+        mTabAdapter.notifyDataSetChanged();
 
         if (mIsNewIntent && isShown) {
             mIsNewIntent = false;
@@ -1380,7 +1391,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
         }
         mWebViewList.clear();
-        mTitleAdapter.notifyDataSetChanged();
+        mTabAdapter.notifyDataSetChanged();
         finish();
     }
 
@@ -1510,61 +1521,58 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    public class LightningViewAdapter extends ArrayAdapter<LightningView> {
+    public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
 
-        final Context context;
-        ColorMatrix colorMatrix;
-        ColorMatrixColorFilter filter;
-        Paint paint;
-        final int layoutResourceId;
-        List<LightningView> data = null;
+        private final Context context;
+        private final int layoutResourceId;
+        private List<LightningView> data = null;
         final CloseTabListener mExitListener;
         private final Drawable mBackgroundTabDrawable;
         private final Drawable mForegroundTabDrawable;
+        private final DrawerItemClickListener mClickListener;
+        private final DrawerItemLongClickListener mLongClickListener;
+        private ColorMatrix mColorMatrix;
+        private Paint mPaint;
+        private ColorFilter mFilter;
+        private static final float DESATURATED = 0.5f;
 
         public LightningViewAdapter(Context context, int layoutResourceId, List<LightningView> data) {
-            super(context, layoutResourceId, data);
             this.layoutResourceId = layoutResourceId;
             this.context = context;
             this.data = data;
             this.mExitListener = new CloseTabListener();
+            this.mClickListener = new DrawerItemClickListener();
+            this.mLongClickListener = new DrawerItemLongClickListener();
 
+            if (mShowTabsInDrawer) {
+                mBackgroundTabDrawable = null;
+                mForegroundTabDrawable = ThemeUtils.getSelectedBackground(context, mDarkTheme);
+            } else {
+                int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(mActivity), Color.BLACK, 0.75f);
+                Bitmap backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
+                Utils.drawTrapezoid(new Canvas(backgroundTabBitmap), backgroundColor, true);
+                mBackgroundTabDrawable = new BitmapDrawable(getResources(), backgroundTabBitmap);
 
-            int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(mActivity), Color.BLACK, 0.75f);
-            Bitmap backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
-            Utils.drawTrapezoid(new Canvas(backgroundTabBitmap), backgroundColor, true);
-            mBackgroundTabDrawable = new BitmapDrawable(getResources(), backgroundTabBitmap);
-
-            int foregroundColor = ThemeUtils.getPrimaryColor(context);
-            Bitmap foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
-            Utils.drawTrapezoid(new Canvas(foregroundTabBitmap), foregroundColor, false);
-            mForegroundTabDrawable = new BitmapDrawable(getResources(), foregroundTabBitmap);
+                int foregroundColor = ThemeUtils.getPrimaryColor(context);
+                Bitmap foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
+                Utils.drawTrapezoid(new Canvas(foregroundTabBitmap), foregroundColor, false);
+                mForegroundTabDrawable = new BitmapDrawable(getResources(), foregroundTabBitmap);
+            }
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            LightningViewHolder holder;
-            if (row == null) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                row = inflater.inflate(layoutResourceId, parent, false);
+        public LightningViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+            View view = inflater.inflate(layoutResourceId, viewGroup, false);
+            return new LightningViewHolder(view);
+        }
 
-                holder = new LightningViewHolder();
-                holder.txtTitle = (TextView) row.findViewById(R.id.textTab);
-                holder.favicon = (ImageView) row.findViewById(R.id.faviconTab);
-                holder.exit = (ImageView) row.findViewById(R.id.deleteButton);
-                if (!mShowTabsInDrawer) {
-                    holder.layout = (LinearLayout) row.findViewById(R.id.tab_item_background);
-                }
-                holder.exitButton = (FrameLayout) row.findViewById(R.id.deleteAction);
-                holder.exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
-                row.setTag(holder);
-            } else {
-                holder = (LightningViewHolder) row.getTag();
-            }
-
+        @Override
+        public void onBindViewHolder(LightningViewHolder holder, int position) {
             holder.exitButton.setTag(position);
             holder.exitButton.setOnClickListener(mExitListener);
+            holder.layout.setOnClickListener(mClickListener);
+            holder.layout.setOnLongClickListener(mLongClickListener);
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
 
@@ -1573,47 +1581,70 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
             Bitmap favicon = web.getFavicon();
             if (web.isForegroundTab()) {
-                holder.txtTitle.setTextAppearance(context, R.style.boldText);
-                holder.favicon.setImageBitmap(favicon);
-                if (!mShowTabsInDrawer) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        holder.layout.setBackground(mForegroundTabDrawable);
-                    } else {
-                        holder.layout.setBackgroundDrawable(mForegroundTabDrawable);
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtTitle.setTextAppearance(R.style.boldText);
+                } else {
+                    holder.txtTitle.setTextAppearance(context, R.style.boldText);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.layout.setBackground(mForegroundTabDrawable);
+                } else {
+                    holder.layout.setBackgroundDrawable(mForegroundTabDrawable);
                 }
                 if (!isIncognito() && mColorMode) {
                     // TODO fix toolbar coloring
 //                    changeToolbarBackground(favicon, mForegroundTabDrawable);
                 }
+                holder.favicon.setImageBitmap(favicon);
             } else {
-                holder.txtTitle.setTextAppearance(context, R.style.normalText);
-                if (!mShowTabsInDrawer) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        holder.layout.setBackground(mBackgroundTabDrawable);
-                    } else {
-                        holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.txtTitle.setTextAppearance(R.style.normalText);
+                } else {
+                    holder.txtTitle.setTextAppearance(context, R.style.normalText);
                 }
-                Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
-                        favicon.getHeight(), Bitmap.Config.ARGB_8888);
-
-                Canvas c = new Canvas(grayscaleBitmap);
-                if (colorMatrix == null || filter == null || paint == null) {
-                    paint = new Paint();
-                    colorMatrix = new ColorMatrix();
-                    colorMatrix.setSaturation(0.5f);
-                    filter = new ColorMatrixColorFilter(colorMatrix);
-                    paint.setColorFilter(filter);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.layout.setBackground(mBackgroundTabDrawable);
+                } else {
+                    holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
                 }
-
-                c.drawBitmap(favicon, 0, 0, paint);
-                holder.favicon.setImageBitmap(grayscaleBitmap);
+                holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
             }
-            return row;
         }
 
-        class LightningViewHolder {
+        @Override
+        public int getItemCount() {
+            return (data != null) ? data.size() : 0;
+        }
+
+        public Bitmap getDesaturatedBitmap(Bitmap favicon) {
+            Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
+                    favicon.getHeight(), Bitmap.Config.ARGB_8888);
+
+            Canvas c = new Canvas(grayscaleBitmap);
+            if (mColorMatrix == null || mFilter == null || mPaint == null) {
+                mPaint = new Paint();
+                mColorMatrix = new ColorMatrix();
+                mColorMatrix.setSaturation(DESATURATED);
+                mFilter = new ColorMatrixColorFilter(mColorMatrix);
+                mPaint.setColorFilter(mFilter);
+            }
+
+            c.drawBitmap(favicon, 0, 0, mPaint);
+            return grayscaleBitmap;
+        }
+
+        public class LightningViewHolder extends RecyclerView.ViewHolder {
+
+            public LightningViewHolder(View view) {
+                super(view);
+                txtTitle = (TextView) view.findViewById(R.id.textTab);
+                favicon = (ImageView) view.findViewById(R.id.faviconTab);
+                exit = (ImageView) view.findViewById(R.id.deleteButton);
+                layout = (LinearLayout) view.findViewById(R.id.tab_item_background);
+                exitButton = (FrameLayout) view.findViewById(R.id.deleteAction);
+                exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+            }
+
             TextView txtTitle;
             ImageView favicon;
             ImageView exit;
@@ -2024,58 +2055,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 
-        buildBookmarkPage(null, mBookmarkManager.getBookmarksFromFolder(null, true));
+        BookmarkPage.buildBookmarkPage(this, null, mBookmarkManager.getBookmarksFromFolder(null, true));
         view.loadUrl(Constants.FILE + bookmarkWebPage);
     }
 
-    private void buildBookmarkPage(final String folder, final List<HistoryItem> list) {
-        File bookmarkWebPage;
-        if (folder == null || folder.isEmpty()) {
-            bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
-        } else {
-            bookmarkWebPage = new File(mActivity.getFilesDir(), folder + '-' + BookmarkPage.FILENAME);
-        }
-        final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
-
-        String folderIconPath = Constants.FILE + mActivity.getCacheDir() + "/folder.png";
-        for (int n = 0; n < list.size(); n++) {
-            final HistoryItem item = list.get(n);
-            bookmarkBuilder.append(BookmarkPage.PART1);
-            if (item.isFolder()) {
-                File folderPage = new File(mActivity.getFilesDir(), item.getTitle() + '-' + BookmarkPage.FILENAME);
-                bookmarkBuilder.append(Constants.FILE).append(folderPage);
-                bookmarkBuilder.append(BookmarkPage.PART2);
-                bookmarkBuilder.append(folderIconPath);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        buildBookmarkPage(item.getTitle(), mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true));
-                    }
-                }).run();
-            } else {
-                bookmarkBuilder.append(item.getUrl());
-                bookmarkBuilder.append(BookmarkPage.PART2).append(BookmarkPage.PART3);
-                bookmarkBuilder.append(item.getUrl());
-            }
-            bookmarkBuilder.append(BookmarkPage.PART4);
-            bookmarkBuilder.append(item.getTitle());
-            bookmarkBuilder.append(BookmarkPage.PART5);
-        }
-        bookmarkBuilder.append(BookmarkPage.END);
-        FileWriter bookWriter = null;
-        try {
-            bookWriter = new FileWriter(bookmarkWebPage, false);
-            bookWriter.write(bookmarkBuilder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(bookWriter);
-        }
-    }
-
     @Override
-    public void update() {
-        mTitleAdapter.notifyDataSetChanged();
+    public void updateTabs() {
+        mTabAdapter.notifyDataSetChanged();
     }
 
     /**

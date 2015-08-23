@@ -3,8 +3,18 @@
  */
 package acr.browser.lightning.constant;
 
+import android.app.Activity;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserApp;
+import acr.browser.lightning.database.BookmarkManager;
+import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.utils.Utils;
 
 public class BookmarkPage {
 
@@ -38,5 +48,51 @@ public class BookmarkPage {
     public static final String PART5 = "</p></div></div></div>";
 
     public static final String END = "</div></body></html>";
+
+    public static void buildBookmarkPage(final Activity activity, final String folder, final List<HistoryItem> list) {
+        final BookmarkManager manager = BookmarkManager.getInstance(activity);
+        File bookmarkWebPage;
+        if (folder == null || folder.isEmpty()) {
+            bookmarkWebPage = new File(activity.getFilesDir(), BookmarkPage.FILENAME);
+        } else {
+            bookmarkWebPage = new File(activity.getFilesDir(), folder + '-' + BookmarkPage.FILENAME);
+        }
+        final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
+
+        String folderIconPath = Constants.FILE + activity.getCacheDir() + "/folder.png";
+        for (int n = 0; n < list.size(); n++) {
+            final HistoryItem item = list.get(n);
+            bookmarkBuilder.append(BookmarkPage.PART1);
+            if (item.isFolder()) {
+                File folderPage = new File(activity.getFilesDir(), item.getTitle() + '-' + BookmarkPage.FILENAME);
+                bookmarkBuilder.append(Constants.FILE).append(folderPage);
+                bookmarkBuilder.append(BookmarkPage.PART2);
+                bookmarkBuilder.append(folderIconPath);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        buildBookmarkPage(activity, item.getTitle(), manager.getBookmarksFromFolder(item.getTitle(), true));
+                    }
+                }).run();
+            } else {
+                bookmarkBuilder.append(item.getUrl());
+                bookmarkBuilder.append(BookmarkPage.PART2).append(BookmarkPage.PART3);
+                bookmarkBuilder.append(item.getUrl());
+            }
+            bookmarkBuilder.append(BookmarkPage.PART4);
+            bookmarkBuilder.append(item.getTitle());
+            bookmarkBuilder.append(BookmarkPage.PART5);
+        }
+        bookmarkBuilder.append(BookmarkPage.END);
+        FileWriter bookWriter = null;
+        try {
+            bookWriter = new FileWriter(bookmarkWebPage, false);
+            bookWriter.write(bookmarkBuilder.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.close(bookWriter);
+        }
+    }
 
 }

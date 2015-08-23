@@ -160,114 +160,12 @@ public class LightningView {
             return;
         }
         if (mHomepage.startsWith("about:home")) {
-            mWebView.loadUrl(getHomepage());
+            mWebView.loadUrl(StartPage.getHomepage(mActivity));
         } else if (mHomepage.startsWith("about:bookmarks")) {
             mBrowserController.openBookmarkPage(mWebView);
         } else {
             mWebView.loadUrl(mHomepage);
         }
-    }
-
-    /**
-     * This method builds the homepage and returns the local URL to be loaded
-     * when it finishes building.
-     *
-     * @return the URL to load
-     */
-    private String getHomepage() {
-        StringBuilder homepageBuilder = new StringBuilder(StartPage.HEAD);
-        String icon;
-        String searchUrl;
-        switch (mPreferences.getSearchChoice()) {
-            case 0:
-                // CUSTOM SEARCH
-                icon = "file:///android_asset/lightning.png";
-                searchUrl = mPreferences.getSearchUrl();
-                break;
-            case 1:
-                // GOOGLE_SEARCH;
-                icon = "file:///android_asset/google.png";
-                // "https://www.google.com/images/srpr/logo11w.png";
-                searchUrl = Constants.GOOGLE_SEARCH;
-                break;
-            case 2:
-                // ANDROID SEARCH;
-                icon = "file:///android_asset/ask.png";
-                searchUrl = Constants.ASK_SEARCH;
-                break;
-            case 3:
-                // BING_SEARCH;
-                icon = "file:///android_asset/bing.png";
-                // "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
-                searchUrl = Constants.BING_SEARCH;
-                break;
-            case 4:
-                // YAHOO_SEARCH;
-                icon = "file:///android_asset/yahoo.png";
-                // "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
-                searchUrl = Constants.YAHOO_SEARCH;
-                break;
-            case 5:
-                // STARTPAGE_SEARCH;
-                icon = "file:///android_asset/startpage.png";
-                // "https://startpage.com/graphics/startp_logo.gif";
-                searchUrl = Constants.STARTPAGE_SEARCH;
-                break;
-            case 6:
-                // STARTPAGE_MOBILE
-                icon = "file:///android_asset/startpage.png";
-                // "https://startpage.com/graphics/startp_logo.gif";
-                searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
-                break;
-            case 7:
-                // DUCK_SEARCH;
-                icon = "file:///android_asset/duckduckgo.png";
-                // "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-                searchUrl = Constants.DUCK_SEARCH;
-                break;
-            case 8:
-                // DUCK_LITE_SEARCH;
-                icon = "file:///android_asset/duckduckgo.png";
-                // "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-                searchUrl = Constants.DUCK_LITE_SEARCH;
-                break;
-            case 9:
-                // BAIDU_SEARCH;
-                icon = "file:///android_asset/baidu.png";
-                // "http://www.baidu.com/img/bdlogo.gif";
-                searchUrl = Constants.BAIDU_SEARCH;
-                break;
-            case 10:
-                // YANDEX_SEARCH;
-                icon = "file:///android_asset/yandex.png";
-                // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = Constants.YANDEX_SEARCH;
-                break;
-            default:
-                // DEFAULT GOOGLE_SEARCH;
-                icon = "file:///android_asset/google.png";
-                searchUrl = Constants.GOOGLE_SEARCH;
-                break;
-
-        }
-
-        homepageBuilder.append(icon);
-        homepageBuilder.append(StartPage.MIDDLE);
-        homepageBuilder.append(searchUrl);
-        homepageBuilder.append(StartPage.END);
-
-        File homepage = new File(mActivity.getFilesDir(), StartPage.FILENAME);
-        FileWriter hWriter = null;
-        try {
-            hWriter = new FileWriter(homepage, false);
-            hWriter.write(homepageBuilder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(hWriter);
-        }
-
-        return Constants.FILE + homepage;
     }
 
     /**
@@ -493,7 +391,7 @@ public class LightningView {
 
     public void setForegroundTab(boolean isForeground) {
         isForegroundTab = isForeground;
-        mBrowserController.update();
+        mBrowserController.updateTabs();
     }
 
     public boolean isForegroundTab() {
@@ -758,7 +656,7 @@ public class LightningView {
             if (API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage) {
                 view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
             }
-            mBrowserController.update();
+            mBrowserController.updateTabs();
         }
 
         @Override
@@ -769,7 +667,7 @@ public class LightningView {
                 mBrowserController.showActionBar();
             }
             mTitle.setFavicon(mWebpageBitmap);
-            mBrowserController.update();
+            mBrowserController.updateTabs();
         }
 
         @Override
@@ -958,7 +856,7 @@ public class LightningView {
             if (icon == null)
                 return;
             mTitle.setFavicon(icon);
-            mBrowserController.update();
+            mBrowserController.updateTabs();
             cacheFavicon(icon);
         }
 
@@ -969,7 +867,7 @@ public class LightningView {
             } else {
                 mTitle.setTitle(mActivity.getString(R.string.untitled));
             }
-            mBrowserController.update();
+            mBrowserController.updateTabs();
             if (view != null)
                 mBrowserController.updateHistory(title, view.getUrl());
         }
