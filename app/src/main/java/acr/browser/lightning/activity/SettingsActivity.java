@@ -4,6 +4,7 @@
 package acr.browser.lightning.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.utils.PermissionsManager;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
@@ -55,5 +57,11 @@ public class SettingsActivity extends ThemableSettingsActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

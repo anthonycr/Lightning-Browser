@@ -3,8 +3,10 @@
  */
 package acr.browser.lightning.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
@@ -17,7 +19,7 @@ import java.util.Comparator;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.BookmarkManager;
-import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.PermissionsManager;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -28,6 +30,11 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private BookmarkManager mBookmarkManager;
     private File[] mFileList;
     private String[] mFileNameList;
+    private PermissionsManager mPermissionsManager;
+    private static String[] REQUIRED_PERMISSIONS = new String[]{
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
     private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
 
     @Override
@@ -41,11 +48,14 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
 
         initPrefs();
+
+        mPermissionsManager = PermissionsManager.getInstance();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mPermissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS);
+        }
     }
 
     private void initPrefs() {
-        // mPreferences storage
-        PreferenceManager mPreferences = PreferenceManager.getInstance();
 
         Preference exportpref = findPreference(SETTINGS_EXPORT);
         Preference importpref = findPreference(SETTINGS_IMPORT);
@@ -58,11 +68,15 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
-                mBookmarkManager.exportBookmarks(getActivity());
+                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
+                    mBookmarkManager.exportBookmarks(getActivity());
+                }
                 return true;
             case SETTINGS_IMPORT:
-                loadFileList(null);
-                createDialog();
+                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
+                    loadFileList(null);
+                    createDialog();
+                }
                 return true;
             default:
                 return false;
@@ -87,12 +101,11 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
             mFileList = new File[0];
         }
 
-        Arrays.sort(mFileList, new SortName());
-
         if (mFileList == null) {
             mFileNameList = new String[0];
             mFileList = new File[0];
         } else {
+            Arrays.sort(mFileList, new SortName());
             mFileNameList = new String[mFileList.length];
         }
         for (int n = 0; n < mFileList.length; n++) {

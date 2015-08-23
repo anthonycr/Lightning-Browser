@@ -4,6 +4,7 @@
 
 package acr.browser.lightning.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -62,6 +63,7 @@ import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
+import acr.browser.lightning.utils.PermissionsManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
@@ -93,6 +95,8 @@ public class LightningView {
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
+    private PermissionsManager mPermissionsManager;
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
 
@@ -101,6 +105,7 @@ public class LightningView {
         mIsIncognitoTab = isIncognito;
         mTitle = new Title(activity, darkTheme);
         mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
+        mPermissionsManager = PermissionsManager.getInstance();
 
         mWebpageBitmap = mTitle.mDefaultIcon;
 
@@ -288,10 +293,13 @@ public class LightningView {
 
         if (!mIsIncognitoTab) {
             settings.setGeolocationEnabled(mPreferences.getLocationEnabled());
+            if (mPreferences.getLocationEnabled() && !PermissionsManager.checkPermissions(mActivity, PERMISSIONS)) {
+                mPermissionsManager.requestPermissionsIfNecessary(mActivity, PERMISSIONS);
+            }
         } else {
             settings.setGeolocationEnabled(false);
         }
-        if (API < 19) {
+        if (API < Build.VERSION_CODES.KITKAT) {
             switch (mPreferences.getFlashSupport()) {
                 case 0:
                     settings.setPluginState(PluginState.OFF);
@@ -709,10 +717,10 @@ public class LightningView {
 
     public class LightningWebClient extends WebViewClient {
 
-        final Context mActivity;
+        final Activity mActivity;
 
-        LightningWebClient(Context context) {
-            mActivity = context;
+        LightningWebClient(Activity activity) {
+            mActivity = activity;
         }
 
         @Override
@@ -932,10 +940,10 @@ public class LightningView {
 
     public class LightningChromeClient extends WebChromeClient {
 
-        final Context mActivity;
+        final Activity mActivity;
 
-        LightningChromeClient(Context context) {
-            mActivity = context;
+        LightningChromeClient(Activity activity) {
+            mActivity = activity;
         }
 
         @Override
@@ -969,6 +977,7 @@ public class LightningView {
         @Override
         public void onGeolocationPermissionsShowPrompt(final String origin,
                                                        final GeolocationPermissions.Callback callback) {
+            mPermissionsManager.requestPermissionsIfNecessary(mActivity, PERMISSIONS);
             final boolean remember = true;
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle(mActivity.getString(R.string.location));
