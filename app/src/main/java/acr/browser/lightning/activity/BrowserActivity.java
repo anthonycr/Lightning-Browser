@@ -95,7 +95,6 @@ import android.widget.VideoView;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -334,7 +333,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) actionBar.getCustomView().findViewById(R.id.search);
         mUntitledTitle = getString(R.string.untitled);
-        mBackgroundColor = getResources().getColor(R.color.primary_color);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mBackgroundColor = getResources().getColor(R.color.primary_color, getTheme());
+        } else {
+            mBackgroundColor = getResources().getColor(R.color.primary_color);
+        }
         mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
         mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
         mSearchIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_forward);
@@ -1348,7 +1351,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Log.d(Constants.TAG, "deleted tab");
     }
 
-    public void performExitCleanUp() {
+    private void performExitCleanUp() {
         if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
             WebUtils.clearCache(mCurrentView.getWebView());
             Log.d(Constants.TAG, "Cache Cleared");
@@ -1526,7 +1529,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         private final Context context;
         private final int layoutResourceId;
         private List<LightningView> data = null;
-        final CloseTabListener mExitListener;
+        private final CloseTabListener mExitListener;
         private final Drawable mBackgroundTabDrawable;
         private final Drawable mForegroundTabDrawable;
         private final DrawerItemClickListener mClickListener;
@@ -1645,11 +1648,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
             }
 
-            TextView txtTitle;
-            ImageView favicon;
-            ImageView exit;
-            FrameLayout exitButton;
-            LinearLayout layout;
+            final TextView txtTitle;
+            final ImageView favicon;
+            final ImageView exit;
+            final FrameLayout exitButton;
+            final LinearLayout layout;
         }
     }
 
@@ -2305,11 +2308,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     /**
      * a class extending FramLayout used to display fullscreen videos
      */
-    static class FullscreenHolder extends FrameLayout {
+    private class FullscreenHolder extends FrameLayout {
 
         public FullscreenHolder(Context ctx) {
             super(ctx);
-            setBackgroundColor(ctx.getResources().getColor(android.R.color.black));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setBackgroundColor(ctx.getResources().getColor(android.R.color.black, getTheme()));
+            } else {
+                setBackgroundColor(ctx.getResources().getColor(android.R.color.black));
+            }
         }
 
         @Override
