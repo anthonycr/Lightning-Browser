@@ -181,8 +181,8 @@ public class Converter {
      * 
      * @throws IOException
      */
-    protected String detectCharset(String key, ByteArrayOutputStream bos, BufferedInputStream in,
-            String enc) throws IOException {
+    protected static String detectCharset(String key, ByteArrayOutputStream bos, BufferedInputStream in,
+                                          String enc) throws IOException {
 
         // Grab better encoding from stream
         byte[] arr = new byte[K2];
