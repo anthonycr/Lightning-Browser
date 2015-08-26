@@ -16,14 +16,18 @@
 package acr.browser.lightning.reading;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Parsed result from web page containing important title, text and image.
- * 
+ *
  * @author Peter Karich
  */
 public class JResult implements Serializable {
@@ -38,10 +42,15 @@ public class JResult implements Serializable {
     private String text;
     private String faviconUrl;
     private String description;
-    private String dateString;
-    private List<String> textList;
+    private String authorName;
+    private String authorDescription;
+    private Date date;
     private Collection<String> keywords;
     private List<ImageResult> images = null;
+    private List<Map<String, String>> links = new ArrayList<>();
+    private String type;
+    private String sitename;
+    private String language;
 
     public JResult() {
     }
@@ -108,6 +117,28 @@ public class JResult implements Serializable {
         return this;
     }
 
+    public String getAuthorName() {
+        if (authorName == null)
+            return "";
+        return authorName;
+    }
+
+    public JResult setAuthorName(String authorName) {
+        this.authorName = authorName;
+        return this;
+    }
+
+    public String getAuthorDescription() {
+        if (authorDescription == null)
+            return "";
+        return authorDescription;
+    }
+
+    public JResult setAuthorDescription(String authorDescription) {
+        this.authorDescription = authorDescription;
+        return this;
+    }
+
     public String getImageUrl() {
         if (imageUrl == null)
             return "";
@@ -128,17 +159,6 @@ public class JResult implements Serializable {
 
     public JResult setText(String text) {
         this.text = text;
-        return this;
-    }
-
-    public List<String> getTextList() {
-        if (this.textList == null)
-            return new ArrayList<>();
-        return this.textList;
-    }
-
-    public JResult setTextList(List<String> textList) {
-        this.textList = textList;
         return this;
     }
 
@@ -164,8 +184,8 @@ public class JResult implements Serializable {
         return this;
     }
 
-    public JResult setDate(String date) {
-        this.dateString = date;
+    public JResult setDate(Date date) {
+        this.date = date;
         return this;
     }
 
@@ -180,8 +200,8 @@ public class JResult implements Serializable {
     /**
      * @return get date from url or guessed from text
      */
-    public String getDate() {
-        return dateString;
+    public Date getDate() {
+        return date;
     }
 
     /**
@@ -207,6 +227,44 @@ public class JResult implements Serializable {
      */
     public void setImages(List<ImageResult> images) {
         this.images = images;
+    }
+
+    public void addLink(String url, String text, Integer pos) {
+        Map link = new HashMap();
+        link.put("url", url);
+        link.put("text", text);
+        link.put("offset", String.valueOf(pos));
+        links.add(link);
+    }
+
+    public List<Map<String, String>> getLinks() {
+        if (links == null)
+            return Collections.emptyList();
+        return links;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getSitename() {
+        return sitename;
+    }
+
+    public void setSitename(String sitename) {
+        this.sitename = sitename;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     @Override

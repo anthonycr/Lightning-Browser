@@ -139,7 +139,7 @@ public class ReadingActivity extends AppCompatActivity {
 
         private final Activity mActivity;
         private String mTitleText;
-        private List<String> mBodyText;
+        private String mBodyText;
 
         public PageLoader(Activity activity) {
             mActivity = activity;
@@ -163,15 +163,15 @@ public class ReadingActivity extends AppCompatActivity {
             try {
                 JResult result = fetcher.fetchAndExtract(params[0], 2500, true);
                 mTitleText = result.getTitle();
-                mBodyText = result.getTextList();
+                mBodyText = result.getText();
             } catch (Exception e) {
                 mTitleText = "";
-                mBodyText = new ArrayList<>();
+                mBodyText = "";
                 e.printStackTrace();
             } catch (OutOfMemoryError e) {
                 System.gc();
                 mTitleText = "";
-                mBodyText = new ArrayList<>();
+                mBodyText = "";
                 e.printStackTrace();
             }
             return null;
@@ -186,11 +186,7 @@ public class ReadingActivity extends AppCompatActivity {
             if (mTitleText.isEmpty() || mBodyText.isEmpty()) {
                 setText(getString(R.string.untitled), getString(R.string.loading_failed));
             } else {
-                StringBuilder builder = new StringBuilder();
-                for (String text : mBodyText) {
-                    builder.append(text).append("\n\n");
-                }
-                setText(mTitleText, builder.toString());
+                setText(mTitleText, mBodyText);
             }
             super.onPostExecute(result);
         }
