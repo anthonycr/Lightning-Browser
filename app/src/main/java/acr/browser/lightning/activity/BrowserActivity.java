@@ -737,7 +737,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (mSearch.hasFocus()) {
                 searchTheWeb(mSearch.getText().toString());
             }
-        } else if ((keyCode == KeyEvent.KEYCODE_MENU) && (Build.VERSION.SDK_INT <= 16)
+        } else if ((keyCode == KeyEvent.KEYCODE_MENU)
+                && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN)
                 && (Build.MANUFACTURER.compareTo("LGE") == 0)) {
             // Workaround for stupid LG devices that crash
             return true;
@@ -747,7 +748,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_MENU) && (Build.VERSION.SDK_INT <= 16)
+        if ((keyCode == KeyEvent.KEYCODE_MENU)
+                && (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN)
                 && (Build.MANUFACTURER.compareTo("LGE") == 0)) {
             // Workaround for stupid LG devices that crash
             openOptionsMenu();

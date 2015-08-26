@@ -365,7 +365,11 @@ public class LightningView {
                 settings.setUserAgentString(Constants.MOBILE_USER_AGENT);
                 break;
             case 4:
-                settings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
+                String ua = mPreferences.getUserAgentString(mDefaultUserAgent);
+                if (ua == null || ua.isEmpty()) {
+                    ua = " ";
+                }
+                settings.setUserAgentString(ua);
                 break;
         }
     }
