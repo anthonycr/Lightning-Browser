@@ -6,7 +6,10 @@ import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
+import com.squareup.otto.Subscribe;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.preference.PreferenceManager;
 
 @SuppressWarnings("deprecation")
@@ -60,4 +63,6 @@ public class MainActivity extends BrowserActivity {
         closeDrawers();
         moveTaskToBack(true);
     }
+
+
 }
