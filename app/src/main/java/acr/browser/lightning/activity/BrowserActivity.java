@@ -782,6 +782,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_incognito:
                 startActivity(new Intent(this, IncognitoActivity.class));
+                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
                 return true;
             case R.id.action_share:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
@@ -1443,6 +1444,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             unregisterReceiver(mNetworkReceiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+        }
+        if (isIncognito() && isFinishing()) {
+            overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
     }
 
