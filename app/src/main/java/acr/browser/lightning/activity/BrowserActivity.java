@@ -848,6 +848,23 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    private void deleteBookmark(String url) {
+        final int position = BookmarkManager.getIndexOfBookmark(mBookmarkList, url);
+
+        if (position == -1) {
+            return;
+        }
+
+        if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position))) {
+            mBookmarkList.remove(position);
+            notifyBookmarkDataSetChanged();
+            mSearchAdapter.refreshBookmarks();
+            if (mCurrentView != null) {
+                updateBookmarkIndicator(mCurrentView.getUrl());
+            }
+        }
+    }
+
     private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
         mBookmarkList.clear();
         mBookmarkList.addAll(items);
@@ -2597,15 +2614,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         mDrawerLayout.closeDrawers();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
-                        if (mBookmarkManager.deleteBookmark(mBookmarkList.get(position))) {
-                            mBookmarkList.remove(position);
-                            notifyBookmarkDataSetChanged();
-                            mSearchAdapter.refreshBookmarks();
-                            openBookmarks();
-                            if (mCurrentView != null) {
-                                updateBookmarkIndicator(mCurrentView.getUrl());
-                            }
-                        }
+                        deleteBookmark(url);
+                        openBookmarks();
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
                         editBookmark(position);
@@ -2826,7 +2836,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 break;
             case R.id.action_add_bookmark:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
-                    addBookmark(mCurrentView.getTitle(), mCurrentView.getUrl());
+                    if (!mBookmarkManager.bookmarkExists(mCurrentView.getUrl())) {
+                        addBookmark(mCurrentView.getTitle(), mCurrentView.getUrl());
+                    } else {
+                        deleteBookmark(mCurrentView.getUrl());
+                    }
                 }
                 break;
         }

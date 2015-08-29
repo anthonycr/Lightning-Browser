@@ -2,9 +2,7 @@ package acr.browser.lightning.database;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Environment;
-import android.provider.Browser;
 import android.support.annotation.NonNull;
 
 import org.json.JSONException;
@@ -27,7 +25,6 @@ import java.util.Set;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkManager {
@@ -325,6 +322,10 @@ public class BookmarkManager {
                 set.add(mBookmarkList.get(n).getUrl());
         }
         return set;
+    }
+
+    public boolean bookmarkExists(String url) {
+        return getBookmarkUrls(getAllBookmarks(false)).contains(url);
     }
 
     /**
