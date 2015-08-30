@@ -182,7 +182,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // Image
     private Bitmap mDefaultVideoPoster, mWebpageBitmap, mFolderBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
-    private Drawable mDeleteIcon, mRefreshIcon, mSearchIcon, mIcon;
+    private Drawable mDeleteIcon, mRefreshIcon, mClearIcon, mIcon;
     private DrawerArrowDrawable mArrowDrawable;
 
     // Proxy
@@ -340,12 +340,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
         mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
-        mSearchIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_forward);
+        mClearIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
 
         int iconBounds = Utils.dpToPx(30);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
         mRefreshIcon.setBounds(0, 0, iconBounds, iconBounds);
-        mSearchIcon.setBounds(0, 0, iconBounds, iconBounds);
+        mClearIcon.setBounds(0, 0, iconBounds, iconBounds);
         mIcon = mRefreshIcon;
         SearchListenerClass search = new SearchListenerClass();
         mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
@@ -461,8 +461,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 ((AutoCompleteTextView) v).selectAll(); // Hack to make sure
                 // the text gets
                 // selected
-                mIcon = mSearchIcon;
-                mSearch.setCompoundDrawables(null, null, mSearchIcon, null);
+                mIcon = mClearIcon;
+                mSearch.setCompoundDrawables(null, null, mClearIcon, null);
             }
             final Animation anim = new Animation() {
 
@@ -528,12 +528,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (tappedX) {
                     if (event.getAction() == MotionEvent.ACTION_UP) {
                         if (mSearch.hasFocus()) {
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-                            searchTheWeb(mSearch.getText().toString());
-                            if (mCurrentView != null) {
-                                mCurrentView.requestFocus();
-                            }
+                            mSearch.setText("");
                         } else {
                             refreshOrStop();
                         }
