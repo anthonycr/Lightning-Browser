@@ -178,7 +178,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // Image
     private Bitmap mDefaultVideoPoster, mWebpageBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
-    private Drawable mDeleteIcon, mRefreshIcon, mSearchIcon, mIcon;
+    private Drawable mDeleteIcon, mRefreshIcon, mClearIcon, mIcon;
     private DrawerArrowDrawable mArrowDrawable;
 
     // Proxy
@@ -324,12 +324,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
         mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
-        mSearchIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_forward);
+        mClearIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
 
         int iconBounds = Utils.dpToPx(30);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
         mRefreshIcon.setBounds(0, 0, iconBounds, iconBounds);
-        mSearchIcon.setBounds(0, 0, iconBounds, iconBounds);
+        mClearIcon.setBounds(0, 0, iconBounds, iconBounds);
         mIcon = mRefreshIcon;
         SearchListenerClass search = new SearchListenerClass();
         mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
@@ -418,8 +418,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 ((AutoCompleteTextView) v).selectAll(); // Hack to make sure
                 // the text gets
                 // selected
-                mIcon = mSearchIcon;
-                mSearch.setCompoundDrawables(null, null, mSearchIcon, null);
+                mIcon = mClearIcon;
+                mSearch.setCompoundDrawables(null, null, mClearIcon, null);
             }
             final Animation anim = new Animation() {
 
@@ -485,12 +485,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (tappedX) {
                     if (event.getAction() == MotionEvent.ACTION_UP) {
                         if (mSearch.hasFocus()) {
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
-                            searchTheWeb(mSearch.getText().toString());
-                            if (mCurrentView != null) {
-                                mCurrentView.requestFocus();
-                            }
+                            mSearch.setText("");
                         } else {
                             refreshOrStop();
                         }
@@ -739,6 +734,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_incognito:
                 startActivity(new Intent(this, IncognitoActivity.class));
+                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
                 return true;
             case R.id.action_share:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
@@ -1202,6 +1198,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             unregisterReceiver(mNetworkReceiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+        }
+        if (isIncognito() && isFinishing()) {
+            overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
 
         BusProvider.getInstance().unregister(busEventListener);
