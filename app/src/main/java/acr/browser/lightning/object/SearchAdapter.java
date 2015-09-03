@@ -36,7 +36,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
@@ -58,7 +61,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private boolean mIsExecuting = false;
     private final boolean mDarkTheme;
     private final boolean mIncognito;
-    private final BookmarkManager mBookmarkManager;
+    @Inject BookmarkManager mBookmarkManager;
     private static final String CACHE_FILE_TYPE = ".sgg";
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
@@ -71,8 +74,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final Drawable mBookmarkDrawable;
 
     public SearchAdapter(Context context, boolean dark, boolean incognito) {
+        BrowserApp.getAppComponent().inject(this);
         mDatabaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
-        mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
         mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
         mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
         mContext = context;

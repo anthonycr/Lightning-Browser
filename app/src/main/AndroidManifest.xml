@@ -20,7 +20,7 @@
         android:required="false" />
 
     <application
-        android:name=".activity.BrowserApp"
+        android:name=".app.BrowserApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"

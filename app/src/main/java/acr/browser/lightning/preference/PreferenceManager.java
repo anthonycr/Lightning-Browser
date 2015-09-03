@@ -3,7 +3,7 @@ package acr.browser.lightning.preference;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
-import acr.browser.lightning.activity.BrowserApp;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 
 public class PreferenceManager {

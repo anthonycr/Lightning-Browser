@@ -1,8 +1,6 @@
 package acr.browser.lightning.fragment;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -22,11 +20,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,19 +32,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
-import acr.browser.lightning.bus.BusProvider;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.DownloadImageTask;
 import acr.browser.lightning.utils.ThemeUtils;
-import acr.browser.lightning.utils.Utils;
-
-import static android.support.v7.app.AlertDialog.Builder;
 
 /**
  * Created by Stefano Pacifici on 25/08/15. Based on Anthony C. Restaino's code.
@@ -57,7 +52,16 @@ import static android.support.v7.app.AlertDialog.Builder;
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     // Managers
-    private BookmarkManager mBookmarkManager;
+    @Inject
+    BookmarkManager mBookmarkManager;
+
+    // Event bus
+    @Inject
+    Bus eventBus;
+
+    // Dialog builder
+    @Inject
+    BookmarksDialogBuilder bookmarksDialogBuilder;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -80,12 +84,17 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         @Override
         public void run() {
             final Context context = getContext();
-            mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
             mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
             mBookmarksListView.setAdapter(mBookmarkAdapter);
         }
     };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BrowserApp.getAppComponent().inject(this);
+    }
 
     // Handle bookmark click
     private final OnItemClickListener itemClickListener = new OnItemClickListener() {
@@ -96,7 +105,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true),
                         true);
             } else {
-                BusProvider.getInstance().post(new BookmarkEvents.Clicked(item));
+                eventBus.post(new BookmarkEvents.Clicked(item));
             }
         }
     };
@@ -154,13 +163,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onStart() {
         super.onStart();
-        BusProvider.getInstance().register(this);
+        eventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        BusProvider.getInstance().unregister(this);
+        eventBus.unregister(this);
     }
 
     @Subscribe
@@ -170,7 +179,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mBookmarks.add(item);
             Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
             mBookmarkAdapter.notifyDataSetChanged();
-            BusProvider.getInstance()
+            eventBus
                     .post(new BookmarkEvents.Added(item));
             updateBookmarkIndicator(event.url);
         }
@@ -179,6 +188,16 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Subscribe
     public void currentPageInfo(final BrowserEvents.CurrentPageUrl event) {
         updateBookmarkIndicator(event.url);
+    }
+
+    @Subscribe
+    public void bookmarkChanged(BookmarkEvents.BookmarkChanged event) {
+        final int size = mBookmarks.size();
+        mBookmarks.remove(event.oldBookmark);
+        assert mBookmarks.size() < size;
+        mBookmarks.add(event.newBookmark);
+        mBookmarkAdapter.notifyDataSetChanged();
+        Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
     }
 
     private void updateBookmarkIndicator(final String url) {
@@ -194,11 +213,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Subscribe
     public void userPressedBack(final BrowserEvents.UserPressedBack event) {
         if (mBookmarkManager.isRootFolder()) {
-            BusProvider.getInstance()
+            eventBus
                     .post(new BookmarkEvents.CloseBookmarks());
         } else {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
         }
+    }
+
+    @Subscribe
+    public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
+        final HistoryItem item = event.item;
+        final int size = mBookmarks.size();
+        mBookmarks.remove(event);
+        assert mBookmarks.size() < size;
+        mBookmarkAdapter.notifyDataSetChanged();
     }
 
     private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
@@ -261,177 +289,17 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private void handleLongPress(final HistoryItem item, final int position) {
         if (item.isFolder()) {
-            longPressFolder(item, position);
-            return;
+            bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            final Bus bus = BusProvider.getInstance();
-            final DialogInterface.OnClickListener dialogClickListener =
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    bus.post(new BookmarkEvents.AsNewTab(item));
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    if (mBookmarkManager.deleteBookmark(item)) {
-                                        mBookmarks.remove(position);
-                                        mBookmarkAdapter.notifyDataSetChanged();
-                                        bus.post(new BookmarkEvents.Deleted(item));
-                                    }
-                                    break;
-                                case DialogInterface.BUTTON_NEUTRAL:
-                                    editBookmark(item, position);
-                                    break;
-                            }
-                        }
-                    };
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.action_bookmarks)
-                    .setMessage(R.string.dialog_bookmark)
-                    .setCancelable(true)
-                    .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                    .setNegativeButton(R.string.action_delete, dialogClickListener)
-                    .setNeutralButton(R.string.action_edit, dialogClickListener)
-                    .show();
+            bookmarksDialogBuilder.showLongPressedDialogForUrl(getContext(), item);
         }
-    }
-
-    private void longPressFolder(final HistoryItem item, final int position) {
-        final DialogInterface.OnClickListener dialogClickListener =
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                renameFolder(item, position);
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                mBookmarkManager.deleteFolder(item.getTitle());
-                                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                                BusProvider.getInstance().post(new BookmarkEvents.Deleted(item));
-                                /* TODO Restore Bookmarkpage
-                                if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
-                                        && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
-                                    openBookmarkPage(mWebView);
-                                }*/
-                                break;
-                        }
-                    }
-                };
-
-        Builder builder = new Builder(getContext());
-        builder.setTitle(R.string.action_folder)
-                .setMessage(R.string.dialog_folder)
-                .setCancelable(true)
-                .setPositiveButton(R.string.action_rename, dialogClickListener)
-                .setNegativeButton(R.string.action_delete, dialogClickListener)
-                .show();
-    }
-
-    /**
-     * Takes in the id of which bookmark was selected and shows a dialog that
-     * allows the user to rename and change the url of the bookmark
-     *
-     * @param item      the bookmark
-     * @param position  the position inside the adapter
-     */
-    private synchronized void editBookmark(final HistoryItem item, final int position) {
-        final Builder editBookmarkDialog = new Builder(getContext());
-        editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
-        final View dialogLayout = View.inflate(getContext(), R.layout.dialog_edit_bookmark, null);
-        final EditText getTitle = (EditText) dialogLayout.findViewById(R.id.bookmark_title);
-        getTitle.setText(item.getTitle());
-        final EditText getUrl = (EditText) dialogLayout.findViewById(R.id.bookmark_url);
-        getUrl.setText(item.getUrl());
-        final AutoCompleteTextView getFolder =
-                (AutoCompleteTextView) dialogLayout.findViewById(R.id.bookmark_folder);
-        getFolder.setHint(R.string.folder);
-        getFolder.setText(item.getFolder());
-        final List<String> folders = mBookmarkManager.getFolderTitles();
-        final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_dropdown_item_1line, folders);
-        getFolder.setThreshold(1);
-        getFolder.setAdapter(suggestionsAdapter);
-        editBookmarkDialog.setView(dialogLayout);
-        editBookmarkDialog.setPositiveButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        HistoryItem editedItem = new HistoryItem();
-                        String currentFolder = item.getFolder();
-                        editedItem.setTitle(getTitle.getText().toString());
-                        editedItem.setUrl(getUrl.getText().toString());
-                        editedItem.setUrl(getUrl.getText().toString());
-                        editedItem.setFolder(getFolder.getText().toString());
-                        mBookmarkManager.editBookmark(item, editedItem);
-
-                        List<HistoryItem> list = mBookmarkManager.getBookmarksFromFolder(currentFolder, true);
-                        if (list.isEmpty()) {
-                            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
-                        } else {
-                            setBookmarkDataSet(list, false);
-                        }
-                        BusProvider.getInstance()
-                                .post(new BookmarkEvents.WantInfoAboutCurrentPage());
-                        /* TODO Restore BookmarkPage
-                        if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
-                                && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
-                            openBookmarkPage(mWebView);
-                        }*/
-                    }
-                });
-        editBookmarkDialog.show();
-    }
-
-    /**
-     * Show a dialog to rename a folder
-     *
-     * @param id the position of the HistoryItem (folder) in the bookmark list
-     */
-    private synchronized void renameFolder(final HistoryItem item, final int id) {
-        final Context context = getContext();
-        final Builder editFolderDialog = new Builder(context);
-        editFolderDialog.setTitle(R.string.title_rename_folder);
-        final EditText getTitle = new EditText(context);
-        getTitle.setHint(R.string.hint_title);
-        getTitle.setText(item.getTitle());
-        getTitle.setSingleLine();
-        LinearLayout layout = new LinearLayout(context);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.dpToPx(10);
-        layout.setPadding(padding, padding, padding, padding);
-        layout.addView(getTitle);
-        editFolderDialog.setView(layout);
-        editFolderDialog.setPositiveButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String oldTitle = item.getTitle();
-                        String newTitle = getTitle.getText().toString();
-
-                        mBookmarkManager.renameFolder(oldTitle, newTitle);
-
-                        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                        /* TODO Restore Bookmarkpage
-                        if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
-                                && mCurrentView.getUrl().endsWith(BookmarkPage.FILENAME)) {
-                            openBookmarkPage(mWebView);
-                        }*/
-                    }
-                });
-        editFolderDialog.show();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_add_bookmark:
-                BusProvider.getInstance().post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                eventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
                 break;
             default:
                 break;

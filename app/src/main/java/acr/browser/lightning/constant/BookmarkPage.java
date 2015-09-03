@@ -3,22 +3,22 @@
  */
 package acr.browser.lightning.constant;
 
-import android.app.Activity;
+import android.content.Context;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserApp;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
-public class BookmarkPage {
-
-    public static final String FILENAME = "bookmarks.html";
+public final class BookmarkPage {
 
     public static final String HEADING = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
             "<head>\n" +
@@ -49,29 +49,41 @@ public class BookmarkPage {
 
     public static final String END = "</div></body></html>";
 
-    public static void buildBookmarkPage(final Activity activity, final String folder, final List<HistoryItem> list) {
-        final BookmarkManager manager = BookmarkManager.getInstance(activity);
-        File bookmarkWebPage;
+    @Inject
+    BookmarkManager manager;
+
+    private final File FILES_DIR;
+    private final File CACHE_DIR;
+
+    @Inject
+    public BookmarkPage(Context context) {
+        BrowserApp.getAppComponent().inject(this);
+        FILES_DIR = context.getFilesDir();
+        CACHE_DIR = context.getCacheDir();
+    }
+
+    public void buildBookmarkPage(final String folder, final List<HistoryItem> list) {
+        final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {
-            bookmarkWebPage = new File(activity.getFilesDir(), BookmarkPage.FILENAME);
+            bookmarkWebPage = new File(FILES_DIR, Constants.BOOKMARKS_FILENAME);
         } else {
-            bookmarkWebPage = new File(activity.getFilesDir(), folder + '-' + BookmarkPage.FILENAME);
+            bookmarkWebPage = new File(FILES_DIR, folder + '-' + Constants.BOOKMARKS_FILENAME);
         }
         final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
 
-        String folderIconPath = Constants.FILE + activity.getCacheDir() + "/folder.png";
+        final String folderIconPath = Constants.FILE + CACHE_DIR + "/folder.png";
         for (int n = 0; n < list.size(); n++) {
             final HistoryItem item = list.get(n);
             bookmarkBuilder.append(BookmarkPage.PART1);
             if (item.isFolder()) {
-                File folderPage = new File(activity.getFilesDir(), item.getTitle() + '-' + BookmarkPage.FILENAME);
+                final File folderPage = new File(FILES_DIR, item.getTitle() + '-' + Constants.BOOKMARKS_FILENAME);
                 bookmarkBuilder.append(Constants.FILE).append(folderPage);
                 bookmarkBuilder.append(BookmarkPage.PART2);
                 bookmarkBuilder.append(folderIconPath);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        buildBookmarkPage(activity, item.getTitle(), manager.getBookmarksFromFolder(item.getTitle(), true));
+                        buildBookmarkPage(item.getTitle(), manager.getBookmarksFromFolder(item.getTitle(), true));
                     }
                 }).run();
             } else {

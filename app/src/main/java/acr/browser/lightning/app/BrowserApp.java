@@ -3,8 +3,6 @@ package acr.browser.lightning.app;
 import android.app.Application;
 import android.content.Context;
 
-import acr.browser.lightning.activity.DaggerAppComponent;
-
 public class BrowserApp extends Application {
 
     private static Context context;

@@ -311,21 +311,4 @@ public final class Utils {
 
         canvas.drawPath(wallpath, paint);
     }
-
-    /**
-     * Calculate the SHA-1 hash of the given string
-     * @param str   the string to hash
-     * @return      the long representation of the hash
-     */
-    public static long hash(final String str) {
-        try {
-            final MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            final byte[] bytes = digest.digest(str.getBytes());
-            final BigInteger intRepr = new BigInteger(bytes);
-            return intRepr.longValue();
-        } catch (NoSuchAlgorithmException e) {
-            Log.e(Constants.TAG, "The device has not SHA-1 support", e);
-            return 0;
-        }
-    }
 }

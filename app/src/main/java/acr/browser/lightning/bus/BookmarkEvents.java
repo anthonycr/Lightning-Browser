@@ -65,8 +65,8 @@ public final class BookmarkEvents {
      * The {@link acr.browser.lightning.fragment.BookmarksFragment} want to know the url (and title)
      * of the currently shown web page.
      */
-    public static class WantInfoAboutCurrentPage {
-    }
+    // public static class WantInfoAboutCurrentPage {
+    // }
 
     /**
      * Sended by the {@link acr.browser.lightning.fragment.BookmarksFragment} when it wants to close
@@ -74,5 +74,19 @@ public final class BookmarkEvents {
      * event.
      */
     public static class CloseBookmarks {
+    }
+
+    /**
+     * Sended when a bookmark is edited
+     */
+    public static class BookmarkChanged {
+
+        public final HistoryItem oldBookmark;
+        public final HistoryItem newBookmark;
+
+        public BookmarkChanged(final HistoryItem oldItem, final HistoryItem newItem) {
+            oldBookmark = oldItem;
+            newBookmark = newItem;
+        }
     }
 }

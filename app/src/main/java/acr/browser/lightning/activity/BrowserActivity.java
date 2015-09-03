@@ -89,21 +89,22 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
+import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
-import acr.browser.lightning.bus.BusProvider;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
@@ -111,6 +112,7 @@ import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.DrawerArrowDrawable;
 import acr.browser.lightning.object.SearchAdapter;
@@ -172,8 +174,21 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // Storage
     private HistoryDatabase mHistoryDatabase;
-    private BookmarkManager mBookmarkManager;
     private PreferenceManager mPreferences;
+
+    // The singleton BookmarkManager
+    @Inject
+    BookmarkManager bookmarkManager;
+
+    // Event bus
+    @Inject
+    Bus eventBus;
+
+    @Inject
+    BookmarkPage bookmarkPage;
+
+    @Inject
+    BookmarksDialogBuilder bookmarksDialogBuilder;
 
     // Image
     private Bitmap mDefaultVideoPoster, mWebpageBitmap;
@@ -206,6 +221,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BrowserApp.getAppComponent().inject(this);
         initialize();
     }
 
@@ -764,7 +780,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_add_bookmark:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
-                    BusProvider.getInstance()
+                    eventBus
                         .post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(),
                                 mCurrentView.getUrl()));
                 }
@@ -943,7 +959,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }, 150);
 
         // Should update the bookmark status in BookmarksFragment
-        BusProvider.getInstance()
+        eventBus
                 .post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
 
 //        new Handler().postDelayed(new Runnable() {
@@ -988,7 +1004,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         mCurrentView.loadUrl(url);
-        BusProvider.getInstance().post(new BrowserEvents.CurrentPageUrl(url));
+        eventBus.post(new BrowserEvents.CurrentPageUrl(url));
     }
 
     @Override
@@ -1163,7 +1179,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
             mDrawerLayout.closeDrawer(mDrawerLeft);
         } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-            BusProvider.getInstance()
+            eventBus
                     .post(new BrowserEvents.UserPressedBack());
         } else {
             if (mCurrentView != null) {
@@ -1203,7 +1219,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
 
-        BusProvider.getInstance().unregister(busEventListener);
+        eventBus.unregister(busEventListener);
     }
 
     void saveOpenTabs() {
@@ -1268,7 +1284,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         filter.addAction(NETWORK_BROADCAST_ACTION);
         registerReceiver(mNetworkReceiver, filter);
 
-        BusProvider.getInstance().register(busEventListener);
+        eventBus.register(busEventListener);
     }
 
     /**
@@ -1429,6 +1445,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
+     * TODO Can this method been removed?
      * Animates the color of the toolbar from one color to another. Optionally animates
      * the color of the tab background, for use when the tabs are displayed on the top
      * of the screen.
@@ -1483,21 +1500,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
     }
 
-    private static String getDomainName(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        String domain = uri.getHost();
-        if (domain == null) {
-            return url;
-        }
-        return domain.startsWith("www.") ? domain.substring(4) : domain;
-    }
-
     @Override
     public void updateUrl(String url, boolean shortUrl) {
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
-        BusProvider.getInstance()
+        eventBus
                 .post(new BrowserEvents.CurrentPageUrl(url));
         if (shortUrl && !url.startsWith(Constants.FILE)) {
             switch (mPreferences.getUrlBoxContentChoice()) {
@@ -1664,9 +1672,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         } finally {
             Utils.close(outputStream);
         }
-        File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
+        File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
 
-        BookmarkPage.buildBookmarkPage(this, null, mBookmarkManager.getBookmarksFromFolder(null, true));
+        bookmarkPage.buildBookmarkPage(null, bookmarkManager.getBookmarksFromFolder(null, true));
         view.loadUrl(Constants.FILE + bookmarkWebPage);
     }
 
@@ -2099,14 +2107,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     final String newUrl = result.getExtra();
                     longPressHistoryLink(newUrl);
                 }
-            } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
-                /* TODO Wtf is this?
+            } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
                 if (url != null) {
-                    longPressBookmarkLink(url);
+                    bookmarksDialogBuilder.showLongPressedDialogForUrl(this, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    longPressBookmarkLink(newUrl);
-                } */
+                    bookmarksDialogBuilder.showLongPressedDialogForUrl(this, newUrl);
+                }
             }
         } else {
             if (url != null) {
@@ -2405,7 +2412,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void bookmarkCurrentPage(final BookmarkEvents.WantToBookmarkCurrentPage event) {
-            BusProvider.getInstance()
+            eventBus
                     .post(new BrowserEvents
                             .AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
         }
@@ -2422,13 +2429,32 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         /**
+         * This is received when the user edit a bookmark
+         *
+         * @param event
+         */
+        @Subscribe
+        public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
+            if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
+                    && mCurrentView.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
+                openBookmarkPage(mWebView);
+            }
+            eventBus
+                    .post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+        }
+
+        /**
          * Notify the browser that a bookmark was deleted
          *
          * @param event
          */
         @Subscribe
         public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
-            BusProvider.getInstance()
+            if (mCurrentView != null && mCurrentView.getUrl().startsWith(Constants.FILE)
+                    && mCurrentView.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
+                openBookmarkPage(mWebView);
+            }
+            eventBus
                     .post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
         }
 

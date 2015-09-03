@@ -56,8 +56,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.bus.BrowserEvents;
-import acr.browser.lightning.bus.BusProvider;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.BrowserController;
