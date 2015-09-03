@@ -32,6 +32,7 @@
             android:layout_gravity="end"
             android:fitsSystemWindows="true"
             android:id="@+id/right_drawer"
+            android:background="?attr/drawerBackground"
             android:layout_width="@dimen/navigation_width"
             android:layout_height="match_parent">
             <fragment
