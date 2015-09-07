@@ -10,7 +10,7 @@ import android.util.Log;
 import net.i2p.android.ui.I2PAndroidHelper;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserApp;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;

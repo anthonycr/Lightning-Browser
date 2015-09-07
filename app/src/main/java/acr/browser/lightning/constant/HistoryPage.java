@@ -11,7 +11,7 @@ import java.util.List;
 
 import android.content.Context;
 
-import acr.browser.lightning.activity.BrowserApp;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryDatabase;

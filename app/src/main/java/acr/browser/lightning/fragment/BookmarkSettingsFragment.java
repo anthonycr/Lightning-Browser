@@ -17,7 +17,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.utils.PermissionsManager;
 
@@ -27,7 +30,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private static final String SETTINGS_IMPORT = "import_bookmark";
 
     private Activity mActivity;
-    private BookmarkManager mBookmarkManager;
+    @Inject BookmarkManager mBookmarkManager;
     private File[] mFileList;
     private String[] mFileNameList;
     private PermissionsManager mPermissionsManager;
@@ -40,12 +43,11 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BrowserApp.getAppComponent().inject(this);
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_bookmarks);
 
         mActivity = getActivity();
-
-        mBookmarkManager = BookmarkManager.getInstance(mActivity.getApplicationContext());
 
         initPrefs();
 

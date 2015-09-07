@@ -98,6 +98,7 @@ public class LightningView {
     private PermissionsManager mPermissionsManager;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
+    @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
 
         mActivity = activity;
@@ -175,6 +176,7 @@ public class LightningView {
      *                 if you don't have a reference to them
      * @param context  the context in which the WebView was created
      */
+    @SuppressLint("NewApi")
     public synchronized void initializePreferences(@Nullable WebSettings settings, Context context) {
         if (settings == null && mWebView == null) {
             return;
@@ -293,6 +295,7 @@ public class LightningView {
      * @param settings the WebSettings object to use.
      * @param context  the Context which was used to construct the WebView.
      */
+    @SuppressLint("NewApi")
     private void initializeSettings(WebSettings settings, Context context) {
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -347,6 +350,7 @@ public class LightningView {
         mToggleDesktop = !mToggleDesktop;
     }
 
+    @SuppressLint("NewApi")
     public void setUserAgent(Context context, int choice) {
         if (mWebView == null) return;
         WebSettings settings = mWebView.getSettings();
@@ -526,6 +530,7 @@ public class LightningView {
         }
     }
 
+    @SuppressLint("NewApi")
     public synchronized void find(String text) {
         if (mWebView != null) {
             if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -645,11 +650,11 @@ public class LightningView {
             return null;
         }
 
+        @SuppressLint("NewApi")
         @Override
         public void onPageFinished(WebView view, String url) {
             if (view.isShown()) {
                 mBrowserController.updateUrl(url, true);
-                mBrowserController.updateBookmarkIndicator(url);
                 view.postInvalidate();
             }
             if (view.getTitle() == null || view.getTitle().isEmpty()) {
@@ -667,7 +672,6 @@ public class LightningView {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (isShown()) {
                 mBrowserController.updateUrl(url, false);
-                mBrowserController.updateBookmarkIndicator(url);
                 mBrowserController.showActionBar();
             }
             mTitle.setFavicon(mWebpageBitmap);
@@ -723,6 +727,7 @@ public class LightningView {
         private boolean mIsRunning = false;
         private float mZoomScale = 0.0f;
 
+        @SuppressLint("NewApi")
         @Override
         public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
             if (view.isShown() && mTextReflow && API >= android.os.Build.VERSION_CODES.KITKAT) {

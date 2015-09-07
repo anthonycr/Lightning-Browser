@@ -3,7 +3,7 @@ package acr.browser.lightning.preference;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
-import acr.browser.lightning.activity.BrowserApp;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 
 public class PreferenceManager {
@@ -44,7 +44,6 @@ public class PreferenceManager {
         public static final String INVERT_COLORS = "invertColors";
         public static final String READING_TEXT_SIZE = "readingTextSize";
         public static final String THEME = "Theme";
-        public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
         public static final String TEXT_ENCODING = "textEncoding";
         public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
         public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
@@ -115,10 +114,6 @@ public class PreferenceManager {
 
     public boolean getCookiesEnabled() {
         return mPrefs.getBoolean(Name.COOKIES, true);
-    }
-
-    public boolean getDefaultBookmarks() {
-        return mPrefs.getBoolean(Name.DEFAULT_BOOKMARKS, true);
     }
 
     public String getDownloadDirectory() {
@@ -315,10 +310,6 @@ public class PreferenceManager {
 
     public void setCookiesEnabled(boolean enable) {
         putBoolean(Name.COOKIES, enable);
-    }
-
-    public void setDefaultBookmarks(boolean show) {
-        putBoolean(Name.DEFAULT_BOOKMARKS, show);
     }
 
     public void setDownloadDirectory(String directory) {
