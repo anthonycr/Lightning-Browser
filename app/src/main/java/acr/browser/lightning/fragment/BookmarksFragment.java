@@ -224,7 +224,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
         final HistoryItem item = event.item;
         final int size = mBookmarks.size();
-        mBookmarks.remove(event);
+        mBookmarks.remove(event.item);
         assert mBookmarks.size() < size;
         mBookmarkAdapter.notifyDataSetChanged();
     }
