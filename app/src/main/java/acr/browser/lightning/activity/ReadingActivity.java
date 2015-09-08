@@ -51,6 +51,7 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
         mPreferences = PreferenceManager.getInstance();
         mInvert = mPreferences.getInvertColors();
         final int color;
@@ -226,6 +227,14 @@ public class ReadingActivity extends AppCompatActivity {
             mProgressDialog = null;
         }
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_out_to_right);
+        }
     }
 
     @Override
