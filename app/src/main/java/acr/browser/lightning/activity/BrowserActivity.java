@@ -780,9 +780,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_add_bookmark:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
-                    eventBus
-                        .post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(),
-                                mCurrentView.getUrl()));
+                    eventBus.post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(),
+                            mCurrentView.getUrl()));
                 }
                 return true;
             case R.id.action_find:
@@ -1505,8 +1504,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
-        eventBus
-                .post(new BrowserEvents.CurrentPageUrl(url));
+        eventBus.post(new BrowserEvents.CurrentPageUrl(url));
         if (shortUrl && !url.startsWith(Constants.FILE)) {
             switch (mPreferences.getUrlBoxContentChoice()) {
                 case 0: // Default, show only the domain
@@ -2412,9 +2410,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void bookmarkCurrentPage(final BookmarkEvents.WantToBookmarkCurrentPage event) {
-            eventBus
-                    .post(new BrowserEvents
-                            .AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
+            eventBus.post(new BrowserEvents
+                    .AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
         }
 
         /**
