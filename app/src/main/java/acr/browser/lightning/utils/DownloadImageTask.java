@@ -30,9 +30,6 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
     public DownloadImageTask(@NonNull ImageView bmImage, @NonNull HistoryItem web,
                              @NonNull Bitmap defaultBitmap) {
-        assert bmImage != null;
-        assert web != null;
-        assert defaultBitmap != null;
         this.bmImage = bmImage;
         this.mWeb = web;
         this.mCacheDir = bmImage.getContext().getCacheDir();
