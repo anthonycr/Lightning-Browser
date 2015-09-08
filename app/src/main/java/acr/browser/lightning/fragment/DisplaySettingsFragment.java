@@ -171,7 +171,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         builder.show();
     }
 
-    private float getTextSize(int size) {
+    private static float getTextSize(int size) {
         switch (size) {
             case 0:
                 return XSMALL;

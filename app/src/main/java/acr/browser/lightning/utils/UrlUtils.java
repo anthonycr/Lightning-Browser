@@ -15,7 +15,6 @@
  */
 package acr.browser.lightning.utils;
 
-import android.net.Uri;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
@@ -28,11 +27,11 @@ import java.util.regex.Pattern;
 public class UrlUtils {
     static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
             "(?i)" + // switch on case insensitive matching
-                    "(" +    // begin group for schema
+                    '(' +    // begin group for schema
                     "(?:http|https|file):\\/\\/" +
                     "|(?:inline|data|about|javascript):" +
                     "|(?:.*:.*@)" +
-                    ")" +
+                    ')' +
                     "(.*)");
     // Google search
     public final static String QUERY_PLACE_HOLDER = "%s";

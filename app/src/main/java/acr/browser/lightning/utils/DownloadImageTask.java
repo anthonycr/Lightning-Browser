@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import acr.browser.lightning.constant.Constants;
@@ -46,7 +45,7 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
         // unique path for each url that is bookmarked.
         final Uri uri = Uri.parse(mUrl);
 
-        final String hash = "" + uri.getHost().hashCode();
+        final String hash = String.valueOf(uri.getHost().hashCode());
         final File image = new File(mCacheDir, hash + ".png");
         final Uri urldisplay = Uri.fromParts(uri.getScheme(), uri.getHost(), "favicon.ico");
         // checks to see if the image exists

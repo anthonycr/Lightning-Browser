@@ -21,10 +21,10 @@ import info.guardianproject.netcipher.web.WebkitProxy;
  */
 public class ProxyUtils {
     // Helper
-    private I2PAndroidHelper mI2PHelper;
+    private final I2PAndroidHelper mI2PHelper;
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
-    private PreferenceManager mPreferences;
+    private final PreferenceManager mPreferences;
     private static ProxyUtils mInstance;
 
     private ProxyUtils(Context context) {
@@ -191,7 +191,7 @@ public class ProxyUtils {
         }
     }
 
-    public int setProxyChoice(int choice, Activity activity) {
+    public static int setProxyChoice(int choice, Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 if (!OrbotHelper.isOrbotInstalled(activity)) {

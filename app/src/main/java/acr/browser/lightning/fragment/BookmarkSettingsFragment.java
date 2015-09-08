@@ -34,7 +34,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private File[] mFileList;
     private String[] mFileNameList;
     private PermissionsManager mPermissionsManager;
-    private static String[] REQUIRED_PERMISSIONS = new String[]{
+    private static final String[] REQUIRED_PERMISSIONS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };

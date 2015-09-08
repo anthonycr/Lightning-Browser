@@ -72,7 +72,7 @@ public final class BookmarkPage {
         final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
 
         final String folderIconPath = Constants.FILE + CACHE_DIR + "/folder.png";
-        for (int n = 0; n < list.size(); n++) {
+        for (int n = 0, size = list.size(); n < size; n++) {
             final HistoryItem item = list.get(n);
             bookmarkBuilder.append(BookmarkPage.PART1);
             if (item.isFolder()) {

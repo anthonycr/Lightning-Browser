@@ -385,16 +385,16 @@ public class ArticleTextExtractor {
             //            System.out.println("date modified element " + elem.toString());
         }
 
-        if ("".equals(dateStr)) {
+        if (dateStr != null && dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[name=utime]").attr("content"));
         }
-        if ("".equals(dateStr)) {
+        if (dateStr != null && dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[name=pdate]").attr("content"));
         }
-        if ("".equals(dateStr)) {
+        if (dateStr != null && dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[property=article:published]").attr("content"));
         }
-        if ("".equals(dateStr)) {
+        if (dateStr != null && dateStr.isEmpty()) {
             return parseDate(dateStr);
         }
 
@@ -1143,13 +1143,14 @@ public class ArticleTextExtractor {
     }
 
     private static String cleanTitle(String title) {
-        StringBuilder res = new StringBuilder();
+
 //        int index = title.lastIndexOf("|");
 //        if (index > 0 && title.length() / 2 < index)
 //            title = title.substring(0, index + 1);
 
         int counter = 0;
         String[] strs = title.split("\\|");
+        StringBuilder res = new StringBuilder(strs.length);
         for (String part : strs) {
             if (IGNORED_TITLE_PARTS.contains(part.toLowerCase().trim()))
                 continue;

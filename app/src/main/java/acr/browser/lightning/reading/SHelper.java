@@ -72,9 +72,9 @@ public class SHelper {
         if (str.isEmpty())
             return "";
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(str.length());
         boolean previousSpace = false;
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0, length = str.length(); i < length; i++) {
             char c = str.charAt(i);
             if (c == ' ' || (int) c == 9 || c == '\n') {
                 previousSpace = true;
@@ -95,7 +95,7 @@ public class SHelper {
      * invalid encoding character occurs.
      */
     public static String encodingCleanup(String str) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(str.length());
         boolean startedWithCorrectString = false;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -301,7 +301,7 @@ public class SHelper {
     }
 
     public static String printNode(Element root, int indentation) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(indentation);
         for (int i = 0; i < indentation; i++) {
             sb.append(' ');
         }

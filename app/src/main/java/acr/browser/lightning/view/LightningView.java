@@ -51,7 +51,6 @@ import android.widget.LinearLayout;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -95,7 +94,7 @@ public class LightningView {
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
-    private PermissionsManager mPermissionsManager;
+    private final PermissionsManager mPermissionsManager;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @SuppressLint("NewApi")

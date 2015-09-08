@@ -203,6 +203,7 @@ public class HtmlFetcher {
     }
 
     // main workhorse to call externally
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     public JResult fetchAndExtract(String url, int timeout, boolean resolve,
                                    int maxContentSize, boolean forceReload) throws Exception {
         String originalUrl = url;
@@ -325,13 +326,13 @@ public class HtmlFetcher {
     }
 
     public String fetchAsString(String urlAsString, int timeout)
-            throws MalformedURLException, IOException {
+            throws IOException {
         return fetchAsString(urlAsString, timeout, true);
     }
 
     // main routine to get raw webpage content
     public String fetchAsString(String urlAsString, int timeout, boolean includeSomeGooseOptions)
-            throws MalformedURLException, IOException {
+            throws IOException {
         HttpURLConnection hConn = createUrlConnection(urlAsString, timeout, includeSomeGooseOptions);
         hConn.setInstanceFollowRedirects(true);
         String encoding = hConn.getContentEncoding();
@@ -413,7 +414,7 @@ public class HtmlFetcher {
      * UTF-8 in the Location: header.
      */
     static String encodeUriFromHeader(String badLocation) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(badLocation.length());
 
         for (char ch : badLocation.toCharArray()) {
             if (ch < (char) 128) {
@@ -428,7 +429,7 @@ public class HtmlFetcher {
     }
 
     protected HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
-                                                    boolean includeSomeGooseOptions) throws MalformedURLException, IOException {
+                                                    boolean includeSomeGooseOptions) throws IOException {
         URL url = new URL(urlAsStr);
         //using proxy may increase latency
         HttpURLConnection hConn = (HttpURLConnection) url.openConnection(Proxy.NO_PROXY);

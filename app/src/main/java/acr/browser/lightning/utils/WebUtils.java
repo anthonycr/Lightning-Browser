@@ -2,7 +2,6 @@ package acr.browser.lightning.utils;
 
 import android.content.Context;
 import android.os.Build;
-import android.provider.Browser;
 import android.support.annotation.NonNull;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;

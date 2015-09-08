@@ -231,10 +231,10 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         ProxyUtils utils = ProxyUtils.getInstance(mActivity);
         switch (choice) {
             case Constants.PROXY_ORBOT:
-                choice = utils.setProxyChoice(choice, mActivity);
+                choice = ProxyUtils.setProxyChoice(choice, mActivity);
                 break;
             case Constants.PROXY_I2P:
-                choice = utils.setProxyChoice(choice, mActivity);
+                choice = ProxyUtils.setProxyChoice(choice, mActivity);
                 break;
             case Constants.PROXY_MANUAL:
                 manualProxyPicker();

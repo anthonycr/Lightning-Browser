@@ -1022,7 +1022,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void onTrimMemory(int level) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Log.d(Constants.TAG, "Low Memory, Free Memory");
-            for (int n = 0; n < mWebViewList.size(); n++) {
+            for (int n = 0, size = mWebViewList.size(); n < size; n++) {
                 mWebViewList.get(n).freeMemory();
             }
         }
@@ -1164,7 +1164,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         performExitCleanUp();
         mCurrentView = null;
         mWebView = null;
-        for (int n = 0; n < mWebViewList.size(); n++) {
+        for (int n = 0, size = mWebViewList.size(); n < size; n++) {
             if (mWebViewList.get(n) != null) {
                 mWebViewList.get(n).onDestroy();
             }
@@ -1225,7 +1225,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     void saveOpenTabs() {
         if (mPreferences.getRestoreLostTabsEnabled()) {
             String s = "";
-            for (int n = 0; n < mWebViewList.size(); n++) {
+            for (int n = 0, size = mWebViewList.size(); n < size; n++) {
                 if (!mWebViewList.get(n).getUrl().isEmpty()) {
                     s = s + mWebViewList.get(n).getUrl() + "|$|SEPARATOR|$|";
                 }
@@ -1270,7 +1270,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
         initializePreferences();
-        for (int n = 0; n < mWebViewList.size(); n++) {
+        for (int n = 0, size = mWebViewList.size(); n < size; n++) {
             if (mWebViewList.get(n) != null) {
                 mWebViewList.get(n).initializePreferences(null, this);
             } else {
@@ -2358,7 +2358,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             super.onReceive(context, intent);
             boolean isConnected = isConnected(context);
             Log.d(Constants.TAG, "Network Connected: " + String.valueOf(isConnected));
-            for (int n = 0; n < mWebViewList.size(); n++) {
+            for (int n = 0, size = mWebViewList.size(); n < size; n++) {
                 WebView view = mWebViewList.get(n).getWebView();
                 if (view != null)
                     view.setNetworkAvailable(isConnected);
@@ -2431,7 +2431,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         /**
          * This is received when the user edit a bookmark
          *
-         * @param event
+         * @param event the event that the bookmark has changed
          */
         @Subscribe
         public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
@@ -2446,7 +2446,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         /**
          * Notify the browser that a bookmark was deleted
          *
-         * @param event
+         * @param event the event that the bookmark has been deleted
          */
         @Subscribe
         public void bookmarkDeleted(final BookmarkEvents.Deleted event) {

@@ -57,7 +57,7 @@ public class PreferenceManager {
     }
 
     private static PreferenceManager mInstance;
-    private SharedPreferences mPrefs;
+    private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
 
