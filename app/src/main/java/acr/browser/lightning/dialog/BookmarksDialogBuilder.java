@@ -138,7 +138,7 @@ public class BookmarksDialogBuilder {
     }
 
     public void showBookmarkFolderLongPressedDialog(final Context context, final HistoryItem item) {
-        assert item.isFolder();
+        // assert item.isFolder();
         final DialogInterface.OnClickListener dialogClickListener =
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -167,7 +167,7 @@ public class BookmarksDialogBuilder {
     }
 
     public void showRenameFolderDialog(final Context context, final HistoryItem item) {
-        assert item.isFolder();
+        // assert item.isFolder();
         final AlertDialog.Builder editFolderDialog = new AlertDialog.Builder(context);
         editFolderDialog.setTitle(R.string.title_rename_folder);
         final EditText getTitle = new EditText(context);

@@ -192,9 +192,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Subscribe
     public void bookmarkChanged(BookmarkEvents.BookmarkChanged event) {
-        final int size = mBookmarks.size();
+        // final int size = mBookmarks.size();
         mBookmarks.remove(event.oldBookmark);
-        assert mBookmarks.size() < size;
+        // assert mBookmarks.size() < size;
         mBookmarks.add(event.newBookmark);
         mBookmarkAdapter.notifyDataSetChanged();
         Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
@@ -223,9 +223,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Subscribe
     public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
         final HistoryItem item = event.item;
-        final int size = mBookmarks.size();
+        // final int size = mBookmarks.size();
         mBookmarks.remove(event.item);
-        assert mBookmarks.size() < size;
+        // assert mBookmarks.size() < size;
         mBookmarkAdapter.notifyDataSetChanged();
     }
 
