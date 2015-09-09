@@ -50,3 +50,5 @@ out
 # Source:
 # https://raw.githubusercontent.com/github/gitignore/master/Android.gitignore
 # https://gitlab.com/fdroid/fdroidclient/raw/master/.gitignore
+
+*.iml
