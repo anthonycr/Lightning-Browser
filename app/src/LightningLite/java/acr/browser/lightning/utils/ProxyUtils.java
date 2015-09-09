@@ -52,7 +52,7 @@ public class ProxyUtils {
 
     }
 
-    public int setProxyChoice(int choice, Activity activity) {
+    public static int setProxyChoice(int choice, Activity activity) {
         return choice;
     }
 }
