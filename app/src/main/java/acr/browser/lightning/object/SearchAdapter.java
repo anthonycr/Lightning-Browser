@@ -353,11 +353,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     }
 
     private File downloadSuggestionsForQuery(String query) {
-        File cacheFile = new File(mContext.getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
+        File cacheFile = new File(BrowserApp.getAppContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
-        if (!isNetworkConnected(mContext)) {
+        if (!isNetworkConnected(BrowserApp.getAppContext())) {
             return cacheFile;
         }
         InputStream in = null;

@@ -3,6 +3,8 @@ package acr.browser.lightning.app;
 import android.app.Application;
 import android.content.Context;
 
+import com.squareup.leakcanary.LeakCanary;
+
 public class BrowserApp extends Application {
 
     private static Context context;
@@ -12,6 +14,7 @@ public class BrowserApp extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        LeakCanary.install(this);
         buildDepencyGraph();
     }
 

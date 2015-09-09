@@ -51,7 +51,7 @@ public class BookmarkManager {
 
     private final String DEFAULT_BOOKMARK_TITLE;
 
-    private Map<String, HistoryItem> mBookmarksMap = new HashMap<>();
+    private final Map<String, HistoryItem> mBookmarksMap = new HashMap<>();
     // private final List<HistoryItem> mBookmarkList = new ArrayList<>();
     private String mCurrentFolder = "";
     private final ExecutorService mExecutor;
@@ -84,8 +84,8 @@ public class BookmarkManager {
     }
 
     /**
-     * Initialize the Bookmaneger, it's a one-time operation and will be executed asynchronously.
-     * When done, mReady flag will been setted to true.
+     * Initialize the BookmarkManager, it's a one-time operation and will be executed asynchronously.
+     * When done, mReady flag will been set to true.
      */
     private class BookmarkInitializer implements Runnable{
         private final Context mContext;
@@ -131,7 +131,8 @@ public class BookmarkManager {
                 } finally {
                     Utils.close(bookmarksReader);
                 }
-                mBookmarksMap = bookmarks;
+                mBookmarksMap.clear();
+                mBookmarksMap.putAll(bookmarks);
                 mReady = true;
             }
         }
@@ -282,7 +283,8 @@ public class BookmarkManager {
                 bookmarks.put(url, item);
             }
         }
-        mBookmarksMap = bookmarks;
+        mBookmarksMap.clear();
+        mBookmarksMap.putAll(bookmarks);
         mExecutor.execute(new BookmarksWriter(new LinkedList<>(mBookmarksMap.values())));
     }
 

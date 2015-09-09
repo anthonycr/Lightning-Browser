@@ -29,7 +29,7 @@ public class ProxyUtils {
 
     private ProxyUtils(Context context) {
         mPreferences = PreferenceManager.getInstance();
-        mI2PHelper = new I2PAndroidHelper(context);
+        mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
     }
 
     public static ProxyUtils getInstance(@NonNull Context context) {
