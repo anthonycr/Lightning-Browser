@@ -402,7 +402,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return connectivity.getActiveNetworkInfo();
     }
 
-    //TODO Write simpler algorithm
+// The old suggestions algorithm, leaving here just for reference
 //    private List<HistoryItem> getSuggestions() {
 //        List<HistoryItem> filteredList = new ArrayList<>();
 //

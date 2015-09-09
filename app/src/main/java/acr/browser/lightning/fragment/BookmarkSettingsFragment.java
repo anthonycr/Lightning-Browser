@@ -33,7 +33,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     @Inject BookmarkManager mBookmarkManager;
     private File[] mFileList;
     private String[] mFileNameList;
-    private PermissionsManager mPermissionsManager;
     private static final String[] REQUIRED_PERMISSIONS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -51,9 +50,9 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         initPrefs();
 
-        mPermissionsManager = PermissionsManager.getInstance();
+        PermissionsManager permissionsManager = PermissionsManager.getInstance();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mPermissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS);
+            permissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS);
         }
     }
 

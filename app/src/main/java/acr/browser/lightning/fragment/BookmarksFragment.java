@@ -70,7 +70,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private Bitmap mWebpageBitmap, mFolderBitmap;
 
     // Bookmarks
-    private List<HistoryItem> mBookmarks = new ArrayList<>();
+    private final List<HistoryItem> mBookmarks = new ArrayList<>();
 
     // Views
     private ListView mBookmarksListView;
@@ -222,7 +222,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Subscribe
     public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
-        final HistoryItem item = event.item;
         // final int size = mBookmarks.size();
         mBookmarks.remove(event.item);
         // assert mBookmarks.size() < size;

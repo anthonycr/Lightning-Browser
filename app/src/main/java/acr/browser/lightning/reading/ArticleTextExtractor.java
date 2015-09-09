@@ -736,8 +736,7 @@ public class ArticleTextExtractor {
     }
 
     private static String extractType(Document doc) {
-        String type = SHelper.innerTrim(doc.select("head meta[property=og:type]").attr("content"));
-        return type;
+        return SHelper.innerTrim(doc.select("head meta[property=og:type]").attr("content"));
     }
 
     private static String extractSitename(Document doc) {

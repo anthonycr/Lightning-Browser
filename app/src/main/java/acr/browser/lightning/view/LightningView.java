@@ -72,8 +72,8 @@ public class LightningView {
     private final Title mTitle;
     private WebView mWebView;
     private final boolean mIsIncognitoTab;
-    private BrowserController mBrowserController;
-    private GestureDetector mGestureDetector;
+    private final BrowserController mBrowserController;
+    private final GestureDetector mGestureDetector;
     private final Activity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
@@ -81,7 +81,7 @@ public class LightningView {
     private final Bitmap mWebpageBitmap;
     private static PreferenceManager mPreferences;
     private final AdBlock mAdBlock;
-    private IntentUtils mIntentUtils;
+    private final IntentUtils mIntentUtils;
     private final Paint mPaint = new Paint();
     private boolean isForegroundTab;
     private boolean mTextReflow = false;

@@ -49,7 +49,7 @@ public class BookmarksDialogBuilder {
     public void showLongPressedDialogForUrl(final Context context, final String url) {
         final HistoryItem item;
         if (url.startsWith(Constants.FILE) && url.endsWith(Constants.BOOKMARKS_FILENAME)) {
-            // TODO this in so many ways is wrong, probably we need to redesign the folder mechanism
+            // TODO hacky, make a better bookmark mechanism in the future
             final Uri uri = Uri.parse(url);
             final String filename = uri.getLastPathSegment();
             final String folderTitle = filename.substring(0, filename.length() - Constants.BOOKMARKS_FILENAME.length() - 1);
@@ -125,7 +125,6 @@ public class BookmarksDialogBuilder {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         HistoryItem editedItem = new HistoryItem();
-                        String currentFolder = item.getFolder();
                         editedItem.setTitle(getTitle.getText().toString());
                         editedItem.setUrl(getUrl.getText().toString());
                         editedItem.setUrl(getUrl.getText().toString());

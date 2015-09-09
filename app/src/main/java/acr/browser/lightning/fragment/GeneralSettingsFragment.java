@@ -228,7 +228,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     }
 
     private void setProxyChoice(int choice) {
-        ProxyUtils utils = ProxyUtils.getInstance(mActivity);
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 choice = ProxyUtils.setProxyChoice(choice, mActivity);

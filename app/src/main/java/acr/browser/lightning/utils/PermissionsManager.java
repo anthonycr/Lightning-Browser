@@ -16,7 +16,7 @@ import java.util.Set;
 public class PermissionsManager {
 
     private static PermissionsManager mInstance;
-    private Set<String> mPendingRequests = new HashSet<>();
+    private final Set<String> mPendingRequests = new HashSet<>();
 
     public static PermissionsManager getInstance() {
         if (mInstance == null) {
