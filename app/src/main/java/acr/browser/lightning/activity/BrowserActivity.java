@@ -112,7 +112,6 @@ import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
-import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.SearchAdapter;
@@ -139,7 +138,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // List
     private final List<LightningView> mWebViewList = new ArrayList<>();
-    private final List<HistoryItem> mBookmarkList = new ArrayList<>();
     private LightningView mCurrentView;
     private WebView mWebView;
 
@@ -148,7 +146,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private AutoCompleteTextView mSearch;
     private ImageView mArrowImage;
     private VideoView mVideoView;
-    private View mCustomView, mVideoProgressView;
+    private View mCustomView;
 
     // Adapter
     private LightningViewAdapter mTabAdapter;
@@ -191,7 +189,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     BookmarksDialogBuilder bookmarksDialogBuilder;
 
     // Image
-    private Bitmap mDefaultVideoPoster, mWebpageBitmap;
+    private Bitmap mWebpageBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
     private Drawable mDeleteIcon, mRefreshIcon, mClearIcon, mIcon;
     private DrawerArrowDrawable mArrowDrawable;
@@ -292,7 +290,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mDrawerListLeft.setAdapter(mTabAdapter);
 
-        mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
+        mHistoryDatabase = HistoryDatabase.getInstance();
 
         if (actionBar == null)
             return;
@@ -621,11 +619,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mColorMode = mPreferences.getColorModeEnabled();
         mColorMode &= !mDarkTheme;
         if (!isIncognito() && !mColorMode && !mDarkTheme && mWebpageBitmap != null) {
-            //TODO fix toolbar coloring
-//            changeToolbarBackground(mWebpageBitmap, null);
+            changeToolbarBackground(mWebpageBitmap, null);
         } else if (!isIncognito() && mCurrentView != null && !mDarkTheme
                 && mCurrentView.getFavicon() != null) {
-//            changeToolbarBackground(mCurrentView.getFavicon(), null);
+            changeToolbarBackground(mCurrentView.getFavicon(), null);
         }
 
         if (mFullScreen) {
@@ -1034,7 +1031,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return false;
         }
         mIsNewIntent = false;
-        LightningView startingTab = new LightningView(mActivity, url, mDarkTheme, isIncognito());
+        LightningView startingTab = new LightningView(mActivity, url, mDarkTheme, isIncognito(), this);
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
@@ -1267,7 +1264,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mCurrentView.resumeTimers();
             mCurrentView.onResume();
         }
-        mHistoryDatabase = HistoryDatabase.getInstance(getApplicationContext());
+        mHistoryDatabase = HistoryDatabase.getInstance();
         initializePreferences();
         for (int n = 0, size = mWebViewList.size(); n < size; n++) {
             if (mWebViewList.get(n) != null) {
@@ -1337,7 +1334,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 int foregroundColor = ThemeUtils.getPrimaryColor(context);
                 Bitmap foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
                 Utils.drawTrapezoid(new Canvas(foregroundTabBitmap), foregroundColor, false);
-                mForegroundTabDrawable = new BitmapDrawable(getResources(), foregroundTabBitmap);
+                mForegroundTabDrawable = new BitmapDrawable(getResources(), foregroundTabBitmap).mutate();
             }
         }
 
@@ -1349,7 +1346,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         @Override
-        public void onBindViewHolder(LightningViewHolder holder, int position) {
+        public void onBindViewHolder(final LightningViewHolder holder, int position) {
             holder.exitButton.setTag(position);
             holder.exitButton.setOnClickListener(mExitListener);
             holder.layout.setOnClickListener(mClickListener);
@@ -1360,7 +1357,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             LightningView web = data.get(position);
             holder.txtTitle.setText(web.getTitle());
 
-            Bitmap favicon = web.getFavicon();
+            final Bitmap favicon = web.getFavicon();
             if (web.isForegroundTab()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     holder.txtTitle.setTextAppearance(R.style.boldText);
@@ -1373,8 +1370,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     holder.layout.setBackgroundDrawable(mForegroundTabDrawable);
                 }
                 if (!isIncognito() && mColorMode) {
-                    // TODO fix toolbar coloring
-//                    changeToolbarBackground(favicon, mForegroundTabDrawable);
+                    changeToolbarBackground(favicon, null /* mForegroundTabDrawable */);
                 }
                 holder.favicon.setImageBitmap(favicon);
             } else {
@@ -1444,7 +1440,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * TODO Can this method been removed?
      * Animates the color of the toolbar from one color to another. Optionally animates
      * the color of the tab background, for use when the tabs are displayed on the top
      * of the screen.
@@ -1453,26 +1448,33 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param tabBackground the optional LinearLayout to color
      */
     private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
+        if (!mShowTabsInDrawer) {
+            // TODO something is messed up and keeping this from working when the tablet tabs are used
+            return;
+        }
+        final int defaultColor;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            defaultColor = getResources().getColor(R.color.primary_color);
+        } else {
+            defaultColor = getColor(R.color.primary_color);
+        }
         Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
 
                 // OR with opaque black to remove transparency glitches
-                int color = 0xff000000 | palette.getVibrantColor(mActivity.getResources()
-                        .getColor(R.color.primary_color));
+                int color = 0xff000000 | palette.getVibrantColor(defaultColor);
 
                 int finalColor; // Lighten up the dark color if it is
                 // too dark
                 if (Utils.isColorTooDark(color)) {
-                    finalColor = Utils.mixTwoColors(
-                            mActivity.getResources().getColor(R.color.primary_color),
-                            color, 0.25f);
+                    finalColor = Utils.mixTwoColors(defaultColor, color, 0.25f);
                 } else {
                     finalColor = color;
                 }
 
-                ValueAnimator anim = ValueAnimator.ofObject(new ArgbEvaluator(),
-                        mBackground.getColor(), finalColor);
+                ValueAnimator anim = ValueAnimator.ofInt(mBackground.getColor(), finalColor);
+                anim.setEvaluator(new ArgbEvaluator());
                 final Window window = getWindow();
                 if (!mShowTabsInDrawer) {
                     window.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
@@ -1485,11 +1487,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         if (mShowTabsInDrawer) {
                             mBackground.setColor(color);
                             window.setBackgroundDrawable(mBackground);
-                        }
-                        mToolbarLayout.setBackgroundColor(color);
-                        if (tabBackground != null) {
+                        } else if (tabBackground != null) {
                             tabBackground.setColorFilter(color, PorterDuff.Mode.SRC_IN);
                         }
+                        mToolbarLayout.setBackgroundColor(color);
                     }
 
                 });
@@ -1523,7 +1524,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     }
                     break;
             }
-
         } else {
             if (url.startsWith(Constants.FILE)) {
                 url = "";
@@ -1548,15 +1548,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             public void run() {
                 try {
                     if (mHistoryDatabase == null) {
-                        mHistoryDatabase = HistoryDatabase.getInstance(mActivity.getApplicationContext());
+                        mHistoryDatabase = HistoryDatabase.getInstance();
                     }
                     mHistoryDatabase.visitHistoryItem(url, title);
                 } catch (IllegalStateException e) {
-                    Log.e(Constants.TAG, "IllegalStateException in updateHistory");
+                    Log.e(Constants.TAG, "IllegalStateException in updateHistory", e);
                 } catch (NullPointerException e) {
-                    Log.e(Constants.TAG, "NullPointerException in updateHistory");
+                    Log.e(Constants.TAG, "NullPointerException in updateHistory", e);
                 } catch (SQLiteException e) {
-                    Log.e(Constants.TAG, "SQLiteException in updateHistory");
+                    Log.e(Constants.TAG, "SQLiteException in updateHistory", e);
                 }
             }
         };
@@ -1852,7 +1852,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             decor.removeView(mFullscreenContainer);
         }
 
-        if (API < 19) {
+        if (API < Build.VERSION_CODES.KITKAT) {
             try {
                 mCustomViewCallback.onCustomViewHidden();
             } catch (Throwable ignored) {
@@ -1927,7 +1927,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         public FullscreenHolder(Context ctx) {
             super(ctx);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setBackgroundColor(ctx.getResources().getColor(android.R.color.black, getTheme()));
+                setBackgroundColor(ctx.getColor(android.R.color.black));
             } else {
                 setBackgroundColor(ctx.getResources().getColor(android.R.color.black));
             }
@@ -1940,29 +1940,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     }
 
-    /**
-     * a stupid method that returns the bitmap image to display in place of
-     * a loading video
-     */
     @Override
     public Bitmap getDefaultVideoPoster() {
-        if (mDefaultVideoPoster == null) {
-            mDefaultVideoPoster = BitmapFactory.decodeResource(getResources(),
-                    android.R.drawable.ic_media_play);
-        }
-        return mDefaultVideoPoster;
+        return BitmapFactory.decodeResource(getResources(), android.R.drawable.spinner_background);
     }
 
-    /**
-     * dumb method that returns the loading progress for a video
-     */
     @Override
     public View getVideoLoadingProgressView() {
-        if (mVideoProgressView == null) {
-            LayoutInflater inflater = LayoutInflater.from(this);
-            mVideoProgressView = inflater.inflate(R.layout.video_loading_progress, null);
-        }
-        return mVideoProgressView;
+        LayoutInflater inflater = LayoutInflater.from(this);
+        return inflater.inflate(R.layout.video_loading_progress, null);
     }
 
     /**
@@ -2343,7 +2329,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private void setupFrameLayoutButton(@IdRes int buttonId, @IdRes int imageId) {
-        FrameLayout frameButton = (FrameLayout) findViewById(buttonId);
+        View frameButton = findViewById(buttonId);
         frameButton.setOnClickListener(this);
         frameButton.setOnLongClickListener(this);
         ImageView buttonImage = (ImageView) findViewById(imageId);
@@ -2410,8 +2396,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void bookmarkCurrentPage(final BookmarkEvents.WantToBookmarkCurrentPage event) {
-            eventBus.post(new BrowserEvents
-                    .AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
+            if (mCurrentView != null) {
+                eventBus.post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
+            }
         }
 
         /**
@@ -2436,8 +2423,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     && mCurrentView.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
                 openBookmarkPage(mWebView);
             }
-            eventBus
-                    .post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+            if (mCurrentView != null) {
+                eventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+            }
         }
 
         /**
@@ -2451,8 +2439,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     && mCurrentView.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
                 openBookmarkPage(mWebView);
             }
-            eventBus
-                    .post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+            if (mCurrentView != null) {
+                eventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+            }
         }
 
         /**

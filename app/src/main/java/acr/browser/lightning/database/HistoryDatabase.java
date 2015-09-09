@@ -8,10 +8,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 
 public class HistoryDatabase extends SQLiteOpenHelper {
 
@@ -35,9 +37,11 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     private static HistoryDatabase mInstance;
 
-    public static HistoryDatabase getInstance(Context context) {
+    private boolean mLock;
+
+    public static HistoryDatabase getInstance() {
         if (mInstance == null || mInstance.isClosed()) {
-            mInstance = new HistoryDatabase(context);
+            mInstance = new HistoryDatabase(BrowserApp.getAppContext());
         }
         return mInstance;
     }
@@ -77,41 +81,61 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @Override
     public synchronized void close() {
-        if (mDatabase != null) {
-            mDatabase.close();
+        if (!mLock) {
+            if (mDatabase != null) {
+                mDatabase.close();
+                mDatabase = null;
+            }
         }
         super.close();
     }
 
+    private void openIfNecessary() {
+        if (mDatabase == null) {
+            mDatabase = this.getWritableDatabase();
+        }
+    }
+
     public synchronized void deleteHistoryItem(String url) {
-        mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[] { url });
+        mLock = true;
+        openIfNecessary();
+        mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
+        mLock = false;
     }
 
     public synchronized void visitHistoryItem(String url, String title) {
+        mLock = true;
+        openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, title);
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
-        Cursor q = mDatabase.query(false, TABLE_HISTORY, new String[] { KEY_URL },
-                KEY_URL + " = ?", new String[] { url }, null, null, null, "1");
+        Cursor q = mDatabase.query(false, TABLE_HISTORY, new String[]{KEY_URL},
+                KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
         if (q.getCount() > 0) {
-            mDatabase.update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[] { url });
+            mDatabase.update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
         } else {
             addHistoryItem(new HistoryItem(url, title));
         }
         q.close();
+        mLock = false;
     }
 
     private synchronized void addHistoryItem(HistoryItem item) {
+        mLock = true;
+        openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_URL, item.getUrl());
         values.put(KEY_TITLE, item.getTitle());
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
         mDatabase.insert(TABLE_HISTORY, null, values);
+        mLock = false;
     }
 
     String getHistoryItem(String url) {
-        Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[] { KEY_ID, KEY_URL, KEY_TITLE },
-                KEY_URL + " = ?", new String[] { url }, null, null, null, null);
+        mLock = true;
+        openIfNecessary();
+        Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
+                KEY_URL + " = ?", new String[]{url}, null, null, null, null);
         String m = null;
         if (cursor != null) {
             cursor.moveToFirst();
@@ -119,11 +143,14 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
             cursor.close();
         }
+        mLock = false;
         return m;
     }
 
     public List<HistoryItem> findItemsContaining(String search) {
-        List<HistoryItem> itemList = new ArrayList<>();
+        mLock = true;
+        openIfNecessary();
+        List<HistoryItem> itemList = new ArrayList<>(5);
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%"
                 + search + "%' OR " + KEY_URL + " LIKE '%" + search + "%' " + "ORDER BY "
                 + KEY_TIME_VISITED + " DESC LIMIT 5";
@@ -142,11 +169,14 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext() && n < 5);
         }
         cursor.close();
+        mLock = false;
         return itemList;
     }
 
     public List<HistoryItem> getLastHundredItems() {
-        List<HistoryItem> itemList = new ArrayList<>();
+        mLock = true;
+        openIfNecessary();
+        List<HistoryItem> itemList = new ArrayList<>(100);
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
                 + " DESC";
 
@@ -164,10 +194,13 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext() && counter < 100);
         }
         cursor.close();
+        mLock = false;
         return itemList;
     }
 
     public List<HistoryItem> getAllHistoryItems() {
+        mLock = true;
+        openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
                 + " DESC";
@@ -185,25 +218,31 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        mLock = false;
         return itemList;
     }
 
     public synchronized int updateHistoryItem(HistoryItem item) {
-
+        mLock = true;
+        openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_URL, item.getUrl());
         values.put(KEY_TITLE, item.getTitle());
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
-        return mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(item.getId()) });
+        int update = mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(item.getId())});
+        mLock = false;
+        return update;
     }
 
     public int getHistoryItemsCount() {
+        mLock = true;
+        openIfNecessary();
         String countQuery = "SELECT * FROM " + TABLE_HISTORY;
         Cursor cursor = mDatabase.rawQuery(countQuery, null);
         int n = cursor.getCount();
         cursor.close();
-
+        mLock = false;
         return n;
     }
 }

@@ -112,11 +112,11 @@ public class ThemeUtils {
         Resources res = context.getResources();
         int color;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            color = (dark) ? res.getColor(R.color.divider_dark, context.getTheme()) :
-                    res.getColor(R.color.divider_light, context.getTheme());
+            color = (dark) ? res.getColor(R.color.selected_dark, context.getTheme()) :
+                    res.getColor(R.color.selected_light, context.getTheme());
         } else {
-            color = (dark) ? res.getColor(R.color.divider_dark) :
-                    res.getColor(R.color.divider_light);
+            color = (dark) ? res.getColor(R.color.selected_dark) :
+                    res.getColor(R.color.selected_light);
         }
         return new ColorDrawable(color);
     }

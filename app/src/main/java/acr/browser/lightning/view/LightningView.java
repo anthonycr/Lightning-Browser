@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
@@ -98,7 +99,7 @@ public class LightningView {
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @SuppressLint("NewApi")
-    public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
+    public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito, BrowserController controller) {
 
         mActivity = activity;
         mWebView = new WebView(activity);
@@ -111,27 +112,20 @@ public class LightningView {
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
-        try {
-            mBrowserController = (BrowserController) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity + " must implement BrowserController");
-        }
+        mBrowserController = controller;
+
         mIntentUtils = new IntentUtils(mBrowserController);
-        mWebView.setDrawingCacheBackgroundColor(0x00000000);
+        mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
         mWebView.setFocusableInTouchMode(true);
         mWebView.setFocusable(true);
-        mWebView.setAnimationCacheEnabled(false);
         mWebView.setDrawingCacheEnabled(false);
         mWebView.setWillNotCacheDrawing(true);
-        mWebView.setAlwaysDrawnWithCacheEnabled(false);
-        mWebView.setBackgroundColor(0);
-
-        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
-            mWebView.setBackground(null);
-            mWebView.getRootView().setBackground(null);
-        } else if (mWebView.getRootView() != null) {
-            mWebView.getRootView().setBackgroundDrawable(null);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            mWebView.setAnimationCacheEnabled(false);
+            mWebView.setAlwaysDrawnWithCacheEnabled(false);
         }
+        mWebView.setBackgroundColor(Color.WHITE);
+
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
         mWebView.setNetworkAvailable(true);

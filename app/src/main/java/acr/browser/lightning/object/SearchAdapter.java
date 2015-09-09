@@ -75,7 +75,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     public SearchAdapter(Context context, boolean dark, boolean incognito) {
         BrowserApp.getAppComponent().inject(this);
-        mDatabaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
+        mDatabaseHandler = HistoryDatabase.getInstance();
         mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
         mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
         mContext = context;
@@ -125,7 +125,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 mSuggestions.clear();
             }
         }
-        mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
+        mDatabaseHandler = HistoryDatabase.getInstance();
     }
 
     public void refreshBookmarks() {
@@ -245,7 +245,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 }
             }
             if (mDatabaseHandler == null || mDatabaseHandler.isClosed()) {
-                mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
+                mDatabaseHandler = HistoryDatabase.getInstance();
             }
             List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(constraint.toString());
             synchronized (mHistory) {
