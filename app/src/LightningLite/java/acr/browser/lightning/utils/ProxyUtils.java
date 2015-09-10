@@ -3,6 +3,8 @@ package acr.browser.lightning.utils;
 import android.app.Activity;
 import android.content.Context;
 
+import acr.browser.lightning.app.BrowserApp;
+
 /**
  * 6/4/2015 Anthony Restaino
  */
@@ -14,24 +16,24 @@ public class ProxyUtils {
 
     }
 
-    public static ProxyUtils getInstance(Context context) {
+    public static ProxyUtils getInstance() {
         if (mInstance == null) {
-            mInstance = new ProxyUtils(context);
+            mInstance = new ProxyUtils(BrowserApp.getAppContext());
         }
         return mInstance;
     }
 
     /*
      * If Orbot/Tor or I2P is installed, prompt the user if they want to enable
-	 * proxying for this session
-	 */
+     * proxying for this session
+     */
     public void checkForProxy(final Activity activity) {
 
     }
 
     /*
      * Initialize WebKit Proxying
-	 */
+     */
     private void initializeProxy(Activity activity) {
 
     }
