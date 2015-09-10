@@ -321,7 +321,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         arrowButton.setOnClickListener(this);
 
-        mProxyUtils = ProxyUtils.getInstance(this);
+        mProxyUtils = ProxyUtils.getInstance();
 
         setupFrameLayoutButton(R.id.action_back, R.id.icon_back);
         setupFrameLayoutButton(R.id.action_forward, R.id.icon_forward);

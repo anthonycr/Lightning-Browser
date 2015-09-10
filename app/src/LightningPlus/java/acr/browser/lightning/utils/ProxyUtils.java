@@ -32,9 +32,9 @@ public class ProxyUtils {
         mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
     }
 
-    public static ProxyUtils getInstance(@NonNull Context context) {
+    public static ProxyUtils getInstance() {
         if (mInstance == null) {
-            mInstance = new ProxyUtils(context);
+            mInstance = new ProxyUtils(BrowserApp.getAppContext());
         }
         return mInstance;
     }
