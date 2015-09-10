@@ -51,7 +51,7 @@ public class BookmarkManager {
 
     private final String DEFAULT_BOOKMARK_TITLE;
 
-    private final Map<String, HistoryItem> mBookmarksMap = new HashMap<>();
+    private Map<String, HistoryItem> mBookmarksMap;
     // private final List<HistoryItem> mBookmarkList = new ArrayList<>();
     private String mCurrentFolder = "";
     private final ExecutorService mExecutor;
@@ -131,8 +131,7 @@ public class BookmarkManager {
                 } finally {
                     Utils.close(bookmarksReader);
                 }
-                mBookmarksMap.clear();
-                mBookmarksMap.putAll(bookmarks);
+                mBookmarksMap = bookmarks;
                 mReady = true;
             }
         }
@@ -283,8 +282,7 @@ public class BookmarkManager {
                 bookmarks.put(url, item);
             }
         }
-        mBookmarksMap.clear();
-        mBookmarksMap.putAll(bookmarks);
+        mBookmarksMap = bookmarks;
         mExecutor.execute(new BookmarksWriter(new LinkedList<>(mBookmarksMap.values())));
     }
 
