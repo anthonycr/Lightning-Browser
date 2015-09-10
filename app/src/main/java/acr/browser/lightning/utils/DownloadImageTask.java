@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 
@@ -32,7 +33,7 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
                              @NonNull Bitmap defaultBitmap) {
         this.bmImage = bmImage;
         this.mWeb = web;
-        this.mCacheDir = bmImage.getContext().getCacheDir();
+        this.mCacheDir = BrowserApp.getAppContext().getCacheDir();
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
     }
@@ -40,18 +41,23 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
     protected Bitmap doInBackground(Void... params) {
         Bitmap mIcon = null;
         // unique path for each url that is bookmarked.
+        if (mUrl == null) {
+            return mDefaultBitmap;
+        }
         final Uri uri = Uri.parse(mUrl);
-
+        if (uri.getHost() == null || uri.getScheme() == null) {
+            return mDefaultBitmap;
+        }
         final String hash = String.valueOf(uri.getHost().hashCode());
         final File image = new File(mCacheDir, hash + ".png");
-        final Uri urldisplay = Uri.fromParts(uri.getScheme(), uri.getHost(), "favicon.ico");
+        final String urlDisplay = uri.getScheme() + "://" + uri.getHost() + "/favicon.ico";
         // checks to see if the image exists
         if (!image.exists()) {
             FileOutputStream fos = null;
             InputStream in = null;
             try {
                 // if not, download it...
-                final URL urlDownload = new URL(urldisplay.toString());
+                final URL urlDownload = new URL(urlDisplay);
                 final HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
                 connection.setDoInput(true);
                 connection.connect();
@@ -65,7 +71,7 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
                     fos = new FileOutputStream(image);
                     mIcon.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.flush();
-                    Log.d(Constants.TAG, "Downloaded: " + urldisplay);
+                    Log.d(Constants.TAG, "Downloaded: " + urlDisplay);
                 }
 
             } catch (Exception e) {
