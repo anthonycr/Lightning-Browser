@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.BrowserController;
@@ -90,7 +91,8 @@ public class LightningView {
     private static float mMaxFling;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
-    private static final float[] mNegativeColorArray = {-1.0f, 0, 0, 0, 255, // red
+    private static final float[] mNegativeColorArray = {
+            -1.0f, 0, 0, 0, 255, // red
             0, -1.0f, 0, 0, 255, // green
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
@@ -505,22 +507,34 @@ public class LightningView {
         }
     }
 
-    private void cacheFavicon(Bitmap icon) {
+    /**
+     * Naive caching of the favicon according to the domain name of the URL
+     * @param icon the icon to cache
+     */
+    private void cacheFavicon(final Bitmap icon) {
         if (icon == null) return;
-
-        String hash = String.valueOf(Utils.getDomainName(getUrl()).hashCode());
-        Log.d(Constants.TAG, "Caching icon for " + Utils.getDomainName(getUrl()));
-        FileOutputStream fos = null;
-        try {
-            File image = new File(mActivity.getCacheDir(), hash + ".png");
-            fos = new FileOutputStream(image);
-            icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(fos);
+        final Uri uri = Uri.parse(getUrl());
+        if (uri.getHost() == null) {
+            return;
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String hash = String.valueOf(uri.getHost().hashCode());
+                Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
+                FileOutputStream fos = null;
+                try {
+                    File image = new File(BrowserApp.getAppContext().getCacheDir(), hash + ".png");
+                    fos = new FileOutputStream(image);
+                    icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    Utils.close(fos);
+                }
+            }
+        }).start();
     }
 
     @SuppressLint("NewApi")
