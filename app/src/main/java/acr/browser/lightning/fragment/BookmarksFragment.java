@@ -3,6 +3,7 @@ package acr.browser.lightning.fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -344,7 +345,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             if (web.isFolder()) {
                 holder.favicon.setImageBitmap(mFolderBitmap);
             } else if (web.getBitmap() == null) {
-                new DownloadImageTask(holder.favicon, web, mWebpageBitmap).execute();
+                new DownloadImageTask(holder.favicon, web, mWebpageBitmap)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }

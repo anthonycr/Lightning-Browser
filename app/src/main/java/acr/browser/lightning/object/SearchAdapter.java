@@ -1,6 +1,5 @@
 package acr.browser.lightning.object;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -66,7 +65,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
     private static final int MAX_SUGGESTIONS = 5;
-    private final SuggestionsComparator mComparator = new SuggestionsComparator();
+    private static final SuggestionsComparator mComparator = new SuggestionsComparator();
     private final String mSearchSubtitle;
     private SearchFilter mFilter;
     private final Drawable mSearchDrawable;
@@ -86,7 +85,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
             @Override
             public void run() {
-                deleteOldCacheFiles(mContext);
+                deleteOldCacheFiles();
             }
 
         });
@@ -97,8 +96,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         delete.start();
     }
 
-    private void deleteOldCacheFiles(Context context) {
-        File dir = new File(context.getCacheDir().toString());
+    private void deleteOldCacheFiles() {
+        File dir = new File(BrowserApp.getAppContext().getCacheDir().toString());
         String[] fileList = dir.list(new NameFilter());
         long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
         for (String fileName : fileList) {
@@ -155,7 +154,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         SuggestionHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(R.layout.two_line_autocomplete, parent, false);
 
             holder = new SuggestionHolder();
@@ -221,7 +220,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             }
             String query = constraint.toString().toLowerCase(Locale.getDefault());
             if (mUseGoogle && !mIncognito && !mIsExecuting) {
-                new RetrieveSearchSuggestions().execute(query);
+                new RetrieveSearchSuggestions().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
             }
 
             int counter = 0;
@@ -352,7 +351,13 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     }
 
-    private File downloadSuggestionsForQuery(String query) {
+    /**
+     * This method downloads the search suggestions for the specific query.
+     * NOTE: This is a blocking operation, do not run on the UI thread.
+     * @param query the query to get suggestions for
+     * @return the cache file containing the suggestions
+     */
+    private static File downloadSuggestionsForQuery(String query) {
         File cacheFile = new File(BrowserApp.getAppContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
@@ -429,7 +434,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 //    }
 
     private List<HistoryItem> getFilteredList() {
-        List<HistoryItem> list = new ArrayList<>();
+        List<HistoryItem> list = new ArrayList<>(5);
         synchronized (mBookmarks) {
             synchronized (mHistory) {
                 synchronized (mSuggestions) {
@@ -456,7 +461,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return list;
     }
 
-    private class SuggestionsComparator implements Comparator<HistoryItem> {
+    private static class SuggestionsComparator implements Comparator<HistoryItem> {
 
         @Override
         public int compare(HistoryItem lhs, HistoryItem rhs) {

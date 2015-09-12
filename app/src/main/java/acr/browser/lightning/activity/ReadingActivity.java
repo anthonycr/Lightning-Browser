@@ -129,7 +129,7 @@ public class ReadingActivity extends AppCompatActivity {
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
-        new PageLoader(this).execute(mUrl);
+        new PageLoader(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
         return true;
     }
 
