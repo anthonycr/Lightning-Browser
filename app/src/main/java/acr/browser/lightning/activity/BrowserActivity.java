@@ -168,7 +168,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mIsImmersive = false,
             mShowTabsInDrawer;
     private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor,
-            mCurrentUiColor;
+            mCurrentUiColor = Color.BLACK;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
     // Storage
@@ -333,7 +333,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSearch = (AutoCompleteTextView) actionBar.getCustomView().findViewById(R.id.search);
         mUntitledTitle = getString(R.string.untitled);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mBackgroundColor = getResources().getColor(R.color.primary_color, getTheme());
+            mBackgroundColor = getColor(R.color.primary_color);
         } else {
             mBackgroundColor = getResources().getColor(R.color.primary_color);
         }
@@ -953,18 +953,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             public void run() {
                 mDrawerLayout.closeDrawers();
             }
-        }, 150);
+        }, 200);
 
         // Should update the bookmark status in BookmarksFragment
-        eventBus
-                .post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+        eventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
 
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                // Remove browser frame background to reduce overdraw
-//                //TODO evaluate performance
-//                mBrowserFrame.setBackgroundColor(0);
+                // Remove browser frame background to reduce overdraw
+                //TODO evaluate performance
+//                mBrowserFrame.setBackgroundColor(Color.TRANSPARENT);
 //            }
 //        }, 300);
 
