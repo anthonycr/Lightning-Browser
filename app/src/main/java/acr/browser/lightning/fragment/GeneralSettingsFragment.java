@@ -490,9 +490,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         v.setPadding(padding, padding, 0, padding);
         layout.addView(v);
         layout.addView(getDownload);
-        if (API < Build.VERSION_CODES.JELLY_BEAN) {
-            layout.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
-        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             Drawable drawable;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 drawable = getResources().getDrawable(android.R.drawable.edit_text, getActivity().getTheme());
@@ -500,6 +498,8 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 drawable = getResources().getDrawable(android.R.drawable.edit_text);
             }
             layout.setBackground(drawable);
+        } else {
+            layout.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
         }
         downLocationPicker.setView(layout);
         downLocationPicker.setPositiveButton(getResources().getString(R.string.action_ok),
@@ -611,7 +611,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 mPreferences.setGoogleSearchSuggestionsEnabled((Boolean) newValue);
                 cbgooglesuggest.setChecked((Boolean) newValue);
                 return true;
-            case  SETTINGS_DRAWERTABS:
+            case SETTINGS_DRAWERTABS:
                 mPreferences.setShowTabsInDrawer((Boolean) newValue);
                 cbDrawerTabs.setChecked((Boolean) newValue);
             default:

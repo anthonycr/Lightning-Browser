@@ -167,7 +167,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mIsFullScreen = false,
             mIsImmersive = false,
             mShowTabsInDrawer;
-    private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor;
+    private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor,
+            mCurrentUiColor;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
     // Storage
@@ -1307,6 +1308,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         private final CloseTabListener mExitListener;
         private final Drawable mBackgroundTabDrawable;
         private final Drawable mForegroundTabDrawable;
+        private final Bitmap mForegroundTabBitmap;
         private final DrawerItemClickListener mClickListener;
         private final DrawerItemLongClickListener mLongClickListener;
         private ColorMatrix mColorMatrix;
@@ -1324,6 +1326,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
             if (mShowTabsInDrawer) {
                 mBackgroundTabDrawable = null;
+                mForegroundTabBitmap = null;
                 mForegroundTabDrawable = ThemeUtils.getSelectedBackground(context, mDarkTheme);
             } else {
                 int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(mActivity), Color.BLACK, 0.75f);
@@ -1332,9 +1335,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mBackgroundTabDrawable = new BitmapDrawable(getResources(), backgroundTabBitmap);
 
                 int foregroundColor = ThemeUtils.getPrimaryColor(context);
-                Bitmap foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
-                Utils.drawTrapezoid(new Canvas(foregroundTabBitmap), foregroundColor, false);
-                mForegroundTabDrawable = new BitmapDrawable(getResources(), foregroundTabBitmap).mutate();
+                mForegroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
+                Utils.drawTrapezoid(new Canvas(mForegroundTabBitmap), foregroundColor, false);
+                mForegroundTabDrawable = null;
             }
         }
 
@@ -1364,13 +1367,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 } else {
                     holder.txtTitle.setTextAppearance(context, R.style.boldText);
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.layout.setBackground(mForegroundTabDrawable);
+                Drawable foregroundDrawable;
+                if (!mShowTabsInDrawer) {
+                    foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
+                    if (!isIncognito() && mColorMode) {
+                        foregroundDrawable.setColorFilter(mCurrentUiColor, PorterDuff.Mode.SRC_IN);
+                    }
                 } else {
-                    holder.layout.setBackgroundDrawable(mForegroundTabDrawable);
+                    foregroundDrawable = mForegroundTabDrawable;
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    holder.layout.setBackground(foregroundDrawable);
+                } else {
+                    holder.layout.setBackgroundDrawable(foregroundDrawable);
                 }
                 if (!isIncognito() && mColorMode) {
-                    changeToolbarBackground(favicon, null /* mForegroundTabDrawable */);
+                    changeToolbarBackground(favicon, foregroundDrawable);
                 }
                 holder.favicon.setImageBitmap(favicon);
             } else {
@@ -1448,15 +1460,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param tabBackground the optional LinearLayout to color
      */
     private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
-        if (!mShowTabsInDrawer) {
-            // TODO something is messed up and keeping this from working when the tablet tabs are used
-            return;
-        }
         final int defaultColor;
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
             defaultColor = getResources().getColor(R.color.primary_color);
         } else {
             defaultColor = getColor(R.color.primary_color);
+        }
+        if (mCurrentUiColor == Color.BLACK) {
+            mCurrentUiColor = defaultColor;
         }
         Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
             @Override
@@ -1467,13 +1478,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
                 int finalColor; // Lighten up the dark color if it is
                 // too dark
-                if (Utils.isColorTooDark(color)) {
+                if (!mShowTabsInDrawer || Utils.isColorTooDark(color)) {
                     finalColor = Utils.mixTwoColors(defaultColor, color, 0.25f);
                 } else {
                     finalColor = color;
                 }
 
-                ValueAnimator anim = ValueAnimator.ofInt(mBackground.getColor(), finalColor);
+                ValueAnimator anim = ValueAnimator.ofInt(mCurrentUiColor, finalColor);
                 anim.setEvaluator(new ArgbEvaluator());
                 final Window window = getWindow();
                 if (!mShowTabsInDrawer) {
@@ -1490,6 +1501,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         } else if (tabBackground != null) {
                             tabBackground.setColorFilter(color, PorterDuff.Mode.SRC_IN);
                         }
+                        mCurrentUiColor = color;
                         mToolbarLayout.setBackgroundColor(color);
                     }
 
