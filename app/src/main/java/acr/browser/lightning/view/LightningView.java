@@ -517,24 +517,7 @@ public class LightningView {
         if (uri.getHost() == null) {
             return;
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String hash = String.valueOf(uri.getHost().hashCode());
-                Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
-                FileOutputStream fos = null;
-                try {
-                    File image = new File(BrowserApp.getAppContext().getCacheDir(), hash + ".png");
-                    fos = new FileOutputStream(image);
-                    icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    Utils.close(fos);
-                }
-            }
-        }).start();
+        new Thread(new IconCacheTask(uri, icon)).start();
     }
 
     @SuppressLint("NewApi")
@@ -626,6 +609,33 @@ public class LightningView {
             return mWebView.getUrl();
         } else {
             return "";
+        }
+    }
+
+    private static class IconCacheTask implements Runnable {
+        private final Uri uri;
+        private final Bitmap icon;
+
+        public IconCacheTask(Uri uri, Bitmap icon) {
+            this.uri = uri;
+            this.icon = icon;
+        }
+
+        @Override
+        public void run() {
+            String hash = String.valueOf(uri.getHost().hashCode());
+            Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
+            FileOutputStream fos = null;
+            try {
+                File image = new File(BrowserApp.getAppContext().getCacheDir(), hash + ".png");
+                fos = new FileOutputStream(image);
+                icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                Utils.close(fos);
+            }
         }
     }
 
