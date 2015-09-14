@@ -181,7 +181,7 @@ public class TabsManager {
     }
 
     /**
-     * TODO We should remove also this
+     * TODO We should remove also this, but probably not
      * @return
      */
     public LightningView getCurrentTab() {
@@ -189,9 +189,27 @@ public class TabsManager {
     }
 
     /**
-     * TODO We should remove also this
+     * Switch the current tab to the one at the given position. It returns the selected. After this
+     * call {@link TabsManager#getCurrentTab()} return the same reference returned by this method if
+     * position is valid.
+     *
+     * @return  the selected tab or null if position is out of tabs range
      */
-    public void setCurrentTab(final LightningView tab) {
-        mCurrentTab = tab;
+    @Nullable
+    public LightningView switchToTab(final int position) {
+        if (position < 0 || position >= mWebViewList.size()) {
+            return null;
+        } else {
+            final LightningView tab = mWebViewList.get(position);
+            mCurrentTab = tab;
+            return tab;
+        }
     }
+
+//    /**
+//     * TODO We should remove also this
+//     */
+//    public void setCurrentTab(final LightningView tab) {
+//        mCurrentTab = tab;
+//    }
 }

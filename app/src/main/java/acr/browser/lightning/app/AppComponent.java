@@ -7,6 +7,7 @@ import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
+import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import dagger.Component;
 
@@ -28,4 +29,6 @@ public interface AppComponent {
     void inject(BookmarksDialogBuilder builder);
 
     void inject(BookmarkPage bookmarkPage);
+
+    void inject(TabsFragment fragment);
 }

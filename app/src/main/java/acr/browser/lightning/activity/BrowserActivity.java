@@ -106,6 +106,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
@@ -113,6 +114,7 @@ import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.BookmarksDialogBuilder;
+import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -132,7 +134,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private DrawerLayout mDrawerLayout;
     private FrameLayout mBrowserFrame;
     private FullscreenHolder mFullscreenContainer;
-    private RecyclerView mDrawerListLeft;
     private ViewGroup mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
     private RelativeLayout mSearchBar;
 
@@ -144,7 +145,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private View mCustomView;
 
     // Adapter
-    private LightningViewAdapter mTabAdapter;
     private SearchAdapter mSearchAdapter;
 
     // Callback
@@ -247,7 +247,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
         mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
         setupFrameLayoutButton(R.id.new_tab_button, R.id.icon_plus);
-        mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
+        mDrawerLeft = (FrameLayout) findViewById(R.id.left_drawer);
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -267,28 +267,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mHomepage = mPreferences.getHomepage();
 
-        RecyclerView horizontalListView = (RecyclerView) findViewById(R.id.twv_list);
-
-
+        final TabsFragment tabsFragment = new TabsFragment();
+        final int containerId = mShowTabsInDrawer ? R.id.left_drawer : R.id.tabs_toolbar_container;
+        final Bundle arguments = new Bundle();
+        arguments.putBoolean(TabsFragment.VERTICAL_MODE, mShowTabsInDrawer);
+        tabsFragment.setArguments(arguments);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(containerId, tabsFragment)
+                .commit();
         if (mShowTabsInDrawer) {
-            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, tabsManager.getTabsList());
-            mDrawerListLeft = (RecyclerView) findViewById(R.id.left_drawer_list);
-            mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            mDrawerListLeft.setLayoutManager(layoutManager);
-            mDrawerListLeft.setHasFixedSize(true);
-            mToolbarLayout.removeView(horizontalListView);
-        } else {
-            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, tabsManager.getTabsList());
-            mDrawerListLeft = horizontalListView;
-            mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_NEVER);
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            mDrawerListLeft.setLayoutManager(layoutManager);
-            mDrawerListLeft.setHasFixedSize(true);
+            mToolbarLayout.removeView(findViewById(R.id.tabs_toolbar_container));
         }
-
-        mDrawerListLeft.setAdapter(mTabAdapter);
 
         mHistoryDatabase = HistoryDatabase.getInstance();
 
@@ -873,55 +863,28 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * The click listener for ListView in the navigation drawer
-     */
-    private class DrawerItemClickListener implements OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            final LightningView currentTab = tabsManager.getCurrentTab();
-            final int position = mDrawerListLeft.getChildAdapterPosition(v);
-            final LightningView tab = tabsManager.getTabAtPosition(position);
-            if (tab != null && currentTab != tab) {
-                mIsNewIntent = false;
-                showTab(tab);
-            }
-        }
-    }
-
-    /**
-     * long click listener for Navigation Drawer
-     */
-    private class DrawerItemLongClickListener implements OnLongClickListener {
-
-        @Override
-        public boolean onLongClick(View v) {
-            int position = mDrawerListLeft.getChildAdapterPosition(v);
-            showCloseDialog(position);
-            return true;
-        }
-    }
-
-    /**
      * displays the WebView contained in the LightningView Also handles the
      * removal of previous views
      *
-     * @param newView the LightningView to show
+     * @param position  the poition of the tab to display
      */
-    private synchronized void showTab(LightningView newView) {
+    private synchronized void showTab(final int position) {
         final LightningView currentView = tabsManager.getCurrentTab();
+        final LightningView newView = tabsManager.switchToTab(position);
+
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
-        if (newView == null) {
+        if (newView == null || currentView == newView) {
             return;
         }
+        mIsNewIntent = false;
+
         final float translation = mToolbarLayout.getTranslationY();
         mBrowserFrame.removeAllViews();
         if (currentView != null) {
             currentView.setForegroundTab(false);
             currentView.onPause();
         }
-        tabsManager.setCurrentTab(newView);
         final WebView currentWebView = currentView.getWebView();
         newView.setForegroundTab(true);
         if (currentWebView != null) {
@@ -1047,15 +1010,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mIdGenerator++;
 
         if (show) {
-            showTab(startingTab);
+            showTab(tabsManager.size() - 1);
         }
         updateTabs();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerListLeft.smoothScrollToPosition(tabsManager.size() - 1);
-            }
-        }, 300);
+
+//      TODO Restore this
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mDrawerListLeft.smoothScrollToPosition(tabsManager.size() - 1);
+//            }
+//        }, 300);
 
         return true;
     }
@@ -1082,14 +1047,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         if (current > position) {
             tabsManager.deleteTab(position);
-            showTab(tabsManager.getTabAtPosition(current - 1));
+            showTab(current - 1);
             updateTabs();
             tabToDelete.onDestroy();
         } else if (tabsManager.size() > position + 1) {
             if (current == position) {
-                showTab(tabsManager.getTabAtPosition(position + 1));
+                showTab(position + 1);
                 tabsManager.deleteTab(position);
-                showTab(tabsManager.getTabAtPosition(position));
+                showTab(position);
                 updateTabs();
             } else {
                 tabsManager.deleteTab(position);
@@ -1098,9 +1063,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             tabToDelete.onDestroy();
         } else if (tabsManager.size() > 1) {
             if (current == position) {
-                showTab(tabsManager.getTabAtPosition(position - 1));
+                showTab(position - 1);
                 tabsManager.deleteTab(position);
-                showTab(tabsManager.getTabAtPosition(position - 1));
+                showTab(position - 1);
                 updateTabs();
             } else {
                 tabsManager.deleteTab(position);
@@ -1115,11 +1080,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 performExitCleanUp();
                 tabToDelete.pauseTimers();
                 tabToDelete.onDestroy();
-                mTabAdapter.notifyDataSetChanged();
+                eventBus.post(new BrowserEvents.TabsChanged());
                 finish();
             }
         }
-        mTabAdapter.notifyDataSetChanged();
+        eventBus.post(new BrowserEvents.TabsChanged());
 
         if (mIsNewIntent && isShown) {
             mIsNewIntent = false;
@@ -1167,7 +1132,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
         tabsManager.shutdown();
-        mTabAdapter.notifyDataSetChanged();
+        eventBus.post(new BrowserEvents.TabsChanged());
         finish();
     }
 
@@ -1291,157 +1256,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (currentTab != null) {
             loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, true, searchUrl));
         }
-    }
-
-    public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
-
-        private final Context context;
-        private final int layoutResourceId;
-        private List<LightningView> data = null;
-        private final CloseTabListener mExitListener;
-        private final Drawable mBackgroundTabDrawable;
-        private final Drawable mForegroundTabDrawable;
-        private final Bitmap mForegroundTabBitmap;
-        private final DrawerItemClickListener mClickListener;
-        private final DrawerItemLongClickListener mLongClickListener;
-        private ColorMatrix mColorMatrix;
-        private Paint mPaint;
-        private ColorFilter mFilter;
-        private static final float DESATURATED = 0.5f;
-
-        public LightningViewAdapter(Context context, int layoutResourceId, List<LightningView> data) {
-            this.layoutResourceId = layoutResourceId;
-            this.context = context;
-            this.data = data;
-            this.mExitListener = new CloseTabListener();
-            this.mClickListener = new DrawerItemClickListener();
-            this.mLongClickListener = new DrawerItemLongClickListener();
-
-            if (mShowTabsInDrawer) {
-                mBackgroundTabDrawable = null;
-                mForegroundTabBitmap = null;
-                mForegroundTabDrawable = ThemeUtils.getSelectedBackground(context, mDarkTheme);
-            } else {
-                int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(mActivity), Color.BLACK, 0.75f);
-                Bitmap backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
-                Utils.drawTrapezoid(new Canvas(backgroundTabBitmap), backgroundColor, true);
-                mBackgroundTabDrawable = new BitmapDrawable(getResources(), backgroundTabBitmap);
-
-                int foregroundColor = ThemeUtils.getPrimaryColor(context);
-                mForegroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
-                Utils.drawTrapezoid(new Canvas(mForegroundTabBitmap), foregroundColor, false);
-                mForegroundTabDrawable = null;
-            }
-        }
-
-        @Override
-        public LightningViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            View view = inflater.inflate(layoutResourceId, viewGroup, false);
-            return new LightningViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final LightningViewHolder holder, int position) {
-            holder.exitButton.setTag(position);
-            holder.exitButton.setOnClickListener(mExitListener);
-            holder.layout.setOnClickListener(mClickListener);
-            holder.layout.setOnLongClickListener(mLongClickListener);
-
-            ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
-
-            LightningView web = data.get(position);
-            holder.txtTitle.setText(web.getTitle());
-
-            final Bitmap favicon = web.getFavicon();
-            if (web.isForegroundTab()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    holder.txtTitle.setTextAppearance(R.style.boldText);
-                } else {
-                    holder.txtTitle.setTextAppearance(context, R.style.boldText);
-                }
-                Drawable foregroundDrawable;
-                if (!mShowTabsInDrawer) {
-                    foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
-                    if (!isIncognito() && mColorMode) {
-                        foregroundDrawable.setColorFilter(mCurrentUiColor, PorterDuff.Mode.SRC_IN);
-                    }
-                } else {
-                    foregroundDrawable = mForegroundTabDrawable;
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.layout.setBackground(foregroundDrawable);
-                } else {
-                    holder.layout.setBackgroundDrawable(foregroundDrawable);
-                }
-                if (!isIncognito() && mColorMode) {
-                    changeToolbarBackground(favicon, foregroundDrawable);
-                }
-                holder.favicon.setImageBitmap(favicon);
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    holder.txtTitle.setTextAppearance(R.style.normalText);
-                } else {
-                    holder.txtTitle.setTextAppearance(context, R.style.normalText);
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    holder.layout.setBackground(mBackgroundTabDrawable);
-                } else {
-                    holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
-                }
-                holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return (data != null) ? data.size() : 0;
-        }
-
-        public Bitmap getDesaturatedBitmap(Bitmap favicon) {
-            Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
-                    favicon.getHeight(), Bitmap.Config.ARGB_8888);
-
-            Canvas c = new Canvas(grayscaleBitmap);
-            if (mColorMatrix == null || mFilter == null || mPaint == null) {
-                mPaint = new Paint();
-                mColorMatrix = new ColorMatrix();
-                mColorMatrix.setSaturation(DESATURATED);
-                mFilter = new ColorMatrixColorFilter(mColorMatrix);
-                mPaint.setColorFilter(mFilter);
-            }
-
-            c.drawBitmap(favicon, 0, 0, mPaint);
-            return grayscaleBitmap;
-        }
-
-        public class LightningViewHolder extends RecyclerView.ViewHolder {
-
-            public LightningViewHolder(View view) {
-                super(view);
-                txtTitle = (TextView) view.findViewById(R.id.textTab);
-                favicon = (ImageView) view.findViewById(R.id.faviconTab);
-                exit = (ImageView) view.findViewById(R.id.deleteButton);
-                layout = (LinearLayout) view.findViewById(R.id.tab_item_background);
-                exitButton = (FrameLayout) view.findViewById(R.id.deleteAction);
-                exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
-            }
-
-            final TextView txtTitle;
-            final ImageView favicon;
-            final ImageView exit;
-            final FrameLayout exitButton;
-            final LinearLayout layout;
-        }
-    }
-
-    private class CloseTabListener implements OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            deleteTab((int) v.getTag());
-        }
-
     }
 
     /**
@@ -1684,7 +1498,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void updateTabs() {
-        mTabAdapter.notifyDataSetChanged();
+        eventBus.post(new BrowserEvents.TabsChanged());
     }
 
     /**
@@ -2481,6 +2295,34 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void closeBookmarks(final BookmarkEvents.CloseBookmarks event) {
             mDrawerLayout.closeDrawer(mDrawerRight);
+        }
+
+        /**
+         * The user wants to close a tab
+         *
+         * @param event contains the position inside the tabs adapter
+         */
+        @Subscribe
+        public void closeTab(final TabEvents.CloseTab event) {
+            deleteTab(event.position);
+        }
+
+        /**
+         * The user clicked on a tab, let's show it
+         *
+         * @param event contains the tab position in the tabs adapter
+         */
+        public void showTab(final TabEvents.ShowTab event) {
+            BrowserActivity.this.showTab(event.position);
+        }
+
+        /**
+         * The user long pressed on a tab, ask him if he want to close the tab
+         *
+         * @param event contains the tab position in the tabs adapter
+         */
+        public void showCloseDialog(final TabEvents.ShowCloseDialog event) {
+             BrowserActivity.this.showCloseDialog(event.position);
         }
     };
 }

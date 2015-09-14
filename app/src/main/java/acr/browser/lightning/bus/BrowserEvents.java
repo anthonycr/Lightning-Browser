@@ -41,4 +41,10 @@ public final class BrowserEvents {
      */
     public static class UserPressedBack {
     }
+
+    /**
+     * Notify that the user closed or opened a tab
+     */
+    public static class TabsChanged {
+    }
 }

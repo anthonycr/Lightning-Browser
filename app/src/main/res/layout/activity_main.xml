@@ -25,7 +25,12 @@
             <include layout="@layout/search_interface" />
         </LinearLayout>
 
-        <include layout="@layout/tab_drawer" />
+        <FrameLayout
+            android:layout_width="@dimen/navigation_width"
+            android:layout_height="match_parent"
+            android:background="?attr/drawerBackground"
+            android:id="@+id/left_drawer"
+            android:fitsSystemWindows="true" />
 
         <FrameLayout
             android:weightSum="1"
