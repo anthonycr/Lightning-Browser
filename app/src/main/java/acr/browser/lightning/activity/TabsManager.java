@@ -20,6 +20,7 @@ import acr.browser.lightning.view.LightningView;
 public class TabsManager {
 
     private final List<LightningView> mWebViewList = new ArrayList<>();
+    private LightningView mCurrentTab;
 
     @Inject
     public TabsManager() {
@@ -168,5 +169,20 @@ public class TabsManager {
      */
     public int getPositionForTab(final LightningView tab) {
         return mWebViewList.indexOf(tab);
+    }
+
+    /**
+     * TODO We should remove also this
+     * @return
+     */
+    public LightningView getCurrentTab() {
+        return mCurrentTab;
+    }
+
+    /**
+     * TODO We should remove also this
+     */
+    public void setCurrentTab(final LightningView tab) {
+        mCurrentTab = tab;
     }
 }
