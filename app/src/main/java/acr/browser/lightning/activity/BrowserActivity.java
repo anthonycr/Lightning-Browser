@@ -136,10 +136,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ViewGroup mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
     private RelativeLayout mSearchBar;
 
-    // List
-    // private LightningView mCurrentView;
-    private WebView mWebView;
-
     // Views
     private AnimatedProgressBar mProgressBar;
     private AutoCompleteTextView mSearch;
@@ -620,6 +616,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void initializePreferences() {
         final LightningView currentView = tabsManager.getCurrentTab();
+        final WebView currentWebView = currentView.getWebView();
         if (mPreferences == null) {
             mPreferences = PreferenceManager.getInstance();
         }
@@ -640,8 +637,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 height = mToolbarLayout.getMeasuredHeight();
             }
-            if (mWebView != null)
-                mWebView.setTranslationY(height);
+            if (currentWebView != null)
+                currentWebView.setTranslationY(height);
             mBrowserFrame.setLayoutTransition(null);
             if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
                 mUiLayout.removeView(mToolbarLayout);
@@ -655,8 +652,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mUiLayout.addView(mToolbarLayout, 0);
             }
             mBrowserFrame.setLayoutTransition(new LayoutTransition());
-            if (mWebView != null)
-                mWebView.setTranslationY(0);
+            if (currentWebView != null)
+                currentWebView.setTranslationY(0);
         }
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
 
@@ -925,9 +922,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             currentView.onPause();
         }
         tabsManager.setCurrentTab(newView);
-        mWebView = newView.getWebView();
+        final WebView currentWebView = currentView.getWebView();
         newView.setForegroundTab(true);
-        if (mWebView != null) {
+        if (currentWebView != null) {
             updateUrl(newView.getUrl(), true);
             updateProgress(newView.getProgress());
         } else {
@@ -935,7 +932,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             updateProgress(0);
         }
 
-        mBrowserFrame.addView(mWebView, MATCH_PARENT);
+        mBrowserFrame.addView(currentWebView, MATCH_PARENT);
         newView.requestFocus();
         newView.onResume();
 
@@ -949,10 +946,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 height = mToolbarLayout.getMeasuredHeight();
             }
-            mWebView.setTranslationY(translation + height);
+            currentWebView.setTranslationY(translation + height);
             mToolbarLayout.setTranslationY(translation);
         } else {
-            mWebView.setTranslationY(0);
+            currentWebView.setTranslationY(0);
         }
 
         showActionBar();
@@ -1018,7 +1015,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void closeEmptyTab() {
-        if (mWebView != null && mWebView.copyBackForwardList().getSize() == 0) {
+        final WebView currentWebView = tabsManager.getCurrentWebView();
+        if (currentWebView != null && currentWebView.copyBackForwardList().getSize() == 0) {
             closeCurrentTab();
         }
     }
@@ -1117,7 +1115,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 performExitCleanUp();
                 tabToDelete.pauseTimers();
                 tabToDelete.onDestroy();
-                mWebView = null;
                 mTabAdapter.notifyDataSetChanged();
                 finish();
             }
@@ -1169,7 +1166,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
-        mWebView = null;
         tabsManager.shutdown();
         mTabAdapter.notifyDataSetChanged();
         finish();
@@ -1808,7 +1804,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Message click = mClickHandler.obtainMessage();
         if (click != null) {
             click.setTarget(mClickHandler);
-            mWebView.requestFocusNodeHref(click);
+            final WebView currentWebView = tabsManager.getCurrentWebView();
+            if (currentWebView != null) {
+                currentWebView.requestFocusNodeHref(click);
+            }
         }
     }
 
@@ -1972,8 +1971,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return;
         }
         if (newTab("", true)) {
+            // TODO Review this
+            final WebView webView = tabsManager.getTabAtPosition(tabsManager.size() - 1).getWebView();
             WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-            transport.setWebView(mWebView);
+            transport.setWebView(webView);
             resultMsg.sendToTarget();
         }
     }
@@ -2003,6 +2004,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void hideActionBar() {
         final LightningView currentTab = tabsManager.getCurrentTab();
+        final WebView currentWebView = currentTab.getWebView();
         if (mFullScreen) {
             if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
                 mUiLayout.removeView(mToolbarLayout);
@@ -2010,13 +2012,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.bringToFront();
                 Log.d(Constants.TAG, "Move view to browser frame");
                 mToolbarLayout.setTranslationY(0);
-                mWebView.setTranslationY(mToolbarLayout.getHeight());
+                currentWebView.setTranslationY(mToolbarLayout.getHeight());
             }
             if (mToolbarLayout == null || currentTab == null)
                 return;
 
             final int height = mToolbarLayout.getHeight();
-            final WebView view = mWebView;
+            final WebView view = currentWebView;
             if (mToolbarLayout.getTranslationY() > -0.01f) {
                 Animation show = new Animation() {
                     @Override
@@ -2030,7 +2032,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 show.setDuration(250);
                 show.setInterpolator(new DecelerateInterpolator());
 //                show.setFillAfter(true);
-                mWebView.startAnimation(show);
+                currentWebView.startAnimation(show);
             }
         }
     }
@@ -2041,6 +2043,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void showActionBar() {
         if (mFullScreen) {
+            final WebView view = tabsManager.getCurrentWebView();
 
             if (mToolbarLayout == null)
                 return;
@@ -2057,13 +2060,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.bringToFront();
                 Log.d(Constants.TAG, "Move view to browser frame");
                 mToolbarLayout.setTranslationY(0);
-                mWebView.setTranslationY(height);
+                if (view != null) {
+                    view.setTranslationY(height);
+                }
             }
             final LightningView currentTab = tabsManager.getCurrentTab();
             if (currentTab == null)
                 return;
 
-            final WebView view = mWebView;
             final int totalHeight = height;
             if (mToolbarLayout.getTranslationY() < -(height - 0.01f)) {
                 Animation show = new Animation() {
@@ -2079,7 +2083,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 show.setDuration(250);
                 show.setInterpolator(new DecelerateInterpolator());
 //                show.setFillAfter(true);
-                mWebView.startAnimation(show);
+                if (view != null) {
+                    view.startAnimation(show);
+                }
             }
         }
     }
@@ -2093,9 +2099,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void longClickPage(final String url) {
         HitTestResult result = null;
         String currentUrl = null;
-        if (mWebView != null) {
-            result = mWebView.getHitTestResult();
-            currentUrl = mWebView.getUrl();
+        final WebView currentWebView = tabsManager.getCurrentWebView();
+        if (currentWebView != null) {
+            result = currentWebView.getHitTestResult();
+            currentUrl = currentWebView.getUrl();
         }
         if (currentUrl != null && currentUrl.startsWith(Constants.FILE)) {
             if (currentUrl.endsWith(HistoryPage.FILENAME)) {
@@ -2279,6 +2286,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void onClick(View v) {
         final LightningView currentTab = tabsManager.getCurrentTab();
+        final WebView currentWebView = currentTab.getWebView();
         switch (v.getId()) {
             case R.id.action_back:
                 if (currentTab != null) {
@@ -2309,13 +2317,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 newTab(null, true);
                 break;
             case R.id.button_next:
-                mWebView.findNext(false);
+                currentWebView.findNext(false);
                 break;
             case R.id.button_back:
-                mWebView.findNext(true);
+                currentWebView.findNext(true);
                 break;
             case R.id.button_quit:
-                mWebView.clearMatches();
+                currentWebView.clearMatches();
                 mSearchBar.setVisibility(View.GONE);
                 break;
             case R.id.action_reading:
@@ -2435,9 +2443,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
             final LightningView currentTab = tabsManager.getCurrentTab();
+            final WebView currentWebView = currentTab.getWebView();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
                     && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
-                openBookmarkPage(mWebView);
+                openBookmarkPage(currentWebView);
             }
             if (currentTab != null) {
                 eventBus.post(new BrowserEvents.CurrentPageUrl(currentTab.getUrl()));
@@ -2452,9 +2461,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
             final LightningView currentTab = tabsManager.getCurrentTab();
+            final WebView currentWebView = currentTab.getWebView();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
                     && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
-                openBookmarkPage(mWebView);
+                openBookmarkPage(currentWebView);
             }
             if (currentTab != null) {
                 eventBus.post(new BrowserEvents.CurrentPageUrl(currentTab.getUrl()));

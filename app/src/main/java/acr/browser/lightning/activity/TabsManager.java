@@ -172,6 +172,15 @@ public class TabsManager {
     }
 
     /**
+     * Return the {@link WebView} associated to the current tab, or null if there is no current tab
+     * @return a {@link WebView} or null
+     */
+    @Nullable
+    public WebView getCurrentWebView() {
+        return mCurrentTab != null ? mCurrentTab.getWebView() : null;
+    }
+
+    /**
      * TODO We should remove also this
      * @return
      */
