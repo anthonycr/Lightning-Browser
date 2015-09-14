@@ -137,7 +137,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private RelativeLayout mSearchBar;
 
     // List
-    private final List<LightningView> mWebViewList = new ArrayList<>();
     private LightningView mCurrentView;
     private WebView mWebView;
 
@@ -189,6 +188,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject
     BookmarksDialogBuilder bookmarksDialogBuilder;
 
+    @Inject
+    TabsManager tabsManager;
+
     // Image
     private Bitmap mWebpageBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
@@ -237,7 +239,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
         mActivity = this;
-        mWebViewList.clear();
+        // TODO Stefano, check this
+        // mWebViewList.clear();
 
         mClickHandler = new ClickHandler(this);
         mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
@@ -272,7 +275,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
 
         if (mShowTabsInDrawer) {
-            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViewList);
+            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, tabsManager.getTabsList());
             mDrawerListLeft = (RecyclerView) findViewById(R.id.left_drawer_list);
             mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -280,7 +283,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mDrawerListLeft.setHasFixedSize(true);
             mToolbarLayout.removeView(horizontalListView);
         } else {
-            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, mWebViewList);
+            mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, tabsManager.getTabsList());
             mDrawerListLeft = horizontalListView;
             mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_NEVER);
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
@@ -873,10 +876,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         @Override
         public void onClick(View v) {
-            int position = mDrawerListLeft.getChildAdapterPosition(v);
-            if (mCurrentView != mWebViewList.get(position)) {
+            final int position = mDrawerListLeft.getChildAdapterPosition(v);
+            final LightningView tab = tabsManager.getTabAtPosition(position);
+            if (tab != null && mCurrentView != tab) {
                 mIsNewIntent = false;
-                showTab(mWebViewList.get(position));
+                showTab(tab);
             }
         }
     }
@@ -1018,25 +1022,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void onTrimMemory(int level) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Log.d(Constants.TAG, "Low Memory, Free Memory");
-            for (int n = 0, size = mWebViewList.size(); n < size; n++) {
-                mWebViewList.get(n).freeMemory();
-            }
+            tabsManager.freeMemory();
         }
     }
 
     synchronized boolean newTab(String url, boolean show) {
         // Limit number of tabs for limited version of app
-        if (!Constants.FULL_VERSION && mWebViewList.size() >= 10) {
+        if (!Constants.FULL_VERSION && tabsManager.size() >= 10) {
             Utils.showSnackbar(this, R.string.max_tabs);
             return false;
         }
         mIsNewIntent = false;
-        LightningView startingTab = new LightningView(mActivity, url, mDarkTheme, isIncognito(), this);
+        LightningView startingTab = tabsManager.newTab(mActivity, url, mDarkTheme, isIncognito(), this);
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
         mIdGenerator++;
-        mWebViewList.add(startingTab);
 
         if (show) {
             showTab(startingTab);
@@ -1045,7 +1046,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mDrawerListLeft.smoothScrollToPosition(mWebViewList.size() - 1);
+                mDrawerListLeft.smoothScrollToPosition(tabsManager.size() - 1);
             }
         }, 300);
 
@@ -1053,49 +1054,47 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private synchronized void deleteTab(int position) {
-        if (position >= mWebViewList.size()) {
+        final LightningView reference = tabsManager.getTabAtPosition(position);
+        if (reference == null) {
             return;
         }
 
-        int current = mWebViewList.indexOf(mCurrentView);
+//  What?
+        int current = tabsManager.getPositionForTab(mCurrentView);
         if (current < 0) {
-            return;
-        }
-        LightningView reference = mWebViewList.get(position);
-        if (reference == null) {
             return;
         }
         if (!reference.getUrl().startsWith(Constants.FILE) && !isIncognito()) {
             mPreferences.setSavedUrl(reference.getUrl());
         }
-        boolean isShown = reference.isShown();
+        final boolean isShown = reference.isShown();
         if (isShown) {
             mBrowserFrame.setBackgroundColor(mBackgroundColor);
         }
         if (current > position) {
-            mWebViewList.remove(position);
-            showTab(mWebViewList.get(current - 1));
+            tabsManager.deleteTab(position);
+            showTab(tabsManager.getTabAtPosition(current - 1));
             updateTabs();
             reference.onDestroy();
-        } else if (mWebViewList.size() > position + 1) {
+        } else if (tabsManager.size() > position + 1) {
             if (current == position) {
-                showTab(mWebViewList.get(position + 1));
-                mWebViewList.remove(position);
-                showTab(mWebViewList.get(position));
+                showTab(tabsManager.getTabAtPosition(position + 1));
+                tabsManager.deleteTab(position);
+                showTab(tabsManager.getTabAtPosition(position));
                 updateTabs();
             } else {
-                mWebViewList.remove(position);
+                tabsManager.deleteTab(position);
             }
 
             reference.onDestroy();
-        } else if (mWebViewList.size() > 1) {
+        } else if (tabsManager.size() > 1) {
             if (current == position) {
-                showTab(mWebViewList.get(position - 1));
-                mWebViewList.remove(position);
-                showTab(mWebViewList.get(position - 1));
+                showTab(tabsManager.getTabAtPosition(position - 1));
+                tabsManager.deleteTab(position);
+                showTab(tabsManager.getTabAtPosition(position - 1));
                 updateTabs();
             } else {
-                mWebViewList.remove(position);
+                tabsManager.deleteTab(position);
             }
 
             reference.onDestroy();
@@ -1103,7 +1102,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (mCurrentView.getUrl().startsWith(Constants.FILE) || mCurrentView.getUrl().equals(mHomepage)) {
                 closeActivity();
             } else {
-                mWebViewList.remove(position);
+                tabsManager.deleteTab(position);
                 performExitCleanUp();
                 reference.pauseTimers();
                 reference.onDestroy();
@@ -1150,7 +1149,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            showCloseDialog(mWebViewList.indexOf(mCurrentView));
+            showCloseDialog(tabsManager.positionOf(mCurrentView));
         }
         return true;
     }
@@ -1160,12 +1159,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         performExitCleanUp();
         mCurrentView = null;
         mWebView = null;
-        for (int n = 0, size = mWebViewList.size(); n < size; n++) {
-            if (mWebViewList.get(n) != null) {
-                mWebViewList.get(n).onDestroy();
-            }
-        }
-        mWebViewList.clear();
+        tabsManager.shutdown();
         mTabAdapter.notifyDataSetChanged();
         finish();
     }
@@ -1189,7 +1183,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         mCurrentView.goBack();
                     }
                 } else {
-                    deleteTab(mWebViewList.indexOf(mCurrentView));
+                    deleteTab(tabsManager.positionOf(mCurrentView));
                 }
             } else {
                 Log.e(Constants.TAG, "This shouldn't happen ever");
@@ -1220,12 +1214,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     void saveOpenTabs() {
         if (mPreferences.getRestoreLostTabsEnabled()) {
-            String s = "";
-            for (int n = 0, size = mWebViewList.size(); n < size; n++) {
-                if (!mWebViewList.get(n).getUrl().isEmpty()) {
-                    s = s + mWebViewList.get(n).getUrl() + "|$|SEPARATOR|$|";
-                }
-            }
+            final String s = tabsManager.tabsString();
             mPreferences.setMemoryUrl(s);
         }
     }
@@ -1266,13 +1255,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mHistoryDatabase = HistoryDatabase.getInstance();
         initializePreferences();
-        for (int n = 0, size = mWebViewList.size(); n < size; n++) {
-            if (mWebViewList.get(n) != null) {
-                mWebViewList.get(n).initializePreferences(null, this);
-            } else {
-                mWebViewList.remove(n);
-            }
-        }
+        tabsManager.resume(this);
 
         supportInvalidateOptionsMenu();
 
@@ -1984,7 +1967,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public void onCloseWindow(LightningView view) {
-        deleteTab(mWebViewList.indexOf(view));
+        deleteTab(tabsManager.positionOf(view));
     }
 
     /**
@@ -2278,7 +2261,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     if (mCurrentView.canGoBack()) {
                         mCurrentView.goBack();
                     } else {
-                        deleteTab(mWebViewList.indexOf(mCurrentView));
+                        deleteTab(tabsManager.positionOf(mCurrentView));
                     }
                 }
                 break;
@@ -2353,11 +2336,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             super.onReceive(context, intent);
             boolean isConnected = isConnected(context);
             Log.d(Constants.TAG, "Network Connected: " + String.valueOf(isConnected));
-            for (int n = 0, size = mWebViewList.size(); n < size; n++) {
-                WebView view = mWebViewList.get(n).getWebView();
-                if (view != null)
-                    view.setNetworkAvailable(isConnected);
-            }
+            tabsManager.notifyConnectioneStatus(isConnected);
         }
     };
 
