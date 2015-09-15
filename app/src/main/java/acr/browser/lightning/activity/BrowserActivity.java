@@ -106,6 +106,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
@@ -269,6 +270,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final int containerId = mShowTabsInDrawer ? R.id.left_drawer : R.id.tabs_toolbar_container;
         final Bundle arguments = new Bundle();
         arguments.putBoolean(TabsFragment.VERTICAL_MODE, mShowTabsInDrawer);
+        arguments.putBoolean(TabsFragment.USE_DARK_THEME, mDarkTheme);
         tabsFragment.setArguments(arguments);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -2099,23 +2101,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final LightningView currentTab = tabsManager.getCurrentTab();
         final WebView currentWebView = currentTab.getWebView();
         switch (v.getId()) {
-// TODO Remove this
-//            case R.id.action_back:
-//                if (currentTab != null) {
-//                    if (currentTab.canGoBack()) {
-//                        currentTab.goBack();
-//                    } else {
-//                        deleteTab(tabsManager.positionOf(currentTab));
-//                    }
-//                }
-//                break;
-//            case R.id.action_forward:
-//                if (currentTab != null) {
-//                    if (currentTab.canGoForward()) {
-//                        currentTab.goForward();
-//                    }
-//                }
-//                break;
             case R.id.arrow_button:
                 if (mSearch != null && mSearch.hasFocus()) {
                     currentTab.requestFocus();
@@ -2150,16 +2135,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.new_tab_button:
-                String url = mPreferences.getSavedUrl();
-                if (url != null) {
-                    newTab(url, true);
-                    Utils.showSnackbar(mActivity, R.string.deleted_tab);
-                }
-                mPreferences.setSavedUrl(null);
-                break;
-        }
         return true;
     }
 
@@ -2331,6 +2306,53 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void newTab(final TabEvents.NewTab event) {
             BrowserActivity.this.newTab(null, true);
+        }
+
+        /**
+         * The user wants to go back on current tab
+         *
+         * @param event a marker
+         */
+        @Subscribe
+        public void goBack(final NavigationEvents.GoBack event) {
+            final LightningView currentTab = tabsManager.getCurrentTab();
+            if (currentTab != null) {
+                if (currentTab.canGoBack()) {
+                    currentTab.goBack();
+                } else {
+                    deleteTab(tabsManager.positionOf(currentTab));
+                }
+            }
+        }
+
+        /**
+         * The user wants to go forward on current tab
+         *
+         * @param event a marker
+         */
+        @Subscribe
+        public void goForward(final NavigationEvents.GoForward event) {
+            final LightningView currentTab = tabsManager.getCurrentTab();
+            if (currentTab != null) {
+                if (currentTab.canGoForward()) {
+                    currentTab.goForward();
+                }
+            }
+        }
+
+        /**
+         * The user long pressed the new tab button
+         *
+         * @param event a marker
+         */
+        @Subscribe
+        public void newTabLongPress(final TabEvents.NewTabLongPress event) {
+                String url = mPreferences.getSavedUrl();
+                if (url != null) {
+                    BrowserActivity.this.newTab(url, true);
+                    Utils.showSnackbar(mActivity, R.string.deleted_tab);
+                }
+                mPreferences.setSavedUrl(null);
         }
     };
 }

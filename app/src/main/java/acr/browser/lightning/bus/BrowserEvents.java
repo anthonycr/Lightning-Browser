@@ -24,9 +24,8 @@ public final class BrowserEvents {
     }
 
     /**
-     * Used to reply to {@link acr.browser.lightning.fragment.BookmarksFragment} message
-     * {@link acr.browser.lightning.bus.BookmarkEvents.WantInfoAboutCurrentPage}. This is generally
-     * used to update the {@link acr.browser.lightning.fragment.BookmarksFragment} interface.
+     * Notify the current page has a new url. This is generally used to update the
+     * {@link acr.browser.lightning.fragment.BookmarksFragment} interface.
      */
     public static class CurrentPageUrl {
         public final String url;

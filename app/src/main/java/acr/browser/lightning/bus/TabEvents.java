@@ -1,6 +1,8 @@
 package acr.browser.lightning.bus;
 
 /**
+ * A collection of events been sent by {@link acr.browser.lightning.fragment.TabsFragment}
+ *
  * @author Stefano Pacifici
  * @date 2015/09/14
  */
@@ -52,5 +54,12 @@ public final class TabEvents {
      * new tab.
      */
     public static class NewTab {
+    }
+
+    /**
+     * Sended by {@link acr.browser.lightning.fragment.TabsFragment} when the user long presses on
+     * new tab button.
+     */
+    public static class NewTabLongPress {
     }
 }

@@ -1,6 +1,8 @@
 package acr.browser.lightning.bus;
 
 /**
+ * Collections of navigation events, like go back or go forward
+ *
  * @author Stefano Pacifici
  * @date 2015/09/15
  */

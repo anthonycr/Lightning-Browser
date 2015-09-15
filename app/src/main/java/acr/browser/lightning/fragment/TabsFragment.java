@@ -59,9 +59,10 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
      * If true, the fragment is in the left drawner in the strip otherwise.
      */
     public static final String VERTICAL_MODE = TAG + ".VERTICAL_MODE";
+    public static final String USE_DARK_THEME = TAG + ".USE_DARK_THEME";
 
-    private boolean mDarkTheme = false; // TODO Only temporary
-    private int mIconColor = 0; // TODO Only temporary
+    private boolean mDarkTheme;
+    private int mIconColor;
     private boolean mColorMode = true; // TODO Only temporary
     private boolean isIncognito = false; // TODO Only temporary
     private int mCurrentUiColor = 0; // TODO Only temporary
@@ -77,6 +78,17 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     public TabsFragment() {
         BrowserApp.getAppComponent().inject(this);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final Bundle arguments = getArguments();
+        final Context context = getContext();
+        mDarkTheme = arguments.getBoolean(USE_DARK_THEME, false);
+        mIconColor = mDarkTheme ?
+                ThemeUtils.getIconDarkThemeColor(context) :
+                ThemeUtils.getIconLightThemeColor(context);
     }
 
     @Nullable
@@ -166,7 +178,14 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public boolean onLongClick(View v) {
-        return false;
+        switch (v.getId()) {
+            case R.id.action_new_tab:
+                bus.post(new TabEvents.NewTabLongPress());
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {

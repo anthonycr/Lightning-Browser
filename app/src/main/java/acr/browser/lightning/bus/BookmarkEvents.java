@@ -62,13 +62,6 @@ public final class BookmarkEvents {
     }
 
     /**
-     * The {@link acr.browser.lightning.fragment.BookmarksFragment} want to know the url (and title)
-     * of the currently shown web page.
-     */
-    // public static class WantInfoAboutCurrentPage {
-    // }
-
-    /**
      * Sended by the {@link acr.browser.lightning.fragment.BookmarksFragment} when it wants to close
      * itself (generally in reply to a {@link acr.browser.lightning.bus.BrowserEvents.UserPressedBack}
      * event.
