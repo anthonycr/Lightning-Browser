@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.view.LightningView;
@@ -17,6 +18,7 @@ import acr.browser.lightning.view.LightningView;
  * @author Stefano Pacifici
  * @date 2015/09/14
  */
+@Singleton
 public class TabsManager {
 
     private final List<LightningView> mWebViewList = new ArrayList<>();
@@ -205,11 +207,4 @@ public class TabsManager {
             return tab;
         }
     }
-
-//    /**
-//     * TODO We should remove also this
-//     */
-//    public void setCurrentTab(final LightningView tab) {
-//        mCurrentTab = tab;
-//    }
 }

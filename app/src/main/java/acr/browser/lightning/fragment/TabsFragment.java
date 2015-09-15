@@ -13,6 +13,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -38,6 +40,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -47,7 +50,7 @@ import acr.browser.lightning.view.LightningView;
  * @author Stefano Pacifici based on Anthony C. Restaino's code
  * @date 2015/09/14
  */
-public class TabsFragment extends Fragment {
+public class TabsFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     private static final String TAG = TabsFragment.class.getSimpleName();
 
@@ -86,6 +89,11 @@ public class TabsFragment extends Fragment {
         if (vertical) {
             view = inflater.inflate(R.layout.tab_drawer, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            // TODO Handle also long press
+            setupFrameLayoutButton(view, R.id.new_tab_button, R.id.icon_plus);
+            setupFrameLayoutButton(view, R.id.action_back, R.id.icon_back);
+            setupFrameLayoutButton(view, R.id.action_forward, R.id.icon_forward);
+
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -96,6 +104,15 @@ public class TabsFragment extends Fragment {
         mRecyclerView.setAdapter(mTabsAdapter);
         mRecyclerView.setHasFixedSize(true);
         return view;
+    }
+
+    private void setupFrameLayoutButton(@NonNull final View root, @IdRes final int buttonId,
+                                        @IdRes final int imageId) {
+        final View frameButton = root.findViewById(buttonId);
+        final ImageView buttonImage = (ImageView) root.findViewById(imageId);
+        frameButton.setOnClickListener(this);
+        frameButton.setOnLongClickListener(this);
+        buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override
@@ -111,6 +128,13 @@ public class TabsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Force adapter refresh
+        mTabsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         bus.unregister(this);
@@ -121,6 +145,28 @@ public class TabsFragment extends Fragment {
         if (mTabsAdapter != null) {
             mTabsAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.new_tab_button:
+                bus.post(new TabEvents.NewTab());
+                break;
+            case R.id.action_back:
+                bus.post(new NavigationEvents.GoBack());
+                break;
+            case R.id.action_forward:
+                bus.post(new NavigationEvents.GoForward());
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return false;
     }
 
     public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
@@ -277,5 +323,4 @@ public class TabsFragment extends Fragment {
             }
         }
     }
-
 }

@@ -235,8 +235,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
         mActivity = this;
-        // TODO Stefano, check this
-        // mWebViewList.clear();
 
         mClickHandler = new ClickHandler(this);
         mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
@@ -246,15 +244,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
         mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
-        setupFrameLayoutButton(R.id.new_tab_button, R.id.icon_plus);
         mDrawerLeft = (FrameLayout) findViewById(R.id.left_drawer);
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerRight = (ViewGroup) findViewById(R.id.right_drawer);
         mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
-        tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+// TODO Probably should be moved to the TabsFragement
+//        ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
+//        tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mShowTabsInDrawer) {
             getWindow().setStatusBarColor(Color.BLACK);
@@ -313,10 +311,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mProxyUtils = ProxyUtils.getInstance();
 
-        setupFrameLayoutButton(R.id.action_back, R.id.icon_back);
-        setupFrameLayoutButton(R.id.action_forward, R.id.icon_forward);
-        setupFrameLayoutButton(R.id.action_toggle_desktop, R.id.icon_desktop);
         setupFrameLayoutButton(R.id.action_reading, R.id.icon_reading);
+        setupFrameLayoutButton(R.id.action_toggle_desktop, R.id.icon_desktop);
 
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) actionBar.getCustomView().findViewById(R.id.search);
@@ -870,7 +866,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private synchronized void showTab(final int position) {
         final LightningView currentView = tabsManager.getCurrentTab();
+        final WebView currentWebView = currentView != null ? currentView.getWebView() : null;
         final LightningView newView = tabsManager.switchToTab(position);
+        final WebView newWebView = newView != null ? newView.getWebView() : null;
 
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
@@ -885,7 +883,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             currentView.setForegroundTab(false);
             currentView.onPause();
         }
-        final WebView currentWebView = currentView.getWebView();
         newView.setForegroundTab(true);
         if (currentWebView != null) {
             updateUrl(newView.getUrl(), true);
@@ -895,7 +892,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             updateProgress(0);
         }
 
-        mBrowserFrame.addView(currentWebView, MATCH_PARENT);
+        mBrowserFrame.addView(newWebView, MATCH_PARENT);
         newView.requestFocus();
         newView.onResume();
 
@@ -909,10 +906,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 height = mToolbarLayout.getMeasuredHeight();
             }
-            currentWebView.setTranslationY(translation + height);
+            newWebView.setTranslationY(translation + height);
             mToolbarLayout.setTranslationY(translation);
         } else {
-            currentWebView.setTranslationY(0);
+            newWebView.setTranslationY(0);
         }
 
         showActionBar();
@@ -2102,22 +2099,23 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final LightningView currentTab = tabsManager.getCurrentTab();
         final WebView currentWebView = currentTab.getWebView();
         switch (v.getId()) {
-            case R.id.action_back:
-                if (currentTab != null) {
-                    if (currentTab.canGoBack()) {
-                        currentTab.goBack();
-                    } else {
-                        deleteTab(tabsManager.positionOf(currentTab));
-                    }
-                }
-                break;
-            case R.id.action_forward:
-                if (currentTab != null) {
-                    if (currentTab.canGoForward()) {
-                        currentTab.goForward();
-                    }
-                }
-                break;
+// TODO Remove this
+//            case R.id.action_back:
+//                if (currentTab != null) {
+//                    if (currentTab.canGoBack()) {
+//                        currentTab.goBack();
+//                    } else {
+//                        deleteTab(tabsManager.positionOf(currentTab));
+//                    }
+//                }
+//                break;
+//            case R.id.action_forward:
+//                if (currentTab != null) {
+//                    if (currentTab.canGoForward()) {
+//                        currentTab.goForward();
+//                    }
+//                }
+//                break;
             case R.id.arrow_button:
                 if (mSearch != null && mSearch.hasFocus()) {
                     currentTab.requestFocus();
@@ -2126,9 +2124,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 } else if (currentTab != null) {
                     currentTab.loadHomepage();
                 }
-                break;
-            case R.id.new_tab_button:
-                newTab(null, true);
                 break;
             case R.id.button_next:
                 currentWebView.findNext(false);
@@ -2168,11 +2163,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
+    // TODO Check if all the calls are relative to TabsFragement
     private void setupFrameLayoutButton(@IdRes int buttonId, @IdRes int imageId) {
-        View frameButton = findViewById(buttonId);
+        final View frameButton = findViewById(buttonId);
+        final ImageView buttonImage = (ImageView) findViewById(imageId);
         frameButton.setOnClickListener(this);
         frameButton.setOnLongClickListener(this);
-        ImageView buttonImage = (ImageView) findViewById(imageId);
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
@@ -2219,7 +2215,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void loadBookmarkInNewTab(final BookmarkEvents.AsNewTab event) {
-            newTab(event.bookmark.getUrl(), true);
+            BrowserActivity.this.newTab(event.bookmark.getUrl(), true);
             mDrawerLayout.closeDrawers();
         }
 
@@ -2312,6 +2308,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          *
          * @param event contains the tab position in the tabs adapter
          */
+        @Subscribe
         public void showTab(final TabEvents.ShowTab event) {
             BrowserActivity.this.showTab(event.position);
         }
@@ -2321,8 +2318,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          *
          * @param event contains the tab position in the tabs adapter
          */
+        @Subscribe
         public void showCloseDialog(final TabEvents.ShowCloseDialog event) {
              BrowserActivity.this.showCloseDialog(event.position);
+        }
+
+        /**
+         * The user wants to create a new tab
+         *
+         * @param event a marker
+         */
+        @Subscribe
+        public void newTab(final TabEvents.NewTab event) {
+            BrowserActivity.this.newTab(null, true);
         }
     };
 }

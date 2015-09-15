@@ -46,4 +46,11 @@ public final class TabEvents {
             this.position = position;
         }
     }
+
+    /**
+     * Sended by {@link acr.browser.lightning.fragment.TabsFragment} when the user want to create a
+     * new tab.
+     */
+    public static class NewTab {
+    }
 }
