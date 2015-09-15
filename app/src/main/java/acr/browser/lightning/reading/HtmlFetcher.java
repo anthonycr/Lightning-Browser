@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -38,6 +39,8 @@ import java.util.zip.InflaterInputStream;
  * @author Peter Karich
  */
 public class HtmlFetcher {
+
+    private static final Pattern SPACE = Pattern.compile(" ");
 
     static {
         SHelper.enableCookieMgmt();
@@ -50,8 +53,8 @@ public class HtmlFetcher {
         String line;
         Set<String> existing = new LinkedHashSet<>();
         while ((line = reader.readLine()) != null) {
-            int index1 = line.indexOf("\"");
-            int index2 = line.indexOf("\"", index1 + 1);
+            int index1 = line.indexOf('\"');
+            int index2 = line.indexOf('\"', index1 + 1);
             String url = line.substring(index1 + 1, index2);
             String domainStr = SHelper.extractDomain(url, true);
             String counterStr = "";
@@ -381,7 +384,7 @@ public class HtmlFetcher {
             newUrl = hConn.getHeaderField("Location");
             // Note that the max recursion level is 5.
             if (responseCode / 100 == 3 && newUrl != null && num_redirects < 5) {
-                newUrl = newUrl.replaceAll(" ", "+");
+                newUrl = SPACE.matcher(newUrl).replaceAll("+");
                 // some services use (none-standard) utf8 in their location header
                 if (urlAsString.startsWith("http://bit.ly")
                         || urlAsString.startsWith("http://is.gd"))

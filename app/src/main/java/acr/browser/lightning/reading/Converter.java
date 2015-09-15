@@ -204,24 +204,24 @@ public class Converter {
             int lastEncIndex;
             if (startChar == '\'')
                 // if we have charset='something'
-                lastEncIndex = str.indexOf("'", ++encIndex + clength);
+                lastEncIndex = str.indexOf('\'', ++encIndex + clength);
             else if (startChar == '\"')
                 // if we have charset="something"
-                lastEncIndex = str.indexOf("\"", ++encIndex + clength);
+                lastEncIndex = str.indexOf('\"', ++encIndex + clength);
             else {
                 // if we have "text/html; charset=utf-8"
-                int first = str.indexOf("\"", encIndex + clength);
+                int first = str.indexOf('\"', encIndex + clength);
                 if (first < 0)
                     first = Integer.MAX_VALUE;
 
                 // or "text/html; charset=utf-8 "
-                int sec = str.indexOf(" ", encIndex + clength);
+                int sec = str.indexOf(' ', encIndex + clength);
                 if (sec < 0)
                     sec = Integer.MAX_VALUE;
                 lastEncIndex = Math.min(first, sec);
 
                 // or "text/html; charset=utf-8 '
-                int third = str.indexOf("'", encIndex + clength);
+                int third = str.indexOf('\'', encIndex + clength);
                 if (third > 0)
                     lastEncIndex = Math.min(lastEncIndex, third);
             }

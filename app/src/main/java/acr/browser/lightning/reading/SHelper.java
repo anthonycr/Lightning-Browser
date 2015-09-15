@@ -193,7 +193,7 @@ public class SHelper {
                 url = url.substring("m.".length());
         }
 
-        int slashIndex = url.indexOf("/");
+        int slashIndex = url.indexOf('/');
         if (slashIndex > 0)
             url = url.substring(0, slashIndex);
 

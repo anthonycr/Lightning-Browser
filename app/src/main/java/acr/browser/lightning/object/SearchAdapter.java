@@ -48,11 +48,11 @@ import acr.browser.lightning.utils.Utils;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
-    private final List<HistoryItem> mHistory = new ArrayList<>();
-    private final List<HistoryItem> mBookmarks = new ArrayList<>();
-    private final List<HistoryItem> mSuggestions = new ArrayList<>();
-    private final List<HistoryItem> mFilteredList = new ArrayList<>();
-    private final List<HistoryItem> mAllBookmarks = new ArrayList<>();
+    private final List<HistoryItem> mHistory = new ArrayList<>(5);
+    private final List<HistoryItem> mBookmarks = new ArrayList<>(5);
+    private final List<HistoryItem> mSuggestions = new ArrayList<>(5);
+    private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
+    private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
     private final Object mLock = new Object();
     private HistoryDatabase mDatabaseHandler;
     private final Context mContext;

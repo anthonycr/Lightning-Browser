@@ -1220,13 +1220,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     void saveOpenTabs() {
         if (mPreferences.getRestoreLostTabsEnabled()) {
-            String s = "";
+            StringBuilder s = new StringBuilder(mWebViewList.size() * 50);
             for (int n = 0, size = mWebViewList.size(); n < size; n++) {
                 if (!mWebViewList.get(n).getUrl().isEmpty()) {
-                    s = s + mWebViewList.get(n).getUrl() + "|$|SEPARATOR|$|";
+                    s.append(mWebViewList.get(n).getUrl()).append("|$|SEPARATOR|$|");
                 }
             }
-            mPreferences.setMemoryUrl(s);
+            mPreferences.setMemoryUrl(s.toString());
         }
     }
 
