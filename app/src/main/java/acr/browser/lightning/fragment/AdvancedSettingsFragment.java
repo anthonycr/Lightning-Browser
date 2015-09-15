@@ -164,13 +164,7 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -187,13 +181,7 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
                 textEncoding.setSummary(Constants.TEXT_ENCODINGS[which]);
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -212,13 +200,7 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 }
