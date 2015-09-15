@@ -903,7 +903,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private synchronized void showTab(LightningView view) {
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
-        if (view == null) {
+        if (view == null || (view == mCurrentView && !mCurrentView.isShown())) {
             return;
         }
         final float translation = mToolbarLayout.getTranslationY();
@@ -961,8 +961,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-                // Remove browser frame background to reduce overdraw
-                //TODO evaluate performance
+        // Remove browser frame background to reduce overdraw
+        //TODO evaluate performance
 //                mBrowserFrame.setBackgroundColor(Color.TRANSPARENT);
 //            }
 //        }, 300);
@@ -1074,14 +1074,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         if (current > position) {
             mWebViewList.remove(position);
-            showTab(mWebViewList.get(current - 1));
             updateTabs();
             reference.onDestroy();
         } else if (mWebViewList.size() > position + 1) {
             if (current == position) {
                 showTab(mWebViewList.get(position + 1));
                 mWebViewList.remove(position);
-                showTab(mWebViewList.get(position));
                 updateTabs();
             } else {
                 mWebViewList.remove(position);
@@ -1092,7 +1090,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (current == position) {
                 showTab(mWebViewList.get(position - 1));
                 mWebViewList.remove(position);
-                showTab(mWebViewList.get(position - 1));
                 updateTabs();
             } else {
                 mWebViewList.remove(position);
