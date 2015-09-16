@@ -129,6 +129,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
         mRecyclerView = null;
         mTabsAdapter = null;
     }

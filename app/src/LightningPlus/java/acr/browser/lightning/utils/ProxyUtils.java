@@ -28,7 +28,7 @@ public class ProxyUtils {
     private static ProxyUtils mInstance;
 
     private ProxyUtils(Context context) {
-        mPreferences = PreferenceManager.getInstance();
+        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
         mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
     }
 

@@ -15,8 +15,8 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mTheme = PreferenceManager.getInstance().getUseTheme();
-        mShowTabsInDrawer = PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
+        mTheme = 0; //PreferenceManager.getInstance().getUseTheme();
+        mShowTabsInDrawer = false; // PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
 
         // set the theme
         if (mTheme == 1) {
@@ -30,8 +30,8 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        int theme = PreferenceManager.getInstance().getUseTheme();
-        boolean drawerTabs = PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
+        int theme = 0; // PreferenceManager.getInstance().getUseTheme();
+        boolean drawerTabs = false; // PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
         if (theme != mTheme || mShowTabsInDrawer != drawerTabs) {
             restart();
         }

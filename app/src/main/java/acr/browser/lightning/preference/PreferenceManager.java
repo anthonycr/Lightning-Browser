@@ -1,11 +1,16 @@
 package acr.browser.lightning.preference;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 
+@Singleton
 public class PreferenceManager {
 
     private static class Name {
@@ -56,20 +61,13 @@ public class PreferenceManager {
         public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
     }
 
-    private static PreferenceManager mInstance;
     private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
 
-    public static PreferenceManager getInstance() {
-        if (mInstance == null) {
-            mInstance = new PreferenceManager();
-        }
-        return mInstance;
-    }
-
-    private PreferenceManager() {
-        mPrefs = BrowserApp.getAppContext().getSharedPreferences(PREFERENCES, 0);
+    @Inject
+    PreferenceManager(final Context context) {
+        mPrefs = context.getSharedPreferences(PREFERENCES, 0);
     }
 
     public boolean getAdBlockEnabled() {

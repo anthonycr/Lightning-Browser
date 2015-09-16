@@ -55,6 +55,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
@@ -80,7 +82,8 @@ public class LightningView {
     private static String mDefaultUserAgent;
     // TODO fix so that mWebpageBitmap can be static - static changes the icon when switching from light to dark and then back to light
     private final Bitmap mWebpageBitmap;
-    private static PreferenceManager mPreferences;
+    @Inject
+    PreferenceManager mPreferences;
     private final AdBlock mAdBlock;
     private final IntentUtils mIntentUtils;
     private final Paint mPaint = new Paint();
@@ -102,7 +105,7 @@ public class LightningView {
 
     @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito, BrowserController controller) {
-
+        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
         mActivity = activity;
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
@@ -178,7 +181,6 @@ public class LightningView {
         } else if (settings == null) {
             settings = mWebView.getSettings();
         }
-        mPreferences = PreferenceManager.getInstance();
 
         settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
         mHomepage = mPreferences.getHomepage();

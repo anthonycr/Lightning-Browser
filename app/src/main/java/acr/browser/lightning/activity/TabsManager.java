@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -25,7 +26,7 @@ public class TabsManager {
     private LightningView mCurrentTab;
 
     @Inject
-    public TabsManager() {
+    public TabsManager(final Context context, final PreferenceManager preferenceManager) {
     }
 
     /**

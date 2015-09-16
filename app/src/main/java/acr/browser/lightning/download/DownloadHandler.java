@@ -20,6 +20,7 @@ import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 
@@ -170,7 +171,7 @@ public class DownloadHandler {
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
 
-        String location = PreferenceManager.getInstance().getDownloadDirectory();
+        String location = BrowserApp.getAppComponent().getPreferenceManager().getDownloadDirectory();
         request.setDestinationInExternalPublicDir(location, filename);
         // let this downloaded file be scanned by MediaScanner - so that it can
         // show up in Gallery app, for example.

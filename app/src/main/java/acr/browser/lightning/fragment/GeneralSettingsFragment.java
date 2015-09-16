@@ -28,7 +28,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 
-public class GeneralSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+public class GeneralSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_PROXY = "proxy";
     private static final String SETTINGS_FLASH = "cb_flash";
@@ -45,7 +45,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
-    private PreferenceManager mPreferences;
     private CharSequence[] mProxyChoices;
     private Preference proxy, useragent, downloadloc, home, searchengine;
     private String mDownloadLocation;
@@ -65,9 +64,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     }
 
     private void initPrefs() {
-        // mPreferences storage
-        mPreferences = PreferenceManager.getInstance();
-
         proxy = findPreference(SETTINGS_PROXY);
         useragent = findPreference(SETTINGS_USERAGENT);
         downloadloc = findPreference(SETTINGS_DOWNLOAD);
@@ -95,23 +91,23 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbgooglesuggest.setOnPreferenceChangeListener(this);
         cbDrawerTabs.setOnPreferenceChangeListener(this);
 
-        mAgentChoice = mPreferences.getUserAgentChoice();
-        mHomepage = mPreferences.getHomepage();
-        mDownloadLocation = mPreferences.getDownloadDirectory();
+        mAgentChoice = preferenceManager.getUserAgentChoice();
+        mHomepage = preferenceManager.getHomepage();
+        mDownloadLocation = preferenceManager.getDownloadDirectory();
         mProxyChoices = getResources().getStringArray(R.array.proxy_choices_array);
 
-        int choice = mPreferences.getProxyChoice();
+        int choice = preferenceManager.getProxyChoice();
         if (choice == Constants.PROXY_MANUAL) {
-            proxy.setSummary(mPreferences.getProxyHost() + ':' + mPreferences.getProxyPort());
+            proxy.setSummary(preferenceManager.getProxyHost() + ':' + preferenceManager.getProxyPort());
         } else {
             proxy.setSummary(mProxyChoices[choice]);
         }
 
         if (API >= 19) {
-            mPreferences.setFlashSupport(0);
+            preferenceManager.setFlashSupport(0);
         }
 
-        setSearchEngineSummary(mPreferences.getSearchChoice());
+        setSearchEngineSummary(preferenceManager.getSearchChoice());
 
         downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/' + mDownloadLocation);
 
@@ -139,9 +135,9 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 useragent.setSummary(getResources().getString(R.string.agent_custom));
         }
 
-        int flashNum = mPreferences.getFlashSupport();
-        boolean imagesBool = mPreferences.getBlockImagesEnabled();
-        boolean enableJSBool = mPreferences.getJavaScriptEnabled();
+        int flashNum = preferenceManager.getFlashSupport();
+        boolean imagesBool = preferenceManager.getBlockImagesEnabled();
+        boolean enableJSBool = preferenceManager.getJavaScriptEnabled();
 
         proxy.setEnabled(Constants.FULL_VERSION);
         cbAds.setEnabled(Constants.FULL_VERSION);
@@ -150,17 +146,17 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbImages.setChecked(imagesBool);
         cbJsScript.setChecked(enableJSBool);
         cbFlash.setChecked(flashNum > 0);
-        cbAds.setChecked(Constants.FULL_VERSION && mPreferences.getAdBlockEnabled());
-        cbColorMode.setChecked(mPreferences.getColorModeEnabled());
-        cbgooglesuggest.setChecked(mPreferences.getGoogleSearchSuggestionsEnabled());
-        cbDrawerTabs.setChecked(mPreferences.getShowTabsInDrawer(true));
+        cbAds.setChecked(Constants.FULL_VERSION && preferenceManager.getAdBlockEnabled());
+        cbColorMode.setChecked(preferenceManager.getColorModeEnabled());
+        cbgooglesuggest.setChecked(preferenceManager.getGoogleSearchSuggestionsEnabled());
+        cbDrawerTabs.setChecked(preferenceManager.getShowTabsInDrawer(true));
     }
 
     private void searchUrlPicker() {
         final AlertDialog.Builder urlPicker = new AlertDialog.Builder(mActivity);
         urlPicker.setTitle(getResources().getString(R.string.custom_url));
         final EditText getSearchUrl = new EditText(mActivity);
-        String mSearchUrl = mPreferences.getSearchUrl();
+        String mSearchUrl = preferenceManager.getSearchUrl();
         getSearchUrl.setText(mSearchUrl);
         urlPicker.setView(getSearchUrl);
         urlPicker.setPositiveButton(getResources().getString(R.string.action_ok),
@@ -168,7 +164,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = getSearchUrl.getText().toString();
-                        mPreferences.setSearchUrl(text);
+                        preferenceManager.setSearchUrl(text);
                         searchengine.setSummary(getResources().getString(R.string.custom_url) + ": "
                                 + text);
                     }
@@ -185,7 +181,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                mPreferences.setFlashSupport(1);
+                                preferenceManager.setFlashSupport(1);
                             }
                         })
                 .setNegativeButton(getResources().getString(R.string.action_auto),
@@ -193,13 +189,13 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mPreferences.setFlashSupport(2);
+                                preferenceManager.setFlashSupport(2);
                             }
                         }).setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
             public void onCancel(DialogInterface dialog) {
-                mPreferences.setFlashSupport(0);
+                preferenceManager.setFlashSupport(0);
             }
 
         });
@@ -210,7 +206,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private void proxyChoicePicker() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.http_proxy));
-        picker.setSingleChoiceItems(mProxyChoices, mPreferences.getProxyChoice(),
+        picker.setSingleChoiceItems(mProxyChoices, preferenceManager.getProxyChoice(),
                 new DialogInterface.OnClickListener() {
 
                     @Override
@@ -240,7 +236,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 break;
         }
 
-        mPreferences.setProxyChoice(choice);
+        preferenceManager.setProxyChoice(choice);
         if (choice < mProxyChoices.length)
             proxy.setSummary(mProxyChoices[choice]);
     }
@@ -258,8 +254,8 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         filterArray[0] = new InputFilter.LengthFilter(maxCharacters - 1);
         eProxyPort.setFilters(filterArray);
 
-        eProxyHost.setText(mPreferences.getProxyHost());
-        eProxyPort.setText(Integer.toString(mPreferences.getProxyPort()));
+        eProxyHost.setText(preferenceManager.getProxyHost());
+        eProxyPort.setText(Integer.toString(preferenceManager.getProxyPort()));
 
         new AlertDialog.Builder(mActivity)
                 .setTitle(R.string.manual_proxy)
@@ -274,10 +270,10 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                             // larger than max integer
                             proxyPort = Integer.parseInt(eProxyPort.getText().toString());
                         } catch (NumberFormatException ignored) {
-                            proxyPort = mPreferences.getProxyPort();
+                            proxyPort = preferenceManager.getProxyPort();
                         }
-                        mPreferences.setProxyHost(proxyHost);
-                        mPreferences.setProxyPort(proxyPort);
+                        preferenceManager.setProxyHost(proxyHost);
+                        preferenceManager.setProxyPort(proxyPort);
                         proxy.setSummary(proxyHost + ':' + proxyPort);
                     }
                 }).show();
@@ -291,13 +287,13 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 "DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
                 "Yandex (Russian)"};
 
-        int n = mPreferences.getSearchChoice();
+        int n = preferenceManager.getSearchChoice();
 
         picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPreferences.setSearchChoice(which);
+                preferenceManager.setSearchChoice(which);
                 setSearchEngineSummary(which);
             }
         });
@@ -313,7 +309,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private void homepageDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.home));
-        mHomepage = mPreferences.getHomepage();
+        mHomepage = preferenceManager.getHomepage();
         int n;
         if (mHomepage.contains("about:home")) {
             n = 1;
@@ -331,15 +327,15 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which + 1) {
                             case 1:
-                                mPreferences.setHomepage("about:home");
+                                preferenceManager.setHomepage("about:home");
                                 home.setSummary(getResources().getString(R.string.action_homepage));
                                 break;
                             case 2:
-                                mPreferences.setHomepage("about:blank");
+                                preferenceManager.setHomepage("about:blank");
                                 home.setSummary(getResources().getString(R.string.action_blank));
                                 break;
                             case 3:
-                                mPreferences.setHomepage("about:bookmarks");
+                                preferenceManager.setHomepage("about:bookmarks");
                                 home.setSummary(getResources().getString(R.string.action_bookmarks));
                                 break;
                             case 4:
@@ -361,7 +357,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
         homePicker.setTitle(getResources().getString(R.string.title_custom_homepage));
         final EditText getHome = new EditText(mActivity);
-        mHomepage = mPreferences.getHomepage();
+        mHomepage = preferenceManager.getHomepage();
         if (!mHomepage.startsWith("about:")) {
             getHome.setText(mHomepage);
         } else {
@@ -373,7 +369,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = getHome.getText().toString();
-                        mPreferences.setHomepage(text);
+                        preferenceManager.setHomepage(text);
                         home.setSummary(text);
                     }
                 });
@@ -383,7 +379,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private void downloadLocDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.title_download_location));
-        mDownloadLocation = mPreferences.getDownloadDirectory();
+        mDownloadLocation = preferenceManager.getDownloadDirectory();
         int n;
         if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
             n = 1;
@@ -397,7 +393,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which + 1) {
                             case 1:
-                                mPreferences.setDownloadDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                preferenceManager.setDownloadDirectory(Environment.DIRECTORY_DOWNLOADS);
                                 downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/'
                                         + Environment.DIRECTORY_DOWNLOADS);
                                 break;
@@ -419,12 +415,12 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private void agentDialog() {
         AlertDialog.Builder agentPicker = new AlertDialog.Builder(mActivity);
         agentPicker.setTitle(getResources().getString(R.string.title_user_agent));
-        mAgentChoice = mPreferences.getUserAgentChoice();
+        mAgentChoice = preferenceManager.getUserAgentChoice();
         agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mPreferences.setUserAgentChoice(which + 1);
+                        preferenceManager.setUserAgentChoice(which + 1);
                         switch (which + 1) {
                             case 1:
                                 useragent.setSummary(getResources().getString(R.string.agent_default));
@@ -467,7 +463,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = getAgent.getText().toString();
-                        mPreferences.setUserAgentString(text);
+                        preferenceManager.setUserAgentString(text);
                         useragent.setSummary(getResources().getString(R.string.agent_custom));
                     }
                 });
@@ -479,7 +475,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         LinearLayout layout = new LinearLayout(mActivity);
         downLocationPicker.setTitle(getResources().getString(R.string.title_download_location));
         final EditText getDownload = new EditText(mActivity);
-        getDownload.setText(mPreferences.getDownloadDirectory());
+        getDownload.setText(preferenceManager.getDownloadDirectory());
 
         int padding = Utils.dpToPx(10);
 
@@ -507,7 +503,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = getDownload.getText().toString();
-                        mPreferences.setDownloadDirectory(text);
+                        preferenceManager.setDownloadDirectory(text);
                         downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/' + text);
                     }
                 });
@@ -582,37 +578,37 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 if (cbFlash.isChecked()) {
                     getFlashChoice();
                 } else {
-                    mPreferences.setFlashSupport(0);
+                    preferenceManager.setFlashSupport(0);
                 }
                 if (!Utils.isFlashInstalled(mActivity) && cbFlash.isChecked()) {
                     Utils.createInformativeDialog(mActivity, R.string.title_warning, R.string.dialog_adobe_not_installed);
                     cbFlash.setEnabled(false);
-                    mPreferences.setFlashSupport(0);
+                    preferenceManager.setFlashSupport(0);
                 }
                 cbFlash.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_ADS:
-                mPreferences.setAdBlockEnabled((Boolean) newValue);
+                preferenceManager.setAdBlockEnabled((Boolean) newValue);
                 cbAds.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_IMAGES:
-                mPreferences.setBlockImagesEnabled((Boolean) newValue);
+                preferenceManager.setBlockImagesEnabled((Boolean) newValue);
                 cbImages.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_JAVASCRIPT:
-                mPreferences.setJavaScriptEnabled((Boolean) newValue);
+                preferenceManager.setJavaScriptEnabled((Boolean) newValue);
                 cbJsScript.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_COLORMODE:
-                mPreferences.setColorModeEnabled((Boolean) newValue);
+                preferenceManager.setColorModeEnabled((Boolean) newValue);
                 cbColorMode.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_GOOGLESUGGESTIONS:
-                mPreferences.setGoogleSearchSuggestionsEnabled((Boolean) newValue);
+                preferenceManager.setGoogleSearchSuggestionsEnabled((Boolean) newValue);
                 cbgooglesuggest.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_DRAWERTABS:
-                mPreferences.setShowTabsInDrawer((Boolean) newValue);
+                preferenceManager.setShowTabsInDrawer((Boolean) newValue);
                 cbDrawerTabs.setChecked((Boolean) newValue);
             default:
                 return false;

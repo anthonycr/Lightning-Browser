@@ -169,7 +169,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // Storage
     private HistoryDatabase mHistoryDatabase;
-    private PreferenceManager mPreferences;
+
 
     // The singleton BookmarkManager
     @Inject
@@ -187,6 +187,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Inject
     TabsManager tabsManager;
+
+    @Inject
+    PreferenceManager mPreferences;
 
     // Image
     private Bitmap mWebpageBitmap;
@@ -207,7 +210,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     public abstract boolean isIncognito();
 
-    abstract void initializeTabs();
+//    abstract void initializeTabs();
 
     abstract void closeActivity();
 
@@ -229,7 +232,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
 
-        mPreferences = PreferenceManager.getInstance();
         //TODO make sure dark theme flag gets set correctly
         mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
         mIconColor = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
@@ -356,7 +358,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        initializeTabs();
+//        initializeTabs();
 
         mProxyUtils.checkForProxy(this);
     }
@@ -565,6 +567,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /* TODO !!!! THIS MUST BY RESTORED ASAP !!!!
     void restoreOrNewTab() {
         mIdGenerator = 0;
 
@@ -601,13 +604,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             newTab(url, true);
         }
     }
+    */
 
     private void initializePreferences() {
         final LightningView currentView = tabsManager.getCurrentTab();
         final WebView currentWebView = currentView.getWebView();
-        if (mPreferences == null) {
-            mPreferences = PreferenceManager.getInstance();
-        }
         mFullScreen = mPreferences.getFullScreenEnabled();
         mColorMode = mPreferences.getColorModeEnabled();
         mColorMode &= !mDarkTheme;

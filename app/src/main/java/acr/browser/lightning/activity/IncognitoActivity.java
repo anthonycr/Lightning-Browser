@@ -18,13 +18,13 @@ public class IncognitoActivity extends BrowserActivity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this);
         }
-        cookieManager.setAcceptCookie(PreferenceManager.getInstance().getIncognitoCookiesEnabled());
+        cookieManager.setAcceptCookie(mPreferences.getIncognitoCookiesEnabled());
     }
 
-    @Override
-    public synchronized void initializeTabs() {
-        newTab(null, true);
-    }
+//    @Override
+//    public synchronized void initializeTabs() {
+//        newTab(null, true);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

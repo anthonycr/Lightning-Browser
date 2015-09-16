@@ -61,6 +61,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final boolean mDarkTheme;
     private final boolean mIncognito;
     @Inject BookmarkManager mBookmarkManager;
+    @Inject PreferenceManager mPreferenceManager;
     private static final String CACHE_FILE_TYPE = ".sgg";
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
@@ -76,7 +77,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         BrowserApp.getAppComponent().inject(this);
         mDatabaseHandler = HistoryDatabase.getInstance();
         mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
-        mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
+        mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
         mContext = context;
         mSearchSubtitle = mContext.getString(R.string.suggestion);
         mDarkTheme = dark || incognito;
@@ -118,7 +119,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     }
 
     public void refreshPreferences() {
-        mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
+        mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
         if (!mUseGoogle) {
             synchronized (mSuggestions) {
                 mSuggestions.clear();

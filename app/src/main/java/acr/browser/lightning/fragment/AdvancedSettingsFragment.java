@@ -18,7 +18,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 
-public class AdvancedSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+public class AdvancedSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_NEWWINDOW = "allow_new_window";
     private static final String SETTINGS_ENABLECOOKIES = "allow_cookies";
@@ -29,7 +29,6 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
     private static final String SETTINGS_TEXTENCODING = "text_encoding";
 
     private Activity mActivity;
-    private PreferenceManager mPreferences;
     private CheckBoxPreference cbAllowPopups, cbenablecookies, cbcookiesInkognito, cbrestoreTabs;
     private Preference renderingmode, urlcontent, textEncoding;
     private CharSequence[] mUrlOptions;
@@ -46,8 +45,6 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
     }
 
     private void initPrefs() {
-        // mPreferences storage
-        mPreferences = PreferenceManager.getInstance();
 
         renderingmode = findPreference(SETTINGS_RENDERINGMODE);
         textEncoding = findPreference(SETTINGS_TEXTENCODING);
@@ -65,7 +62,7 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
         cbcookiesInkognito.setOnPreferenceChangeListener(this);
         cbrestoreTabs.setOnPreferenceChangeListener(this);
 
-        switch (mPreferences.getRenderingMode()) {
+        switch (preferenceManager.getRenderingMode()) {
             case 0:
                 renderingmode.setSummary(getString(R.string.name_normal));
                 break;
@@ -80,16 +77,16 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
                 break;
         }
 
-        textEncoding.setSummary(mPreferences.getTextEncoding());
+        textEncoding.setSummary(preferenceManager.getTextEncoding());
 
         mUrlOptions = getResources().getStringArray(R.array.url_content_array);
-        int option = mPreferences.getUrlBoxContentChoice();
+        int option = preferenceManager.getUrlBoxContentChoice();
         urlcontent.setSummary(mUrlOptions[option]);
 
-        cbAllowPopups.setChecked(mPreferences.getPopupsEnabled());
-        cbenablecookies.setChecked(mPreferences.getCookiesEnabled());
-        cbcookiesInkognito.setChecked(mPreferences.getIncognitoCookiesEnabled());
-        cbrestoreTabs.setChecked(mPreferences.getRestoreLostTabsEnabled());
+        cbAllowPopups.setChecked(preferenceManager.getPopupsEnabled());
+        cbenablecookies.setChecked(preferenceManager.getCookiesEnabled());
+        cbcookiesInkognito.setChecked(preferenceManager.getIncognitoCookiesEnabled());
+        cbrestoreTabs.setChecked(preferenceManager.getRestoreLostTabsEnabled());
     }
 
     @Override
@@ -114,19 +111,19 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_NEWWINDOW:
-                mPreferences.setPopupsEnabled((Boolean) newValue);
+                preferenceManager.setPopupsEnabled((Boolean) newValue);
                 cbAllowPopups.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_ENABLECOOKIES:
-                mPreferences.setCookiesEnabled((Boolean) newValue);
+                preferenceManager.setCookiesEnabled((Boolean) newValue);
                 cbenablecookies.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_COOKIESINKOGNITO:
-                mPreferences.setIncognitoCookiesEnabled((Boolean) newValue);
+                preferenceManager.setIncognitoCookiesEnabled((Boolean) newValue);
                 cbcookiesInkognito.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_RESTORETABS:
-                mPreferences.setRestoreLostTabsEnabled((Boolean) newValue);
+                preferenceManager.setRestoreLostTabsEnabled((Boolean) newValue);
                 cbrestoreTabs.setChecked((Boolean) newValue);
                 return true;
             default:
@@ -142,12 +139,12 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
                 mActivity.getString(R.string.name_grayscale),
                 mActivity.getString(R.string.name_inverted_grayscale)};
 
-        int n = mPreferences.getRenderingMode();
+        int n = preferenceManager.getRenderingMode();
 
         picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPreferences.setRenderingMode(which);
+                preferenceManager.setRenderingMode(which);
                 switch (which) {
                     case 0:
                         renderingmode.setSummary(getString(R.string.name_normal));
@@ -178,12 +175,12 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.text_encoding));
         final List<String> textEncodingList = Arrays.asList(Constants.TEXT_ENCODINGS);
-        int n = textEncodingList.indexOf(mPreferences.getTextEncoding());
+        int n = textEncodingList.indexOf(preferenceManager.getTextEncoding());
 
         picker.setSingleChoiceItems(Constants.TEXT_ENCODINGS, n, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPreferences.setTextEncoding(Constants.TEXT_ENCODINGS[which]);
+                preferenceManager.setTextEncoding(Constants.TEXT_ENCODINGS[which]);
                 textEncoding.setSummary(Constants.TEXT_ENCODINGS[which]);
             }
         });
@@ -201,12 +198,12 @@ public class AdvancedSettingsFragment extends PreferenceFragment implements Pref
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.url_contents));
 
-        int n = mPreferences.getUrlBoxContentChoice();
+        int n = preferenceManager.getUrlBoxContentChoice();
 
         picker.setSingleChoiceItems(mUrlOptions, n, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPreferences.setUrlBoxContentChoice(which);
+                preferenceManager.setUrlBoxContentChoice(which);
                 if (which < mUrlOptions.length) {
                     urlcontent.setSummary(mUrlOptions[which]);
                 }

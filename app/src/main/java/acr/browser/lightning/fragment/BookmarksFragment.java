@@ -64,6 +64,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Inject
     BookmarksDialogBuilder bookmarksDialogBuilder;
 
+    @Inject
+    PreferenceManager preferenceManager;
+
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
 
@@ -151,7 +154,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         // TODO this code depend way too much on BrowserActivity
         super.onActivityCreated(savedInstanceState);
         final BrowserActivity activity = (BrowserActivity) getActivity();
-        final PreferenceManager preferenceManager =PreferenceManager.getInstance();
         boolean darkTheme = preferenceManager.getUseTheme() != 0 || activity.isIncognito();
         mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
