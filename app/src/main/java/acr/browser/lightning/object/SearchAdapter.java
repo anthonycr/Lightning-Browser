@@ -108,7 +108,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-    private class NameFilter implements FilenameFilter {
+    private static class NameFilter implements FilenameFilter {
 
         @Override
         public boolean accept(File dir, String filename) {
@@ -273,7 +273,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     }
 
-    private class SuggestionHolder {
+    private static class SuggestionHolder {
         ImageView mImage;
         TextView mTitle;
         TextView mUrl;

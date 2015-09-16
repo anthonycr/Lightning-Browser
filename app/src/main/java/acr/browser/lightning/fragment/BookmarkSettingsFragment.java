@@ -114,7 +114,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         }
     }
 
-    private class SortName implements Comparator<File> {
+    private static class SortName implements Comparator<File> {
 
         @Override
         public int compare(File a, File b) {

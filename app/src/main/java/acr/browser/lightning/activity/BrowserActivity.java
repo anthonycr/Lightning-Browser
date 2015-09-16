@@ -1930,7 +1930,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     /**
      * a class extending FramLayout used to display fullscreen videos
      */
-    private class FullscreenHolder extends FrameLayout {
+    private static class FullscreenHolder extends FrameLayout {
 
         public FullscreenHolder(Context ctx) {
             super(ctx);

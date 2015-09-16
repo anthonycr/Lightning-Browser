@@ -1208,7 +1208,7 @@ public class ArticleTextExtractor {
      *
      * @author Chris Alexander, chris@chris-alexander.co.uk
      */
-    private class ImageComparator implements Comparator<ImageResult> {
+    private static class ImageComparator implements Comparator<ImageResult> {
 
         @Override
         public int compare(ImageResult o1, ImageResult o2) {
