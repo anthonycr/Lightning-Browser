@@ -101,15 +101,14 @@ public class BookmarkManager {
                 final File bookmarksFile = new File(mFilesDir, FILE_BOOKMARKS);
 
                 BufferedReader bookmarksReader = null;
+                InputStream inputStream = null;
                 try {
-                    final InputStream inputStream;
                     if (bookmarksFile.exists() && bookmarksFile.isFile()) {
                         inputStream = new FileInputStream(bookmarksFile);
                     } else {
                         inputStream = mContext.getResources().openRawResource(R.raw.default_bookmarks);
                     }
-                    bookmarksReader =
-                            new BufferedReader(new InputStreamReader(inputStream));
+                    bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
                     String line;
                     while ((line = bookmarksReader.readLine()) != null) {
                         try {
@@ -130,6 +129,7 @@ public class BookmarkManager {
                     Log.e(TAG, "Error reading the bookmarks file", e);
                 } finally {
                     Utils.close(bookmarksReader);
+                    Utils.close(inputStream);
                 }
                 mBookmarksMap = bookmarks;
                 mReady = true;

@@ -57,8 +57,9 @@ public class AdBlock {
             @Override
             public void run() {
                 AssetManager asset = context.getAssets();
+                BufferedReader reader = null;
                 try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    reader = new BufferedReader(new InputStreamReader(
                             asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;
                     while ((line = reader.readLine()) != null) {
@@ -67,6 +68,8 @@ public class AdBlock {
                 } catch (IOException e) {
                     Log.wtf(TAG, "Reading blocked domains list from file '"
                             + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
+                } finally {
+                    Utils.close(reader);
                 }
             }
         });
