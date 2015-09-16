@@ -20,7 +20,7 @@ import acr.browser.lightning.utils.Utils;
 
 public final class BookmarkPage {
 
-    public static final String HEADING = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
+    private static final String HEADING = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
             "<head>\n" +
             "<meta content=en-us http-equiv=Content-Language />\n" +
             "<meta content='text/html; charset=utf-8' http-equiv=Content-Type />\n" +
@@ -33,21 +33,21 @@ public final class BookmarkPage {
             "width:130px;font-size: small;font-family: Arial, Helvetica, 'sans-serif';white-space:nowrap;overflow:hidden;text-align:left;vertical-align:middle;margin:auto;text-overflow:ellipsis;-o-text-overflow:ellipsis;-ms-text-overflow:ellipsis}.box a{width:100%;height:100%;position:absolute;left:0;top:0}img{vertical-align:middle;margin-right:10px;width:20px;height:20px;}.margin{margin:10px}</style>\n" +
             "<body><div id=content>";
 
-    public static final String PART1 = "<div class=box><a href='";
+    private static final String PART1 = "<div class=box><a href='";
 
-    public static final String PART2 = "'></a>\n" +
+    private static final String PART2 = "'></a>\n" +
             "<div class=margin>\n" +
             "<div class=box-content>\n" +
             "<p class=ellipses>\n" +
             "<img src='";
 
-    public static final String PART3 = "http://www.google.com/s2/favicons?domain=";
+    private static final String PART3 = "http://www.google.com/s2/favicons?domain=";
 
-    public static final String PART4 = "' />";
+    private static final String PART4 = "' />";
 
-    public static final String PART5 = "</p></div></div></div>";
+    private static final String PART5 = "</p></div></div></div>";
 
-    public static final String END = "</div></body></html>";
+    private static final String END = "</div></body></html>";
 
     @Inject
     BookmarkManager manager;

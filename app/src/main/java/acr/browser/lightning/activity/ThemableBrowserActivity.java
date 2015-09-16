@@ -37,7 +37,7 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isTablet() {
+    boolean isTablet() {
         return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 

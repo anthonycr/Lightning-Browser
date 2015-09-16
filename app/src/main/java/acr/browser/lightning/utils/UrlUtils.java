@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  * Utility methods for Url manipulation
  */
 public class UrlUtils {
-    static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
+    private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
             "(?i)" + // switch on case insensitive matching
                     '(' +    // begin group for schema
                     "(?:http|https|file):\\/\\/" +

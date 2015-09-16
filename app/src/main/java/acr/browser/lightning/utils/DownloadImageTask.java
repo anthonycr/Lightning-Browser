@@ -23,11 +23,11 @@ import acr.browser.lightning.database.HistoryItem;
  */
 public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-    final ImageView bmImage;
-    final HistoryItem mWeb;
-    final File mCacheDir;
-    final String mUrl;
-    final Bitmap mDefaultBitmap;
+    private final ImageView bmImage;
+    private final HistoryItem mWeb;
+    private final File mCacheDir;
+    private final String mUrl;
+    private final Bitmap mDefaultBitmap;
 
     public DownloadImageTask(@NonNull ImageView bmImage, @NonNull HistoryItem web,
                              @NonNull Bitmap defaultBitmap) {
