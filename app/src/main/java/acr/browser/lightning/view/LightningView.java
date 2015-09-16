@@ -51,6 +51,7 @@ import android.widget.LinearLayout;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -75,14 +76,13 @@ public class LightningView {
     private final Title mTitle;
     private WebView mWebView;
     private final boolean mIsIncognitoTab;
-    private final BrowserController mBrowserController;
+    private final BrowserController mBrowserController = null; // TODO REMOVE
     private final GestureDetector mGestureDetector;
     private final Activity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
     // TODO fix so that mWebpageBitmap can be static - static changes the icon when switching from light to dark and then back to light
     private final Bitmap mWebpageBitmap;
-    @Inject
     PreferenceManager mPreferences;
     private final AdBlock mAdBlock;
     private final IntentUtils mIntentUtils;
@@ -104,7 +104,7 @@ public class LightningView {
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @SuppressLint("NewApi")
-    public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito, BrowserController controller) {
+    public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
         mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
         mActivity = activity;
         mWebView = new WebView(activity);
@@ -117,9 +117,7 @@ public class LightningView {
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
-        mBrowserController = controller;
-
-        mIntentUtils = new IntentUtils(mBrowserController);
+        mIntentUtils = new IntentUtils(activity);
         mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
         mWebView.setFocusableInTouchMode(true);
         mWebView.setFocusable(true);
@@ -161,10 +159,35 @@ public class LightningView {
         if (mHomepage.startsWith("about:home")) {
             mWebView.loadUrl(StartPage.getHomepage(mActivity));
         } else if (mHomepage.startsWith("about:bookmarks")) {
-            mBrowserController.openBookmarkPage(mWebView);
+            loadBookmarkpage();
         } else {
             mWebView.loadUrl(mHomepage);
         }
+    }
+
+    /**
+     * Load the HTML bookmarks page in this view
+     */
+    public void loadBookmarkpage() {
+        if (mWebView == null)
+            return;
+        Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
+        FileOutputStream outputStream = null;
+        File image = new File(mActivity.getCacheDir(), "folder.png");
+        try {
+            outputStream = new FileOutputStream(image);
+            folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            folderIcon.recycle();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.close(outputStream);
+        }
+        File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
+
+        BrowserApp.getAppComponent().getBookmarkPage().buildBookmarkPage(null);
+        mWebView.loadUrl(Constants.FILE + bookmarkWebPage);
+
     }
 
     /**

@@ -48,8 +48,6 @@ public interface BrowserController {
 
     void longClickPage(String url);
 
-    void openBookmarkPage(WebView view);
-
     void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 
     void closeEmptyTab();

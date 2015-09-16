@@ -1471,31 +1471,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return super.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * open the HTML bookmarks page, parameter view is the WebView that should show the page
-     */
-    @Override
-    public void openBookmarkPage(WebView view) {
-        if (view == null)
-            return;
-        Bitmap folderIcon = ThemeUtils.getThemedBitmap(this, R.drawable.ic_folder, false);
-        FileOutputStream outputStream = null;
-        File image = new File(mActivity.getCacheDir(), "folder.png");
-        try {
-            outputStream = new FileOutputStream(image);
-            folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            folderIcon.recycle();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(outputStream);
-        }
-        File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
-
-        bookmarkPage.buildBookmarkPage(null, bookmarkManager.getBookmarksFromFolder(null, true));
-        view.loadUrl(Constants.FILE + bookmarkWebPage);
-    }
-
     @Override
     public void updateTabs() {
         eventBus.post(new BrowserEvents.TabsChanged());
@@ -2232,7 +2207,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             final WebView currentWebView = currentTab.getWebView();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
                     && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
-                openBookmarkPage(currentWebView);
+                currentTab.loadBookmarkpage();
             }
             if (currentTab != null) {
                 eventBus.post(new BrowserEvents.CurrentPageUrl(currentTab.getUrl()));
@@ -2250,7 +2225,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             final WebView currentWebView = currentTab.getWebView();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
                     && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
-                openBookmarkPage(currentWebView);
+                currentTab.loadBookmarkpage();
             }
             if (currentTab != null) {
                 eventBus.post(new BrowserEvents.CurrentPageUrl(currentTab.getUrl()));

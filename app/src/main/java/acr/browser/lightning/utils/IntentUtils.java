@@ -2,6 +2,7 @@ package acr.browser.lightning.utils;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -19,7 +20,7 @@ import acr.browser.lightning.controller.BrowserController;
 
 public class IntentUtils {
 
-    private final Activity mActivity;
+    private final Context mActivity;
 
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
             + // switch on case insensitive matching
@@ -28,8 +29,8 @@ public class IntentUtils {
             "(?:http|https|file):\\/\\/" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
             + ')' + "(.*)");
 
-    public IntentUtils(BrowserController controller) {
-        mActivity = controller.getActivity();
+    public IntentUtils(Context context) {
+        mActivity = context.getApplicationContext();
     }
 
     public boolean startActivityForUrl(WebView tab, String url) {
@@ -64,9 +65,11 @@ public class IntentUtils {
             return false;
         }
         try {
-            if (mActivity.startActivityIfNeeded(intent, -1)) {
-                return true;
-            }
+            // TODO Restore this
+//            if (mActivity.startActivityIfNeeded(intent, -1)) {
+//                return true;
+//            }
+            mActivity.startActivity(intent);
         } catch (ActivityNotFoundException ex) {
             ex.printStackTrace();
         }

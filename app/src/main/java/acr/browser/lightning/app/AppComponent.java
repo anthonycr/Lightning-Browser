@@ -37,4 +37,6 @@ public interface AppComponent {
     PreferenceManager getPreferenceManager();
 
     void inject(LightningPreferenceFragment fragment);
+
+    BookmarkPage getBookmarkPage();
 }
