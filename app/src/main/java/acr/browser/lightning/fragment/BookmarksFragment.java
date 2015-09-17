@@ -58,11 +58,11 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     // Event bus
     @Inject
-    Bus eventBus;
+    Bus mEventBus;
 
     // Dialog builder
     @Inject
-    BookmarksDialogBuilder bookmarksDialogBuilder;
+    BookmarksDialogBuilder mBookmarksDialogBuilder;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -81,7 +81,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private int mIconColor;
 
     // Init asynchronously the bookmark manager
-    private final Runnable initBookmarkManager = new Runnable() {
+    private final Runnable mInitBookmarkManager = new Runnable() {
         @Override
         public void run() {
             final Context context = getContext();
@@ -106,7 +106,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true),
                         true);
             } else {
-                eventBus.post(new BookmarkEvents.Clicked(item));
+                mEventBus.post(new BookmarkEvents.Clicked(item));
             }
         }
     };
@@ -119,6 +119,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             return true;
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+    }
 
     @Nullable
     @Override
@@ -142,7 +148,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         });
 
         // Must be called here, only here we have a reference to the ListView
-        new Thread(initBookmarkManager).run();
+        new Thread(mInitBookmarkManager).run();
         return view;
     }
 
@@ -151,7 +157,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         // TODO this code depend way too much on BrowserActivity
         super.onActivityCreated(savedInstanceState);
         final BrowserActivity activity = (BrowserActivity) getActivity();
-        final PreferenceManager preferenceManager =PreferenceManager.getInstance();
+        final PreferenceManager preferenceManager = PreferenceManager.getInstance();
         boolean darkTheme = preferenceManager.getUseTheme() != 0 || activity.isIncognito();
         mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
@@ -164,13 +170,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onStart() {
         super.onStart();
-        eventBus.register(this);
+        mEventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        eventBus.unregister(this);
+        mEventBus.unregister(this);
     }
 
     @Subscribe
@@ -180,7 +186,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mBookmarks.add(item);
             Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
             mBookmarkAdapter.notifyDataSetChanged();
-            eventBus
+            mEventBus
                     .post(new BookmarkEvents.Added(item));
             updateBookmarkIndicator(event.url);
         }
@@ -193,12 +199,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Subscribe
     public void bookmarkChanged(BookmarkEvents.BookmarkChanged event) {
-        // final int size = mBookmarks.size();
-        mBookmarks.remove(event.oldBookmark);
-        // assert mBookmarks.size() < size;
-        mBookmarks.add(event.newBookmark);
-        mBookmarkAdapter.notifyDataSetChanged();
-        Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
+        String folder = mBookmarkManager.getCurrentFolder();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
     private void updateBookmarkIndicator(final String url) {
@@ -214,8 +216,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Subscribe
     public void userPressedBack(final BrowserEvents.UserPressedBack event) {
         if (mBookmarkManager.isRootFolder()) {
-            eventBus
-                    .post(new BookmarkEvents.CloseBookmarks());
+            mEventBus.post(new BookmarkEvents.CloseBookmarks());
         } else {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
         }
@@ -223,10 +224,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Subscribe
     public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
-        // final int size = mBookmarks.size();
         mBookmarks.remove(event.item);
-        // assert mBookmarks.size() < size;
-        mBookmarkAdapter.notifyDataSetChanged();
+        if (event.item.isFolder()) {
+            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+        } else {
+            mBookmarkAdapter.notifyDataSetChanged();
+        }
     }
 
     private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
@@ -234,10 +237,11 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mBookmarks.addAll(items);
         mBookmarkAdapter.notifyDataSetChanged();
         final int resource;
-        if (mBookmarkManager.isRootFolder())
+        if (mBookmarkManager.isRootFolder()) {
             resource = R.drawable.ic_action_star;
-        else
+        } else {
             resource = R.drawable.ic_action_back;
+        }
 
         final Animation startRotation = new Animation() {
             @Override
@@ -289,9 +293,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private void handleLongPress(final HistoryItem item, final int position) {
         if (item.isFolder()) {
-            bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
+            mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            bookmarksDialogBuilder.showLongPressedDialogForUrl(getContext(), item);
+            mBookmarksDialogBuilder.showLongPressedDialogForUrl(getContext(), item);
         }
     }
 
@@ -299,7 +303,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_add_bookmark:
-                eventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                mEventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
                 break;
             default:
                 break;
