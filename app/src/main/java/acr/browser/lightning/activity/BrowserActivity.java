@@ -117,7 +117,6 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.fragment.TabsFragment;
-import acr.browser.lightning.object.ClickHandler;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.receiver.NetworkReceiver;
@@ -150,7 +149,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private SearchAdapter mSearchAdapter;
 
     // Callback
-    private ClickHandler mClickHandler;
     private CustomViewCallback mCustomViewCallback;
     private ValueCallback<Uri> mUploadMessage;
     private ValueCallback<Uri[]> mFilePathCallback;
@@ -240,7 +238,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mActivity = this;
 
-        mClickHandler = new ClickHandler(this);
         mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
         mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
         // initialize background ColorDrawable
@@ -1572,26 +1569,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mActivity.startActivityForResult(chooserIntent, 1);
     }
 
-    /**
-     * handles long presses for the browser, tries to get the
-     * url of the item that was clicked and sends it (it can be null)
-     * to the click handler that does cool stuff with it
-     */
-    @Override
-    public void onLongPress() {
-        if (mClickHandler == null) {
-            mClickHandler = new ClickHandler(mActivity);
-        }
-        Message click = mClickHandler.obtainMessage();
-        if (click != null) {
-            click.setTarget(mClickHandler);
-            final WebView currentWebView = tabsManager.getCurrentWebView();
-            if (currentWebView != null) {
-                currentWebView.requestFocusNodeHref(click);
-            }
-        }
-    }
-
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
         final LightningView currentTab = tabsManager.getCurrentTab();
@@ -1866,58 +1843,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 //                show.setFillAfter(true);
                 if (view != null) {
                     view.startAnimation(show);
-                }
-            }
-        }
-    }
-
-    /**
-     * handles a long click on the page, parameter String url
-     * is the url that should have been obtained from the WebView touch node
-     * thingy, if it is null, this method tries to deal with it and find a workaround
-     */
-    @Override
-    public void longClickPage(final String url) {
-        HitTestResult result = null;
-        String currentUrl = null;
-        final WebView currentWebView = tabsManager.getCurrentWebView();
-        if (currentWebView != null) {
-            result = currentWebView.getHitTestResult();
-            currentUrl = currentWebView.getUrl();
-        }
-        if (currentUrl != null && currentUrl.startsWith(Constants.FILE)) {
-            if (currentUrl.endsWith(HistoryPage.FILENAME)) {
-                if (url != null) {
-                    longPressHistoryLink(url);
-                } else if (result != null && result.getExtra() != null) {
-                    final String newUrl = result.getExtra();
-                    longPressHistoryLink(newUrl);
-                }
-            } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
-                if (url != null) {
-                    bookmarksDialogBuilder.showLongPressedDialogForUrl(this, url);
-                } else if (result != null && result.getExtra() != null) {
-                    final String newUrl = result.getExtra();
-                    bookmarksDialogBuilder.showLongPressedDialogForUrl(this, newUrl);
-                }
-            }
-        } else {
-            if (url != null) {
-                if (result != null) {
-                    if (result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == HitTestResult.IMAGE_TYPE) {
-                        longPressImage(url);
-                    } else {
-                        longPressLink(url);
-                    }
-                } else {
-                    longPressLink(url);
-                }
-            } else if (result != null && result.getExtra() != null) {
-                final String newUrl = result.getExtra();
-                if (result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == HitTestResult.IMAGE_TYPE) {
-                    longPressImage(newUrl);
-                } else {
-                    longPressLink(newUrl);
                 }
             }
         }

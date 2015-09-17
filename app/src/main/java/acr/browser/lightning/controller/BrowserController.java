@@ -24,7 +24,7 @@ public interface BrowserController {
 
     void openFileChooser(ValueCallback<Uri> uploadMsg);
 
-    void onLongPress();
+//    void onLongPress();
 
     void onShowCustomView(View view, CustomViewCallback callback);
 
@@ -44,7 +44,7 @@ public interface BrowserController {
 
     void showActionBar();
 
-    void longClickPage(String url);
+    // void longClickPage(String url);
 
     void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 

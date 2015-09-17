@@ -20,6 +20,7 @@ import android.net.MailTo;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -63,9 +64,12 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.AdBlock;
@@ -87,7 +91,6 @@ public class LightningView {
     private static String mDefaultUserAgent;
     // TODO fix so that mWebpageBitmap can be static - static changes the icon when switching from light to dark and then back to light
     private final Bitmap mWebpageBitmap;
-    PreferenceManager mPreferences;
     private final AdBlock mAdBlock;
     private final IntentUtils mIntentUtils;
     private final Paint mPaint = new Paint();
@@ -106,13 +109,20 @@ public class LightningView {
     };
     private final PermissionsManager mPermissionsManager;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+    private final WebViewHandler webViewHandler = new WebViewHandler();
 
-    private final Bus eventBus;
+    @Inject
+    Bus eventBus;
+
+    @Inject
+    PreferenceManager mPreferences;
+
+    @Inject
+    BookmarksDialogBuilder bookmarksDialogBuilder;
 
     @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
-        eventBus = BrowserApp.getAppComponent().getBus();
-        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
+        BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
@@ -610,6 +620,52 @@ public class LightningView {
     public synchronized void goForward() {
         if (mWebView != null) {
             mWebView.goForward();
+        }
+    }
+
+    /**
+     * handles a long click on the page, parameter String url
+     * is the url that should have been obtained from the WebView touch node
+     * thingy, if it is null, this method tries to deal with it and find a workaround
+     */
+    private void longClickPage(final String url) {
+        final WebView.HitTestResult result = mWebView.getHitTestResult();
+        String currentUrl = mWebView.getUrl();
+        if (currentUrl != null && currentUrl.startsWith(Constants.FILE)) {
+            if (currentUrl.endsWith(HistoryPage.FILENAME)) {
+                if (url != null) {
+                    // TODO longPressHistoryLink(url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    // TODO longPressHistoryLink(newUrl);
+                }
+            } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
+                if (url != null) {
+                    bookmarksDialogBuilder.showLongPressedDialogForUrl(mActivity, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    bookmarksDialogBuilder.showLongPressedDialogForUrl(mActivity, newUrl);
+                }
+            }
+        } else {
+            if (url != null) {
+                if (result != null) {
+                    if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+                        // TODO longPressImage(url);
+                    } else {
+                        // TODO longPressLink(url);
+                    }
+                } else {
+                    // TODO longPressLink(url);
+                }
+            } else if (result != null && result.getExtra() != null) {
+                final String newUrl = result.getExtra();
+                if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+                    // TODO longPressImage(newUrl);
+                } else {
+                    // TODO longPressLink(newUrl);
+                }
+            }
         }
     }
 
@@ -1149,8 +1205,13 @@ public class LightningView {
 
         @Override
         public void onLongPress(MotionEvent e) {
-            if (mCanTriggerLongPress)
-                mBrowserController.onLongPress();
+            if (mCanTriggerLongPress) {
+                Message msg = webViewHandler.obtainMessage();
+                if (msg != null) {
+                    msg.setTarget(webViewHandler);
+                    mWebView.requestFocusNodeHref(msg);
+                }
+            }
         }
 
         /**
@@ -1170,6 +1231,15 @@ public class LightningView {
         @Override
         public void onShowPress(MotionEvent e) {
             mCanTriggerLongPress = true;
+        }
+    }
+
+    private class WebViewHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final String url = msg.getData().getString("url");
+            longClickPage(url);
         }
     }
 }

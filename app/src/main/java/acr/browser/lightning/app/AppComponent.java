@@ -15,6 +15,7 @@ import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.view.LightningView;
 import dagger.Component;
 
 /**
@@ -47,4 +48,6 @@ public interface AppComponent {
     Bus getBus();
 
     Context getApplicationContext();
+
+    void inject(LightningView lightningView);
 }
