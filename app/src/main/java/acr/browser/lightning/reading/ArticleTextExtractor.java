@@ -968,7 +968,7 @@ public class ArticleTextExtractor {
         return weight;
     }
 
-    private Element determineImageSource(Element el, List<ImageResult> images) {
+    private static Element determineImageSource(Element el, List<ImageResult> images) {
         int maxWeight = 0;
         Element maxNode = null;
         Elements els = el.select("img");

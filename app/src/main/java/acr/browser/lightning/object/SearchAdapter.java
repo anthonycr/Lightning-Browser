@@ -96,7 +96,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         delete.start();
     }
 
-    private void deleteOldCacheFiles() {
+    private static void deleteOldCacheFiles() {
         File dir = new File(BrowserApp.getAppContext().getCacheDir().toString());
         String[] fileList = dir.list(new NameFilter());
         long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
