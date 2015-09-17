@@ -38,6 +38,7 @@ import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -1012,7 +1013,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (show) {
             showTab(tabsManager.size() - 1);
         }
-        updateTabs();
+        // TODO Check is this is callable directly from LightningView
+        eventBus.post(new BrowserEvents.TabsChanged());
 
 //      TODO Restore this
 //        new Handler().postDelayed(new Runnable() {
@@ -1048,14 +1050,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (current > position) {
             tabsManager.deleteTab(position);
             showTab(current - 1);
-            updateTabs();
+            eventBus.post(new BrowserEvents.TabsChanged());
             tabToDelete.onDestroy();
         } else if (tabsManager.size() > position + 1) {
             if (current == position) {
                 showTab(position + 1);
                 tabsManager.deleteTab(position);
                 showTab(position);
-                updateTabs();
+                eventBus.post(new BrowserEvents.TabsChanged());
             } else {
                 tabsManager.deleteTab(position);
             }
@@ -1066,7 +1068,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 showTab(position - 1);
                 tabsManager.deleteTab(position);
                 showTab(position - 1);
-                updateTabs();
+                eventBus.post(new BrowserEvents.TabsChanged());
             } else {
                 tabsManager.deleteTab(position);
             }
@@ -1424,11 +1426,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         getUrl.setAdapter(mSearchAdapter);
     }
 
-    @Override
-    public boolean proxyIsNotReady() {
-        return !mProxyUtils.isProxyReady(this);
-    }
-
     /**
      * function that opens the HTML history page in the browser
      */
@@ -1469,11 +1466,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (forward != null && forward.getIcon() != null)
             forward.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void updateTabs() {
-        eventBus.post(new BrowserEvents.TabsChanged());
     }
 
     /**
@@ -2326,9 +2318,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 String url = mPreferences.getSavedUrl();
                 if (url != null) {
                     BrowserActivity.this.newTab(url, true);
+
                     Utils.showSnackbar(mActivity, R.string.deleted_tab);
                 }
                 mPreferences.setSavedUrl(null);
+        }
+
+        @Subscribe
+        public void displayInSnackbar(final BrowserEvents.ShowSnackBarMessage event) {
+            if (event.message != null) {
+                Utils.showSnackbar(BrowserActivity.this, event.message);
+            } else {
+                Utils.showSnackbar(mActivity, event.stringRes);            }
         }
     };
 }

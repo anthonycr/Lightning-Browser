@@ -119,7 +119,7 @@ public class TabsManager {
                                              final String url, final boolean darkTheme,
                                              final boolean isIncognito,
                                              final BrowserController controller) {
-        final LightningView tab = new LightningView(activity, url, darkTheme, isIncognito, controller);
+        final LightningView tab = new LightningView(activity, url, darkTheme, isIncognito);
         mWebViewList.add(tab);
         return tab;
     }

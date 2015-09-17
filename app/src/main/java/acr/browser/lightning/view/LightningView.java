@@ -49,6 +49,8 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.squareup.otto.Bus;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +62,7 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.BrowserController;
@@ -68,6 +71,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.PermissionsManager;
+import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
@@ -103,8 +107,11 @@ public class LightningView {
     private final PermissionsManager mPermissionsManager;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
+    private final Bus eventBus;
+
     @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito) {
+        eventBus = BrowserApp.getAppComponent().getBus();
         mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
         mActivity = activity;
         mWebView = new WebView(activity);
@@ -419,7 +426,7 @@ public class LightningView {
 
     public void setForegroundTab(boolean isForeground) {
         isForegroundTab = isForeground;
-        mBrowserController.updateTabs();
+        eventBus.post(new BrowserEvents.TabsChanged());
     }
 
     public boolean isForegroundTab() {
@@ -522,7 +529,7 @@ public class LightningView {
 
     public synchronized void reload() {
         // Check if configured proxy is available
-        if (mBrowserController.proxyIsNotReady()) {
+        if (!ProxyUtils.getInstance().isProxyReady()) {
             // User has been notified
             return;
         }
@@ -625,8 +632,7 @@ public class LightningView {
 
     public synchronized void loadUrl(String url) {
         // Check if configured proxy is available
-        if (mBrowserController.proxyIsNotReady()) {
-            // User has been notified
+        if (!ProxyUtils.getInstance().isProxyReady()) {
             return;
         }
 
@@ -697,7 +703,7 @@ public class LightningView {
             if (API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage) {
                 view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
             }
-            mBrowserController.updateTabs();
+            eventBus.post(new BrowserEvents.TabsChanged());
         }
 
         @Override
@@ -707,7 +713,7 @@ public class LightningView {
                 mBrowserController.showActionBar();
             }
             mTitle.setFavicon(mWebpageBitmap);
-            mBrowserController.updateTabs();
+            eventBus.post(new BrowserEvents.TabsChanged());
         }
 
         @Override
@@ -839,7 +845,7 @@ public class LightningView {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // Check if configured proxy is available
-            if (mBrowserController.proxyIsNotReady()) {
+            if (!ProxyUtils.getInstance().isProxyReady()) {
                 // User has been notified
                 return true;
             }
@@ -897,7 +903,7 @@ public class LightningView {
             if (icon == null)
                 return;
             mTitle.setFavicon(icon);
-            mBrowserController.updateTabs();
+                    eventBus.post(new BrowserEvents.TabsChanged()); ;
             cacheFavicon(icon);
         }
 
@@ -908,7 +914,7 @@ public class LightningView {
             } else {
                 mTitle.setTitle(mActivity.getString(R.string.untitled));
             }
-            mBrowserController.updateTabs();
+                    eventBus.post(new BrowserEvents.TabsChanged()); ;
             if (view != null)
                 mBrowserController.updateHistory(title, view.getUrl());
         }

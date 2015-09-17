@@ -1,5 +1,10 @@
 package acr.browser.lightning.bus;
 
+import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
+
+import acr.browser.lightning.R;
+
 /**
  * Created by Stefano Pacifici on 26/08/15.
  */
@@ -45,5 +50,24 @@ public final class BrowserEvents {
      * Notify that the user closed or opened a tab
      */
     public static class TabsChanged {
+    }
+
+    /**
+     * Notify the Browser to display a SnackBar in the main activity
+     */
+    public static class ShowSnackBarMessage {
+        public final String message;
+        @StringRes
+        public final int stringRes;
+
+        public ShowSnackBarMessage(final String message) {
+            this.message = message;
+            this.stringRes = -1;
+        }
+
+        public ShowSnackBarMessage(@StringRes final int stringRes) {
+            this.message = null;
+            this.stringRes = stringRes;
+        }
     }
 }

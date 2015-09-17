@@ -1,5 +1,9 @@
 package acr.browser.lightning.app;
 
+import android.content.Context;
+
+import com.squareup.otto.Bus;
+
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
@@ -39,4 +43,8 @@ public interface AppComponent {
     void inject(LightningPreferenceFragment fragment);
 
     BookmarkPage getBookmarkPage();
+
+    Bus getBus();
+
+    Context getApplicationContext();
 }

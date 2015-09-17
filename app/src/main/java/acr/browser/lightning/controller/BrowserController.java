@@ -24,8 +24,6 @@ public interface BrowserController {
 
     void openFileChooser(ValueCallback<Uri> uploadMsg);
 
-    void updateTabs();
-
     void onLongPress();
 
     void onShowCustomView(View view, CustomViewCallback callback);
@@ -51,8 +49,6 @@ public interface BrowserController {
     void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 
     void closeEmptyTab();
-
-    boolean proxyIsNotReady();
 
    //  void updateBookmarkIndicator(String url);
 
