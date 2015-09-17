@@ -177,17 +177,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // The singleton BookmarkManager
     @Inject
-    BookmarkManager bookmarkManager;
+    BookmarkManager mBookmarkManager;
 
     // Event bus
     @Inject
-    Bus eventBus;
+    Bus mEventBus;
 
     @Inject
-    BookmarkPage bookmarkPage;
+    BookmarkPage mBookmarkPage;
 
     @Inject
-    BookmarksDialogBuilder bookmarksDialogBuilder;
+    BookmarksDialogBuilder mBookmarksDialogBuilder;
 
     // Image
     private Bitmap mWebpageBitmap;
@@ -778,7 +778,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_add_bookmark:
                 if (mCurrentView != null && !mCurrentView.getUrl().startsWith(Constants.FILE)) {
-                    eventBus.post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(),
+                    mEventBus.post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(),
                             mCurrentView.getUrl()));
                 }
                 return true;
@@ -956,7 +956,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }, 200);
 
         // Should update the bookmark status in BookmarksFragment
-        eventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+        mEventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
 
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
@@ -1000,7 +1000,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         mCurrentView.loadUrl(url);
-        eventBus.post(new BrowserEvents.CurrentPageUrl(url));
+        mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
     }
 
     @Override
@@ -1172,7 +1172,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
             mDrawerLayout.closeDrawer(mDrawerLeft);
         } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-            eventBus
+            mEventBus
                     .post(new BrowserEvents.UserPressedBack());
         } else {
             if (mCurrentView != null) {
@@ -1212,7 +1212,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
 
-        eventBus.unregister(busEventListener);
+        mEventBus.unregister(busEventListener);
     }
 
     void saveOpenTabs() {
@@ -1277,7 +1277,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         filter.addAction(NETWORK_BROADCAST_ACTION);
         registerReceiver(mNetworkReceiver, filter);
 
-        eventBus.register(busEventListener);
+        mEventBus.register(busEventListener);
     }
 
     /**
@@ -1513,7 +1513,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
-        eventBus.post(new BrowserEvents.CurrentPageUrl(url));
+        mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
         if (shortUrl && !url.startsWith(Constants.FILE)) {
             switch (mPreferences.getUrlBoxContentChoice()) {
                 case 0: // Default, show only the domain
@@ -1680,7 +1680,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
 
-        bookmarkPage.buildBookmarkPage(null, bookmarkManager.getBookmarksFromFolder(null, true));
+        mBookmarkPage.buildBookmarkPage(null, mBookmarkManager.getBookmarksFromFolder(null, true));
         view.loadUrl(Constants.FILE + bookmarkWebPage);
     }
 
@@ -2101,10 +2101,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 }
             } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
                 if (url != null) {
-                    bookmarksDialogBuilder.showLongPressedDialogForUrl(this, url);
+                    mBookmarksDialogBuilder.showLongPressedDialogForUrl(this, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    bookmarksDialogBuilder.showLongPressedDialogForUrl(this, newUrl);
+                    mBookmarksDialogBuilder.showLongPressedDialogForUrl(this, newUrl);
                 }
             }
         } else {
@@ -2405,7 +2405,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void bookmarkCurrentPage(final BookmarkEvents.WantToBookmarkCurrentPage event) {
             if (mCurrentView != null) {
-                eventBus.post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
+                mEventBus.post(new BrowserEvents.AddBookmark(mCurrentView.getTitle(), mCurrentView.getUrl()));
             }
         }
 
@@ -2432,7 +2432,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 openBookmarkPage(mWebView);
             }
             if (mCurrentView != null) {
-                eventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+                mEventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
             }
         }
 
@@ -2448,7 +2448,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 openBookmarkPage(mWebView);
             }
             if (mCurrentView != null) {
-                eventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
+                mEventBus.post(new BrowserEvents.CurrentPageUrl(mCurrentView.getUrl()));
             }
         }
 
