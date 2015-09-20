@@ -13,11 +13,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.URLUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -29,6 +34,10 @@ import acr.browser.lightning.utils.Utils;
 public class DownloadHandler {
 
     private static final String LOGTAG = "DLHandler";
+
+    public static final String DEFAULT_DOWNLOAD_PATH =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    .getPath();
 
 
     /**
@@ -153,6 +162,7 @@ public class DownloadHandler {
             // This only happens for very bad urls, we want to catch the
             // exception here
             Log.e(LOGTAG, "Exception while trying to parse url '" + url + '\'', e);
+            Utils.showSnackbar(activity, R.string.problem_download);
             return;
         }
 
@@ -171,9 +181,29 @@ public class DownloadHandler {
         // depending on mimetype?
 
         String location = PreferenceManager.getInstance().getDownloadDirectory();
-        request.setDestinationInExternalPublicDir(location, filename);
+        Uri downloadLocation;
+        if (location != null) {
+            downloadLocation = Uri.parse(addNecessarySlashes(location));
+        } else {
+            downloadLocation = Uri.parse(addNecessarySlashes(DEFAULT_DOWNLOAD_PATH));
+            PreferenceManager.getInstance().setDownloadDirectory(downloadLocation.getPath());
+        }
+
+        File dir = new File(downloadLocation.getPath());
+        if (!dir.isDirectory() && !dir.mkdirs()) {
+            // Cannot make the directory
+            Utils.showSnackbar(activity, R.string.problem_location_download);
+            return;
+        }
+
+        if (!isWriteAccessAvailable(downloadLocation)) {
+            Utils.showSnackbar(activity, R.string.problem_location_download);
+            return;
+        }
+        request.setDestinationUri(downloadLocation);
         // let this downloaded file be scanned by MediaScanner - so that it can
         // show up in Gallery app, for example.
+        request.setVisibleInDownloadsUi(true);
         request.allowScanningByMediaScanner();
         request.setDescription(webAddress.getHost());
         // XXX: Have to use the old url since the cookies were stored using the
@@ -191,7 +221,7 @@ public class DownloadHandler {
         } else {
             final DownloadManager manager = (DownloadManager) activity
                     .getSystemService(Context.DOWNLOAD_SERVICE);
-            new Thread("Browser download") {
+            new Thread() {
                 @Override
                 public void run() {
                     try {
@@ -203,8 +233,100 @@ public class DownloadHandler {
                     }
                 }
             }.start();
-            Utils.showSnackbar(activity, R.string.download_pending);
+            Utils.showSnackbar(activity, activity.getString(R.string.download_pending) + ' ' + filename);
         }
 
     }
+
+    private static final String sFileName = "test";
+    private static final String sFileExtension = ".txt";
+
+    /**
+     * Determine whether there is write access in the given directory. Returns false if a
+     * file cannot be created in the directory or if the directory does not exist.
+     *
+     * @param directory the directory to check for write access
+     * @return returns true if the directory can be written to or is in a directory that can
+     * be written to. false if there is no write access.
+     */
+    public static boolean isWriteAccessAvailable(String directory) {
+        if (directory == null || directory.isEmpty()) {
+            return false;
+        }
+        String dir = addNecessarySlashes(directory);
+        dir = getFirstRealParentDirectory(dir);
+        File file = new File(dir + sFileName + sFileExtension);
+        for (int n = 0; n < 100; n++) {
+            if (!file.exists()) {
+                try {
+                    if (file.createNewFile()) {
+                        file.delete();
+                    }
+                    return true;
+                } catch (IOException ignored) {
+                    return false;
+                }
+            } else {
+                file = new File(dir + sFileName + '-' + n + sFileExtension);
+            }
+        }
+        return file.canWrite();
+    }
+
+    /**
+     * Returns the first parent directory of a directory that exists. This is useful
+     * for subdirectories that do not exist but their parents do.
+     *
+     * @param directory the directory to find the first existent parent
+     * @return the first existent parent
+     */
+    private static String getFirstRealParentDirectory(String directory) {
+        if (directory == null || directory.isEmpty()) {
+            return "/";
+        }
+        directory = addNecessarySlashes(directory);
+        File file = new File(directory);
+        if (!file.isDirectory()) {
+            int indexSlash = directory.lastIndexOf('/');
+            if (indexSlash > 0) {
+                String parent = directory.substring(0, indexSlash);
+                int previousIndex = parent.lastIndexOf('/');
+                if (previousIndex > 0) {
+                    return getFirstRealParentDirectory(parent.substring(0, previousIndex));
+                } else {
+                    return "/";
+                }
+            } else {
+                return "/";
+            }
+        } else {
+            return directory;
+        }
+    }
+
+    private static boolean isWriteAccessAvailable(Uri fileUri) {
+        File file = new File(fileUri.getPath());
+        try {
+            if (file.createNewFile()) {
+                file.delete();
+            }
+            return true;
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
+
+    public static String addNecessarySlashes(String originalPath) {
+        if (originalPath == null || originalPath.length() == 0) {
+            return "/";
+        }
+        if (originalPath.charAt(originalPath.length() - 1) != '/') {
+            originalPath = originalPath + '/';
+        }
+        if (originalPath.charAt(0) != '/') {
+            originalPath = '/' + originalPath;
+        }
+        return originalPath;
+    }
+
 }

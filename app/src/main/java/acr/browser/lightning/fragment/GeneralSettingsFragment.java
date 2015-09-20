@@ -5,27 +5,28 @@ package acr.browser.lightning.fragment;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class GeneralSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -113,7 +114,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
 
         setSearchEngineSummary(mPreferences.getSearchChoice());
 
-        downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/' + mDownloadLocation);
+        downloadloc.setSummary(mDownloadLocation);
 
         if (mHomepage.contains("about:home")) {
             home.setSummary(getResources().getString(R.string.action_homepage));
@@ -143,7 +144,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         boolean imagesBool = mPreferences.getBlockImagesEnabled();
         boolean enableJSBool = mPreferences.getJavaScriptEnabled();
 
-        proxy.setEnabled(Constants.FULL_VERSION);
+//        proxy.setEnabled(Constants.FULL_VERSION);
         cbAds.setEnabled(Constants.FULL_VERSION);
         cbFlash.setEnabled(API < 19);
 
@@ -386,22 +387,21 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         mDownloadLocation = mPreferences.getDownloadDirectory();
         int n;
         if (mDownloadLocation.contains(Environment.DIRECTORY_DOWNLOADS)) {
-            n = 1;
+            n = 0;
         } else {
-            n = 2;
+            n = 1;
         }
 
-        picker.setSingleChoiceItems(R.array.download_folder, n - 1,
+        picker.setSingleChoiceItems(R.array.download_folder, n,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which + 1) {
-                            case 1:
-                                mPreferences.setDownloadDirectory(Environment.DIRECTORY_DOWNLOADS);
-                                downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/'
-                                        + Environment.DIRECTORY_DOWNLOADS);
+                        switch (which) {
+                            case 0:
+                                mPreferences.setDownloadDirectory(DownloadHandler.DEFAULT_DOWNLOAD_PATH);
+                                downloadloc.setSummary(DownloadHandler.DEFAULT_DOWNLOAD_PATH);
                                 break;
-                            case 2:
+                            case 1:
                                 downPicker();
                                 break;
                         }
@@ -479,36 +479,42 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         LinearLayout layout = new LinearLayout(mActivity);
         downLocationPicker.setTitle(getResources().getString(R.string.title_download_location));
         final EditText getDownload = new EditText(mActivity);
+        getDownload.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        getDownload.setText(PreferenceManager.getInstance().getDownloadDirectory());
+        final int errorColor = ContextCompat.getColor(getActivity(), R.color.error_red);
+        final int regularColor = ThemeUtils.getTextColor(getActivity());
+        getDownload.setTextColor(regularColor);
+        getDownload.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!DownloadHandler.isWriteAccessAvailable(s.toString())) {
+                    getDownload.setTextColor(errorColor);
+                } else {
+                    getDownload.setTextColor(regularColor);
+                }
+            }
+        });
         getDownload.setText(mPreferences.getDownloadDirectory());
 
-        int padding = Utils.dpToPx(10);
-
-        TextView v = new TextView(mActivity);
-        v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        v.setTextColor(Color.DKGRAY);
-        v.setText(Constants.EXTERNAL_STORAGE + '/');
-        v.setPadding(padding, padding, 0, padding);
-        layout.addView(v);
         layout.addView(getDownload);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Drawable drawable;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                drawable = getResources().getDrawable(android.R.drawable.edit_text, getActivity().getTheme());
-            } else {
-                drawable = getResources().getDrawable(android.R.drawable.edit_text);
-            }
-            layout.setBackground(drawable);
-        } else {
-            layout.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
-        }
         downLocationPicker.setView(layout);
         downLocationPicker.setPositiveButton(getResources().getString(R.string.action_ok),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = getDownload.getText().toString();
+                        text = DownloadHandler.addNecessarySlashes(text);
                         mPreferences.setDownloadDirectory(text);
-                        downloadloc.setSummary(Constants.EXTERNAL_STORAGE + '/' + text);
+                        downloadloc.setSummary(text);
                     }
                 });
         downLocationPicker.show();

@@ -3,6 +3,8 @@
  */
 package acr.browser.lightning.download;
 
+import android.support.annotation.NonNull;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,13 +13,13 @@ import static android.util.Patterns.GOOD_IRI_CHAR;
 
 /**
  * Web Address Parser
- * 
+ * <p/>
  * This is called WebAddress, rather than URL or URI, because it attempts to
  * parse the stuff that a user will actually type into a browser address widget.
- * 
+ * <p/>
  * Unlike java.net.uri, this parser will not choke on URIs missing schemes. It
  * will only throw a ParseException if the input is really hosed.
- * 
+ * <p/>
  * If given an https scheme but no port, fills in port
  */
 public class WebAddress {
@@ -43,7 +45,7 @@ public class WebAddress {
     /**
      * Parses given URI-like string.
      */
-    public WebAddress(String address) {
+    public WebAddress(String address) throws IllegalArgumentException {
 
         if (address == null) {
             throw new IllegalArgumentException("address can't be null");
@@ -134,7 +136,7 @@ public class WebAddress {
         return mScheme;
     }
 
-    public void setHost(String host) {
+    public void setHost(@NonNull String host) {
         mHost = host;
     }
 

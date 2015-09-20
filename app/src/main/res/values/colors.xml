@@ -33,4 +33,6 @@
     <color name="icon_light_theme">#8A000000</color>
     <color name="icon_dark_theme">#FFFFFFFF</color>
 
+    <color name="error_red">#F44336</color>
+
 </resources>

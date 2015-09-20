@@ -120,4 +120,8 @@ public class ThemeUtils {
         }
         return new ColorDrawable(color);
     }
+
+    public static int getTextColor(Context context){
+        return getColor(context, android.R.attr.editTextColor);
+    }
 }
