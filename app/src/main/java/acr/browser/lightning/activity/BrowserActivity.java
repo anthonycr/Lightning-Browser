@@ -18,14 +18,8 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -38,17 +32,13 @@ import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -76,7 +66,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebView;
-import android.webkit.WebView.HitTestResult;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -95,11 +84,7 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -115,7 +100,7 @@ import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
-import acr.browser.lightning.dialog.BookmarksDialogBuilder;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -166,10 +151,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mCurrentUiColor = Color.BLACK;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
 
-    // Storage
-    private HistoryDatabase mHistoryDatabase;
-
-
     // The singleton BookmarkManager
     @Inject
     BookmarkManager bookmarkManager;
@@ -182,13 +163,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     BookmarkPage bookmarkPage;
 
     @Inject
-    BookmarksDialogBuilder bookmarksDialogBuilder;
+    LightningDialogBuilder bookmarksDialogBuilder;
 
     @Inject
     TabsManager tabsManager;
 
     @Inject
     PreferenceManager mPreferences;
+
+    @Inject
+    HistoryDatabase mHistoryDatabase;
 
     // Image
     private Bitmap mWebpageBitmap;
@@ -280,8 +264,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mToolbarLayout.removeView(findViewById(R.id.tabs_toolbar_container));
         }
 
-        mHistoryDatabase = HistoryDatabase.getInstance();
-
         if (actionBar == null)
             return;
 
@@ -356,7 +338,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-//        initializeTabs();
+        tabsManager.restoreTabs(this, mDarkTheme, isIncognito());
+        // At this point we always have at least a tab in the tab manager
+        showTab(0);
 
         mProxyUtils.checkForProxy(this);
     }
@@ -564,45 +548,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mDrawerRight.requestLayout();
         }
     }
-
-    /* TODO !!!! THIS MUST BY RESTORED ASAP !!!!
-    void restoreOrNewTab() {
-        mIdGenerator = 0;
-
-        String url = null;
-        if (getIntent() != null) {
-            url = getIntent().getDataString();
-            if (url != null) {
-                if (url.startsWith(Constants.FILE)) {
-                    Utils.showSnackbar(this, R.string.message_blocked_local);
-                    url = null;
-                }
-            }
-        }
-        if (mPreferences.getRestoreLostTabsEnabled()) {
-            String mem = mPreferences.getMemoryUrl();
-            mPreferences.setMemoryUrl("");
-            String[] array = Utils.getArray(mem);
-            int count = 0;
-            for (String urlString : array) {
-                if (!urlString.isEmpty()) {
-                    if (url != null && url.compareTo(urlString) == 0) {
-                        url = null;
-                    }
-                    newTab(urlString, true);
-                    count++;
-                }
-            }
-            if (url != null) {
-                newTab(url, true);
-            } else if (count == 0) {
-                newTab(null, true);
-            }
-        } else {
-            newTab(url, true);
-        }
-    }
-    */
 
     private void initializePreferences() {
         final LightningView currentView = tabsManager.getCurrentTab();
@@ -1001,7 +946,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return false;
         }
         mIsNewIntent = false;
-        LightningView startingTab = tabsManager.newTab(mActivity, url, mDarkTheme, isIncognito(), this);
+        LightningView startingTab = tabsManager.newTab(this, url, mDarkTheme, isIncognito());
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
@@ -1227,7 +1172,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             currentTab.resumeTimers();
             currentTab.onResume();
         }
-        mHistoryDatabase = HistoryDatabase.getInstance();
         initializePreferences();
         tabsManager.resume(this);
 
@@ -1366,9 +1310,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             @Override
             public void run() {
                 try {
-                    if (mHistoryDatabase == null) {
-                        mHistoryDatabase = HistoryDatabase.getInstance();
-                    }
                     mHistoryDatabase.visitHistoryItem(url, title);
                 } catch (IllegalStateException e) {
                     Log.e(Constants.TAG, "IllegalStateException in updateHistory", e);
@@ -1848,107 +1789,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    private void longPressHistoryLink(final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                final LightningView currentTab = tabsManager.getCurrentTab();
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        newTab(url, false);
-                        mDrawerLayout.closeDrawers();
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        mHistoryDatabase.deleteHistoryItem(url);
-                        openHistory();
-                        break;
-
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        if (currentTab != null) {
-                            loadUrlInCurrentView(url);
-                        }
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(R.string.action_history)
-                .setMessage(R.string.dialog_history_long_press)
-                .setCancelable(true)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_delete, dialogClickListener)
-                .setNeutralButton(R.string.action_open, dialogClickListener)
-                .show();
-    }
-
-    private void longPressImage(final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                final LightningView currentTab = tabsManager.getCurrentTab();
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        newTab(url, false);
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        loadUrlInCurrentView(url);
-                        break;
-
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        if (API > 8) {
-                            Utils.downloadFile(mActivity, url,
-                                    currentTab.getUserAgent(), "attachment");
-                        }
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(url.replace(Constants.HTTP, ""))
-                .setCancelable(true)
-                .setMessage(R.string.dialog_image)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_open, dialogClickListener)
-                .setNeutralButton(R.string.action_download, dialogClickListener)
-                .show();
-    }
-
-    private void longPressLink(final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        newTab(url, false);
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        loadUrlInCurrentView(url);
-                        break;
-
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("label", url);
-                        clipboard.setPrimaryClip(clip);
-                        break;
-                }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
-        builder.setTitle(url)
-                .setCancelable(true)
-                .setMessage(R.string.dialog_link)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_open, dialogClickListener)
-                .setNeutralButton(R.string.action_copy, dialogClickListener)
-                .show();
-    }
-
     /**
      * This method lets the search bar know that the page is currently loading
      * and that it should display the stop icon to indicate to the user that
@@ -2058,13 +1898,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private final Object busEventListener = new Object() {
         /**
-         * Load the given bookmark in the current tab, used by the the
-         * {@link acr.browser.lightning.fragment.BookmarksFragment}
+         * Load the given url in the current tab, used by the the
+         * {@link acr.browser.lightning.fragment.BookmarksFragment} and by the
+         * {@link LightningDialogBuilder}
          * @param event   The event as it comes from the bus
          */
         @Subscribe
-        public void loadBookmarkInCurrentTab(final BookmarkEvents.Clicked event) {
-            loadUrlInCurrentView(event.bookmark.getUrl());
+        public void loadUrlInCurrentTab(final BrowserEvents.OpenUrlInCurrentTab event) {
+            loadUrlInCurrentView(event.url);
             // keep any jank from happening when the drawer is closed after the
             // URL starts to load
             final Handler handler = new Handler();
@@ -2077,13 +1918,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         /**
-         * Load the given bookmark in a new tab, used by the the
-         * {@link acr.browser.lightning.fragment.BookmarksFragment}
+         * Load the given url in a new tab, used by the the
+         * {@link acr.browser.lightning.fragment.BookmarksFragment} and by the
+         * {@link LightningDialogBuilder}
          * @param event   The event as it comes from the bus
          */
         @Subscribe
-        public void loadBookmarkInNewTab(final BookmarkEvents.AsNewTab event) {
-            BrowserActivity.this.newTab(event.bookmark.getUrl(), true);
+        public void loadUrlInNewTab(final BrowserEvents.OpenUrlInNewTab event) {
+            BrowserActivity.this.newTab(event.url, true);
             mDrawerLayout.closeDrawers();
         }
 

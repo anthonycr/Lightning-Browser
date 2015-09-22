@@ -12,9 +12,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 
+@Singleton
 public class HistoryDatabase extends SQLiteOpenHelper {
 
     // All Static variables
@@ -39,14 +43,8 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     private boolean mLock;
 
-    public static HistoryDatabase getInstance() {
-        if (mInstance == null || mInstance.isClosed()) {
-            mInstance = new HistoryDatabase(BrowserApp.getAppContext());
-        }
-        return mInstance;
-    }
-
-    private HistoryDatabase(Context context) {
+    @Inject
+    public HistoryDatabase(Context context) {
         super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
         mDatabase = this.getWritableDatabase();
     }

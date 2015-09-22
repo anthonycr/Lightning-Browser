@@ -66,7 +66,7 @@ public class HistoryPage {
     }
 
     private static List<HistoryItem> getWebHistory(Context context) {
-        HistoryDatabase databaseHandler = HistoryDatabase.getInstance();
+        HistoryDatabase databaseHandler = BrowserApp.getAppComponent().getHistoryDatabase();
         return databaseHandler.getLastHundredItems();
     }
 }

@@ -12,28 +12,6 @@ public final class BookmarkEvents {
     }
 
     /**
-     * A bookmark was clicked
-     */
-    public final static class Clicked {
-        public final HistoryItem bookmark;
-
-        public Clicked(final HistoryItem bookmark) {
-            this.bookmark = bookmark;
-        }
-    }
-
-    /**
-     * The user ask to open the bookmark as new tab
-     */
-    public final static class AsNewTab {
-        public final HistoryItem bookmark;
-
-        public AsNewTab(final HistoryItem bookmark) {
-            this.bookmark = bookmark;
-        }
-    }
-
-    /**
      * The user ask to delete the selected bookmark
      */
     public static class Deleted {

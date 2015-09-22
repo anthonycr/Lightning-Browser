@@ -54,14 +54,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final List<HistoryItem> mFilteredList = new ArrayList<>();
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>();
     private final Object mLock = new Object();
-    private HistoryDatabase mDatabaseHandler;
     private final Context mContext;
     private boolean mUseGoogle = true;
     private boolean mIsExecuting = false;
     private final boolean mDarkTheme;
     private final boolean mIncognito;
-    @Inject BookmarkManager mBookmarkManager;
-    @Inject PreferenceManager mPreferenceManager;
     private static final String CACHE_FILE_TYPE = ".sgg";
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
@@ -73,9 +70,17 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final Drawable mHistoryDrawable;
     private final Drawable mBookmarkDrawable;
 
+    @Inject
+    HistoryDatabase mDatabaseHandler;
+
+    @Inject
+    BookmarkManager mBookmarkManager;
+
+    @Inject
+    PreferenceManager mPreferenceManager;
+
     public SearchAdapter(Context context, boolean dark, boolean incognito) {
         BrowserApp.getAppComponent().inject(this);
-        mDatabaseHandler = HistoryDatabase.getInstance();
         mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
         mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
         mContext = context;
@@ -125,7 +130,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 mSuggestions.clear();
             }
         }
-        mDatabaseHandler = HistoryDatabase.getInstance();
     }
 
     public void refreshBookmarks() {
@@ -240,13 +244,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                             mBookmarks.add(mAllBookmarks.get(n));
                             counter++;
                         }
-
                     }
                 }
             }
-            if (mDatabaseHandler == null || mDatabaseHandler.isClosed()) {
-                mDatabaseHandler = HistoryDatabase.getInstance();
-            }
+
             List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(constraint.toString());
             synchronized (mHistory) {
                 mHistory.clear();

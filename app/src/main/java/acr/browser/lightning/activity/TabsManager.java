@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -26,7 +27,30 @@ public class TabsManager {
     private LightningView mCurrentTab;
 
     @Inject
-    public TabsManager(final Context context, final PreferenceManager preferenceManager) {
+    PreferenceManager mPreferenceManager;
+
+    @Inject
+    public TabsManager() {
+    }
+
+    public void restoreTabs(BrowserActivity activity, boolean darkTheme, boolean incognito) {
+        mWebViewList.clear();
+        mCurrentTab = null;
+        if (!incognito && mPreferenceManager.getRestoreLostTabsEnabled()) {
+            final String mem = mPreferenceManager.getMemoryUrl();
+            mPreferenceManager.setMemoryUrl("");
+            String[] array = Utils.getArray(mem);
+            int count = 0;
+            for (String urlString : array) {
+                if (!urlString.isEmpty()) {
+                    newTab(activity, urlString, darkTheme, incognito);
+                }
+            }
+        }
+        if (mWebViewList.size() == 0) {
+            newTab(activity, null, darkTheme, incognito);
+        }
+        // mCurrentTab = mWebViewList.get(0);
     }
 
     /**
@@ -112,13 +136,11 @@ public class TabsManager {
      * @param url
      * @param darkTheme
      * @param isIncognito
-     * @param controller
      * @return
      */
-    public synchronized LightningView newTab(final Activity activity,
+    public synchronized LightningView newTab(final BrowserActivity activity,
                                              final String url, final boolean darkTheme,
-                                             final boolean isIncognito,
-                                             final BrowserController controller) {
+                                             final boolean isIncognito) {
         final LightningView tab = new LightningView(activity, url, darkTheme, isIncognito);
         mWebViewList.add(tab);
         return tab;

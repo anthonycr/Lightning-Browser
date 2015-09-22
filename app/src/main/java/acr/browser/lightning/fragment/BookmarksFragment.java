@@ -42,7 +42,7 @@ import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.dialog.BookmarksDialogBuilder;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.DownloadImageTask;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -62,7 +62,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     // Dialog builder
     @Inject
-    BookmarksDialogBuilder bookmarksDialogBuilder;
+    LightningDialogBuilder bookmarksDialogBuilder;
 
     @Inject
     PreferenceManager preferenceManager;
@@ -109,7 +109,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true),
                         true);
             } else {
-                eventBus.post(new BookmarkEvents.Clicked(item));
+                eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(item.getUrl()));
             }
         }
     };
@@ -293,7 +293,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         if (item.isFolder()) {
             bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            bookmarksDialogBuilder.showLongPressedDialogForUrl(getContext(), item);
+            bookmarksDialogBuilder.showLongPressLinkDialog(getContext(), item.getUrl());
         }
     }
 

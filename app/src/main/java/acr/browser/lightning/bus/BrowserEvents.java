@@ -1,10 +1,6 @@
 package acr.browser.lightning.bus;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-
-import acr.browser.lightning.R;
 
 /**
  * Created by Stefano Pacifici on 26/08/15.
@@ -21,9 +17,9 @@ public final class BrowserEvents {
      * result is a new bookmark added.
      */
     public static class AddBookmark {
-        public final String title, url;
+        public final java.lang.String title, url;
 
-        public AddBookmark(final String title, final String url) {
+        public AddBookmark(final java.lang.String title, final java.lang.String url) {
             this.title = title;
             this.url = url;
         }
@@ -34,9 +30,9 @@ public final class BrowserEvents {
      * {@link acr.browser.lightning.fragment.BookmarksFragment} interface.
      */
     public static class CurrentPageUrl {
-        public final String url;
+        public final java.lang.String url;
 
-        public CurrentPageUrl(final String url) {
+        public CurrentPageUrl(final java.lang.String url) {
             this.url = url;
         }
     }
@@ -54,14 +50,18 @@ public final class BrowserEvents {
     }
 
     /**
+     *
+     */
+
+    /**
      * Notify the Browser to display a SnackBar in the main activity
      */
     public static class ShowSnackBarMessage {
-        public final String message;
+        public final java.lang.String message;
         @StringRes
         public final int stringRes;
 
-        public ShowSnackBarMessage(final String message) {
+        public ShowSnackBarMessage(final java.lang.String message) {
             this.message = message;
             this.stringRes = -1;
         }
@@ -69,6 +69,28 @@ public final class BrowserEvents {
         public ShowSnackBarMessage(@StringRes final int stringRes) {
             this.message = null;
             this.stringRes = stringRes;
+        }
+    }
+
+    /**
+     * The user want to open the given url in the current tab
+     */
+    public final static class OpenUrlInCurrentTab {
+        public final String url;
+
+        public OpenUrlInCurrentTab(final String url) {
+            this.url = url;
+        }
+    }
+
+    /**
+     * The user ask to open the given url as new tab
+     */
+    public final static class OpenUrlInNewTab {
+        public final String url;
+
+        public OpenUrlInNewTab(final String url) {
+            this.url = url;
         }
     }
 }
