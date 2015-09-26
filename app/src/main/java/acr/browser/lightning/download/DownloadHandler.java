@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 
@@ -181,26 +182,28 @@ public class DownloadHandler {
         // depending on mimetype?
 
         String location = PreferenceManager.getInstance().getDownloadDirectory();
-        Uri downloadLocation;
+        Uri downloadFolder;
         if (location != null) {
-            downloadLocation = Uri.parse(addNecessarySlashes(location));
+            location = addNecessarySlashes(location);
+            downloadFolder = Uri.parse(location);
         } else {
-            downloadLocation = Uri.parse(addNecessarySlashes(DEFAULT_DOWNLOAD_PATH));
-            PreferenceManager.getInstance().setDownloadDirectory(downloadLocation.getPath());
+            location = addNecessarySlashes(DEFAULT_DOWNLOAD_PATH);
+            downloadFolder = Uri.parse(location);
+            PreferenceManager.getInstance().setDownloadDirectory(location);
         }
 
-        File dir = new File(downloadLocation.getPath());
+        File dir = new File(downloadFolder.getPath());
         if (!dir.isDirectory() && !dir.mkdirs()) {
             // Cannot make the directory
             Utils.showSnackbar(activity, R.string.problem_location_download);
             return;
         }
 
-        if (!isWriteAccessAvailable(downloadLocation)) {
+        if (!isWriteAccessAvailable(downloadFolder)) {
             Utils.showSnackbar(activity, R.string.problem_location_download);
             return;
         }
-        request.setDestinationUri(downloadLocation);
+        request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
         // let this downloaded file be scanned by MediaScanner - so that it can
         // show up in Gallery app, for example.
         request.setVisibleInDownloadsUi(true);
@@ -230,6 +233,8 @@ public class DownloadHandler {
                         // Probably got a bad URL or something
                         e.printStackTrace();
                         Utils.showSnackbar(activity, R.string.cannot_download);
+                    } catch (SecurityException e) {
+                        Utils.showSnackbar(activity, R.string.problem_location_download);
                     }
                 }
             }.start();

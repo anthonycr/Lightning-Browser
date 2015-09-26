@@ -38,6 +38,7 @@ import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -125,26 +126,49 @@ import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserController, OnClickListener, OnLongClickListener {
 
-    // Layout
-    private DrawerLayout mDrawerLayout;
-    private FrameLayout mBrowserFrame;
-    private FullscreenHolder mFullscreenContainer;
-    private RecyclerView mDrawerListLeft;
-    private ViewGroup mDrawerLeft, mDrawerRight, mUiLayout, mToolbarLayout;
-    private RelativeLayout mSearchBar;
+    // Static Layout
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
 
-    // List
+    @Bind(R.id.content_frame)
+    FrameLayout mBrowserFrame;
+
+    @Bind(R.id.left_drawer)
+    ViewGroup mDrawerLeft;
+
+    @Bind(R.id.right_drawer)
+    ViewGroup mDrawerRight;
+
+    @Bind(R.id.ui_layout)
+    ViewGroup mUiLayout;
+
+    @Bind(R.id.toolbar_layout)
+    ViewGroup mToolbarLayout;
+
+    @Bind(R.id.progress_view)
+    AnimatedProgressBar mProgressBar;
+
+    @Bind(R.id.search_bar)
+    RelativeLayout mSearchBar;
+
+
+    // Browser Views
     private final List<LightningView> mWebViewList = new ArrayList<>();
     private LightningView mCurrentView;
     private WebView mWebView;
+    private RecyclerView mTabListView;
 
-    // Views
-    private AnimatedProgressBar mProgressBar;
+    // Toolbar Views
     private AutoCompleteTextView mSearch;
     private ImageView mArrowImage;
+
+    // Full Screen Video Views
+    private FullscreenHolder mFullscreenContainer;
     private VideoView mVideoView;
     private View mCustomView;
 
@@ -158,9 +182,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ValueCallback<Uri> mUploadMessage;
     private ValueCallback<Uri[]> mFilePathCallback;
 
-    // Context
-    private Activity mActivity;
-
     // Primatives
     private boolean mFullScreen, mColorMode, mDarkTheme,
             mIsNewIntent = false,
@@ -173,7 +194,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // Storage
     private HistoryDatabase mHistoryDatabase;
-    private PreferenceManager mPreferences;
+    private PreferenceManager mPreferences = PreferenceManager.getInstance();
 
     // The singleton BookmarkManager
     @Inject
@@ -221,38 +242,30 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         initialize();
     }
 
     private synchronized void initialize() {
-        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
 
-        mPreferences = PreferenceManager.getInstance();
         //TODO make sure dark theme flag gets set correctly
         mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
         mIconColor = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
         mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
-        mActivity = this;
         mWebViewList.clear();
 
         mClickHandler = new ClickHandler(this);
-        mBrowserFrame = (FrameLayout) findViewById(R.id.content_frame);
-        mToolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
         // initialize background ColorDrawable
         mBackground.setColor(((ColorDrawable) mToolbarLayout.getBackground()).getColor());
 
-        mUiLayout = (LinearLayout) findViewById(R.id.ui_layout);
-        mProgressBar = (AnimatedProgressBar) findViewById(R.id.progress_view);
         setupFrameLayoutButton(R.id.new_tab_button, R.id.icon_plus);
-        mDrawerLeft = (LinearLayout) findViewById(R.id.left_drawer);
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerRight = (ViewGroup) findViewById(R.id.right_drawer);
         mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
         tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
@@ -273,23 +286,23 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         if (mShowTabsInDrawer) {
             mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item, mWebViewList);
-            mDrawerListLeft = (RecyclerView) findViewById(R.id.left_drawer_list);
-            mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+            mTabListView = (RecyclerView) findViewById(R.id.left_drawer_list);
+            mTabListView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            mDrawerListLeft.setLayoutManager(layoutManager);
-            mDrawerListLeft.setHasFixedSize(true);
+            mTabListView.setLayoutManager(layoutManager);
+            mTabListView.setHasFixedSize(true);
             mToolbarLayout.removeView(horizontalListView);
         } else {
             mTabAdapter = new LightningViewAdapter(this, R.layout.tab_list_item_horizontal, mWebViewList);
-            mDrawerListLeft = horizontalListView;
-            mDrawerListLeft.setOverScrollMode(View.OVER_SCROLL_NEVER);
+            mTabListView = horizontalListView;
+            mTabListView.setOverScrollMode(View.OVER_SCROLL_NEVER);
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            mDrawerListLeft.setLayoutManager(layoutManager);
-            mDrawerListLeft.setHasFixedSize(true);
+            mTabListView.setLayoutManager(layoutManager);
+            mTabListView.setHasFixedSize(true);
         }
 
-        mDrawerListLeft.setAdapter(mTabAdapter);
+        mTabListView.setAdapter(mTabAdapter);
 
         mHistoryDatabase = HistoryDatabase.getInstance();
 
@@ -302,15 +315,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(R.layout.toolbar_content);
 
-        View v = actionBar.getCustomView();
-        LayoutParams lp = v.getLayoutParams();
+        View customView = actionBar.getCustomView();
+        LayoutParams lp = customView.getLayoutParams();
         lp.width = LayoutParams.MATCH_PARENT;
         lp.height = LayoutParams.MATCH_PARENT;
-        v.setLayoutParams(lp);
+        customView.setLayoutParams(lp);
 
-        mArrowImage = (ImageView) actionBar.getCustomView().findViewById(R.id.arrow);
-        FrameLayout arrowButton = (FrameLayout) actionBar.getCustomView().findViewById(
-                R.id.arrow_button);
+        mArrowImage = (ImageView) customView.findViewById(R.id.arrow);
+        FrameLayout arrowButton = (FrameLayout) customView.findViewById(R.id.arrow_button);
         if (mShowTabsInDrawer) {
             // Use hardware acceleration for the animation
             mArrowDrawable = new DrawerArrowDrawable(this);
@@ -330,13 +342,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         setupFrameLayoutButton(R.id.action_reading, R.id.icon_reading);
 
         // create the search EditText in the ToolBar
-        mSearch = (AutoCompleteTextView) actionBar.getCustomView().findViewById(R.id.search);
+        mSearch = (AutoCompleteTextView) customView.findViewById(R.id.search);
         mUntitledTitle = getString(R.string.untitled);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mBackgroundColor = getColor(R.color.primary_color);
-        } else {
-            mBackgroundColor = getResources().getColor(R.color.primary_color);
-        }
+        mBackgroundColor = ContextCompat.getColor(this, R.color.primary_color);
         mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
         mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
         mClearIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
@@ -417,11 +425,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Override
         public void onFocusChange(View v, final boolean hasFocus) {
             if (!hasFocus && mCurrentView != null) {
-                if (mCurrentView.getProgress() < 100) {
-                    setIsLoading();
-                } else {
-                    setIsFinishedLoading();
-                }
+                setIsLoading(mCurrentView.getProgress() < 100);
                 updateUrl(mCurrentView.getUrl(), true);
             } else if (hasFocus) {
                 String url = mCurrentView.getUrl();
@@ -613,9 +617,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private void initializePreferences() {
-        if (mPreferences == null) {
-            mPreferences = PreferenceManager.getInstance();
-        }
         mFullScreen = mPreferences.getFullScreenEnabled();
         mColorMode = mPreferences.getColorModeEnabled();
         mColorMode &= !mDarkTheme;
@@ -767,7 +768,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("label", mCurrentView.getUrl());
                     clipboard.setPrimaryClip(clip);
-                    Utils.showSnackbar(mActivity, R.string.message_link_copied);
+                    Utils.showSnackbar(this, R.string.message_link_copied);
                 }
                 return true;
             case R.id.action_settings:
@@ -800,7 +801,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * for. It highlights the text entered.
      */
     private void findInPage() {
-        final AlertDialog.Builder finder = new AlertDialog.Builder(mActivity);
+        final AlertDialog.Builder finder = new AlertDialog.Builder(this);
         finder.setTitle(getResources().getString(R.string.action_find));
         final EditText getHome = new EditText(this);
         getHome.setHint(getResources().getString(R.string.search_hint));
@@ -822,7 +823,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mCurrentView != null) {
             mCurrentView.find(text);
         }
-        mSearchBar = (RelativeLayout) findViewById(R.id.search_bar);
         mSearchBar.setVisibility(View.VISIBLE);
 
         TextView tw = (TextView) findViewById(R.id.search_query);
@@ -842,11 +842,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (position < 0) {
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(mActivity,
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line);
-        adapter.add(mActivity.getString(R.string.close_tab));
-        adapter.add(mActivity.getString(R.string.close_all_tabs));
+        adapter.add(this.getString(R.string.close_tab));
+        adapter.add(this.getString(R.string.close_all_tabs));
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 
             @Override
@@ -873,7 +873,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         @Override
         public void onClick(View v) {
-            int position = mDrawerListLeft.getChildAdapterPosition(v);
+            int position = mTabListView.getChildAdapterPosition(v);
             if (mCurrentView != mWebViewList.get(position)) {
                 mIsNewIntent = false;
                 showTab(mWebViewList.get(position));
@@ -888,7 +888,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         @Override
         public boolean onLongClick(View v) {
-            int position = mDrawerListLeft.getChildAdapterPosition(v);
+            int position = mTabListView.getChildAdapterPosition(v);
             showCloseDialog(position);
             return true;
         }
@@ -995,7 +995,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void loadUrlInCurrentView(final String url) {
         if (mCurrentView == null) {
-            // This is a problem, probably an assert will be better than a return
             return;
         }
 
@@ -1031,7 +1030,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return false;
         }
         mIsNewIntent = false;
-        LightningView startingTab = new LightningView(mActivity, url, mDarkTheme, isIncognito(), this);
+        LightningView startingTab = new LightningView(this, url, mDarkTheme, isIncognito(), this);
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
@@ -1045,7 +1044,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mDrawerListLeft.smoothScrollToPosition(mWebViewList.size() - 1);
+                mTabListView.smoothScrollToPosition(mWebViewList.size() - 1);
             }
         }, 300);
 
@@ -1124,17 +1123,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mPreferences.getClearCacheExit() && mCurrentView != null && !isIncognito()) {
             WebUtils.clearCache(mCurrentView.getWebView());
             Log.d(Constants.TAG, "Cache Cleared");
-
         }
         if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
             WebUtils.clearHistory(this);
             Log.d(Constants.TAG, "History Cleared");
-
         }
         if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
             WebUtils.clearCookies(this);
             Log.d(Constants.TAG, "Cookies Cleared");
-
         }
         if (mPreferences.getClearWebStorageExitEnabled() && !isIncognito()) {
             WebUtils.clearWebStorage();
@@ -1325,7 +1321,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mForegroundTabBitmap = null;
                 mForegroundTabDrawable = ThemeUtils.getSelectedBackground(context, mDarkTheme);
             } else {
-                int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(mActivity), Color.BLACK, 0.75f);
+                int backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f);
                 Bitmap backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
                 Utils.drawTrapezoid(new Canvas(backgroundTabBitmap), backgroundColor, true);
                 mBackgroundTabDrawable = new BitmapDrawable(getResources(), backgroundTabBitmap);
@@ -1392,6 +1388,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 } else {
                     holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
                 }
+
                 holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
             }
         }
@@ -1542,11 +1539,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void updateProgress(int n) {
-        if (n >= 100) {
-            setIsFinishedLoading();
-        } else {
-            setIsLoading();
-        }
+        setIsLoading(n < 100);
         mProgressBar.setProgress(n);
     }
 
@@ -1589,7 +1582,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 try {
                     String url;
                     url = ((TextView) arg1.findViewById(R.id.url)).getText().toString();
-                    if (url.startsWith(mActivity.getString(R.string.suggestion))) {
+                    if (url.startsWith(BrowserActivity.this.getString(R.string.suggestion))) {
                         url = ((TextView) arg1.findViewById(R.id.title)).getText().toString();
                     } else {
                         getUrl.setText(url);
@@ -1608,7 +1601,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
 
         getUrl.setSelectAllOnFocus(true);
-        mSearchAdapter = new SearchAdapter(mActivity, mDarkTheme, isIncognito());
+        mSearchAdapter = new SearchAdapter(this, mDarkTheme, isIncognito());
         getUrl.setAdapter(mSearchAdapter);
     }
 
@@ -1626,7 +1619,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
             @Override
             public void run() {
-                loadUrlInCurrentView(HistoryPage.getHistoryPage(mActivity));
+                loadUrlInCurrentView(HistoryPage.getHistoryPage(BrowserActivity.this));
                 mSearch.setText("");
             }
 
@@ -1668,7 +1661,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return;
         Bitmap folderIcon = ThemeUtils.getThemedBitmap(this, R.drawable.ic_folder, false);
         FileOutputStream outputStream = null;
-        File image = new File(mActivity.getCacheDir(), "folder.png");
+        File image = new File(this.getCacheDir(), "folder.png");
         try {
             outputStream = new FileOutputStream(image);
             folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
@@ -1678,7 +1671,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         } finally {
             Utils.close(outputStream);
         }
-        File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
+        File bookmarkWebPage = new File(this.getFilesDir(), Constants.BOOKMARKS_FILENAME);
 
         mBookmarkPage.buildBookmarkPage(null, mBookmarkManager.getBookmarksFromFolder(null, true));
         view.loadUrl(Constants.FILE + bookmarkWebPage);
@@ -1754,7 +1747,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mFilePathCallback = filePathCallback;
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(mActivity.getPackageManager()) != null) {
+        if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
             try {
@@ -1776,7 +1769,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
         contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        contentSelectionIntent.setType("image/*");
+        contentSelectionIntent.setType("*/*");
 
         Intent[] intentArray;
         if (takePictureIntent != null) {
@@ -1790,7 +1783,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-        mActivity.startActivityForResult(chooserIntent, 1);
+        this.startActivityForResult(chooserIntent, 1);
     }
 
     /**
@@ -1801,7 +1794,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void onLongPress() {
         if (mClickHandler == null) {
-            mClickHandler = new ClickHandler(mActivity);
+            mClickHandler = new ClickHandler(this);
         }
         Message click = mClickHandler.obtainMessage();
         if (click != null) {
@@ -1934,11 +1927,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         public FullscreenHolder(Context ctx) {
             super(ctx);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setBackgroundColor(ctx.getColor(android.R.color.black));
-            } else {
-                setBackgroundColor(ctx.getResources().getColor(android.R.color.black));
-            }
+            setBackgroundColor(ContextCompat.getColor(ctx, android.R.color.black));
         }
 
         @Override
@@ -1990,7 +1979,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public Activity getActivity() {
-        return mActivity;
+        return this;
     }
 
     /**
@@ -2024,7 +2013,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 };
                 show.setDuration(250);
                 show.setInterpolator(new DecelerateInterpolator());
-//                show.setFillAfter(true);
                 mWebView.startAnimation(show);
             }
         }
@@ -2072,7 +2060,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 };
                 show.setDuration(250);
                 show.setInterpolator(new DecelerateInterpolator());
-//                show.setFillAfter(true);
                 mWebView.startAnimation(show);
             }
         }
@@ -2153,7 +2140,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.action_history)
                 .setMessage(R.string.dialog_history_long_press)
                 .setCancelable(true)
@@ -2177,16 +2164,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         break;
 
                     case DialogInterface.BUTTON_NEUTRAL:
-                        if (API > 8) {
-                            Utils.downloadFile(mActivity, url,
-                                    mCurrentView.getUserAgent(), "attachment");
-                        }
+                        Utils.downloadFile(BrowserActivity.this, url,
+                                mCurrentView.getUserAgent(), "attachment");
                         break;
                 }
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(url.replace(Constants.HTTP, ""))
                 .setCancelable(true)
                 .setMessage(R.string.dialog_image)
@@ -2218,7 +2203,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this); // dialog
         builder.setTitle(url)
                 .setCancelable(true)
                 .setMessage(R.string.dialog_link)
@@ -2233,21 +2218,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * and that it should display the stop icon to indicate to the user that
      * pressing it stops the page from loading
      */
-    private void setIsLoading() {
+    private void setIsLoading(boolean isLoading) {
         if (!mSearch.hasFocus()) {
-            mIcon = mDeleteIcon;
-            mSearch.setCompoundDrawables(null, null, mDeleteIcon, null);
-        }
-    }
-
-    /**
-     * This tells the search bar that the page is finished loading and it should
-     * display the refresh icon
-     */
-    private void setIsFinishedLoading() {
-        if (!mSearch.hasFocus()) {
-            mIcon = mRefreshIcon;
-            mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
+            mIcon = isLoading ? mDeleteIcon : mRefreshIcon;
+            mSearch.setCompoundDrawables(null, null, mIcon, null);
         }
     }
 
@@ -2328,7 +2302,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 String url = mPreferences.getSavedUrl();
                 if (url != null) {
                     newTab(url, true);
-                    Utils.showSnackbar(mActivity, R.string.deleted_tab);
+                    Utils.showSnackbar(this, R.string.deleted_tab);
                 }
                 mPreferences.setSavedUrl(null);
                 break;
