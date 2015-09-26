@@ -34,7 +34,8 @@ import acr.browser.lightning.utils.Utils;
  */
 public class DownloadHandler {
 
-    private static final String LOGTAG = "DLHandler";
+    private static final String TAG = DownloadHandler.class.getSimpleName();
+    private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     public static final String DEFAULT_DOWNLOAD_PATH =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -162,7 +163,7 @@ public class DownloadHandler {
         } catch (Exception e) {
             // This only happens for very bad urls, we want to catch the
             // exception here
-            Log.e(LOGTAG, "Exception while trying to parse url '" + url + '\'', e);
+            Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
             Utils.showSnackbar(activity, R.string.problem_download);
             return;
         }
@@ -212,7 +213,7 @@ public class DownloadHandler {
         // XXX: Have to use the old url since the cookies were stored using the
         // old percent-encoded url.
         String cookies = CookieManager.getInstance().getCookie(url);
-        request.addRequestHeader("cookie", cookies);
+        request.addRequestHeader(COOKIE_REQUEST_HEADER, cookies);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         if (mimetype == null) {
             if (TextUtils.isEmpty(addressString)) {
