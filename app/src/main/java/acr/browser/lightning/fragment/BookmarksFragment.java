@@ -1,5 +1,6 @@
 package acr.browser.lightning.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -78,7 +79,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private ImageView mBookmarkTitleImage, mBookmarkImage;
 
     // Colors
-    private int mIconColor;
+    private int mIconColor, mScrollIndex;
 
     // Init asynchronously the bookmark manager
     private final Runnable mInitBookmarkManager = new Runnable() {
@@ -98,11 +99,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     // Handle bookmark click
-    private final OnItemClickListener itemClickListener = new OnItemClickListener() {
+    private final OnItemClickListener mItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
             if (item.isFolder()) {
+                mScrollIndex = mBookmarksListView.getFirstVisiblePosition();
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
                 mEventBus.post(new BookmarkEvents.Clicked(item));
@@ -110,7 +112,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     };
 
-    private final OnItemLongClickListener itemLongClickListener = new OnItemLongClickListener() {
+    private final OnItemLongClickListener mItemLongClickListener = new OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
@@ -130,8 +132,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
         mBookmarksListView = (ListView) view.findViewById(R.id.right_drawer_list);
-        mBookmarksListView.setOnItemClickListener(itemClickListener);
-        mBookmarksListView.setOnItemLongClickListener(itemLongClickListener);
+        mBookmarksListView.setOnItemClickListener(mItemClickListener);
+        mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage = (ImageView) view.findViewById(R.id.starIcon);
         mBookmarkImage = (ImageView) view.findViewById(R.id.icon_star);
         final View backView = view.findViewById(R.id.bookmark_back_button);
@@ -141,9 +143,11 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 if (mBookmarkManager == null) return;
                 if (!mBookmarkManager.isRootFolder()) {
                     setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+                    mBookmarksListView.setSelection(mScrollIndex);
                 }
             }
         });
+        setupNavigationButton(view, R.id.action_add_bookmark, R.id.icon_star);
 
         // Must be called here, only here we have a reference to the ListView
         new Thread(mInitBookmarkManager).run();
@@ -152,16 +156,15 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        // TODO this code depend way too much on BrowserActivity
+        // TODO remove dependency on BrowserActivity
         super.onActivityCreated(savedInstanceState);
-        final BrowserActivity activity = (BrowserActivity) getActivity();
+        final Activity activity = getActivity();
         final PreferenceManager preferenceManager = PreferenceManager.getInstance();
-        boolean darkTheme = preferenceManager.getUseTheme() != 0 || activity.isIncognito();
+        boolean darkTheme = preferenceManager.getUseTheme() != 0 || ((BrowserActivity) activity).isIncognito();
         mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
                 ThemeUtils.getIconLightThemeColor(activity);
-        setupFrameLayoutButton(getView(), R.id.action_add_bookmark, R.id.icon_star);
         mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
@@ -216,6 +219,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mEventBus.post(new BookmarkEvents.CloseBookmarks());
         } else {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+            mBookmarksListView.setSelection(mScrollIndex);
         }
     }
 
@@ -279,8 +283,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    // TODO this is basically a copy/paste from BrowserActivity, should be changed
-    private void setupFrameLayoutButton(@NonNull View view, @IdRes int buttonId, @IdRes int imageId) {
+    private void setupNavigationButton(@NonNull View view, @IdRes int buttonId, @IdRes int imageId) {
         FrameLayout frameButton = (FrameLayout) view.findViewById(buttonId);
         frameButton.setOnClickListener(this);
         frameButton.setOnLongClickListener(this);

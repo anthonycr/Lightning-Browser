@@ -24,7 +24,7 @@ public class BookmarkLocalSync {
     private static final String COLUMN_URL = "url";
     private static final String COLUMN_BOOKMARK = "bookmark";
 
-    private Context mContext;
+    private final Context mContext;
 
     public BookmarkLocalSync(Context context) {
         mContext = context;

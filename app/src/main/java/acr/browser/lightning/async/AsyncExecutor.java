@@ -16,9 +16,9 @@ import java.util.concurrent.RejectedExecutionException;
 public class AsyncExecutor implements Executor {
 
     private static final String TAG = AsyncExecutor.class.getSimpleName();
-    private static AsyncExecutor INSTANCE = new AsyncExecutor();
-    private Queue<Runnable> mQueue = new ArrayDeque<>(1);
-    private ExecutorService mExecutor = Executors.newFixedThreadPool(4);
+    private static final AsyncExecutor INSTANCE = new AsyncExecutor();
+    private final Queue<Runnable> mQueue = new ArrayDeque<>(1);
+    private final ExecutorService mExecutor = Executors.newFixedThreadPool(4);
 
     private AsyncExecutor() {}
 

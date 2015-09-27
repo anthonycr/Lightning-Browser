@@ -194,7 +194,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // Storage
     private HistoryDatabase mHistoryDatabase;
-    private PreferenceManager mPreferences = PreferenceManager.getInstance();
+    private final PreferenceManager mPreferences = PreferenceManager.getInstance();
 
     // The singleton BookmarkManager
     @Inject

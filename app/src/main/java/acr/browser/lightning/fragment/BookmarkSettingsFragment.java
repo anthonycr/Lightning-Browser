@@ -75,8 +75,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         }
     }
 
-    ;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

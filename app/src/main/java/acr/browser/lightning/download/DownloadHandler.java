@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,7 +21,6 @@ import android.webkit.URLUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;

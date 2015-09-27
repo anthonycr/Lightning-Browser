@@ -47,7 +47,7 @@ public class JResult implements Serializable {
     private Date date;
     private Collection<String> keywords;
     private List<ImageResult> images = null;
-    private List<Map<String, String>> links = new ArrayList<>();
+    private final List<Map<String, String>> links = new ArrayList<>();
     private String type;
     private String sitename;
     private String language;
