@@ -3,7 +3,6 @@ package acr.browser.lightning.fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -38,13 +37,14 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.async.AsyncExecutor;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BookmarksDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.DownloadImageTask;
+import acr.browser.lightning.async.ImageDownloadTask;
 import acr.browser.lightning.utils.ThemeUtils;
 
 /**
@@ -103,8 +103,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
             if (item.isFolder()) {
-                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true),
-                        true);
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
                 mEventBus.post(new BookmarkEvents.Clicked(item));
             }
@@ -139,8 +138,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBookmarkManager == null)
-                    return;
+                if (mBookmarkManager == null) return;
                 if (!mBookmarkManager.isRootFolder()) {
                     setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
                 }
@@ -186,8 +184,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mBookmarks.add(item);
             Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
             mBookmarkAdapter.notifyDataSetChanged();
-            mEventBus
-                    .post(new BookmarkEvents.Added(item));
+            mEventBus.post(new BookmarkEvents.Added(item));
             updateBookmarkIndicator(event.url);
         }
     }
@@ -345,19 +342,19 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
             HistoryItem web = mBookmarks.get(position);
             holder.txtTitle.setText(web.getTitle());
-            holder.favicon.setImageBitmap(mWebpageBitmap);
             if (web.isFolder()) {
                 holder.favicon.setImageBitmap(mFolderBitmap);
             } else if (web.getBitmap() == null) {
-                new DownloadImageTask(holder.favicon, web, mWebpageBitmap)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                holder.favicon.setImageBitmap(mWebpageBitmap);
+                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap)
+                        .executeOnExecutor(AsyncExecutor.getInstance());
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }
             return row;
         }
 
-        class BookmarkViewHolder {
+        private class BookmarkViewHolder {
             TextView txtTitle;
             ImageView favicon;
         }

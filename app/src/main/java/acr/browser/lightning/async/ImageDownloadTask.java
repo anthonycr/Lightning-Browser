@@ -1,4 +1,4 @@
-package acr.browser.lightning.utils;
+package acr.browser.lightning.async;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,33 +11,35 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.utils.Utils;
 
-/**
- * Created by Stefano Pacifici on 25/08/15.
- */
-public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
+public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
-    private final ImageView bmImage;
+    private static final String TAG = ImageDownloadTask.class.getSimpleName();
+    private static final File mCacheDir = BrowserApp.getAppContext().getCacheDir();
+    private final WeakReference<ImageView> bmImage;
     private final HistoryItem mWeb;
-    private final File mCacheDir;
     private final String mUrl;
     private final Bitmap mDefaultBitmap;
 
-    public DownloadImageTask(@NonNull ImageView bmImage, @NonNull HistoryItem web,
-                             @NonNull Bitmap defaultBitmap) {
-        this.bmImage = bmImage;
+    public ImageDownloadTask(@NonNull ImageView bmImage, @NonNull HistoryItem web, @NonNull Bitmap defaultBitmap) {
+        // Set a tag on the ImageView so we know if the view
+        // has gone out of scope and should not be used
+        bmImage.setTag(web.getUrl().hashCode());
+        this.bmImage = new WeakReference<>(bmImage);
         this.mWeb = web;
-        this.mCacheDir = BrowserApp.getAppContext().getCacheDir();
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
     }
 
+    @Override
     protected Bitmap doInBackground(Void... params) {
         Bitmap mIcon = null;
         // unique path for each url that is bookmarked.
@@ -60,6 +62,8 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
                 final URL urlDownload = new URL(urlDisplay);
                 final HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
                 connection.setDoInput(true);
+                connection.setConnectTimeout(1000);
+                connection.setReadTimeout(1000);
                 connection.connect();
                 in = connection.getInputStream();
 
@@ -74,8 +78,8 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
                     Log.d(Constants.TAG, "Downloaded: " + urlDisplay);
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
+                Log.d(TAG, "Could not download: " + urlDisplay);
             } finally {
                 Utils.close(in);
                 Utils.close(fos);
@@ -89,10 +93,11 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
             FileOutputStream fos = null;
             try {
                 // if not, download it...
-                final URL urlDownload = new URL("https://www.google.com/s2/favicons?domain_url="
-                        + uri.toString());
+                final URL urlDownload = new URL("https://www.google.com/s2/favicons?domain_url=" + uri.toString());
                 final HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
                 connection.setDoInput(true);
+                connection.setConnectTimeout(1000);
+                connection.setReadTimeout(1000);
                 connection.connect();
                 in = connection.getInputStream();
 
@@ -107,7 +112,7 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.d(TAG, "Could not download Google favicon");
             } finally {
                 Utils.close(in);
                 Utils.close(fos);
@@ -120,10 +125,16 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
         }
     }
 
-    protected void onPostExecute(Bitmap result) {
-        final Bitmap fav = Utils.padFavicon(result);
-        bmImage.setImageBitmap(fav);
+    @Override
+    protected void onPostExecute(Bitmap bitmap) {
+        super.onPostExecute(bitmap);
+        AsyncExecutor.getInstance().notifyThreadFinish();
+        final Bitmap fav = Utils.padFavicon(bitmap);
+        ImageView view = bmImage.get();
+        if (view != null && view.getTag().equals(mWeb.getUrl().hashCode())) {
+            view.setImageBitmap(fav);
+        }
         mWeb.setBitmap(fav);
-        // notifyBookmarkDataSetChanged();
     }
+
 }
