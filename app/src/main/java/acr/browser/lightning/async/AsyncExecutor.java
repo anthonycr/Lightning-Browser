@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -17,7 +18,7 @@ public class AsyncExecutor implements Executor {
     private static final String TAG = AsyncExecutor.class.getSimpleName();
     private static AsyncExecutor INSTANCE = new AsyncExecutor();
     private Queue<Runnable> mQueue = new ArrayDeque<>(1);
-    private Executor mExecutor = Executors.newFixedThreadPool(4);
+    private ExecutorService mExecutor = Executors.newFixedThreadPool(4);
 
     private AsyncExecutor() {}
 
@@ -35,6 +36,7 @@ public class AsyncExecutor implements Executor {
 
     @Override
     protected void finalize() throws Throwable {
+        mExecutor.shutdownNow();
         super.finalize();
     }
 
