@@ -168,7 +168,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ImageView mArrowImage;
 
     // Full Screen Video Views
-    private FullscreenHolder mFullscreenContainer;
+    private FrameLayout mFullscreenContainer;
     private VideoView mVideoView;
     private View mCustomView;
 
@@ -1210,7 +1210,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
 
-        mEventBus.unregister(busEventListener);
+        mEventBus.unregister(mBusEventListener);
     }
 
     void saveOpenTabs() {
@@ -1275,7 +1275,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         filter.addAction(NETWORK_BROADCAST_ACTION);
         registerReceiver(mNetworkReceiver, filter);
 
-        mEventBus.register(busEventListener);
+        mEventBus.register(mBusEventListener);
     }
 
     /**
@@ -1821,7 +1821,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mOriginalOrientation = getRequestedOrientation();
         FrameLayout decor = (FrameLayout) getWindow().getDecorView();
-        mFullscreenContainer = new FullscreenHolder(this);
+        mFullscreenContainer = new FrameLayout(this);
+        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
         mCustomView = view;
         mFullscreenContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
         decor.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
@@ -1896,9 +1897,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * turns on fullscreen mode in the app
+     * This method sets whether or not the activity will display
+     * in full-screen mode (i.e. the ActionBar will be hidden) and
+     * whether or not immersive mode should be set. This is used to
+     * set both parameters correctly as during a full-screen video,
+     * both need to be set, but other-wise we leave it up to user
+     * preference.
      *
-     * @param enabled whether to enable fullscreen or not
+     * @param enabled   true to enable full-screen, false otherwise
+     * @param immersive true to enable immersive mode, false otherwise
      */
     private void setFullscreen(boolean enabled, boolean immersive) {
         mIsFullScreen = enabled;
@@ -1923,27 +1930,25 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * a class extending FramLayout used to display fullscreen videos
+     * This interface method is used by the LightningView to obtain an
+     * image that is displayed as a placeholder on a video until the video
+     * has initialized and can begin loading.
+     *
+     * @return a Bitmap that can be used as a place holder for videos.
      */
-    private static class FullscreenHolder extends FrameLayout {
-
-        public FullscreenHolder(Context ctx) {
-            super(ctx);
-            setBackgroundColor(ContextCompat.getColor(ctx, android.R.color.black));
-        }
-
-        @Override
-        public boolean onTouchEvent(@NonNull MotionEvent evt) {
-            return true;
-        }
-
-    }
-
     @Override
     public Bitmap getDefaultVideoPoster() {
         return BitmapFactory.decodeResource(getResources(), android.R.drawable.spinner_background);
     }
 
+    /**
+     * An interface method so that we can inflate a view to send to
+     * a LightningView when it needs to display a video and has to
+     * show a loading dialog. Inflates a progress view and returns it.
+     *
+     * @return A view that should be used to display the state
+     * of a video's loading progress.
+     */
     @Override
     public View getVideoLoadingProgressView() {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -1951,7 +1956,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * handles javascript requests to create a new window in the browser
+     * This method handles the JavaScript callback to create a new tab.
+     * Basically this handles the event that JavaScript needs to create
+     * a popup.
+     *
+     * @param resultMsg the transport message used to send the URL to
+     *                  the newly created WebView.
      */
     @Override
     public void onCreateWindow(Message resultMsg) {
@@ -1966,9 +1976,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * Closes the specified view, implementing the JavaScript callback to close a window
+     * Closes the specified {@link LightningView}. This implements
+     * the JavaScript callback that asks the tab to close itself and
+     * is especially helpful when a page creates a redirect and does
+     * not need the tab to stay open any longer.
      *
-     * @param view the LightningView to close
+     * @param view the LightningView to close, delete it.
      */
     @Override
     public void onCloseWindow(LightningView view) {
@@ -1976,16 +1989,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * returns the Activity instance for this activity,
-     * very helpful when creating things in other classes... I think
-     */
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
-
-    /**
-     * it hides the action bar, seriously what else were you expecting
+     * Hide the ActionBar using an animation if we are in full-screen
+     * mode. This method also re-parents the ActionBar if its parent is
+     * incorrect so that the animation can happen correctly.
      */
     @Override
     public void hideActionBar() {
@@ -2021,7 +2027,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * obviously it shows the action bar if it's hidden
+     * Display the ActionBar using an animation if we are in full-screen
+     * mode. This method also re-parents the ActionBar if its parent is
+     * incorrect so that the animation can happen correctly.
      */
     @Override
     public void showActionBar() {
@@ -2068,9 +2076,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * handles a long click on the page, parameter String url
-     * is the url that should have been obtained from the WebView touch node
-     * thingy, if it is null, this method tries to deal with it and find a workaround
+     * Handle a long-press on the current web page. The WebView provides
+     * a URL to this method that it thinks is what the user has long-pressed.
+     * This may be different than what the user actually long-pressed, e.g. in
+     * the case of an image link you may want to provide options for both the
+     * image and the link. This method also handles the event that the WebView
+     * was not able to get a URL from the event in which case we need to drill
+     * down using {@link HitTestResult} and obtain the URL that is at the root
+     * of their press. This method is responsible with delegating the dialog
+     * creation to one of the several other methods in this class.
+     *
+     * @param url the URL that was retrieved from the WebView in
+     *            the long-press event.
      */
     @Override
     public void longClickPage(final String url) {
@@ -2118,6 +2135,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /**
+     * Handle the event that the user has long-pressed an item on the {@link HistoryPage}.
+     * In this case we wish to present the user with a dialog with a few options:
+     * open the history item in a new tab, delete the history item, or open the
+     * item in the current tab.
+     *
+     * @param url the URL of the history item.
+     */
     private void longPressHistoryLink(final String url) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -2152,6 +2177,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 .show();
     }
 
+    /**
+     * Handle the event that the user has long-pressed on an image link
+     * and provide them with various options for things to do with that image.
+     * Options include opening the image in a new tab, loading the image in the
+     * current tab, or downloading the image.
+     *
+     * @param url the URL of the image that was retrieved from long-press.
+     */
     private void longPressImage(final String url) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -2183,6 +2216,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 .show();
     }
 
+    /**
+     * Handle the event that the user has long-pressed a link on a web page.
+     * It creates a dialog with a few options on what the user can do with the
+     * URL that has been retrieved from their long-press, namely, create a
+     * new tab, load the URL in the current tab, or copy the link.
+     *
+     * @param url the URL that has been retrieved in the long-press event
+     */
     private void longPressLink(final String url) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -2230,7 +2271,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     /**
      * handle presses on the refresh icon in the search bar, if the page is
      * loading, stop the page, if it is done loading refresh the page.
-     * <p/>
      * See setIsFinishedLoading and setIsLoading for displaying the correct icon
      */
     private void refreshOrStop() {
@@ -2243,6 +2283,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /**
+     * Handle the click event for the views that are using
+     * this class as a click listener. This method should
+     * distinguish between the various views using their IDs.
+     *
+     * @param v the view that the user has clicked
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -2297,6 +2344,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /**
+     * Handle long presses on views that use this class
+     * as their OnLongClickListener. This method should
+     * distinguish between the IDs of the views that are
+     * getting clicked.
+     *
+     * @param view the view that has been long pressed
+     * @return returns true since the method handles the long press
+     * event
+     */
     @Override
     public boolean onLongClick(View view) {
         switch (view.getId()) {
@@ -2312,6 +2369,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
+    /**
+     * A utility method that creates a FrameLayout button with the given ID and
+     * sets the image of the button to the given image ID. The OnClick and OnLongClick
+     * listeners are set to this class, so BrowserActivity should handle those events
+     * there. Additionally, it tints the images according to the current theme.
+     * This method only is a convenience so that this code does not have to be repeated
+     * for the several "Buttons" that use this.
+     *
+     * @param buttonId the view id of the button
+     * @param imageId  the image to set as the button image
+     */
     private void setupFrameLayoutButton(@IdRes int buttonId, @IdRes int imageId) {
         View frameButton = findViewById(buttonId);
         frameButton.setOnClickListener(this);
@@ -2320,6 +2388,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
+    /**
+     * This NetworkReceiver notifies each of the WebViews in the browser whether
+     * the network is currently connected or not. This is important because some
+     * JavaScript properties rely on the WebView knowing the current network state.
+     * It is used to help the browser be compliant with the HTML5 spec, sec. 5.7.7
+     */
     private final NetworkReceiver mNetworkReceiver = new NetworkReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2334,17 +2408,28 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     };
 
+    /**
+     * Handle the callback that permissions requested have been granted or not.
+     * This method should act upon the results of the permissions request.
+     *
+     * @param requestCode  the request code sent when initially making the request
+     * @param permissions  the array of the permissions that was requested
+     * @param grantResults the results of the permissions requests that provides
+     *                     information on whether the request was granted or not
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         PermissionsManager.getInstance().notifyPermissionsChange(permissions);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private final Object busEventListener = new Object() {
+    private final Object mBusEventListener = new Object() {
+
         /**
          * Load the given bookmark in the current tab, used by the the
          * {@link acr.browser.lightning.fragment.BookmarksFragment}
-         * @param event   The event as it comes from the bus
+         *
+         * @param event   Bus event indicating that the user has clicked a bookmark
          */
         @Subscribe
         public void loadBookmarkInCurrentTab(final BookmarkEvents.Clicked event) {
@@ -2363,7 +2448,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         /**
          * Load the given bookmark in a new tab, used by the the
          * {@link acr.browser.lightning.fragment.BookmarksFragment}
-         * @param event   The event as it comes from the bus
+         *
+         * @param event   Bus event indicating that the user wishes
+         *                to open a bookmark in a new tab
          */
         @Subscribe
         public void loadBookmarkInNewTab(final BookmarkEvents.AsNewTab event) {
@@ -2376,7 +2463,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          * message this receiver answer firing the
          * {@link acr.browser.lightning.bus.BrowserEvents.AddBookmark} message
          *
-         * @param event basically a marker
+         * @param event an event that the user wishes to bookmark the current page
          */
         @Subscribe
         public void bookmarkCurrentPage(final BookmarkEvents.WantToBookmarkCurrentPage event) {
@@ -2389,7 +2476,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          * This message is received when a bookmark was added by the
          * {@link acr.browser.lightning.fragment.BookmarksFragment}
          *
-         * @param event a marker
+         * @param event the event that a bookmark has been added
          */
         @Subscribe
         public void bookmarkAdded(final BookmarkEvents.Added event) {
@@ -2397,9 +2484,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         /**
-         * This is received when the user edit a bookmark
+         * This method is called when the user edits a bookmark.
          *
-         * @param event the event that the bookmark has changed
+         * @param event the event that the bookmark has changed.
          */
         @Subscribe
         public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
@@ -2413,7 +2500,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         /**
-         * Notify the browser that a bookmark was deleted
+         * Notify the browser that a bookmark was deleted.
          *
          * @param event the event that the bookmark has been deleted
          */
@@ -2433,7 +2520,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          * to {@link acr.browser.lightning.bus.BrowserEvents.UserPressedBack} message if the
          * fragement is showing the boomarks root folder.
          *
-         * @param event a marker
+         * @param event an event notifying the browser that the bookmark drawer
+         *              should be closed.
          */
         @Subscribe
         public void closeBookmarks(final BookmarkEvents.CloseBookmarks event) {

@@ -28,8 +28,8 @@ public class IntentUtils {
             "(?:http|https|file):\\/\\/" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
             + ')' + "(.*)");
 
-    public IntentUtils(BrowserController controller) {
-        mActivity = controller.getActivity();
+    public IntentUtils(Activity activity) {
+        mActivity = activity;
     }
 
     public boolean startActivityForUrl(WebView tab, String url) {

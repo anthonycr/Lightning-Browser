@@ -116,7 +116,7 @@ public class LightningView {
 
         mBrowserController = controller;
 
-        mIntentUtils = new IntentUtils(mBrowserController);
+        mIntentUtils = new IntentUtils(mActivity);
         mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
         mWebView.setFocusableInTouchMode(true);
         mWebView.setFocusable(true);

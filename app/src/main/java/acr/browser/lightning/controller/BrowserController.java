@@ -40,8 +40,6 @@ public interface BrowserController {
 
     void onCloseWindow(LightningView view);
 
-    Activity getActivity();
-
     void hideActionBar();
 
     void showActionBar();
