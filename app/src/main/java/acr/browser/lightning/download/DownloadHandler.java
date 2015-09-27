@@ -235,6 +235,8 @@ public class DownloadHandler {
                         e.printStackTrace();
                         Utils.showSnackbar(activity, R.string.cannot_download);
                     } catch (SecurityException e) {
+                        // TODO write a download utility that downloads files rather than rely on the system
+                        // because the system can only handle Environment.getExternal... as a path
                         Utils.showSnackbar(activity, R.string.problem_location_download);
                     }
                 }

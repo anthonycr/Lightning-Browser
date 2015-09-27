@@ -213,7 +213,7 @@ public class BookmarkManager {
      *
      * @param list the list of HistoryItems to add to bookmarks
      */
-    private synchronized void addBookmarkList(List<HistoryItem> list) {
+    public synchronized void addBookmarkList(List<HistoryItem> list) {
         if (list == null || list.isEmpty()) {
             return;
         }
