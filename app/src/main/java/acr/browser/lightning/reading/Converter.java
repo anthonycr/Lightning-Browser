@@ -35,9 +35,9 @@ import acr.browser.lightning.constant.Constants;
  */
 public class Converter {
 
-    public final static String UTF8 = "UTF-8";
-    public final static String ISO = "ISO-8859-1";
-    public final static int K2 = 2048;
+    private final static String UTF8 = "UTF-8";
+    private final static String ISO = "ISO-8859-1";
+    private final static int K2 = 2048;
     private int maxBytes = 1000000 / 2;
     private String encoding;
     private String url;
@@ -99,7 +99,7 @@ public class Converter {
      *            The max bytes that we want to read from the input stream
      * @return String
      */
-    public String streamToString(InputStream is, int maxBytes, String enc) {
+    private String streamToString(InputStream is, int maxBytes, String enc) {
         encoding = enc;
         // Http 1.1. standard is iso-8859-1 not utf8 :(
         // but we force utf-8 as youtube assumes it ;)
@@ -181,8 +181,8 @@ public class Converter {
      * 
      * @throws IOException
      */
-    protected static String detectCharset(String key, ByteArrayOutputStream bos, BufferedInputStream in,
-                                          String enc) throws IOException {
+    private static String detectCharset(String key, ByteArrayOutputStream bos, BufferedInputStream in,
+                                        String enc) throws IOException {
 
         // Grab better encoding from stream
         byte[] arr = new byte[K2];

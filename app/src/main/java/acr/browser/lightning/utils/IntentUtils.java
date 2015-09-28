@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import acr.browser.lightning.controller.BrowserController;
-
 public class IntentUtils {
 
     private final Activity mActivity;

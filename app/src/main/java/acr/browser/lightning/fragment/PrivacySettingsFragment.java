@@ -153,12 +153,7 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
                                 clear.start();
                             }
                         })
-                .setNegativeButton(getResources().getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                            }
-                        }).show();
+                .setNegativeButton(getResources().getString(R.string.action_no), null).show();
     }
 
     private void clearCookiesDialog() {
@@ -178,12 +173,7 @@ public class PrivacySettingsFragment extends PreferenceFragment implements Prefe
                                 clear.start();
                             }
                         })
-                .setNegativeButton(getResources().getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                            }
-                        }).show();
+                .setNegativeButton(getResources().getString(R.string.action_no), null).show();
     }
 
     private void clearCache() {

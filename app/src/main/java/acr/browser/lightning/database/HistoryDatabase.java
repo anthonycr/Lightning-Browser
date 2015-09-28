@@ -22,7 +22,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
 
     // Database Name
-    public static final String DATABASE_NAME = "historyManager";
+    private static final String DATABASE_NAME = "historyManager";
 
     // HistoryItems table name
     private static final String TABLE_HISTORY = "history";
@@ -160,7 +160,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HistoryItem item = new HistoryItem();
-                item.setID(Integer.parseInt(cursor.getString(0)));
                 item.setUrl(cursor.getString(1));
                 item.setTitle(cursor.getString(2));
                 item.setImageId(R.drawable.ic_history);
@@ -185,7 +184,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HistoryItem item = new HistoryItem();
-                item.setID(Integer.parseInt(cursor.getString(0)));
                 item.setUrl(cursor.getString(1));
                 item.setTitle(cursor.getString(2));
                 item.setImageId(R.drawable.ic_history);
@@ -210,7 +208,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HistoryItem item = new HistoryItem();
-                item.setID(Integer.parseInt(cursor.getString(0)));
                 item.setUrl(cursor.getString(1));
                 item.setTitle(cursor.getString(2));
                 item.setImageId(R.drawable.ic_history);
@@ -220,19 +217,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         cursor.close();
         mLock = false;
         return itemList;
-    }
-
-    public synchronized int updateHistoryItem(HistoryItem item) {
-        mLock = true;
-        openIfNecessary();
-        ContentValues values = new ContentValues();
-        values.put(KEY_URL, item.getUrl());
-        values.put(KEY_TITLE, item.getTitle());
-        values.put(KEY_TIME_VISITED, System.currentTimeMillis());
-        int update = mDatabase.update(TABLE_HISTORY, values, KEY_ID + " = ?",
-                new String[]{String.valueOf(item.getId())});
-        mLock = false;
-        return update;
     }
 
     public int getHistoryItemsCount() {

@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.controller;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Message;

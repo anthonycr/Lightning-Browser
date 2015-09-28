@@ -26,7 +26,7 @@ public class BrowserApp extends Application {
         return appComponent;
     }
 
-    public void buildDepencyGraph() {
+    private void buildDepencyGraph() {
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
     }
 

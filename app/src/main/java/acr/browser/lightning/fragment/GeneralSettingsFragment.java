@@ -15,7 +15,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -219,12 +218,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                         setProxyChoice(which);
                     }
                 });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -302,12 +296,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 setSearchEngineSummary(which);
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -349,12 +338,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                         }
                     }
                 });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -407,12 +391,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                         }
                     }
                 });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -442,18 +421,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                         }
                     }
                 });
-        agentPicker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-        agentPicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                Log.i("Cancelled", "");
-            }
-        });
+        agentPicker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         agentPicker.show();
     }
 
@@ -485,24 +453,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         final int errorColor = ContextCompat.getColor(getActivity(), R.color.error_red);
         final int regularColor = ThemeUtils.getTextColor(getActivity());
         getDownload.setTextColor(regularColor);
-        getDownload.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!DownloadHandler.isWriteAccessAvailable(s.toString())) {
-                    getDownload.setTextColor(errorColor);
-                } else {
-                    getDownload.setTextColor(regularColor);
-                }
-            }
-        });
+        getDownload.addTextChangedListener(new DownloadLocationTextWatcher(getDownload, errorColor, regularColor));
         getDownload.setText(mPreferences.getDownloadDirectory());
 
         layout.addView(getDownload);
@@ -622,6 +573,33 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
                 cbDrawerTabs.setChecked((Boolean) newValue);
             default:
                 return false;
+        }
+    }
+
+    private static class DownloadLocationTextWatcher implements TextWatcher {
+        private final EditText getDownload;
+        private final int errorColor;
+        private final int regularColor;
+
+        public DownloadLocationTextWatcher(EditText getDownload, int errorColor, int regularColor) {
+            this.getDownload = getDownload;
+            this.errorColor = errorColor;
+            this.regularColor = regularColor;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!DownloadHandler.isWriteAccessAvailable(s.toString())) {
+                this.getDownload.setTextColor(this.errorColor);
+            } else {
+                this.getDownload.setTextColor(this.regularColor);
+            }
         }
     }
 }

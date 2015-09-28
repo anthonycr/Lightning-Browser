@@ -39,9 +39,9 @@ import javax.net.ssl.X509TrustManager;
 /**
  * @author Peter Karich
  */
-public class SHelper {
+class SHelper {
 
-    public static final String UTF8 = "UTF-8";
+    private static final String UTF8 = "UTF-8";
     private static final Pattern SPACE = Pattern.compile(" ");
 
     public static String replaceSpaces(String url) {
@@ -122,7 +122,7 @@ public class SHelper {
         return str1.substring(res[0], res[1]);
     }
 
-    public static int[] longestSubstring(String str1, String str2) {
+    private static int[] longestSubstring(String str1, String str2) {
         if (str1 == null || str1.isEmpty() || str2 == null || str2.isEmpty())
             return null;
 
@@ -280,7 +280,7 @@ public class SHelper {
         }
     }
 
-    public static String urlDecode(String str) {
+    private static String urlDecode(String str) {
         try {
             return URLDecoder.decode(str, UTF8);
         } catch (UnsupportedEncodingException ex) {
@@ -300,7 +300,7 @@ public class SHelper {
         return printNode(root, 0);
     }
 
-    public static String printNode(Element root, int indentation) {
+    private static String printNode(Element root, int indentation) {
         StringBuilder sb = new StringBuilder(indentation);
         for (int i = 0; i < indentation; i++) {
             sb.append(' ');

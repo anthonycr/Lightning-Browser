@@ -41,8 +41,8 @@ public class OutputFormatter {
         this(minFirstParagraphText, minParagraphText, NODES_TO_REPLACE);
     }
 
-    public OutputFormatter(int minFirstParagraphText, int minParagraphText,
-                           List<String> nodesToReplace) {
+    private OutputFormatter(int minFirstParagraphText, int minParagraphText,
+                            List<String> nodesToReplace) {
         this.minFirstParagraphText = minFirstParagraphText;
         this.minParagraphText = minParagraphText;
         this.nodesToReplace = nodesToReplace;
@@ -91,7 +91,7 @@ public class OutputFormatter {
      * If there are elements inside our top node that have a negative gravity
      * score remove them
      */
-    protected void removeNodesWithNegativeScores(Element topNode) {
+    private void removeNodesWithNegativeScores(Element topNode) {
         Elements gravityItems = topNode.select("*[gravityScore]");
         for (Element item : gravityItems) {
             int score = getScore(item);
@@ -102,7 +102,7 @@ public class OutputFormatter {
         }
     }
 
-    protected int append(Element node, StringBuilder sb, String tagName) {
+    private int append(Element node, StringBuilder sb, String tagName) {
         int countOfP = 0; // Number of P elements in the article
         int paragraphWithTextIndex = 0;
         // is select more costly then getElementsByTag?
@@ -134,14 +134,14 @@ public class OutputFormatter {
         return countOfP;
     }
 
-    protected static void setParagraphIndex(Element node, String tagName) {
+    private static void setParagraphIndex(Element node, String tagName) {
         int paragraphIndex = 0;
         for (Element e : node.select(tagName)) {
             e.attr("paragraphIndex", Integer.toString(paragraphIndex++));
         }
     }
 
-    protected int getMinParagraph(int paragraphIndex) {
+    private int getMinParagraph(int paragraphIndex) {
         if (paragraphIndex < 1) {
             return minFirstParagraphText;
         } else {
@@ -149,7 +149,7 @@ public class OutputFormatter {
         }
     }
 
-    protected static int getParagraphIndex(Element el) {
+    private static int getParagraphIndex(Element el) {
         try {
             return Integer.parseInt(el.attr("paragraphIndex"));
         } catch (NumberFormatException ex) {
@@ -157,7 +157,7 @@ public class OutputFormatter {
         }
     }
 
-    protected static int getScore(Element el) {
+    private static int getScore(Element el) {
         try {
             return Integer.parseInt(el.attr("gravityScore"));
         } catch (Exception ex) {
@@ -165,7 +165,7 @@ public class OutputFormatter {
         }
     }
 
-    boolean unlikely(Node e) {
+    private boolean unlikely(Node e) {
         if (e.attr("class") != null && e.attr("class").toLowerCase().contains("caption"))
             return true;
 
@@ -174,7 +174,7 @@ public class OutputFormatter {
         return unlikelyPattern.matcher(style).find() || unlikelyPattern.matcher(clazz).find();
     }
 
-    void appendTextSkipHidden(Element e, StringBuilder accum, int indent) {
+    private void appendTextSkipHidden(Element e, StringBuilder accum, int indent) {
         for (Node child : e.childNodes()) {
             if (unlikely(child)) {
                 continue;
@@ -195,17 +195,17 @@ public class OutputFormatter {
         }
     }
 
-    static boolean lastCharIsWhitespace(StringBuilder accum) {
+    private static boolean lastCharIsWhitespace(StringBuilder accum) {
         return accum.length() != 0 && Character.isWhitespace(accum.charAt(accum.length() - 1));
     }
 
-    protected String node2Text(Element el) {
+    private String node2Text(Element el) {
         StringBuilder sb = new StringBuilder(200);
         appendTextSkipHidden(el, sb, 0);
         return sb.toString();
     }
 
-    public OutputFormatter setUnlikelyPattern(String unlikelyPattern) {
+    private OutputFormatter setUnlikelyPattern(String unlikelyPattern) {
         this.unlikelyPattern = Pattern.compile(unlikelyPattern);
         return this;
     }

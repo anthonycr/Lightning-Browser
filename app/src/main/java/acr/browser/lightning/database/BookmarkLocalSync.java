@@ -100,12 +100,14 @@ public class BookmarkLocalSync {
         return list;
     }
 
+    @WorkerThread
     public boolean isStockSupported() {
         Cursor cursor = getStockCursor();
         Utils.close(cursor);
         return cursor != null;
     }
 
+    @WorkerThread
     public boolean isChromeSupported() {
         Cursor cursor = getChromeCursor();
         Utils.close(cursor);
@@ -113,6 +115,7 @@ public class BookmarkLocalSync {
     }
 
     @Nullable
+    @WorkerThread
     private Cursor getChromeCursor() {
         Cursor cursor;
         Uri uri = Uri.parse(CHROME_BOOKMARKS_CONTENT);
@@ -126,6 +129,7 @@ public class BookmarkLocalSync {
     }
 
     @Nullable
+    @WorkerThread
     private Cursor getStockCursor() {
         Cursor cursor;
         Uri uri = Uri.parse(STOCK_BOOKMARKS_CONTENT);

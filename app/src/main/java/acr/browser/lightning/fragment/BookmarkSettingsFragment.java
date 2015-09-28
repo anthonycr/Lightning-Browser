@@ -102,16 +102,23 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         Preference exportpref = findPreference(SETTINGS_EXPORT);
         Preference importpref = findPreference(SETTINGS_IMPORT);
-        Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
 
         mSync = new BookmarkLocalSync(mActivity);
 
-        importStock.setEnabled(mSync.isStockSupported() || mSync.isChromeSupported());
-
         exportpref.setOnPreferenceClickListener(this);
         importpref.setOnPreferenceClickListener(this);
-        importStock.setOnPreferenceClickListener(this);
+
+        new Thread(mInitializeImportPreference).start();
     }
+
+    private final Runnable mInitializeImportPreference = new Runnable() {
+        @Override
+        public void run() {
+            Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
+            importStock.setEnabled(mSync.isStockSupported() || mSync.isChromeSupported());
+            importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
+        }
+    };
 
     @Override
     public boolean onPreferenceClick(Preference preference) {

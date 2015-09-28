@@ -139,22 +139,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         sample.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT));
         sample.setGravity(Gravity.CENTER_HORIZONTAL);
         view.addView(sample);
-        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar view, int size, boolean user) {
-                sample.setTextSize(getTextSize(size));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar arg0) {
-            }
-
-        });
+        bar.setOnSeekBarChangeListener(new TextSeekBarListener(sample));
         final int MAX = 5;
         bar.setMax(MAX);
         bar.setProgress(MAX - mPreferences.getTextSize());
@@ -224,5 +209,26 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
             }
         });
         picker.show();
+    }
+
+    private static class TextSeekBarListener implements SeekBar.OnSeekBarChangeListener {
+
+        private final TextView sample;
+
+        public TextSeekBarListener(TextView sample) {this.sample = sample;}
+
+        @Override
+        public void onProgressChanged(SeekBar view, int size, boolean user) {
+            this.sample.setTextSize(getTextSize(size));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar arg0) {
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar arg0) {
+        }
+
     }
 }

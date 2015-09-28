@@ -22,7 +22,9 @@ public class WebUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             c.removeAllCookies(null);
         } else {
+            //noinspection deprecation
             CookieSyncManager.createInstance(context);
+            //noinspection deprecation
             c.removeAllCookie();
         }
     }
@@ -37,7 +39,9 @@ public class WebUtils {
         m.clearFormData();
         m.clearHttpAuthUsernamePassword();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //noinspection deprecation
             m.clearUsernamePassword();
+            //noinspection deprecation
             WebIconDatabase.getInstance().removeAllIcons();
         }
         Utils.trimCache(context);

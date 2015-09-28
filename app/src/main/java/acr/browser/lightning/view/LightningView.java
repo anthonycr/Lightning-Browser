@@ -123,7 +123,9 @@ public class LightningView {
         mWebView.setDrawingCacheEnabled(false);
         mWebView.setWillNotCacheDrawing(true);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            //noinspection deprecation
             mWebView.setAnimationCacheEnabled(false);
+            //noinspection deprecation
             mWebView.setAlwaysDrawnWithCacheEnabled(false);
         }
         mWebView.setBackgroundColor(Color.WHITE);
@@ -197,12 +199,15 @@ public class LightningView {
         if (API < Build.VERSION_CODES.KITKAT) {
             switch (mPreferences.getFlashSupport()) {
                 case 0:
+                    //noinspection deprecation
                     settings.setPluginState(PluginState.OFF);
                     break;
                 case 1:
+                    //noinspection deprecation
                     settings.setPluginState(PluginState.ON_DEMAND);
                     break;
                 case 2:
+                    //noinspection deprecation
                     settings.setPluginState(PluginState.ON);
                     break;
                 default:
@@ -213,12 +218,14 @@ public class LightningView {
         setUserAgent(context, mPreferences.getUserAgentChoice());
 
         if (mPreferences.getSavePasswordsEnabled() && !mIsIncognitoTab) {
-            if (API < 18) {
+            if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //noinspection deprecation
                 settings.setSavePassword(true);
             }
             settings.setSaveFormData(true);
         } else {
-            if (API < 18) {
+            if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //noinspection deprecation
                 settings.setSavePassword(false);
             }
             settings.setSaveFormData(false);
@@ -293,9 +300,11 @@ public class LightningView {
     @SuppressLint("NewApi")
     private void initializeSettings(WebSettings settings, Context context) {
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //noinspection deprecation
             settings.setAppCacheMaxSize(Long.MAX_VALUE);
         }
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //noinspection deprecation
             settings.setEnableSmoothTransition(true);
         }
         if (API > Build.VERSION_CODES.JELLY_BEAN) {
@@ -331,6 +340,7 @@ public class LightningView {
         settings.setAppCachePath(context.getDir("appcache", 0).getPath());
         settings.setGeolocationDatabasePath(context.getDir("geolocation", 0).getPath());
         if (API < Build.VERSION_CODES.KITKAT) {
+            //noinspection deprecation
             settings.setDatabasePath(context.getDir("databases", 0).getPath());
         }
     }
@@ -346,7 +356,7 @@ public class LightningView {
     }
 
     @SuppressLint("NewApi")
-    public void setUserAgent(Context context, int choice) {
+    private void setUserAgent(Context context, int choice) {
         if (mWebView == null) return;
         WebSettings settings = mWebView.getSettings();
         switch (choice) {
@@ -388,8 +398,10 @@ public class LightningView {
     }
 
     public synchronized void freeMemory() {
-        if (mWebView != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+        if (mWebView != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            //noinspection deprecation
             mWebView.freeMemory();
+        }
     }
 
     public void setForegroundTab(boolean isForeground) {
@@ -526,6 +538,7 @@ public class LightningView {
             if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 mWebView.findAllAsync(text);
             } else {
+                //noinspection deprecation
                 mWebView.findAll(text);
             }
         }
@@ -593,12 +606,6 @@ public class LightningView {
         }
     }
 
-    public synchronized void invalidate() {
-        if (mWebView != null) {
-            mWebView.invalidate();
-        }
-    }
-
     public String getTitle() {
         return mTitle.getTitle();
     }
@@ -658,6 +665,7 @@ public class LightningView {
             return super.shouldInterceptRequest(view, request);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
             if (mAdBlock.isAd(url)) {
@@ -944,14 +952,17 @@ public class LightningView {
             mBrowserController.onCloseWindow(LightningView.this);
         }
 
+        @SuppressWarnings("unused")
         public void openFileChooser(ValueCallback<Uri> uploadMsg) {
             mBrowserController.openFileChooser(uploadMsg);
         }
 
+        @SuppressWarnings("unused")
         public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
             mBrowserController.openFileChooser(uploadMsg);
         }
 
+        @SuppressWarnings("unused")
         public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
             mBrowserController.openFileChooser(uploadMsg);
         }
@@ -999,6 +1010,7 @@ public class LightningView {
             super.onShowCustomView(view, callback);
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         @Deprecated
         public void onShowCustomView(View view, int requestedOrientation,

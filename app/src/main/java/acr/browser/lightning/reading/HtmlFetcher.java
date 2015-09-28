@@ -207,8 +207,8 @@ public class HtmlFetcher {
 
     // main workhorse to call externally
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    public JResult fetchAndExtract(String url, int timeout, boolean resolve,
-                                   int maxContentSize, boolean forceReload) throws Exception {
+    private JResult fetchAndExtract(String url, int timeout, boolean resolve,
+                                    int maxContentSize, boolean forceReload) throws Exception {
         String originalUrl = url;
         url = SHelper.removeHashbang(url);
         String gUrl = SHelper.getUrlFromUglyGoogleRedirect(url);
@@ -301,7 +301,7 @@ public class HtmlFetcher {
     }
 
     // Ugly hack to break free from any cached versions, a few URLs required this.
-    public static String getURLtoBreakCache(String url) {
+    private static String getURLtoBreakCache(String url) {
         try {
             URL aURL = new URL(url);
             if (aURL.getQuery() != null && aURL.getQuery().isEmpty()) {
@@ -314,7 +314,7 @@ public class HtmlFetcher {
         }
     }
 
-    public String lessText(String text) {
+    private String lessText(String text) {
         if (text == null)
             return "";
 
@@ -328,13 +328,13 @@ public class HtmlFetcher {
         return SHelper.useDomainOfFirstArg4Second(url, urlOrPath);
     }
 
-    public String fetchAsString(String urlAsString, int timeout)
+    private String fetchAsString(String urlAsString, int timeout)
             throws IOException {
         return fetchAsString(urlAsString, timeout, true);
     }
 
     // main routine to get raw webpage content
-    public String fetchAsString(String urlAsString, int timeout, boolean includeSomeGooseOptions)
+    private String fetchAsString(String urlAsString, int timeout, boolean includeSomeGooseOptions)
             throws IOException {
         HttpURLConnection hConn = createUrlConnection(urlAsString, timeout, includeSomeGooseOptions);
         hConn.setInstanceFollowRedirects(true);
@@ -352,7 +352,7 @@ public class HtmlFetcher {
         return createConverter(urlAsString).streamToString(is, enc);
     }
 
-    public static Converter createConverter(String url) {
+    private static Converter createConverter(String url) {
         return new Converter(url);
     }
 
@@ -364,8 +364,8 @@ public class HtmlFetcher {
      * @return the resolved url if any. Or null if it couldn't resolve the url
      * (within the specified time) or the same url if response code is OK
      */
-    public String getResolvedUrl(String urlAsString, int timeout,
-                                 int num_redirects) {
+    private String getResolvedUrl(String urlAsString, int timeout,
+                                  int num_redirects) {
         String newUrl = null;
         int responseCode = -1;
         try {
@@ -416,7 +416,7 @@ public class HtmlFetcher {
      * to non-ASCII characters. Workaround for broken origin servers that send
      * UTF-8 in the Location: header.
      */
-    static String encodeUriFromHeader(String badLocation) {
+    private static String encodeUriFromHeader(String badLocation) {
         StringBuilder sb = new StringBuilder(badLocation.length());
 
         for (char ch : badLocation.toCharArray()) {
@@ -431,8 +431,8 @@ public class HtmlFetcher {
         return sb.toString();
     }
 
-    protected HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
-                                                    boolean includeSomeGooseOptions) throws IOException {
+    private HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
+                                                  boolean includeSomeGooseOptions) throws IOException {
         URL url = new URL(urlAsStr);
         //using proxy may increase latency
         HttpURLConnection hConn = (HttpURLConnection) url.openConnection(Proxy.NO_PROXY);

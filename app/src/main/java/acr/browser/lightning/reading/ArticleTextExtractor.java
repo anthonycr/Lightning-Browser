@@ -385,16 +385,16 @@ public class ArticleTextExtractor {
             //            System.out.println("date modified element " + elem.toString());
         }
 
-        if (dateStr != null && dateStr.isEmpty()) {
+        if (dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[name=utime]").attr("content"));
         }
-        if (dateStr != null && dateStr.isEmpty()) {
+        if (dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[name=pdate]").attr("content"));
         }
-        if (dateStr != null && dateStr.isEmpty()) {
+        if (dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[property=article:published]").attr("content"));
         }
-        if (dateStr != null && dateStr.isEmpty()) {
+        if (dateStr.isEmpty()) {
             return parseDate(dateStr);
         }
 
@@ -492,9 +492,7 @@ public class ArticleTextExtractor {
             if (el.hasAttr("content")) {
                 dateStr = el.attr("content");
                 Date parsedDate = parseDate(dateStr);
-                if (parsedDate != null) {
-                    return parsedDate;
-                }
+                return parsedDate;
             }
         }
 
@@ -686,14 +684,12 @@ public class ArticleTextExtractor {
     private static Collection<String> extractKeywords(Document doc) {
         String content = SHelper.innerTrim(doc.select("head meta[name=keywords]").attr("content"));
 
-        if (content != null) {
-            if (content.startsWith("[") && content.endsWith("]"))
-                content = content.substring(1, content.length() - 1);
+        if (content.startsWith("[") && content.endsWith("]"))
+            content = content.substring(1, content.length() - 1);
 
-            String[] split = content.split("\\s*,\\s*");
-            if (split.length > 1 || (split.length > 0 && split[0] != null && !split[0].isEmpty()))
-                return Arrays.asList(split);
-        }
+        String[] split = content.split("\\s*,\\s*");
+        if (split.length > 1 || (split.length > 0 && split[0] != null && !split[0].isEmpty()))
+            return Arrays.asList(split);
         return Collections.emptyList();
     }
 
@@ -1190,7 +1186,7 @@ public class ArticleTextExtractor {
                 charlen = 4;
             } else if (c <= 0xdfff) {
                 charlen = 0;
-            } else if (c <= 0xffff) {
+            } else {
                 charlen = 3;
             }
             if (resultlen + charlen > length) {

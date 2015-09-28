@@ -433,7 +433,7 @@ public class BookmarkManager {
      *
      * @return a list of all folders
      */
-    public synchronized List<HistoryItem> getFolders(boolean sort) {
+    private synchronized List<HistoryItem> getFolders(boolean sort) {
         final HashMap<String, HistoryItem> folders = new HashMap<>();
         for (HistoryItem item : mBookmarksMap.values()) {
             final String folderName = item.getFolder();

@@ -374,6 +374,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START);
 
         if (API <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //noinspection deprecation
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
@@ -1294,7 +1295,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
+    private class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
 
         private final Context context;
         private final int layoutResourceId;
@@ -1359,6 +1360,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     holder.txtTitle.setTextAppearance(R.style.boldText);
                 } else {
+                    //noinspection deprecation
                     holder.txtTitle.setTextAppearance(context, R.style.boldText);
                 }
                 Drawable foregroundDrawable;
@@ -1373,6 +1375,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     holder.layout.setBackground(foregroundDrawable);
                 } else {
+                    //noinspection deprecation
                     holder.layout.setBackgroundDrawable(foregroundDrawable);
                 }
                 if (!isIncognito() && mColorMode) {
@@ -1383,11 +1386,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     holder.txtTitle.setTextAppearance(R.style.normalText);
                 } else {
+                    //noinspection deprecation
                     holder.txtTitle.setTextAppearance(context, R.style.normalText);
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     holder.layout.setBackground(mBackgroundTabDrawable);
                 } else {
+                    //noinspection deprecation
                     holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
                 }
 
@@ -1455,12 +1460,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param tabBackground the optional LinearLayout to color
      */
     private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
-        final int defaultColor;
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            defaultColor = getResources().getColor(R.color.primary_color);
-        } else {
-            defaultColor = getColor(R.color.primary_color);
-        }
+        final int defaultColor = ContextCompat.getColor(this, R.color.primary_color);
         if (mCurrentUiColor == Color.BLACK) {
             mCurrentUiColor = defaultColor;
         }

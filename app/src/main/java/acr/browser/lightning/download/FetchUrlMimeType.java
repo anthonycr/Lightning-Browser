@@ -25,7 +25,7 @@ import acr.browser.lightning.utils.Utils;
  * just clicks on the link, we will do the same steps of correcting the mimetype
  * down in android.os.webkit.LoadListener rather than handling it here.
  */
-public class FetchUrlMimeType extends Thread {
+class FetchUrlMimeType extends Thread {
 
     private final Activity mActivity;
 
