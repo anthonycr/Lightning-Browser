@@ -1,6 +1,9 @@
 package acr.browser.lightning.fragment;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +13,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,12 +22,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +48,7 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
@@ -59,13 +66,13 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
      * If true, the fragment is in the left drawner in the strip otherwise.
      */
     public static final String VERTICAL_MODE = TAG + ".VERTICAL_MODE";
-    public static final String USE_DARK_THEME = TAG + ".USE_DARK_THEME";
+    public static final String IS_INCOGNITO = TAG + ".IS_INCOGNITO";
 
-    private boolean mDarkTheme;
+    private boolean mIsIncognito, mDarkTheme;
     private int mIconColor;
-    private boolean mColorMode = true; // TODO Only temporary
-    private boolean isIncognito = false; // TODO Only temporary
-    private int mCurrentUiColor = 0; // TODO Only temporary
+    private boolean mColorMode = true;
+    private boolean mShowInNavigationDrawer;
+    private int mCurrentUiColor = Color.BLACK; // TODO Only temporary
 
     private RecyclerView mRecyclerView;
     private LightningViewAdapter mTabsAdapter;
@@ -76,6 +83,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Inject
     Bus bus;
 
+    @Inject
+    PreferenceManager mPreferences;
+
     public TabsFragment() {
         BrowserApp.getAppComponent().inject(this);
     }
@@ -85,7 +95,11 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         super.onCreate(savedInstanceState);
         final Bundle arguments = getArguments();
         final Context context = getContext();
-        mDarkTheme = arguments.getBoolean(USE_DARK_THEME, false);
+        mIsIncognito = arguments.getBoolean(IS_INCOGNITO, false);
+        mShowInNavigationDrawer = arguments.getBoolean(VERTICAL_MODE, true);
+        mDarkTheme = mPreferences.getUseTheme() != 0 || mIsIncognito;
+        mColorMode = mPreferences.getColorModeEnabled();
+        mColorMode &= !mDarkTheme;
         mIconColor = mDarkTheme ?
                 ThemeUtils.getIconDarkThemeColor(context) :
                 ThemeUtils.getIconLightThemeColor(context);
@@ -95,10 +109,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final Bundle arguments = getArguments();
-        final boolean vertical = arguments.getBoolean(VERTICAL_MODE, true);
         final View view;
         final LayoutManager layoutManager;
-        if (vertical) {
+        if (mShowInNavigationDrawer) {
             view = inflater.inflate(R.layout.tab_drawer, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
             // TODO Handle also long press
@@ -112,7 +125,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         }
         mRecyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
         mRecyclerView.setLayoutManager(layoutManager);
-        mTabsAdapter = new LightningViewAdapter(vertical);
+        mTabsAdapter = new LightningViewAdapter(mShowInNavigationDrawer);
         mRecyclerView.setAdapter(mTabsAdapter);
         mRecyclerView.setHasFixedSize(true);
         return view;
@@ -249,7 +262,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 Drawable foregroundDrawable;
                 if (!vertical) {
                     foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
-                    if (!isIncognito && mColorMode) {
+                    if (!mIsIncognito && mColorMode) {
                         foregroundDrawable.setColorFilter(mCurrentUiColor, PorterDuff.Mode.SRC_IN);
                     }
                 } else {
@@ -260,9 +273,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 } else {
                     holder.layout.setBackgroundDrawable(foregroundDrawable);
                 }
-                if (!isIncognito && mColorMode) {
-                    // TODO Restore this
-                    // changeToolbarBackground(favicon, foregroundDrawable);
+                if (!mIsIncognito && mColorMode) {
+                    changeToolbarBackground(favicon, foregroundDrawable);
                 }
                 holder.favicon.setImageBitmap(favicon);
             } else {
@@ -300,6 +312,64 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             c.drawBitmap(favicon, 0, 0, mPaint);
             return grayscaleBitmap;
+        }
+
+        /**
+         * Animates the color of the toolbar from one color to another. Optionally animates
+         * the color of the tab background, for use when the tabs are displayed on the top
+         * of the screen.
+         *
+         * @param favicon       the Bitmap to extract the color from
+         * @param tabBackground the optional LinearLayout to color
+         */
+        private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
+            if (mShowInNavigationDrawer) {
+                return;
+            }
+
+            final int defaultColor;
+            final Resources resources = getResources();
+            final ColorDrawable mBackground = new ColorDrawable();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                defaultColor = resources.getColor(R.color.primary_color, null);
+            } else {
+                defaultColor = resources.getColor(R.color.primary_color);
+            }
+            if (mCurrentUiColor == Color.BLACK) {
+                mCurrentUiColor = defaultColor;
+            }
+            Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+
+                    // OR with opaque black to remove transparency glitches
+                    int color = 0xff000000 | palette.getVibrantColor(defaultColor);
+
+                    int finalColor = Utils.mixTwoColors(defaultColor, color, 0.25f);
+
+                    ValueAnimator anim = ValueAnimator.ofInt(mCurrentUiColor, finalColor);
+                    anim.setEvaluator(new ArgbEvaluator());
+                    // final Window window = getWindow();
+                    // TODO Check this
+                    // if (!mShowInNavigationDrawer) {
+                    //     window.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+                    // }
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            final int color = (Integer) animation.getAnimatedValue();
+                            if (tabBackground != null) {
+                                tabBackground.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+                            }
+                            mCurrentUiColor = color;
+                        }
+
+                    });
+                    anim.setDuration(300);
+                    anim.start();
+                }
+            });
         }
 
         public class LightningViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

@@ -235,7 +235,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerRight = (ViewGroup) findViewById(R.id.right_drawer);
         mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-// TODO Probably should be moved to the TabsFragement
+// TODO Please review this
 //        ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
 //        tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
 
@@ -253,8 +253,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final TabsFragment tabsFragment = new TabsFragment();
         final int containerId = mShowTabsInDrawer ? R.id.left_drawer : R.id.tabs_toolbar_container;
         final Bundle arguments = new Bundle();
+        arguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito());
         arguments.putBoolean(TabsFragment.VERTICAL_MODE, mShowTabsInDrawer);
-        arguments.putBoolean(TabsFragment.USE_DARK_THEME, mDarkTheme);
         tabsFragment.setArguments(arguments);
         getSupportFragmentManager()
                 .beginTransaction()
