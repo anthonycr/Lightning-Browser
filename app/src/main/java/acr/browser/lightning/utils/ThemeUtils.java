@@ -1,7 +1,6 @@
 package acr.browser.lightning.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,11 +11,11 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.widget.ImageView;
 
@@ -46,17 +45,11 @@ public class ThemeUtils {
     }
 
     public static int getIconLightThemeColor(@NonNull Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return context.getResources().getColor(R.color.icon_light_theme, context.getTheme());
-        }
-        return context.getResources().getColor(R.color.icon_light_theme);
+        return ContextCompat.getColor(context, R.color.icon_light_theme);
     }
 
     public static int getIconDarkThemeColor(@NonNull Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return context.getResources().getColor(R.color.icon_dark_theme, context.getTheme());
-        }
-        return context.getResources().getColor(R.color.icon_dark_theme);
+        return ContextCompat.getColor(context, R.color.icon_dark_theme);
     }
 
     public static void themeImageView(ImageView icon, Context context, boolean dark) {
@@ -80,12 +73,7 @@ public class ThemeUtils {
     @Nullable
     public static Drawable getThemedDrawable(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
-        final Drawable drawable;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = context.getResources().getDrawable(res);
-        } else {
-            drawable = context.getDrawable(res);
-        }
+        final Drawable drawable = ContextCompat.getDrawable(context, res);
         if (drawable == null)
             return null;
         drawable.mutate();
@@ -95,12 +83,7 @@ public class ThemeUtils {
 
     @Nullable
     public static Drawable getLightThemedDrawable(@NonNull Context context, @DrawableRes int res) {
-        final Drawable drawable;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = context.getResources().getDrawable(res);
-        } else {
-            drawable = context.getDrawable(res);
-        }
+        final Drawable drawable = ContextCompat.getDrawable(context, res);
         if (drawable == null)
             return null;
         drawable.mutate();
@@ -109,15 +92,12 @@ public class ThemeUtils {
     }
 
     public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
-        Resources res = context.getResources();
-        int color;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            color = (dark) ? res.getColor(R.color.selected_dark, context.getTheme()) :
-                    res.getColor(R.color.selected_light, context.getTheme());
-        } else {
-            color = (dark) ? res.getColor(R.color.selected_dark) :
-                    res.getColor(R.color.selected_light);
-        }
+        final int color = (dark) ? ContextCompat.getColor(context, R.color.selected_dark) :
+                ContextCompat.getColor(context, R.color.selected_light);
         return new ColorDrawable(color);
+    }
+
+    public static int getTextColor(Context context) {
+        return getColor(context, android.R.attr.editTextColor);
     }
 }

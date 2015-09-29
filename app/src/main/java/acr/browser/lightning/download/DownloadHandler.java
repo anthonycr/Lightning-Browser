@@ -19,8 +19,12 @@ import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 
+import java.io.File;
+import java.io.IOException;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 
@@ -29,7 +33,12 @@ import acr.browser.lightning.utils.Utils;
  */
 public class DownloadHandler {
 
-    private static final String LOGTAG = "DLHandler";
+    private static final String TAG = DownloadHandler.class.getSimpleName();
+    private static final String COOKIE_REQUEST_HEADER = "Cookie";
+
+    public static final String DEFAULT_DOWNLOAD_PATH =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    .getPath();
 
 
     /**
@@ -153,7 +162,8 @@ public class DownloadHandler {
         } catch (Exception e) {
             // This only happens for very bad urls, we want to catch the
             // exception here
-            Log.e(LOGTAG, "Exception while trying to parse url '" + url + '\'', e);
+            Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
+            Utils.showSnackbar(activity, R.string.problem_download);
             return;
         }
 
@@ -172,15 +182,37 @@ public class DownloadHandler {
         // depending on mimetype?
 
         String location = BrowserApp.getAppComponent().getPreferenceManager().getDownloadDirectory();
-        request.setDestinationInExternalPublicDir(location, filename);
+        Uri downloadFolder;
+        if (location != null) {
+            location = addNecessarySlashes(location);
+            downloadFolder = Uri.parse(location);
+        } else {
+            location = addNecessarySlashes(DEFAULT_DOWNLOAD_PATH);
+            downloadFolder = Uri.parse(location);
+            BrowserApp.getAppComponent().getPreferenceManager().setDownloadDirectory(location);
+        }
+
+        File dir = new File(downloadFolder.getPath());
+        if (!dir.isDirectory() && !dir.mkdirs()) {
+            // Cannot make the directory
+            Utils.showSnackbar(activity, R.string.problem_location_download);
+            return;
+        }
+
+        if (!isWriteAccessAvailable(downloadFolder)) {
+            Utils.showSnackbar(activity, R.string.problem_location_download);
+            return;
+        }
+        request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
         // let this downloaded file be scanned by MediaScanner - so that it can
         // show up in Gallery app, for example.
+        request.setVisibleInDownloadsUi(true);
         request.allowScanningByMediaScanner();
         request.setDescription(webAddress.getHost());
         // XXX: Have to use the old url since the cookies were stored using the
         // old percent-encoded url.
         String cookies = CookieManager.getInstance().getCookie(url);
-        request.addRequestHeader("cookie", cookies);
+        request.addRequestHeader(COOKIE_REQUEST_HEADER, cookies);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         if (mimetype == null) {
             if (TextUtils.isEmpty(addressString)) {
@@ -192,7 +224,7 @@ public class DownloadHandler {
         } else {
             final DownloadManager manager = (DownloadManager) activity
                     .getSystemService(Context.DOWNLOAD_SERVICE);
-            new Thread("Browser download") {
+            new Thread() {
                 @Override
                 public void run() {
                     try {
@@ -201,11 +233,107 @@ public class DownloadHandler {
                         // Probably got a bad URL or something
                         e.printStackTrace();
                         Utils.showSnackbar(activity, R.string.cannot_download);
+                    } catch (SecurityException e) {
+                        // TODO write a download utility that downloads files rather than rely on the system
+                        // because the system can only handle Environment.getExternal... as a path
+                        Utils.showSnackbar(activity, R.string.problem_location_download);
                     }
                 }
             }.start();
-            Utils.showSnackbar(activity, R.string.download_pending);
+            Utils.showSnackbar(activity, activity.getString(R.string.download_pending) + ' ' + filename);
         }
 
     }
+
+    private static final String sFileName = "test";
+    private static final String sFileExtension = ".txt";
+
+    /**
+     * Determine whether there is write access in the given directory. Returns false if a
+     * file cannot be created in the directory or if the directory does not exist.
+     *
+     * @param directory the directory to check for write access
+     * @return returns true if the directory can be written to or is in a directory that can
+     * be written to. false if there is no write access.
+     */
+    public static boolean isWriteAccessAvailable(String directory) {
+        if (directory == null || directory.isEmpty()) {
+            return false;
+        }
+        String dir = addNecessarySlashes(directory);
+        dir = getFirstRealParentDirectory(dir);
+        File file = new File(dir + sFileName + sFileExtension);
+        for (int n = 0; n < 100; n++) {
+            if (!file.exists()) {
+                try {
+                    if (file.createNewFile()) {
+                        file.delete();
+                    }
+                    return true;
+                } catch (IOException ignored) {
+                    return false;
+                }
+            } else {
+                file = new File(dir + sFileName + '-' + n + sFileExtension);
+            }
+        }
+        return file.canWrite();
+    }
+
+    /**
+     * Returns the first parent directory of a directory that exists. This is useful
+     * for subdirectories that do not exist but their parents do.
+     *
+     * @param directory the directory to find the first existent parent
+     * @return the first existent parent
+     */
+    private static String getFirstRealParentDirectory(String directory) {
+        if (directory == null || directory.isEmpty()) {
+            return "/";
+        }
+        directory = addNecessarySlashes(directory);
+        File file = new File(directory);
+        if (!file.isDirectory()) {
+            int indexSlash = directory.lastIndexOf('/');
+            if (indexSlash > 0) {
+                String parent = directory.substring(0, indexSlash);
+                int previousIndex = parent.lastIndexOf('/');
+                if (previousIndex > 0) {
+                    return getFirstRealParentDirectory(parent.substring(0, previousIndex));
+                } else {
+                    return "/";
+                }
+            } else {
+                return "/";
+            }
+        } else {
+            return directory;
+        }
+    }
+
+    private static boolean isWriteAccessAvailable(Uri fileUri) {
+        File file = new File(fileUri.getPath());
+        try {
+            if (file.createNewFile()) {
+                file.delete();
+            }
+            return true;
+        } catch (IOException ignored) {
+            return false;
+        }
+        }
+
+    public static String addNecessarySlashes(String originalPath) {
+        if (originalPath == null || originalPath.length() == 0) {
+            return "/";
+    }
+        if (originalPath.charAt(originalPath.length() - 1) != '/') {
+            originalPath = originalPath + '/';
+        }
+        if (originalPath.charAt(0) != '/') {
+            originalPath = '/' + originalPath;
+        }
+        return originalPath;
+    }
+
 }

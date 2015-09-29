@@ -11,12 +11,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 import android.webkit.WebView;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 
@@ -77,13 +75,13 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbcookiesexit.setOnPreferenceChangeListener(this);
         cbwebstorageexit.setOnPreferenceChangeListener(this);
 
-        cblocation.setChecked(preferenceManager.getLocationEnabled());
-        cbsavepasswords.setChecked(preferenceManager.getSavePasswordsEnabled());
-        cbcacheexit.setChecked(preferenceManager.getClearCacheExit());
-        cbhistoryexit.setChecked(preferenceManager.getClearHistoryExitEnabled());
-        cbcookiesexit.setChecked(preferenceManager.getClearCookiesExitEnabled());
-        cb3cookies.setChecked(preferenceManager.getBlockThirdPartyCookiesEnabled());
-        cbwebstorageexit.setChecked(preferenceManager.getClearWebStorageExitEnabled());
+        cblocation.setChecked(mPreferenceManager.getLocationEnabled());
+        cbsavepasswords.setChecked(mPreferenceManager.getSavePasswordsEnabled());
+        cbcacheexit.setChecked(mPreferenceManager.getClearCacheExit());
+        cbhistoryexit.setChecked(mPreferenceManager.getClearHistoryExitEnabled());
+        cbcookiesexit.setChecked(mPreferenceManager.getClearCookiesExitEnabled());
+        cb3cookies.setChecked(mPreferenceManager.getBlockThirdPartyCookiesEnabled());
+        cbwebstorageexit.setChecked(mPreferenceManager.getClearWebStorageExitEnabled());
 
         cb3cookies.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
@@ -149,12 +147,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                                 clear.start();
                             }
                         })
-                .setNegativeButton(getResources().getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                            }
-                        }).show();
+                .setNegativeButton(getResources().getString(R.string.action_no), null).show();
     }
 
     private void clearCookiesDialog() {
@@ -174,12 +167,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                                 clear.start();
                             }
                         })
-                .setNegativeButton(getResources().getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                            }
-                        }).show();
+                .setNegativeButton(getResources().getString(R.string.action_no), null).show();
     }
 
     private void clearCache() {
@@ -209,31 +197,31 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_LOCATION:
-                preferenceManager.setLocationEnabled((Boolean) newValue);
+                mPreferenceManager.setLocationEnabled((Boolean) newValue);
                 cblocation.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_THIRDPCOOKIES:
-                preferenceManager.setBlockThirdPartyCookiesEnabled((Boolean) newValue);
+                mPreferenceManager.setBlockThirdPartyCookiesEnabled((Boolean) newValue);
                 cb3cookies.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_SAVEPASSWORD:
-                preferenceManager.setSavePasswordsEnabled((Boolean) newValue);
+                mPreferenceManager.setSavePasswordsEnabled((Boolean) newValue);
                 cbsavepasswords.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_CACHEEXIT:
-                preferenceManager.setClearCacheExit((Boolean) newValue);
+                mPreferenceManager.setClearCacheExit((Boolean) newValue);
                 cbcacheexit.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_HISTORYEXIT:
-                preferenceManager.setClearHistoryExitEnabled((Boolean) newValue);
+                mPreferenceManager.setClearHistoryExitEnabled((Boolean) newValue);
                 cbhistoryexit.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_COOKIEEXIT:
-                preferenceManager.setClearCookiesExitEnabled((Boolean) newValue);
+                mPreferenceManager.setClearCookiesExitEnabled((Boolean) newValue);
                 cbcookiesexit.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_WEBSTORAGEEXIT:
-                preferenceManager.setClearWebStorageExitEnabled((Boolean) newValue);
+                mPreferenceManager.setClearWebStorageExitEnabled((Boolean) newValue);
                 cbwebstorageexit.setChecked((Boolean) newValue);
                 return true;
             default:

@@ -34,6 +34,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -48,11 +49,12 @@ import acr.browser.lightning.utils.Utils;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
-    private final List<HistoryItem> mHistory = new ArrayList<>();
-    private final List<HistoryItem> mBookmarks = new ArrayList<>();
-    private final List<HistoryItem> mSuggestions = new ArrayList<>();
-    private final List<HistoryItem> mFilteredList = new ArrayList<>();
-    private final List<HistoryItem> mAllBookmarks = new ArrayList<>();
+    private static final Pattern SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
+    private final List<HistoryItem> mHistory = new ArrayList<>(5);
+    private final List<HistoryItem> mBookmarks = new ArrayList<>(5);
+    private final List<HistoryItem> mSuggestions = new ArrayList<>(5);
+    private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
+    private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
     private final Object mLock = new Object();
     private final Context mContext;
     private boolean mUseGoogle = true;
@@ -87,14 +89,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mSearchSubtitle = mContext.getString(R.string.suggestion);
         mDarkTheme = dark || incognito;
         mIncognito = incognito;
-        Thread delete = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                deleteOldCacheFiles();
-            }
-
-        });
+        Thread delete = new Thread(new ClearCacheRunnable());
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
@@ -102,7 +97,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         delete.start();
     }
 
-    private void deleteOldCacheFiles() {
+    private static void deleteOldCacheFiles() {
         File dir = new File(BrowserApp.getAppContext().getCacheDir().toString());
         String[] fileList = dir.list(new NameFilter());
         long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
@@ -114,7 +109,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-    private class NameFilter implements FilenameFilter {
+    private static class NameFilter implements FilenameFilter {
 
         @Override
         public boolean accept(File dir, String filename) {
@@ -215,6 +210,15 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return mFilter;
     }
 
+    private static class ClearCacheRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            deleteOldCacheFiles();
+        }
+
+    }
+
     private class SearchFilter extends Filter {
 
         @Override
@@ -225,7 +229,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             }
             String query = constraint.toString().toLowerCase(Locale.getDefault());
             if (mUseGoogle && !mIncognito && !mIsExecuting) {
-                new RetrieveSearchSuggestions().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
+                new RetrieveSearchSuggestions().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, query);
             }
 
             int counter = 0;
@@ -275,7 +279,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     }
 
-    private class SuggestionHolder {
+    private static class SuggestionHolder {
         ImageView mImage;
         TextView mTitle;
         TextView mUrl;
@@ -293,7 +297,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             List<HistoryItem> filter = new ArrayList<>();
             String query = arg0[0];
             try {
-                query = query.replace(" ", "+");
+                query = SPACE_PATTERN.matcher(query).replaceAll("+");
                 URLEncoder.encode(query, ENCODING);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -337,6 +341,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void onPostExecute(List<HistoryItem> result) {
+            mIsExecuting = false;
             synchronized (mSuggestions) {
                 mSuggestions.clear();
                 mSuggestions.addAll(result);
@@ -348,7 +353,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 mFilteredList.addAll(filtered);
                 notifyDataSetChanged();
             }
-            mIsExecuting = false;
         }
 
     }
@@ -356,6 +360,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     /**
      * This method downloads the search suggestions for the specific query.
      * NOTE: This is a blocking operation, do not run on the UI thread.
+     *
      * @param query the query to get suggestions for
      * @return the cache file containing the suggestions
      */
@@ -408,32 +413,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
         return connectivity.getActiveNetworkInfo();
     }
-
-// The old suggestions algorithm, leaving here just for reference
-//    private List<HistoryItem> getSuggestions() {
-//        List<HistoryItem> filteredList = new ArrayList<>();
-//
-//        int suggestionsSize = mSuggestions.size();
-//        int historySize = mHistory.size();
-//        int bookmarkSize = mBookmarks.size();
-//
-//        int maxSuggestions = (bookmarkSize + historySize < 3) ? (5 - bookmarkSize - historySize) : (bookmarkSize < 2) ? (4 - bookmarkSize) : (historySize < 1) ? 3 : 2;
-//        int maxHistory = (suggestionsSize + bookmarkSize < 4) ? (5 - suggestionsSize - bookmarkSize) : 1;
-//        int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize) : 2;
-//
-//        for (int n = 0; n < bookmarkSize && n < maxBookmarks; n++) {
-//            filteredList.add(mBookmarks.get(n));
-//        }
-//
-//        for (int n = 0; n < historySize && n < maxHistory; n++) {
-//            filteredList.add(mHistory.get(n));
-//        }
-//
-//        for (int n = 0; n < suggestionsSize && n < maxSuggestions; n++) {
-//            filteredList.add(mSuggestions.get(n));
-//        }
-//        return filteredList;
-//    }
 
     private List<HistoryItem> getFilteredList() {
         List<HistoryItem> list = new ArrayList<>(5);

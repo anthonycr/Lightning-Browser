@@ -3,6 +3,8 @@
  */
 package acr.browser.lightning.download;
 
+import android.support.annotation.NonNull;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,28 +13,28 @@ import static android.util.Patterns.GOOD_IRI_CHAR;
 
 /**
  * Web Address Parser
- * 
+ * <p/>
  * This is called WebAddress, rather than URL or URI, because it attempts to
  * parse the stuff that a user will actually type into a browser address widget.
- * 
+ * <p/>
  * Unlike java.net.uri, this parser will not choke on URIs missing schemes. It
  * will only throw a ParseException if the input is really hosed.
- * 
+ * <p/>
  * If given an https scheme but no port, fills in port
  */
-public class WebAddress {
+class WebAddress {
 
     private String mScheme;
     private String mHost;
     private int mPort;
     private String mPath;
     private String mAuthInfo;
-    static final int MATCH_GROUP_SCHEME = 1;
-    static final int MATCH_GROUP_AUTHORITY = 2;
-    static final int MATCH_GROUP_HOST = 3;
-    static final int MATCH_GROUP_PORT = 4;
-    static final int MATCH_GROUP_PATH = 5;
-    static final Pattern sAddressPattern = Pattern.compile(
+    private static final int MATCH_GROUP_SCHEME = 1;
+    private static final int MATCH_GROUP_AUTHORITY = 2;
+    private static final int MATCH_GROUP_HOST = 3;
+    private static final int MATCH_GROUP_PORT = 4;
+    private static final int MATCH_GROUP_PATH = 5;
+    private static final Pattern sAddressPattern = Pattern.compile(
     /* scheme */"(?:(http|https|file)\\:\\/\\/)?" +
     /* authority */"(?:([-A-Za-z0-9$_.+!*'(),;?&=]+(?:\\:[-A-Za-z0-9$_.+!*'(),;?&=]+)?)@)?" +
     /* host */"([" + GOOD_IRI_CHAR + "%_-][" + GOOD_IRI_CHAR + "%_\\.-]*|\\[[0-9a-fA-F:\\.]+\\])?" +
@@ -43,7 +45,7 @@ public class WebAddress {
     /**
      * Parses given URI-like string.
      */
-    public WebAddress(String address) {
+    public WebAddress(String address) throws IllegalArgumentException {
 
         if (address == null) {
             throw new IllegalArgumentException("address can't be null");
@@ -134,7 +136,7 @@ public class WebAddress {
         return mScheme;
     }
 
-    public void setHost(String host) {
+    public void setHost(@NonNull String host) {
         mHost = host;
     }
 

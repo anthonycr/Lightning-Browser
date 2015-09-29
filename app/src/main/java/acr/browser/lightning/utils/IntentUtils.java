@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import acr.browser.lightning.controller.BrowserController;
-
 public class IntentUtils {
 
     private final Context mActivity;
@@ -29,8 +27,8 @@ public class IntentUtils {
             "(?:http|https|file):\\/\\/" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
             + ')' + "(.*)");
 
-    public IntentUtils(Context context) {
-        mActivity = context.getApplicationContext();
+    public IntentUtils(Activity activity) {
+        mActivity = activity;
     }
 
     public boolean startActivityForUrl(WebView tab, String url) {

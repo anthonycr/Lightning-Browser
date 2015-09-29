@@ -25,9 +25,9 @@ import acr.browser.lightning.utils.Utils;
  * just clicks on the link, we will do the same steps of correcting the mimetype
  * down in android.os.webkit.LoadListener rather than handling it here.
  */
-public class FetchUrlMimeType extends Thread {
+class FetchUrlMimeType extends Thread {
 
-    private final Context mContext;
+    private final Activity mActivity;
 
     private final DownloadManager.Request mRequest;
 
@@ -39,12 +39,11 @@ public class FetchUrlMimeType extends Thread {
 
     public FetchUrlMimeType(Activity activity, DownloadManager.Request request, String uri,
                             String cookies, String userAgent) {
-        mContext = activity.getApplicationContext();
+        mActivity = activity;
         mRequest = request;
         mUri = uri;
         mCookies = cookies;
         mUserAgent = userAgent;
-        Utils.showSnackbar(activity, R.string.download_pending);
     }
 
     @Override
@@ -87,6 +86,7 @@ public class FetchUrlMimeType extends Thread {
                 connection.disconnect();
         }
 
+        String filename = "";
         if (mimeType != null) {
             if (mimeType.equalsIgnoreCase("text/plain")
                     || mimeType.equalsIgnoreCase("application/octet-stream")) {
@@ -96,13 +96,14 @@ public class FetchUrlMimeType extends Thread {
                     mRequest.setMimeType(newMimeType);
                 }
             }
-            String filename = URLUtil.guessFileName(mUri, contentDisposition, mimeType);
+            filename = URLUtil.guessFileName(mUri, contentDisposition, mimeType);
             mRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
         }
 
         // Start the download
-        DownloadManager manager = (DownloadManager) mContext
+        DownloadManager manager = (DownloadManager) mActivity
                 .getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(mRequest);
+        Utils.showSnackbar(mActivity, mActivity.getString(R.string.download_pending) + ' ' + filename);
     }
 }

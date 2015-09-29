@@ -16,9 +16,9 @@ import acr.browser.lightning.utils.Utils;
 
 public class StartPage {
 
-    public static final String FILENAME = "homepage.html";
+    private static final String FILENAME = "homepage.html";
 
-    public static final String HEAD = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
+    private static final String HEAD = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
             + "<head>"
             + "<meta content=\"en-us\" http-equiv=\"Content-Language\" />"
             + "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />"
@@ -41,11 +41,11 @@ public class StartPage {
             + "font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;"
             + "border-radius: 2px;}</style><body> <div class=\"outer\"><div class=\"middle\"><div class=\"inner\"><img class=\"smaller\" src=\"";
 
-    public static final String MIDDLE = "\" ></br></br><form onsubmit=\"return search()\" class=\"search_bar\">"
+    private static final String MIDDLE = "\" ></br></br><form onsubmit=\"return search()\" class=\"search_bar\">"
             + "<input type=\"submit\" id=\"search_submit\" value=\"Search\" ><span><input class=\"search\" type=\"text\" value=\"\" id=\"search_input\" >"
             + "</span></form></br></br></div></div></div><script type=\"text/javascript\">function search(){if(document.getElementById(\"search_input\").value != \"\"){window.location.href = \"";
 
-    public static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
+    private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
     /**
      * This method builds the homepage and returns the local URL to be loaded

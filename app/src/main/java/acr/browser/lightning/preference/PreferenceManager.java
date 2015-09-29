@@ -2,13 +2,13 @@ package acr.browser.lightning.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.download.DownloadHandler;
 
 @Singleton
 public class PreferenceManager {
@@ -19,7 +19,7 @@ public class PreferenceManager {
         public static final String BLOCK_IMAGES = "blockimages";
         public static final String CLEAR_CACHE_EXIT = "cache";
         public static final String COOKIES = "cookies";
-        public static final String DOWNLOAD_DIRECTORY = "download";
+        public static final String DOWNLOAD_DIRECTORY = "downloadLocation";
         public static final String FULL_SCREEN = "fullscreen";
         public static final String HIDE_STATUS_BAR = "hidestatus";
         public static final String HOMEPAGE = "home";
@@ -115,7 +115,7 @@ public class PreferenceManager {
     }
 
     public String getDownloadDirectory() {
-        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, Environment.DIRECTORY_DOWNLOADS);
+        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, DownloadHandler.DEFAULT_DOWNLOAD_PATH);
     }
 
     public int getFlashSupport() {
@@ -242,7 +242,7 @@ public class PreferenceManager {
         return mPrefs.getString(Name.TEXT_ENCODING, Constants.DEFAULT_ENCODING);
     }
 
-    public boolean getShowTabsInDrawer(boolean defaultValue){
+    public boolean getShowTabsInDrawer(boolean defaultValue) {
         return mPrefs.getBoolean(Name.SHOW_TABS_IN_DRAWER, defaultValue);
     }
 
@@ -258,7 +258,7 @@ public class PreferenceManager {
         mPrefs.edit().putString(name, value).apply();
     }
 
-    public void setShowTabsInDrawer(boolean show){
+    public void setShowTabsInDrawer(boolean show) {
         putBoolean(Name.SHOW_TABS_IN_DRAWER, show);
     }
 

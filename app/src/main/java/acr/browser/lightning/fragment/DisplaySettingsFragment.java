@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.preference.PreferenceManager;
 
 public class DisplaySettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -57,7 +55,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
     private void initPrefs() {
         // mPreferences storage
         mThemeOptions = this.getResources().getStringArray(R.array.themes);
-        mCurrentTheme = preferenceManager.getUseTheme();
+        mCurrentTheme = mPreferenceManager.getUseTheme();
 
         theme = findPreference(SETTINGS_THEME);
         Preference textsize = findPreference(SETTINGS_TEXTSIZE);
@@ -75,13 +73,13 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         cboverview.setOnPreferenceChangeListener(this);
         cbreflow.setOnPreferenceChangeListener(this);
 
-        cbstatus.setChecked(preferenceManager.getHideStatusBarEnabled());
-        cbfullscreen.setChecked(preferenceManager.getFullScreenEnabled());
-        cbviewport.setChecked(preferenceManager.getUseWideViewportEnabled());
-        cboverview.setChecked(preferenceManager.getOverviewModeEnabled());
-        cbreflow.setChecked(preferenceManager.getTextReflowEnabled());
+        cbstatus.setChecked(mPreferenceManager.getHideStatusBarEnabled());
+        cbfullscreen.setChecked(mPreferenceManager.getFullScreenEnabled());
+        cbviewport.setChecked(mPreferenceManager.getUseWideViewportEnabled());
+        cboverview.setChecked(mPreferenceManager.getOverviewModeEnabled());
+        cbreflow.setChecked(mPreferenceManager.getTextReflowEnabled());
 
-        theme.setSummary(mThemeOptions[preferenceManager.getUseTheme()]);
+        theme.setSummary(mThemeOptions[mPreferenceManager.getUseTheme()]);
     }
 
     @Override
@@ -103,23 +101,23 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_HIDESTATUSBAR:
-                preferenceManager.setHideStatusBarEnabled((Boolean) newValue);
+                mPreferenceManager.setHideStatusBarEnabled((Boolean) newValue);
                 cbstatus.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_FULLSCREEN:
-                preferenceManager.setFullScreenEnabled((Boolean) newValue);
+                mPreferenceManager.setFullScreenEnabled((Boolean) newValue);
                 cbfullscreen.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_VIEWPORT:
-                preferenceManager.setUseWideViewportEnabled((Boolean) newValue);
+                mPreferenceManager.setUseWideViewportEnabled((Boolean) newValue);
                 cbviewport.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_OVERVIEWMODE:
-                preferenceManager.setOverviewModeEnabled((Boolean) newValue);
+                mPreferenceManager.setOverviewModeEnabled((Boolean) newValue);
                 cboverview.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_REFLOW:
-                preferenceManager.setTextReflowEnabled((Boolean) newValue);
+                mPreferenceManager.setTextReflowEnabled((Boolean) newValue);
                 cbreflow.setChecked((Boolean) newValue);
                 return true;
             default:
@@ -137,32 +135,17 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         sample.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT));
         sample.setGravity(Gravity.CENTER_HORIZONTAL);
         view.addView(sample);
-        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar view, int size, boolean user) {
-                sample.setTextSize(getTextSize(size));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar arg0) {
-            }
-
-        });
+        bar.setOnSeekBarChangeListener(new TextSeekBarListener(sample));
         final int MAX = 5;
         bar.setMax(MAX);
-        bar.setProgress(MAX - preferenceManager.getTextSize());
+        bar.setProgress(MAX - mPreferenceManager.getTextSize());
         builder.setView(view);
         builder.setTitle(R.string.title_text_size);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                preferenceManager.setTextSize(MAX - bar.getProgress());
+                mPreferenceManager.setTextSize(MAX - bar.getProgress());
             }
 
         });
@@ -192,12 +175,12 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.theme));
 
-        int n = preferenceManager.getUseTheme();
+        int n = mPreferenceManager.getUseTheme();
         picker.setSingleChoiceItems(mThemeOptions, n, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                preferenceManager.setUseTheme(which);
+                mPreferenceManager.setUseTheme(which);
                 if (which < mThemeOptions.length) {
                     theme.setSummary(mThemeOptions[which]);
                 }
@@ -208,7 +191,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mCurrentTheme != preferenceManager.getUseTheme()) {
+                        if (mCurrentTheme != mPreferenceManager.getUseTheme()) {
                             getActivity().onBackPressed();
                         }
                     }
@@ -216,11 +199,32 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         picker.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                if (mCurrentTheme != preferenceManager.getUseTheme()) {
+                if (mCurrentTheme != mPreferenceManager.getUseTheme()) {
                     getActivity().onBackPressed();
                 }
             }
         });
         picker.show();
+    }
+
+    private static class TextSeekBarListener implements SeekBar.OnSeekBarChangeListener {
+
+        private final TextView sample;
+
+        public TextSeekBarListener(TextView sample) {this.sample = sample;}
+
+        @Override
+        public void onProgressChanged(SeekBar view, int size, boolean user) {
+            this.sample.setTextSize(getTextSize(size));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar arg0) {
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar arg0) {
+        }
+
     }
 }

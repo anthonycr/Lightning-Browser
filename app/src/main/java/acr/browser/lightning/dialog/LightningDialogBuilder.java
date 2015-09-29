@@ -114,7 +114,7 @@ public class LightningDialogBuilder {
                 .show();
     }
 
-    public void showEditBookmarkDialog(final Context context, final HistoryItem item) {
+    private void showEditBookmarkDialog(final Context context, final HistoryItem item) {
         final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(context);
         editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
         final View dialogLayout = View.inflate(context, R.layout.dialog_edit_bookmark, null);
@@ -178,7 +178,7 @@ public class LightningDialogBuilder {
                 .show();
     }
 
-    public void showRenameFolderDialog(final Context context, final HistoryItem item) {
+    private void showRenameFolderDialog(final Context context, final HistoryItem item) {
         // assert item.isFolder();
         final AlertDialog.Builder editFolderDialog = new AlertDialog.Builder(context);
         editFolderDialog.setTitle(R.string.title_rename_folder);

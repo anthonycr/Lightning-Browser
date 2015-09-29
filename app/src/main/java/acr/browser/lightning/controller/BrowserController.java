@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.controller;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Message;
@@ -37,8 +36,6 @@ public interface BrowserController {
     void onCreateWindow(Message resultMsg);
 
     void onCloseWindow(LightningView view);
-
-    Activity getActivity();
 
     void hideActionBar();
 

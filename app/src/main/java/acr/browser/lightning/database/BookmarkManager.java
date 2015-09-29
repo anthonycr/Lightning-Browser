@@ -66,7 +66,6 @@ public class BookmarkManager {
     }
 
     /**
-     *
      * @return true if the BookmarkManager was initialized, false otherwise
      */
     public boolean isReady() {
@@ -75,8 +74,9 @@ public class BookmarkManager {
 
     /**
      * Look for bookmark using the url
-     * @param url   the lookup url
-     * @return  the bookmark as an {@link HistoryItem} or null
+     *
+     * @param url the lookup url
+     * @return the bookmark as an {@link HistoryItem} or null
      */
     @Nullable
     public HistoryItem findBookmarkForUrl(final String url) {
@@ -87,7 +87,7 @@ public class BookmarkManager {
      * Initialize the BookmarkManager, it's a one-time operation and will be executed asynchronously.
      * When done, mReady flag will been set to true.
      */
-    private class BookmarkInitializer implements Runnable{
+    private class BookmarkInitializer implements Runnable {
         private final Context mContext;
 
         public BookmarkInitializer(Context context) {
@@ -101,15 +101,14 @@ public class BookmarkManager {
                 final File bookmarksFile = new File(mFilesDir, FILE_BOOKMARKS);
 
                 BufferedReader bookmarksReader = null;
+                InputStream inputStream = null;
                 try {
-                    final InputStream inputStream;
                     if (bookmarksFile.exists() && bookmarksFile.isFile()) {
                         inputStream = new FileInputStream(bookmarksFile);
                     } else {
                         inputStream = mContext.getResources().openRawResource(R.raw.default_bookmarks);
                     }
-                    bookmarksReader =
-                            new BufferedReader(new InputStreamReader(inputStream));
+                    bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
                     String line;
                     while ((line = bookmarksReader.readLine()) != null) {
                         try {
@@ -130,6 +129,7 @@ public class BookmarkManager {
                     Log.e(TAG, "Error reading the bookmarks file", e);
                 } finally {
                     Utils.close(bookmarksReader);
+                    Utils.close(inputStream);
                 }
                 mBookmarksMap = bookmarks;
                 mReady = true;
@@ -195,8 +195,8 @@ public class BookmarkManager {
      * This method adds the the HistoryItem item to permanent bookmark storage.<br>
      * This operation is blocking if the manager is still not ready.
      *
-     * @param item  the item to add
-     * @return  It returns true if the operation was successful.
+     * @param item the item to add
+     * @return It returns true if the operation was successful.
      */
     public synchronized boolean addBookmark(@NonNull HistoryItem item) {
         final String url = item.getUrl();
@@ -213,7 +213,7 @@ public class BookmarkManager {
      *
      * @param list the list of HistoryItems to add to bookmarks
      */
-    private synchronized void addBookmarkList(List<HistoryItem> list) {
+    public synchronized void addBookmarkList(List<HistoryItem> list) {
         if (list == null || list.isEmpty()) {
             return;
         }
@@ -251,7 +251,7 @@ public class BookmarkManager {
         if (newName.isEmpty()) {
             return;
         }
-        for (HistoryItem item: mBookmarksMap.values()) {
+        for (HistoryItem item : mBookmarksMap.values()) {
             if (item.getFolder().equals(oldName)) {
                 item.setFolder(newName);
             } else if (item.isFolder() && item.getTitle().equals(oldName)) {
@@ -269,7 +269,7 @@ public class BookmarkManager {
      */
     public synchronized void deleteFolder(@NonNull String name) {
         final Map<String, HistoryItem> bookmarks = new HashMap<>();
-        for (HistoryItem item: mBookmarksMap.values()) {
+        for (HistoryItem item : mBookmarksMap.values()) {
             final String url = item.getUrl();
             if (item.isFolder()) {
                 if (!item.getTitle().equals(name)) {
@@ -357,8 +357,7 @@ public class BookmarkManager {
      * This is a disk-bound operation and should not be
      * done very frequently.
      *
-     * @param sort  force to sort the returned bookmarkList
-     *
+     * @param sort force to sort the returned bookmarkList
      * @return returns a list of bookmarks that can be sorted
      */
     public synchronized List<HistoryItem> getAllBookmarks(boolean sort) {
@@ -385,7 +384,7 @@ public class BookmarkManager {
             folder = "";
         }
         mCurrentFolder = folder;
-        for (HistoryItem item: mBookmarksMap.values()) {
+        for (HistoryItem item : mBookmarksMap.values()) {
             if (item.getFolder().equals(folder))
                 bookmarks.add(item);
         }
@@ -405,13 +404,22 @@ public class BookmarkManager {
     }
 
     /**
+     * Returns the current folder
+     *
+     * @return the current folder
+     */
+    public String getCurrentFolder() {
+        return mCurrentFolder;
+    }
+
+    /**
      * Method is used internally for searching the bookmarks
      *
      * @return a sorted map of all bookmarks, useful for seeing if a bookmark exists
      */
     private Set<String> getBookmarkUrls(List<HistoryItem> list) {
         Set<String> set = new HashSet<>();
-        for (HistoryItem item: mBookmarksMap.values()) {
+        for (HistoryItem item : mBookmarksMap.values()) {
             if (!item.isFolder())
                 set.add(item.getUrl());
         }
@@ -425,9 +433,9 @@ public class BookmarkManager {
      *
      * @return a list of all folders
      */
-    public synchronized List<HistoryItem> getFolders(boolean sort) {
+    private synchronized List<HistoryItem> getFolders(boolean sort) {
         final HashMap<String, HistoryItem> folders = new HashMap<>();
-        for (HistoryItem item: mBookmarksMap.values()) {
+        for (HistoryItem item : mBookmarksMap.values()) {
             final String folderName = item.getFolder();
             if (folderName != null && !folderName.isEmpty() && !folders.containsKey(folderName)) {
                 final HistoryItem folder = new HistoryItem();
@@ -453,7 +461,7 @@ public class BookmarkManager {
      */
     public synchronized List<String> getFolderTitles() {
         final Set<String> folders = new HashSet<>();
-        for (HistoryItem item: mBookmarksMap.values()) {
+        for (HistoryItem item : mBookmarksMap.values()) {
             final String folderName = item.getFolder();
             if (folderName != null && !folderName.isEmpty()) {
                 folders.add(folderName);

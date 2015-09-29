@@ -8,5 +8,8 @@
         <Preference
             android:key="import_bookmark"
             android:title="@string/import_backup" />
+        <Preference
+            android:key="import_browser"
+            android:title="@string/importbookmarks" />
     </PreferenceCategory>
 </PreferenceScreen>

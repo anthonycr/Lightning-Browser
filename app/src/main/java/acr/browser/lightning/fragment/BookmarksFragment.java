@@ -3,7 +3,6 @@ package acr.browser.lightning.fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -38,13 +37,14 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.async.AsyncExecutor;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.DownloadImageTask;
+import acr.browser.lightning.async.ImageDownloadTask;
 import acr.browser.lightning.utils.ThemeUtils;
 
 /**
@@ -58,14 +58,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     // Event bus
     @Inject
-    Bus eventBus;
+    Bus mEventBus;
 
     // Dialog builder
     @Inject
-    LightningDialogBuilder bookmarksDialogBuilder;
+    LightningDialogBuilder mBookmarksDialogBuilder;
 
     @Inject
-    PreferenceManager preferenceManager;
+    PreferenceManager mPreferenceManager;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -81,10 +81,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private ImageView mBookmarkTitleImage, mBookmarkImage;
 
     // Colors
-    private int mIconColor;
+    private int mIconColor, mScrollIndex;
 
     // Init asynchronously the bookmark manager
-    private final Runnable initBookmarkManager = new Runnable() {
+    private final Runnable mInitBookmarkManager = new Runnable() {
         @Override
         public void run() {
             final Context context = getContext();
@@ -101,20 +101,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     // Handle bookmark click
-    private final OnItemClickListener itemClickListener = new OnItemClickListener() {
+    private final OnItemClickListener mItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
             if (item.isFolder()) {
-                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true),
-                        true);
+                mScrollIndex = mBookmarksListView.getFirstVisiblePosition();
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
-                eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(item.getUrl()));
+                mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(item.getUrl()));
             }
         }
     };
 
-    private final OnItemLongClickListener itemLongClickListener = new OnItemLongClickListener() {
+    private final OnItemLongClickListener mItemLongClickListener = new OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
@@ -123,56 +123,62 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
         mBookmarksListView = (ListView) view.findViewById(R.id.right_drawer_list);
-        mBookmarksListView.setOnItemClickListener(itemClickListener);
-        mBookmarksListView.setOnItemLongClickListener(itemLongClickListener);
+        mBookmarksListView.setOnItemClickListener(mItemClickListener);
+        mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage = (ImageView) view.findViewById(R.id.starIcon);
         mBookmarkImage = (ImageView) view.findViewById(R.id.icon_star);
         final View backView = view.findViewById(R.id.bookmark_back_button);
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBookmarkManager == null)
-                    return;
+                if (mBookmarkManager == null) return;
                 if (!mBookmarkManager.isRootFolder()) {
                     setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+                    mBookmarksListView.setSelection(mScrollIndex);
                 }
             }
         });
+        setupNavigationButton(view, R.id.action_add_bookmark, R.id.icon_star);
 
         // Must be called here, only here we have a reference to the ListView
-        new Thread(initBookmarkManager).run();
+        new Thread(mInitBookmarkManager).run();
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        // TODO this code depend way too much on BrowserActivity
+        // TODO remove dependency on BrowserActivity
         super.onActivityCreated(savedInstanceState);
         final BrowserActivity activity = (BrowserActivity) getActivity();
-        boolean darkTheme = preferenceManager.getUseTheme() != 0 || activity.isIncognito();
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || ((BrowserActivity) activity).isIncognito();
         mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
                 ThemeUtils.getIconLightThemeColor(activity);
-        setupFrameLayoutButton(getView(), R.id.action_add_bookmark, R.id.icon_star);
         mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        eventBus.register(this);
+        mEventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        eventBus.unregister(this);
+        mEventBus.unregister(this);
     }
 
     @Subscribe
@@ -182,8 +188,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mBookmarks.add(item);
             Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
             mBookmarkAdapter.notifyDataSetChanged();
-            eventBus
-                    .post(new BookmarkEvents.Added(item));
+            mEventBus.post(new BookmarkEvents.Added(item));
             updateBookmarkIndicator(event.url);
         }
     }
@@ -195,12 +200,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Subscribe
     public void bookmarkChanged(BookmarkEvents.BookmarkChanged event) {
-        // final int size = mBookmarks.size();
-        mBookmarks.remove(event.oldBookmark);
-        // assert mBookmarks.size() < size;
-        mBookmarks.add(event.newBookmark);
-        mBookmarkAdapter.notifyDataSetChanged();
-        Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
+        String folder = mBookmarkManager.getCurrentFolder();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
     private void updateBookmarkIndicator(final String url) {
@@ -216,19 +217,21 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Subscribe
     public void userPressedBack(final BrowserEvents.UserPressedBack event) {
         if (mBookmarkManager.isRootFolder()) {
-            eventBus
-                    .post(new BookmarkEvents.CloseBookmarks());
+            mEventBus.post(new BookmarkEvents.CloseBookmarks());
         } else {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+            mBookmarksListView.setSelection(mScrollIndex);
         }
     }
 
     @Subscribe
     public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
-        // final int size = mBookmarks.size();
         mBookmarks.remove(event.item);
-        // assert mBookmarks.size() < size;
+        if (event.item.isFolder()) {
+            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+        } else {
         mBookmarkAdapter.notifyDataSetChanged();
+    }
     }
 
     private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
@@ -236,10 +239,11 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mBookmarks.addAll(items);
         mBookmarkAdapter.notifyDataSetChanged();
         final int resource;
-        if (mBookmarkManager.isRootFolder())
+        if (mBookmarkManager.isRootFolder()) {
             resource = R.drawable.ic_action_star;
-        else
+        } else {
             resource = R.drawable.ic_action_back;
+        }
 
         final Animation startRotation = new Animation() {
             @Override
@@ -280,8 +284,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    // TODO this is basically a copy/paste from BrowserActivity, should be changed
-    private void setupFrameLayoutButton(@NonNull View view, @IdRes int buttonId, @IdRes int imageId) {
+    private void setupNavigationButton(@NonNull View view, @IdRes int buttonId, @IdRes int imageId) {
         FrameLayout frameButton = (FrameLayout) view.findViewById(buttonId);
         frameButton.setOnClickListener(this);
         frameButton.setOnLongClickListener(this);
@@ -291,9 +294,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private void handleLongPress(final HistoryItem item, final int position) {
         if (item.isFolder()) {
-            bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
+            mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            bookmarksDialogBuilder.showLongPressLinkDialog(getContext(), item.getUrl());
+            mBookmarksDialogBuilder.showLongPressLinkDialog(getContext(), item.getUrl());
         }
     }
 
@@ -301,7 +304,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_add_bookmark:
-                eventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                mEventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
                 break;
             default:
                 break;
@@ -343,19 +346,19 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
             HistoryItem web = mBookmarks.get(position);
             holder.txtTitle.setText(web.getTitle());
-            holder.favicon.setImageBitmap(mWebpageBitmap);
             if (web.isFolder()) {
                 holder.favicon.setImageBitmap(mFolderBitmap);
             } else if (web.getBitmap() == null) {
-                new DownloadImageTask(holder.favicon, web, mWebpageBitmap)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                holder.favicon.setImageBitmap(mWebpageBitmap);
+                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap)
+                        .executeOnExecutor(AsyncExecutor.getInstance());
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }
             return row;
         }
 
-        class BookmarkViewHolder {
+        private class BookmarkViewHolder {
             TextView txtTitle;
             ImageView favicon;
         }

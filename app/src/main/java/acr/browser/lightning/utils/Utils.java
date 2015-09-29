@@ -18,10 +18,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -151,7 +148,7 @@ public final class Utils {
         }
     }
 
-    public static boolean deleteDir(File dir) {
+    private static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
             for (String aChildren : children) {
@@ -259,14 +256,6 @@ public final class Utils {
             closeable.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public static Drawable getDrawable(Context context, @DrawableRes int res) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return context.getDrawable(res);
-        } else {
-            return context.getResources().getDrawable(res);
         }
     }
 

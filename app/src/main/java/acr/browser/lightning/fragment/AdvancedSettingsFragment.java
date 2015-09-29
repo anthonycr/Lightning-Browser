@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 
 import java.util.Arrays;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.preference.PreferenceManager;
 
 public class AdvancedSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -62,7 +60,7 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
         cbcookiesInkognito.setOnPreferenceChangeListener(this);
         cbrestoreTabs.setOnPreferenceChangeListener(this);
 
-        switch (preferenceManager.getRenderingMode()) {
+        switch (mPreferenceManager.getRenderingMode()) {
             case 0:
                 renderingmode.setSummary(getString(R.string.name_normal));
                 break;
@@ -77,16 +75,16 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                 break;
         }
 
-        textEncoding.setSummary(preferenceManager.getTextEncoding());
+        textEncoding.setSummary(mPreferenceManager.getTextEncoding());
 
         mUrlOptions = getResources().getStringArray(R.array.url_content_array);
-        int option = preferenceManager.getUrlBoxContentChoice();
+        int option = mPreferenceManager.getUrlBoxContentChoice();
         urlcontent.setSummary(mUrlOptions[option]);
 
-        cbAllowPopups.setChecked(preferenceManager.getPopupsEnabled());
-        cbenablecookies.setChecked(preferenceManager.getCookiesEnabled());
-        cbcookiesInkognito.setChecked(preferenceManager.getIncognitoCookiesEnabled());
-        cbrestoreTabs.setChecked(preferenceManager.getRestoreLostTabsEnabled());
+        cbAllowPopups.setChecked(mPreferenceManager.getPopupsEnabled());
+        cbenablecookies.setChecked(mPreferenceManager.getCookiesEnabled());
+        cbcookiesInkognito.setChecked(mPreferenceManager.getIncognitoCookiesEnabled());
+        cbrestoreTabs.setChecked(mPreferenceManager.getRestoreLostTabsEnabled());
     }
 
     @Override
@@ -111,19 +109,19 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_NEWWINDOW:
-                preferenceManager.setPopupsEnabled((Boolean) newValue);
+                mPreferenceManager.setPopupsEnabled((Boolean) newValue);
                 cbAllowPopups.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_ENABLECOOKIES:
-                preferenceManager.setCookiesEnabled((Boolean) newValue);
+                mPreferenceManager.setCookiesEnabled((Boolean) newValue);
                 cbenablecookies.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_COOKIESINKOGNITO:
-                preferenceManager.setIncognitoCookiesEnabled((Boolean) newValue);
+                mPreferenceManager.setIncognitoCookiesEnabled((Boolean) newValue);
                 cbcookiesInkognito.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_RESTORETABS:
-                preferenceManager.setRestoreLostTabsEnabled((Boolean) newValue);
+                mPreferenceManager.setRestoreLostTabsEnabled((Boolean) newValue);
                 cbrestoreTabs.setChecked((Boolean) newValue);
                 return true;
             default:
@@ -139,12 +137,12 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                 mActivity.getString(R.string.name_grayscale),
                 mActivity.getString(R.string.name_inverted_grayscale)};
 
-        int n = preferenceManager.getRenderingMode();
+        int n = mPreferenceManager.getRenderingMode();
 
         picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                preferenceManager.setRenderingMode(which);
+                mPreferenceManager.setRenderingMode(which);
                 switch (which) {
                     case 0:
                         renderingmode.setSummary(getString(R.string.name_normal));
@@ -161,13 +159,7 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -175,22 +167,16 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.text_encoding));
         final List<String> textEncodingList = Arrays.asList(Constants.TEXT_ENCODINGS);
-        int n = textEncodingList.indexOf(preferenceManager.getTextEncoding());
+        int n = textEncodingList.indexOf(mPreferenceManager.getTextEncoding());
 
         picker.setSingleChoiceItems(Constants.TEXT_ENCODINGS, n, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                preferenceManager.setTextEncoding(Constants.TEXT_ENCODINGS[which]);
+                mPreferenceManager.setTextEncoding(Constants.TEXT_ENCODINGS[which]);
                 textEncoding.setSummary(Constants.TEXT_ENCODINGS[which]);
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 
@@ -198,24 +184,18 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.url_contents));
 
-        int n = preferenceManager.getUrlBoxContentChoice();
+        int n = mPreferenceManager.getUrlBoxContentChoice();
 
         picker.setSingleChoiceItems(mUrlOptions, n, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                preferenceManager.setUrlBoxContentChoice(which);
+                mPreferenceManager.setUrlBoxContentChoice(which);
                 if (which < mUrlOptions.length) {
                     urlcontent.setSummary(mUrlOptions[which]);
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
         picker.show();
     }
 }

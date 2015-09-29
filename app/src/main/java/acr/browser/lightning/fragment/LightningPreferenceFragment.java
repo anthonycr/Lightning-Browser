@@ -17,7 +17,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 public class LightningPreferenceFragment extends PreferenceFragment {
 
     @Inject
-    PreferenceManager preferenceManager;
+    PreferenceManager mPreferenceManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
