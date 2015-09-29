@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionName "4.2.1a"
+        versionName "4.2.2a"
     }
     sourceSets {
         lightningPlus.setRoot('src/LightningPlus')
@@ -30,12 +30,12 @@ android {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
             applicationId "acr.browser.lightning"
-            versionCode 82
+            versionCode 83
         }
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
             applicationId "acr.browser.barebones"
-            versionCode 83
+            versionCode 84
         }
     }
     lintOptions {
