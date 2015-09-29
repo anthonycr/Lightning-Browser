@@ -7,6 +7,7 @@ import com.squareup.otto.Bus;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
@@ -53,4 +54,6 @@ public interface AppComponent {
     Context getApplicationContext();
 
     void inject(LightningView lightningView);
+
+    void inject(ThemableBrowserActivity activity);
 }

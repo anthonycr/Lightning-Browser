@@ -191,8 +191,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject
     TabsManager tabsManager;
 
-    @Inject
-    PreferenceManager mPreferences;
+    // Preference manager was moved on ThemeableBrowserActivity
 
     @Inject
     HistoryDatabase mHistoryDatabase;

@@ -17,9 +17,9 @@ public final class BrowserEvents {
      * result is a new bookmark added.
      */
     public static class AddBookmark {
-        public final java.lang.String title, url;
+        public final String title, url;
 
-        public AddBookmark(final java.lang.String title, final java.lang.String url) {
+        public AddBookmark(final String title, final String url) {
             this.title = title;
             this.url = url;
         }
@@ -30,9 +30,9 @@ public final class BrowserEvents {
      * {@link acr.browser.lightning.fragment.BookmarksFragment} interface.
      */
     public static class CurrentPageUrl {
-        public final java.lang.String url;
+        public final String url;
 
-        public CurrentPageUrl(final java.lang.String url) {
+        public CurrentPageUrl(final String url) {
             this.url = url;
         }
     }
@@ -57,11 +57,11 @@ public final class BrowserEvents {
      * Notify the Browser to display a SnackBar in the main activity
      */
     public static class ShowSnackBarMessage {
-        public final java.lang.String message;
+        public final String message;
         @StringRes
         public final int stringRes;
 
-        public ShowSnackBarMessage(final java.lang.String message) {
+        public ShowSnackBarMessage(final String message) {
             this.message = message;
             this.stringRes = -1;
         }
