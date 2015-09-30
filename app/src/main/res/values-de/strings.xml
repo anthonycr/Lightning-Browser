@@ -123,7 +123,6 @@
     <string name="licenses">Open Source-Lizenzen</string>
     <string name="suggestion">Suche nach</string>
     <string name="block_ads">Werbung blockieren</string>
-    <string name="message_untrusted_certificate">Das Zertifikat dieser Webseite ist nicht vertrauenswürdig. Trotzdem fortsetzen?</string>
     <string name="title_form_resubmission">Formularneuzustellung</string>
     <string name="message_form_resubmission">Daten erneut senden?</string>
     <string name="message_location">\nMeine Position verwenden?</string>

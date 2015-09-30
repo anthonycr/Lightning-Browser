@@ -120,7 +120,6 @@
     <string name="licenses">オープンソースライセンス</string>
     <string name="suggestion">Search for</string>
     <string name="block_ads">広告ブロック</string>
-    <string name="message_untrusted_certificate">このページに信用性の証明書がありません。読み込みを続けますか?</string>
     <string name="title_form_resubmission">フォームの再送</string>
     <string name="message_form_resubmission">データを再送しますか?</string>
     <string name="message_location">\n位置情報の提供を許可しますか?</string>

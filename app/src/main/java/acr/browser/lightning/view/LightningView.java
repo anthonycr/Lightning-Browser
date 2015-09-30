@@ -54,6 +54,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
@@ -774,11 +776,47 @@ public class LightningView {
             }
         }
 
+        private List<Integer> getAllSslErrorMessageCodes(SslError error) {
+
+            List<Integer> errorCodeMessageCodes = new ArrayList<>();
+
+            if (error.hasError(SslError.SSL_DATE_INVALID)) {
+                errorCodeMessageCodes.add(R.string.message_certificate_date_invalid);
+            }
+            if (error.hasError(SslError.SSL_EXPIRED)) {
+                errorCodeMessageCodes.add(R.string.message_certificate_expired);
+            }
+            if (error.hasError(SslError.SSL_IDMISMATCH)) {
+                errorCodeMessageCodes.add(R.string.message_certificate_domain_mismatch);
+            }
+            if (error.hasError(SslError.SSL_NOTYETVALID)) {
+                errorCodeMessageCodes.add(R.string.message_certificate_not_yet_valid);
+            }
+            if (error.hasError(SslError.SSL_UNTRUSTED)) {
+                errorCodeMessageCodes.add(R.string.message_certificate_untrusted);
+            }
+            if (error.hasError(SslError.SSL_INVALID)) {
+                errorCodeMessageCodes.add(R.string.message_certificate_invalid);
+            }
+
+            return errorCodeMessageCodes;
+        }
+
         @Override
         public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, SslError error) {
+
+            List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Integer messageCode : errorCodeMessageCodes) {
+                stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
+            }
+            String alertMessage =
+                    mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle(mActivity.getString(R.string.title_warning));
-            builder.setMessage(mActivity.getString(R.string.message_untrusted_certificate))
+            builder.setMessage(alertMessage)
                     .setCancelable(true)
                     .setPositiveButton(mActivity.getString(R.string.action_yes),
                             new DialogInterface.OnClickListener() {
@@ -794,13 +832,7 @@ public class LightningView {
                                     handler.cancel();
                                 }
                             });
-            AlertDialog alert = builder.create();
-            if (error.getPrimaryError() == SslError.SSL_UNTRUSTED) {
-                alert.show();
-            } else {
-                handler.proceed();
-            }
-
+            builder.create().show();
         }
 
         @Override
