@@ -106,7 +106,6 @@
     <string name="licenses">오픈 소스 라이센스</string>
     <string name="suggestion">다음을 검색</string>
     <string name="block_ads">광고 차단</string>
-    <string name="message_untrusted_certificate">이 웹사이트의 인증서는 신뢰할 수 없습니다. 계속할까요?</string>
     <string name="title_form_resubmission">양식 다시 제출</string>
     <string name="message_form_resubmission">다시 전송할까요?</string>
     <string name="message_location">\n 이(가) 위치를 사용하고자 합니다</string>

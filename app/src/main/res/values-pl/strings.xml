@@ -106,7 +106,6 @@
     <string name="licenses">Licencje Open Source</string>
     <string name="suggestion">Wyszukaj</string>
     <string name="block_ads">Blokuj reklamy</string>
-    <string name="message_untrusted_certificate">Certyfikat używany przez tę stronę nie jest zaufany. Kontynuować mimo wszystko?</string>
     <string name="title_form_resubmission">Ponowne wysyłanie formularza</string>
     <string name="message_form_resubmission">Czy chciałbyś ponownie wysłać dane wprowadzone do formularza?</string>
     <string name="message_location">\nTa strona prosi o dostęp do twojej geolokalizacji</string>

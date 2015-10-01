@@ -107,7 +107,6 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Ara</string>
     <string name="block_ads">Reklamları Engelle</string>
-    <string name="message_untrusted_certificate">Sitenin sertifikası güvenilir değil. Yine de devam edilsin mi?</string>
     <string name="title_form_resubmission">Formu yeniden gönder</string>
     <string name="message_form_resubmission">Veriyi yeniden göndermek istiyor musun?</string>
     <string name="message_location">\nKonum bilgisi isteniyor</string>

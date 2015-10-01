@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2013 The Android Open Source Project
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
@@ -120,7 +120,6 @@
     <string name="custom_url">URL personale</string>
     <string name="message_blocked_local">Il caricamento del file locale è stato bloccato</string>
     <string name="suggestion">Cerca</string>
-    <string name="message_untrusted_certificate">Il certificato del sito non è fidato. Procedere comunque?</string>
     <string name="title_form_resubmission">Reinvio form</string>
     <string name="message_form_resubmission">Vuoi reinviare i dati?</string>
     <string name="message_location">\nVorrebbe usare la tua posizione</string>
