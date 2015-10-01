@@ -1,31 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lightning</string>
-    <string name="google">جوجل</string>
     <string name="settings">إعدادات المتصفح</string>
     <string name="location">الوصول إلى موقعك</string>
     <string name="password">حفظ كلمات السر</string>
     <string name="agent">وكيل المستخدم</string>
-    <string name="history">مسح السجل</string>
-    <string name="email">راسلني</string>
     <string name="flash">تفعيل مشغل الفلاش</string>
-    <string name="mobile">عرض بشكل الجوال</string>
-    <string name="desk">عرض بشكل الكمبيوتر</string>
-    <string name="custom">عرض وكيل مستخدم مخصص</string>
     <string name="home">الصفحة الرئيسية</string>
-    <string name="settingshelp">سوف يتم تطبيق الإعدادات فقط على علامات التبويب الجديدة</string>
     <string name="fullscreen">وضع ملء الشاشة</string>
     <string name="java">تفعيل الجافا</string>
-    <string name="saveTab">استعادة علامات التبويب المفقودة</string>
-    <string name="settings_title">الإعدادات</string>
     <string name="download">مسار التحميلات</string>
     <string name="settings_advanced">الإعدادات المتقدمة</string>
-    <string name="source">رمز المصدر</string>
-    <string name="license">الرخصة</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache"> ترخيص اباتشي 2.0</string>
-    <string name="title_activity_new_settings">الإعدادات الجديدة</string>
-    <string name="action_settings">الإعدادات</string>
     <string name="version">إصدار التطبيق</string>
     <string name="cache"> مسح ذاكرة التخزين المؤقتة عند الخروج</string>
     <string name="reflow">تفعيل إلتفاف النص</string>
@@ -61,14 +47,11 @@
     <string name="dialog_download">هل ترغب في تحميل هذا الملف؟</string>
     <string name="action_cancel">إلغاء</string>
     <string name="title_warning">تحذير</string>
-    <string name="dialog_adobe_dead">عفوا, لقد أجريت جوجل بعض التغييرات , و مشغل الفلاش لم يعد يعمل على أندرويد 4.4 فما فوق.</string>
     <string name="dialog_adobe_not_installed">لم يتم العثور على مشغل الفلاش يرجى تثبيته من المتجر.</string>
-    <string name="dialog_adobe_unsupported">مشغل الفلاش لا يدعم أندرويد 4.2 فما فوق , و عند تفعيل الفلاش سوف يتعطل المتصفح . يرجى عدم إبلاغنا بالمشاكل في حال تفعيل مشغل الفلاش.</string>
     <string name="title_user_agent">وكيل المستخدم</string>
     <string name="title_download_location">مسار التحميلات</string>
     <string name="title_custom_homepage">صفحة رئيسية مخصصة</string>
     <string name="action_webpage">صفحة ويب</string>
-    <string name="dialog_reflow_warning">عفوا , لقد أجريت جوجل بعض التغييرات و إلتفاف النص لم يعد يعمل على أندرويد 4.4 فما فوق.</string>
     <string name="title_clear_history">مسح السجل</string>
     <string name="title_clear_cookies">مسح ملفات تعريف الارتباط</string>
     <string name="dialog_history">هل تريد مسح جميع سجلات التصفح ؟</string>
@@ -89,10 +72,6 @@
     <string name="action_edit">تعديل</string>
     <string name="action_incognito">علامة تبويب التخفي</string>
     <string name="action_homepage">الافتراضي</string>
-    <string name="drawer_open">فتح قائمة التنقل</string>
-    <string name="drawer_close">إغلاق قائمة التنقل</string>
-    <string name="action_websearch">البحث في الويب</string>
-    <string name="action_refresh">تحديث</string>
     <string name="action_new_tab">علامة تبويب جديدة</string>
     <string name="action_share">مشاركة</string>
     <string name="action_history">السجل</string>

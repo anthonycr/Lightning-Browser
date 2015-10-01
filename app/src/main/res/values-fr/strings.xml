@@ -1,24 +1,17 @@
 <resources>
     <string name="app_name">Lightning</string>
-    <string name="google">Google</string>
     <string name="tabs">Onglets</string>
     <string name="settings">Paramètres</string>
     <string name="location">Accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">User Agent</string>
-    <string name="history">Effacer l\'historique</string>
     <string name="clear_cookies_exit">Effacer les cookies en quittant</string>
     <string name="clear_history_exit">Effacer l\'historique en quittant</string>
-    <string name="email">Contactez moi</string>
     <string name="flash">Activer Adobe Flash Player</string>
     <string name="block_ads">Bloquer les publicités</string>
     <string name="block">Bloquer les images</string>
     <string name="third_party">Bloquer les cookies tiers</string>
-    <string name="mobile">Voir la version mobile</string>
-    <string name="desk">Voir la version ordinateur</string>
-    <string name="custom">Utiliser un User Agent personnalisé</string>
     <string name="home">Au démarrage</string>
-    <string name="settingshelp">Les paramètres ne s\'appliqueront qu\'aux nouveaux onglets</string>
     <string name="fullscreen">Activer le mode plein écran</string>
     <string name="java">Activer JavaScript</string>
     <string name="invert_color">Inverser les couleurs</string>
@@ -28,7 +21,6 @@
     <string name="action_add_bookmark">Ajouter aux favoris</string>
     <string name="action_copy">Copier l\'URL</string>
     <string name="action_share">Partager</string>
-    <string name="action_settings">Paramètres</string>
     <string name="action_incognito">Onglet incognito</string>
     <string name="action_new_tab">Nouvel onglet</string>
     <string name="action_find">Rechercher dans la page</string>

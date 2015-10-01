@@ -1,32 +1,11 @@
 package acr.browser.lightning.object;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources.Theme;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,397 +15,442 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.ThemeUtils;
+import acr.browser.lightning.utils.Utils;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
-	private List<HistoryItem> mHistory;
-	private List<HistoryItem> mBookmarks;
-	private List<HistoryItem> mSuggestions;
-	private List<HistoryItem> mFilteredList;
-	private List<HistoryItem> mAllBookmarks;
-	private HistoryDatabase mDatabaseHandler;
-	private final Context mContext;
-	private boolean mUseGoogle = true;
-	private boolean mIsExecuting = false;
-	private final boolean mDarkTheme;
-	private final boolean mIncognito;
-	private final BookmarkManager mBookmarkManager;
-	private static final String ENCODING = "ISO-8859-1";
-	private static final long INTERVAL_DAY = 86400000;
-	private final String mSearchSubtitle;
-	private static final int API = Build.VERSION.SDK_INT;
-	private final Theme mTheme;
-	private SearchFilter mFilter;
+    private static final Pattern SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
+    private final List<HistoryItem> mHistory = new ArrayList<>(5);
+    private final List<HistoryItem> mBookmarks = new ArrayList<>(5);
+    private final List<HistoryItem> mSuggestions = new ArrayList<>(5);
+    private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
+    private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
+    private final Object mLock = new Object();
+    private HistoryDatabase mDatabaseHandler;
+    private final Context mContext;
+    private boolean mUseGoogle = true;
+    private boolean mIsExecuting = false;
+    private final boolean mDarkTheme;
+    private final boolean mIncognito;
+    @Inject
+    BookmarkManager mBookmarkManager;
+    private static final String CACHE_FILE_TYPE = ".sgg";
+    private static final String ENCODING = "ISO-8859-1";
+    private static final long INTERVAL_DAY = 86400000;
+    private static final int MAX_SUGGESTIONS = 5;
+    private static final SuggestionsComparator mComparator = new SuggestionsComparator();
+    private final String mSearchSubtitle;
+    private SearchFilter mFilter;
+    private final Drawable mSearchDrawable;
+    private final Drawable mHistoryDrawable;
+    private final Drawable mBookmarkDrawable;
 
-	public SearchAdapter(Context context, boolean dark, boolean incognito) {
-		mDatabaseHandler = HistoryDatabase.getInstance(context.getApplicationContext());
-		mTheme = context.getTheme();
-		mFilteredList = new ArrayList<>();
-		mHistory = new ArrayList<>();
-		mBookmarks = new ArrayList<>();
-		mSuggestions = new ArrayList<>();
-		mBookmarkManager = BookmarkManager.getInstance(context.getApplicationContext());
-		mAllBookmarks = mBookmarkManager.getBookmarks(true);
-		mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
-		mContext = context;
-		mSearchSubtitle = mContext.getString(R.string.suggestion);
-		mDarkTheme = dark || incognito;
-		mIncognito = incognito;
-		Thread delete = new Thread(new Runnable() {
+    public SearchAdapter(Context context, boolean dark, boolean incognito) {
+        BrowserApp.getAppComponent().inject(this);
+        mDatabaseHandler = HistoryDatabase.getInstance();
+        mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
+        mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
+        mContext = context;
+        mSearchSubtitle = mContext.getString(R.string.suggestion);
+        mDarkTheme = dark || incognito;
+        mIncognito = incognito;
+        Thread delete = new Thread(new ClearCacheRunnable());
+        mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
+        mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
+        mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
+        delete.setPriority(Thread.MIN_PRIORITY);
+        delete.start();
+    }
 
-			@Override
-			public void run() {
-				deleteOldCacheFiles(mContext);
-			}
+    private static void deleteOldCacheFiles() {
+        File dir = new File(BrowserApp.getAppContext().getCacheDir().toString());
+        String[] fileList = dir.list(new NameFilter());
+        long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
+        for (String fileName : fileList) {
+            File file = new File(dir.getPath() + fileName);
+            if (earliestTimeAllowed > file.lastModified()) {
+                file.delete();
+            }
+        }
+    }
 
-		});
-		delete.start();
-	}
+    private static class NameFilter implements FilenameFilter {
 
-	private void deleteOldCacheFiles(Context context) {
-		File dir = new File(context.getCacheDir().toString());
-		String[] fileList = dir.list(new NameFilter());
-		long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
-		for (String fileName : fileList) {
-			File file = new File(dir.getPath() + fileName);
-			if (earliestTimeAllowed > file.lastModified()) {
-				file.delete();
-			}
-		}
-	}
+        @Override
+        public boolean accept(File dir, String filename) {
+            return filename.endsWith(CACHE_FILE_TYPE);
+        }
 
-	private class NameFilter implements FilenameFilter {
+    }
 
-		private static final String ext = ".sgg";
+    public void refreshPreferences() {
+        mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
+        if (!mUseGoogle) {
+            synchronized (mSuggestions) {
+                mSuggestions.clear();
+            }
+        }
+        mDatabaseHandler = HistoryDatabase.getInstance();
+    }
 
-		@Override
-		public boolean accept(File dir, String filename) {
-			return filename.endsWith(ext);
-		}
+    public void refreshBookmarks() {
+        synchronized (mLock) {
+            mAllBookmarks.clear();
+            mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
+        }
+    }
 
-	}
+    @Override
+    public int getCount() {
+        return mFilteredList.size();
+    }
 
-	public void refreshPreferences() {
-		mUseGoogle = PreferenceManager.getInstance().getGoogleSearchSuggestionsEnabled();
-		if (!mUseGoogle && mSuggestions != null) {
-			mSuggestions.clear();
-		}
-	}
+    @Override
+    public Object getItem(int position) {
+        return mFilteredList.get(position);
+    }
 
-	public void refreshBookmarks() {
-		mAllBookmarks = mBookmarkManager.getBookmarks(true);
-	}
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
 
-	@Override
-	public int getCount() {
-		if (mFilteredList != null) {
-			return mFilteredList.size();
-		} else {
-			return 0;
-		}
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        SuggestionHolder holder;
 
-	@Override
-	public Object getItem(int position) {
-		return mFilteredList.get(position);
-	}
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            convertView = inflater.inflate(R.layout.two_line_autocomplete, parent, false);
 
-	@Override
-	public long getItemId(int position) {
-		return 0;
-	}
+            holder = new SuggestionHolder();
+            holder.mTitle = (TextView) convertView.findViewById(R.id.title);
+            holder.mUrl = (TextView) convertView.findViewById(R.id.url);
+            holder.mImage = (ImageView) convertView.findViewById(R.id.suggestionIcon);
+            convertView.setTag(holder);
+        } else {
+            holder = (SuggestionHolder) convertView.getTag();
+        }
+        HistoryItem web;
+        web = mFilteredList.get(position);
+        holder.mTitle.setText(web.getTitle());
+        holder.mUrl.setText(web.getUrl());
 
-	@SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View row = convertView;
-		SuggestionHolder holder;
+        Drawable image;
+        switch (web.getImageId()) {
+            case R.drawable.ic_bookmark: {
+                if (mDarkTheme)
+                    holder.mTitle.setTextColor(Color.WHITE);
+                image = mBookmarkDrawable;
+                break;
+            }
+            case R.drawable.ic_search: {
+                if (mDarkTheme)
+                    holder.mTitle.setTextColor(Color.WHITE);
+                image = mSearchDrawable;
+                break;
+            }
+            case R.drawable.ic_history: {
+                if (mDarkTheme)
+                    holder.mTitle.setTextColor(Color.WHITE);
+                image = mHistoryDrawable;
+                break;
+            }
+            default:
+                if (mDarkTheme)
+                    holder.mTitle.setTextColor(Color.WHITE);
+                image = mSearchDrawable;
+                break;
+        }
 
-		if (row == null) {
-			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-			row = inflater.inflate(R.layout.two_line_autocomplete, parent, false);
+        holder.mImage.setImageDrawable(image);
 
-			holder = new SuggestionHolder();
-			holder.mTitle = (TextView) row.findViewById(R.id.title);
-			holder.mUrl = (TextView) row.findViewById(R.id.url);
-			holder.mImage = (ImageView) row.findViewById(R.id.suggestionIcon);
-			row.setTag(holder);
-		} else {
-			holder = (SuggestionHolder) row.getTag();
-		}
+        return convertView;
+    }
 
-		HistoryItem web = mFilteredList.get(position);
-		holder.mTitle.setText(web.getTitle());
-		holder.mUrl.setText(web.getUrl());
+    @Override
+    public Filter getFilter() {
+        if (mFilter == null) {
+            mFilter = new SearchFilter();
+        }
+        return mFilter;
+    }
 
-		int imageId = R.drawable.ic_bookmark;
-		switch (web.getImageId()) {
-			case R.drawable.ic_bookmark: {
-				if (!mDarkTheme) {
-					imageId = R.drawable.ic_bookmark;
-				} else {
-					holder.mTitle.setTextColor(Color.WHITE);
-					imageId = R.drawable.ic_bookmark_dark;
-				}
-				break;
-			}
-			case R.drawable.ic_search: {
-				if (!mDarkTheme) {
-					imageId = R.drawable.ic_search;
-				} else {
-					holder.mTitle.setTextColor(Color.WHITE);
-					imageId = R.drawable.ic_search_dark;
-				}
-				break;
-			}
-			case R.drawable.ic_history: {
-				if (!mDarkTheme) {
-					imageId = R.drawable.ic_history;
-				} else {
-					holder.mTitle.setTextColor(Color.WHITE);
-					imageId = R.drawable.ic_history_dark;
-				}
-				break;
-			}
-		}
+    private static class ClearCacheRunnable implements Runnable {
 
-		if (API < Build.VERSION_CODES.LOLLIPOP) {
-			holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId));
-		} else {
-			holder.mImage.setImageDrawable(mContext.getResources().getDrawable(imageId, mTheme));
-		}
+        @Override
+        public void run() {
+            deleteOldCacheFiles();
+        }
 
-		return row;
-	}
+    }
 
-	public void setContents(List<HistoryItem> list) {
-		if (mFilteredList != null) {
-			mFilteredList.clear();
-			mFilteredList.addAll(list);
-		} else {
-			mFilteredList = list;
-		}
-		notifyDataSetChanged();
-	}
+    private class SearchFilter extends Filter {
 
-	@Override
-	public Filter getFilter() {
-		if (mFilter == null) {
-			mFilter = new SearchFilter();
-		}
-		return mFilter;
-	}
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            if (constraint == null) {
+                return results;
+            }
+            String query = constraint.toString().toLowerCase(Locale.getDefault());
+            if (mUseGoogle && !mIncognito && !mIsExecuting) {
+                new RetrieveSearchSuggestions().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, query);
+            }
 
-	public class SearchFilter extends Filter {
+            int counter = 0;
+            synchronized (mBookmarks) {
+                mBookmarks.clear();
+                synchronized (mLock) {
+                    for (int n = 0; n < mAllBookmarks.size(); n++) {
+                        if (counter >= 5) {
+                            break;
+                        }
+                        if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
+                                .startsWith(query)) {
+                            mBookmarks.add(mAllBookmarks.get(n));
+                            counter++;
+                        } else if (mAllBookmarks.get(n).getUrl().contains(query)) {
+                            mBookmarks.add(mAllBookmarks.get(n));
+                            counter++;
+                        }
 
-		@Override
-		protected FilterResults performFiltering(CharSequence constraint) {
-			FilterResults results = new FilterResults();
-			if (constraint == null) {
-				return results;
-			}
-			String query = constraint.toString().toLowerCase(Locale.getDefault());
-			if (mUseGoogle && !mIncognito && !mIsExecuting) {
-				new RetrieveSearchSuggestions().execute(query);
-			}
+                    }
+                }
+            }
+            if (mDatabaseHandler == null || mDatabaseHandler.isClosed()) {
+                mDatabaseHandler = HistoryDatabase.getInstance();
+            }
+            List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(constraint.toString());
+            synchronized (mHistory) {
+                mHistory.clear();
+                mHistory.addAll(historyList);
+            }
+            results.count = 1;
+            return results;
+        }
 
-			int counter = 0;
-			mBookmarks = new ArrayList<>();
-			for (int n = 0; n < mAllBookmarks.size(); n++) {
-				if (counter >= 5) {
-					break;
-				}
-				if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
-						.startsWith(query)) {
-					mBookmarks.add(mAllBookmarks.get(n));
-					counter++;
-				} else if (mAllBookmarks.get(n).getUrl().contains(query)) {
-					mBookmarks.add(mAllBookmarks.get(n));
-					counter++;
-				}
+        @Override
+        public CharSequence convertResultToString(Object resultValue) {
+            return ((HistoryItem) resultValue).getUrl();
+        }
 
-			}
-			if (mDatabaseHandler == null) {
-				mDatabaseHandler = HistoryDatabase.getInstance(mContext.getApplicationContext());
-			}
-			mHistory = mDatabaseHandler.findItemsContaining(constraint.toString());
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            synchronized (mFilteredList) {
+                mFilteredList.clear();
+                List<HistoryItem> filtered = getFilteredList();
+                Collections.sort(filtered, mComparator);
+                mFilteredList.addAll(filtered);
+            }
+            notifyDataSetChanged();
+        }
 
-			results.count = 1;
-			return results;
-		}
+    }
 
-		@Override
-		public CharSequence convertResultToString(Object resultValue) {
-			return ((HistoryItem) resultValue).getUrl();
-		}
+    private static class SuggestionHolder {
+        ImageView mImage;
+        TextView mTitle;
+        TextView mUrl;
+    }
 
-		@Override
-		protected void publishResults(CharSequence constraint, FilterResults results) {
-			mFilteredList = getSuggestions();
-			notifyDataSetChanged();
-		}
+    private class RetrieveSearchSuggestions extends AsyncTask<String, Void, List<HistoryItem>> {
 
-	}
+        private XmlPullParserFactory mFactory;
+        private XmlPullParser mXpp;
 
-	private class SuggestionHolder {
-		ImageView mImage;
-		TextView mTitle;
-		TextView mUrl;
-	}
+        @Override
+        protected List<HistoryItem> doInBackground(String... arg0) {
+            mIsExecuting = true;
 
-	private class RetrieveSearchSuggestions extends AsyncTask<String, Void, List<HistoryItem>> {
+            List<HistoryItem> filter = new ArrayList<>();
+            String query = arg0[0];
+            try {
+                query = SPACE_PATTERN.matcher(query).replaceAll("+");
+                URLEncoder.encode(query, ENCODING);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            File cache = downloadSuggestionsForQuery(query);
+            if (!cache.exists()) {
+                return filter;
+            }
+            InputStream fileInput = null;
+            try {
+                fileInput = new BufferedInputStream(new FileInputStream(cache));
+                if (mFactory == null) {
+                    mFactory = XmlPullParserFactory.newInstance();
+                    mFactory.setNamespaceAware(true);
+                }
+                if (mXpp == null) {
+                    mXpp = mFactory.newPullParser();
+                }
+                mXpp.setInput(fileInput, ENCODING);
+                int eventType = mXpp.getEventType();
+                int counter = 0;
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    if (eventType == XmlPullParser.START_TAG && "suggestion".equals(mXpp.getName())) {
+                        String suggestion = mXpp.getAttributeValue(null, "data");
+                        filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
+                                suggestion, R.drawable.ic_search));
+                        counter++;
+                        if (counter >= 5) {
+                            break;
+                        }
+                    }
+                    eventType = mXpp.next();
+                }
+            } catch (Exception e) {
+                return filter;
+            } finally {
+                Utils.close(fileInput);
+            }
+            return filter;
+        }
 
-		private XmlPullParserFactory mFactory;
-		private XmlPullParser mXpp;
+        @Override
+        protected void onPostExecute(List<HistoryItem> result) {
+            mIsExecuting = false;
+            synchronized (mSuggestions) {
+                mSuggestions.clear();
+                mSuggestions.addAll(result);
+            }
+            synchronized (mFilteredList) {
+                mFilteredList.clear();
+                List<HistoryItem> filtered = getFilteredList();
+                Collections.sort(filtered, mComparator);
+                mFilteredList.addAll(filtered);
+                notifyDataSetChanged();
+            }
+        }
 
-		@Override
-		protected List<HistoryItem> doInBackground(String... arg0) {
-			mIsExecuting = true;
+    }
 
-			List<HistoryItem> filter = new ArrayList<>();
-			String query = arg0[0];
-			try {
-				query = query.replace(" ", "+");
-				URLEncoder.encode(query, ENCODING);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			File cache = downloadSuggestionsForQuery(query);
-			if (!cache.exists()) {
-				return filter;
-			}
-			InputStream fileInput = null;
-			try {
-				fileInput = new BufferedInputStream(new FileInputStream(cache));
-				if (mFactory == null) {
-					mFactory = XmlPullParserFactory.newInstance();
-					mFactory.setNamespaceAware(true);
-				}
-				if (mXpp == null) {
-					mXpp = mFactory.newPullParser();
-				}
-				mXpp.setInput(fileInput, ENCODING);
-				int eventType = mXpp.getEventType();
-				int counter = 0;
-				while (eventType != XmlPullParser.END_DOCUMENT) {
-					if (eventType == XmlPullParser.START_TAG && "suggestion".equals(mXpp.getName())) {
-						String suggestion = mXpp.getAttributeValue(null, "data");
-						filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
-								suggestion, R.drawable.ic_search));
-						counter++;
-						if (counter >= 5) {
-							break;
-						}
-					}
-					eventType = mXpp.next();
-				}
-			} catch (Exception e) {
-				return filter;
-			} finally {
-				if (fileInput != null) {
-					try {
-						fileInput.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			return filter;
-		}
+    /**
+     * This method downloads the search suggestions for the specific query.
+     * NOTE: This is a blocking operation, do not run on the UI thread.
+     *
+     * @param query the query to get suggestions for
+     * @return the cache file containing the suggestions
+     */
+    private static File downloadSuggestionsForQuery(String query) {
+        File cacheFile = new File(BrowserApp.getAppContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
+        if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
+            return cacheFile;
+        }
+        if (!isNetworkConnected(BrowserApp.getAppContext())) {
+            return cacheFile;
+        }
+        InputStream in = null;
+        FileOutputStream fos = null;
+        try {
+            URL url = new URL("http://google.com/complete/search?q=" + query
+                    + "&output=toolbar&hl=en");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            in = connection.getInputStream();
 
-		@Override
-		protected void onPostExecute(List<HistoryItem> result) {
-			mSuggestions = result;
-			mFilteredList = getSuggestions();
-			notifyDataSetChanged();
-			mIsExecuting = false;
-		}
+            if (in != null) {
+                fos = new FileOutputStream(cacheFile);
+                int buffer;
+                while ((buffer = in.read()) != -1) {
+                    fos.write(buffer);
+                }
+                fos.flush();
+            }
+            cacheFile.setLastModified(System.currentTimeMillis());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Utils.close(in);
+            Utils.close(fos);
+        }
+        return cacheFile;
+    }
 
-	}
+    private static boolean isNetworkConnected(Context context) {
+        NetworkInfo networkInfo = getActiveNetworkInfo(context);
+        return networkInfo != null && networkInfo.isConnected();
+    }
 
-	private File downloadSuggestionsForQuery(String query) {
-		File cacheFile = new File(mContext.getCacheDir(), query.hashCode() + ".sgg");
-		if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
-			return cacheFile;
-		}
-		if (!isNetworkConnected(mContext)) {
-			return cacheFile;
-		}
-		try {
-			URL url = new URL("http://google.com/complete/search?q=" + query
-					+ "&output=toolbar&hl=en");
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setDoInput(true);
-			connection.connect();
-			InputStream in = connection.getInputStream();
+    private static NetworkInfo getActiveNetworkInfo(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity == null) {
+            return null;
+        }
+        return connectivity.getActiveNetworkInfo();
+    }
 
-			if (in != null) {
-				FileOutputStream fos = new FileOutputStream(cacheFile);
-				int buffer;
-				while ((buffer = in.read()) != -1) {
-					fos.write(buffer);
-				}
-				fos.flush();
-				fos.close();
-			}
-			cacheFile.setLastModified(System.currentTimeMillis());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return cacheFile;
-	}
+    private List<HistoryItem> getFilteredList() {
+        List<HistoryItem> list = new ArrayList<>(5);
+        synchronized (mBookmarks) {
+            synchronized (mHistory) {
+                synchronized (mSuggestions) {
+                    Iterator<HistoryItem> bookmark = mBookmarks.iterator();
+                    Iterator<HistoryItem> history = mHistory.iterator();
+                    Iterator<HistoryItem> suggestion = mSuggestions.listIterator();
+                    while (list.size() < MAX_SUGGESTIONS) {
+                        if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
+                            return list;
+                        }
+                        if (bookmark.hasNext()) {
+                            list.add(bookmark.next());
+                        }
+                        if (suggestion.hasNext() && list.size() < MAX_SUGGESTIONS) {
+                            list.add(suggestion.next());
+                        }
+                        if (history.hasNext() && list.size() < MAX_SUGGESTIONS) {
+                            list.add(history.next());
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
 
-	private boolean isNetworkConnected(Context context) {
-		NetworkInfo networkInfo = getActiveNetworkInfo(context);
-		return networkInfo != null && networkInfo.isConnected();
-	}
+    private static class SuggestionsComparator implements Comparator<HistoryItem> {
 
-	private NetworkInfo getActiveNetworkInfo(Context context) {
-		ConnectivityManager connectivity = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connectivity == null) {
-			return null;
-		}
-		return connectivity.getActiveNetworkInfo();
-	}
-
-	public List<HistoryItem> getSuggestions() {
-		List<HistoryItem> filteredList = new ArrayList<>();
-
-		int suggestionsSize = (mSuggestions == null) ? 0 : mSuggestions.size();
-		int historySize = (mHistory == null) ? 0 : mHistory.size();
-		int bookmarkSize = (mBookmarks == null) ? 0 : mBookmarks.size();
-
-		int maxSuggestions = (bookmarkSize + historySize < 3) ? (5 - bookmarkSize - historySize)
-				: (bookmarkSize < 2) ? (4 - bookmarkSize) : (historySize < 1) ? 3 : 2;
-		int maxHistory = (suggestionsSize + bookmarkSize < 4) ? (5 - suggestionsSize - bookmarkSize)
-				: 1;
-		int maxBookmarks = (suggestionsSize + historySize < 3) ? (5 - suggestionsSize - historySize)
-				: 2;
-
-		if (!mUseGoogle || mIncognito) {
-			maxHistory++;
-			maxBookmarks++;
-		}
-
-		for (int n = 0; n < bookmarkSize && n < maxBookmarks; n++) {
-			filteredList.add(mBookmarks.get(n));
-		}
-
-		for (int n = 0; n < historySize && n < maxHistory; n++) {
-			filteredList.add(mHistory.get(n));
-		}
-
-		for (int n = 0; n < suggestionsSize && n < maxSuggestions; n++) {
-			filteredList.add(mSuggestions.get(n));
-		}
-		return filteredList;
-	}
+        @Override
+        public int compare(HistoryItem lhs, HistoryItem rhs) {
+            if (lhs.getImageId() == rhs.getImageId()) return 0;
+            if (lhs.getImageId() == R.drawable.ic_bookmark) return -1;
+            if (rhs.getImageId() == R.drawable.ic_bookmark) return 1;
+            if (lhs.getImageId() == R.drawable.ic_history) return -1;
+            return 1;
+        }
+    }
 
 }

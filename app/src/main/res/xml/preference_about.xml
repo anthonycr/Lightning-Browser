@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidElementNotAllowed -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_about">
+        <Preference
+            android:summary="@string/url_twitter"
+            android:title="@string/action_follow_me">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://twitter.com/RestainoAnthony">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+        <Preference
+            android:key="pref_version"
+            android:title="@string/version" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/licenses">
+        <Preference
+            android:summary="@string/mpl_license"
+            android:title="@string/app_name">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.mozilla.org/MPL/2.0/">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+        <Preference
+            android:summary="@string/apache"
+            android:title="@string/android_open_source_project">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.apache.org/licenses/LICENSE-2.0">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+        <Preference
+            android:summary="@string/freeware"
+            android:title="@string/hphosts_ad_server_list">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://hosts-file.net/">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+        <Preference
+            android:summary="@string/license_gnu"
+            android:title="@string/library_netcipher">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.gnu.org/licenses/lgpl.html">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+        <Preference
+            android:summary="@string/apache"
+            android:title="@string/snacktory">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.apache.org/licenses/LICENSE-2.0">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+        <Preference
+            android:summary="@string/mit_license"
+            android:title="@string/jsoup">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://jsoup.org/license">
+                <extra
+                    android:name="SOURCE"
+                    android:value="SELF" />
+            </intent>
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

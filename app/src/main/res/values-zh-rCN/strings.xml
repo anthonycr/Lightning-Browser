@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">打开导航抽屉</string>
-    <string name="drawer_close">关闭导航抽屉</string>
-    <string name="action_websearch">网页搜索</string>
-    <string name="action_refresh">刷新页面</string>
     <string name="action_new_tab">新建标签</string>
     <string name="action_share">分享页面</string>
     <string name="action_history">历史记录</string>
@@ -12,32 +8,18 @@
     <string name="action_add_bookmark">添加书签</string>
     <string name="action_copy">复制链接</string>
     <string name="action_forward">前进</string>
-    <string name="google">Google</string>
     <string name="settings">浏览器设置</string>
     <string name="location">允许站点访问地理位置</string>
     <string name="password">保存密码</string>
     <!-- <string name="keep_last_tab">不关闭最后一个标签</string> -->
     <string name="agent">User Agent</string>
-    <string name="history">清空历史记录</string>
-    <string name="email">邮件开发者</string>
     <string name="flash">启用 Adobe Flash</string>
-    <string name="mobile">作为移动设备访问</string>
-    <string name="desk">作为桌面设备访问</string>
-    <string name="custom">自定义 User Agent</string>
     <string name="home">设置首页</string>
-    <string name="settingshelp">设置仅将应用于新标签页</string>
     <string name="fullscreen">启用全屏模式</string>
     <string name="java">启用 JavaScript</string>
-    <string name="saveTab">恢复丢失标签</string>
-    <string name="settings_title">应用设置</string>
     <string name="download">下载目录</string>
     <string name="settings_advanced">高级设置</string>
-    <string name="source">源码</string>
-    <string name="license">许可</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">新设置</string>
-    <string name="action_settings">应用设置</string>
     <string name="version">当前版本</string>
     <string name="cache">退出时清理缓存</string>
     <string name="reflow">启用文本重排</string>
@@ -73,14 +55,11 @@
     <string name="dialog_download">您是否需要下载此文件？</string>
     <string name="action_cancel">取消</string>
     <string name="title_warning">警告</string>
-    <string name="dialog_adobe_dead">"非常抱歉，Google 对此做了一些更改导致 Adobe Flash 无法支持 Android 4.4 以及更高版本。"</string>
     <string name="dialog_adobe_not_installed">"未检测到您的设备中安装了 Adobe Flash Player，请先安装 Adobe  Flash Player 后再启用此选项。"</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash 无法正常支持 Android 4.2 以及更高版本并且可能导致浏览器崩溃，若您启用后出现浏览器崩溃的问题请勿对此问题进行反馈。</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">下载目录</string>
     <string name="title_custom_homepage">自定义主页</string>
     <string name="action_webpage">网页</string>
-    <string name="dialog_reflow_warning">"非常抱歉，Google 对此做了一些更改导致文本重拍无法支持 Android 4.4 以及更高版本。"</string>
     <string name="title_clear_history">清除历史记录</string>
     <string name="title_clear_cookies">清除 Cookies</string>
     <string name="dialog_history">您是否确认清除所有浏览器历史记录？</string>
@@ -100,7 +79,6 @@
     <string name="title_edit_bookmark">编辑书签</string>
     <string name="action_edit">编辑</string>
     <string name="action_incognito">新建隐身标签</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_homepage">默认页面</string>
     <string name="action_back">返回</string>
     <string name="action_find">页内搜索</string>
@@ -129,7 +107,6 @@
     <string name="licenses">开源许可</string>
     <string name="suggestion">搜索目标</string>
     <string name="block_ads">拦截广告</string>
-    <string name="message_untrusted_certificate">该网站的证书不被信任。是否仍要继续？</string>
     <string name="title_form_resubmission">重新提交表单</string>
     <string name="message_form_resubmission">你想重新发送数据吗？</string>
     <string name="message_location">\n你想使用你的位置吗？</string>
@@ -140,9 +117,6 @@
     <string name="hint_password">密码</string>
     <string name="google_suggestions">搜索建议</string>
     <string name="powered_by_google">由 Google 提供支持</string>
-    <string name="title_adblock">广告拦截</string>
-    <string name="message_adblock">广告拦截现在只能在付费版的浏览器 - Lightning Browser+ 中使用。你可以在 Google Play 中下载它。</string>
-    <string name="enable_orbot">启用 Orbot</string>
     <string name="use_tor_prompt">看起来你已经安装了 Orbot. 你想要使用 Tor 吗？</string>
     <string name="install_orbot">请安装 Orbot 以便通过 Tor 全使用代理。</string>
     <string name="yes">是</string>
@@ -172,8 +146,6 @@
     <string name="bookmark_settings">书签设置</string>
     <string name="import_bookmark_error">无法从文件导入书签</string>
     <string name="title_chooser">选择一个文件</string>
-    <string name="available_lollipop">此功能仅在 Android 5.0+ 版本中可用</string>
-    <string name="change_after_restart">主题变更将在你重启浏览器后生效。</string>
     <string name="close_all_tabs">关闭所有标签</string>
     <string name="close_tab">关闭标签</string>
     <string name="color_mode">启用色彩模式</string>

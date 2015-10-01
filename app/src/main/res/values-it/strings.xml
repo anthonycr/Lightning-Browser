@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2013 The Android Open Source Project
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
       http://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing, software
@@ -18,10 +17,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Apri drawer navigazione</string>
-    <string name="drawer_close">Chiudi drawer navigazione</string>
-    <string name="action_websearch">Ricerca web</string>
-    <string name="action_refresh">Ricarica</string>
     <string name="action_new_tab">Nuova scheda</string>
     <string name="action_share">Condividi</string>
     <string name="action_history">Cronologia</string>
@@ -29,31 +24,17 @@
     <string name="action_add_bookmark">Aggiungi segnalibro</string>
     <string name="action_copy">Copia link</string>
     <string name="action_forward">Avanti</string>
-    <string name="google">Google</string>
     <string name="settings">Impostazioni del browser</string>
     <string name="location">Accesso alla posizione</string>
     <string name="password">Salva Password</string>
     <string name="agent">User Agent</string>
-    <string name="history">Cancella cronologia</string>
-    <string name="email">Email me</string>
     <string name="flash">Abilita Adobe Flash</string>
-    <string name="mobile">Visualizza come mobile</string>
-    <string name="desk">Visualizza come desktop</string>
-    <string name="custom">Visualizza come agente utente personalizzata</string>
     <string name="home">Homepage</string>
-    <string name="settingshelp">Impostazioni valgono solo per le nuove schede</string>
     <string name="fullscreen">Mod. Schermo intero</string>
     <string name="java">Abilita JavaScript</string>
-    <string name="saveTab">Ripristina le schede se vengono perse</string>
-    <string name="settings_title">Impostazioni</string>
     <string name="download">Percorso download</string>
     <string name="settings_advanced">Impostazioni avanzate</string>
-    <string name="source">Codice sorgente</string>
-    <string name="license">Licenza</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Licenza Apache 2.0</string>
-    <string name="title_activity_new_settings">NuoveImpostazioni</string>
-    <string name="action_settings">Impostazioni</string>
     <string name="version">Versione Applicazione</string>
     <string name="cache">Pulisci la cache alla chiusura</string>
     <string name="reflow">Abilità reflow del testo</string>
@@ -71,7 +52,7 @@
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
-    <string name="clear_cookies">Cancella i cookies del browser</string>
+    <string name="clear_cookies">Cancella i cookies</string>
     <string name="dialog_image">Cosa vorresti fare con questa immagine?</string>
     <string name="action_download">Scarica</string>
     <string name="action_open">Apri</string>
@@ -89,14 +70,10 @@
     <string name="dialog_download">Vuoi scaricare questo file?</string>
     <string name="action_cancel">Annulla</string>
     <string name="title_warning">Attenzione</string>
-    <string name="dialog_adobe_dead">Spiacenti, Google ha fatto alcune modifiche e Adobe Flash non funziona più in Android 4.4+</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player non rilevato.\nSi prega di installare Flash Player.</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash non supporta Android 4.2 o superiori e bloccherà il browser. Per favore non segnalare alcun errore riscontrato quando attivi Flash.</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Percorso download</string>
     <string name="title_custom_homepage">Homepage personale</string>
-    <string name="action_webpage">Pagina web</string>
-    <string name="dialog_reflow_warning">Spiacenti, Google ha fatto alcune modifiche e il reflow del testo non funziona più in Android 4.4+</string>
     <string name="title_clear_history">Cancella cronologia</string>
     <string name="title_clear_cookies">Cancella i cookie</string>
     <string name="dialog_history">Vorresti eliminare tutta la cronologia del browser?</string>
@@ -116,16 +93,15 @@
     <string name="title_edit_bookmark">Modifica Segnalibro</string>
     <string name="action_edit">Modifica</string>
     <string name="action_incognito">Nuova scheda anonima</string>
-    <string name="hello_world">Ciao mondo!</string>
     <string name="action_homepage">Default</string>
     <string name="action_back">Indietro</string>
     <string name="action_find">Trova nella pagina</string>
     <string name="download_pending">Avvio scaricamento\u2026</string>
     <string name="cannot_download">Possibile scaricare solo da URL \"http\" o \"https\".</string>
-    <string name="download_no_sdcard_dlg_title" >Nessuna scheda SD</string>
-    <string name="download_no_sdcard_dlg_msg" >Una memoria USB è necessaria per scaricare il file.</string>
+    <string name="download_no_sdcard_dlg_title">Nessuna scheda SD</string>
+    <string name="download_no_sdcard_dlg_msg">Una memoria USB è necessaria per scaricare il file.</string>
     <string name="download_sdcard_busy_dlg_title">Memoria USB non disponibile</string>
-    <string name="download_sdcard_busy_dlg_msg" >La memoria di archiviazione è occupata. Per permettere i download, tocca Disattiva Memoria USB nella notifica.</string>
+    <string name="download_sdcard_busy_dlg_msg">La memoria di archiviazione è occupata. Per permettere i download, tocca Disattiva Memoria USB nella notifica.</string>
     <string name="incognito_cookies">Abilita Cookies in modalità incognito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuale</string>
@@ -140,12 +116,10 @@
     <string name="max_tabs">Numero massimo di pagine raggiunto</string>
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
+    <string name="block_ads">Blocca Annunci</string>
     <string name="custom_url">URL personale</string>
     <string name="message_blocked_local">Il caricamento del file locale è stato bloccato</string>
-    <string name="licenses">Licenze Open Source</string>
     <string name="suggestion">Cerca</string>
-    <string name="block_ads">Blocca annunci</string>
-    <string name="message_untrusted_certificate">Il certificato del sito non è fidato. Procedere comunque?</string>
     <string name="title_form_resubmission">Reinvio form</string>
     <string name="message_form_resubmission">Vuoi reinviare i dati?</string>
     <string name="message_location">\nVorrebbe usare la tua posizione</string>
@@ -156,15 +130,6 @@
     <string name="hint_password">Password</string>
     <string name="google_suggestions">Suggerimenti di ricerca</string>
     <string name="powered_by_google">In collaborazione con Google</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">AdBlock è disponibile solo nella versione a pagamento del browser, Lightning Browser+. È disponibile da scaricare in Google Play.</string>
-    <string name="http_proxy">Proxy HTTP</string>
-    <string-array name="proxy_choices_array">
-        <item>Nessuno</item>
-        <item>Orbot</item>
-        <item>I2P</item>
-        <item>Manuale</item>
-    </string-array>
     <string name="manual_proxy">Proxy manuale</string>
     <string name="host">Host:</string>
     <string name="port">Porta:</string>
@@ -186,10 +151,6 @@
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
     <string name="deleted_tab">Vecchia scheda riaperta</string>
     <string name="rendering_mode">Modalità rendering</string>
-    <string name="name_inverted">Inversa</string>
-    <string name="name_grayscale">Scala di grigi</string>
-    <string name="name_inverted_grayscale">Scala di grigi inversa</string>
-    <string name="name_normal">Normale</string>
     <string name="sync_history">Sincronizza cronologia con Google</string>
     <string name="title_file_chooser">Selezione file</string>
     <string name="library_netcipher">NetCipher</string>
@@ -204,11 +165,16 @@
     <string name="settings_display">Display</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_about">Informazioni</string>
-    <string name="settings_about_explain">Informazioni sulla versione, autore e licenza.</string>
+    <string name="settings_about_explain">Informazioni sull\'autore, versione e license.</string>
+    <string name="name_inverted">Inverso</string>
+    <string name="name_grayscale">Scala di grigi</string>
+    <string name="name_inverted_grayscale">Scala di grigi inversa</string>
+    <string name="name_normal">Normale</string>
+    <string name="licenses">Licenze Open Source</string>
+    <string name="action_webpage">Pagina Web</string>
     <string name="close_tab">Chiudi scheda</string>
     <string name="close_all_tabs">Chiudi tutte le schede</string>
     <string name="third_party">Blocca i cookie di terze parti</string>
-    <string name="available_lollipop">Questa funzione è disponibile solo in Android 5.0+</string>
     <string name="color_mode">Attiva modalità colore</string>
     <string name="reading_mode">Modalità lettura</string>
     <string name="loading">Caricamento&#8230;</string>
@@ -218,12 +184,27 @@
     <string name="mit_license">Licenza MIT</string>
     <string name="url_contents">Contenuti campo URL</string>
     <string-array name="url_content_array">
-        <item >Dominio (predefinito)</item>
-        <item >URL</item>
-        <item >Titolo</item>
+        <item>Dominio (predefinito)</item>
+        <item>URL</item>
+        <item>Titolo</item>
     </string-array>
-        <string name="invert_color">Inverti colori</string>
-        <string name="dark_theme">Usa tema scuro</string>
-        <string name="change_after_restart">La modifica del tema avrà effetto al prossimo riavvio del browser.</string>
-        <string name="tabs">Schede</string>
+    <string name="invert_color">Inverti colori</string>
+    <string name="dark_theme">Tema Scuro</string>
+    <string name="tabs">Schede</string>
+    <string name="theme">Temi</string>
+    <string name="light_theme">Tema Chiaro</string>
+    <string name="black_theme">Tema Nero (AMOLED)</string>
+    <string name="folder">Nomne Cartella</string>
+    <string name="action_folder">Cartella</string>
+    <string name="action_rename">Rinomina</string>
+    <string name="title_rename_folder">Rinomina Cartellar</string>
+    <string name="dialog_folder">Cosa vorresti fare con questa cartella?</string>
+    <string name="clear_web_storage">Clear Web Storage</string>
+    <string name="http_proxy">Proxy HTTP</string>
+    <string-array name="proxy_choices_array">
+        <item>Nessuno</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manuale</item>
+    </string-array>
 </resources>

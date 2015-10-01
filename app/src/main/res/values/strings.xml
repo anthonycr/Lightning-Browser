@@ -18,10 +18,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="app_name">Lightning</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
-    <string name="action_websearch">Web search</string>
-    <string name="action_refresh">Refresh</string>
     <string name="action_new_tab">New Tab</string>
     <string name="action_share">Share</string>
     <string name="action_history">History</string>
@@ -29,31 +25,17 @@
     <string name="action_add_bookmark">Add Bookmark</string>
     <string name="action_copy">Copy Link</string>
     <string name="action_forward">Forward</string>
-    <string name="google">Google</string>
     <string name="settings">Settings</string>
     <string name="location">Location Access</string>
     <string name="password">Save your passwords</string>
     <string name="agent">User Agent</string>
-    <string name="history">Clear history</string>
-    <string name="email">Email me</string>
     <string name="flash">Enable Adobe Flash</string>
-    <string name="mobile">View as Mobile</string>
-    <string name="desk">View as Desktop</string>
-    <string name="custom">View as custom user agent</string>
     <string name="home">Homepage</string>
-    <string name="settingshelp">Settings only apply to new tabs</string>
     <string name="fullscreen">Full-screen Mode</string>
     <string name="java">Enable JavaScript</string>
-    <string name="saveTab">Restore your tabs if they\'re lost</string>
-    <string name="settings_title">Settings</string>
     <string name="download">Download Location</string>
     <string name="settings_advanced">Advanced Settings</string>
-    <string name="source">Source Code</string>
-    <string name="license">License</string>
-    <string name="github">github.com/anthonycr/Lightning-Browser</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="title_activity_new_settings">NewSettings</string>
-    <string name="action_settings">Settings</string>
     <string name="version">Application Version</string>
     <string name="cache">Clear cache on exit</string>
     <string name="reflow">Enable text reflow</string>
@@ -71,12 +53,13 @@
     <string name="stock_browser_unavailable">No stock browser detected</string>
     <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
-    <string name="clear_cookies">Clear browser cookies</string>
+    <string name="clear_cookies">Clear Browser Cookies</string>
     <string name="dialog_image">What would you like to do with this image?</string>
     <string name="action_download">Download</string>
     <string name="action_open">Open</string>
     <string name="dialog_link">What would you like to do with this link?</string>
     <string name="dialog_title_share">Share this page</string>
+    <string name="dialog_history_long_press">What would you like to do with this history item?</string>
     <string name="dialog_bookmark">What would you like to do with this bookmark?</string>
     <string name="action_delete">Delete</string>
     <string name="action_blank">Blank Page</string>
@@ -89,14 +72,11 @@
     <string name="dialog_download">Do you want to download this file?</string>
     <string name="action_cancel">Cancel</string>
     <string name="title_warning">Warning</string>
-    <string name="dialog_adobe_dead">We\'re sorry, Google made some changes, and Adobe Flash no longer works on Android 4.4+</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player was not detected.\nPlease install Flash Player.</string>
-    <string name="dialog_adobe_unsupported">Adobe Flash does not support Andoid 4.2 and above, and will crash the browser. Please do not report any crashes that occur if you enable Flash.</string>
     <string name="title_user_agent">User Agent</string>
     <string name="title_download_location">Download Location</string>
     <string name="title_custom_homepage">Custom Homepage</string>
     <string name="action_webpage">Webpage</string>
-    <string name="dialog_reflow_warning">We\'re sorry, Google made some changes, and Text Reflow no longer works on Android 4.4+</string>
     <string name="title_clear_history">Clear History</string>
     <string name="title_clear_cookies">Clear Cookies</string>
     <string name="dialog_history">Would you like to clear all browser history?</string>
@@ -116,12 +96,13 @@
     <string name="title_edit_bookmark">Edit Bookmark</string>
     <string name="action_edit">Edit</string>
     <string name="action_incognito">New Incognito Tab</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_homepage">Default</string>
     <string name="action_back">Back</string>
     <string name="action_find">Find in Page</string>
     <string name="download_pending">Starting download\u2026</string>
     <string name="cannot_download">Can only download \"http\" or \"https\" URLs.</string>
+    <string name="problem_download">Invalid URL encountered, cannot download</string>
+    <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_no_sdcard_dlg_title" >No SD card</string>
     <string name="download_no_sdcard_dlg_msg" >USB storage is required to download the file.</string>
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
@@ -132,7 +113,7 @@
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contact Me</string>
     <string name="url_twitter">twitter.com/RestainoAnthony</string>
-    <string name="clear_cache">Clear cache</string>
+    <string name="clear_cache">Clear Cache</string>
     <string name="message_cache_cleared">Cache Cleared</string>
     <string name="message_import">Bookmarks Were Imported</string>
     <string name="message_clear_history">History Cleared</string>
@@ -145,7 +126,13 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
     <string name="block_ads">Block Ads</string>
-    <string name="message_untrusted_certificate">The certificate of the site is not trusted. Proceed anyway?</string>
+    <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
+    <string name="message_certificate_date_invalid">date of certificate is invalid</string>
+    <string name="message_certificate_expired">certificate is expired</string>
+    <string name="message_certificate_domain_mismatch">domain in certificate does not match the site domain</string>
+    <string name="message_certificate_invalid">certificate is invalid</string>
+    <string name="message_certificate_not_yet_valid">certificate is not yet valid</string>
+    <string name="message_certificate_untrusted">certificate is not trusted</string>
     <string name="title_form_resubmission">Form Resubmission</string>
     <string name="message_form_resubmission">Would you like to resend the data?</string>
     <string name="message_location">\nWould like to use your location</string>
@@ -156,9 +143,7 @@
     <string name="hint_password">Password</string>
     <string name="google_suggestions">Search Suggestions</string>
     <string name="powered_by_google">Powered by Google</string>
-    <string name="title_adblock">AdBlock</string>
-    <string name="message_adblock">AdBlock is currently only available in the browser\'s paid version, Lightning Browser+. It is available to download on Google Play.</string>
-    <string name="http_proxy">HTTP proxy</string>
+    <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
         <item>None</item>
         <item>Orbot</item>
@@ -208,7 +193,6 @@
     <string name="close_tab">Close tab</string>
     <string name="close_all_tabs">Close all tabs</string>
     <string name="third_party">Block 3rd Party Cookies</string>
-    <string name="available_lollipop">This feature is only available on Android 5.0+</string>
     <string name="color_mode">Enable Color Mode</string>
     <string name="reading_mode">Reader Mode</string>
     <string name="loading">Loading&#8230;</string>
@@ -217,13 +201,27 @@
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
     <string name="url_contents">URL Box Contents</string>
+    <string name="text_encoding">Text Encoding</string>
     <string-array name="url_content_array">
         <item >Domain (default)</item>
         <item >URL</item>
         <item >Title</item>
     </string-array>
         <string name="invert_color">Invert color</string>
-        <string name="dark_theme">Use Dark Theme</string>
-        <string name="change_after_restart">The theme change will take effect after you restart the browser.</string>
+        <string name="dark_theme">Dark Theme</string>
         <string name="tabs">Tabs</string>
+    <string name="theme">App Theme</string>
+    <string name="light_theme">Light Theme</string>
+    <string name="black_theme">Black Theme (AMOLED)</string>
+    <string name="folder">Folder Name</string>
+    <string name="action_folder">Folder</string>
+    <string name="action_rename">Rename</string>
+    <string name="title_rename_folder">Rename Folder</string>
+    <string name="dialog_folder">What would you like to do with this folder?</string>
+    <string name="clear_web_storage">Clear Web Storage</string>
+    <string name="clear_web_storage_exit">Clear web storage on exit</string>
+    <string name="message_web_storage_cleared">Web Storage Cleared</string>
+    <string name="hosts_source">Hosts File Ad Blocking Source</string>
+    <string name="settings_adblock">Ad Block Settings</string>
+    <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
 </resources>

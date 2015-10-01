@@ -7,63 +7,50 @@
     android:background="?attr/drawerBackground"
     android:clickable="true"
     android:fitsSystemWindows="true"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/dividerColor"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/plusIcon"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:contentDescription="@string/action_new_tab"
-            android:gravity="center_vertical"
-            android:src="?attr/tabDrawable" >
-        </ImageView>
+        <FrameLayout
+            android:id="@+id/tab_header_button"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:background="?attr/actionBarItemBackground"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/plusIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/action_new_tab"
+                android:src="@drawable/ic_action_tabs" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:layout_toRightOf="@+id/plusIcon"
             android:fontFamily="sans-serif-light"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:text="@string/tabs"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-    </RelativeLayout>
+    </LinearLayout>
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="?attr/dividerColor" />
-
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/left_drawer_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:choiceMode="singleChoice"
         android:divider="@null"
-        android:dividerHeight="0dp"
-        android:listSelector="?attr/listBackground" />
-
-    <View
-        android:id="@+id/lineView"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="?attr/dividerColor" />
+        android:dividerHeight="0dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,68 +58,58 @@
         android:background="?attr/dividerColor"
         android:baselineAligned="false"
         android:orientation="horizontal"
-        android:weightSum="3" >
+        android:weightSum="3">
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/action_back"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/listBackground"
-            android:clickable="true" >
+            android:background="?attr/actionBarItemBackground"
+            android:clickable="true">
 
             <ImageView
+                android:id="@+id/icon_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
                 android:contentDescription="@string/action_back"
-                android:paddingBottom="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="4dp"
-                android:src="?attr/arrowBackDrawable" />
-        </RelativeLayout>
+                android:src="@drawable/ic_action_back" />
+        </FrameLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/new_tab_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/listBackground"
-            android:clickable="true" >
+            android:background="?attr/actionBarItemBackground"
+            android:clickable="true">
 
             <ImageView
+                android:id="@+id/icon_plus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
                 android:contentDescription="@string/action_new_tab"
-                android:paddingBottom="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="4dp"
-                android:src="?attr/plusDrawable" >
-            </ImageView>
-        </RelativeLayout>
+                android:src="@drawable/ic_action_plus" />
+        </FrameLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/action_forward"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/listBackground"
-            android:clickable="true" >
+            android:background="?attr/actionBarItemBackground"
+            android:clickable="true">
 
             <ImageView
+                android:id="@+id/icon_forward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
                 android:contentDescription="@string/action_forward"
-                android:paddingBottom="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="4dp"
-                android:src="?attr/arrowForwardDrawable" />
-        </RelativeLayout>
+                android:src="@drawable/ic_action_forward" />
+        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>

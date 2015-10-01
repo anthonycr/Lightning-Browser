@@ -4,6 +4,7 @@
     <style name="Theme.SettingsTheme" parent="Theme.AppCompat.Light">
 
         <!-- customize the color palette -->
+        <item name="android:windowBackground">@null</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate</item>
         <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color</item>
@@ -12,14 +13,13 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="invertColorDrawable">@drawable/ic_action_invert_light</item>
-        <item name="textSizeDrawable">@drawable/ic_action_text_size_light</item>
         <item name="dividerColor">@color/divider_light</item>
     </style>
 
     <style name="Theme.SettingsTheme.Dark" parent="Theme.AppCompat">
 
         <!-- customize the color palette -->
+        <item name="android:windowBackground">@null</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_dark</item>
         <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color_dark</item>
@@ -28,8 +28,21 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="invertColorDrawable">@drawable/ic_action_invert_dark</item>
-        <item name="textSizeDrawable">@drawable/ic_action_text_size_dark</item>
+        <item name="dividerColor">@color/divider_dark</item>
+    </style>
+
+    <style name="Theme.SettingsTheme.Black" parent="Theme.AppCompat">
+
+        <!-- customize the color palette -->
+        <item name="android:windowBackground">@null</item>
+        <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_black</item>
+        <item name="listBackground">@drawable/list_bg</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="dividerColor">@color/divider_dark</item>
     </style>
 
@@ -37,26 +50,20 @@
 
         <!-- customize the color palette -->
         <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="listBackground">@drawable/list_bg</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/secondary_color</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="progressBackgroundColor">@color/secondary_color</item>
-        <item name="listBackground">@drawable/list_bg</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="progressColor">@color/gray_medium</item>
         <item name="numberColor">@color/gray_dark</item>
         <item name="autoCompleteTitleColor">@color/black</item>
         <item name="autoCompleteUrlColor">@color/gray_medium</item>
-        <item name="arrowBackDrawable">@drawable/ic_action_back</item>
-        <item name="arrowForwardDrawable">@drawable/ic_action_forward</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
         <item name="drawerBackground">@color/drawer_background</item>
-        <item name="plusDrawable">@drawable/ic_action_plus</item>
-        <item name="deleteDrawable">@drawable/ic_action_delete</item>
-        <item name="starDrawable">@drawable/ic_action_star</item>
-        <item name="tabDrawable">@drawable/ic_action_tabs_light</item>
         <item name="dividerColor">@color/divider_light</item>
         <item name="selectedBackground">@drawable/list_bg_light</item>
     </style>
@@ -77,15 +84,31 @@
         <item name="numberColor">@color/gray_dark</item>
         <item name="autoCompleteTitleColor">@color/black</item>
         <item name="autoCompleteUrlColor">@color/gray_medium</item>
-        <item name="arrowBackDrawable">@drawable/ic_action_back_dark</item>
-        <item name="arrowForwardDrawable">@drawable/ic_action_forward_dark</item>
         <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
         <item name="drawerBackground">@color/drawer_background_dark</item>
-        <item name="plusDrawable">@drawable/ic_action_plus_dark</item>
-        <item name="deleteDrawable">@drawable/ic_action_delete_dark</item>
-        <item name="starDrawable">@drawable/ic_action_star_dark</item>
-        <item name="tabDrawable">@drawable/ic_action_tabs_dark</item>
         <item name="dividerColor">@color/divider_dark</item>
+        <item name="selectedBackground">@drawable/list_bg_dark</item>
+    </style>
+
+    <style name="Theme.BlackTheme" parent="Theme.AppCompat">
+
+        <!-- customize the color palette -->
+        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="progressBackgroundColor">@color/black</item>
+        <item name="listBackground">@drawable/list_bg</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="progressColor">@color/gray_medium</item>
+        <item name="numberColor">@color/gray_dark</item>
+        <item name="autoCompleteTitleColor">@color/black</item>
+        <item name="autoCompleteUrlColor">@color/gray_medium</item>
+        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
+        <item name="drawerBackground">@color/black</item>
+        <item name="dividerColor">@color/black</item>
         <item name="selectedBackground">@drawable/list_bg_dark</item>
     </style>
 
@@ -101,6 +124,10 @@
     <style name="normalText">
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="TwoWayView">
+        <item name="android:orientation">horizontal</item>
     </style>
 
 </resources>

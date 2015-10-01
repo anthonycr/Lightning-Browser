@@ -5,151 +5,150 @@ package acr.browser.lightning.database;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public class HistoryItem implements Comparable<HistoryItem> {
 
-	// private variables
-	private int mId = 0;
-	private String mUrl = "";
-	private String mTitle = "";
-	private String mFolder = "";
-	private Bitmap mBitmap = null;
-	private int mImageId = 0;
-	private int mOrder = 0;
+    // private variables
+    @NonNull
+    private String mUrl = "";
 
-	// Empty constructor
-	public HistoryItem() {
+    @NonNull
+    private String mTitle = "";
 
-	}
+    @NonNull
+    private String mFolder = "";
 
-	// constructor
-	public HistoryItem(int id, String url, String title) {
-		this.mId = id;
-		this.mUrl = url;
-		this.mTitle = title;
-		this.mBitmap = null;
-	}
+    @Nullable
+    private Bitmap mBitmap = null;
 
-	// constructor
-	public HistoryItem(String url, String title) {
-		this.mUrl = url;
-		this.mTitle = title;
-		this.mBitmap = null;
-	}
+    private int mImageId = 0;
+    private int mOrder = 0;
+    private boolean mIsFolder = false;
 
-	// constructor
-	public HistoryItem(String url, String title, int imageId) {
-		this.mUrl = url;
-		this.mTitle = title;
-		this.mBitmap = null;
-		this.mImageId = imageId;
-	}
+    // Empty constructor
+    public HistoryItem() {}
 
-	// getting ID
-	public int getId() {
-		return this.mId;
-	}
+    public HistoryItem(HistoryItem item) {
+        this.mUrl = item.mUrl;
+        this.mTitle = item.mTitle;
+        this.mFolder = item.mFolder;
+        this.mOrder = item.mOrder;
+        this.mIsFolder = item.mIsFolder;
+    }
 
-	public int getImageId() {
-		return this.mImageId;
-	}
+    // constructor
+    public HistoryItem(@NonNull String url, @NonNull String title) {
+        this.mUrl = url;
+        this.mTitle = title;
+        this.mBitmap = null;
+    }
 
-	// setting id
-	public void setID(int id) {
-		this.mId = id;
-	}
+    // constructor
+    public HistoryItem(@NonNull String url, @NonNull String title, int imageId) {
+        this.mUrl = url;
+        this.mTitle = title;
+        this.mBitmap = null;
+        this.mImageId = imageId;
+    }
 
-	public void setImageId(int id) {
-		this.mImageId = id;
-	}
+    public int getImageId() {
+        return this.mImageId;
+    }
 
-	public void setBitmap(Bitmap image) {
-		mBitmap = image;
-	}
+    public void setImageId(int id) {
+        this.mImageId = id;
+    }
 
-	public void setFolder(String folder) {
-		mFolder = (folder == null) ? "" : folder;
-	}
+    public void setBitmap(Bitmap image) {
+        mBitmap = image;
+    }
 
-	public void setOrder(int order) {
-		mOrder = order;
-	}
+    public void setFolder(String folder) {
+        mFolder = (folder == null) ? "" : folder;
+    }
 
-	public int getOrder() {
-		return mOrder;
-	}
+    public void setOrder(int order) {
+        mOrder = order;
+    }
 
-	public String getFolder() {
-		return mFolder;
-	}
+    public int getOrder() {
+        return mOrder;
+    }
 
-	public Bitmap getBitmap() {
-		return mBitmap;
-	}
+    public String getFolder() {
+        return mFolder;
+    }
 
-	// getting name
-	public String getUrl() {
-		return this.mUrl;
-	}
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
 
-	// setting name
-	public void setUrl(String url) {
-		this.mUrl = (url == null) ? "" : url;
-	}
+    // getting name
+    public String getUrl() {
+        return this.mUrl;
+    }
 
-	// getting phone number
-	public String getTitle() {
-		return this.mTitle;
-	}
+    // setting name
+    public void setUrl(String url) {
+        this.mUrl = (url == null) ? "" : url;
+    }
 
-	// setting phone number
-	public void setTitle(String title) {
-		this.mTitle = (title == null) ? "" : title;
-	}
+    // getting phone number
+    public String getTitle() {
+        return this.mTitle;
+    }
 
-	@Override
-	public String toString() {
-		return mTitle;
-	}
+    // setting phone number
+    public void setTitle(String title) {
+        this.mTitle = (title == null) ? "" : title;
+    }
 
-	@Override
-	public int compareTo(@NonNull HistoryItem another) {
-		return mTitle.compareTo(another.mTitle);
-	}
+    public void setIsFolder(boolean isFolder) {
+        mIsFolder = isFolder;
+    }
 
-	@Override
-	public boolean equals(Object o) {
+    public boolean isFolder() {
+        return mIsFolder;
+    }
 
-		if (this == o) {
-			return true;
-		}
-		if (o == null || ((Object) this).getClass() != o.getClass()) {
-			return false;
-		}
+    @Override
+    public String toString() {
+        return mTitle;
+    }
 
-		HistoryItem that = (HistoryItem) o;
+    @Override
+    public int compareTo(@NonNull HistoryItem another) {
+        int compare = this.mTitle.compareTo(another.mTitle);
+        if (compare == 0) {
+            return this.mUrl.compareTo(another.mUrl);
+        }
+        return compare;
+    }
 
-		if (mId != that.mId) {
-			return false;
-		}
-		if (mImageId != that.mImageId) {
-			return false;
-		}
-		if (mBitmap != null ? !mBitmap.equals(that.mBitmap) : that.mBitmap != null) {
-			return false;
-		}
-		return mTitle.equals(that.mTitle) && mUrl.equals(that.mUrl);
-	}
+    @Override
+    public boolean equals(Object object) {
 
-	@Override
-	public int hashCode() {
+        if (this == object) return true;
+        if (object == null) return false;
+        if (!(object instanceof HistoryItem)) return false;
 
-		int result = mId;
-		result = 31 * result + mUrl.hashCode();
-		result = 31 * result + mTitle.hashCode();
-		result = 31 * result + (mBitmap != null ? mBitmap.hashCode() : 0);
-		result = 31 * result + mImageId;
+        HistoryItem that = (HistoryItem) object;
 
-		return result;
-	}
+        return mImageId == that.mImageId &&
+                this.mTitle.equals(that.mTitle) && this.mUrl.equals(that.mUrl) &&
+                this.mFolder.equals(that.mFolder);
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = mUrl.hashCode();
+        result = 31 * result + mImageId;
+        result = 31 * result + mTitle.hashCode();
+        result = 32 * result + mFolder.hashCode();
+        result = 31 * result + mImageId;
+
+        return result;
+    }
 }

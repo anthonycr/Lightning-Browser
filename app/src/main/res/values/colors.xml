@@ -2,14 +2,10 @@
 <resources>
 
     <color name="black">#ff000000</color>
-    <color name="light">#ffa0a0a0</color>
     <color name="gray_dark">#222222</color>
-    <color name="gray_light">#dddddd</color>
     <color name="gray_medium">#cdcdcd</color>
     <color name="white">#ffffff</color>
-    <color name="gray_extra_dark">#1b1b1b</color>
     <color name="gray_list_bg">#0d000000</color>
-    <color name="dark_text">#212121</color>
 
     <color name="primary_color">#E0E0E0</color>
     <color name="secondary_color">#4D000000</color>
@@ -25,13 +21,18 @@
 
     <color name="primary_color_dark">#424242</color>
 
-    <color name="divider_dark">#1EFFFFFF</color>
-    <color name="divider_light">#1E000000</color>
+    <color name="divider_dark">#1FFFFFFF</color>
+    <color name="divider_light">#1F000000</color>
 
 
     <color name="selected_dark">#0FFFFFFF</color>
     <color name="selected_light">#0F000000</color>
 
     <color name="transparent">#00000000</color>
+
+    <color name="icon_light_theme">#8A000000</color>
+    <color name="icon_dark_theme">#FFFFFFFF</color>
+
+    <color name="error_red">#F44336</color>
 
 </resources>

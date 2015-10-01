@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.controller;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Message;
@@ -12,49 +11,48 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebView;
 
+import acr.browser.lightning.view.LightningView;
+
 public interface BrowserController {
 
-	void updateUrl(String title, boolean shortUrl);
+    void updateUrl(String title, boolean shortUrl);
 
-	void updateProgress(int n);
+    void updateProgress(int n);
 
-	void updateHistory(String title, String url);
+    void updateHistory(String title, String url);
 
-	void openFileChooser(ValueCallback<Uri> uploadMsg);
+    void openFileChooser(ValueCallback<Uri> uploadMsg);
 
-	void update();
+    void updateTabs();
 
-	void onLongPress();
+    void onLongPress();
 
-	void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback);
+    void onShowCustomView(View view, CustomViewCallback callback);
 
-	void onHideCustomView();
+    void onHideCustomView();
 
-	Bitmap getDefaultVideoPoster();
+    Bitmap getDefaultVideoPoster();
 
-	View getVideoLoadingProgressView();
+    View getVideoLoadingProgressView();
 
-	void onCreateWindow(boolean isUserGesture, Message resultMsg);
+    void onCreateWindow(Message resultMsg);
 
-	Activity getActivity();
+    void onCloseWindow(LightningView view);
 
-	void hideActionBar();
+    void hideActionBar();
 
-	void showActionBar();
+    void showActionBar();
 
-	void toggleActionBar();
+    void longClickPage(String url);
 
-	void longClickPage(String url);
+    void openBookmarkPage(WebView view);
 
-	void openBookmarkPage(WebView view);
+    void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 
-	void showFileChooser(ValueCallback<Uri[]> filePathCallback);
+    void closeEmptyTab();
 
-	void closeEmptyTab();
+    boolean proxyIsNotReady();
 
-	boolean isIncognito();
+   //  void updateBookmarkIndicator(String url);
 
-	boolean isProxyReady();
-
-	int getMenu();
 }
