@@ -4,7 +4,11 @@
 ####Download
 * [Download APK from here](https://github.com/anthonycr/Lightning-Browser/releases)
 
-* [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
+* [Download from F-Droid](https://f-droid.org/repository/browse/?fdfilter=lightning&fdid=acr.browser.lightning)
+
+* [Download Free from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
+
+* [Download Paid from Google Play](https://play.google.com/store/apps/details?id=acr.browser.lightning)
 
 ####Master Branch
 * [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)

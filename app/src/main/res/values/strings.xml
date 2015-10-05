@@ -126,7 +126,13 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
     <string name="block_ads">Block Ads</string>
-    <string name="message_untrusted_certificate">The certificate of the site is not trusted. Proceed anyway?</string>
+    <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
+    <string name="message_certificate_date_invalid">date of certificate is invalid</string>
+    <string name="message_certificate_expired">certificate is expired</string>
+    <string name="message_certificate_domain_mismatch">domain in certificate does not match the site domain</string>
+    <string name="message_certificate_invalid">certificate is invalid</string>
+    <string name="message_certificate_not_yet_valid">certificate is not yet valid</string>
+    <string name="message_certificate_untrusted">certificate is not trusted</string>
     <string name="title_form_resubmission">Form Resubmission</string>
     <string name="message_form_resubmission">Would you like to resend the data?</string>
     <string name="message_location">\nWould like to use your location</string>

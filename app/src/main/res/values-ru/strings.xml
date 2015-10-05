@@ -106,7 +106,6 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Искать</string>
     <string name="block_ads">Блокировать рекламу</string>
-    <string name="message_untrusted_certificate">Сертификат сайта не является доверенным. Все равно продолжить?</string>
     <string name="title_form_resubmission">Повторная форма</string>
     <string name="message_form_resubmission">Вы действительно хотите отправить данные?</string>
     <string name="message_location">\Хотите использовать своё местоположение?</string>

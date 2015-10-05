@@ -120,7 +120,6 @@
     <string name="licenses">Лиценце отвореног кôда</string>
     <string name="suggestion">Тражи</string>
     <string name="block_ads">Блокирај рекламе</string>
-    <string name="message_untrusted_certificate">Сертификат овог сајта није поуздан. Да наставим свеједно?</string>
     <string name="title_form_resubmission">Поновно слање формулара</string>
     <string name="message_form_resubmission">Желите ли да поново пошаљете податке?</string>
     <string name="message_location">\nЖелите ли да користите вашу локацију</string>

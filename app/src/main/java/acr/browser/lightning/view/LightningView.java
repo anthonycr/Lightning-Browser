@@ -39,6 +39,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserActivity;
@@ -408,7 +410,7 @@ public class LightningView {
         if (mWebView != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             //noinspection deprecation
             mWebView.freeMemory();
-    }
+        }
     }
 
     public void setForegroundTab(boolean isForeground) {
