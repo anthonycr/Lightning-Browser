@@ -50,6 +50,7 @@
 * Please add translations/translation fixes as you see need
 
 ####Contributing
+* [The Trello Board](https://trello.com/b/Gwjx8MC3/lightning-browser)
 * Contributions are always welcome
 * If you want a feature and can code, feel free to fork and add the change yourself and make a pull request
 * PLEASE use the ````dev```` branch when contributing as the ````master```` branch is supposed to be for stable builds. I will not reject your pull request if you make it on master, but it will annoy me and make my life harder.
