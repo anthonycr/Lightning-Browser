@@ -3,11 +3,14 @@ package acr.browser.lightning.view;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
 import android.webkit.ValueCallback;
@@ -170,16 +173,29 @@ class LightningChromeClient extends WebChromeClient {
         return true;
     }
 
+    /**
+     * Obtain an image that is displayed as a placeholder on a video until the video has initialized
+     * and can begin loading.
+     *
+     * @return a Bitmap that can be used as a place holder for videos.
+     */
     @Override
     public Bitmap getDefaultVideoPoster() {
-        // TODO Simplify the method can be moved here
-        return mActivity.getDefaultVideoPoster();
+        final Resources resources = mActivity.getResources();
+        return BitmapFactory.decodeResource(resources, android.R.drawable.spinner_background);
     }
 
+    /**
+     * Inflate a view to send to a LightningView when it needs to display a video and has to
+     * show a loading dialog. Inflates a progress view and returns it.
+     *
+     * @return A view that should be used to display the state
+     * of a video's loading progress.
+     */
     @Override
     public View getVideoLoadingProgressView() {
-        // TODO Simplify the method can be moved here
-        return mActivity.getVideoLoadingProgressView();
+        LayoutInflater inflater = LayoutInflater.from(mActivity);
+        return inflater.inflate(R.layout.video_loading_progress, null);
     }
 
     @Override

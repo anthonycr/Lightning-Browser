@@ -114,7 +114,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         if (mShowInNavigationDrawer) {
             view = inflater.inflate(R.layout.tab_drawer, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-            // TODO Handle also long press
             setupFrameLayoutButton(view, R.id.new_tab_button, R.id.icon_plus);
             setupFrameLayoutButton(view, R.id.action_back, R.id.icon_back);
             setupFrameLayoutButton(view, R.id.action_forward, R.id.icon_forward);

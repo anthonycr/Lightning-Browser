@@ -29,10 +29,6 @@ public interface BrowserController {
 
     void onHideCustomView();
 
-    Bitmap getDefaultVideoPoster();
-
-    View getVideoLoadingProgressView();
-
     void onCreateWindow(Message resultMsg);
 
     void onCloseWindow(LightningView view);

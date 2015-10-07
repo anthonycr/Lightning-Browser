@@ -52,6 +52,10 @@ import acr.browser.lightning.utils.ThemeUtils;
  */
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
+    private final static String TAG = BookmarksFragment.class.getSimpleName();
+
+    public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
+
     // Managers
     @Inject
     BookmarkManager mBookmarkManager;
@@ -83,6 +87,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Colors
     private int mIconColor, mScrollIndex;
 
+    private boolean mIsIncognito;
+
     // Init asynchronously the bookmark manager
     private final Runnable mInitBookmarkManager = new Runnable() {
         @Override
@@ -98,6 +104,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
+        final Bundle arguments = getArguments();
+        final Context context = getContext();
+        mIsIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
+        mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
+        mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
+        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
+                ThemeUtils.getIconLightThemeColor(context);
     }
 
     // Handle bookmark click
@@ -137,6 +151,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mBookmarksListView.setOnItemClickListener(mItemClickListener);
         mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage = (ImageView) view.findViewById(R.id.starIcon);
+        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         mBookmarkImage = (ImageView) view.findViewById(R.id.icon_star);
         final View backView = view.findViewById(R.id.bookmark_back_button);
         backView.setOnClickListener(new View.OnClickListener() {
@@ -154,19 +169,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         // Must be called here, only here we have a reference to the ListView
         new Thread(mInitBookmarkManager).run();
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        // TODO remove dependency on BrowserActivity
-        super.onActivityCreated(savedInstanceState);
-        final BrowserActivity activity = (BrowserActivity) getActivity();
-        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || ((BrowserActivity) activity).isIncognito();
-        mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
-        mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
-        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
-                ThemeUtils.getIconLightThemeColor(activity);
-        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override

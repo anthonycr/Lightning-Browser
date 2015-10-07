@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class IntentUtils {
 
-    private final Context mActivity;
+    private final Activity mActivity;
 
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
             + // switch on case insensitive matching
@@ -63,11 +63,9 @@ public class IntentUtils {
             return false;
         }
         try {
-            // TODO Restore this
-//            if (mActivity.startActivityIfNeeded(intent, -1)) {
-//                return true;
-//            }
-            mActivity.startActivity(intent);
+            if (mActivity.startActivityIfNeeded(intent, -1)) {
+                return true;
+            }
         } catch (ActivityNotFoundException ex) {
             ex.printStackTrace();
         }

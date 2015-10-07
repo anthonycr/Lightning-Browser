@@ -99,7 +99,6 @@ public class LightningView {
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
         mTitle = new LightningViewTitle(activity, darkTheme);
-        // mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
         mPermissionsManager = PermissionsManager.getInstance();
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
@@ -195,8 +194,6 @@ public class LightningView {
 
         settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
         mHomepage = mPreferences.getHomepage();
-        // mAdBlock.updatePreference();
-
         setColorMode(mPreferences.getRenderingMode());
 
         if (!mIsIncognitoTab) {

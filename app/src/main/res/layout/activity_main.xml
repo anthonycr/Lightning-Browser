@@ -41,14 +41,8 @@
             android:id="@+id/right_drawer"
             android:background="?attr/drawerBackground"
             android:layout_width="@dimen/navigation_width"
-            android:layout_height="match_parent">
-            <fragment
-                android:id="@+id/bookmark_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                class="acr.browser.lightning.fragment.BookmarksFragment" />
-        </FrameLayout>
-        <!-- include layout="@layout/bookmark_drawer" / -->
+            android:layout_height="match_parent" />
+
     </android.support.v4.widget.DrawerLayout>
 
 </LinearLayout>

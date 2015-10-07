@@ -11,6 +11,7 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -104,6 +106,7 @@ import acr.browser.lightning.controller.BrowserController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
+import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -267,13 +270,21 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         final TabsFragment tabsFragment = new TabsFragment();
         final int containerId = mShowTabsInDrawer ? R.id.left_drawer : R.id.tabs_toolbar_container;
-        final Bundle arguments = new Bundle();
-        arguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito());
-        arguments.putBoolean(TabsFragment.VERTICAL_MODE, mShowTabsInDrawer);
-        tabsFragment.setArguments(arguments);
-        getSupportFragmentManager()
+        final Bundle tabsFragmentArguments = new Bundle();
+        tabsFragmentArguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito());
+        tabsFragmentArguments.putBoolean(TabsFragment.VERTICAL_MODE, mShowTabsInDrawer);
+        tabsFragment.setArguments(tabsFragmentArguments);
+
+        final BookmarksFragment bookmarksFragment = new BookmarksFragment();
+        final Bundle bookmarksFragmentArguments = new Bundle();
+        bookmarksFragmentArguments.putBoolean(BookmarksFragment.INCOGNITO_MODE, isIncognito());
+        bookmarksFragment.setArguments(bookmarksFragmentArguments);
+
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager
                 .beginTransaction()
                 .add(containerId, tabsFragment)
+                .add(R.id.right_drawer, bookmarksFragment)
                 .commit();
         if (mShowTabsInDrawer) {
             mToolbarLayout.removeView(findViewById(R.id.tabs_toolbar_container));
@@ -981,7 +992,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
 //  What?
-        int current = tabsManager.getPositionForTab(currentTab);
+        int current = tabsManager.positionOf(currentTab);
         if (current < 0) {
             return;
         }
@@ -996,7 +1007,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             tabsManager.deleteTab(position);
             showTab(current - 1);
             mEventBus.post(new BrowserEvents.TabsChanged());
-            tabToDelete.onDestroy();
         } else if (tabsManager.size() > position + 1) {
             if (current == position) {
                 showTab(position + 1);
@@ -1006,8 +1016,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             } else {
                 tabsManager.deleteTab(position);
             }
-
-            tabToDelete.onDestroy();
         } else if (tabsManager.size() > 1) {
             if (current == position) {
                 showTab(position - 1);
@@ -1016,8 +1024,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mEventBus.post(new BrowserEvents.TabsChanged());
             } else {
             }
-
-            tabToDelete.onDestroy();
         } else {
             if (currentTab.getUrl().startsWith(Constants.FILE) || currentTab.getUrl().equals(mHomepage)) {
                 closeActivity();
@@ -1025,7 +1031,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 tabsManager.deleteTab(position);
                 performExitCleanUp();
                 tabToDelete.pauseTimers();
-                tabToDelete.onDestroy();
                 mEventBus.post(new BrowserEvents.TabsChanged());
                 finish();
             }
@@ -1624,32 +1629,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         }
-    }
-
-    /**
-     * This interface method is used by the LightningView to obtain an
-     * image that is displayed as a placeholder on a video until the video
-     * has initialized and can begin loading.
-     *
-     * @return a Bitmap that can be used as a place holder for videos.
-     */
-    @Override
-    public Bitmap getDefaultVideoPoster() {
-        return BitmapFactory.decodeResource(getResources(), android.R.drawable.spinner_background);
-    }
-
-    /**
-     * An interface method so that we can inflate a view to send to
-     * a LightningView when it needs to display a video and has to
-     * show a loading dialog. Inflates a progress view and returns it.
-     *
-     * @return A view that should be used to display the state
-     * of a video's loading progress.
-     */
-    @Override
-    public View getVideoLoadingProgressView() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        return inflater.inflate(R.layout.video_loading_progress, null);
     }
 
     /**

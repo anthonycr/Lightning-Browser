@@ -89,7 +89,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     private void openIfNecessary() {
-        if (mDatabase == null) {
+        if (isClosed()) {
             mDatabase = this.getWritableDatabase();
         }
     }

@@ -158,13 +158,11 @@ public class TabsManager {
             return null;
         }
         final LightningView tab = mWebViewList.remove(position);
-        // TODO This should not be done outside this call
-        // tab.onDestroy();
+        tab.onDestroy();
         return tab;
     }
 
     /**
-     * TODO I think it should be removed
      * Return the position of the given tab
      * @param tab
      * @return
@@ -185,15 +183,6 @@ public class TabsManager {
             }
         }
         return builder.toString();
-    }
-
-    /**
-     * TODO Remove this, temporary workaround
-     * @param tab
-     * @return
-     */
-    public int getPositionForTab(final LightningView tab) {
-        return mWebViewList.indexOf(tab);
     }
 
     /**
