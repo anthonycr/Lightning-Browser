@@ -143,7 +143,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         boolean imagesBool = mPreferences.getBlockImagesEnabled();
         boolean enableJSBool = mPreferences.getJavaScriptEnabled();
 
-//        proxy.setEnabled(Constants.FULL_VERSION);
         cbAds.setEnabled(Constants.FULL_VERSION);
         cbFlash.setEnabled(API < 19);
 
