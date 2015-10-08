@@ -340,6 +340,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         setupFrameLayoutButton(R.id.action_forward, R.id.icon_forward);
         setupFrameLayoutButton(R.id.action_toggle_desktop, R.id.icon_desktop);
         setupFrameLayoutButton(R.id.action_reading, R.id.icon_reading);
+        setupFrameLayoutButton(R.id.action_home, R.id.icon_home);
 
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) customView.findViewById(R.id.search);
@@ -2320,6 +2321,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 break;
             case R.id.new_tab_button:
                 newTab(null, true);
+                break;
+            case R.id.action_home:
+                mCurrentView.loadHomepage();
+                closeDrawers();
                 break;
             case R.id.button_next:
                 mWebView.findNext(false);
