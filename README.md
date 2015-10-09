@@ -55,8 +55,9 @@
 * If you want a feature and can code, feel free to fork and add the change yourself and make a pull request
 * PLEASE use the ````dev```` branch when contributing as the ````master```` branch is supposed to be for stable builds. I will not reject your pull request if you make it on master, but it will annoy me and make my life harder.
 * Code Style
-    * Standard Java camel case
-    * Member variables are preceded with an 'm'
+    * Hungarian Notation
+         * Prefix member variables with 'm'
+         * Prefix static member variables with 's'
     * Use 4 spaces instead of a tab (\t)
 
 ####Setting Up the Project
