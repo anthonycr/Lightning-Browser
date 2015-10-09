@@ -117,7 +117,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             setupFrameLayoutButton(view, R.id.new_tab_button, R.id.icon_plus);
             setupFrameLayoutButton(view, R.id.action_back, R.id.icon_back);
             setupFrameLayoutButton(view, R.id.action_forward, R.id.icon_forward);
-
+            setupFrameLayoutButton(view, R.id.action_home, R.id.icon_home);
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -184,6 +184,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             case R.id.action_forward:
                 bus.post(new NavigationEvents.GoForward());
                 break;
+            case R.id.action_home:
+                bus.post(new NavigationEvents.GoHome());
             default:
                 break;
         }

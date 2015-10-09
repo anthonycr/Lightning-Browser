@@ -19,9 +19,16 @@ public class NavigationEvents {
     }
 
     /**
-     * Fired by {@link acr.browser.lightning.fragment.TabsFragment} when teh user presses forward
+     * Fired by {@link acr.browser.lightning.fragment.TabsFragment} when the user presses forward
      * button.
      */
     public static class GoForward {
+    }
+
+    /**
+     * Fired by {@link acr.browser.lightning.fragment.TabsFragment} when the user presses the home
+     * button.
+     */
+    public static class GoHome {
     }
 }

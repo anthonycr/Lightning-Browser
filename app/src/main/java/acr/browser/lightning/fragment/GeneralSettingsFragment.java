@@ -138,7 +138,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         boolean imagesBool = mPreferenceManager.getBlockImagesEnabled();
         boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
 
-//        proxy.setEnabled(Constants.FULL_VERSION);
         cbAds.setEnabled(Constants.FULL_VERSION);
         cbFlash.setEnabled(API < 19);
 
