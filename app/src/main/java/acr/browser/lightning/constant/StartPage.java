@@ -57,11 +57,12 @@ public class StartPage {
         StringBuilder homepageBuilder = new StringBuilder(StartPage.HEAD);
         String icon;
         String searchUrl;
-        switch (PreferenceManager.getInstance().getSearchChoice()) {
+        final PreferenceManager preferenceManager = BrowserApp.getAppComponent().getPreferenceManager();
+        switch (preferenceManager.getSearchChoice()) {
             case 0:
                 // CUSTOM SEARCH
                 icon = "file:///android_asset/lightning.png";
-                searchUrl = PreferenceManager.getInstance().getSearchUrl();
+                searchUrl = preferenceManager.getSearchUrl();
                 break;
             case 1:
                 // GOOGLE_SEARCH;

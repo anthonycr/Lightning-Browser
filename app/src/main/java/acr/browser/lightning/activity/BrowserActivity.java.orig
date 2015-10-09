@@ -320,6 +320,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mProxyUtils = ProxyUtils.getInstance();
 
+<<<<<<< HEAD
+=======
+        setupFrameLayoutButton(R.id.action_back, R.id.icon_back);
+        setupFrameLayoutButton(R.id.action_forward, R.id.icon_forward);
+        setupFrameLayoutButton(R.id.action_toggle_desktop, R.id.icon_desktop);
+        setupFrameLayoutButton(R.id.action_reading, R.id.icon_reading);
+        setupFrameLayoutButton(R.id.action_home, R.id.icon_home);
+
+>>>>>>> d3867d29bd4002682fc3c0a15d6f10cb1869c137
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) customView.findViewById(R.id.search);
         mUntitledTitle = getString(R.string.untitled);
@@ -890,8 +899,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-        // Remove browser frame background to reduce overdraw
-        //TODO evaluate performance
+                // Remove browser frame background to reduce overdraw
+                //TODO evaluate performance
 //                mBrowserFrame.setBackgroundColor(Color.TRANSPARENT);
 //            }
 //        }, 300);
@@ -950,8 +959,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Log.d(Constants.TAG, "Low Memory, Free Memory");
             tabsManager.freeMemory();
+            }
         }
-    }
 
     synchronized boolean newTab(String url, boolean show) {
         // Limit number of tabs for limited version of app
@@ -1755,9 +1764,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 show.setInterpolator(new DecelerateInterpolator());
                 if (view != null) {
                     view.startAnimation(show);
-            }
                 }
             }
+        }
     }
 
     /**
@@ -1809,6 +1818,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     currentTab.loadHomepage();
                 }
                 break;
+<<<<<<< HEAD
+=======
+            case R.id.new_tab_button:
+                newTab(null, true);
+                break;
+            case R.id.action_home:
+                mCurrentView.loadHomepage();
+                closeDrawers();
+                break;
+>>>>>>> d3867d29bd4002682fc3c0a15d6f10cb1869c137
             case R.id.button_next:
                 currentWebView.findNext(false);
                 break;
@@ -2079,15 +2098,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (currentTab.canGoForward()) {
                     currentTab.goForward();
                 }
-            }
-        }
-
-        @Subscribe
-        public void goHome(final NavigationEvents.GoHome event) {
-            final LightningView currentTab = tabsManager.getCurrentTab();
-            if (currentTab != null) {
-                currentTab.loadHomepage();
-                closeDrawers();
             }
         }
 

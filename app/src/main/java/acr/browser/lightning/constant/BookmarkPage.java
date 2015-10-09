@@ -62,7 +62,8 @@ public final class BookmarkPage {
         CACHE_DIR = context.getCacheDir();
     }
 
-    public void buildBookmarkPage(final String folder, final List<HistoryItem> list) {
+    public void buildBookmarkPage(final String folder) {
+        final List<HistoryItem> list = manager.getBookmarksFromFolder(folder, true);
         final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {
             bookmarkWebPage = new File(FILES_DIR, Constants.BOOKMARKS_FILENAME);
@@ -83,7 +84,7 @@ public final class BookmarkPage {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        buildBookmarkPage(item.getTitle(), manager.getBookmarksFromFolder(item.getTitle(), true));
+                        buildBookmarkPage(item.getTitle());
                     }
                 }).run();
             } else {

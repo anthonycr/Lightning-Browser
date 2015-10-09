@@ -18,14 +18,14 @@ public class MainActivity extends BrowserActivity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this);
         }
-        cookieManager.setAcceptCookie(PreferenceManager.getInstance().getCookiesEnabled());
+        cookieManager.setAcceptCookie(mPreferences.getCookiesEnabled());
     }
 
-    @Override
-    public synchronized void initializeTabs() {
-        restoreOrNewTab();
-        // if incognito mode use newTab(null, true); instead
-    }
+//    @Override
+//    public synchronized void initializeTabs() {
+//        // restoreOrNewTab();
+//        // if incognito mode use newTab(null, true); instead
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

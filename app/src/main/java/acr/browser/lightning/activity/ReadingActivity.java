@@ -22,6 +22,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.reading.HtmlFetcher;
@@ -49,7 +50,7 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
-        mPreferences = PreferenceManager.getInstance();
+        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
         mInvert = mPreferences.getInvertColors();
         final int color;
         if (mInvert) {

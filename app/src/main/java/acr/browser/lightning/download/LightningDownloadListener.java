@@ -3,7 +3,7 @@
  */
 package acr.browser.lightning.download;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -15,10 +15,10 @@ import acr.browser.lightning.constant.Constants;
 
 public class LightningDownloadListener implements DownloadListener {
 
-    private final Activity mActivity;
+    private final Context mContext;
 
-    public LightningDownloadListener(Activity activity) {
-        mActivity = activity;
+    public LightningDownloadListener(Context context) {
+        mContext = context;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class LightningDownloadListener implements DownloadListener {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        DownloadHandler.onDownloadStart(mActivity, url, userAgent,
+                        DownloadHandler.onDownloadStart(mContext, url, userAgent,
                                 contentDisposition, mimetype);
                         break;
 
@@ -40,12 +40,12 @@ public class LightningDownloadListener implements DownloadListener {
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext); // dialog
         builder.setTitle(fileName)
-                .setMessage(mActivity.getResources().getString(R.string.dialog_download))
-                .setPositiveButton(mActivity.getResources().getString(R.string.action_download),
+                .setMessage(mContext.getResources().getString(R.string.dialog_download))
+                .setPositiveButton(mContext.getResources().getString(R.string.action_download),
                         dialogClickListener)
-                .setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),
+                .setNegativeButton(mContext.getResources().getString(R.string.action_cancel),
                         dialogClickListener).show();
         Log.i(Constants.TAG, "Downloading" + fileName);
 

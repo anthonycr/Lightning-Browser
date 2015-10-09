@@ -6,26 +6,18 @@ package acr.browser.lightning.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.net.MailTo;
 import android.net.Uri;
-import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -34,60 +26,48 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.webkit.CookieManager;
-import android.webkit.GeolocationPermissions;
-import android.webkit.HttpAuthHandler;
-import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
-import java.io.ByteArrayInputStream;
+import com.squareup.otto.Bus;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.AdBlock;
-import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.PermissionsManager;
+import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningView {
 
-    private final Title mTitle;
+    final LightningViewTitle mTitle;
     private WebView mWebView;
-    private final boolean mIsIncognitoTab;
-    private final BrowserController mBrowserController;
+    final boolean mIsIncognitoTab;
     private final GestureDetector mGestureDetector;
-    private final Activity mActivity;
+    private final BrowserActivity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
-    // TODO fix so that mWebpageBitmap can be static - static changes the icon when switching from light to dark and then back to light
-    private final Bitmap mWebpageBitmap;
-    private static PreferenceManager mPreferences;
-    private final AdBlock mAdBlock;
-    private final IntentUtils mIntentUtils;
     private final Paint mPaint = new Paint();
     private boolean isForegroundTab;
-    private boolean mTextReflow = false;
     private boolean mInvertPage = false;
     private boolean mToggleDesktop = false;
     private static float mMaxFling;
@@ -101,24 +81,28 @@ public class LightningView {
     };
     private final PermissionsManager mPermissionsManager;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+    private final WebViewHandler webViewHandler = new WebViewHandler();
+
+    @Inject
+    Bus eventBus;
+
+    @Inject
+    PreferenceManager mPreferences;
+
+    @Inject
+    LightningDialogBuilder bookmarksDialogBuilder;
 
     @SuppressLint("NewApi")
-    public LightningView(Activity activity, String url, boolean darkTheme, boolean isIncognito, BrowserController controller) {
-
+    public LightningView(BrowserActivity activity, String url, boolean darkTheme, boolean isIncognito) {
+        BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
-        mTitle = new Title(activity, darkTheme);
-        mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
+        mTitle = new LightningViewTitle(activity, darkTheme);
         mPermissionsManager = PermissionsManager.getInstance();
-
-        mWebpageBitmap = mTitle.mDefaultIcon;
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
-        mBrowserController = controller;
-
-        mIntentUtils = new IntentUtils(mActivity);
         mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
         mWebView.setFocusableInTouchMode(true);
         mWebView.setFocusable(true);
@@ -135,8 +119,8 @@ public class LightningView {
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
         mWebView.setNetworkAvailable(true);
-        mWebView.setWebChromeClient(new LightningChromeClient(activity));
-        mWebView.setWebViewClient(new LightningWebClient(activity));
+        mWebView.setWebChromeClient(new LightningChromeClient(activity, this));
+        mWebView.setWebViewClient(new LightningWebClient(activity, this));
         mWebView.setDownloadListener(new LightningDownloadListener(activity));
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
@@ -162,10 +146,35 @@ public class LightningView {
         if (mHomepage.startsWith("about:home")) {
             mWebView.loadUrl(StartPage.getHomepage(mActivity));
         } else if (mHomepage.startsWith("about:bookmarks")) {
-            mBrowserController.openBookmarkPage(mWebView);
+            loadBookmarkpage();
         } else {
             mWebView.loadUrl(mHomepage);
         }
+    }
+
+    /**
+     * Load the HTML bookmarks page in this view
+     */
+    public void loadBookmarkpage() {
+        if (mWebView == null)
+            return;
+        Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
+        FileOutputStream outputStream = null;
+        File image = new File(mActivity.getCacheDir(), "folder.png");
+        try {
+            outputStream = new FileOutputStream(image);
+            folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            folderIcon.recycle();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.close(outputStream);
+        }
+        File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
+
+        BrowserApp.getAppComponent().getBookmarkPage().buildBookmarkPage(null);
+        mWebView.loadUrl(Constants.FILE + bookmarkWebPage);
+
     }
 
     /**
@@ -182,12 +191,9 @@ public class LightningView {
         } else if (settings == null) {
             settings = mWebView.getSettings();
         }
-        mPreferences = PreferenceManager.getInstance();
 
         settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
         mHomepage = mPreferences.getHomepage();
-        mAdBlock.updatePreference();
-
         setColorMode(mPreferences.getRenderingMode());
 
         if (!mIsIncognitoTab) {
@@ -242,7 +248,6 @@ public class LightningView {
         }
 
         if (mPreferences.getTextReflowEnabled()) {
-            mTextReflow = true;
             settings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
             if (API >= android.os.Build.VERSION_CODES.KITKAT) {
                 try {
@@ -254,7 +259,6 @@ public class LightningView {
                 }
             }
         } else {
-            mTextReflow = false;
             settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
         }
 
@@ -408,7 +412,7 @@ public class LightningView {
 
     public void setForegroundTab(boolean isForeground) {
         isForegroundTab = isForeground;
-        mBrowserController.updateTabs();
+        eventBus.post(new BrowserEvents.TabsChanged());
     }
 
     public boolean isForegroundTab() {
@@ -511,7 +515,7 @@ public class LightningView {
 
     public synchronized void reload() {
         // Check if configured proxy is available
-        if (mBrowserController.proxyIsNotReady()) {
+        if (!ProxyUtils.getInstance().isProxyReady()) {
             // User has been notified
             return;
         }
@@ -579,6 +583,60 @@ public class LightningView {
         }
     }
 
+    /**
+     * Used by {@link LightningWebClient}
+     *
+     * @return true if the page is in inverted mode, false otherwise
+     */
+    public boolean getInvertePage() {
+        return mInvertPage;
+    }
+    /**
+     * handles a long click on the page, parameter String url
+     * is the url that should have been obtained from the WebView touch node
+     * thingy, if it is null, this method tries to deal with it and find a workaround
+     */
+    private void longClickPage(final String url) {
+        final WebView.HitTestResult result = mWebView.getHitTestResult();
+        String currentUrl = mWebView.getUrl();
+        if (currentUrl != null && currentUrl.startsWith(Constants.FILE)) {
+            if (currentUrl.endsWith(HistoryPage.FILENAME)) {
+                if (url != null) {
+                    bookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    bookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
+                }
+            } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
+                if (url != null) {
+                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                }
+            }
+        } else {
+            if (url != null) {
+                if (result != null) {
+                    if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+                        bookmarksDialogBuilder.showLongPressImageDialog(mActivity, url, getUserAgent());
+                    } else {
+                        bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                    }
+                } else {
+                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                }
+            } else if (result != null && result.getExtra() != null) {
+                final String newUrl = result.getExtra();
+                if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+                    bookmarksDialogBuilder.showLongPressImageDialog(mActivity, newUrl, getUserAgent());
+                } else {
+                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                }
+            }
+        }
+    }
+
     public boolean canGoBack() {
         return mWebView != null && mWebView.canGoBack();
     }
@@ -598,8 +656,7 @@ public class LightningView {
 
     public synchronized void loadUrl(String url) {
         // Check if configured proxy is available
-        if (mBrowserController.proxyIsNotReady()) {
-            // User has been notified
+        if (!ProxyUtils.getInstance().isProxyReady()) {
             return;
         }
 
@@ -619,500 +676,6 @@ public class LightningView {
         } else {
             return "";
         }
-    }
-
-    private static class IconCacheTask implements Runnable {
-        private final Uri uri;
-        private final Bitmap icon;
-
-        public IconCacheTask(Uri uri, Bitmap icon) {
-            this.uri = uri;
-            this.icon = icon;
-        }
-
-        @Override
-        public void run() {
-            String hash = String.valueOf(uri.getHost().hashCode());
-            Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
-            FileOutputStream fos = null;
-            try {
-                File image = new File(BrowserApp.getAppContext().getCacheDir(), hash + ".png");
-                fos = new FileOutputStream(image);
-                icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                Utils.close(fos);
-            }
-        }
-    }
-
-    public class LightningWebClient extends WebViewClient {
-
-        final Activity mActivity;
-
-        LightningWebClient(Activity activity) {
-            mActivity = activity;
-        }
-
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (mAdBlock.isAd(request.getUrl().toString())) {
-                    ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
-                    return new WebResourceResponse("text/plain", "utf-8", EMPTY);
-                }
-            }
-            return super.shouldInterceptRequest(view, request);
-        }
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            if (mAdBlock.isAd(url)) {
-                ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
-                return new WebResourceResponse("text/plain", "utf-8", EMPTY);
-            }
-            return null;
-        }
-
-        @SuppressLint("NewApi")
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            if (view.isShown()) {
-                mBrowserController.updateUrl(url, true);
-                view.postInvalidate();
-            }
-            if (view.getTitle() == null || view.getTitle().isEmpty()) {
-                mTitle.setTitle(mActivity.getString(R.string.untitled));
-            } else {
-                mTitle.setTitle(view.getTitle());
-            }
-            if (API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage) {
-                view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
-            }
-            mBrowserController.updateTabs();
-        }
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (isShown()) {
-                mBrowserController.updateUrl(url, false);
-                mBrowserController.showActionBar();
-            }
-            mTitle.setFavicon(mWebpageBitmap);
-            mBrowserController.updateTabs();
-        }
-
-        @Override
-        public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
-                                              final String host, final String realm) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            final EditText name = new EditText(mActivity);
-            final EditText password = new EditText(mActivity);
-            LinearLayout passLayout = new LinearLayout(mActivity);
-            passLayout.setOrientation(LinearLayout.VERTICAL);
-
-            passLayout.addView(name);
-            passLayout.addView(password);
-
-            name.setHint(mActivity.getString(R.string.hint_username));
-            name.setSingleLine();
-            password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            password.setSingleLine();
-            password.setTransformationMethod(new PasswordTransformationMethod());
-            password.setHint(mActivity.getString(R.string.hint_password));
-            builder.setTitle(mActivity.getString(R.string.title_sign_in));
-            builder.setView(passLayout);
-            builder.setCancelable(true)
-                    .setPositiveButton(mActivity.getString(R.string.title_sign_in),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    String user = name.getText().toString();
-                                    String pass = password.getText().toString();
-                                    handler.proceed(user.trim(), pass.trim());
-                                    Log.d(Constants.TAG, "Request Login");
-
-                                }
-                            })
-                    .setNegativeButton(mActivity.getString(R.string.action_cancel),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    handler.cancel();
-
-                                }
-                            });
-            AlertDialog alert = builder.create();
-            alert.show();
-
-        }
-
-        private boolean mIsRunning = false;
-        private float mZoomScale = 0.0f;
-
-        @SuppressLint("NewApi")
-        @Override
-        public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
-            if (view.isShown() && mTextReflow && API >= android.os.Build.VERSION_CODES.KITKAT) {
-                if (mIsRunning)
-                    return;
-                if (Math.abs(mZoomScale - newScale) > 0.01f) {
-                    mIsRunning = view.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            mZoomScale = newScale;
-                            view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
-                            mIsRunning = false;
-                        }
-
-                    }, 100);
-                }
-
-            }
-        }
-
-        private List<Integer> getAllSslErrorMessageCodes(SslError error) {
-
-            List<Integer> errorCodeMessageCodes = new ArrayList<>();
-
-            if (error.hasError(SslError.SSL_DATE_INVALID)) {
-                errorCodeMessageCodes.add(R.string.message_certificate_date_invalid);
-            }
-            if (error.hasError(SslError.SSL_EXPIRED)) {
-                errorCodeMessageCodes.add(R.string.message_certificate_expired);
-            }
-            if (error.hasError(SslError.SSL_IDMISMATCH)) {
-                errorCodeMessageCodes.add(R.string.message_certificate_domain_mismatch);
-            }
-            if (error.hasError(SslError.SSL_NOTYETVALID)) {
-                errorCodeMessageCodes.add(R.string.message_certificate_not_yet_valid);
-            }
-            if (error.hasError(SslError.SSL_UNTRUSTED)) {
-                errorCodeMessageCodes.add(R.string.message_certificate_untrusted);
-            }
-            if (error.hasError(SslError.SSL_INVALID)) {
-                errorCodeMessageCodes.add(R.string.message_certificate_invalid);
-            }
-
-            return errorCodeMessageCodes;
-        }
-
-        @Override
-        public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, SslError error) {
-
-            List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
-
-            StringBuilder stringBuilder = new StringBuilder();
-            for (Integer messageCode : errorCodeMessageCodes) {
-                stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
-            }
-            String alertMessage =
-                    mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setTitle(mActivity.getString(R.string.title_warning));
-            builder.setMessage(alertMessage)
-                    .setCancelable(true)
-                    .setPositiveButton(mActivity.getString(R.string.action_yes),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    handler.proceed();
-                                }
-                            })
-                    .setNegativeButton(mActivity.getString(R.string.action_no),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    handler.cancel();
-                                }
-                            });
-            builder.create().show();
-        }
-
-        @Override
-        public void onFormResubmission(WebView view, @NonNull final Message dontResend, final Message resend) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setTitle(mActivity.getString(R.string.title_form_resubmission));
-            builder.setMessage(mActivity.getString(R.string.message_form_resubmission))
-                    .setCancelable(true)
-                    .setPositiveButton(mActivity.getString(R.string.action_yes),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-
-                                    resend.sendToTarget();
-                                }
-                            })
-                    .setNegativeButton(mActivity.getString(R.string.action_no),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-
-                                    dontResend.sendToTarget();
-                                }
-                            });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // Check if configured proxy is available
-            if (mBrowserController.proxyIsNotReady()) {
-                // User has been notified
-                return true;
-            }
-
-            if (mIsIncognitoTab) {
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-            if (url.startsWith("about:")) {
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-            if (url.contains("mailto:")) {
-                MailTo mailTo = MailTo.parse(url);
-                Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
-                        mailTo.getBody(), mailTo.getCc());
-                mActivity.startActivity(i);
-                view.reload();
-                return true;
-            } else if (url.startsWith("intent://")) {
-                Intent intent;
-                try {
-                    intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-                } catch (URISyntaxException ex) {
-                    return false;
-                }
-                if (intent != null) {
-                    try {
-                        mActivity.startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        Log.e(Constants.TAG, "ActivityNotFoundException");
-                    }
-                    return true;
-                }
-            }
-            return mIntentUtils.startActivityForUrl(mWebView, url);
-        }
-    }
-
-    public class LightningChromeClient extends WebChromeClient {
-
-        final Activity mActivity;
-
-        LightningChromeClient(Activity activity) {
-            mActivity = activity;
-        }
-
-        @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-            if (isShown()) {
-                mBrowserController.updateProgress(newProgress);
-            }
-        }
-
-        @Override
-        public void onReceivedIcon(WebView view, Bitmap icon) {
-            if (icon == null)
-                return;
-            mTitle.setFavicon(icon);
-            mBrowserController.updateTabs();
-            cacheFavicon(icon);
-        }
-
-        @Override
-        public void onReceivedTitle(WebView view, String title) {
-            if (title != null && !title.isEmpty()) {
-                mTitle.setTitle(title);
-            } else {
-                mTitle.setTitle(mActivity.getString(R.string.untitled));
-            }
-            mBrowserController.updateTabs();
-            if (view != null)
-                mBrowserController.updateHistory(title, view.getUrl());
-        }
-
-        @Override
-        public void onGeolocationPermissionsShowPrompt(final String origin,
-                                                       final GeolocationPermissions.Callback callback) {
-            mPermissionsManager.requestPermissionsIfNecessary(mActivity, PERMISSIONS);
-            final boolean remember = true;
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setTitle(mActivity.getString(R.string.location));
-            String org;
-            if (origin.length() > 50) {
-                org = origin.subSequence(0, 50) + "...";
-            } else {
-                org = origin;
-            }
-            builder.setMessage(org + mActivity.getString(R.string.message_location))
-                    .setCancelable(true)
-                    .setPositiveButton(mActivity.getString(R.string.action_allow),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    callback.invoke(origin, true, remember);
-                                }
-                            })
-                    .setNegativeButton(mActivity.getString(R.string.action_dont_allow),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    callback.invoke(origin, false, remember);
-                                }
-                            });
-            AlertDialog alert = builder.create();
-            alert.show();
-
-        }
-
-        @Override
-        public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
-                                      Message resultMsg) {
-            mBrowserController.onCreateWindow(resultMsg);
-            return true;
-        }
-
-        @Override
-        public void onCloseWindow(WebView window) {
-            mBrowserController.onCloseWindow(LightningView.this);
-        }
-
-        @SuppressWarnings("unused")
-        public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-            mBrowserController.openFileChooser(uploadMsg);
-        }
-
-        @SuppressWarnings("unused")
-        public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
-            mBrowserController.openFileChooser(uploadMsg);
-        }
-
-        @SuppressWarnings("unused")
-        public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
-            mBrowserController.openFileChooser(uploadMsg);
-        }
-
-        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
-                                         WebChromeClient.FileChooserParams fileChooserParams) {
-            mBrowserController.showFileChooser(filePathCallback);
-            return true;
-        }
-
-        @Override
-        public Bitmap getDefaultVideoPoster() {
-            return mBrowserController.getDefaultVideoPoster();
-        }
-
-        @Override
-        public View getVideoLoadingProgressView() {
-            return mBrowserController.getVideoLoadingProgressView();
-        }
-
-        @Override
-        public void onHideCustomView() {
-            mBrowserController.onHideCustomView();
-            super.onHideCustomView();
-        }
-
-        @Override
-        public void onShowCustomView(View view, CustomViewCallback callback) {
-            // While these lines might look like they work, in practice,
-            // Full-screen videos won't work correctly. I may test this out some
-            // more
-            // if (view instanceof FrameLayout) {
-            // FrameLayout frame = (FrameLayout) view;
-            // if (frame.getFocusedChild() instanceof VideoView) {
-            // VideoView video = (VideoView) frame.getFocusedChild();
-            // video.stopPlayback();
-            // frame.removeView(video);
-            // video.setVisibility(View.GONE);
-            // }
-            // } else {
-            mBrowserController.onShowCustomView(view, callback);
-
-            // }
-
-            super.onShowCustomView(view, callback);
-        }
-
-        @SuppressWarnings("deprecation")
-        @Override
-        @Deprecated
-        public void onShowCustomView(View view, int requestedOrientation,
-                                     CustomViewCallback callback) {
-            // While these lines might look like they work, in practice,
-            // Full-screen videos won't work correctly. I may test this out some
-            // more
-            // if (view instanceof FrameLayout) {
-            // FrameLayout frame = (FrameLayout) view;
-            // if (frame.getFocusedChild() instanceof VideoView) {
-            // VideoView video = (VideoView) frame.getFocusedChild();
-            // video.stopPlayback();
-            // frame.removeView(video);
-            // video.setVisibility(View.GONE);
-            // }
-            // } else {
-            mBrowserController.onShowCustomView(view, callback);
-
-            // }
-
-            super.onShowCustomView(view, requestedOrientation, callback);
-        }
-    }
-
-    public class Title {
-
-        private Bitmap mFavicon;
-        private String mTitle;
-        private final Bitmap mDefaultIcon;
-
-        public Title(Context context, boolean darkTheme) {
-            mDefaultIcon = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
-            mFavicon = mDefaultIcon;
-            mTitle = mActivity.getString(R.string.action_new_tab);
-        }
-
-        public void setFavicon(Bitmap favicon) {
-            if (favicon == null) {
-                mFavicon = mDefaultIcon;
-            } else {
-                mFavicon = Utils.padFavicon(favicon);
-            }
-        }
-
-        public void setTitle(String title) {
-            if (title == null) {
-                mTitle = "";
-            } else {
-                mTitle = title;
-            }
-        }
-
-        public void setTitleAndFavicon(String title, Bitmap favicon) {
-            mTitle = title;
-
-            if (favicon == null) {
-                mFavicon = mDefaultIcon;
-            } else {
-                mFavicon = Utils.padFavicon(favicon);
-            }
-        }
-
-        public String getTitle() {
-            return mTitle;
-        }
-
-        public Bitmap getFavicon() {
-            return mFavicon;
-        }
-
     }
 
     private class TouchListener implements OnTouchListener {
@@ -1137,9 +700,9 @@ public class LightningView {
             } else if (mAction == MotionEvent.ACTION_UP) {
                 final float distance = (mY - mLocation);
                 if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
-                    mBrowserController.showActionBar();
+                    mActivity.showActionBar();
                 } else if (distance < -SCROLL_UP_THRESHOLD) {
-                    mBrowserController.hideActionBar();
+                    mActivity.hideActionBar();
                 }
                 mLocation = 0;
             }
@@ -1154,9 +717,9 @@ public class LightningView {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             int power = (int) (velocityY * 100 / mMaxFling);
             if (power < -10) {
-                mBrowserController.hideActionBar();
+                mActivity.hideActionBar();
             } else if (power > 15) {
-                mBrowserController.showActionBar();
+                mActivity.showActionBar();
             }
             return super.onFling(e1, e2, velocityX, velocityY);
         }
@@ -1172,8 +735,13 @@ public class LightningView {
 
         @Override
         public void onLongPress(MotionEvent e) {
-            if (mCanTriggerLongPress)
-                mBrowserController.onLongPress();
+            if (mCanTriggerLongPress) {
+                Message msg = webViewHandler.obtainMessage();
+                if (msg != null) {
+                    msg.setTarget(webViewHandler);
+                    mWebView.requestFocusNodeHref(msg);
+                }
+        }
         }
 
         /**
@@ -1193,6 +761,15 @@ public class LightningView {
         @Override
         public void onShowPress(MotionEvent e) {
             mCanTriggerLongPress = true;
+        }
+    }
+
+    private class WebViewHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            final String url = msg.getData().getString("url");
+            longClickPage(url);
         }
     }
 }

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/left_drawer"
-    android:layout_width="@dimen/navigation_width"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="start"
     android:background="?attr/drawerBackground"
     android:clickable="true"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -45,12 +42,13 @@
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/left_drawer_list"
+        android:id="@+id/tabs_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@null"
-        android:dividerHeight="0dp" />
+        android:dividerHeight="0dp"
+        android:overScrollMode="ifContentScrolls" />
 
     <LinearLayout
         android:layout_width="match_parent"

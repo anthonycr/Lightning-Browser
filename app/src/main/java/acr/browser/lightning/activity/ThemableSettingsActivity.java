@@ -4,6 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 
@@ -13,7 +14,7 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mTheme = PreferenceManager.getInstance().getUseTheme();
+        mTheme = BrowserApp.getAppComponent().getPreferenceManager().getUseTheme();
 
         // set the theme
         if (mTheme == 0) {
@@ -32,7 +33,7 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
     @Override
     protected void onResume() {
         super.onResume();
-        if (PreferenceManager.getInstance().getUseTheme() != mTheme) {
+        if (BrowserApp.getAppComponent().getPreferenceManager().getUseTheme() != mTheme) {
             restart();
         }
     }
