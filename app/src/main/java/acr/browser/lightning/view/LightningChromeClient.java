@@ -57,11 +57,8 @@ class LightningChromeClient extends WebChromeClient {
 
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
-        if (icon == null)
-            return;
         mLightningView.mTitle.setFavicon(icon);
         eventBus.post(new BrowserEvents.TabsChanged());
-        ;
         cacheFavicon(view.getUrl(), icon);
     }
 
@@ -70,7 +67,7 @@ class LightningChromeClient extends WebChromeClient {
      *
      * @param icon the icon to cache
      */
-    private void cacheFavicon(final String url, final Bitmap icon) {
+    private static void cacheFavicon(final String url, final Bitmap icon) {
         if (icon == null) return;
         final Uri uri = Uri.parse(url);
         if (uri.getHost() == null) {

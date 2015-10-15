@@ -1,6 +1,7 @@
 package acr.browser.lightning.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -36,16 +37,20 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.activity.ReadingActivity;
+import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.async.AsyncExecutor;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.async.ImageDownloadTask;
 import acr.browser.lightning.utils.ThemeUtils;
+import acr.browser.lightning.view.LightningView;
 
 /**
  * Created by Stefano Pacifici on 25/08/15. Based on Anthony C. Restaino's code.
@@ -70,6 +75,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Inject
     PreferenceManager mPreferenceManager;
+
+    @Inject
+    TabsManager mTabsManager;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -165,6 +173,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             }
         });
         setupNavigationButton(view, R.id.action_add_bookmark, R.id.icon_star);
+        setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
+        setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
         // Must be called here, only here we have a reference to the ListView
         new Thread(mInitBookmarkManager).run();
@@ -232,8 +242,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         if (event.item.isFolder()) {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
         } else {
-        mBookmarkAdapter.notifyDataSetChanged();
-    }
+            mBookmarkAdapter.notifyDataSetChanged();
+        }
     }
 
     private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
@@ -307,6 +317,22 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.action_add_bookmark:
                 mEventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                break;
+            case R.id.action_reading:
+                LightningView currentTab = mTabsManager.getCurrentTab();
+                if (currentTab != null) {
+                    Intent read = new Intent(getActivity(), ReadingActivity.class);
+                    read.putExtra(Constants.LOAD_READING_URL, currentTab.getUrl());
+                    startActivity(read);
+                }
+                break;
+            case R.id.action_toggle_desktop:
+                LightningView current = mTabsManager.getCurrentTab();
+                if (current != null) {
+                    current.toggleDesktopUA(getActivity());
+                    current.reload();
+                    // TODO add back drawer closing
+                }
                 break;
             default:
                 break;

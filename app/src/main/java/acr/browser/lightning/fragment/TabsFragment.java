@@ -29,7 +29,6 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,8 +36,6 @@ import android.widget.TextView;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -114,6 +111,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         if (mShowInNavigationDrawer) {
             view = inflater.inflate(R.layout.tab_drawer, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+            setupFrameLayoutButton(view, R.id.tab_header_button, R.id.plusIcon);
             setupFrameLayoutButton(view, R.id.new_tab_button, R.id.icon_plus);
             setupFrameLayoutButton(view, R.id.action_back, R.id.icon_back);
             setupFrameLayoutButton(view, R.id.action_forward, R.id.icon_forward);

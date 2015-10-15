@@ -100,6 +100,7 @@ public class LightningWebClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        mLightningView.mTitle.setFavicon(null);
         if (mLightningView.isShown()) {
             mActivity.updateUrl(url, false);
             mActivity.showActionBar();
