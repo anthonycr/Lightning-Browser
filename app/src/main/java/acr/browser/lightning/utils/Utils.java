@@ -45,7 +45,7 @@ public final class Utils {
 
     public static void downloadFile(final Activity activity, final String url,
                                     final String userAgent, final String contentDisposition) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessary(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsManager.PermissionResult() {
             @Override
             public void onGranted() {

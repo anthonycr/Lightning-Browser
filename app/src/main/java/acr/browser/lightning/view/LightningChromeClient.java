@@ -1,7 +1,6 @@
 package acr.browser.lightning.view;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -114,7 +113,7 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onGeolocationPermissionsShowPrompt(final String origin,
                                                    final GeolocationPermissions.Callback callback) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessary(mActivity, PERMISSIONS, new PermissionsManager.PermissionResult() {
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, PERMISSIONS, new PermissionsManager.PermissionResult() {
             @Override
             public void onGranted() {
                 final boolean remember = true;

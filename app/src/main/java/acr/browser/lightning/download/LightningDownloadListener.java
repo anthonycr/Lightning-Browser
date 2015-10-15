@@ -26,7 +26,7 @@ public class LightningDownloadListener implements DownloadListener {
     @Override
     public void onDownloadStart(final String url, final String userAgent,
                                 final String contentDisposition, final String mimetype, long contentLength) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessary(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsManager.PermissionResult() {
             @Override
             public void onGranted() {

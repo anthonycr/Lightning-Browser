@@ -88,7 +88,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         PermissionsManager permissionsManager = PermissionsManager.getInstance();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            permissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS, null);
+            permissionsManager.requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS, null);
         }
     }
 
@@ -127,7 +127,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 //                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
 //                    mBookmarkManager.exportBookmarks(getActivity());
 //                }
-                PermissionsManager.getInstance().requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS,
+                PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
                         new PermissionsManager.PermissionResult() {
                             @Override
                             public void onGranted() {
@@ -145,7 +145,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 //                    loadFileList(null);
 //                    createDialog();
 //                }
-                PermissionsManager.getInstance().requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS,
+                PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
                         new PermissionsManager.PermissionResult() {
                             @Override
                             public void onGranted() {
