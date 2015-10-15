@@ -609,10 +609,10 @@ public class LightningView {
                 }
             } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
                 if (url != null) {
-                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                    bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                    bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, newUrl);
                 }
             }
         } else {

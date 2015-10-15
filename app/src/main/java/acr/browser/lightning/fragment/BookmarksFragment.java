@@ -298,7 +298,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         if (item.isFolder()) {
             mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            mBookmarksDialogBuilder.showLongPressLinkDialog(getContext(), item.getUrl());
+            mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(getContext(), item);
         }
     }
 

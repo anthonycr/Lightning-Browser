@@ -72,7 +72,7 @@ public class BookmarkLocalSync {
         if (!isChromeSupported()) {
             return list;
         }
-        Cursor cursor = getStockCursor();
+        Cursor cursor = getChromeCursor();
         try {
             if (cursor != null) {
                 for (int n = 0; n < cursor.getColumnCount(); n++) {

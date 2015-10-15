@@ -12,6 +12,7 @@ import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.utils.PermissionsManager;
 
 public class LightningDownloadListener implements DownloadListener {
 
@@ -21,6 +22,7 @@ public class LightningDownloadListener implements DownloadListener {
         mContext = context;
     }
 
+    //TODO implement permissions for downloading
     @Override
     public void onDownloadStart(final String url, final String userAgent,
             final String contentDisposition, final String mimetype, long contentLength) {

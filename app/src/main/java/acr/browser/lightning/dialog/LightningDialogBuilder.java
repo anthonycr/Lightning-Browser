@@ -257,11 +257,8 @@ public class LightningDialogBuilder {
                         eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
-                        if (Build.VERSION.SDK_INT > 8) {
-                            // Should be better to send an event on the bus here
                             Utils.downloadFile(activity, url,
                                     userAgent, "attachment");
-                        }
                         break;
                 }
             }
