@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.utils;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -44,10 +45,22 @@ public final class Utils {
 
     public static void downloadFile(final Activity activity, final String url,
                                     final String userAgent, final String contentDisposition) {
-        String fileName = URLUtil.guessFileName(url, null, null);
-        DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null
-        );
-        Log.i(Constants.TAG, "Downloading" + fileName);
+        PermissionsManager.getInstance().requestPermissionsIfNecessary(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsManager.PermissionResult() {
+            @Override
+            public void onGranted() {
+                String fileName = URLUtil.guessFileName(url, null, null);
+                DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null
+                );
+                Log.i(Constants.TAG, "Downloading" + fileName);
+            }
+
+            @Override
+            public void onDenied(String permission) {
+                // TODO Show Message
+            }
+        });
+
     }
 
     public static Intent newEmailIntent(String address, String subject,

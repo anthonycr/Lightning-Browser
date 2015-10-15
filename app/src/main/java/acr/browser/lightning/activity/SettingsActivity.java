@@ -61,7 +61,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions);
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

@@ -61,12 +61,14 @@ class LightningChromeClient extends WebChromeClient {
         if (icon == null)
             return;
         mLightningView.mTitle.setFavicon(icon);
-        eventBus.post(new BrowserEvents.TabsChanged()); ;
+        eventBus.post(new BrowserEvents.TabsChanged());
+        ;
         cacheFavicon(view.getUrl(), icon);
     }
 
     /**
      * Naive caching of the favicon according to the domain name of the URL
+     *
      * @param icon the icon to cache
      */
     private void cacheFavicon(final String url, final Bitmap icon) {
@@ -112,35 +114,43 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onGeolocationPermissionsShowPrompt(final String origin,
                                                    final GeolocationPermissions.Callback callback) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessary(mActivity, PERMISSIONS);
-        final boolean remember = true;
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(mActivity.getString(R.string.location));
-        String org;
-        if (origin.length() > 50) {
-            org = origin.subSequence(0, 50) + "...";
-        } else {
-            org = origin;
-        }
-        builder.setMessage(org + mActivity.getString(R.string.message_location))
-                .setCancelable(true)
-                .setPositiveButton(mActivity.getString(R.string.action_allow),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                callback.invoke(origin, true, remember);
-                            }
-                        })
-                .setNegativeButton(mActivity.getString(R.string.action_dont_allow),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                callback.invoke(origin, false, remember);
-                            }
-                        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        PermissionsManager.getInstance().requestPermissionsIfNecessary(mActivity, PERMISSIONS, new PermissionsManager.PermissionResult() {
+            @Override
+            public void onGranted() {
+                final boolean remember = true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                builder.setTitle(mActivity.getString(R.string.location));
+                String org;
+                if (origin.length() > 50) {
+                    org = origin.subSequence(0, 50) + "...";
+                } else {
+                    org = origin;
+                }
+                builder.setMessage(org + mActivity.getString(R.string.message_location))
+                        .setCancelable(true)
+                        .setPositiveButton(mActivity.getString(R.string.action_allow),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        callback.invoke(origin, true, remember);
+                                    }
+                                })
+                        .setNegativeButton(mActivity.getString(R.string.action_dont_allow),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        callback.invoke(origin, false, remember);
+                                    }
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
 
+            @Override
+            public void onDenied(String permission) {
+                //TODO show message and/or turn off setting
+            }
+        });
     }
 
     @Override

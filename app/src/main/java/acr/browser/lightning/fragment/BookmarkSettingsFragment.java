@@ -88,7 +88,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         PermissionsManager permissionsManager = PermissionsManager.getInstance();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            permissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS);
+            permissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS, null);
         }
     }
 
@@ -124,15 +124,40 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
-                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
-                    mBookmarkManager.exportBookmarks(getActivity());
-                }
+//                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
+//                    mBookmarkManager.exportBookmarks(getActivity());
+//                }
+                PermissionsManager.getInstance().requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS,
+                        new PermissionsManager.PermissionResult() {
+                            @Override
+                            public void onGranted() {
+                                mBookmarkManager.exportBookmarks(getActivity());
+                            }
+
+                            @Override
+                            public void onDenied(String permission) {
+                                //TODO Show message
+                            }
+                        });
                 return true;
             case SETTINGS_IMPORT:
-                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
-                    loadFileList(null);
-                    createDialog();
-                }
+//                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
+//                    loadFileList(null);
+//                    createDialog();
+//                }
+                PermissionsManager.getInstance().requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS,
+                        new PermissionsManager.PermissionResult() {
+                            @Override
+                            public void onGranted() {
+                                loadFileList(null);
+                                createDialog();
+                            }
+
+                            @Override
+                            public void onDenied(String permission) {
+                                //TODO Show message
+                            }
+                        });
                 return true;
             case SETTINGS_IMPORT_BROWSER:
                 new ImportBookmarksTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

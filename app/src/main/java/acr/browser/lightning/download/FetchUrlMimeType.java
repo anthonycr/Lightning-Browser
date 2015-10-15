@@ -6,6 +6,8 @@ package acr.browser.lightning.download;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
@@ -53,7 +55,7 @@ class FetchUrlMimeType extends Thread {
     public void run() {
         // User agent is likely to be null, though the AndroidHttpClient
         // seems ok with that.
-        final Bus evenBus = BrowserApp.getAppComponent().getBus();
+        final Bus eventBus = BrowserApp.getAppComponent().getBus();
         String mimeType = null;
         String contentDisposition = null;
         HttpURLConnection connection = null;
@@ -108,6 +110,13 @@ class FetchUrlMimeType extends Thread {
         DownloadManager manager = (DownloadManager) mContext
                 .getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(mRequest);
-        evenBus.post(new BrowserEvents.ShowSnackBarMessage(mContext.getString(R.string.download_pending) + ' ' + filename));
+        Handler handler = new Handler(Looper.getMainLooper());
+        final String file = filename;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                eventBus.post(new BrowserEvents.ShowSnackBarMessage(mContext.getString(R.string.download_pending) + ' ' + file));
+            }
+        });
     }
 }

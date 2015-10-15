@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -198,9 +199,6 @@ public class LightningView {
 
         if (!mIsIncognitoTab) {
             settings.setGeolocationEnabled(mPreferences.getLocationEnabled());
-            if (mPreferences.getLocationEnabled() && !PermissionsManager.checkPermissions(mActivity, PERMISSIONS)) {
-                mPermissionsManager.requestPermissionsIfNecessary(mActivity, PERMISSIONS);
-            }
         } else {
             settings.setGeolocationEnabled(false);
         }
@@ -527,6 +525,7 @@ public class LightningView {
 
     /**
      * Naive caching of the favicon according to the domain name of the URL
+     *
      * @param icon the icon to cache
      */
     private void cacheFavicon(final Bitmap icon) {
@@ -591,6 +590,7 @@ public class LightningView {
     public boolean getInvertePage() {
         return mInvertPage;
     }
+
     /**
      * handles a long click on the page, parameter String url
      * is the url that should have been obtained from the WebView touch node
@@ -741,7 +741,7 @@ public class LightningView {
                     msg.setTarget(webViewHandler);
                     mWebView.requestFocusNodeHref(msg);
                 }
-        }
+            }
         }
 
         /**

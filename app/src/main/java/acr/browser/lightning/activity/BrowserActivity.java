@@ -11,14 +11,12 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -45,7 +43,6 @@ import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -77,7 +74,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -88,8 +84,6 @@ import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -109,7 +103,6 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.utils.PermissionsManager;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -822,7 +815,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * displays the WebView contained in the LightningView Also handles the
      * removal of previous views
      *
-     * @param position  the poition of the tab to display
+     * @param position the poition of the tab to display
      */
     private synchronized void showTab(final int position) {
         final LightningView currentView = tabsManager.getCurrentTab();
@@ -1733,7 +1726,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.setTranslationY(0);
                 if (view != null) {
                     view.setTranslationY(height);
-            }
+                }
             }
             final LightningView currentTab = tabsManager.getCurrentTab();
             if (currentTab == null)
@@ -1755,9 +1748,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 show.setInterpolator(new DecelerateInterpolator());
                 if (view != null) {
                     view.startAnimation(show);
-            }
                 }
             }
+        }
     }
 
     /**
@@ -1848,6 +1841,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     // TODO Check if all the calls are relative to TabsFragement
+
     /**
      * A utility method that creates a FrameLayout button with the given ID and
      * sets the image of the button to the given image ID. The OnClick and OnLongClick
@@ -1880,7 +1874,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             boolean isConnected = isConnected(context);
             Log.d(Constants.TAG, "Network Connected: " + String.valueOf(isConnected));
             tabsManager.notifyConnectioneStatus(isConnected);
-            }
+        }
     };
 
     /**
@@ -1894,7 +1888,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions);
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -2037,7 +2031,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void showCloseDialog(final TabEvents.ShowCloseDialog event) {
-             BrowserActivity.this.showCloseDialog(event.position);
+            BrowserActivity.this.showCloseDialog(event.position);
         }
 
         /**
@@ -2098,13 +2092,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void newTabLongPress(final TabEvents.NewTabLongPress event) {
-                String url = mPreferences.getSavedUrl();
-                if (url != null) {
-                    BrowserActivity.this.newTab(url, true);
+            String url = mPreferences.getSavedUrl();
+            if (url != null) {
+                BrowserActivity.this.newTab(url, true);
 
-                    Utils.showSnackbar(BrowserActivity.this, R.string.deleted_tab);
-                }
-                mPreferences.setSavedUrl(null);
+                Utils.showSnackbar(BrowserActivity.this, R.string.deleted_tab);
+            }
+            mPreferences.setSavedUrl(null);
         }
 
         @Subscribe
