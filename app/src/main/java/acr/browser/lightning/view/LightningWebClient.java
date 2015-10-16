@@ -293,6 +293,11 @@ class LightningWebClient extends WebViewClient {
                 return false;
             }
             if (intent != null) {
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setComponent(null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    intent.setSelector(null);
+                }
                 try {
                     mActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {

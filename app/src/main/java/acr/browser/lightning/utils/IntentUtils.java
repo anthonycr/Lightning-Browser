@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -39,6 +40,12 @@ public class IntentUtils {
             return false;
         }
 
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.setComponent(null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            intent.setSelector(null);
+        }
+
         if (mActivity.getPackageManager().resolveActivity(intent, 0) == null) {
             String packagename = intent.getPackage();
             if (packagename != null) {
@@ -51,8 +58,6 @@ public class IntentUtils {
                 return false;
             }
         }
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        intent.setComponent(null);
         if (tab != null) {
             intent.putExtra(mActivity.getPackageName() + ".Origin", 1);
         }
