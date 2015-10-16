@@ -414,7 +414,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return connectivity.getActiveNetworkInfo();
     }
 
-    private List<HistoryItem> getFilteredList() {
+    private synchronized List<HistoryItem> getFilteredList() {
         List<HistoryItem> list = new ArrayList<>(5);
         synchronized (mBookmarks) {
             synchronized (mHistory) {

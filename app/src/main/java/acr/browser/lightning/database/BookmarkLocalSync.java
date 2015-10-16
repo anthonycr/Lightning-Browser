@@ -26,7 +26,7 @@ public class BookmarkLocalSync {
 
     private final Context mContext;
 
-    public BookmarkLocalSync(Context context) {
+    public BookmarkLocalSync(@NonNull Context context) {
         mContext = context;
     }
 

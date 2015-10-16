@@ -21,6 +21,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
@@ -39,6 +41,7 @@ public class ReadingActivity extends AppCompatActivity {
     private PreferenceManager mPreferences;
     private int mTextSize;
     private ProgressDialog mProgressDialog;
+    private PageLoader mLoaderReference;
 
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
@@ -130,29 +133,33 @@ public class ReadingActivity extends AppCompatActivity {
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
-        new PageLoader(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
+        mLoaderReference = new PageLoader(this);
+        mLoaderReference.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
         return true;
     }
 
     private class PageLoader extends AsyncTask<String, Void, Void> {
 
-        private final Activity mActivity;
+        private final WeakReference<Activity> mActivityReference;
         private String mTitleText;
         private String mBodyText;
 
         public PageLoader(Activity activity) {
-            mActivity = activity;
+            mActivityReference = new WeakReference<>(activity);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(mActivity);
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setMessage(mActivity.getString(R.string.loading));
-            mProgressDialog.show();
+            Activity activity = mActivityReference.get();
+            if (activity != null) {
+                mProgressDialog = new ProgressDialog(activity);
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.setIndeterminate(true);
+                mProgressDialog.setMessage(activity.getString(R.string.loading));
+                mProgressDialog.show();
+            }
         }
 
         @Override
@@ -224,6 +231,7 @@ public class ReadingActivity extends AppCompatActivity {
             mProgressDialog.dismiss();
             mProgressDialog = null;
         }
+        mLoaderReference.cancel(true);
         super.onDestroy();
     }
 

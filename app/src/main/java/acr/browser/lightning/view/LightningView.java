@@ -582,6 +582,24 @@ public class LightningView {
         }
     }
 
+    public synchronized void findNext() {
+        if (mWebView != null) {
+            mWebView.findNext(true);
+        }
+    }
+
+    public synchronized void findPrevious() {
+        if (mWebView != null) {
+            mWebView.findNext(false);
+        }
+    }
+
+    public synchronized void clearFindMatches() {
+        if (mWebView != null) {
+            mWebView.clearMatches();
+        }
+    }
+
     /**
      * Used by {@link LightningWebClient}
      *
@@ -646,7 +664,7 @@ public class LightningView {
     }
 
     @Nullable
-    public WebView getWebView() {
+    public synchronized WebView getWebView() {
         return mWebView;
     }
 

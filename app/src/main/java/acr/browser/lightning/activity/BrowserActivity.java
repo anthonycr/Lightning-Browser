@@ -161,11 +161,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ValueCallback<Uri[]> mFilePathCallback;
 
     // Primatives
-    private boolean mFullScreen, mColorMode, mDarkTheme,
-            mIsNewIntent = false,
-            mIsFullScreen = false,
-            mIsImmersive = false,
-            mShowTabsInDrawer;
+    private boolean mFullScreen;
+    private boolean mDarkTheme;
+    private boolean mIsNewIntent = false;
+    private boolean mIsFullScreen = false;
+    private boolean mIsImmersive = false;
+    private boolean mShowTabsInDrawer;
     private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor,
             mCurrentUiColor = Color.BLACK;
     private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
@@ -405,7 +406,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (!hasFocus && currentView != null) {
                 setIsLoading(currentView.getProgress() < 100);
                 updateUrl(currentView.getUrl(), true);
-            } else if (hasFocus) {
+            } else if (hasFocus && currentView != null) {
                 String url = currentView.getUrl();
                 if (url.startsWith(Constants.FILE)) {
                     mSearch.setText("");
@@ -559,11 +560,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void initializePreferences() {
         final LightningView currentView = tabsManager.getCurrentTab();
-        final WebView currentWebView = currentView.getWebView();
+        final WebView currentWebView = tabsManager.getCurrentWebView();
         mFullScreen = mPreferences.getFullScreenEnabled();
-        mColorMode = mPreferences.getColorModeEnabled();
-        mColorMode &= !mDarkTheme;
-        if (!isIncognito() && !mColorMode && !mDarkTheme && mWebpageBitmap != null) {
+        boolean colorMode = mPreferences.getColorModeEnabled();
+        colorMode &= !mDarkTheme;
+        if (!isIncognito() && !colorMode && !mDarkTheme && mWebpageBitmap != null) {
             changeToolbarBackground(mWebpageBitmap, null);
         } else if (!isIncognito() && currentView != null && !mDarkTheme
                 && currentView.getFavicon() != null) {
@@ -731,9 +732,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 findInPage();
                 return true;
             case R.id.action_reading_mode:
-                Intent read = new Intent(this, ReadingActivity.class);
-                read.putExtra(Constants.LOAD_READING_URL, currentView.getUrl());
-                startActivity(read);
+                if (currentView != null) {
+                    Intent read = new Intent(this, ReadingActivity.class);
+                    read.putExtra(Constants.LOAD_READING_URL, currentView.getUrl());
+                    startActivity(read);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -822,6 +825,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final WebView currentWebView = currentView != null ? currentView.getWebView() : null;
         final LightningView newView = tabsManager.switchToTab(position);
         final WebView newWebView = newView != null ? newView.getWebView() : null;
+        if (newView == null || newWebView == null) {
+            return;
+        }
 
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
@@ -946,7 +952,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    synchronized boolean newTab(String url, boolean show) {
+    private synchronized boolean newTab(String url, boolean show) {
         // Limit number of tabs for limited version of app
         if (!Constants.FULL_VERSION && tabsManager.size() >= 10) {
             Utils.showSnackbar(this, R.string.max_tabs);
@@ -984,11 +990,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return;
         }
 
-//  What?
         int current = tabsManager.positionOf(currentTab);
-        if (current < 0) {
-            return;
-        }
+
         if (!tabToDelete.getUrl().startsWith(Constants.FILE) && !isIncognito()) {
             mPreferences.setSavedUrl(tabToDelete.getUrl());
         }
@@ -1016,9 +1019,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 showTab(position - 1);
                 mEventBus.post(new BrowserEvents.TabsChanged());
             } else {
+                tabsManager.deleteTab(position);
             }
         } else {
-            if (currentTab.getUrl().startsWith(Constants.FILE) || currentTab.getUrl().equals(mHomepage)) {
+            if (currentTab != null && (currentTab.getUrl().startsWith(Constants.FILE)
+                    || currentTab.getUrl().equals(mHomepage))) {
                 closeActivity();
             } else {
                 tabsManager.deleteTab(position);
@@ -1130,7 +1135,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     void saveOpenTabs() {
         if (mPreferences.getRestoreLostTabsEnabled()) {
             final String s = tabsManager.tabsString();
-            mPreferences.setMemoryUrl(s.toString());
+            mPreferences.setMemoryUrl(s);
         }
     }
 
@@ -1192,8 +1197,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         String searchUrl = mSearchText + UrlUtils.QUERY_PLACE_HOLDER;
         query = query.trim();
-        currentTab.stopLoading();
         if (currentTab != null) {
+            currentTab.stopLoading();
             loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, true, searchUrl));
         }
     }
@@ -1318,30 +1323,34 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * previously searched URLs
      */
     private void initializeSearchSuggestions(final AutoCompleteTextView getUrl) {
-        final LightningView currentTab = tabsManager.getCurrentTab();
         getUrl.setThreshold(1);
         getUrl.setDropDownWidth(-1);
         getUrl.setDropDownAnchor(R.id.toolbar_layout);
         getUrl.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                try {
-                    String url;
-                    url = ((TextView) arg1.findViewById(R.id.url)).getText().toString();
-                    if (url.startsWith(BrowserActivity.this.getString(R.string.suggestion))) {
-                        url = ((TextView) arg1.findViewById(R.id.title)).getText().toString();
-                    } else {
-                        getUrl.setText(url);
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                String url = null;
+                CharSequence urlString = ((TextView) view.findViewById(R.id.url)).getText();
+                if (urlString != null) {
+                    url = urlString.toString();
+                }
+                if (url == null || url.startsWith(BrowserActivity.this.getString(R.string.suggestion))) {
+                    CharSequence searchString = ((TextView) view.findViewById(R.id.title)).getText();
+                    if (searchString != null) {
+                        url = searchString.toString();
                     }
-                    searchTheWeb(url);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
-                    if (currentTab != null) {
-                        currentTab.requestFocus();
-                    }
-                } catch (NullPointerException e) {
-                    Log.e("Browser Error: ", "NullPointerException on item click");
+                }
+                if (url == null) {
+                    return;
+                }
+                getUrl.setText(url);
+                searchTheWeb(url);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
+                final LightningView currentTab = tabsManager.getCurrentTab();
+                if (currentTab != null) {
+                    currentTab.requestFocus();
                 }
             }
 
@@ -1521,7 +1530,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mFullscreenContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
         decor.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
         setFullscreen(true, true);
-        currentTab.setVisibility(View.GONE);
+        if (currentTab != null) {
+            currentTab.setVisibility(View.GONE);
+        }
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
                 mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
@@ -1633,16 +1644,20 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      *                  the newly created WebView.
      */
     @Override
-    public void onCreateWindow(Message resultMsg) {
+    public synchronized void onCreateWindow(Message resultMsg) {
         if (resultMsg == null) {
             return;
         }
         if (newTab("", true)) {
-            // TODO Review this
-            final WebView webView = tabsManager.getTabAtPosition(tabsManager.size() - 1).getWebView();
-            WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-            transport.setWebView(webView);
-            resultMsg.sendToTarget();
+            LightningView newTab = tabsManager.getTabAtPosition(tabsManager.size() - 1);
+            if (newTab != null) {
+                final WebView webView = newTab.getWebView();
+                if (webView != null) {
+                    WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                    transport.setWebView(webView);
+                    resultMsg.sendToTarget();
+                }
+            }
         }
     }
 
@@ -1666,8 +1681,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public void hideActionBar() {
-        final LightningView currentTab = tabsManager.getCurrentTab();
-        final WebView currentWebView = currentTab.getWebView();
+        final WebView currentWebView = tabsManager.getCurrentWebView();
         if (mFullScreen) {
             if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
                 mUiLayout.removeView(mToolbarLayout);
@@ -1675,21 +1689,21 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.bringToFront();
                 Log.d(Constants.TAG, "Move view to browser frame");
                 mToolbarLayout.setTranslationY(0);
-                currentWebView.setTranslationY(mToolbarLayout.getHeight());
+                if (currentWebView != null) {
+                    currentWebView.setTranslationY(mToolbarLayout.getHeight());
+                }
             }
-            if (mToolbarLayout == null || currentTab == null)
+            if (mToolbarLayout == null || currentWebView == null)
                 return;
 
             final int height = mToolbarLayout.getHeight();
-            final WebView view = currentWebView;
             if (mToolbarLayout.getTranslationY() > -0.01f) {
                 Animation show = new Animation() {
                     @Override
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
                         float trans = (1.0f - interpolatedTime) * height;
                         mToolbarLayout.setTranslationY(trans - height);
-                        if (view != null)
-                            view.setTranslationY(trans);
+                        currentWebView.setTranslationY(trans);
                     }
                 };
                 show.setDuration(250);
@@ -1791,25 +1805,27 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void onClick(View v) {
         final LightningView currentTab = tabsManager.getCurrentTab();
-        final WebView currentWebView = currentTab.getWebView();
+        if (currentTab == null) {
+            return;
+        }
         switch (v.getId()) {
             case R.id.arrow_button:
                 if (mSearch != null && mSearch.hasFocus()) {
                     currentTab.requestFocus();
                 } else if (mShowTabsInDrawer) {
                     mDrawerLayout.openDrawer(mDrawerLeft);
-                } else if (currentTab != null) {
+                } else {
                     currentTab.loadHomepage();
                 }
                 break;
             case R.id.button_next:
-                currentWebView.findNext(false);
+                currentTab.findNext();
                 break;
             case R.id.button_back:
-                currentWebView.findNext(true);
+                currentTab.findPrevious();
                 break;
             case R.id.button_quit:
-                currentWebView.clearMatches();
+                currentTab.clearFindMatches();
                 mSearchBar.setVisibility(View.GONE);
                 break;
             case R.id.action_reading:
@@ -1963,7 +1979,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
             final LightningView currentTab = tabsManager.getCurrentTab();
-            final WebView currentWebView = currentTab.getWebView();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
                     && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
                 currentTab.loadBookmarkpage();
@@ -1981,7 +1996,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
             final LightningView currentTab = tabsManager.getCurrentTab();
-            final WebView currentWebView = currentTab.getWebView();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
                     && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
                 currentTab.loadBookmarkpage();
