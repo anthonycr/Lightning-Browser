@@ -992,6 +992,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mPreferences.setSavedUrl(tabToDelete.getUrl());
         }
         final boolean isShown = tabToDelete.isShown();
+        boolean shouldClose = mIsNewIntent && isShown;
         if (isShown) {
             mBrowserFrame.setBackgroundColor(mBackgroundColor);
         }
@@ -1031,7 +1032,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mEventBus.post(new BrowserEvents.TabsChanged());
 
-        if (mIsNewIntent && isShown) {
+        if (shouldClose) {
             mIsNewIntent = false;
             closeActivity();
         }

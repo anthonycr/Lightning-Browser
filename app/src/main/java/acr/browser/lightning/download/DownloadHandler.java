@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -46,11 +47,11 @@ public class DownloadHandler {
      * Notify the host application a download should be done, or that the data
      * should be streamed if a streaming viewer is available.
      *
-     * @param context               The context in which the download was requested.
-     * @param url                   The full url to the content that should be downloaded
-     * @param userAgent             User agent of the downloading application.
-     * @param contentDisposition    Content-disposition http header, if present.
-     * @param mimetype              The mimetype of the content reported by the server
+     * @param context            The context in which the download was requested.
+     * @param url                The full url to the content that should be downloaded
+     * @param userAgent          User agent of the downloading application.
+     * @param contentDisposition Content-disposition http header, if present.
+     * @param mimetype           The mimetype of the content reported by the server
      */
     public static void onDownloadStart(Context context, String url, String userAgent,
                                        String contentDisposition, String mimetype) {
@@ -63,6 +64,11 @@ public class DownloadHandler {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.parse(url), mimetype);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                intent.setSelector(null);
+            }
             ResolveInfo info = context.getPackageManager().resolveActivity(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {
@@ -321,12 +327,12 @@ public class DownloadHandler {
         } catch (IOException ignored) {
             return false;
         }
-        }
+    }
 
     public static String addNecessarySlashes(String originalPath) {
         if (originalPath == null || originalPath.length() == 0) {
             return "/";
-    }
+        }
         if (originalPath.charAt(originalPath.length() - 1) != '/') {
             originalPath = originalPath + '/';
         }
