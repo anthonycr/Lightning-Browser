@@ -35,6 +35,7 @@ import com.squareup.otto.Bus;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -74,7 +75,7 @@ public class LightningView {
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
-    private final WebViewHandler mWebViewHandler = new WebViewHandler();
+    private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
 
     @Inject
     Bus mEventBus;
@@ -773,12 +774,22 @@ public class LightningView {
         }
     }
 
-    private class WebViewHandler extends Handler {
+    private static class WebViewHandler extends Handler {
+
+        private WeakReference<LightningView> mReference;
+
+        public WebViewHandler(LightningView view) {
+            mReference = new WeakReference<>(view);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             final String url = msg.getData().getString("url");
-            longClickPage(url);
+            LightningView view = mReference.get();
+            if (view != null) {
+                view.longClickPage(url);
+            }
         }
     }
 }

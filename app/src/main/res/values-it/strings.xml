@@ -123,7 +123,6 @@
     <string name="licenses">Licenze Open Source</string>
     <string name="suggestion">Cerca</string>
     <string name="block_ads">Blocca Annunci</string>
-    <string name="message_untrusted_certificate">Il certificato di questo sito non è sicuro. Vuoi procedere lo stesso?</string>
     <string name="title_form_resubmission">Reinvio Modulo</string>
     <string name="message_form_resubmission">Vuoi inviare nuovamente i dati?</string>
     <string name="message_location">\nVorrebbe usare la tua posizione</string>

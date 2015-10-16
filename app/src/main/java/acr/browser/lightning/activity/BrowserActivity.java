@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -240,16 +241,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mIconColor = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
         mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
-
         // initialize background ColorDrawable
         mBackground.setColor(((ColorDrawable) mToolbarLayout.getBackground()).getColor());
 
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-// TODO Please review this
-//        ImageView tabTitleImage = (ImageView) findViewById(R.id.plusIcon);
-//        tabTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mShowTabsInDrawer) {
             getWindow().setStatusBarColor(Color.BLACK);
@@ -413,9 +410,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 } else {
                     mSearch.setText(url);
                 }
-                ((AutoCompleteTextView) v).selectAll(); // Hack to make sure
-                // the text gets
-                // selected
+                // Hack to make sure the text gets selected
+                ((AutoCompleteTextView) v).selectAll();
                 mIcon = mClearIcon;
                 mSearch.setCompoundDrawables(null, null, mClearIcon, null);
             }
@@ -1211,7 +1207,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param favicon       the Bitmap to extract the color from
      * @param tabBackground the optional LinearLayout to color
      */
-    private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
+    @Override
+    public void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
         final int defaultColor = ContextCompat.getColor(this, R.color.primary_color);
         if (mCurrentUiColor == Color.BLACK) {
             mCurrentUiColor = defaultColor;
@@ -1257,6 +1254,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 anim.start();
             }
         });
+    }
+
+    @ColorInt
+    @Override
+    public int getUiColor() {
+        return mCurrentUiColor;
     }
 
     @Override
