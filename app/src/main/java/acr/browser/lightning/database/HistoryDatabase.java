@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
 
 @Singleton
 public class HistoryDatabase extends SQLiteOpenHelper {
@@ -73,7 +72,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         mDatabase = this.getWritableDatabase();
     }
 
-    public boolean isClosed() {
+    private boolean isClosed() {
         return mDatabase == null || !mDatabase.isOpen();
     }
 

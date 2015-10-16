@@ -7,7 +7,6 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.preference.PreferenceManager;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {

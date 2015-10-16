@@ -15,7 +15,6 @@ import java.util.Set;
 
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.preference.PreferenceManager;
 
 public class AdBlock {
 

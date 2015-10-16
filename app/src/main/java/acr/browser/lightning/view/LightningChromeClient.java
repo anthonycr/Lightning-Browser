@@ -231,8 +231,8 @@ class LightningChromeClient extends WebChromeClient {
         super.onShowCustomView(view, callback);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    @Deprecated
     public void onShowCustomView(View view, int requestedOrientation,
                                  CustomViewCallback callback) {
         // While these lines might look like they work, in practice,

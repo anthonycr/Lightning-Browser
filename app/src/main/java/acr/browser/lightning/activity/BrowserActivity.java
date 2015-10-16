@@ -210,7 +210,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-    public abstract boolean isIncognito();
+    protected abstract boolean isIncognito();
 
 //    abstract void initializeTabs();
 

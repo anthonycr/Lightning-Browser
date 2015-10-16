@@ -60,7 +60,7 @@ class LightningViewTitle {
         return mFavicon;
     }
 
-    public Bitmap getDefaultIcon() {
+    public static Bitmap getDefaultIcon() {
         return DEFAULT_ICON;
     }
 }

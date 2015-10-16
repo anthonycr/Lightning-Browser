@@ -33,6 +33,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import acr.browser.lightning.utils.Utils;
+
 /**
  * Class to fetch articles. This class is thread safe.
  *
@@ -49,28 +51,34 @@ public class HtmlFetcher {
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader reader = new BufferedReader(new FileReader("urls.txt"));
-        String line;
-        Set<String> existing = new LinkedHashSet<>();
-        while ((line = reader.readLine()) != null) {
-            int index1 = line.indexOf('\"');
-            int index2 = line.indexOf('\"', index1 + 1);
-            String url = line.substring(index1 + 1, index2);
-            String domainStr = SHelper.extractDomain(url, true);
-            String counterStr = "";
-            // TODO more similarities
-            if (existing.contains(domainStr))
-                counterStr = "2";
-            else
-                existing.add(domainStr);
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try {
 
-            String html = new HtmlFetcher().fetchAsString(url, 2000);
-            String outFile = domainStr + counterStr + ".html";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-            writer.write(html);
-            writer.close();
+            reader = new BufferedReader(new FileReader("urls.txt"));
+            String line;
+            Set<String> existing = new LinkedHashSet<>();
+            while ((line = reader.readLine()) != null) {
+                int index1 = line.indexOf('\"');
+                int index2 = line.indexOf('\"', index1 + 1);
+                String url = line.substring(index1 + 1, index2);
+                String domainStr = SHelper.extractDomain(url, true);
+                String counterStr = "";
+                // TODO more similarities
+                if (existing.contains(domainStr))
+                    counterStr = "2";
+                else
+                    existing.add(domainStr);
+
+                String html = new HtmlFetcher().fetchAsString(url, 2000);
+                String outFile = domainStr + counterStr + ".html";
+                writer = new BufferedWriter(new FileWriter(outFile));
+                writer.write(html);
+            }
+        } finally {
+            Utils.close(reader);
+            Utils.close(writer);
         }
-        reader.close();
     }
 
     private String referrer = "http://jetsli.de/crawler";

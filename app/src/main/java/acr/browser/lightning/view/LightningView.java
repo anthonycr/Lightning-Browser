@@ -4,7 +4,6 @@
 
 package acr.browser.lightning.view;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,12 +35,8 @@ import com.squareup.otto.Bus;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import javax.inject.Inject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BrowserActivity;
@@ -53,7 +48,6 @@ import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.PermissionsManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -80,18 +74,16 @@ public class LightningView {
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
-    private final PermissionsManager mPermissionsManager;
-    private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
-    private final WebViewHandler webViewHandler = new WebViewHandler();
+    private final WebViewHandler mWebViewHandler = new WebViewHandler();
 
     @Inject
-    Bus eventBus;
+    Bus mEventBus;
 
     @Inject
     PreferenceManager mPreferences;
 
     @Inject
-    LightningDialogBuilder bookmarksDialogBuilder;
+    LightningDialogBuilder mBookmarksDialogBuilder;
 
     @SuppressLint("NewApi")
     public LightningView(BrowserActivity activity, String url, boolean darkTheme, boolean isIncognito) {
@@ -100,7 +92,6 @@ public class LightningView {
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
         mTitle = new LightningViewTitle(activity, darkTheme);
-        mPermissionsManager = PermissionsManager.getInstance();
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
@@ -410,7 +401,7 @@ public class LightningView {
 
     public void setForegroundTab(boolean isForeground) {
         isForegroundTab = isForeground;
-        eventBus.post(new BrowserEvents.TabsChanged());
+        mEventBus.post(new BrowserEvents.TabsChanged());
     }
 
     public boolean isForegroundTab() {
@@ -568,7 +559,7 @@ public class LightningView {
         }
     }
 
-    public String getUserAgent() {
+    private String getUserAgent() {
         if (mWebView != null) {
             return mWebView.getSettings().getUserAgentString();
         } else {
@@ -620,36 +611,36 @@ public class LightningView {
         if (currentUrl != null && currentUrl.startsWith(Constants.FILE)) {
             if (currentUrl.endsWith(HistoryPage.FILENAME)) {
                 if (url != null) {
-                    bookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    bookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
                 }
             } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
                 if (url != null) {
-                    bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, url);
+                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, newUrl);
+                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, newUrl);
                 }
             }
         } else {
             if (url != null) {
                 if (result != null) {
                     if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                        bookmarksDialogBuilder.showLongPressImageDialog(mActivity, url, getUserAgent());
+                        mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, url, getUserAgent());
                     } else {
-                        bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                        mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
                     }
                 } else {
-                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
                 }
             } else if (result != null && result.getExtra() != null) {
                 final String newUrl = result.getExtra();
                 if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                    bookmarksDialogBuilder.showLongPressImageDialog(mActivity, newUrl, getUserAgent());
+                    mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, newUrl, getUserAgent());
                 } else {
-                    bookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
                 }
             }
         }
@@ -754,9 +745,9 @@ public class LightningView {
         @Override
         public void onLongPress(MotionEvent e) {
             if (mCanTriggerLongPress) {
-                Message msg = webViewHandler.obtainMessage();
+                Message msg = mWebViewHandler.obtainMessage();
                 if (msg != null) {
-                    msg.setTarget(webViewHandler);
+                    msg.setTarget(mWebViewHandler);
                     mWebView.requestFocusNodeHref(msg);
                 }
             }

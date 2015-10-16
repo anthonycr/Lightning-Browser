@@ -36,7 +36,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
@@ -95,8 +94,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Colors
     private int mIconColor, mScrollIndex;
 
-    private boolean mIsIncognito;
-
     // Init asynchronously the bookmark manager
     private final Runnable mInitBookmarkManager = new Runnable() {
         @Override
@@ -114,8 +111,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         BrowserApp.getAppComponent().inject(this);
         final Bundle arguments = getArguments();
         final Context context = getContext();
-        mIsIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
-        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
+        boolean isIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || isIncognito;
         mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :

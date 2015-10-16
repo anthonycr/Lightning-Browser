@@ -3,13 +3,11 @@
  */
 package acr.browser.lightning.controller;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Message;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
-import android.webkit.WebView;
 
 import acr.browser.lightning.view.LightningView;
 

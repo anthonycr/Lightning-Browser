@@ -21,6 +21,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
@@ -249,6 +250,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
 
             LightningView web = tabsManager.getTabAtPosition(position);
+            if (web == null) {
+                return;
+            }
             holder.txtTitle.setText(web.getTitle());
 
             final Bitmap favicon = web.getFavicon();
@@ -326,14 +330,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 return;
             }
 
-            final int defaultColor;
-            final Resources resources = getResources();
-            final ColorDrawable mBackground = new ColorDrawable();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                defaultColor = resources.getColor(R.color.primary_color, null);
-            } else {
-                defaultColor = resources.getColor(R.color.primary_color);
-            }
+            final int defaultColor = ContextCompat.getColor(getContext(), R.color.primary_color);
             if (mCurrentUiColor == Color.BLACK) {
                 mCurrentUiColor = defaultColor;
             }

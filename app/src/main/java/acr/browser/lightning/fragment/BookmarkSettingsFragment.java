@@ -5,7 +5,6 @@ package acr.browser.lightning.fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -52,7 +51,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     private class ImportBookmarksTask extends AsyncTask<Void, Void, Integer> {
 
-        private WeakReference<Activity> mActivityReference;
+        private final WeakReference<Activity> mActivityReference;
 
         public ImportBookmarksTask(Activity activity) {
             mActivityReference = new WeakReference<>(activity);

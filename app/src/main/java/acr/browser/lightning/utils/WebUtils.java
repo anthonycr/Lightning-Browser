@@ -11,7 +11,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.HistoryDatabase;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino

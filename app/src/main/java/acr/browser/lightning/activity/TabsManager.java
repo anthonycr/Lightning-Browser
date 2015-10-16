@@ -38,7 +38,6 @@ public class TabsManager {
             final String mem = mPreferenceManager.getMemoryUrl();
             mPreferenceManager.setMemoryUrl("");
             String[] array = Utils.getArray(mem);
-            int count = 0;
             for (String urlString : array) {
                 if (!urlString.isEmpty()) {
                     newTab(activity, urlString, darkTheme, incognito);
