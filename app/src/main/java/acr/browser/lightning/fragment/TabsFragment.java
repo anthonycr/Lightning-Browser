@@ -40,7 +40,7 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
-import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -71,7 +71,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     private RecyclerView mRecyclerView;
     private LightningViewAdapter mTabsAdapter;
-    private BrowserController mUiController;
+    private UIController mUiController;
 
     @Inject
     TabsManager tabsManager;
@@ -91,7 +91,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         super.onCreate(savedInstanceState);
         final Bundle arguments = getArguments();
         final Context context = getContext();
-        mUiController = (BrowserController) getActivity();
+        mUiController = (UIController) getActivity();
         mIsIncognito = arguments.getBoolean(IS_INCOGNITO, false);
         mShowInNavigationDrawer = arguments.getBoolean(VERTICAL_MODE, true);
         mDarkTheme = mPreferences.getUseTheme() != 0 || mIsIncognito;

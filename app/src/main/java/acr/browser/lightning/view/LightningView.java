@@ -5,6 +5,7 @@
 package acr.browser.lightning.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -40,12 +41,12 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -58,8 +59,9 @@ public class LightningView {
     final LightningViewTitle mTitle;
     private WebView mWebView;
     final boolean mIsIncognitoTab;
+    private final UIController mUIController;
     private final GestureDetector mGestureDetector;
-    private final BrowserActivity mActivity;
+    private final Activity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
     private final Paint mPaint = new Paint();
@@ -87,12 +89,13 @@ public class LightningView {
     LightningDialogBuilder mBookmarksDialogBuilder;
 
     @SuppressLint("NewApi")
-    public LightningView(BrowserActivity activity, String url, boolean darkTheme, boolean isIncognito) {
+    public LightningView(Activity activity, String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
+        mUIController = (UIController) activity;
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
-        mTitle = new LightningViewTitle(activity, darkTheme);
+        mTitle = new LightningViewTitle(activity, mUIController.getUseDarkTheme());
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
@@ -710,9 +713,9 @@ public class LightningView {
             } else if (mAction == MotionEvent.ACTION_UP) {
                 final float distance = (mY - mLocation);
                 if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
-                    mActivity.showActionBar();
+                    mUIController.showActionBar();
                 } else if (distance < -SCROLL_UP_THRESHOLD) {
-                    mActivity.hideActionBar();
+                    mUIController.hideActionBar();
                 }
                 mLocation = 0;
             }
@@ -727,9 +730,9 @@ public class LightningView {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             int power = (int) (velocityY * 100 / mMaxFling);
             if (power < -10) {
-                mActivity.hideActionBar();
+                mUIController.hideActionBar();
             } else if (power > 15) {
-                mActivity.showActionBar();
+                mUIController.showActionBar();
             }
             return super.onFling(e1, e2, velocityX, velocityY);
         }

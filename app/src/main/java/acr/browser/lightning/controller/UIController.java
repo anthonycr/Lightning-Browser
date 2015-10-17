@@ -16,18 +16,20 @@ import android.webkit.WebChromeClient.CustomViewCallback;
 
 import acr.browser.lightning.view.LightningView;
 
-public interface BrowserController {
+public interface UIController {
 
     void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable Drawable drawable);
 
     @ColorInt
     int getUiColor();
 
-    void updateUrl(String title, boolean shortUrl);
+    boolean getUseDarkTheme();
+
+    void updateUrl(@Nullable String title, boolean shortUrl);
 
     void updateProgress(int n);
 
-    void updateHistory(String title, String url);
+    void updateHistory(@Nullable String title, @NonNull String url);
 
     void openFileChooser(ValueCallback<Uri> uploadMsg);
 

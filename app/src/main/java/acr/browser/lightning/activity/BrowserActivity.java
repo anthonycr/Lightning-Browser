@@ -97,7 +97,7 @@ import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
-import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
@@ -116,7 +116,7 @@ import acr.browser.lightning.view.LightningView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserController, OnClickListener, OnLongClickListener {
+public abstract class BrowserActivity extends ThemableBrowserActivity implements UIController, OnClickListener, OnLongClickListener {
 
     // Static Layout
     @Bind(R.id.drawer_layout)
@@ -213,11 +213,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     protected abstract boolean isIncognito();
 
-//    abstract void initializeTabs();
-
     abstract void closeActivity();
 
-    public abstract void updateHistory(final String title, final String url);
+    public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
     abstract void updateCookiePreference();
 
@@ -348,7 +346,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        tabsManager.restoreTabs(this, mDarkTheme, isIncognito());
+        tabsManager.restoreTabsAndHandleIntent(this, getIntent(), isIncognito());
         // At this point we always have at least a tab in the tab manager
         showTab(0);
 
@@ -882,14 +880,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Should update the bookmark status in BookmarksFragment
         mEventBus.post(new BrowserEvents.CurrentPageUrl(newView.getUrl()));
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
+        // new Handler().postDelayed(new Runnable() {
+        //     @Override
+        //     public void run() {
         // Remove browser frame background to reduce overdraw
         //TODO evaluate performance
-//                mBrowserFrame.setBackgroundColor(Color.TRANSPARENT);
-//            }
-//        }, 300);
+        //         mBrowserFrame.setBackgroundColor(Color.TRANSPARENT);
+        //     }
+        // }, 300);
 
     }
 
@@ -955,7 +953,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return false;
         }
         mIsNewIntent = false;
-        LightningView startingTab = tabsManager.newTab(this, url, mDarkTheme, isIncognito());
+        LightningView startingTab = tabsManager.newTab(this, url, isIncognito());
         if (mIdGenerator == 0) {
             startingTab.resumeTimers();
         }
@@ -967,13 +965,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // TODO Check is this is callable directly from LightningView
         mEventBus.post(new BrowserEvents.TabsChanged());
 
-//      TODO Restore this
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mDrawerListLeft.smoothScrollToPosition(tabsManager.size() - 1);
-//            }
-//        }, 300);
+        // TODO Restore this
+        // new Handler().postDelayed(new Runnable() {
+        //    @Override
+        //    public void run() {
+        //        mDrawerListLeft.smoothScrollToPosition(tabsManager.size() - 1);
+        //    }
+        // }, 300);
 
         return true;
     }
@@ -1257,6 +1255,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
     }
 
+    @Override
+    public boolean getUseDarkTheme() {
+        return mDarkTheme;
+    }
+
     @ColorInt
     @Override
     public int getUiColor() {
@@ -1264,11 +1267,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void updateUrl(String url, boolean shortUrl) {
-        final LightningView currentTab = tabsManager.getCurrentTab();
+    public void updateUrl(@Nullable String url, boolean shortUrl) {
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
+        final LightningView currentTab = tabsManager.getCurrentTab();
         mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
         if (shortUrl && !url.startsWith(Constants.FILE)) {
             switch (mPreferences.getUrlBoxContentChoice()) {
@@ -1302,7 +1305,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mProgressBar.setProgress(n);
     }
 
-    void addItemToHistory(final String title, final String url) {
+    void addItemToHistory(@Nullable final String title, @NonNull final String url) {
         Runnable update = new Runnable() {
             @Override
             public void run() {
@@ -1317,7 +1320,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 }
             }
         };
-        if (url != null && !url.startsWith(Constants.FILE)) {
+        if (!url.startsWith(Constants.FILE)) {
             new Thread(update).start();
         }
     }
@@ -1893,7 +1896,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             super.onReceive(context, intent);
             boolean isConnected = isConnected(context);
             Log.d(Constants.TAG, "Network Connected: " + String.valueOf(isConnected));
-            tabsManager.notifyConnectioneStatus(isConnected);
+            tabsManager.notifyConnectionStatus(isConnected);
         }
     };
 

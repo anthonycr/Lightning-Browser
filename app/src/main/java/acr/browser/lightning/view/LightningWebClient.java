@@ -1,6 +1,7 @@
 package acr.browser.lightning.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,10 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -46,14 +47,16 @@ import acr.browser.lightning.utils.Utils;
  */
 class LightningWebClient extends WebViewClient {
 
-    private final BrowserActivity mActivity;
+    private final Activity mActivity;
     private final LightningView mLightningView;
+    private final UIController mUIController;
     private final AdBlock mAdBlock;
     private final Bus mEventBus;
     private final IntentUtils mIntentUtils;
 
-    LightningWebClient(BrowserActivity activity, LightningView lightningView) {
+    LightningWebClient(Activity activity, LightningView lightningView) {
         mActivity = activity;
+        mUIController = (UIController) activity;
         mLightningView = lightningView;
         mAdBlock = AdBlock.getInstance(activity);
         mAdBlock.updatePreference();
@@ -86,7 +89,7 @@ class LightningWebClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         if (view.isShown()) {
-            mActivity.updateUrl(url, true);
+            mUIController.updateUrl(url, true);
             view.postInvalidate();
         }
         if (view.getTitle() == null || view.getTitle().isEmpty()) {
@@ -105,8 +108,8 @@ class LightningWebClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         mLightningView.mTitle.setFavicon(null);
         if (mLightningView.isShown()) {
-            mActivity.updateUrl(url, false);
-            mActivity.showActionBar();
+            mUIController.updateUrl(url, false);
+            mUIController.showActionBar();
         }
         mEventBus.post(new BrowserEvents.TabsChanged());
     }

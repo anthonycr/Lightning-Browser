@@ -1,6 +1,7 @@
 package acr.browser.lightning.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -23,10 +24,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.utils.PermissionsManager;
 import acr.browser.lightning.utils.Utils;
 
@@ -38,12 +39,14 @@ class LightningChromeClient extends WebChromeClient {
 
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
-    private final BrowserActivity mActivity;
+    private final Activity mActivity;
     private final LightningView mLightningView;
+    private final UIController mUIController;
     private final Bus eventBus;
 
-    LightningChromeClient(BrowserActivity activity, LightningView lightningView) {
+    LightningChromeClient(Activity activity, LightningView lightningView) {
         mActivity = activity;
+        mUIController = (UIController) activity;
         mLightningView = lightningView;
         eventBus = BrowserApp.getAppComponent().getBus();
     }
@@ -51,7 +54,7 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
         if (mLightningView.isShown()) {
-            mActivity.updateProgress(newProgress);
+            mUIController.updateProgress(newProgress);
         }
     }
 
@@ -103,7 +106,7 @@ class LightningChromeClient extends WebChromeClient {
         }
         eventBus.post(new BrowserEvents.TabsChanged());
         if (view != null) {
-            mActivity.updateHistory(title, view.getUrl());
+            mUIController.updateHistory(title, view.getUrl());
         }
     }
 
@@ -152,30 +155,33 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
                                   Message resultMsg) {
-        mActivity.onCreateWindow(resultMsg);
+        mUIController.onCreateWindow(resultMsg);
         return true;
     }
 
     @Override
     public void onCloseWindow(WebView window) {
-        mActivity.onCloseWindow(mLightningView);
+        mUIController.onCloseWindow(mLightningView);
     }
 
+    @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-        mActivity.openFileChooser(uploadMsg);
+        mUIController.openFileChooser(uploadMsg);
     }
 
+    @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
-        mActivity.openFileChooser(uploadMsg);
+        mUIController.openFileChooser(uploadMsg);
     }
 
+    @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
-        mActivity.openFileChooser(uploadMsg);
+        mUIController.openFileChooser(uploadMsg);
     }
 
     public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
                                      WebChromeClient.FileChooserParams fileChooserParams) {
-        mActivity.showFileChooser(filePathCallback);
+        mUIController.showFileChooser(filePathCallback);
         return true;
     }
 
@@ -206,7 +212,7 @@ class LightningChromeClient extends WebChromeClient {
 
     @Override
     public void onHideCustomView() {
-        mActivity.onHideCustomView();
+        mUIController.onHideCustomView();
         super.onHideCustomView();
     }
 
@@ -224,7 +230,7 @@ class LightningChromeClient extends WebChromeClient {
         // video.setVisibility(View.GONE);
         // }
         // } else {
-        mActivity.onShowCustomView(view, callback);
+        mUIController.onShowCustomView(view, callback);
 
         // }
 
@@ -247,7 +253,7 @@ class LightningChromeClient extends WebChromeClient {
         // video.setVisibility(View.GONE);
         // }
         // } else {
-        mActivity.onShowCustomView(view, callback);
+        mUIController.onShowCustomView(view, callback);
 
         // }
 

@@ -1,7 +1,10 @@
 package acr.browser.lightning.activity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.webkit.WebView;
 
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import acr.browser.lightning.view.LightningView;
 @Singleton
 public class TabsManager {
 
+    private static final String TAG = TabsManager.class.getSimpleName();
     private final List<LightningView> mWebViewList = new ArrayList<>();
     private LightningView mCurrentTab;
 
@@ -28,24 +32,30 @@ public class TabsManager {
     PreferenceManager mPreferenceManager;
 
     @Inject
-    public TabsManager() {
-    }
+    public TabsManager() {}
 
-    public void restoreTabs(BrowserActivity activity, boolean darkTheme, boolean incognito) {
+    public void restoreTabsAndHandleIntent(Activity activity, Intent intent, boolean incognito) {
+        String url = null;
+        if (intent != null) {
+            url = intent.getDataString();
+        }
         mWebViewList.clear();
         mCurrentTab = null;
+        if (url != null) {
+            newTab(activity, url, incognito);
+        }
         if (!incognito && mPreferenceManager.getRestoreLostTabsEnabled()) {
             final String mem = mPreferenceManager.getMemoryUrl();
             mPreferenceManager.setMemoryUrl("");
             String[] array = Utils.getArray(mem);
             for (String urlString : array) {
                 if (!urlString.isEmpty()) {
-                    newTab(activity, urlString, darkTheme, incognito);
+                    newTab(activity, urlString, incognito);
                 }
             }
         }
         if (mWebViewList.size() == 0) {
-            newTab(activity, null, darkTheme, incognito);
+            newTab(activity, null, incognito);
         }
         // mCurrentTab = mWebViewList.get(0);
     }
@@ -68,7 +78,7 @@ public class TabsManager {
      * @return the corespondent {@link LightningView}, or null if the index is invalid
      */
     @Nullable
-    public LightningView getTabAtPosition(final int position) {
+    public synchronized LightningView getTabAtPosition(final int position) {
         if (position < 0 || position >= mWebViewList.size()) {
             return null;
         }
@@ -79,7 +89,7 @@ public class TabsManager {
     /**
      * Try to low memory pressure
      */
-    public void freeMemory() {
+    public synchronized void freeMemory() {
         for (LightningView tab : mWebViewList) {
             tab.freeMemory();
         }
@@ -111,7 +121,7 @@ public class TabsManager {
      *
      * @param isConnected
      */
-    public synchronized void notifyConnectioneStatus(final boolean isConnected) {
+    public synchronized void notifyConnectionStatus(final boolean isConnected) {
         for (LightningView tab : mWebViewList) {
             final WebView webView = tab.getWebView();
             if (webView != null) {
@@ -123,7 +133,7 @@ public class TabsManager {
     /**
      * @return The number of currently opened tabs
      */
-    public int size() {
+    public synchronized int size() {
         return mWebViewList.size();
     }
 
@@ -132,14 +142,13 @@ public class TabsManager {
      *
      * @param activity
      * @param url
-     * @param darkTheme
      * @param isIncognito
      * @return
      */
-    public synchronized LightningView newTab(final BrowserActivity activity,
-                                             final String url, final boolean darkTheme,
+    public synchronized LightningView newTab(final Activity activity,
+                                             final String url,
                                              final boolean isIncognito) {
-        final LightningView tab = new LightningView(activity, url, darkTheme, isIncognito);
+        final LightningView tab = new LightningView(activity, url, isIncognito);
         mWebViewList.add(tab);
         return tab;
     }
@@ -166,7 +175,7 @@ public class TabsManager {
      * @param tab the tab to look for
      * @return the position of the tab or -1 if the tab is not in the list
      */
-    public int positionOf(final LightningView tab) {
+    public synchronized int positionOf(final LightningView tab) {
         return mWebViewList.indexOf(tab);
     }
 
@@ -190,7 +199,7 @@ public class TabsManager {
      * @return a {@link WebView} or null
      */
     @Nullable
-    public WebView getCurrentWebView() {
+    public synchronized WebView getCurrentWebView() {
         return mCurrentTab != null ? mCurrentTab.getWebView() : null;
     }
 
@@ -200,7 +209,7 @@ public class TabsManager {
      * @return
      */
     @Nullable
-    public LightningView getCurrentTab() {
+    public synchronized LightningView getCurrentTab() {
         return mCurrentTab;
     }
 
@@ -212,8 +221,9 @@ public class TabsManager {
      * @return the selected tab or null if position is out of tabs range
      */
     @Nullable
-    public LightningView switchToTab(final int position) {
+    public synchronized LightningView switchToTab(final int position) {
         if (position < 0 || position >= mWebViewList.size()) {
+            Log.e(TAG, "Returning a null LightningView requested for position: " + position);
             return null;
         } else {
             final LightningView tab = mWebViewList.get(position);

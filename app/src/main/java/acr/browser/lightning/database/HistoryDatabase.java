@@ -8,6 +8,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +40,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     private SQLiteDatabase mDatabase;
 
-    private static HistoryDatabase mInstance;
-
-    private boolean mLock;
-
     @Inject
     public HistoryDatabase(Context context) {
         super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
@@ -66,23 +64,21 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void deleteHistory() {
+    public synchronized void deleteHistory() {
         mDatabase.delete(TABLE_HISTORY, null, null);
         mDatabase.close();
         mDatabase = this.getWritableDatabase();
     }
 
-    private boolean isClosed() {
+    private synchronized boolean isClosed() {
         return mDatabase == null || !mDatabase.isOpen();
     }
 
     @Override
     public synchronized void close() {
-        if (!mLock) {
-            if (mDatabase != null) {
-                mDatabase.close();
-                mDatabase = null;
-            }
+        if (mDatabase != null) {
+            mDatabase.close();
+            mDatabase = null;
         }
         super.close();
     }
@@ -94,42 +90,35 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     public synchronized void deleteHistoryItem(String url) {
-        mLock = true;
         openIfNecessary();
         mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
-        mLock = false;
     }
 
-    public synchronized void visitHistoryItem(String url, String title) {
-        mLock = true;
+    public synchronized void visitHistoryItem(@NonNull String url, @Nullable String title) {
         openIfNecessary();
         ContentValues values = new ContentValues();
-        values.put(KEY_TITLE, title);
+        values.put(KEY_TITLE, title == null ? "" : title);
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
         Cursor q = mDatabase.query(false, TABLE_HISTORY, new String[]{KEY_URL},
                 KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
         if (q.getCount() > 0) {
             mDatabase.update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
         } else {
-            addHistoryItem(new HistoryItem(url, title));
+            addHistoryItem(new HistoryItem(url, title == null ? "" : title));
         }
         q.close();
-        mLock = false;
     }
 
-    private synchronized void addHistoryItem(HistoryItem item) {
-        mLock = true;
+    private synchronized void addHistoryItem(@NonNull HistoryItem item) {
         openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_URL, item.getUrl());
         values.put(KEY_TITLE, item.getTitle());
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
         mDatabase.insert(TABLE_HISTORY, null, values);
-        mLock = false;
     }
 
-    String getHistoryItem(String url) {
-        mLock = true;
+    synchronized String getHistoryItem(String url) {
         openIfNecessary();
         Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
                 KEY_URL + " = ?", new String[]{url}, null, null, null, null);
@@ -140,14 +129,15 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
             cursor.close();
         }
-        mLock = false;
         return m;
     }
 
-    public List<HistoryItem> findItemsContaining(String search) {
-        mLock = true;
+    public synchronized List<HistoryItem> findItemsContaining(@Nullable String search) {
         openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(5);
+        if (search == null) {
+            return itemList;
+        }
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%"
                 + search + "%' OR " + KEY_URL + " LIKE '%" + search + "%' " + "ORDER BY "
                 + KEY_TIME_VISITED + " DESC LIMIT 5";
@@ -165,12 +155,10 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext() && n < 5);
         }
         cursor.close();
-        mLock = false;
         return itemList;
     }
 
-    public List<HistoryItem> getLastHundredItems() {
-        mLock = true;
+    public synchronized List<HistoryItem> getLastHundredItems() {
         openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(100);
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
@@ -189,12 +177,10 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext() && counter < 100);
         }
         cursor.close();
-        mLock = false;
         return itemList;
     }
 
-    public List<HistoryItem> getAllHistoryItems() {
-        mLock = true;
+    public synchronized List<HistoryItem> getAllHistoryItems() {
         openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
@@ -212,18 +198,15 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        mLock = false;
         return itemList;
     }
 
-    public int getHistoryItemsCount() {
-        mLock = true;
+    public synchronized int getHistoryItemsCount() {
         openIfNecessary();
         String countQuery = "SELECT * FROM " + TABLE_HISTORY;
         Cursor cursor = mDatabase.rawQuery(countQuery, null);
         int n = cursor.getCount();
         cursor.close();
-        mLock = false;
         return n;
     }
 }
