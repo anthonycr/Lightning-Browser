@@ -3,9 +3,7 @@ sudo: false
 android:
   components:
     - build-tools-22.0.1
-    - build-tools-23.0.1
     - android-23
-    - android-22
     - extra-android-support
     - extra-android-m2repository
   licenses:
@@ -17,3 +15,4 @@ before_install:
 install:
   - ./gradlew
 script:
+  - ./gradlew assembleRelease

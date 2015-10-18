@@ -42,6 +42,9 @@ android {
     lintOptions {
         abortOnError true
     }
+    packagingOptions {
+        exclude '.README'
+    }
 }
 
 dexcount {
