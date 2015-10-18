@@ -1,6 +1,6 @@
 package acr.browser.lightning.view;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -64,18 +64,18 @@ class LightningWebClient extends WebViewClient {
         mIntentUtils = new IntentUtils(activity);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (mAdBlock.isAd(request.getUrl().toString())) {
-                ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
-                return new WebResourceResponse("text/plain", "utf-8", EMPTY);
-            }
+        if (mAdBlock.isAd(request.getUrl().toString())) {
+            ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
+            return new WebResourceResponse("text/plain", "utf-8", EMPTY);
         }
         return super.shouldInterceptRequest(view, request);
     }
 
     @SuppressWarnings("deprecation")
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
         if (mAdBlock.isAd(url)) {
@@ -85,7 +85,7 @@ class LightningWebClient extends WebViewClient {
         return null;
     }
 
-    @SuppressLint("NewApi")
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onPageFinished(WebView view, String url) {
         if (view.isShown()) {
@@ -163,7 +163,7 @@ class LightningWebClient extends WebViewClient {
     private boolean mIsRunning = false;
     private float mZoomScale = 0.0f;
 
-    @SuppressLint("NewApi")
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
         if (view.isShown() && mLightningView.mPreferences.getTextReflowEnabled() &&

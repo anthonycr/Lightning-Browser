@@ -35,6 +35,8 @@ public interface UIController {
 
     void onShowCustomView(View view, CustomViewCallback callback);
 
+    void onShowCustomView(View view, CustomViewCallback callback, int requestedOrienation);
+
     void onHideCustomView();
 
     void onCreateWindow(Message resultMsg);

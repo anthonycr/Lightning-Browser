@@ -4,6 +4,7 @@
 
 package acr.browser.lightning.activity;
 
+import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
@@ -996,13 +997,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         if (current > position) {
             tabsManager.deleteTab(position);
-            showTab(current - 1);
             mEventBus.post(new BrowserEvents.TabsChanged());
         } else if (tabsManager.size() > position + 1) {
             if (current == position) {
                 showTab(position + 1);
                 tabsManager.deleteTab(position);
-                showTab(position);
                 mEventBus.post(new BrowserEvents.TabsChanged());
             } else {
                 tabsManager.deleteTab(position);
@@ -1011,7 +1010,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (current == position) {
                 showTab(position - 1);
                 tabsManager.deleteTab(position);
-                showTab(position - 1);
                 mEventBus.post(new BrowserEvents.TabsChanged());
             } else {
                 tabsManager.deleteTab(position);
@@ -1078,13 +1076,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void onBackPressed() {
+    public synchronized void onBackPressed() {
         final LightningView currentTab = tabsManager.getCurrentTab();
         if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
             mDrawerLayout.closeDrawer(mDrawerLeft);
         } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-            mEventBus
-                    .post(new BrowserEvents.UserPressedBack());
+            mEventBus.post(new BrowserEvents.UserPressedBack());
         } else {
             if (currentTab != null) {
                 Log.d(Constants.TAG, "onBackPressed");
@@ -1097,7 +1094,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         currentTab.goBack();
                     }
                 } else {
-                    deleteTab(tabsManager.positionOf(currentTab));
+                    if (mCustomView != null || mCustomViewCallback != null) {
+                        onHideCustomView();
+                    } else {
+                        deleteTab(tabsManager.positionOf(currentTab));
+                    }
                 }
             } else {
                 Log.e(Constants.TAG, "This shouldn't happen ever");
@@ -1511,17 +1512,26 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-        this.startActivityForResult(chooserIntent, 1);
+        startActivityForResult(chooserIntent, 1);
     }
 
     @Override
-    public void onShowCustomView(View view, CustomViewCallback callback) {
+    public synchronized void onShowCustomView(View view, CustomViewCallback callback) {
+        int requestedOrientation = mOriginalOrientation = getRequestedOrientation();
+        onShowCustomView(view, callback, requestedOrientation);
+    }
+
+    @Override
+    public synchronized void onShowCustomView(final View view, CustomViewCallback callback, int requestedOrientation) {
         final LightningView currentTab = tabsManager.getCurrentTab();
-        if (view == null) {
-            return;
-        }
-        if (mCustomView != null && callback != null) {
-            callback.onCustomViewHidden();
+        if (view == null || mCustomView != null) {
+            if (callback != null) {
+                try {
+                    callback.onCustomViewHidden();
+                } catch (Exception e) {
+                    Log.e(Constants.TAG, "Error hiding custom view", e);
+                }
+            }
             return;
         }
         try {
@@ -1530,30 +1540,46 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
         }
         mOriginalOrientation = getRequestedOrientation();
-        FrameLayout decor = (FrameLayout) getWindow().getDecorView();
+        mCustomViewCallback = callback;
+        mCustomView = view;
+
+        setRequestedOrientation(requestedOrientation);
+        final FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+
         mFullscreenContainer = new FrameLayout(this);
         mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
-        mCustomView = view;
-        mFullscreenContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
-        decor.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
-        setFullscreen(true, true);
-        if (currentTab != null) {
-            currentTab.setVisibility(View.GONE);
-        }
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
                 mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
                 mVideoView.setOnErrorListener(new VideoCompletionListener());
                 mVideoView.setOnCompletionListener(new VideoCompletionListener());
             }
+        } else if (view instanceof VideoView) {
+            mVideoView = (VideoView) view;
+            mVideoView.setOnErrorListener(new VideoCompletionListener());
+            mVideoView.setOnCompletionListener(new VideoCompletionListener());
         }
-        mCustomViewCallback = callback;
+        decorView.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
+        mFullscreenContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
+        decorView.requestLayout();
+        setFullscreen(true, true);
+        if (currentTab != null) {
+            currentTab.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
     public void onHideCustomView() {
         final LightningView currentTab = tabsManager.getCurrentTab();
         if (mCustomView == null || mCustomViewCallback == null || currentTab == null) {
+            if (mCustomViewCallback != null) {
+                try {
+                    mCustomViewCallback.onCustomViewHidden();
+                } catch (Exception e) {
+                    Log.e(Constants.TAG, "Error hiding custom view", e);
+                }
+                mCustomViewCallback = null;
+            }
             return;
         }
         Log.d(Constants.TAG, "onHideCustomView");
@@ -1564,25 +1590,31 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
         }
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
-        FrameLayout decor = (FrameLayout) getWindow().getDecorView();
-        if (decor != null) {
-            decor.removeView(mFullscreenContainer);
-        }
-
-        if (API < Build.VERSION_CODES.KITKAT) {
-            try {
-                mCustomViewCallback.onCustomViewHidden();
-            } catch (Throwable ignored) {
-
+        if (mFullscreenContainer != null) {
+            ViewGroup parent = (ViewGroup) mFullscreenContainer.getParent();
+            if (parent != null) {
+                parent.removeView(mFullscreenContainer);
             }
+            mFullscreenContainer.removeAllViews();
         }
+
         mFullscreenContainer = null;
         mCustomView = null;
         if (mVideoView != null) {
+            Log.d(Constants.TAG, "VideoView is being stopped");
+            mVideoView.stopPlayback();
             mVideoView.setOnErrorListener(null);
             mVideoView.setOnCompletionListener(null);
             mVideoView = null;
         }
+        if (mCustomViewCallback != null) {
+            try {
+                mCustomViewCallback.onCustomViewHidden();
+            } catch (Exception e) {
+                Log.e(Constants.TAG, "Error hiding custom view", e);
+            }
+        }
+        mCustomViewCallback = null;
         setRequestedOrientation(mOriginalOrientation);
     }
 

@@ -193,6 +193,9 @@ class LightningChromeClient extends WebChromeClient {
      */
     @Override
     public Bitmap getDefaultVideoPoster() {
+        if (mActivity == null) {
+            return null;
+        }
         final Resources resources = mActivity.getResources();
         return BitmapFactory.decodeResource(resources, android.R.drawable.spinner_background);
     }
@@ -213,50 +216,17 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onHideCustomView() {
         mUIController.onHideCustomView();
-        super.onHideCustomView();
     }
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        // While these lines might look like they work, in practice,
-        // Full-screen videos won't work correctly. I may test this out some
-        // more
-        // if (view instanceof FrameLayout) {
-        // FrameLayout frame = (FrameLayout) view;
-        // if (frame.getFocusedChild() instanceof VideoView) {
-        // VideoView video = (VideoView) frame.getFocusedChild();
-        // video.stopPlayback();
-        // frame.removeView(video);
-        // video.setVisibility(View.GONE);
-        // }
-        // } else {
         mUIController.onShowCustomView(view, callback);
-
-        // }
-
-        super.onShowCustomView(view, callback);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void onShowCustomView(View view, int requestedOrientation,
                                  CustomViewCallback callback) {
-        // While these lines might look like they work, in practice,
-        // Full-screen videos won't work correctly. I may test this out some
-        // more
-        // if (view instanceof FrameLayout) {
-        // FrameLayout frame = (FrameLayout) view;
-        // if (frame.getFocusedChild() instanceof VideoView) {
-        // VideoView video = (VideoView) frame.getFocusedChild();
-        // video.stopPlayback();
-        // frame.removeView(video);
-        // video.setVisibility(View.GONE);
-        // }
-        // } else {
-        mUIController.onShowCustomView(view, callback);
-
-        // }
-
-        super.onShowCustomView(view, requestedOrientation, callback);
+        mUIController.onShowCustomView(view, callback, requestedOrientation);
     }
 }

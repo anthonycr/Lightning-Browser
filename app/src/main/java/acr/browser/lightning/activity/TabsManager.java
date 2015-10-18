@@ -165,6 +165,9 @@ public class TabsManager {
             return null;
         }
         final LightningView tab = mWebViewList.remove(position);
+        if (mCurrentTab == tab) {
+            mCurrentTab = null;
+        }
         tab.onDestroy();
         return tab;
     }
@@ -227,8 +230,11 @@ public class TabsManager {
             return null;
         } else {
             final LightningView tab = mWebViewList.get(position);
-            mCurrentTab = tab;
+            if (tab != null) {
+                mCurrentTab = tab;
+            }
             return tab;
         }
     }
+
 }
