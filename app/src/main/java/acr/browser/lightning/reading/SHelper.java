@@ -253,7 +253,7 @@ class SHelper {
     public static String getUrlFromUglyGoogleRedirect(String url) {
         if (url.startsWith("http://www.google.com/url?")) {
             url = url.substring("http://www.google.com/url?".length());
-            String arr[] = urlDecode(url).split("\\&");
+            String arr[] = urlDecode(url).split("&");
             for (String str : arr) {
                 if (str.startsWith("q="))
                     return str.substring("q=".length());
