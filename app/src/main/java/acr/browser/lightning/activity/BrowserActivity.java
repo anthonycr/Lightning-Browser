@@ -4,7 +4,6 @@
 
 package acr.browser.lightning.activity;
 
-import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
@@ -106,7 +105,7 @@ import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.receiver.NetworkReceiver;
-import acr.browser.lightning.utils.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;

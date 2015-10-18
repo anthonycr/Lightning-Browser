@@ -28,7 +28,8 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.utils.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsResultAction;
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -113,7 +114,7 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onGeolocationPermissionsShowPrompt(final String origin,
                                                    final GeolocationPermissions.Callback callback) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, PERMISSIONS, new PermissionsManager.PermissionResult() {
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, PERMISSIONS, new PermissionsResultAction() {
             @Override
             public void onGranted() {
                 final boolean remember = true;

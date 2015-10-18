@@ -40,13 +40,15 @@ import java.util.Date;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.download.DownloadHandler;
+import acr.browser.lightning.permissions.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsResultAction;
 
 public final class Utils {
 
     public static void downloadFile(final Activity activity, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsManager.PermissionResult() {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
             @Override
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);

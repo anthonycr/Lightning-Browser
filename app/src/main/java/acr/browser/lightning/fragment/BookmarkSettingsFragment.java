@@ -27,7 +27,8 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.utils.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsResultAction;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -138,7 +139,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
-                        new PermissionsManager.PermissionResult() {
+                        new PermissionsResultAction() {
                             @Override
                             public void onGranted() {
                                 mBookmarkManager.exportBookmarks(getActivity());
@@ -152,7 +153,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                 return true;
             case SETTINGS_IMPORT:
                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
-                        new PermissionsManager.PermissionResult() {
+                        new PermissionsResultAction() {
                             @Override
                             public void onGranted() {
                                 loadFileList(null);

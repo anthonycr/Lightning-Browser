@@ -13,7 +13,8 @@ import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.utils.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsManager;
+import acr.browser.lightning.permissions.PermissionsResultAction;
 
 public class LightningDownloadListener implements DownloadListener {
 
@@ -28,7 +29,7 @@ public class LightningDownloadListener implements DownloadListener {
                                 final String contentDisposition, final String mimetype, long contentLength) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                new PermissionsManager.PermissionResult() {
+                new PermissionsResultAction() {
                     @Override
                     public void onGranted() {
                         String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
