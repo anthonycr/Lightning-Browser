@@ -52,6 +52,7 @@ import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningView {
@@ -612,7 +613,7 @@ public class LightningView {
     private void longClickPage(final String url) {
         final WebView.HitTestResult result = mWebView.getHitTestResult();
         String currentUrl = mWebView.getUrl();
-        if (currentUrl != null && currentUrl.startsWith(Constants.FILE)) {
+        if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
             if (currentUrl.endsWith(HistoryPage.FILENAME)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
