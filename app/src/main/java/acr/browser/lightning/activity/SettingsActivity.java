@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.permissions.PermissionsManager;
+import com.anthonycr.grant.PermissionsManager;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 

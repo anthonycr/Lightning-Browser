@@ -27,8 +27,8 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.permissions.PermissionsManager;
-import acr.browser.lightning.permissions.PermissionsResultAction;
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {

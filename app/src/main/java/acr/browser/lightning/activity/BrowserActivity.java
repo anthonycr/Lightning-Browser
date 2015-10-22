@@ -105,7 +105,7 @@ import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.receiver.NetworkReceiver;
-import acr.browser.lightning.permissions.PermissionsManager;
+import com.anthonycr.grant.PermissionsManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
