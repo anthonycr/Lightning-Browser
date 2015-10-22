@@ -103,6 +103,7 @@ public class TabsManager {
             tab.onDestroy();
         }
         mWebViewList.clear();
+        mCurrentTab = null;
     }
 
     /**
