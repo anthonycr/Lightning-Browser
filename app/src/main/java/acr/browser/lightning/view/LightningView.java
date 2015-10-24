@@ -552,7 +552,10 @@ public class LightningView {
             mWebView.setVisibility(View.GONE);
             mWebView.removeAllViews();
             mWebView.destroyDrawingCache();
-            // mWebView.destroy(); //this is causing the segfault
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //this is causing the segfault occasionally below 4.2
+                mWebView.destroy();
+            }
             mWebView = null;
         }
     }
