@@ -38,6 +38,7 @@
     <string name="stock_browser_available">（已检测到受支持的原生浏览器）</string>
     <string name="fullScreenOption">浏览时隐藏状态栏</string>
     <string name="clear_cookies">清除浏览器 Cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">您希望对此图片进行什么操作？</string>
     <string name="action_download">下载</string>
     <string name="action_open">打开</string>

@@ -37,6 +37,7 @@
     <string name="stock_browser_available">Wspierana systemowa przeglądarka internetowa wykryta</string>
     <string name="fullScreenOption">Ukryj pasek statusu</string>
     <string name="clear_cookies">Wyczyść ciasteczka</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Co chciałbyś zrobić z tym obrazkiem?</string>
     <string name="action_download">Pobierz</string>
     <string name="action_open">Otwórz</string>

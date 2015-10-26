@@ -30,6 +30,7 @@
     <string name="stock_browser_available">(دعم مخزون المتصفح )</string>
     <string name="fullScreenOption">إخفاء شريط الحالة أثناء التصفح</string>
     <string name="clear_cookies">مسح ملفات تعريف الارتباط</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">ماذا تريد أن تفعل مع هذه الصورة؟</string>
     <string name="action_download">تحميل</string>
     <string name="action_open">فتح</string>
