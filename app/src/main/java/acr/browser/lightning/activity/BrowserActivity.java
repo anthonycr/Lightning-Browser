@@ -403,7 +403,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 updateUrl(currentView.getUrl(), true);
             } else if (hasFocus && currentView != null) {
                 String url = currentView.getUrl();
-                if (url.startsWith(Constants.FILE)) {
+                if (UrlUtils.isSpecialUrl(url)) {
                     mSearch.setText("");
                 } else {
                     mSearch.setText(url);
@@ -691,7 +691,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
                 return true;
             case R.id.action_share:
-                if (currentView != null && !currentView.getUrl().startsWith(Constants.FILE)) {
+                if (currentView != null && !UrlUtils.isSpecialUrl(currentView.getUrl())) {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
                     shareIntent.putExtra(Intent.EXTRA_SUBJECT, currentView.getTitle());
@@ -703,7 +703,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 openBookmarks();
                 return true;
             case R.id.action_copy:
-                if (currentView != null && !currentView.getUrl().startsWith(Constants.FILE)) {
+                if (currentView != null && !UrlUtils.isSpecialUrl(currentView.getUrl())) {
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("label", currentView.getUrl());
                     clipboard.setPrimaryClip(clip);
@@ -717,7 +717,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 openHistory();
                 return true;
             case R.id.action_add_bookmark:
-                if (currentView != null && !currentView.getUrl().startsWith(Constants.FILE)) {
+                if (currentView != null && !UrlUtils.isSpecialUrl(currentView.getUrl())) {
                     mEventBus.post(new BrowserEvents.AddBookmark(currentView.getTitle(),
                             currentView.getUrl()));
                 }
@@ -893,24 +893,38 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     void handleNewIntent(Intent intent) {
 
-        String url = null;
+        final String url;
         if (intent != null) {
             url = intent.getDataString();
+        } else {
+            url = null;
         }
         int num = 0;
-        String source = null;
+        final String source;
         if (intent != null && intent.getExtras() != null) {
             num = intent.getExtras().getInt(getPackageName() + ".Origin");
             source = intent.getExtras().getString("SOURCE");
+        } else {
+            source = null;
         }
         if (num == 1) {
             loadUrlInCurrentView(url);
         } else if (url != null) {
             if (url.startsWith(Constants.FILE)) {
-                Utils.showSnackbar(this, R.string.message_blocked_local);
-                url = null;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(true)
+                        .setMessage(R.string.message_blocked_local)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                newTab(url, true);
+                            }
+                        })
+                        .show();
+            } else {
+                newTab(url, true);
             }
-            newTab(url, true);
             mIsNewIntent = (source == null);
         }
     }
@@ -986,7 +1000,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         int current = tabsManager.positionOf(currentTab);
 
-        if (!tabToDelete.getUrl().startsWith(Constants.FILE) && !isIncognito()) {
+        if (!UrlUtils.isSpecialUrl(tabToDelete.getUrl()) && !isIncognito()) {
             mPreferences.setSavedUrl(tabToDelete.getUrl());
         }
         final boolean isShown = tabToDelete.isShown();
@@ -1014,7 +1028,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 tabsManager.deleteTab(position);
             }
         } else {
-            if (currentTab != null && (currentTab.getUrl().startsWith(Constants.FILE)
+            if (currentTab != null && (UrlUtils.isSpecialUrl(currentTab.getUrl())
                     || currentTab.getUrl().equals(mHomepage))) {
                 closeActivity();
             } else {
@@ -1273,7 +1287,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         final LightningView currentTab = tabsManager.getCurrentTab();
         mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
-        if (shortUrl && !url.startsWith(Constants.FILE)) {
+        if (shortUrl && !UrlUtils.isSpecialUrl(url)) {
             switch (mPreferences.getUrlBoxContentChoice()) {
                 case 0: // Default, show only the domain
                     url = url.replaceFirst(Constants.HTTP, "");
@@ -1292,7 +1306,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     break;
             }
         } else {
-            if (url.startsWith(Constants.FILE)) {
+            if (UrlUtils.isSpecialUrl(url)) {
                 url = "";
             }
             mSearch.setText(url);
@@ -1320,7 +1334,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 }
             }
         };
-        if (!url.startsWith(Constants.FILE)) {
+        if (!UrlUtils.isSpecialUrl(url)) {
             new Thread(update).start();
         }
     }

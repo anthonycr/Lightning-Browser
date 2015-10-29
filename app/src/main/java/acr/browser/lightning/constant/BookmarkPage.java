@@ -24,7 +24,7 @@ public final class BookmarkPage {
             "<head>\n" +
             "<meta content=en-us http-equiv=Content-Language />\n" +
             "<meta content='text/html; charset=utf-8' http-equiv=Content-Type />\n" +
-            "<meta name=viewport content='width=device-width, initial-scale=1.0'>\n" +
+            "<meta name=viewport content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>\n" +
             "<title>" +
             BrowserApp.getAppContext().getString(R.string.action_bookmarks) +
             "</title>\n" +
