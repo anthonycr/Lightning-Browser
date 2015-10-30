@@ -20,6 +20,11 @@ import acr.browser.lightning.utils.Utils;
 
 public final class BookmarkPage {
 
+    /**
+     * The bookmark page standard suffix
+     */
+    public static final String FILENAME = "bookmarks.html";
+
     private static final String HEADING = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
             "<head>\n" +
             "<meta content=en-us http-equiv=Content-Language />\n" +
@@ -66,9 +71,9 @@ public final class BookmarkPage {
         final List<HistoryItem> list = manager.getBookmarksFromFolder(folder, true);
         final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {
-            bookmarkWebPage = new File(FILES_DIR, Constants.BOOKMARKS_FILENAME);
+            bookmarkWebPage = new File(FILES_DIR, FILENAME);
         } else {
-            bookmarkWebPage = new File(FILES_DIR, folder + '-' + Constants.BOOKMARKS_FILENAME);
+            bookmarkWebPage = new File(FILES_DIR, folder + '-' + FILENAME);
         }
         final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
 
@@ -77,7 +82,7 @@ public final class BookmarkPage {
             final HistoryItem item = list.get(n);
             bookmarkBuilder.append(BookmarkPage.PART1);
             if (item.isFolder()) {
-                final File folderPage = new File(FILES_DIR, item.getTitle() + '-' + Constants.BOOKMARKS_FILENAME);
+                final File folderPage = new File(FILES_DIR, item.getTitle() + '-' + FILENAME);
                 bookmarkBuilder.append(Constants.FILE).append(folderPage);
                 bookmarkBuilder.append(BookmarkPage.PART2);
                 bookmarkBuilder.append(folderIconPath);

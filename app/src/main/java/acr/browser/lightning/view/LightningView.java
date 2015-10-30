@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
@@ -167,7 +168,7 @@ public class LightningView {
         } finally {
             Utils.close(outputStream);
         }
-        File bookmarkWebPage = new File(mActivity.getFilesDir(), Constants.BOOKMARKS_FILENAME);
+        File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 
         BrowserApp.getAppComponent().getBookmarkPage().buildBookmarkPage(null);
         mWebView.loadUrl(Constants.FILE + bookmarkWebPage);
@@ -624,7 +625,7 @@ public class LightningView {
                     final String newUrl = result.getExtra();
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
                 }
-            } else if (currentUrl.endsWith(Constants.BOOKMARKS_FILENAME)) {
+            } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, url);
                 } else if (result != null && result.getExtra() != null) {

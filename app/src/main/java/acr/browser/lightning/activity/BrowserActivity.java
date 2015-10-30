@@ -2032,7 +2032,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
             final LightningView currentTab = tabsManager.getCurrentTab();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-                    && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
+                    && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
                 currentTab.loadBookmarkpage();
             }
             if (currentTab != null) {
@@ -2049,7 +2049,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
             final LightningView currentTab = tabsManager.getCurrentTab();
             if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-                    && currentTab.getUrl().endsWith(Constants.BOOKMARKS_FILENAME)) {
+                    && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
                 currentTab.loadBookmarkpage();
             }
             if (currentTab != null) {

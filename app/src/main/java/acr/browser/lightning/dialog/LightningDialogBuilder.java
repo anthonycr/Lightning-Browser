@@ -24,6 +24,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.database.BookmarkManager;
@@ -60,11 +61,11 @@ public class LightningDialogBuilder {
      */
     public void showLongPressedDialogForBookmarkUrl(final Context context, final String url) {
         final HistoryItem item;
-        if (url.startsWith(Constants.FILE) && url.endsWith(Constants.BOOKMARKS_FILENAME)) {
+        if (url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME)) {
             // TODO hacky, make a better bookmark mechanism in the future
             final Uri uri = Uri.parse(url);
             final String filename = uri.getLastPathSegment();
-            final String folderTitle = filename.substring(0, filename.length() - Constants.BOOKMARKS_FILENAME.length() - 1);
+            final String folderTitle = filename.substring(0, filename.length() - BookmarkPage.FILENAME.length() - 1);
             item = new HistoryItem();
             item.setIsFolder(true);
             item.setTitle(folderTitle);
