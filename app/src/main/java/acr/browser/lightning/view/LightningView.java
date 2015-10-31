@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -57,6 +59,10 @@ import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningView {
+
+    public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
+    public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
+    public static final String HEADER_DNT = "DNT";
 
     final LightningViewTitle mTitle;
     private WebView mWebView;
@@ -80,6 +86,7 @@ public class LightningView {
             0, 0, 0, 1.0f, 0 // alpha
     };
     private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
+    private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
     @Inject
     Bus mEventBus;
@@ -128,7 +135,7 @@ public class LightningView {
 
         if (url != null) {
             if (!url.trim().isEmpty()) {
-                mWebView.loadUrl(url);
+                mWebView.loadUrl(url, mRequestHeaders);
             } else {
                 // don't load anything, the user is looking for a blank tab
             }
@@ -142,11 +149,11 @@ public class LightningView {
             return;
         }
         if (mHomepage.startsWith("about:home")) {
-            mWebView.loadUrl(StartPage.getHomepage(mActivity));
+            mWebView.loadUrl(StartPage.getHomepage(mActivity), mRequestHeaders);
         } else if (mHomepage.startsWith("about:bookmarks")) {
             loadBookmarkpage();
         } else {
-            mWebView.loadUrl(mHomepage);
+            mWebView.loadUrl(mHomepage, mRequestHeaders);
         }
     }
 
@@ -171,7 +178,7 @@ public class LightningView {
         File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 
         BrowserApp.getAppComponent().getBookmarkPage().buildBookmarkPage(null);
-        mWebView.loadUrl(Constants.FILE + bookmarkWebPage);
+        mWebView.loadUrl(Constants.FILE + bookmarkWebPage, mRequestHeaders);
 
     }
 
@@ -182,12 +189,23 @@ public class LightningView {
      *                 if you don't have a reference to them
      * @param context  the context in which the WebView was created
      */
-    @SuppressLint("NewApi")
+    @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
     public synchronized void initializePreferences(@Nullable WebSettings settings, Context context) {
         if (settings == null && mWebView == null) {
             return;
         } else if (settings == null) {
             settings = mWebView.getSettings();
+        }
+
+        if (mPreferences.getDoNotTrackEnabled()) {
+            mRequestHeaders.put(HEADER_DNT, "1");
+        } else {
+            mRequestHeaders.remove(HEADER_DNT);
+        }
+
+        if (mPreferences.getRemoveIdentifyingHeadersEnabled()) {
+            mRequestHeaders.put(HEADER_REQUESTED_WITH, "");
+            mRequestHeaders.put(HEADER_WAP_PROFILE, "");
         }
 
         settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
@@ -382,6 +400,11 @@ public class LightningView {
                 settings.setUserAgentString(ua);
                 break;
         }
+    }
+
+    @NonNull
+    protected Map<String, String> getRequestHeaders() {
+        return mRequestHeaders;
     }
 
     public boolean isShown() {
@@ -679,7 +702,7 @@ public class LightningView {
         }
 
         if (mWebView != null) {
-            mWebView.loadUrl(url);
+            mWebView.loadUrl(url, mRequestHeaders);
         }
     }
 
@@ -784,7 +807,7 @@ public class LightningView {
 
     private static class WebViewHandler extends Handler {
 
-        private WeakReference<LightningView> mReference;
+        private final WeakReference<LightningView> mReference;
 
         public WebViewHandler(LightningView view) {
             mReference = new WeakReference<>(view);

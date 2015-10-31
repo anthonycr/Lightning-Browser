@@ -528,7 +528,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        boolean checked = (Boolean) newValue;
+        boolean checked = false;
+        if (newValue instanceof Boolean) {
+            checked = (Boolean) newValue;
+        }
         switch (preference.getKey()) {
             case SETTINGS_FLASH:
                 if (!Utils.isFlashInstalled(mActivity) && checked) {

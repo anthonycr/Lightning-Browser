@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import acr.browser.lightning.R;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
+import acr.browser.lightning.view.LightningView;
 
 public class PrivacySettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -31,10 +32,10 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_CLEARCOOKIES = "clear_cookies";
     private static final String SETTINGS_CLEARWEBSTORAGE = "clear_webstorage";
     private static final String SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit";
+    private static final String SETTINGS_DONOTTRACK = "do_not_track";
+    private static final String SETTINGS_INVASIVEHEADERS = "remove_identifying_headers";
 
     private Activity mActivity;
-    private CheckBoxPreference cblocation, cb3cookies, cbsavepasswords, cbcacheexit, cbhistoryexit,
-            cbcookiesexit, cbwebstorageexit;
     private Handler messageHandler;
 
     @Override
@@ -54,13 +55,15 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         Preference clearcookies = findPreference(SETTINGS_CLEARCOOKIES);
         Preference clearwebstorage = findPreference(SETTINGS_CLEARWEBSTORAGE);
 
-        cblocation = (CheckBoxPreference) findPreference(SETTINGS_LOCATION);
-        cb3cookies = (CheckBoxPreference) findPreference(SETTINGS_THIRDPCOOKIES);
-        cbsavepasswords = (CheckBoxPreference) findPreference(SETTINGS_SAVEPASSWORD);
-        cbcacheexit = (CheckBoxPreference) findPreference(SETTINGS_CACHEEXIT);
-        cbhistoryexit = (CheckBoxPreference) findPreference(SETTINGS_HISTORYEXIT);
-        cbcookiesexit = (CheckBoxPreference) findPreference(SETTINGS_COOKIEEXIT);
-        cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
+        CheckBoxPreference cblocation = (CheckBoxPreference) findPreference(SETTINGS_LOCATION);
+        CheckBoxPreference cb3cookies = (CheckBoxPreference) findPreference(SETTINGS_THIRDPCOOKIES);
+        CheckBoxPreference cbsavepasswords = (CheckBoxPreference) findPreference(SETTINGS_SAVEPASSWORD);
+        CheckBoxPreference cbcacheexit = (CheckBoxPreference) findPreference(SETTINGS_CACHEEXIT);
+        CheckBoxPreference cbhistoryexit = (CheckBoxPreference) findPreference(SETTINGS_HISTORYEXIT);
+        CheckBoxPreference cbcookiesexit = (CheckBoxPreference) findPreference(SETTINGS_COOKIEEXIT);
+        CheckBoxPreference cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
+        CheckBoxPreference cbDoNotTrack = (CheckBoxPreference) findPreference(SETTINGS_DONOTTRACK);
+        CheckBoxPreference cbIdentifyingHeaders = (CheckBoxPreference) findPreference(SETTINGS_INVASIVEHEADERS);
 
         clearcache.setOnPreferenceClickListener(this);
         clearhistory.setOnPreferenceClickListener(this);
@@ -74,6 +77,8 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbhistoryexit.setOnPreferenceChangeListener(this);
         cbcookiesexit.setOnPreferenceChangeListener(this);
         cbwebstorageexit.setOnPreferenceChangeListener(this);
+        cbDoNotTrack.setOnPreferenceChangeListener(this);
+        cbIdentifyingHeaders.setOnPreferenceChangeListener(this);
 
         cblocation.setChecked(mPreferenceManager.getLocationEnabled());
         cbsavepasswords.setChecked(mPreferenceManager.getSavePasswordsEnabled());
@@ -82,6 +87,11 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbcookiesexit.setChecked(mPreferenceManager.getClearCookiesExitEnabled());
         cb3cookies.setChecked(mPreferenceManager.getBlockThirdPartyCookiesEnabled());
         cbwebstorageexit.setChecked(mPreferenceManager.getClearWebStorageExitEnabled());
+        cbDoNotTrack.setChecked(mPreferenceManager.getDoNotTrackEnabled());
+        cbIdentifyingHeaders.setChecked(mPreferenceManager.getRemoveIdentifyingHeadersEnabled());
+
+        String identifyingHeadersSummary = LightningView.HEADER_REQUESTED_WITH + ", " + LightningView.HEADER_WAP_PROFILE;
+        cbIdentifyingHeaders.setSummary(identifyingHeadersSummary);
 
         cb3cookies.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
@@ -194,35 +204,33 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_LOCATION:
                 mPreferenceManager.setLocationEnabled((Boolean) newValue);
-                cblocation.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_THIRDPCOOKIES:
                 mPreferenceManager.setBlockThirdPartyCookiesEnabled((Boolean) newValue);
-                cb3cookies.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_SAVEPASSWORD:
                 mPreferenceManager.setSavePasswordsEnabled((Boolean) newValue);
-                cbsavepasswords.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_CACHEEXIT:
                 mPreferenceManager.setClearCacheExit((Boolean) newValue);
-                cbcacheexit.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_HISTORYEXIT:
                 mPreferenceManager.setClearHistoryExitEnabled((Boolean) newValue);
-                cbhistoryexit.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_COOKIEEXIT:
                 mPreferenceManager.setClearCookiesExitEnabled((Boolean) newValue);
-                cbcookiesexit.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_WEBSTORAGEEXIT:
                 mPreferenceManager.setClearWebStorageExitEnabled((Boolean) newValue);
-                cbwebstorageexit.setChecked((Boolean) newValue);
+                return true;
+            case SETTINGS_DONOTTRACK:
+                mPreferenceManager.setDoNotTrackEnabled((Boolean) newValue);
+                return true;
+            case SETTINGS_INVASIVEHEADERS:
+                mPreferenceManager.setRemoveIdentifyingHeadersEnabled((Boolean) newValue);
                 return true;
             default:
                 return false;
