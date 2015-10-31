@@ -2,8 +2,10 @@ package acr.browser.lightning.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -13,6 +15,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
@@ -34,16 +38,15 @@ public class TabsManager {
     @Inject
     public TabsManager() {}
 
-    public void restoreTabsAndHandleIntent(Activity activity, Intent intent, boolean incognito) {
+    public synchronized void restoreTabsAndHandleIntent(final Activity activity,
+                                                        final Intent intent,
+                                                        final boolean incognito) {
         String url = null;
         if (intent != null) {
             url = intent.getDataString();
         }
         mWebViewList.clear();
         mCurrentTab = null;
-        if (url != null) {
-            newTab(activity, url, incognito);
-        }
         if (!incognito && mPreferenceManager.getRestoreLostTabsEnabled()) {
             final String mem = mPreferenceManager.getMemoryUrl();
             mPreferenceManager.setMemoryUrl("");
@@ -54,10 +57,28 @@ public class TabsManager {
                 }
             }
         }
+        if (url != null) {
+            if (url.startsWith(Constants.FILE)) {
+                final String urlToLoad = url;
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setCancelable(true)
+                        .setTitle(R.string.title_warning)
+                        .setMessage(R.string.message_blocked_local)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                newTab(activity, urlToLoad, incognito);
+                            }
+                        })
+                        .show();
+            } else {
+                newTab(activity, url, incognito);
+            }
+        }
         if (mWebViewList.size() == 0) {
             newTab(activity, null, incognito);
         }
-        // mCurrentTab = mWebViewList.get(0);
     }
 
     /**
