@@ -206,6 +206,9 @@ public class LightningView {
         if (mPreferences.getRemoveIdentifyingHeadersEnabled()) {
             mRequestHeaders.put(HEADER_REQUESTED_WITH, "");
             mRequestHeaders.put(HEADER_WAP_PROFILE, "");
+        } else {
+            mRequestHeaders.remove(HEADER_REQUESTED_WITH);
+            mRequestHeaders.remove(HEADER_WAP_PROFILE);
         }
 
         settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
