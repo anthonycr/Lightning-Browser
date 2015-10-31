@@ -52,7 +52,7 @@ public class PreferenceManager {
         public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
         public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
         public static final String DO_NOT_TRACK = "doNotTrack";
-        public static final String INVASIVE_HEADERS = "removeInvasiveHeaders";
+        public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -252,7 +252,7 @@ public class PreferenceManager {
     }
 
     public boolean getRemoveIdentifyingHeadersEnabled(){
-        return mPrefs.getBoolean(Name.INVASIVE_HEADERS, false);
+        return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
     private void putBoolean(String name, boolean value) {
@@ -268,7 +268,7 @@ public class PreferenceManager {
     }
 
     public void setRemoveIdentifyingHeadersEnabled(boolean enabled){
-        putBoolean(Name.INVASIVE_HEADERS, enabled);
+        putBoolean(Name.IDENTIFYING_HEADERS, enabled);
     }
 
     public void setDoNotTrackEnabled(boolean doNotTrack) {

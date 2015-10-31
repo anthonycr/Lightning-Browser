@@ -33,7 +33,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_CLEARWEBSTORAGE = "clear_webstorage";
     private static final String SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit";
     private static final String SETTINGS_DONOTTRACK = "do_not_track";
-    private static final String SETTINGS_INVASIVEHEADERS = "remove_identifying_headers";
+    private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
     private Activity mActivity;
     private Handler messageHandler;
@@ -63,7 +63,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         CheckBoxPreference cbcookiesexit = (CheckBoxPreference) findPreference(SETTINGS_COOKIEEXIT);
         CheckBoxPreference cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
         CheckBoxPreference cbDoNotTrack = (CheckBoxPreference) findPreference(SETTINGS_DONOTTRACK);
-        CheckBoxPreference cbIdentifyingHeaders = (CheckBoxPreference) findPreference(SETTINGS_INVASIVEHEADERS);
+        CheckBoxPreference cbIdentifyingHeaders = (CheckBoxPreference) findPreference(SETTINGS_IDENTIFYINGHEADERS);
 
         clearcache.setOnPreferenceClickListener(this);
         clearhistory.setOnPreferenceClickListener(this);
@@ -229,7 +229,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
             case SETTINGS_DONOTTRACK:
                 mPreferenceManager.setDoNotTrackEnabled((Boolean) newValue);
                 return true;
-            case SETTINGS_INVASIVEHEADERS:
+            case SETTINGS_IDENTIFYINGHEADERS:
                 mPreferenceManager.setRemoveIdentifyingHeadersEnabled((Boolean) newValue);
                 return true;
             default:
