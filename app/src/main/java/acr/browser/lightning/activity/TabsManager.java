@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.squareup.otto.Bus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +18,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
@@ -34,6 +38,9 @@ public class TabsManager {
 
     @Inject
     PreferenceManager mPreferenceManager;
+
+    @Inject
+    Bus mEventBus;
 
     @Inject
     public TabsManager() {}
@@ -182,7 +189,7 @@ public class TabsManager {
      * @return The removed tab reference or null
      */
     @Nullable
-    public synchronized LightningView deleteTab(final int position) {
+    public synchronized LightningView removeTab(final int position) {
         if (position >= mWebViewList.size()) {
             return null;
         }
@@ -191,7 +198,27 @@ public class TabsManager {
             mCurrentTab = null;
         }
         tab.onDestroy();
+        Log.d(Constants.TAG, tab.toString());
         return tab;
+    }
+
+    public synchronized void deleteTab(int position) {
+        final LightningView currentTab = getCurrentTab();
+        int current = positionOf(currentTab);
+
+        if (current == position) {
+            if (size() == 1) {
+                mCurrentTab = null;
+            } else if (current < size() - 1 ) {
+                // There is another tab after this one
+                mCurrentTab = getTabAtPosition(current + 1);
+            } else {
+                mCurrentTab = getTabAtPosition(current - 1);
+            }
+            removeTab(current);
+        } else {
+            removeTab(position);
+        }
     }
 
     /**

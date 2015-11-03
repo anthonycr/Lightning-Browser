@@ -816,8 +816,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private synchronized void showTab(final int position) {
         final LightningView currentView = mTabsManager.getCurrentTab();
-        final WebView currentWebView = currentView != null ? currentView.getWebView() : null;
         final LightningView newView = mTabsManager.switchToTab(position);
+        switchTabs(currentView, newView);
+    }
+
+    // This is commodity to breack the flow between regular tab management and the CLIQZ's search
+    // interface.
+    private void switchTabs(final LightningView currentView, final LightningView newView) {
+        final WebView currentWebView = currentView != null ? currentView.getWebView() : null;
         final WebView newWebView = newView != null ? newView.getWebView() : null;
         if (newView == null || newWebView == null) {
             return;
@@ -1000,13 +1006,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private synchronized void deleteTab(int position) {
         final LightningView tabToDelete = mTabsManager.getTabAtPosition(position);
-        final LightningView currentTab = mTabsManager.getCurrentTab();
 
         if (tabToDelete == null) {
             return;
         }
-
-        int current = mTabsManager.positionOf(currentTab);
 
         if (!UrlUtils.isSpecialUrl(tabToDelete.getUrl()) && !isIncognito()) {
             mPreferences.setSavedUrl(tabToDelete.getUrl());
@@ -1016,37 +1019,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (isShown) {
             mBrowserFrame.setBackgroundColor(mBackgroundColor);
         }
-        if (current > position) {
-            mTabsManager.deleteTab(position);
-            mEventBus.post(new BrowserEvents.TabsChanged());
-        } else if (mTabsManager.size() > position + 1) {
-            if (current == position) {
-                showTab(position + 1);
-                mTabsManager.deleteTab(position);
-                mEventBus.post(new BrowserEvents.TabsChanged());
-            } else {
-                mTabsManager.deleteTab(position);
-            }
-        } else if (mTabsManager.size() > 1) {
-            if (current == position) {
-                showTab(position - 1);
-                mTabsManager.deleteTab(position);
-                mEventBus.post(new BrowserEvents.TabsChanged());
-            } else {
-                mTabsManager.deleteTab(position);
-            }
-        } else {
-            if (currentTab != null && (UrlUtils.isSpecialUrl(currentTab.getUrl())
-                    || currentTab.getUrl().equals(mHomepage))) {
-                closeActivity();
-            } else {
-                mTabsManager.deleteTab(position);
-                performExitCleanUp();
-                tabToDelete.pauseTimers();
-                mEventBus.post(new BrowserEvents.TabsChanged());
-                finish();
-            }
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        mTabsManager.deleteTab(position);
+        final LightningView afterTab = mTabsManager.getCurrentTab();
+        if (afterTab == null) {
+//            if (currentTab != null && (UrlUtils.isSpecialUrl(currentTab.getUrl())
+//                    || currentTab.getUrl().equals(mPreferenceManager.getHomepage()))) {
+//                closeActivity();
+//            } else {
+            performExitCleanUp();
+            finish();
+//            }
+        } else if (afterTab != currentTab) {
+            switchTabs(currentTab, afterTab);
+            currentTab.pauseTimers();
         }
+
         mEventBus.post(new BrowserEvents.TabsChanged());
 
         if (shouldClose) {
