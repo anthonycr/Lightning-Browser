@@ -189,7 +189,7 @@ public class TabsManager {
      * @return The removed tab reference or null
      */
     @Nullable
-    public synchronized LightningView removeTab(final int position) {
+    private synchronized LightningView removeTab(final int position) {
         if (position >= mWebViewList.size()) {
             return null;
         }
