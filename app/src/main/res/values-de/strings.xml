@@ -123,7 +123,6 @@
     <string name="licenses">Open Source-Lizenzen</string>
     <string name="suggestion">Suche nach</string>
     <string name="block_ads">Werbung blockieren</string>
-    <string name="message_untrusted_certificate">Das Zertifikat dieser Webseite ist nicht vertrauenswürdig. Trotzdem fortsetzen?</string>
     <string name="title_form_resubmission">Formularneuzustellung</string>
     <string name="message_form_resubmission">Daten erneut senden?</string>
     <string name="message_location">\nMeine Position verwenden?</string>
@@ -184,4 +183,36 @@
         <item >URL</item>
         <item >Titel</item>
     </string-array>
+    <string name="action_folder">Ordner</string>
+    <string name="action_rename">Umbenennen</string>
+    <string name="black_theme">Schwarzes Design (AMOLED)</string>
+    <string name="clear_web_storage">Webinhalte leeren</string>
+    <string name="clear_web_storage_exit">Webinhalte beim Beenden leeren</string>
+    <string name="dark_theme">Dunkles Design</string>
+    <string name="dialog_folder">Was möchten Sie mit diesem Ordner tun?</string>
+    <string name="dialog_history_long_press">Was möchten Sie mit diesem Verlaufs-Eintrag tun?</string>
+    <string name="folder">Ordnername</string>
+    <string name="invert_color">Farben invertieren</string>
+    <string name="light_theme">Helles Design</string>
+    <string name="manual_proxy">Manueller Proxy</string>
+    <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
+    <string name="message_web_storage_cleared">Webinhalte geleert</string>
+    <string name="port">Port:</string>
+    <string name="tabs">Tabs</string>
+    <string name="theme">App-Design</string>
+    <string name="title_rename_folder">Ordner umbenennen</string>
+    <string name="http_proxy">HTTP-Proxy</string>
+    <string name="i2p_not_running">I2P läuft nicht.</string>
+    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
+    <string name="message_certificate_date_invalid">Zertifikats-Datum ungültig</string>
+    <string name="message_certificate_domain_mismatch">Domain in Zertifikat stimmt nicht mit aktueller Domain überein</string>
+    <string name="message_certificate_expired">Zertifikat abgelaufen</string>
+    <string name="message_certificate_invalid">Zertifikat ungültig</string>
+    <string name="message_certificate_not_yet_valid">Zertifikat noch nicht gültig</string>
+    <string name="message_certificate_untrusted">Zertifikat wird nicht vertraut</string>
+    <string name="problem_download">Ungültige Adresse gefunden. Kann nicht herunterladen</string>
+    <string name="problem_location_download">Kann nicht an den eingestellten Ort herunterladen</string>
+    <string name="use_i2p_prompt">Es sieht aus, als ob I2P installiert wäre. Möchten Sie es verwenden?</string>
+    <string name="text_encoding">Textcodierung</string>
+    <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
 </resources>

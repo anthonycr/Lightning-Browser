@@ -15,6 +15,7 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +27,8 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.utils.PermissionsManager;
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -45,9 +47,17 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private ImportBookmarksTask mImportTaskReference;
     private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
 
     private class ImportBookmarksTask extends AsyncTask<Void, Void, Integer> {
+
+        private final WeakReference<Activity> mActivityReference;
+
+        public ImportBookmarksTask(Activity activity) {
+            mActivityReference = new WeakReference<>(activity);
+        }
+
         @Override
         protected Integer doInBackground(Void... params) {
             List<HistoryItem> list = null;
@@ -67,10 +77,11 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         @Override
         protected void onPostExecute(Integer num) {
             super.onPostExecute(num);
-            if (mActivity != null) {
+            Activity activity = mActivityReference.get();
+            if (activity != null) {
                 int number = num;
-                final String message = mActivity.getResources().getString(R.string.message_import);
-                Utils.showSnackbar(mActivity, number + " " + message);
+                final String message = activity.getResources().getString(R.string.message_import);
+                Utils.showSnackbar(activity, number + " " + message);
             }
         }
     }
@@ -88,7 +99,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
         PermissionsManager permissionsManager = PermissionsManager.getInstance();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            permissionsManager.requestPermissionsIfNecessary(getActivity(), REQUIRED_PERMISSIONS);
+            permissionsManager.requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS, null);
         }
     }
 
@@ -96,6 +107,9 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     public void onDestroy() {
         super.onDestroy();
         mActivity = null;
+        if (mImportTaskReference != null) {
+            mImportTaskReference.cancel(false);
+        }
     }
 
     private void initPrefs() {
@@ -124,18 +138,37 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
-                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
-                    mBookmarkManager.exportBookmarks(getActivity());
-                }
+                PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
+                        new PermissionsResultAction() {
+                            @Override
+                            public void onGranted() {
+                                mBookmarkManager.exportBookmarks(getActivity());
+                            }
+
+                            @Override
+                            public void onDenied(String permission) {
+                                //TODO Show message
+                            }
+                        });
                 return true;
             case SETTINGS_IMPORT:
-                if (PermissionsManager.checkPermissions(getActivity(), REQUIRED_PERMISSIONS)) {
-                    loadFileList(null);
-                    createDialog();
-                }
+                PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
+                        new PermissionsResultAction() {
+                            @Override
+                            public void onGranted() {
+                                loadFileList(null);
+                                createDialog();
+                            }
+
+                            @Override
+                            public void onDenied(String permission) {
+                                //TODO Show message
+                            }
+                        });
                 return true;
             case SETTINGS_IMPORT_BROWSER:
-                new ImportBookmarksTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                mImportTaskReference = new ImportBookmarksTask(getActivity());
+                mImportTaskReference.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 return true;
             default:
                 return false;

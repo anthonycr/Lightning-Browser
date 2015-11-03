@@ -16,7 +16,7 @@ import acr.browser.lightning.utils.Utils;
 
 public class StartPage {
 
-    private static final String FILENAME = "homepage.html";
+    public static final String FILENAME = "homepage.html";
 
     private static final String HEAD = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
             + "<head>"
@@ -57,11 +57,12 @@ public class StartPage {
         StringBuilder homepageBuilder = new StringBuilder(StartPage.HEAD);
         String icon;
         String searchUrl;
-        switch (PreferenceManager.getInstance().getSearchChoice()) {
+        final PreferenceManager preferenceManager = BrowserApp.getAppComponent().getPreferenceManager();
+        switch (preferenceManager.getSearchChoice()) {
             case 0:
                 // CUSTOM SEARCH
                 icon = "file:///android_asset/lightning.png";
-                searchUrl = PreferenceManager.getInstance().getSearchUrl();
+                searchUrl = preferenceManager.getSearchUrl();
                 break;
             case 1:
                 // GOOGLE_SEARCH;

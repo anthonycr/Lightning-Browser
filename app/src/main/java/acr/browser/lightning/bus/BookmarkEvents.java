@@ -12,28 +12,6 @@ public final class BookmarkEvents {
     }
 
     /**
-     * A bookmark was clicked
-     */
-    public final static class Clicked {
-        public final HistoryItem bookmark;
-
-        public Clicked(final HistoryItem bookmark) {
-            this.bookmark = bookmark;
-        }
-    }
-
-    /**
-     * The user ask to open the bookmark as new tab
-     */
-    public final static class AsNewTab {
-        public final HistoryItem bookmark;
-
-        public AsNewTab(final HistoryItem bookmark) {
-            this.bookmark = bookmark;
-        }
-    }
-
-    /**
      * The user ask to delete the selected bookmark
      */
     public static class Deleted {
@@ -60,13 +38,6 @@ public final class BookmarkEvents {
             this.item = item;
         }
     }
-
-    /**
-     * The {@link acr.browser.lightning.fragment.BookmarksFragment} want to know the url (and title)
-     * of the currently shown web page.
-     */
-    // public static class WantInfoAboutCurrentPage {
-    // }
 
     /**
      * Sended by the {@link acr.browser.lightning.fragment.BookmarksFragment} when it wants to close

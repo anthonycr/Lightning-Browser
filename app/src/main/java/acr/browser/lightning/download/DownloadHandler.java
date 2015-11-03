@@ -3,15 +3,14 @@
  */
 package acr.browser.lightning.download;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -19,13 +18,17 @@ import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 
+import com.squareup.otto.Bus;
+
 import java.io.File;
 import java.io.IOException;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.MainActivity;
+import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.Utils;
 
 /**
  * Handle download requests
@@ -44,13 +47,13 @@ public class DownloadHandler {
      * Notify the host application a download should be done, or that the data
      * should be streamed if a streaming viewer is available.
      *
-     * @param activity           Activity requesting the download.
+     * @param context            The context in which the download was requested.
      * @param url                The full url to the content that should be downloaded
      * @param userAgent          User agent of the downloading application.
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
      */
-    public static void onDownloadStart(Activity activity, String url, String userAgent,
+    public static void onDownloadStart(Context context, String url, String userAgent,
                                        String contentDisposition, String mimetype) {
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
@@ -61,18 +64,22 @@ public class DownloadHandler {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.parse(url), mimetype);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ResolveInfo info = activity.getPackageManager().resolveActivity(intent,
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                intent.setSelector(null);
+            }
+            ResolveInfo info = context.getPackageManager().resolveActivity(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {
-                ComponentName myName = activity.getComponentName();
                 // If we resolved to ourselves, we don't want to attempt to
                 // load the url only to try and download it again.
-                if (!myName.getPackageName().equals(info.activityInfo.packageName)
-                        || !myName.getClassName().equals(info.activityInfo.name)) {
+                if (BuildConfig.APPLICATION_ID.equals(info.activityInfo.packageName)
+                        || MainActivity.class.getName().equals(info.activityInfo.name)) {
                     // someone (other than us) knows how to handle this mime
                     // type with this scheme, don't download.
                     try {
-                        activity.startActivity(intent);
+                        context.startActivity(intent);
                         return;
                     } catch (ActivityNotFoundException ex) {
                         // Best behavior is to fall back to a download in this
@@ -81,8 +88,7 @@ public class DownloadHandler {
                 }
             }
         }
-        onDownloadStartNoStream(activity, url, userAgent, contentDisposition, mimetype
-        );
+        onDownloadStartNoStream(context, url, userAgent, contentDisposition, mimetype);
     }
 
     // This is to work around the fact that java.net.URI throws Exceptions
@@ -119,17 +125,17 @@ public class DownloadHandler {
      * Notify the host application a download should be done, even if there is a
      * streaming viewer available for thise type.
      *
-     * @param activity           Activity requesting the download.
+     * @param context            The context in which the download is requested.
      * @param url                The full url to the content that should be downloaded
      * @param userAgent          User agent of the downloading application.
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
      */
     /* package */
-    private static void onDownloadStartNoStream(final Activity activity, String url, String userAgent,
+    private static void onDownloadStartNoStream(final Context context, String url, String userAgent,
                                                 String contentDisposition, String mimetype) {
-
-        String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
+        final Bus eventBus = BrowserApp.getAppComponent().getBus();
+        final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
         String status = Environment.getExternalStorageState();
@@ -139,14 +145,14 @@ public class DownloadHandler {
 
             // Check to see if the SDCard is busy, same as the music app
             if (status.equals(Environment.MEDIA_SHARED)) {
-                msg = activity.getString(R.string.download_sdcard_busy_dlg_msg);
+                msg = context.getString(R.string.download_sdcard_busy_dlg_msg);
                 title = R.string.download_sdcard_busy_dlg_title;
             } else {
-                msg = activity.getString(R.string.download_no_sdcard_dlg_msg, filename);
+                msg = context.getString(R.string.download_no_sdcard_dlg_msg, filename);
                 title = R.string.download_no_sdcard_dlg_title;
             }
 
-            new AlertDialog.Builder(activity).setTitle(title)
+            new AlertDialog.Builder(context).setTitle(title)
                     .setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
                     .setPositiveButton(R.string.action_ok, null).show();
             return;
@@ -162,7 +168,7 @@ public class DownloadHandler {
             // This only happens for very bad urls, we want to catch the
             // exception here
             Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
-            Utils.showSnackbar(activity, R.string.problem_download);
+            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_download));
             return;
         }
 
@@ -172,7 +178,7 @@ public class DownloadHandler {
         try {
             request = new DownloadManager.Request(uri);
         } catch (IllegalArgumentException e) {
-            Utils.showSnackbar(activity, R.string.cannot_download);
+            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
             return;
         }
         request.setMimeType(mimetype);
@@ -180,7 +186,7 @@ public class DownloadHandler {
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
 
-        String location = PreferenceManager.getInstance().getDownloadDirectory();
+        String location = BrowserApp.getAppComponent().getPreferenceManager().getDownloadDirectory();
         Uri downloadFolder;
         if (location != null) {
             location = addNecessarySlashes(location);
@@ -188,18 +194,18 @@ public class DownloadHandler {
         } else {
             location = addNecessarySlashes(DEFAULT_DOWNLOAD_PATH);
             downloadFolder = Uri.parse(location);
-            PreferenceManager.getInstance().setDownloadDirectory(location);
+            BrowserApp.getAppComponent().getPreferenceManager().setDownloadDirectory(location);
         }
 
         File dir = new File(downloadFolder.getPath());
         if (!dir.isDirectory() && !dir.mkdirs()) {
             // Cannot make the directory
-            Utils.showSnackbar(activity, R.string.problem_location_download);
+            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
             return;
         }
 
         if (!isWriteAccessAvailable(downloadFolder)) {
-            Utils.showSnackbar(activity, R.string.problem_location_download);
+            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
             return;
         }
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
@@ -219,9 +225,9 @@ public class DownloadHandler {
             }
             // We must have long pressed on a link or image to download it. We
             // are not sure of the mimetype in this case, so do a head request
-            new FetchUrlMimeType(activity, request, addressString, cookies, userAgent).start();
+            new FetchUrlMimeType(context, request, addressString, cookies, userAgent).start();
         } else {
-            final DownloadManager manager = (DownloadManager) activity
+            final DownloadManager manager = (DownloadManager) context
                     .getSystemService(Context.DOWNLOAD_SERVICE);
             new Thread() {
                 @Override
@@ -231,15 +237,16 @@ public class DownloadHandler {
                     } catch (IllegalArgumentException e) {
                         // Probably got a bad URL or something
                         e.printStackTrace();
-                        Utils.showSnackbar(activity, R.string.cannot_download);
+                        eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
                     } catch (SecurityException e) {
                         // TODO write a download utility that downloads files rather than rely on the system
                         // because the system can only handle Environment.getExternal... as a path
-                        Utils.showSnackbar(activity, R.string.problem_location_download);
+                        eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
                     }
                 }
             }.start();
-            Utils.showSnackbar(activity, activity.getString(R.string.download_pending) + ' ' + filename);
+            eventBus.post(new BrowserEvents.ShowSnackBarMessage(
+                    context.getString(R.string.download_pending) + ' ' + filename));
         }
 
     }

@@ -1,7 +1,7 @@
 package acr.browser.lightning.fragment;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -36,22 +36,30 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.activity.ReadingActivity;
+import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.async.AsyncExecutor;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.dialog.BookmarksDialogBuilder;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.async.ImageDownloadTask;
 import acr.browser.lightning.utils.ThemeUtils;
+import acr.browser.lightning.utils.UrlUtils;
+import acr.browser.lightning.view.LightningView;
 
 /**
  * Created by Stefano Pacifici on 25/08/15. Based on Anthony C. Restaino's code.
  */
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+
+    private final static String TAG = BookmarksFragment.class.getSimpleName();
+
+    public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
 
     // Managers
     @Inject
@@ -63,7 +71,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     // Dialog builder
     @Inject
-    BookmarksDialogBuilder mBookmarksDialogBuilder;
+    LightningDialogBuilder mBookmarksDialogBuilder;
+
+    @Inject
+    PreferenceManager mPreferenceManager;
+
+    @Inject
+    TabsManager mTabsManager;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -96,6 +110,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
+        final Bundle arguments = getArguments();
+        final Context context = getContext();
+        boolean isIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || isIncognito;
+        mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
+        mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
+        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
+                ThemeUtils.getIconLightThemeColor(context);
     }
 
     // Handle bookmark click
@@ -107,7 +129,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 mScrollIndex = mBookmarksListView.getFirstVisiblePosition();
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
-                mEventBus.post(new BookmarkEvents.Clicked(item));
+                mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(item.getUrl()));
             }
         }
     };
@@ -135,6 +157,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mBookmarksListView.setOnItemClickListener(mItemClickListener);
         mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage = (ImageView) view.findViewById(R.id.starIcon);
+        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         mBookmarkImage = (ImageView) view.findViewById(R.id.icon_star);
         final View backView = view.findViewById(R.id.bookmark_back_button);
         backView.setOnClickListener(new View.OnClickListener() {
@@ -148,24 +171,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             }
         });
         setupNavigationButton(view, R.id.action_add_bookmark, R.id.icon_star);
+        setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
+        setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
         // Must be called here, only here we have a reference to the ListView
         new Thread(mInitBookmarkManager).run();
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        // TODO remove dependency on BrowserActivity
-        super.onActivityCreated(savedInstanceState);
-        final Activity activity = getActivity();
-        final PreferenceManager preferenceManager = PreferenceManager.getInstance();
-        boolean darkTheme = preferenceManager.getUseTheme() != 0 || ((BrowserActivity) activity).isIncognito();
-        mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
-        mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
-        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
-                ThemeUtils.getIconLightThemeColor(activity);
-        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override
@@ -183,12 +194,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Subscribe
     public void addBookmark(final BrowserEvents.AddBookmark event) {
         final HistoryItem item = new HistoryItem(event.url, event.title);
-        if (mBookmarkManager.addBookmark(item)) {
-            mBookmarks.add(item);
-            Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
-            mBookmarkAdapter.notifyDataSetChanged();
-            mEventBus.post(new BookmarkEvents.Added(item));
-            updateBookmarkIndicator(event.url);
+        if (!UrlUtils.isSpecialUrl(item.getUrl())) {
+            if (mBookmarkManager.addBookmark(item)) {
+                mBookmarks.add(item);
+                Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
+                mBookmarkAdapter.notifyDataSetChanged();
+                mEventBus.post(new BookmarkEvents.Added(item));
+                updateBookmarkIndicator(event.url);
+            }
         }
     }
 
@@ -295,7 +308,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         if (item.isFolder()) {
             mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            mBookmarksDialogBuilder.showLongPressedDialogForUrl(getContext(), item);
+            mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(getContext(), item);
         }
     }
 
@@ -304,6 +317,22 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.action_add_bookmark:
                 mEventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                break;
+            case R.id.action_reading:
+                LightningView currentTab = mTabsManager.getCurrentTab();
+                if (currentTab != null) {
+                    Intent read = new Intent(getActivity(), ReadingActivity.class);
+                    read.putExtra(Constants.LOAD_READING_URL, currentTab.getUrl());
+                    startActivity(read);
+                }
+                break;
+            case R.id.action_toggle_desktop:
+                LightningView current = mTabsManager.getCurrentTab();
+                if (current != null) {
+                    current.toggleDesktopUA(getActivity());
+                    current.reload();
+                    // TODO add back drawer closing
+                }
                 break;
             default:
                 break;

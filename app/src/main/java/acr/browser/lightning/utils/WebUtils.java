@@ -10,7 +10,7 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
-import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.app.BrowserApp;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino
@@ -34,7 +34,7 @@ public class WebUtils {
     }
 
     public static void clearHistory(@NonNull Context context) {
-        HistoryDatabase.getInstance().deleteHistory();
+        BrowserApp.getAppComponent().getHistoryDatabase().deleteHistory();
         WebViewDatabase m = WebViewDatabase.getInstance(context);
         m.clearFormData();
         m.clearHttpAuthUsernamePassword();

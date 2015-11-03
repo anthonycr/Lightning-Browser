@@ -5,7 +5,7 @@
     <string name="action_share">Udostępnij</string>
     <string name="action_history">Historia</string>
     <string name="action_bookmarks">Zakładki</string>
-    <string name="action_add_bookmark">Dodaj do zakładek</string>
+    <string name="action_add_bookmark">Dodaj zakładkę</string>
     <string name="action_copy">Kopiuj link</string>
     <string name="action_forward">Dalej</string>
     <string name="settings">Ustawienia</string>
@@ -18,7 +18,7 @@
     <string name="java">Włącz Javascript</string>
     <string name="download">Miejsce zapisu pobieranych plików</string>
     <string name="settings_advanced">Zaawansowane</string>
-    <string name="apache">Apache License 2.0</string>
+    <string name="apache">Licencja Apache 2.0</string>
     <string name="version">Wersja aplikacji</string>
     <string name="cache">Wyczyść pamięć podręczną po zamknięciu</string>
     <string name="reflow">Zawijaj tekst do rozmiaru ekranu</string>
@@ -42,6 +42,7 @@
     <string name="action_open">Otwórz</string>
     <string name="dialog_link">Co chciałbyś zrobić z tym linkiem?</string>
     <string name="dialog_title_share">Udostępnij tę stronę</string>
+    <string name="dialog_history_long_press">Co chciałbyś zrobić z tym wpisem historii przeglądania?</string>
     <string name="dialog_bookmark">Co chciałbyś zrobić z tą zakładką?</string>
     <string name="action_delete">Usuń</string>
     <string name="action_blank">Pusta</string>
@@ -83,6 +84,8 @@
     <string name="action_find">Znajdź na stronie</string>
     <string name="download_pending">Rozpoczynanie pobierania\u2026</string>
     <string name="cannot_download">Pliki mogą być pobierane tylko z linków zaczynających się od \"http\" lub \"https\".</string>
+    <string name="problem_download">Nie można pobrać - nieprawidłowy URL</string>
+    <string name="problem_location_download">Nie można pobrać pliku do wskazanej lokalizacji</string>
     <string name="download_no_sdcard_dlg_title" >Brak karty SD</string>
     <string name="download_no_sdcard_dlg_msg" >Pamięć USB jest wymagana do pobrania tego pliku.</string>
     <string name="download_sdcard_busy_dlg_title">Pamięć USB niedostępna</string>
@@ -106,7 +109,13 @@
     <string name="licenses">Licencje Open Source</string>
     <string name="suggestion">Wyszukaj</string>
     <string name="block_ads">Blokuj reklamy</string>
-    <string name="message_untrusted_certificate">Certyfikat używany przez tę stronę nie jest zaufany. Kontynuować mimo wszystko?</string>
+    <string name="message_insecure_connection">Połączenie z tą stroną jest niezaufane:\n%1$s\nKontynuuować mimo wszystko?</string>
+    <string name="message_certificate_date_invalid">data ważności certyfikatu jest nieprawidłowa</string>
+    <string name="message_certificate_domain_mismatch">domena dla której wystawiono certyfikat jest różna od domeny odwiedzanej strony</string>
+    <string name="message_certificate_expired">data ważności certyfikatu już upłynęła</string>
+    <string name="message_certificate_invalid">ceryfikat jest nieprawidłowy</string>
+    <string name="message_certificate_not_yet_valid">certyfikat nie jest jeszcze ważny</string>
+    <string name="message_certificate_untrusted">certyfikat jest niezaufany</string>
     <string name="title_form_resubmission">Ponowne wysyłanie formularza</string>
     <string name="message_form_resubmission">Czy chciałbyś ponownie wysłać dane wprowadzone do formularza?</string>
     <string name="message_location">\nTa strona prosi o dostęp do twojej geolokalizacji</string>
@@ -117,8 +126,21 @@
     <string name="hint_password">Hasło</string>
     <string name="google_suggestions">Podpowiedzi wyszukiwania</string>
     <string name="powered_by_google">Dostarczane przez Google</string>
-    <string name="use_tor_prompt">Wygląda na to że Orbot jest zainstalowany. Chciałbyś go włączyć i użyć sieci Tor do łączenia się z internetem?</string>
-    <string name="install_orbot">Zanistaluj Orbota by móc używać sieci Tor do łączenia się z internetem.</string>
+    <string name="http_proxy">Konfiguracja serwera proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>Bez proxy</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Ręczne ustawienia</item>
+    </string-array>
+    <string name="manual_proxy">Ręczne ustawienia proxy</string>
+    <string name="host">Host:</string>
+    <string name="port">Port:</string>
+    <string name="use_tor_prompt">Wygląda na to że Orbot jest zainstalowany. Chciałbyś go włączyć i użyć sieci TOR do łączenia się z internetem?</string>
+    <string name="use_i2p_prompt">Wygląda na to że I2P jest zainstalowany. Chciałbyś go użyć do łączenia się z internetem?</string>
+    <string name="install_orbot">Zainstaluj Orbota by móc używać sieci TOR do łączenia się z internetem.</string>
+    <string name="i2p_not_running">I2P nie jest uruchomiony.</string>
+    <string name="i2p_tunnels_not_ready">Tunele I2P nie są jeszcze gotowe.</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="clear_cookies_exit">Wyczyść ciasteczka po zamknięciu</string>
@@ -129,19 +151,19 @@
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
-    <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
+    <string name="hphosts_ad_server_list">Lista filtrów hpHosts</string>
     <string name="deleted_tab">Przywrócono kartę</string>
-    <string name="rendering_mode">Tryb Renderowania</string>
+    <string name="rendering_mode">Tryb renderowania</string>
     <string name="name_inverted">Odwrócony</string>
-    <string name="name_grayscale">Odcienie Szarości</string>
-    <string name="name_inverted_grayscale">Odwrócone Odcienie Szarości</string>
+    <string name="name_grayscale">Odcienie szarości</string>
+    <string name="name_inverted_grayscale">Odwrócone odcienie szarości</string>
     <string name="name_normal">Normalny</string>
     <string name="sync_history">Synchronizuj historię z Google</string>
     <string name="title_file_chooser">Wybierz plik</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
-    <string name="export_bookmarks">Eksportuj zakładki do backupu</string>
-    <string name="import_backup">Importuj zakładki z backupu</string>
+    <string name="export_bookmarks">Eksportuj zakładki</string>
+    <string name="import_backup">Importuj zakładki</string>
     <string name="bookmark_export_path">Zakładki wyeksportowane do</string>
     <string name="bookmark_settings">Zakładki</string>
     <string name="import_bookmark_error">Nie udało się zaimportować zakładek z</string>
@@ -149,10 +171,40 @@
     <string name="settings_general">Ogólne</string>
     <string name="settings_display">Wyświetlanie</string>
     <string name="settings_privacy">Prywatność</string>
-    <string name="settings_about">O Przeglądarce</string>
+    <string name="settings_about">O przeglądarce</string>
     <string name="settings_about_explain">Szczegóły o wersji, autorze i licencji.</string>
     <string name="close_tab">Zamknij kartę</string>
     <string name="close_all_tabs">Zamknij wszystkie karty</string>
     <string name="third_party">Blokuj ciasteczka z innych witryn</string>
-    <string name="color_mode">Włącz Tryb zmieniania koloru</string>
+    <string name="color_mode">Włącz tryb zmieniania koloru</string>
+    <string name="reading_mode">Tryb czytania</string>
+    <string name="loading">Ładowanie&#8230;</string>
+    <string name="loading_failed">Nie udało się wczytać tekstu ze strony.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">Licencja MIT</string>
+    <string name="url_contents">Zawartość paska adresu</string>
+    <string name="text_encoding">Kodowanie tekstu</string>
+    <string-array name="url_content_array">
+        <item >Tylko domena (domyślne)</item>
+        <item >Pełny URL</item>
+        <item >Tytuł strony</item>
+    </string-array>
+    <string name="invert_color">Odwróć kolory</string>
+    <string name="dark_theme">Ciemny motyw</string>
+    <string name="tabs">Karty</string>
+    <string name="theme">Wygląd aplikacji</string>
+    <string name="light_theme">Jasny motyw</string>
+    <string name="black_theme">Czarny motyw (AMOLED)</string>
+    <string name="folder">Nazwa folderu</string>
+    <string name="action_folder">Folder</string>
+    <string name="action_rename">Zmień nazwę</string>
+    <string name="title_rename_folder">Zmień nazwę folderu</string>
+    <string name="dialog_folder">Co chciałbyś zrobić z tym folderem?</string>
+    <string name="clear_web_storage">Wyczyść dane i ustawienia witryn</string>
+    <string name="clear_web_storage_exit">Wyczyść dane i ustawienia witryn po zamknięciu</string>
+    <string name="message_web_storage_cleared">Dane i ustawienia witryn zostały wyczyszczone</string>
+    <string name="hosts_source">Źródło filtrów blokujących reklamy</string>
+    <string name="settings_adblock">Ustawienia blokowania reklam</string>
+    <string name="tabs_in_drawer">Pokazuj karty w bocznym menu</string>
 </resources>

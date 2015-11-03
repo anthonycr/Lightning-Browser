@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.utils.PermissionsManager;
+import com.anthonycr.grant.PermissionsManager;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
@@ -61,7 +61,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions);
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

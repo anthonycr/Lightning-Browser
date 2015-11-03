@@ -7,19 +7,24 @@ import com.squareup.leakcanary.LeakCanary;
 
 public class BrowserApp extends Application {
 
-    private static Context context;
+    private static Context sContext;
     private static AppComponent appComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        context = getApplicationContext();
         LeakCanary.install(this);
         buildDepencyGraph();
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        sContext = base;
+    }
+
     public static Context getAppContext() {
-        return context;
+        return sContext;
     }
 
     public static AppComponent getAppComponent() {

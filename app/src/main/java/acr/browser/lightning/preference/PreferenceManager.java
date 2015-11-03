@@ -1,11 +1,15 @@
 package acr.browser.lightning.preference;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
-import acr.browser.lightning.app.BrowserApp;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.download.DownloadHandler;
 
+@Singleton
 public class PreferenceManager {
 
     private static class Name {
@@ -47,6 +51,8 @@ public class PreferenceManager {
         public static final String TEXT_ENCODING = "textEncoding";
         public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
         public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
+        public static final String DO_NOT_TRACK = "doNotTrack";
+        public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -56,20 +62,13 @@ public class PreferenceManager {
         public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
     }
 
-    private static PreferenceManager mInstance;
     private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
 
-    public static PreferenceManager getInstance() {
-        if (mInstance == null) {
-            mInstance = new PreferenceManager();
-        }
-        return mInstance;
-    }
-
-    private PreferenceManager() {
-        mPrefs = BrowserApp.getAppContext().getSharedPreferences(PREFERENCES, 0);
+    @Inject
+    PreferenceManager(final Context context) {
+        mPrefs = context.getSharedPreferences(PREFERENCES, 0);
     }
 
     public boolean getAdBlockEnabled() {
@@ -248,6 +247,14 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.SHOW_TABS_IN_DRAWER, defaultValue);
     }
 
+    public boolean getDoNotTrackEnabled() {
+        return mPrefs.getBoolean(Name.DO_NOT_TRACK, false);
+    }
+
+    public boolean getRemoveIdentifyingHeadersEnabled(){
+        return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
+    }
+
     private void putBoolean(String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -258,6 +265,14 @@ public class PreferenceManager {
 
     private void putString(String name, String value) {
         mPrefs.edit().putString(name, value).apply();
+    }
+
+    public void setRemoveIdentifyingHeadersEnabled(boolean enabled){
+        putBoolean(Name.IDENTIFYING_HEADERS, enabled);
+    }
+
+    public void setDoNotTrackEnabled(boolean doNotTrack) {
+        putBoolean(Name.DO_NOT_TRACK, doNotTrack);
     }
 
     public void setShowTabsInDrawer(boolean show) {

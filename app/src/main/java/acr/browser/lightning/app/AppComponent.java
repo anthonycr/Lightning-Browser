@@ -1,13 +1,23 @@
 package acr.browser.lightning.app;
 
+import android.content.Context;
+
+import com.squareup.otto.Bus;
+
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.constant.BookmarkPage;
-import acr.browser.lightning.dialog.BookmarksDialogBuilder;
+import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
+import acr.browser.lightning.fragment.LightningPreferenceFragment;
+import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
+import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.view.LightningView;
 import dagger.Component;
 
 /**
@@ -25,7 +35,25 @@ public interface AppComponent {
 
     void inject(SearchAdapter adapter);
 
-    void inject(BookmarksDialogBuilder builder);
+    void inject(LightningDialogBuilder builder);
 
     void inject(BookmarkPage bookmarkPage);
+
+    void inject(TabsFragment fragment);
+
+    PreferenceManager getPreferenceManager();
+
+    void inject(LightningPreferenceFragment fragment);
+
+    BookmarkPage getBookmarkPage();
+
+    Bus getBus();
+
+    HistoryDatabase getHistoryDatabase();
+
+    Context getApplicationContext();
+
+    void inject(LightningView lightningView);
+
+    void inject(ThemableBrowserActivity activity);
 }

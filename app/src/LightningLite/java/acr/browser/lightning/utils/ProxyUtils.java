@@ -6,10 +6,13 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.squareup.otto.Bus;
+
 import net.i2p.android.ui.I2PAndroidHelper;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
@@ -26,8 +29,11 @@ public class ProxyUtils {
     private final PreferenceManager mPreferences;
     private static ProxyUtils mInstance;
 
+    private final Bus mEventBus;
+
     private ProxyUtils(Context context) {
-        mPreferences = PreferenceManager.getInstance();
+        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
+        mEventBus = BrowserApp.getAppComponent().getBus();
         mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
     }
 
@@ -143,13 +149,13 @@ public class ProxyUtils {
 
     }
 
-    public boolean isProxyReady(Activity activity) {
+    public boolean isProxyReady() {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                Utils.showSnackbar(activity, R.string.i2p_not_running);
+                mEventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                Utils.showSnackbar(activity, R.string.i2p_tunnels_not_ready);
+                mEventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
                 return false;
             }
         }

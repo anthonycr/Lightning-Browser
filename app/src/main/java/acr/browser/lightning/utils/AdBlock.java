@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.preference.PreferenceManager;
 
 public class AdBlock {
 
@@ -44,11 +44,11 @@ public class AdBlock {
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);
         }
-        mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
+        mBlockAds = BrowserApp.getAppComponent().getPreferenceManager().getAdBlockEnabled();
     }
 
     public void updatePreference() {
-        mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
+        mBlockAds = BrowserApp.getAppComponent().getPreferenceManager().getAdBlockEnabled();
     }
 
     private void loadBlockedDomainsList(final Context context) {

@@ -2,8 +2,8 @@ language: android
 sudo: false
 android:
   components:
+    - build-tools-23.0.1
     - build-tools-22.0.1
-    - build-tools-23.0.0
     - android-23
     - android-22
     - extra-android-support
@@ -17,3 +17,4 @@ before_install:
 install:
   - ./gradlew
 script:
+  - ./gradlew assembleRelease
