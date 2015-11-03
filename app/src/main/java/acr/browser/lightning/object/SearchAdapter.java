@@ -380,7 +380,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             language = DEFAULT_LANGUAGE;
         }
         try {
-            URL url = new URL("http://google.com/complete/search?q=" + query
+            URL url = new URL("https://google.com/complete/search?q=" + query
                     + "&output=toolbar&hl=" + language);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
