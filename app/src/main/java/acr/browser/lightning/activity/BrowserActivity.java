@@ -100,6 +100,7 @@ import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
@@ -666,6 +667,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final LightningView currentView = mTabsManager.getCurrentTab();
+        final String currentUrl = currentView != null ? currentView.getUrl() : null;
         // Handle action buttons
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -691,11 +693,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
                 return true;
             case R.id.action_share:
-                if (currentView != null && !UrlUtils.isSpecialUrl(currentView.getUrl())) {
+                if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
                     shareIntent.putExtra(Intent.EXTRA_SUBJECT, currentView.getTitle());
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, currentView.getUrl());
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, currentUrl);
                     startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.dialog_title_share)));
                 }
                 return true;
@@ -703,9 +705,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 openBookmarks();
                 return true;
             case R.id.action_copy:
-                if (currentView != null && !UrlUtils.isSpecialUrl(currentView.getUrl())) {
+                if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("label", currentView.getUrl());
+                    ClipData clip = ClipData.newPlainText("label", currentUrl);
                     clipboard.setPrimaryClip(clip);
                     Utils.showSnackbar(this, R.string.message_link_copied);
                 }
@@ -717,23 +719,43 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 openHistory();
                 return true;
             case R.id.action_add_bookmark:
-                if (currentView != null && !UrlUtils.isSpecialUrl(currentView.getUrl())) {
-                    mEventBus.post(new BrowserEvents.AddBookmark(currentView.getTitle(),
-                            currentView.getUrl()));
+                if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
+                    addBookmark(currentView.getTitle(), currentUrl);
                 }
                 return true;
             case R.id.action_find:
                 findInPage();
                 return true;
             case R.id.action_reading_mode:
-                if (currentView != null) {
+                if (currentUrl != null) {
                     Intent read = new Intent(this, ReadingActivity.class);
-                    read.putExtra(Constants.LOAD_READING_URL, currentView.getUrl());
+                    read.putExtra(Constants.LOAD_READING_URL, currentUrl);
                     startActivity(read);
                 }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    // By using a manager, adds a bookmark and notifies third parties about that
+    private void addBookmark(final String title, final String url) {
+        final HistoryItem item = !mBookmarkManager.isBookmark(url)
+                ? new HistoryItem(url, title)
+                : null;
+        if (item != null && mBookmarkManager.addBookmark(item)) {
+            mSearchAdapter.refreshBookmarks();
+            mEventBus.post(new BrowserEvents.BookmarkAdded(title, url));
+        }
+    }
+
+    private void deleteBookmark(final String title, final String url) {
+        final HistoryItem item = mBookmarkManager.isBookmark(url)
+                ? new HistoryItem(url, title)
+                : null;
+        if (item != null && mBookmarkManager.deleteBookmark(item)) {
+            mSearchAdapter.refreshBookmarks();
+            mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
         }
     }
 
@@ -1994,29 +2016,26 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         /**
-         * When receive a {@link acr.browser.lightning.bus.BookmarkEvents.WantToBookmarkCurrentPage}
+         * When receive a {@link BookmarkEvents.ToggleBookmarkForCurrentPage}
          * message this receiver answer firing the
-         * {@link acr.browser.lightning.bus.BrowserEvents.AddBookmark} message
+         * {@link BrowserEvents.BookmarkAdded} message
          *
          * @param event an event that the user wishes to bookmark the current page
          */
         @Subscribe
-        public void bookmarkCurrentPage(final BookmarkEvents.WantToBookmarkCurrentPage event) {
+        public void bookmarkCurrentPage(final BookmarkEvents.ToggleBookmarkForCurrentPage event) {
             final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab != null) {
-                mEventBus.post(new BrowserEvents.AddBookmark(currentTab.getTitle(), currentTab.getUrl()));
+            final String url = currentTab != null ? currentTab.getUrl() : null;
+            final String title = currentTab != null ? currentTab.getTitle() : null;
+            if (url == null) {
+                return;
             }
-        }
 
-        /**
-         * This message is received when a bookmark was added by the
-         * {@link acr.browser.lightning.fragment.BookmarksFragment}
-         *
-         * @param event the event that a bookmark has been added
-         */
-        @Subscribe
-        public void bookmarkAdded(final BookmarkEvents.Added event) {
-            mSearchAdapter.refreshBookmarks();
+            if (!mBookmarkManager.isBookmark(url)) {
+                addBookmark(title, url);
+            } else {
+                deleteBookmark(title, url);
+            }
         }
 
         /**

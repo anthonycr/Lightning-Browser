@@ -12,14 +12,13 @@ public final class BrowserEvents {
     }
 
     /**
-     * Used to reply to the {@link acr.browser.lightning.fragment.BookmarksFragment} message
-     * {@link acr.browser.lightning.bus.BookmarkEvents.WantToBookmarkCurrentPage}. The interaction
-     * result is a new bookmark added.
+     * The {@link acr.browser.lightning.activity.BrowserActivity} signal a new bookmark was added
+     * (mainly to the {@link acr.browser.lightning.fragment.BookmarksFragment}).
      */
-    public static class AddBookmark {
+    public static class BookmarkAdded {
         public final String title, url;
 
-        public AddBookmark(final String title, final String url) {
+        public BookmarkAdded(final String title, final String url) {
             this.title = title;
             this.url = url;
         }
