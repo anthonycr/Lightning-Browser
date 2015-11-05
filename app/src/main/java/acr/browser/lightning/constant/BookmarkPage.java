@@ -46,7 +46,7 @@ public final class BookmarkPage {
             "<p class=ellipses>\n" +
             "<img src='";
 
-    private static final String PART3 = "http://www.google.com/s2/favicons?domain=";
+    private static final String PART3 = "https://www.google.com/s2/favicons?domain=";
 
     private static final String PART4 = "' />";
 
