@@ -20,11 +20,16 @@ import acr.browser.lightning.utils.Utils;
 
 public final class BookmarkPage {
 
+    /**
+     * The bookmark page standard suffix
+     */
+    public static final String FILENAME = "bookmarks.html";
+
     private static final String HEADING = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
             "<head>\n" +
             "<meta content=en-us http-equiv=Content-Language />\n" +
             "<meta content='text/html; charset=utf-8' http-equiv=Content-Type />\n" +
-            "<meta name=viewport content='width=device-width, initial-scale=1.0'>\n" +
+            "<meta name=viewport content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>\n" +
             "<title>" +
             BrowserApp.getAppContext().getString(R.string.action_bookmarks) +
             "</title>\n" +
@@ -41,7 +46,7 @@ public final class BookmarkPage {
             "<p class=ellipses>\n" +
             "<img src='";
 
-    private static final String PART3 = "http://www.google.com/s2/favicons?domain=";
+    private static final String PART3 = "https://www.google.com/s2/favicons?domain=";
 
     private static final String PART4 = "' />";
 
@@ -66,9 +71,9 @@ public final class BookmarkPage {
         final List<HistoryItem> list = manager.getBookmarksFromFolder(folder, true);
         final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {
-            bookmarkWebPage = new File(FILES_DIR, Constants.BOOKMARKS_FILENAME);
+            bookmarkWebPage = new File(FILES_DIR, FILENAME);
         } else {
-            bookmarkWebPage = new File(FILES_DIR, folder + '-' + Constants.BOOKMARKS_FILENAME);
+            bookmarkWebPage = new File(FILES_DIR, folder + '-' + FILENAME);
         }
         final StringBuilder bookmarkBuilder = new StringBuilder(BookmarkPage.HEADING);
 
@@ -77,7 +82,7 @@ public final class BookmarkPage {
             final HistoryItem item = list.get(n);
             bookmarkBuilder.append(BookmarkPage.PART1);
             if (item.isFolder()) {
-                final File folderPage = new File(FILES_DIR, item.getTitle() + '-' + Constants.BOOKMARKS_FILENAME);
+                final File folderPage = new File(FILES_DIR, item.getTitle() + '-' + FILENAME);
                 bookmarkBuilder.append(Constants.FILE).append(folderPage);
                 bookmarkBuilder.append(BookmarkPage.PART2);
                 bookmarkBuilder.append(folderIconPath);

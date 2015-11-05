@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
@@ -41,11 +42,8 @@ import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 
-/**
- * @author Stefano Pacifici based on Anthony C. Restaino's code
- * @date 2015/09/22
- */
 class LightningWebClient extends WebViewClient {
+
 
     private final Activity mActivity;
     private final LightningView mLightningView;
@@ -152,7 +150,6 @@ class LightningWebClient extends WebViewClient {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 handler.cancel();
-
                             }
                         });
         AlertDialog alert = builder.create();
@@ -275,13 +272,17 @@ class LightningWebClient extends WebViewClient {
             return true;
         }
 
+        Map<String, String> headers = mLightningView.getRequestHeaders();
+
         if (mLightningView.mIsIncognitoTab) {
-            return super.shouldOverrideUrlLoading(view, url);
+            view.loadUrl(url, headers);
+            return true;
         }
         if (url.startsWith("about:")) {
-            return super.shouldOverrideUrlLoading(view, url);
+            view.loadUrl(url, headers);
+            return true;
         }
-        if (url.contains("mailto:")) {
+        if (url.startsWith("mailto:")) {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
                     mailTo.getBody(), mailTo.getCc());
@@ -292,8 +293,8 @@ class LightningWebClient extends WebViewClient {
             Intent intent;
             try {
                 intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-            } catch (URISyntaxException ex) {
-                return false;
+            } catch (URISyntaxException ignored) {
+                intent = null;
             }
             if (intent != null) {
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -309,6 +310,10 @@ class LightningWebClient extends WebViewClient {
                 return true;
             }
         }
-        return mIntentUtils.startActivityForUrl(view, url);
+
+        if (!mIntentUtils.startActivityForUrl(view, url)) {
+            view.loadUrl(url, headers);
+        }
+        return true;
     }
 }

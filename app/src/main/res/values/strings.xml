@@ -225,4 +225,6 @@
     <string name="hosts_source">Hosts File Ad Blocking Source</string>
     <string name="settings_adblock">Ad Block Settings</string>
     <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
+    <string name="do_not_track">Request \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Remove Identifying Headers</string>
 </resources>

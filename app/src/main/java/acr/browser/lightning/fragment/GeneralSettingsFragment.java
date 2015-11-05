@@ -5,6 +5,7 @@ package acr.browser.lightning.fragment;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -101,7 +102,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             proxy.setSummary(mProxyChoices[choice]);
         }
 
-        if (API >= 19) {
+        if (API >= Build.VERSION_CODES.KITKAT) {
             mPreferenceManager.setFlashSupport(0);
         }
 
@@ -138,7 +139,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
 
         cbAds.setEnabled(Constants.FULL_VERSION);
-        cbFlash.setEnabled(API < 19);
+        cbFlash.setEnabled(API < Build.VERSION_CODES.KITKAT);
 
         cbImages.setChecked(imagesBool);
         cbJsScript.setChecked(enableJSBool);
@@ -343,7 +344,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         if (!mHomepage.startsWith("about:")) {
             getHome.setText(mHomepage);
         } else {
-            getHome.setText("http://www.google.com");
+            String defaultUrl = "https://www.google.com";
+            getHome.setText(defaultUrl);
         }
         homePicker.setView(getHome);
         homePicker.setPositiveButton(getResources().getString(R.string.action_ok),
@@ -526,44 +528,41 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        // switch preferences
+        boolean checked = false;
+        if (newValue instanceof Boolean) {
+            checked = (Boolean) newValue;
+        }
         switch (preference.getKey()) {
             case SETTINGS_FLASH:
-                if (cbFlash.isChecked()) {
-                    getFlashChoice();
-                } else {
-                    mPreferenceManager.setFlashSupport(0);
-                }
-                if (!Utils.isFlashInstalled(mActivity) && cbFlash.isChecked()) {
+                if (!Utils.isFlashInstalled(mActivity) && checked) {
                     Utils.createInformativeDialog(mActivity, R.string.title_warning, R.string.dialog_adobe_not_installed);
-                    cbFlash.setEnabled(false);
                     mPreferenceManager.setFlashSupport(0);
+                    return false;
+                } else {
+                    if (checked) {
+                        getFlashChoice();
+                    } else {
+                        mPreferenceManager.setFlashSupport(0);
+                    }
                 }
-                cbFlash.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_ADS:
-                mPreferenceManager.setAdBlockEnabled((Boolean) newValue);
-                cbAds.setChecked((Boolean) newValue);
+                mPreferenceManager.setAdBlockEnabled(checked);
                 return true;
             case SETTINGS_IMAGES:
-                mPreferenceManager.setBlockImagesEnabled((Boolean) newValue);
-                cbImages.setChecked((Boolean) newValue);
+                mPreferenceManager.setBlockImagesEnabled(checked);
                 return true;
             case SETTINGS_JAVASCRIPT:
-                mPreferenceManager.setJavaScriptEnabled((Boolean) newValue);
-                cbJsScript.setChecked((Boolean) newValue);
+                mPreferenceManager.setJavaScriptEnabled(checked);
                 return true;
             case SETTINGS_COLORMODE:
-                mPreferenceManager.setColorModeEnabled((Boolean) newValue);
-                cbColorMode.setChecked((Boolean) newValue);
+                mPreferenceManager.setColorModeEnabled(checked);
                 return true;
             case SETTINGS_GOOGLESUGGESTIONS:
-                mPreferenceManager.setGoogleSearchSuggestionsEnabled((Boolean) newValue);
-                cbgooglesuggest.setChecked((Boolean) newValue);
+                mPreferenceManager.setGoogleSearchSuggestionsEnabled(checked);
                 return true;
             case SETTINGS_DRAWERTABS:
-                mPreferenceManager.setShowTabsInDrawer((Boolean) newValue);
-                cbDrawerTabs.setChecked((Boolean) newValue);
+                mPreferenceManager.setShowTabsInDrawer(checked);
             default:
                 return false;
         }

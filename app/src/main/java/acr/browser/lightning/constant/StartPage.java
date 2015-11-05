@@ -16,7 +16,7 @@ import acr.browser.lightning.utils.Utils;
 
 public class StartPage {
 
-    private static final String FILENAME = "homepage.html";
+    public static final String FILENAME = "homepage.html";
 
     private static final String HEAD = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
             + "<head>"

@@ -394,8 +394,8 @@ public class HtmlFetcher {
             if (responseCode / 100 == 3 && newUrl != null && num_redirects < 5) {
                 newUrl = SPACE.matcher(newUrl).replaceAll("+");
                 // some services use (none-standard) utf8 in their location header
-                if (urlAsString.startsWith("http://bit.ly")
-                        || urlAsString.startsWith("http://is.gd"))
+                if (urlAsString.contains("://bit.ly")
+                        || urlAsString.contains("://is.gd"))
                     newUrl = encodeUriFromHeader(newUrl);
 
                 // AP: This code is not longer need, instead we always follow

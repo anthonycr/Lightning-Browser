@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -29,6 +30,9 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
 
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +44,6 @@ import java.util.Date;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.download.DownloadHandler;
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
 
 public final class Utils {
 
@@ -270,6 +272,24 @@ public final class Utils {
         try {
             closeable.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Utility method to close cursors. Cursor did not
+     * implement Closeable until API 16, so using this
+     * method for when we want to close a cursor.
+     *
+     * @param cursor the cursor to close
+     */
+    public static void close(Cursor cursor) {
+        if (cursor == null) {
+            return;
+        }
+        try {
+            cursor.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

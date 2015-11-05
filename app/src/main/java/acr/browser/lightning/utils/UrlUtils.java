@@ -21,6 +21,11 @@ import android.webkit.URLUtil;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
+import acr.browser.lightning.constant.StartPage;
+
 /**
  * Utility methods for Url manipulation
  */
@@ -144,5 +149,15 @@ public class UrlUtils {
             return "";
         }
         return inUrl;
+    }
+
+    /**
+     * Returns whether the given url is the bookmarks/history page or a normal website
+     */
+    public static boolean isSpecialUrl(String url) {
+        return url != null && url.startsWith(Constants.FILE) &&
+                (url.endsWith(BookmarkPage.FILENAME) ||
+                        url.endsWith(HistoryPage.FILENAME) ||
+                        url.endsWith(StartPage.FILENAME));
     }
 }

@@ -63,6 +63,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final boolean mIncognito;
     private static final String CACHE_FILE_TYPE = ".sgg";
     private static final String ENCODING = "ISO-8859-1";
+    private static final String DEFAULT_LANGUAGE = "en";
     private static final long INTERVAL_DAY = 86400000;
     private static final int MAX_SUGGESTIONS = 5;
     private static final SuggestionsComparator mComparator = new SuggestionsComparator();
@@ -374,9 +375,13 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
         InputStream in = null;
         FileOutputStream fos = null;
+        String language = Locale.getDefault().getLanguage();
+        if (language.isEmpty()) {
+            language = DEFAULT_LANGUAGE;
+        }
         try {
-            URL url = new URL("http://google.com/complete/search?q=" + query
-                    + "&output=toolbar&hl=en");
+            URL url = new URL("https://google.com/complete/search?q=" + query
+                    + "&output=toolbar&hl=" + language);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
