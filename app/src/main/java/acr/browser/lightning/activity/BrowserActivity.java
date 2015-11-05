@@ -8,6 +8,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -23,6 +24,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -937,6 +942,35 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    public void registerNfcHandler() {
+        NfcAdapter adapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
+        if (adapter == null || Build.VERSION.SDK_INT < 16) {
+            return;  // NFC not available on this device
+        }
+        adapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public NdefMessage createNdefMessage(NfcEvent event) {
+                final LightningView currentTab = mTabsManager.getCurrentTab();
+                if (currentTab != null) {
+                    try {
+                        return new NdefMessage(NdefRecord.createUri(currentTab.getUrl()));
+                    } catch (IllegalArgumentException e) {
+                        Log.e(Constants.TAG, "IllegalArgumentException creating URI NdefRecord", e);
+                    }
+                }
+                return null;
+            }
+        }, this);
+    }
+    public void unregisterNfcHandler() {
+        NfcAdapter adapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
+        if (adapter == null || Build.VERSION.SDK_INT < 16) {
+            return;  // NFC not available on this device
+        }
+        adapter.setNdefPushMessageCallback(null, this);
+    }
+
     private void loadUrlInCurrentView(final String url) {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (currentTab == null) {
@@ -1147,6 +1181,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         mEventBus.unregister(mBusEventListener);
+        unregisterNfcHandler();
     }
 
     void saveOpenTabs() {
@@ -1201,6 +1236,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         registerReceiver(mNetworkReceiver, filter);
 
         mEventBus.register(mBusEventListener);
+        registerNfcHandler();
     }
 
     /**
