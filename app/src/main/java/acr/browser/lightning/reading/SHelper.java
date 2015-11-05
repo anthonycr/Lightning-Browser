@@ -251,8 +251,8 @@ class SHelper {
     }
 
     public static String getUrlFromUglyGoogleRedirect(String url) {
-        if (url.startsWith("http://www.google.com/url?")) {
-            url = url.substring("http://www.google.com/url?".length());
+        if (url.startsWith("https://www.google.com/url?")) {
+            url = url.substring("https://www.google.com/url?".length());
             String arr[] = urlDecode(url).split("&");
             for (String str : arr) {
                 if (str.startsWith("q="))
@@ -264,8 +264,8 @@ class SHelper {
     }
 
     public static String getUrlFromUglyFacebookRedirect(String url) {
-        if (url.startsWith("http://www.facebook.com/l.php?u=")) {
-            url = url.substring("http://www.facebook.com/l.php?u=".length());
+        if (url.startsWith("https://www.facebook.com/l.php?u=")) {
+            url = url.substring("https://www.facebook.com/l.php?u=".length());
             return urlDecode(url);
         }
 
