@@ -2,21 +2,27 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
     <header
         android:fragment="acr.browser.lightning.fragment.GeneralSettingsFragment"
-        android:title="@string/settings_general" />
+        android:icon="@drawable/empty"
+        android:title="@string/settings_general"/>
     <header
         android:fragment="acr.browser.lightning.fragment.BookmarkSettingsFragment"
-        android:title="@string/bookmark_settings" />
+        android:icon="@drawable/empty"
+        android:title="@string/bookmark_settings"/>
     <header
         android:fragment="acr.browser.lightning.fragment.DisplaySettingsFragment"
-        android:title="@string/settings_display" />
+        android:icon="@drawable/empty"
+        android:title="@string/settings_display"/>
     <header
         android:fragment="acr.browser.lightning.fragment.PrivacySettingsFragment"
-        android:title="@string/settings_privacy" />
+        android:icon="@drawable/empty"
+        android:title="@string/settings_privacy"/>
     <header
         android:fragment="acr.browser.lightning.fragment.AdvancedSettingsFragment"
-        android:title="@string/settings_advanced" />
+        android:icon="@drawable/empty"
+        android:title="@string/settings_advanced"/>
     <header
         android:fragment="acr.browser.lightning.fragment.AboutSettingsFragment"
-        android:title="@string/settings_about"
-        android:summary="@string/settings_about_explain" />
+        android:icon="@drawable/empty"
+        android:summary="@string/settings_about_explain"
+        android:title="@string/settings_about"/>
 </preference-headers>
