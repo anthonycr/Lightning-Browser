@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
@@ -11,11 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.anthonycr.grant.PermissionsManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
-import com.anthonycr.grant.PermissionsManager;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
@@ -44,6 +46,10 @@ public class SettingsActivity extends ThemableSettingsActivity {
         loadHeadersFromResource(R.xml.preferences_headers, target);
         fragments.clear();
         for (Header header : target) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                // Workaround for bug in the AppCompat support library
+                header.iconRes = R.drawable.empty;
+            }
             fragments.add(header.fragment);
         }
     }
