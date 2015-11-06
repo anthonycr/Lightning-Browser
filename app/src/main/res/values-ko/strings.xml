@@ -37,6 +37,7 @@
     <string name="stock_browser_available">지원되는 기본 브라우저 감지됨</string>
     <string name="fullScreenOption">브라우징 도중에는 상태 표시줄 숨기기</string>
     <string name="clear_cookies">브라우저 쿠키 지우기</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">이 이미지로 무엇을 할까요?</string>
     <string name="action_download">다운로드</string>
     <string name="action_open">열기</string>

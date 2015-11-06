@@ -54,6 +54,7 @@
     <string name="stock_browser_available">Откривен подржани уграђени прегледач</string>
     <string name="fullScreenOption">Сакриј траку стања током прегледања</string>
     <string name="clear_cookies">Очисти колачиће</string>
+    <string name="clear_history">Очисти историјат</string>
     <string name="dialog_image">Шта желите да урадите са овом сликом?</string>
     <string name="action_download">Преузми</string>
     <string name="action_open">Отвори</string>

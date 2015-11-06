@@ -38,6 +38,7 @@
     <string name="stock_browser_available">Desteklenen stock tarayıcı bulundu</string>
     <string name="fullScreenOption">Gezinirken durum çubuğunu gizle</string>
     <string name="clear_cookies">Tarayıcı çerezlerini temizle</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Bu resimle ne yapmak istersin?</string>
     <string name="action_download">İndir</string>
     <string name="action_open">Aç</string>

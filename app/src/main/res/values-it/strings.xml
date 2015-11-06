@@ -53,6 +53,7 @@
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato mentre navighi</string>
     <string name="clear_cookies">Cancella i cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Cosa vuoi fare con questa immagine?</string>
     <string name="action_download">Scarica</string>
     <string name="action_open">Apri</string>

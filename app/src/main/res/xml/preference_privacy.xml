@@ -44,7 +44,7 @@
             android:title="@string/clear_cache"/>
         <Preference
             android:key="clear_history"
-            android:title="@string/title_clear_history"/>
+            android:title="@string/clear_history"/>
         <Preference
             android:key="clear_cookies"
             android:title="@string/clear_cookies"/>

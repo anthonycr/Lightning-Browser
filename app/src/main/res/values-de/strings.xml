@@ -54,6 +54,7 @@
     <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
     <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
     <string name="clear_cookies">Cookies löschen</string>
+    <string name="clear_history">Verlauf löschen</string>
     <string name="dialog_image">Was möchten Sie mit diesem Bild tun?</string>
     <string name="action_download">Herunterladen</string>
     <string name="action_open">Öffnen</string>

@@ -38,6 +38,7 @@
     <string name="stock_browser_available">Βρέθηκε υποστηριζόμενος browser</string>
     <string name="fullScreenOption">Απόκρυψη της γραμμής κατάστασης κατα την χρήση</string>
     <string name="clear_cookies">Καθαρισμός των cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Τι θα θέλατε να κάνετε με την εικόνα;</string>
     <string name="action_download">Κατέβασμα</string>
     <string name="action_open">Άνοιγμα</string>

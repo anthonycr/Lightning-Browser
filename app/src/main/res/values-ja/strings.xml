@@ -51,6 +51,7 @@
     <string name="stock_browser_available">読み込み可能なブラウザがあります</string>
     <string name="fullScreenOption">ブラウズ中ステータスバーを非表示にする</string>
     <string name="clear_cookies">Cookiesを消去する</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">この画像をどうしますか?</string>
     <string name="action_download">ダウンロード</string>
     <string name="action_open">開く</string>

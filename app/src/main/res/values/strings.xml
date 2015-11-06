@@ -54,6 +54,7 @@
     <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
     <string name="clear_cookies">Clear Browser Cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">What would you like to do with this image?</string>
     <string name="action_download">Download</string>
     <string name="action_open">Open</string>
