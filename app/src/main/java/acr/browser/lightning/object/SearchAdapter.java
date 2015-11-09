@@ -46,6 +46,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
+import ch.boye.httpclientandroidlib.HttpStatus;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
@@ -385,7 +386,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
-            in = connection.getInputStream();
+            int status = connection.getResponseCode();
+
+            if (status >= HttpStatus.SC_BAD_REQUEST)
+                in = connection.getErrorStream();
+            else
+                in = connection.getInputStream();
 
             if (in != null) {
                 fos = new FileOutputStream(cacheFile);
