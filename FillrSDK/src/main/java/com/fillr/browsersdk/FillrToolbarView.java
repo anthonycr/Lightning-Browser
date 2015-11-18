@@ -154,7 +154,7 @@ public class FillrToolbarView extends RelativeLayout {
                 if (isFillrAppInstalled()) {
                     Fillr.getInstance().showPinScreen();
                 } else {
-                    Fillr.getInstance().showDownloadDialog(mContext,DIALOG_ORIGIN_FILL_BUTTON);
+                    Fillr.getInstance().showDownloadDialog(mContext, DIALOG_ORIGIN_FILL_BUTTON);
                 }
                 toolbarView.setVisibility(View.INVISIBLE);
 
@@ -193,8 +193,8 @@ public class FillrToolbarView extends RelativeLayout {
             public void onGlobalLayout() {
 
                 Fillr instance = Fillr.getInstance();
-                if(instance!=null) {
-                    if (FillrAuthenticationStore.isEnabled() && instance.webViewHasFocus()) {
+                if (instance != null) {
+                    if (FillrAuthenticationStore.isEnabled(mContext) && instance.webViewHasFocus()) {
 
                         Rect displayRect = new Rect();
                         toolbarView.getWindowVisibleDisplayFrame(displayRect);
@@ -218,7 +218,7 @@ public class FillrToolbarView extends RelativeLayout {
                                     mWhatsThisText.setVisibility(View.INVISIBLE);
                                 } else {
                                     String browserName = getFillrBarText(context);
-                                    if(browserName!=null){
+                                    if (browserName != null) {
                                         text = browserName;
                                     }
                                     autofillIcon.setVisibility(View.VISIBLE);
@@ -243,11 +243,11 @@ public class FillrToolbarView extends RelativeLayout {
         });
     }
 
-    private String getFillrBarText(Context context){
+    private String getFillrBarText(Context context) {
         String retVal = null;
 
         Fillr instance = Fillr.getInstance();
-        if(instance!=null) {
+        if (instance != null) {
             FillrBrowserProperties browserProps = instance.getBrowserProps();
 
             if (browserProps != null) {
@@ -265,8 +265,8 @@ public class FillrToolbarView extends RelativeLayout {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
 
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
-                if(autofillTextView!=null){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (autofillTextView != null) {
                     autofillTextView.setTextColor(getResources().getColor(R.color.com_fillr_toolbar_bg_color));
                 }
             }
@@ -276,7 +276,7 @@ public class FillrToolbarView extends RelativeLayout {
     };
 
     public boolean isFillrAppInstalled() {
-        return FillrUtils.isPackageInstalled(Fillr.FILLR_PACKAGE_NAME,mContext);
+        return FillrUtils.isPackageInstalled(Fillr.FILLR_PACKAGE_NAME, mContext);
     }
 
 
