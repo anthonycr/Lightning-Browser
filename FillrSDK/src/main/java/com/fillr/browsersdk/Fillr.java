@@ -22,7 +22,6 @@ import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -84,7 +83,7 @@ public final class Fillr {
 
     private static String javascriptData              = null;
     private static final AsyncHttpClient client       = new AsyncHttpClient();
-    private static Fillr fillrIntance                 = null;
+    private static Fillr fillrInstance = null;
 
     private FillrBrowserProperties mBrowserProps    = null;
 
@@ -102,10 +101,10 @@ public final class Fillr {
     }
 
     public static Fillr getInstance() {
-        if (fillrIntance == null) {
-            fillrIntance = new Fillr();
+        if (fillrInstance == null) {
+            fillrInstance = new Fillr();
         }
-        return fillrIntance;
+        return fillrInstance;
     }
 
     /**
@@ -134,7 +133,7 @@ public final class Fillr {
             browser_type        = type;
             mBrowserProps       = browserInfo;
 
-            fillrIntance.getWidget(false);
+            fillrInstance.getWidget(false);
 
             Context applicationContext = parentActivity.getApplicationContext();
             if(applicationContext!=null) {
@@ -165,7 +164,7 @@ public final class Fillr {
      */
     public void trackWebView(WebView webView) {
 
-        if (!FillrAuthenticationStore.isEnabled()) {
+        if (!FillrAuthenticationStore.isEnabled(parentActivity)) {
             return;
         }
 
@@ -218,7 +217,7 @@ public final class Fillr {
      * Downloads the Javascript, and injects it into the current webview
      */
     public void injectJavascriptIntoWebView() {
-        if(FillrAuthenticationStore.isEnabled()) {
+        if(FillrAuthenticationStore.isEnabled(parentActivity)) {
             String javascript = getWidget(true);
 
             if (javascript != null) {
@@ -523,7 +522,7 @@ public final class Fillr {
     }
 
     public void setEnabled(boolean value){
-        FillrAuthenticationStore.setEnabled(value);
+        FillrAuthenticationStore.setEnabled(parentActivity,value);
     }
 
     public FillrBrowserProperties getBrowserProps(){
@@ -532,11 +531,11 @@ public final class Fillr {
 
     public WidgetSource getWidgetSource()
     {
-        return FillrAuthenticationStore.widgetSource();
+        return FillrAuthenticationStore.widgetSource(parentActivity);
     }
 
     public void setWidgetSource(WidgetSource source)
     {
-        FillrAuthenticationStore.setWidgetSource(source);
+        FillrAuthenticationStore.setWidgetSource(parentActivity,source);
     }
 }

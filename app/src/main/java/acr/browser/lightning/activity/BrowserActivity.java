@@ -91,7 +91,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
-import com.fillr.browsersdk.FillrAuthenticationStore;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -132,6 +131,7 @@ import butterknife.ButterKnife;
 
 import com.fillr.browsersdk.Fillr;
 import com.fillr.browsersdk.model.FillrBrowserProperties;
+import com.fillr.browsersdk.FillrAuthenticationStore;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserController, OnClickListener, OnLongClickListener {
 
@@ -384,8 +384,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         // Initialise Fillr before the tabs are set up
         FillrBrowserProperties fillrBrowserProperties = new FillrBrowserProperties("Lightning Browser", "Lightning Browser");
+        // The md5 string is an API key which is passed through to our mapping engine whenever a fill request is created.
         Fillr.getInstance().initialise("2e15b38679d7514d3a37e1d54f44f59d", this, Fillr.BROWSER_TYPE.WEB_KIT, fillrBrowserProperties);
         Fillr.getInstance().setWidgetSource(FillrAuthenticationStore.WidgetSource.LOCAL);
+
         initializeTabs();
 
         mProxyUtils.checkForProxy(this);

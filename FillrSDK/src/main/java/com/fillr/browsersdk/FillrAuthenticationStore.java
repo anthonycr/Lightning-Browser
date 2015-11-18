@@ -25,8 +25,7 @@ public class FillrAuthenticationStore {
 
     private static final String SHARED_PREF_KEY = "com.fillr.browsersdk";
 
-    public enum WidgetSource
-    {
+    public enum WidgetSource {
         REMOTE,
         LOCAL
     }
@@ -39,67 +38,53 @@ public class FillrAuthenticationStore {
 
     public static boolean getAnalyticsFlag(Context context) {
         boolean retVal = true;
-        if(context!=null) {
+        if (context != null) {
             SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
-            if(sharedPref!=null) {
+            if (sharedPref != null) {
                 retVal = sharedPref.getBoolean(F_ANALYICS, true);
             }
         }
         return retVal;
     }
 
-    static final boolean isEnabled() {
+    static final boolean isEnabled(Context context) {
         boolean retVal = false;
-        Fillr instance = Fillr.getInstance();
-        if(instance!=null) {
-            Activity act = instance.getParentActivity();
-            if(act!=null) {
-                SharedPreferences sharedPreferences = act.getSharedPreferences(SHARED_PREF_KEY, 0);
+
+            if (context != null) {
+                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, 0);
                 retVal = sharedPreferences.getBoolean("enabled", true);
             }
-        }
+
         return retVal;
     }
 
-    static final void setEnabled(boolean value) {
+    static final void setEnabled(Context context, boolean value) {
 
-        Fillr instance = Fillr.getInstance();
-        if(instance!=null) {
-            Activity act = instance.getParentActivity();
-            if(act!=null) {
-                SharedPreferences sharedPreferences = act.getSharedPreferences(SHARED_PREF_KEY, 0);
+        if (context != null) {
+                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("enabled", value);
                 editor.commit();
-            }
+
         }
     }
 
-    static final WidgetSource widgetSource()
-    {
+    static final WidgetSource widgetSource(Context context) {
         boolean retVal = false;
-        Fillr instance = Fillr.getInstance();
-        if(instance!=null) {
-            Activity act = instance.getParentActivity();
-            if(act!=null) {
-                SharedPreferences sharedPreferences = act.getSharedPreferences(SHARED_PREF_KEY, 0);
+        if (context != null) {
+                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, 0);
                 retVal = sharedPreferences.getBoolean("download_widget", true);
-            }
         }
+
         return retVal ? WidgetSource.REMOTE : WidgetSource.LOCAL;
     }
 
-    static final void setWidgetSource(WidgetSource source)
-    {
-        Fillr instance = Fillr.getInstance();
-        if(instance!=null) {
-            Activity act = instance.getParentActivity();
-            if(act!=null) {
-                SharedPreferences sharedPreferences = act.getSharedPreferences(SHARED_PREF_KEY, 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("download_widget", source == WidgetSource.REMOTE ? true : false);
-                editor.commit();
-            }
+    static final void setWidgetSource(Context context, WidgetSource source) {
+        if (context != null) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_KEY, 0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("download_widget", source == WidgetSource.REMOTE ? true : false);
+            editor.commit();
         }
     }
 }
