@@ -91,6 +91,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
+import com.fillr.browsersdk.FillrAuthenticationStore;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -128,6 +129,9 @@ import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import com.fillr.browsersdk.Fillr;
+import com.fillr.browsersdk.model.FillrBrowserProperties;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserController, OnClickListener, OnLongClickListener {
 
@@ -378,6 +382,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
+        // Initialise Fillr before the tabs are set up
+        FillrBrowserProperties fillrBrowserProperties = new FillrBrowserProperties("Lightning Browser", "Lightning Browser");
+        Fillr.getInstance().initialise("2e15b38679d7514d3a37e1d54f44f59d", this, Fillr.BROWSER_TYPE.WEB_KIT, fillrBrowserProperties);
+        Fillr.getInstance().setWidgetSource(FillrAuthenticationStore.WidgetSource.LOCAL);
         initializeTabs();
 
         mProxyUtils.checkForProxy(this);
@@ -970,6 +978,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 //            }
 //        }, 300);
 
+
+        Fillr.getInstance().setEnabled(mPreferences.getFillrAutofillEnabled(true));
+        Fillr.getInstance().trackWebView(mCurrentView.getWebView());
     }
 
     void handleNewIntent(Intent intent) {
@@ -1277,6 +1288,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         registerReceiver(mNetworkReceiver, filter);
 
         mEventBus.register(mBusEventListener);
+
+        // Ensure Fillr users will resume to a fill state after an install
+        Fillr.getInstance().onResume();
+        // Update Fillr preferences in case of returning from browser preference fragment
+        Fillr.getInstance().setEnabled(mPreferences.getFillrAutofillEnabled(true));
+        // Ensure the current tab has Fillr injected if the preferences are changed
+        Fillr.getInstance().trackWebView(mCurrentView.getWebView());
     }
 
     /**
@@ -1703,6 +1721,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        // Handle the Fillr activity result and populate the page
+        if (requestCode == Fillr.FILLR_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Fillr.getInstance().processForm(intent);
+            } else {
+                // handle a cancelled/abandoned fill if needed
+            }
+        }
+
         if (API < Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode == 1) {
                 if (null == mUploadMessage) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="install_fillr_title">Fillr によるセキュアな自動入力</string>
+    <string name="install_fillr_content">Fillr は世界で最も安全 &amp; 正確な自動入力アプリです。個人データは PIN コードで保護され、Fillr アプリ内で暗号化してから本人のデバイス上にのみ保存されます。セットアップはあっという間で、完了後はこのページが再び表示されます。</string>
+    <string name="install_fillr_button_yes">Fillr を無料でインストールして時間を節約</string>
+    <string name="install_fillr_button_no">今はせずにフォームを手動で入力する</string>
+    <string name="install_fillr_tool_bar_text">セキュアな自動入力を使用</string>
+    <string name="install_fillr_bar_bspec">%1$s に Autofill をインストール</string>
+    <string name="install_fillr_title_bspec">Fillr による %1$s 用 Autofill</string>
+    <string name="install_fillr_button_yes_bspec">Fillr と %1$s 用 Autofill をインストール</string>
+</resources>

@@ -46,5 +46,10 @@
             android:key="google_suggestions"
             android:title="@string/google_suggestions"
             android:summary="@string/powered_by_google" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="fillr_autofill"
+            android:title="@string/autofill"
+            android:summary="@string/powered_by_fillr" />
     </PreferenceCategory>
 </PreferenceScreen>

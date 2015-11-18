@@ -42,6 +42,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private static final String SETTINGS_SEARCHENGINE = "search";
     private static final String SETTINGS_GOOGLESUGGESTIONS = "google_suggestions";
     private static final String SETTINGS_DRAWERTABS = "cb_drawertabs";
+    private static final String SETTINGS_FILLRAUTOFILL = "fillr_autofill";
 
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -51,7 +52,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
     private String mDownloadLocation;
     private int mAgentChoice;
     private String mHomepage;
-    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest, cbDrawerTabs;
+    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest, cbDrawerTabs, cbFillrAutofill;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
         cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
         cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
+        cbFillrAutofill = (CheckBoxPreference) findPreference(SETTINGS_FILLRAUTOFILL);
 
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);
@@ -94,6 +96,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbColorMode.setOnPreferenceChangeListener(this);
         cbgooglesuggest.setOnPreferenceChangeListener(this);
         cbDrawerTabs.setOnPreferenceChangeListener(this);
+        cbFillrAutofill.setOnPreferenceChangeListener(this);
 
         mAgentChoice = mPreferences.getUserAgentChoice();
         mHomepage = mPreferences.getHomepage();
@@ -154,6 +157,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
         cbColorMode.setChecked(mPreferences.getColorModeEnabled());
         cbgooglesuggest.setChecked(mPreferences.getGoogleSearchSuggestionsEnabled());
         cbDrawerTabs.setChecked(mPreferences.getShowTabsInDrawer(true));
+        cbFillrAutofill.setChecked(mPreferences.getFillrAutofillEnabled(true));
     }
 
     private void searchUrlPicker() {
@@ -571,6 +575,9 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Prefe
             case SETTINGS_DRAWERTABS:
                 mPreferences.setShowTabsInDrawer((Boolean) newValue);
                 cbDrawerTabs.setChecked((Boolean) newValue);
+            case SETTINGS_FILLRAUTOFILL:
+                mPreferences.setFillrAutofillEnabled((Boolean) newValue);
+                cbFillrAutofill.setChecked((Boolean) newValue);
             default:
                 return false;
         }

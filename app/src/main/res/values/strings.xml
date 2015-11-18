@@ -224,4 +224,6 @@
     <string name="hosts_source">Hosts File Ad Blocking Source</string>
     <string name="settings_adblock">Ad Block Settings</string>
     <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
+    <string name="autofill">Form Autofill</string>
+    <string name="powered_by_fillr">Powered by Fillr</string>
 </resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="com_fillr_browsersdk_bg_color">#00a4b8</color>
+    <color name="com_fillr_browsersdk_dark_teal">#0091a2</color>
+    <color name="com_fillr_browsersdk_dashboard_bg">#007f8e</color>
+
+    <color name="com_fillr_browsersdk_toolbar_line">#cdcecf</color>
+
+    <color name="com_fillr_transparent_button_white">#3DFFFFFF</color>
+
+    <color name="com_fillr_border_end_color">#e0e0e0</color>
+    <color name="com_fillr_button_transparence">#45FFFFFF</color>
+
+
+    <color name="com_fillr_header_grey_background">#ffd8d8d8</color>
+
+    <color name="com_fillr_toolbar_text_color_1">#DE000000</color>
+    <color name="com_fillr_toolbar_text_color_2">#8A000000</color>
+
+    <color name="com_fillr_toolbar_bg_color">#212121</color>
+    <color name="com_fillr_toolbar_bg_selected_color">#999999</color>
+
+    
+
+
+</resources>
