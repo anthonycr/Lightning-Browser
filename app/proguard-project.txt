@@ -161,4 +161,4 @@
 -dontwarn com.squareup.okhttp.**
 -dontwarn retrofit.**
 -dontwarn com.google.android.gms.**
--keep class com.google.android.gms.**
+-keep class com.google.android.gms.** { *; }
