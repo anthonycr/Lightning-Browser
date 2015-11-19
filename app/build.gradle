@@ -9,6 +9,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionName "4.2.3.1"
+        multiDexEnabled true
     }
     sourceSets {
         lightningPlus.setRoot('src/LightningPlus')
@@ -44,6 +45,10 @@ android {
     }
     packagingOptions {
         exclude '.readme'
+    }
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
     }
 }
 

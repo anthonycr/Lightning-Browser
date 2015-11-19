@@ -16,15 +16,17 @@
 package com.fillr.browsersdk;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Handler;
+import android.os.Build;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,13 +34,12 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import com.fillr.browsersdk.apiclient.FillrApiClientService;
+import com.fillr.browsersdk.apiclient.FillrConsumerAPIClient;
 import com.fillr.browsersdk.model.FillrBrowserProperties;
 import com.fillr.browsersdk.utilities.FillrUtils;
 import com.fillr.browsersdk.FillrAuthenticationStore.WidgetSource;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,10 +50,19 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedByteArray;
+
 /**
  * Created by AlexZhaoBin on 13/05/15.
  */
 public final class Fillr {
+
+    public FillrBrowserProperties getBrowserProps() {
+        return mBrowserProps;
+    }
 
     public enum BROWSER_TYPE{WEB_KIT,GECKO}
 
@@ -75,14 +85,13 @@ public final class Fillr {
     private static final String EXTRA_KEY_SDK_PACKAGE = "com.fillr.sdkpackage";
 
     private static final String EXTRA_KEY_VERSION     = "com.fillr.sdkversion";
-    private static final String EXTRA_VALUE_VERSION   = "1.6";
+    private static final String EXTRA_VALUE_VERSION   = "1.7";
     private static final String EXTRA_KEY_ADDITIONAL_INFO = "com.fillr.additionalinfo";
 
     public static final String FILLR_PACKAGE_NAME     = "com.fillr";
 
 
     private static String javascriptData              = null;
-    private static final AsyncHttpClient client       = new AsyncHttpClient();
     private static Fillr fillrInstance = null;
 
     private FillrBrowserProperties mBrowserProps    = null;
@@ -319,29 +328,32 @@ public final class Fillr {
     }
 
     private final String getWidgetInfoFromServer(final boolean loadWidgetAfterFinish) {
+        if (javascriptData != null) {
+            return javascriptData;
+        }
 
-        if (javascriptData != null) return javascriptData;
+        FillrApiClientService fillrAPIService = FillrConsumerAPIClient.createFillrAPIService(FillrApiClientService.class);
 
-        client.get(MOBILE_BROWSER_WIDGET, new AsyncHttpResponseHandler() {
+        fillrAPIService.requestMappings(new Callback<Response>() {
             @Override
-            public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-                String decoded;
-                try {
-                    decoded = new String(arg2, "UTF-8");
-                    javascriptData = decoded;
+            public void success(Response jsonElement, Response response) {
+                if (jsonElement != null && jsonElement.getBody() != null) {
+                    javascriptData = new String(((TypedByteArray) jsonElement.getBody()).getBytes());
+
                     if (loadWidgetAfterFinish) {
                         if (mWebView != null && mWebView.getVisibility() == View.VISIBLE) {
                             loadWidget();
                         }
                     }
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            public void failure(RetrofitError error) {
+                //Fail silently
+                if(error!=null && error.getMessage()!=null) {
+                    Log.e(getClass().getSimpleName(), error.getMessage());
+                }
             }
         });
         return null;
@@ -520,10 +532,6 @@ public final class Fillr {
 
     public void setEnabled(boolean value) {
         FillrAuthenticationStore.setEnabled(parentActivity,value);
-    }
-
-    public FillrBrowserProperties getBrowserProps() {
-        return mBrowserProps;
     }
 
     public WidgetSource getWidgetSource() {

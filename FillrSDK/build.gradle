@@ -13,12 +13,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0.0"
     }
@@ -31,7 +31,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.loopj.android:android-async-http:1.4.5'
+    compile 'com.google.android.gms:play-services:8.1.0'
+    compile ('com.squareup.retrofit:retrofit:1.9.0'){
+        exclude module: 'okhttp'
+    }
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
 }
