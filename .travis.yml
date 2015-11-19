@@ -9,6 +9,7 @@ android:
     - extra-android-support
     - extra-android-m2repository
     - extra-google-google_play_services
+    - extra-google-m2repository 
   licenses:
     - 'android-sdk-license-.+'
     - '.*intel.+'
