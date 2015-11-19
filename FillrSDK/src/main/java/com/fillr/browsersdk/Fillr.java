@@ -75,7 +75,7 @@ public final class Fillr {
     private static final String EXTRA_KEY_SDK_PACKAGE = "com.fillr.sdkpackage";
 
     private static final String EXTRA_KEY_VERSION     = "com.fillr.sdkversion";
-    private static final String EXTRA_VALUE_VERSION   = "1.5";
+    private static final String EXTRA_VALUE_VERSION   = "1.6";
     private static final String EXTRA_KEY_ADDITIONAL_INFO = "com.fillr.additionalinfo";
 
     public static final String FILLR_PACKAGE_NAME     = "com.fillr";
