@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/com_fillr_install_button_bg_rounded_selected" android:state_pressed="true"/> <!-- selected -->
+    <item android:drawable="@drawable/com_fillr_install_button_bg_rounded" /> <!-- default -->
+
+</selector>

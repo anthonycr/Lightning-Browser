@@ -227,4 +227,6 @@
     <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
     <string name="remove_identifying_headers">Remove Identifying Headers</string>
+    <string name="autofill">Form Autofill</string>
+    <string name="powered_by_fillr">Powered by Fillr</string>
 </resources>

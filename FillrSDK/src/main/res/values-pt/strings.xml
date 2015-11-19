@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="install_fillr_title">Preenchimento automático seguro do Fillr</string>
+    <string name="install_fillr_content">O Fillr possui o preenchimento automático mais seguro e preciso do mundo. Os dados do seu perfil são protegidos por PIN e armazenados apenas em seu dispositivo, totalmente criptografados dentro do app. A configuração dura menos de um minuto, e ao final você será redirecionado para esta página.</string>
+    <string name="install_fillr_button_yes">Instale o Fillr de GRAÇA e economize tempo</string>
+    <string name="install_fillr_button_no">Agora não, eu gostaria de preencher este formulário manualmente</string>
+    <string name="install_fillr_tool_bar_text">Usar preenchimento automático de seguro</string>
+    <string name="install_fillr_bar_bspec">Instalar preenchimento automático para %1$s</string>
+    <string name="install_fillr_title_bspec">Preenchimento automático %1$s por Fillr</string>
+    <string name="install_fillr_button_yes_bspec">Instalar Fillr, preenchimento automático para %1$s</string>
+</resources>

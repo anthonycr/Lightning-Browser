@@ -41,6 +41,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_SEARCHENGINE = "search";
     private static final String SETTINGS_GOOGLESUGGESTIONS = "google_suggestions";
     private static final String SETTINGS_DRAWERTABS = "cb_drawertabs";
+    private static final String SETTINGS_FILLRAUTOFILL = "fillr_autofill";
 
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -49,7 +50,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private String mDownloadLocation;
     private int mAgentChoice;
     private String mHomepage;
-    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest, cbDrawerTabs;
+    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest, cbDrawerTabs, cbFillrAutofill;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
         cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
         cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
+        cbFillrAutofill = (CheckBoxPreference) findPreference(SETTINGS_FILLRAUTOFILL);
 
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);
@@ -89,6 +91,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbColorMode.setOnPreferenceChangeListener(this);
         cbgooglesuggest.setOnPreferenceChangeListener(this);
         cbDrawerTabs.setOnPreferenceChangeListener(this);
+        cbFillrAutofill.setOnPreferenceChangeListener(this);
 
         mAgentChoice = mPreferenceManager.getUserAgentChoice();
         mHomepage = mPreferenceManager.getHomepage();
@@ -148,6 +151,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
         cbgooglesuggest.setChecked(mPreferenceManager.getGoogleSearchSuggestionsEnabled());
         cbDrawerTabs.setChecked(mPreferenceManager.getShowTabsInDrawer(true));
+        cbFillrAutofill.setChecked(mPreferenceManager.getFillrAutofillEnabled(true));
     }
 
     private void searchUrlPicker() {
@@ -563,6 +567,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 return true;
             case SETTINGS_DRAWERTABS:
                 mPreferenceManager.setShowTabsInDrawer(checked);
+                return true;
+            case SETTINGS_FILLRAUTOFILL:
+                mPreferenceManager.setFillrAutofillEnabled(checked);
+                return true;
             default:
                 return false;
         }

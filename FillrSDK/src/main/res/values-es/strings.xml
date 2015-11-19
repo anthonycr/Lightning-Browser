@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="install_fillr_title">Autorrelleno seguro de Fillr</string>
+    <string name="install_fillr_content">Fillr es la aplicación de autorrelleno más segura y precisa del mundo. Los datos de tu perfil están protegidos con código PIN y solo se almacenan en tu dispositivo, totalmente codificados dentro de la aplicación Fillr. La configuración lleva menos de un minuto y después te redirige de nuevo a esta página.</string>
+    <string name="install_fillr_button_yes">Instala Fillr de forma GRATUITA y ahorra tiempo</string>
+    <string name="install_fillr_button_no">Ahora no, quiero rellenar este formulario manualmente</string>
+    <string name="install_fillr_tool_bar_text">Utilizar la función de autorrelleno seguro</string>
+    <string name="install_fillr_bar_bspec">Instalar la función de autorrelleno para %1$s</string>
+    <string name="install_fillr_title_bspec">%1$s la función de autorrelleno de Fillr</string>
+    <string name="install_fillr_button_yes_bspec">Instalar la función de autorrelleno de Fillr para %1$s</string>
+
+</resources>

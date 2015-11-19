@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="install_fillr_title">Fillr 的安全自动填充</string>
+    <string name="install_fillr_content">Fillr 是全球最安全、最准确的自动填充工具。你的资料数据完全加密，有 PIN 保护，而且只会存储在你设备上的 Fillr app 之中。设置只需不到一分钟的时间，完成之后你会回到这个页面。</string>
+    <string name="install_fillr_button_yes">免费安装 Fillr，立即节省时间</string>
+    <string name="install_fillr_button_no">现在不要，我想手动填充这份表单</string>
+    <string name="install_fillr_tool_bar_text">使用安全自动填充</string>
+    <string name="install_fillr_bar_bspec">为 %1$s 安装自动填充</string>
+    <string name="install_fillr_title_bspec">Fillr 提供的 %1$s 自动填充</string>
+    <string name="install_fillr_button_yes_bspec">安装 Fillr，%1$s 的自动填充</string>
+</resources>

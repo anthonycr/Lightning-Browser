@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="install_fillr_title">Sicheres Auto-Ausfüllen von Fillr</string>
+    <string name="install_fillr_content">Fillr ist der sicherste &amp; genaueste Autofiller der Welt. Ihre Profildaten sind durch eine PIN geschützt und werden nur auf Ihrem Gerät gesichert und vollständig in der Fillr-App verschlüsselt. Die Einrichtung dauert weniger als eine Minute, und Sie werden zu dieser Seite zurückgeführt.</string>
+    <string name="install_fillr_button_yes">Fillr KOSTENLOS installieren und Zeit sparen</string>
+    <string name="install_fillr_button_no">Nicht jetzt, ich möchte dieses Formular manuell ausfüllen</string>
+    <string name="install_fillr_tool_bar_text">Sicheres Auto-Ausfüllen verwenden</string>
+    <string name="install_fillr_bar_bspec">Sofortiges Auto-Ausfüllen für %1$s</string>
+    <string name="install_fillr_title_bspec">%1$s Auto-Ausfüllen von Fillr</string>
+    <string name="install_fillr_button_yes_bspec">Installieren Sie Fillr, Auto-Ausfüller für %1$s</string>
+
+</resources>

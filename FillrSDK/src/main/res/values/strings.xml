@@ -1,0 +1,18 @@
+<resources>
+
+    <string name="install_fillr_content">"Fillr is the most secure &amp; accurate autofill in the world and it’s free. Setup takes under a minute and you’ll be returned to this page."</string>
+    <string name="install_fillr_button_yes">Install Fillr</string>
+    <string name="install_fillr_button_no">"Not now, I'd like to fill this form manually"</string>
+    <string name="install_fillr_tool_bar_text">Use Secure Autofill</string>
+
+    <string name="install_fillr_title">Secure Autofill by Fillr</string>
+
+    <!-- Variable properties -->
+    <string name="install_fillr_title_bspec">%1$s Autofill by Fillr</string>
+    <string name="install_fillr_button_yes_bspec">Install Fillr, Autofill for %1$s</string>
+
+    <string name="install_fillr_bar_bspec">Install Autofill for %1$s</string>
+
+    <item name="line_seperator" type="id" />
+
+</resources>

@@ -111,3 +111,18 @@
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
 
 -dontwarn org.apache.http.HttpHost
+
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+-keep class com.fillr.browsersdk.Fillr$JSNativeInteface
+-keepclassmembers class com.fillr.browsersdk.Fillr
+-keepclassmembers class com.fillr.browsersdk.Fillr$JSNativeInteface
+-keep public class * implements com.fillr.browsersdk.Fillr$JSNativeInteface
+-keepclassmembers class com.fillr.browsersdk.Fillr$JSNativeInteface {
+    <methods>;
+}
+-keepattributes JavascriptInterface
+-keepattributes *Annotation*

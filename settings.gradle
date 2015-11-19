@@ -2,3 +2,5 @@ include ':app'
 include ':libnetcipher'
 
 project(':libnetcipher').projectDir = new File(rootProject.projectDir, 'external/netcipher/libnetcipher')
+
+include ':FillrSDK'

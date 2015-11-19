@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FillrSDK</string>
+    <string name="install_fillr_title">Riempimento automatico sicuro di Fillr</string>
+    <string name="install_fillr_content">Fillr è il metodo più sicuro al mondo per il riempimento automatico. I dati del tuo profilo sono protetti da PIN e archiviati sempre e solo sul tuo dispositivo, completamente criptati all\'interno dell\'app Fillr. La configurazione richiede meno di un minuto, poi verrai reindirizzato a questa pagina.</string>
+    <string name="install_fillr_button_yes">Installa Fillr GRATIS e risparmia tempo prezioso</string>
+    <string name="install_fillr_button_no">Non ora, voglio riempire questo modulo manualmente</string>
+    <string name="install_fillr_tool_bar_text">Usa riempimento automatico sicuro</string>
+    <string name="install_fillr_bar_bspec">Installa il riempimento automatico per %1$s</string>
+    <string name="install_fillr_title_bspec">Riempimento automatico %1$s di Fillr</string>
+    <string name="install_fillr_button_yes_bspec">Installa Fillr, riempimento automatico per %1$s</string>
+
+</resources>

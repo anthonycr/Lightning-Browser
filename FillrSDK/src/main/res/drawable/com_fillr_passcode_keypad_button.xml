@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/com_fillr_keypad_button_pressed" android:state_pressed="true"/> <!-- selected -->
+    <item android:drawable="@drawable/com_fillr_keypad_button" android:state_pressed="false"></item> <!-- default -->
+
+</selector>
