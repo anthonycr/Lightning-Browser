@@ -112,30 +112,30 @@ public final class Fillr {
      * This method is the starting point of integrating the SDK.
      * Call this method with your developer key and your activity
      * @param devKey supplied by Fillr
-     * @param parentAct parent activity
+     * @param parentActivity parent activity
      * @param type the type of the browser implementation - webview or gecko
      */
     public final void initialise(String devKey,
-                                 Activity parentAct,
+                                 Activity parentActivity,
                                  BROWSER_TYPE type) {
-        initialise(devKey,parentAct,type,null);
+        initialise(devKey,parentActivity,type,null);
     }
 
 
     public final void initialise(String devKey,
-                                 Activity parentAct,
+                                 Activity parentActivity,
                                  BROWSER_TYPE type,  FillrBrowserProperties browserInfo) {
 
-        if(parentAct!=null && devKey != null && type!=null) {
+        if(parentActivity!=null && devKey != null && type!=null) {
 
-            parentActivity      = parentAct;
+            this.parentActivity = parentActivity;
             this.devKey         = devKey;
             browser_type        = type;
             mBrowserProps       = browserInfo;
 
             fillrInstance.getWidget(false);
 
-            Context applicationContext = parentActivity.getApplicationContext();
+            Context applicationContext = this.parentActivity.getApplicationContext();
             if(applicationContext!=null) {
                 mPackageName = applicationContext.getPackageName();
             }
