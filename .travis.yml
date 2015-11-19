@@ -8,6 +8,7 @@ android:
     - android-22
     - extra-android-support
     - extra-android-m2repository
+    - extra-google-google_play_services
   licenses:
     - 'android-sdk-license-.+'
     - '.*intel.+'
