@@ -201,12 +201,9 @@ public final class Fillr {
     {
         String javascript = null;
 
-        if (getWidgetSource() == WidgetSource.REMOTE)
-        {
+        if (getWidgetSource() == WidgetSource.REMOTE) {
             javascript = getWidgetInfoFromServer(loadWidgetAfterFinish);
-        }
-        else
-        {
+        } else {
             javascript = getWidgetInfoFromAssets(loadWidgetAfterFinish);
         }
 
