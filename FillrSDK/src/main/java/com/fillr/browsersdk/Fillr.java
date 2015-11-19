@@ -149,9 +149,9 @@ public final class Fillr {
      * @return true if the webview that's being tracked has focus
      */
     public boolean webViewHasFocus() {
-        if(mWebView!=null) {
+        if (mWebView!=null) {
             return mWebView.hasFocus();
-        }else if(fillInitListener!=null){
+        } else if (fillInitListener!=null) {
             return fillInitListener.shouldShowFillrToolbar();
         }
         return true;
@@ -176,7 +176,7 @@ public final class Fillr {
         mWebView.addJavascriptInterface(new JSNativeInterface(), "androidInterface");
     }
 
-    public void trackGeckoView(FillInitListener listener){
+    public void trackGeckoView(FillInitListener listener) {
         this.fillInitListener = listener;
     }
 
@@ -217,7 +217,7 @@ public final class Fillr {
      * Downloads the Javascript, and injects it into the current webview
      */
     public void injectJavascriptIntoWebView() {
-        if(FillrAuthenticationStore.isEnabled(parentActivity)) {
+        if (FillrAuthenticationStore.isEnabled(parentActivity)) {
             String javascript = getWidget(true);
 
             if (javascript != null) {
