@@ -27,7 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 public class FillrUtils {
 
 	public static void hideKeyboard(Activity activity) {
-		if(activity!=null) {
+		if (activity!=null) {
 			View view = activity.getCurrentFocus();
 			if (view != null) {
 				InputMethodManager inputManager = (InputMethodManager)
@@ -61,4 +61,11 @@ public class FillrUtils {
 		return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 	}
 
+	public static boolean androidApiHoneycombOrHigher() {
+		return androidApiIsGreaterThanOrEqualTo(android.os.Build.VERSION_CODES.HONEYCOMB);
+	}
+
+	public static boolean androidApiIsGreaterThanOrEqualTo(int androidVersion) {
+		return android.os.Build.VERSION.SDK_INT >= androidVersion;
+	}
 }

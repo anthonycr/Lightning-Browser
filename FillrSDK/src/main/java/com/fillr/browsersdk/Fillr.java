@@ -76,7 +76,7 @@ public final class Fillr {
 
     private static final String EXTRA_KEY_VERSION     = "com.fillr.sdkversion";
     private static final String EXTRA_VALUE_VERSION   = "1.5";
-    private static final String EXTRA_KEY_ADDITONAL_INFO     = "com.fillr.additionalinfo";
+    private static final String EXTRA_KEY_ADDITIONAL_INFO = "com.fillr.additionalinfo";
 
     public static final String FILLR_PACKAGE_NAME     = "com.fillr";
 
@@ -186,12 +186,12 @@ public final class Fillr {
     }
 
     void showPinScreen() {
-        if(browser_type == BROWSER_TYPE.WEB_KIT) {
+        if (browser_type == BROWSER_TYPE.WEB_KIT) {
             injectJavascriptIntoWebView();
-        }else if (browser_type == BROWSER_TYPE.GECKO){
-            if(this.fillInitListener!=null){
+        } else if (browser_type == BROWSER_TYPE.GECKO) {
+            if (this.fillInitListener!=null ){
                 this.fillInitListener.onFillButtonClicked();
-            }else{
+            } else {
                 throw new ExceptionInInitializerError("provide a fillrinitlistener");
             }
         }
@@ -233,7 +233,7 @@ public final class Fillr {
      * @param context context object
      * @param origin identifies the caller of this method, used for analytics purposes if available
      */
-    public void showDownloadDialog(Context context, final int origin){
+    public void showDownloadDialog(Context context, final int origin) {
 
         LayoutInflater inflater     = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 
@@ -245,7 +245,7 @@ public final class Fillr {
         Button closeDialog = (Button)viewCreated.findViewById(R.id.id_btn_no);
         Button approveDialog = (Button) viewCreated.findViewById(R.id.id_btn_yes);
 
-        if(mBrowserProps!=null){
+        if (mBrowserProps!=null) {
             mBrowserProps.setDialogProps(viewCreated,context);
         }
 
@@ -276,7 +276,7 @@ public final class Fillr {
 
     public void downloadFillrApp() {
         // Save return package name
-        if(parentActivity!=null) {
+        if (parentActivity!=null) {
 
             String browserPackageName = parentActivity.getApplicationContext().getPackageName();
             setClipboardData("ReturnPackageName", getAdditionalInfo());
@@ -285,14 +285,14 @@ public final class Fillr {
             try {
                 parentActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(campaignUrl)));
             } catch (android.content.ActivityNotFoundException anfe) {
-                parentActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(campaignUrl)));
+
             }
         }
     }
 
     @SuppressLint("NewApi")
-    private void setClipboardData(String key, String value){
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+    private void setClipboardData(String key, String value) {
+        if (FillrUtils.androidApiHoneycombOrHigher()) {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) parentActivity.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText(key, value);
             clipboard.setPrimaryClip(clip);
@@ -322,9 +322,8 @@ public final class Fillr {
     }
 
     private final String getWidgetInfoFromServer(final boolean loadWidgetAfterFinish) {
-        if (javascriptData != null) {
-            return javascriptData;
-        }
+
+        if (javascriptData != null) return javascriptData;
 
         client.get(MOBILE_BROWSER_WIDGET, new AsyncHttpResponseHandler() {
             @Override
@@ -353,9 +352,7 @@ public final class Fillr {
 
     private final String getWidgetInfoFromAssets(final boolean loadWidgetAfterFinish) {
 
-        if (javascriptData != null) {
-            return javascriptData;
-        }
+        if (javascriptData != null) return javascriptData;
 
         StringBuilder buf = new StringBuilder();
         BufferedReader in = null;
@@ -395,7 +392,7 @@ public final class Fillr {
         return javascriptData;
     }
 
-    private final String getDeveloperKey(){
+    private final String getDeveloperKey() {
         return devKey;
     }
 
@@ -404,7 +401,7 @@ public final class Fillr {
         String payload  = data.getStringExtra("com.fillr.payload");
         String mappings = data.getStringExtra("com.fillr.mappings");
 
-        if(payload!=null && mappings !=null) {
+        if (payload != null && mappings != null) {
             mWebView.loadUrl("javascript:PopWidgetInterface.populateWithMappings(JSON.parse('" +
                     mappings.replaceAll("(\\\\t|\\\\n|\\\\r')", " ") + "'), JSON.parse('" + payload + "'));");
         }
@@ -415,14 +412,14 @@ public final class Fillr {
             @Override
             public void run() {
                 FillrUtils.hideKeyboard(parentActivity);
-                //DO NOT CHANGE
+                // DO NOT CHANGE
                 Intent newIntent = buildIntent(json);
                 parentActivity.startActivityForResult(newIntent, FILLR_REQUEST_CODE);
             }
         });
     }
 
-    private Intent buildIntent(String json){
+    private Intent buildIntent(String json) {
         Intent newIntent = new Intent();
         newIntent.setComponent(new ComponentName("com.fillr", "com.fillr.browsersdk.activities.FillrBSDKProfileDataApproveActivity"));
         newIntent.putExtra(EXTRA_KEY_FIELDS, json);
@@ -430,8 +427,8 @@ public final class Fillr {
         newIntent.putExtra(EXTRA_KEY_SDK_PACKAGE, mPackageName);
         newIntent.putExtra(EXTRA_KEY_VERSION, EXTRA_VALUE_VERSION);
         String additionalInfo = getAdditionalInfo();
-        if(additionalInfo!=null) {
-            newIntent.putExtra(EXTRA_KEY_ADDITONAL_INFO, additionalInfo);
+        if (additionalInfo!=null) {
+            newIntent.putExtra(EXTRA_KEY_ADDITIONAL_INFO, additionalInfo);
         }
         return newIntent;
     }
@@ -445,21 +442,22 @@ public final class Fillr {
             json.put("developer_key", getDeveloperKey());
             json.put("version", EXTRA_VALUE_VERSION);
             retVal = json.toString();
-        }catch (JSONException ex){
+        } catch (JSONException ex) {
             ex.printStackTrace();
         }
         return retVal;
     }
 
-    Activity getParentActivity(){
+    Activity getParentActivity() {
         return parentActivity;
     }
 
     @SuppressLint("NewApi")
-    public void onResume(){
+    public void onResume() {
 
         String shouldTrigger = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+
+        if (FillrUtils.androidApiHoneycombOrHigher()) {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) parentActivity.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData data = clipboard.getPrimaryClip();
             if (data != null && data.getItemCount() > 0) {
@@ -474,7 +472,7 @@ public final class Fillr {
 
         boolean trigger = shouldTrigger != null && shouldTrigger.equals("com.fillr.load.yes");
 
-        if(parentActivity!=null && mWebView!=null) {
+        if (parentActivity!=null && mWebView!=null) {
             if (trigger) {
                 if (mWebView.getVisibility() == View.VISIBLE) {
                     final Handler handler = new Handler();
@@ -486,7 +484,7 @@ public final class Fillr {
                     }, 300);
                 }
             }
-        }else if(fillInitListener!=null){
+        } else if (fillInitListener!=null) {
             if (trigger) {
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -500,7 +498,7 @@ public final class Fillr {
         setClipboardData("com.fillr.triggerautofill", "");
     }
 
-    public void onPause(){
+    public void onPause() {
 
     }
 
@@ -508,8 +506,10 @@ public final class Fillr {
         if (mWebView != null && mWebView.getVisibility() == View.VISIBLE && !hasSrolled) {
             int x = mWebView.getScrollX();
             int y = mWebView.getScrollY();
-            y = y + FillrUtils.convertDpToPixels(20); //hard coded scroll value
-            if(y<0){
+            // Hard coded scroll value. Compensates for the fill toolbar.
+            // Scrolls the webview down a bit so the focussed field isn't obscured
+            y = y + FillrUtils.convertDpToPixels(20);
+            if (y < 0) {
                 y = 0;
             }
             mWebView.scrollTo(x,y);
@@ -517,25 +517,23 @@ public final class Fillr {
         }
     }
 
-    public void resetScroll(){
+    public void resetScroll() {
         hasSrolled = false;
     }
 
-    public void setEnabled(boolean value){
+    public void setEnabled(boolean value) {
         FillrAuthenticationStore.setEnabled(parentActivity,value);
     }
 
-    public FillrBrowserProperties getBrowserProps(){
+    public FillrBrowserProperties getBrowserProps() {
         return mBrowserProps;
     }
 
-    public WidgetSource getWidgetSource()
-    {
+    public WidgetSource getWidgetSource() {
         return FillrAuthenticationStore.widgetSource(parentActivity);
     }
 
-    public void setWidgetSource(WidgetSource source)
-    {
+    public void setWidgetSource(WidgetSource source) {
         FillrAuthenticationStore.setWidgetSource(parentActivity,source);
     }
 }

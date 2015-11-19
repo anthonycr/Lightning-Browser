@@ -39,6 +39,7 @@ import com.fillr.browsersdk.utilities.FillrUtils;
  * Created by AlexZhaoBin on 13/05/15.
  */
 public class FillrToolbarView extends RelativeLayout {
+
     private boolean alreadyInitialized = false;
     private FillrToolbarView toolbarView;
     private Context mContext;
@@ -71,10 +72,12 @@ public class FillrToolbarView extends RelativeLayout {
     }
 
     private void initViews(final Context context) {
+
         if (alreadyInitialized) {
             // Only initialize once
             return;
         }
+
         alreadyInitialized = true;
 
         toolbarView = this;
@@ -138,6 +141,7 @@ public class FillrToolbarView extends RelativeLayout {
         relativeParams.addRule(RelativeLayout.CENTER_VERTICAL);
         relativeParams.setMargins(dpToPixel(context, 10), 0, dpToPixel(context, 10), 0);
         this.addView(mWhatsThisText, relativeParams);
+
         if (isFillrAppInstalled()) {
             mWhatsThisText.setVisibility(View.INVISIBLE);
         } else {
@@ -156,6 +160,7 @@ public class FillrToolbarView extends RelativeLayout {
                 } else {
                     Fillr.getInstance().showDownloadDialog(mContext, DIALOG_ORIGIN_FILL_BUTTON);
                 }
+
                 toolbarView.setVisibility(View.INVISIBLE);
 
                 // To avoid double tap, set a timer to re-enable the button
@@ -192,53 +197,53 @@ public class FillrToolbarView extends RelativeLayout {
             @Override
             public void onGlobalLayout() {
 
-                Fillr instance = Fillr.getInstance();
-                if (instance != null) {
-                    if (FillrAuthenticationStore.isEnabled(mContext) && instance.webViewHasFocus()) {
+            Fillr instance = Fillr.getInstance();
+            if (instance != null) {
+                if (FillrAuthenticationStore.isEnabled(mContext) && instance.webViewHasFocus()) {
 
-                        Rect displayRect = new Rect();
-                        toolbarView.getWindowVisibleDisplayFrame(displayRect);
-                        int rootHeight = toolbarView.getRootView().getHeight();
-                        // r.bottom is the position above soft keypad or device button.
-                        // if keypad is shown, the r.bottom is smaller than that before.
-                        int keypadHeight = rootHeight - displayRect.bottom;
+                    Rect displayRect = new Rect();
+                    toolbarView.getWindowVisibleDisplayFrame(displayRect);
+                    int rootHeight = toolbarView.getRootView().getHeight();
+                    // r.bottom is the position above soft keypad or device button.
+                    // if keypad is shown, the r.bottom is smaller than that before.
+                    int keypadHeight = rootHeight - displayRect.bottom;
 
-                        if (keypadHeight > rootHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
-                            if (!shouldDismissToolbar) {
-                                // keyboard is opened
-                                toolbarView.setVisibility(View.VISIBLE);
-                                autofillTextView.setTextColor(getResources().getColorStateList(R.color.toolbar_text_color));
-                                autofillTextView.setOnTouchListener(onToolbarTextTouch);
+                    if (keypadHeight > rootHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                        if (!shouldDismissToolbar) {
+                            // keyboard is opened
+                            toolbarView.setVisibility(View.VISIBLE);
+                            autofillTextView.setTextColor(getResources().getColorStateList(R.color.toolbar_text_color));
+                            autofillTextView.setOnTouchListener(onToolbarTextTouch);
 
-                                CharSequence text = context.getText(R.string.install_fillr_tool_bar_text);
+                            CharSequence text = context.getText(R.string.install_fillr_tool_bar_text);
 
-                                if (isFillrAppInstalled()) {
-                                    autofillIcon.setVisibility(View.VISIBLE);
-                                    autofillTextView.setText(text);
-                                    mWhatsThisText.setVisibility(View.INVISIBLE);
-                                } else {
-                                    String browserName = getFillrBarText(context);
-                                    if (browserName != null) {
-                                        text = browserName;
-                                    }
-                                    autofillIcon.setVisibility(View.VISIBLE);
-                                    autofillTextView.setText(text);
-                                    mWhatsThisText.setVisibility(View.VISIBLE);
-                                }
-                                instance.scrollWebView();
+                            if (isFillrAppInstalled()) {
+                                autofillIcon.setVisibility(View.VISIBLE);
+                                autofillTextView.setText(text);
+                                mWhatsThisText.setVisibility(View.INVISIBLE);
                             } else {
-                                shouldDismissToolbar = false;
+                                String browserName = getFillrBarText(context);
+                                if (browserName != null) {
+                                    text = browserName;
+                                }
+                                autofillIcon.setVisibility(View.VISIBLE);
+                                autofillTextView.setText(text);
+                                mWhatsThisText.setVisibility(View.VISIBLE);
                             }
+                            instance.scrollWebView();
                         } else {
-                            // keyboard is closed
-                            toolbarView.setVisibility(View.INVISIBLE);
-                            instance.resetScroll();
+                            shouldDismissToolbar = false;
                         }
                     } else {
+                        // keyboard is closed
                         toolbarView.setVisibility(View.INVISIBLE);
                         instance.resetScroll();
                     }
+                } else {
+                    toolbarView.setVisibility(View.INVISIBLE);
+                    instance.resetScroll();
                 }
+            }
             }
         });
     }
@@ -278,7 +283,6 @@ public class FillrToolbarView extends RelativeLayout {
     public boolean isFillrAppInstalled() {
         return FillrUtils.isPackageInstalled(Fillr.FILLR_PACKAGE_NAME, mContext);
     }
-
 
     private int dpToPixel(Context context, int dp) {
         Resources resources = context.getResources();
