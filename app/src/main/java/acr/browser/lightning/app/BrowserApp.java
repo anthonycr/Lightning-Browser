@@ -2,7 +2,6 @@ package acr.browser.lightning.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
 
 import com.squareup.leakcanary.LeakCanary;
 
@@ -22,7 +21,6 @@ public class BrowserApp extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         sContext = base;
-        MultiDex.install(this);
     }
 
     public static Context getAppContext() {
