@@ -96,5 +96,6 @@ dependencies {
 
     provided 'javax.annotation:jsr250-api:1.0'
 
+    compile 'com.android.support:multidex:1.0.1'
     compile project(':FillrSDK')
 }
