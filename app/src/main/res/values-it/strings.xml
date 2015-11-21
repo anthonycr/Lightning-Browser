@@ -53,7 +53,7 @@
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato mentre navighi</string>
     <string name="clear_cookies">Cancella i cookies</string>
-    <string name="clear_history">Clear Browser History</string>
+    <string name="clear_history">Cancella la cronologia</string>
     <string name="dialog_image">Cosa vuoi fare con questa immagine?</string>
     <string name="action_download">Scarica</string>
     <string name="action_open">Apri</string>
@@ -90,22 +90,22 @@
     <string name="size_small">Piccolo</string>
     <string name="size_smallest">Più piccolo</string>
     <string name="title_error">Errore</string>
-    <string name="dialog_import_error">Nessun browser è stato trovato.</string>
+    <string name="dialog_import_error">Non è stato trovato alcun browser.</string>
     <string name="hint_title">Titolo</string>
     <string name="hint_url">URL</string>
-    <string name="title_edit_bookmark">Edita</string>
-    <string name="action_edit">Edita</string>
+    <string name="title_edit_bookmark">Modifica segnalibro</string>
+    <string name="action_edit">Modifica</string>
     <string name="action_incognito">Nuova scheda in incognito</string>
     <string name="action_homepage">Default</string>
     <string name="action_back">Indietro</string>
     <string name="action_find">Trova nella pagina</string>
-    <string name="download_pending">Inizio download\u2026</string>
-    <string name="cannot_download">Può solo scaricare \"http\" or \"https\" URLs.</string>
+    <string name="download_pending">Avvio download\u2026</string>
+    <string name="cannot_download">Puoi scaricare solo da URLs \"http\" o \"https\".</string>
     <string name="download_no_sdcard_dlg_title" >Nessuna SD Card trovata.</string>
     <string name="download_no_sdcard_dlg_msg" >USB storage is required to download the file.</string>
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
     <string name="download_sdcard_busy_dlg_msg" >The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
-    <string name="incognito_cookies">Enable Cookies in Incognito Mode</string>
+    <string name="incognito_cookies">Abilita i cookies nella modalità incognito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuale</string>
     <string name="action_auto">Automatica</string>
@@ -160,7 +160,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Reopened old tab</string>
+    <string name="deleted_tab">Scheda precedente riaperta</string>
     <string name="rendering_mode">Rendering Mode</string>
     <string name="name_inverted">Inverso</string>
     <string name="name_grayscale">Scala di grigi</string>
@@ -174,7 +174,7 @@
     <string name="import_backup">Importa i segnalibri da un backup</string>
     <string name="bookmark_export_path">Segnalibri esportati</string>
     <string name="bookmark_settings">Segnalibri</string>
-    <string name="import_bookmark_error">Impossibile importare i segnalibri da file</string>
+    <string name="import_bookmark_error">Impossibile importare i segnalibri dal file</string>
     <string name="title_chooser">Scegli un file</string>
     <string name="settings_general">Generali</string>
     <string name="settings_display">Display</string>
@@ -187,12 +187,12 @@
     <string name="color_mode">Attiva modalità colore</string>
     <string name="reading_mode">Modalità lettura</string>
     <string name="loading">Caricamento&#8230;</string>
-    <string name="loading_failed">Impossibile caricare nulla dalla pagina.</string>
+    <string name="loading_failed">Impossibile caricare la pagina web.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
-    <string name="url_contents">URL Box Contents</string>
-    <string name="text_encoding">Text Encoding</string>
+    <string name="url_contents">Contenuto del campo URL</string>
+    <string name="text_encoding">Codifica del testo</string>
     <string-array name="url_content_array">
         <item >Dominio (default)</item>
         <item >URL</item>
@@ -207,9 +207,14 @@
     <string name="folder">Nome cartella</string>
     <string name="action_folder">Cartella</string>
     <string name="action_rename">Rinomina</string>
-    <string name="title_rename_folder">Rinomina cartella</string>
+    <string name="title_rename_folder">Rinomina la cartella</string>
     <string name="dialog_folder">Cosa vuoi fare con questa cartella?</string>
     <string name="clear_web_storage">Clear Web Storage</string>
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
     <string name="message_web_storage_cleared">Web Storage Cleared</string>
+    <string name="hosts_source">Fonte file host</string>
+    <string name="settings_adblock">Impostazioni di Ad Block</string>
+    <string name="tabs_in_drawer">Mostra le schede nel menù</string>
+    <string name="do_not_track">\'Non tenere traccia\'</string>
+    <string name="remove_identifying_headers">Rimuovi header di identificazione</string>
 </resources>
