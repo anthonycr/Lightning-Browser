@@ -302,6 +302,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             mArrowImage.setImageDrawable(mArrowDrawable);
         } else {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
             mArrowImage.setImageResource(R.drawable.ic_action_home);
             mArrowImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         }

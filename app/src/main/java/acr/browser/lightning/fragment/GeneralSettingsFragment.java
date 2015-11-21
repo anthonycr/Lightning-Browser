@@ -563,6 +563,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 return true;
             case SETTINGS_DRAWERTABS:
                 mPreferenceManager.setShowTabsInDrawer(checked);
+                return true;
             default:
                 return false;
         }
