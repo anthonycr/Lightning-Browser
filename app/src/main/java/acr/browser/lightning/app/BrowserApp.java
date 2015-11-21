@@ -34,5 +34,4 @@ public class BrowserApp extends Application {
     private void buildDepencyGraph() {
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
     }
-
 }

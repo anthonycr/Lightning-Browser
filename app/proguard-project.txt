@@ -111,3 +111,54 @@
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
 
 -dontwarn org.apache.http.HttpHost
+
+
+-keepattributes Signature
+-keepattributes InnerClasses
+
+# OkIO and OkHTTP
+
+-dontwarn com.squareup.okhttp.**
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn rx.**
+-dontwarn com.squareup.okhttp.*
+-dontwarn retrofit.appengine.UrlFetchClient
+
+-keepattributes *Annotation*
+-keep class retrofit.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit.http.* <methods>;
+}
+
+-keep class com.fillr.** { *; }
+
+# Gson
+-keep interface com.google.gson.** { *; }
+-keep class com.google.gson.** { *; }
+
+# Retrofit
+-keep class com.google.inject.** { *; }
+-keep class org.apache.http.** { *; }
+-keep class org.apache.james.mime4j.** { *; }
+-keep class javax.inject.** { *; }
+-keep class retrofit.** { *; }
+-keep interface retrofit.** { *; }
+
+-dontwarn rx.**
+-dontwarn com.google.appengine.api.urlfetch.**
+-dontwarn okio.**
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+
+# Classes that will be serialized/deserialized over Gson
+
+# OkIO and OkHTTP
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
+-dontwarn retrofit.**
+-dontwarn com.google.android.gms.**
+-keep class com.google.android.gms.** { *; }

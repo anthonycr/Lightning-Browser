@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="install_fillr_title">Надежное автозаполнение от Fillr</string>
+    <string name="install_fillr_content">Fillr – самое надежное и точное приложение в мире для автозаполнения. Данные вашего профиля защищены PIN-кодом и хранятся только на устройстве, тщательно зашифрованные приложением. Установка займет меньше минуты, а после нее вы вернетесь на этот экран.</string>
+    <string name="install_fillr_button_yes">Установите Fillr бесплатно и сэкономьте мое время</string>
+    <string name="install_fillr_button_no">Не сейчас, я заполню эти поля вручную</string>
+    <string name="install_fillr_tool_bar_text">Использовать безопасное автозаполнение</string>
+    <string name="install_fillr_bar_bspec">Установить автозаполнение для %1$s</string>
+    <string name="install_fillr_title_bspec">Автозаполнение %1$s через Fillr</string>
+    <string name="install_fillr_button_yes_bspec">Установить Fillr, автозаполнение для %1$s</string>
+</resources>

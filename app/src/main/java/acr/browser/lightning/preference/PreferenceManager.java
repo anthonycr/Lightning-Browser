@@ -53,6 +53,7 @@ public class PreferenceManager {
         public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
         public static final String DO_NOT_TRACK = "doNotTrack";
         public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
+        public static final String FILLR_AUTOFILL = "FillrAutofill";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -255,6 +256,10 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
+    public boolean getFillrAutofillEnabled(boolean defaultValue) {
+        return mPrefs.getBoolean(Name.FILLR_AUTOFILL, defaultValue);
+    }
+
     private void putBoolean(String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -273,6 +278,10 @@ public class PreferenceManager {
 
     public void setDoNotTrackEnabled(boolean doNotTrack) {
         putBoolean(Name.DO_NOT_TRACK, doNotTrack);
+    }
+
+    public void setFillrAutofillEnabled(boolean enabled) { 
+        putBoolean(Name.FILLR_AUTOFILL, enabled); 
     }
 
     public void setShowTabsInDrawer(boolean show) {
