@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import acr.browser.lightning.utils.Utils;
 
 public class SearchAdapter extends BaseAdapter implements Filterable {
 
+    private static final String TAG = SearchAdapter.class.getSimpleName();
     private static final Pattern SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
     private final List<HistoryItem> mHistory = new ArrayList<>(5);
     private final List<HistoryItem> mBookmarks = new ArrayList<>(5);
@@ -388,6 +390,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
+            if (connection.getResponseCode() >= HttpURLConnection.HTTP_MULT_CHOICE ||
+                    connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
+                Log.e(TAG, "Search API Responded with code: " + connection.getResponseCode());
+                return cacheFile;
+            }
             in = connection.getInputStream();
 
             if (in != null) {
