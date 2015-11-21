@@ -380,8 +380,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             language = DEFAULT_LANGUAGE;
         }
         try {
-            URL url = new URL("https://google.com/complete/search?q=" + query
-                    + "&output=toolbar&hl=" + language);
+            // Old API that doesn't support HTTPS
+            // http://google.com/complete/search?q= + query + &output=toolbar&hl= + language
+            URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&hl="
+                    + language + "&q=" + query);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
