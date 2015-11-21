@@ -72,6 +72,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final Drawable mSearchDrawable;
     private final Drawable mHistoryDrawable;
     private final Drawable mBookmarkDrawable;
+    private String mLanguage;
 
     @Inject
     HistoryDatabase mDatabaseHandler;
@@ -96,6 +97,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
         delete.setPriority(Thread.MIN_PRIORITY);
         delete.start();
+        mLanguage = Locale.getDefault().getLanguage();
+        if (mLanguage.isEmpty()) {
+            mLanguage = DEFAULT_LANGUAGE;
+        }
     }
 
     private static void deleteOldCacheFiles() {
@@ -303,7 +308,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            File cache = downloadSuggestionsForQuery(query);
+            File cache = downloadSuggestionsForQuery(query, mLanguage);
             if (!cache.exists()) {
                 return filter;
             }
@@ -365,7 +370,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
      * @param query the query to get suggestions for
      * @return the cache file containing the suggestions
      */
-    private static File downloadSuggestionsForQuery(String query) {
+    private static File downloadSuggestionsForQuery(String query, String language) {
         File cacheFile = new File(BrowserApp.getAppContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
@@ -375,10 +380,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
         InputStream in = null;
         FileOutputStream fos = null;
-        String language = Locale.getDefault().getLanguage();
-        if (language.isEmpty()) {
-            language = DEFAULT_LANGUAGE;
-        }
         try {
             // Old API that doesn't support HTTPS
             // http://google.com/complete/search?q= + query + &output=toolbar&hl= + language
