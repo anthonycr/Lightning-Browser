@@ -106,7 +106,9 @@ import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.receiver.NetworkReceiver;
+
 import com.anthonycr.grant.PermissionsManager;
+
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -846,7 +848,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // This is commodity to breack the flow between regular tab management and the CLIQZ's search
     // interface.
     private void switchTabs(final LightningView currentView, final LightningView newView) {
-        final WebView currentWebView = currentView != null ? currentView.getWebView() : null;
         final WebView newWebView = newView != null ? newView.getWebView() : null;
         if (newView == null || newWebView == null) {
             return;
@@ -866,13 +867,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             currentView.onPause();
         }
         newView.setForegroundTab(true);
-        if (currentWebView != null) {
-            updateUrl(newView.getUrl(), true);
-            updateProgress(newView.getProgress());
-        } else {
-            updateUrl("", true);
-            updateProgress(0);
-        }
+        updateUrl(newView.getUrl(), true);
+        updateProgress(newView.getProgress());
 
         removeViewFromParent(newWebView);
         mBrowserFrame.addView(newWebView, MATCH_PARENT);
@@ -1043,19 +1039,23 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mBrowserFrame.setBackgroundColor(mBackgroundColor);
         }
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        mTabsManager.deleteTab(position);
+        if (mTabsManager.size() == 1 && currentTab != null &&
+                (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
+                        currentTab.getUrl().equals(mPreferences.getHomepage()))) {
+            closeActivity();
+            return;
+        } else {
+            mTabsManager.deleteTab(position);
+        }
         final LightningView afterTab = mTabsManager.getCurrentTab();
         if (afterTab == null) {
-//            if (currentTab != null && (UrlUtils.isSpecialUrl(currentTab.getUrl())
-//                    || currentTab.getUrl().equals(mPreferenceManager.getHomepage()))) {
-//                closeActivity();
-//            } else {
-            performExitCleanUp();
-            finish();
-//            }
+            closeBrowser();
+            return;
         } else if (afterTab != currentTab) {
             switchTabs(currentTab, afterTab);
-            currentTab.pauseTimers();
+            if (currentTab != null) {
+                currentTab.pauseTimers();
+            }
         }
 
         mEventBus.post(new BrowserEvents.TabsChanged());
