@@ -30,7 +30,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -49,7 +48,6 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.async.ImageDownloadTask;
 import acr.browser.lightning.utils.ThemeUtils;
-import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -192,22 +190,17 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Subscribe
-    public void addBookmark(final BrowserEvents.AddBookmark event) {
-        final HistoryItem item = new HistoryItem(event.url, event.title);
-        if (!UrlUtils.isSpecialUrl(item.getUrl())) {
-            if (mBookmarkManager.addBookmark(item)) {
-                mBookmarks.add(item);
-                Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
-                mBookmarkAdapter.notifyDataSetChanged();
-                mEventBus.post(new BookmarkEvents.Added(item));
-                updateBookmarkIndicator(event.url);
-            }
-        }
+    public void addBookmark(final BrowserEvents.BookmarkAdded event) {
+        updateBookmarkIndicator(event.url);
+        String folder = mBookmarkManager.getCurrentFolder();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
     @Subscribe
     public void currentPageInfo(final BrowserEvents.CurrentPageUrl event) {
         updateBookmarkIndicator(event.url);
+        String folder = mBookmarkManager.getCurrentFolder();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
     @Subscribe
@@ -316,7 +309,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.action_add_bookmark:
-                mEventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                mEventBus.post(new BookmarkEvents.ToggleBookmarkForCurrentPage());
                 break;
             case R.id.action_reading:
                 LightningView currentTab = mTabsManager.getCurrentTab();

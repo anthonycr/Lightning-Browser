@@ -23,20 +23,9 @@ public final class BookmarkEvents {
     }
 
     /**
-     * The user ask to bookmark the currently displayed page
+     * The user ask to add/del a bookmark to the currently displayed page
      */
-    public static class WantToBookmarkCurrentPage {
-    }
-
-    /**
-     * The bookmark was added
-     */
-    public static class Added {
-        public final HistoryItem item;
-
-        public Added(final HistoryItem item) {
-            this.item = item;
-        }
+    public static class ToggleBookmarkForCurrentPage {
     }
 
     /**
