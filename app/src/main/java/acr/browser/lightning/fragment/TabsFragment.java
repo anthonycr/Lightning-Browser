@@ -35,12 +35,12 @@ import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
-import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -71,7 +71,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     private RecyclerView mRecyclerView;
     private LightningViewAdapter mTabsAdapter;
-    private UIController mUiController;
 
     @Inject
     TabsManager tabsManager;
@@ -91,7 +90,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         super.onCreate(savedInstanceState);
         final Bundle arguments = getArguments();
         final Context context = getContext();
-        mUiController = (UIController) getActivity();
         mIsIncognito = arguments.getBoolean(IS_INCOGNITO, false);
         mShowInNavigationDrawer = arguments.getBoolean(VERTICAL_MODE, true);
         mDarkTheme = mPreferences.getUseTheme() != 0 || mIsIncognito;
@@ -264,7 +262,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 if (!mDrawerTabs) {
                     foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
                     if (!mIsIncognito && mColorMode) {
-                        foregroundDrawable.setColorFilter(mUiController.getUiColor(), PorterDuff.Mode.SRC_IN);
+                        foregroundDrawable.setColorFilter(((BrowserActivity)getActivity()).getUiColor(),
+                                PorterDuff.Mode.SRC_IN);
                     }
                 } else {
                     foregroundDrawable = mForegroundTabDrawable;
@@ -275,7 +274,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                     holder.layout.setBackgroundDrawable(foregroundDrawable);
                 }
                 if (!mIsIncognito && mColorMode) {
-                    mUiController.changeToolbarBackground(favicon, foregroundDrawable);
+                    ((BrowserActivity)getActivity()).changeToolbarBackground(favicon, foregroundDrawable);
                 }
                 holder.favicon.setImageBitmap(favicon);
             } else {

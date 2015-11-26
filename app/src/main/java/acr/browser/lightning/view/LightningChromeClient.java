@@ -27,7 +27,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.controller.UIController;
+
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 import acr.browser.lightning.utils.Utils;
@@ -42,12 +42,10 @@ class LightningChromeClient extends WebChromeClient {
 
     private final Activity mActivity;
     private final LightningView mLightningView;
-    private final UIController mUIController;
     private final Bus eventBus;
 
     LightningChromeClient(Activity activity, LightningView lightningView) {
         mActivity = activity;
-        mUIController = (UIController) activity;
         mLightningView = lightningView;
         eventBus = BrowserApp.getAppComponent().getBus();
     }
@@ -55,7 +53,7 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
         if (mLightningView.isShown()) {
-            mUIController.updateProgress(newProgress);
+            eventBus.post(new BrowserEvents.UpdateProgress(newProgress));
         }
     }
 
@@ -106,8 +104,8 @@ class LightningChromeClient extends WebChromeClient {
             mLightningView.mTitle.setTitle(mActivity.getString(R.string.untitled));
         }
         eventBus.post(new BrowserEvents.TabsChanged());
-        if (view != null) {
-            mUIController.updateHistory(title, view.getUrl());
+        if (view != null && !mLightningView.mIsIncognitoTab) {
+            mLightningView.addItemToHistory(title, view.getUrl());
         }
     }
 
@@ -156,33 +154,33 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
                                   Message resultMsg) {
-        mUIController.onCreateWindow(resultMsg);
+        eventBus.post(new BrowserEvents.CreateWindow(resultMsg));
         return true;
     }
 
     @Override
     public void onCloseWindow(WebView window) {
-        mUIController.onCloseWindow(mLightningView);
+        eventBus.post(new BrowserEvents.CloseWindow(mLightningView));
     }
 
     @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-        mUIController.openFileChooser(uploadMsg);
+        eventBus.post(new BrowserEvents.OpenFileChooser(uploadMsg));
     }
 
     @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
-        mUIController.openFileChooser(uploadMsg);
+        eventBus.post(new BrowserEvents.OpenFileChooser(uploadMsg));
     }
 
     @SuppressWarnings("unused")
     public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
-        mUIController.openFileChooser(uploadMsg);
+        eventBus.post(new BrowserEvents.OpenFileChooser(uploadMsg));
     }
 
     public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
                                      WebChromeClient.FileChooserParams fileChooserParams) {
-        mUIController.showFileChooser(filePathCallback);
+        eventBus.post(new BrowserEvents.ShowFileChooser(filePathCallback));
         return true;
     }
 
@@ -216,18 +214,17 @@ class LightningChromeClient extends WebChromeClient {
 
     @Override
     public void onHideCustomView() {
-        mUIController.onHideCustomView();
+        eventBus.post(new BrowserEvents.HideCustomView());
     }
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        mUIController.onShowCustomView(view, callback);
+        eventBus.post(new BrowserEvents.ShowCustomView(view, callback));
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onShowCustomView(View view, int requestedOrientation,
-                                 CustomViewCallback callback) {
-        mUIController.onShowCustomView(view, callback, requestedOrientation);
+    public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) {
+        eventBus.post(new BrowserEvents.ShowCustomView(view, callback, requestedOrientation));
     }
 }
