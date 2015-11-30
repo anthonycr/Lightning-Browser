@@ -167,7 +167,6 @@
     <string name="close_all_tabs">全てのタブを閉じる</string>
     <string name="close_tab">タブを閉じる</string>
     <string name="color_mode">カラーモードを有効にする</string>
-    <string name="dark_theme">ダークテーマ</string>
     <string name="action_folder">フォルダ</string>
     <string name="action_rename">リネーム</string>
     <string name="clear_web_storage">Webストレージをクリア</string>
@@ -177,4 +176,6 @@
     <string name="reading_mode">リーダーモード</string>
     <string name="tabs">タブ</string>
     <string name="third_party">サードパーティCookieを無効にする</string>
+    <string name="tabs_in_drawer">ナビゲーションドロワでタブを表示する</string>
+    <string name="url_contents">URL-Boxコンテンツ</string>
 </resources>
