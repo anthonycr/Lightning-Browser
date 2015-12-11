@@ -87,9 +87,16 @@ public final class BrowserEvents {
      */
     public final static class OpenUrlInNewTab {
         public final String url;
+        public final boolean show;
 
         public OpenUrlInNewTab(final String url) {
-            this.url = url;
+            this(url, true/*show*/);
         }
+
+        public OpenUrlInNewTab(final String url, boolean show) {
+            this.url = url;
+            this.show = show;
+        }
+
     }
 }

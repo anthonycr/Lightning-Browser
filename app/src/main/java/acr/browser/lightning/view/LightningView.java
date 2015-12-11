@@ -20,8 +20,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -64,6 +66,10 @@ public class LightningView {
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
     public static final String HEADER_DNT = "DNT";
 
+    private enum UrlType {
+        REGULAR, IMAGE, HISTORY, BOOKMARK
+    }
+
     final LightningViewTitle mTitle;
     private WebView mWebView;
     final boolean mIsIncognitoTab;
@@ -87,6 +93,9 @@ public class LightningView {
     };
     private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
     private final Map<String, String> mRequestHeaders = new ArrayMap<>();
+
+    private transient String mUrlForContextMenu;
+    private transient UrlType mUrlTypeForContextMenu;
 
     @Inject
     Bus mEventBus;
@@ -646,10 +655,10 @@ public class LightningView {
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
             if (currentUrl.endsWith(HistoryPage.FILENAME)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
+                    handleLongClick(url, UrlType.HISTORY);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
+                    handleLongClick(newUrl, UrlType.HISTORY);
                 }
             } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
                 if (url != null) {
@@ -663,22 +672,53 @@ public class LightningView {
             if (url != null) {
                 if (result != null) {
                     if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                        mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, url, getUserAgent());
+                        handleLongClick(url, UrlType.IMAGE);
                     } else {
-                        mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                        handleLongClick(url, UrlType.REGULAR);
                     }
                 } else {
-                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                    handleLongClick(url, UrlType.REGULAR);
                 }
             } else if (result != null && result.getExtra() != null) {
                 final String newUrl = result.getExtra();
                 if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                    mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, newUrl, getUserAgent());
+                    handleLongClick(newUrl, UrlType.IMAGE);
                 } else {
-                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                    handleLongClick(newUrl, UrlType.REGULAR);
                 }
             }
         }
+    }
+
+    public void handleLongClick(String url, UrlType type) {
+        this.mUrlForContextMenu = url;
+        this.mUrlTypeForContextMenu = type;
+        mActivity.registerForContextMenu(mWebView);
+    }
+
+    public void displayContextMenu(ContextMenu menu, View v) {
+
+        if (mUrlForContextMenu == null) {
+            return;
+        }
+        menu.setHeaderTitle(mUrlForContextMenu);
+        switch (mUrlTypeForContextMenu) {
+
+            case REGULAR:
+                mBookmarksDialogBuilder.buildLongPressLinkMenu(mActivity, mUrlForContextMenu, menu);
+                break;
+            case IMAGE:
+                mBookmarksDialogBuilder.buildLongPressImageMenu(mActivity, mUrlForContextMenu, getUserAgent(), menu);
+                break;
+            case HISTORY:
+                mBookmarksDialogBuilder.buildLongPressedHistoryLinkDialog(mActivity, mUrlForContextMenu, menu);
+                break;
+            case BOOKMARK:
+                break;
+        }
+
+        mActivity.unregisterForContextMenu(mWebView);
+        mUrlForContextMenu = null;
     }
 
     public boolean canGoBack() {

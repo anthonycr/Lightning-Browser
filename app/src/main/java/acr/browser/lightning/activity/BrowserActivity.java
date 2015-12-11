@@ -43,6 +43,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -2012,7 +2013,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void loadUrlInNewTab(final BrowserEvents.OpenUrlInNewTab event) {
-            BrowserActivity.this.newTab(event.url, true);
+            BrowserActivity.this.newTab(event.url, event.show);
             mDrawerLayout.closeDrawers();
         }
 
@@ -2192,4 +2193,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
         }
     };
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab == null) {
+            return;
+        }
+        currentTab.displayContextMenu(menu, v);
+    }
 }
