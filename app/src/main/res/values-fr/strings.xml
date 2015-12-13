@@ -1,36 +1,230 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2013 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+  
     <string name="app_name">Lightning</string>
-    <string name="tabs">Onglets</string>
+    <string name="action_new_tab">Nouvel onglet</string>
+    <string name="action_share">Partager</string>
+    <string name="action_history">Historique</string>
+    <string name="action_bookmarks">Favoris</string>
+    <string name="action_add_bookmark">Ajouter aux favoris</string>
+    <string name="action_copy">Copier l\'adresse</string>
+    <string name="action_forward">Transférer</string>
     <string name="settings">Paramètres</string>
     <string name="location">Accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">User Agent</string>
+    <string name="flash">Activer Adobe Flash</string>
+    <string name="home">Page d\'accueil</string>
+    <string name="fullscreen">Mode plein écran</string>
+    <string name="java">Activer JavaScript</string>
+    <string name="download">Téléchargement</string>
+    <string name="settings_advanced">Paramètres avancés</string>
+    <string name="apache">Apache License 2.0</string>
+    <string name="version">Version application</string>
+    <string name="cache">Effacer le cache en quittant</string>
+    <string name="reflow">Activer repositionnement du texte</string>
+    <string name="block">Bloquer les images</string>
+    <string name="window">Autoriser les sites à ouvrir de nouvelles fenêtres</string>
+    <string name="cookies">Activer les cookies</string>
+    <string name="importbookmarks">Importer les favoris depuis un navigateur</string>
+    <string name="size">Taille du texte</string>
+    <string name="recommended">Recommendé</string>
+    <string name="search">Moteur de recherche</string>
+    <string name="search_hint">Rechercher</string>
+    <string name="wideViewPort">Utiliser large fenêtre d\'affichage</string>
+    <string name="overViewMode">Charger les pages en mode aperçu</string>
+    <string name="restore">Restaurer les onglets perdus au démarrage</string>
+    <string name="stock_browser_unavailable">Aucun navigateur détecté</string>
+    <string name="stock_browser_available">Navigateur compatible détecté</string>
+    <string name="fullScreenOption">Masquer la barre d\'état lors de la navigation</string>
+    <string name="clear_cookies">Effacer les cookies du navigateur</string>
+    <string name="clear_history">Effacer l\'historique du navigateur</string>
+    <string name="dialog_image">Que voulez-vous faire avec cette image ?</string>
+    <string name="action_download">Télécharger</string>
+    <string name="action_open">Ouvrir</string>
+    <string name="dialog_link">Que voulez-vous faire avec ce lien ?</string>
+    <string name="dialog_title_share">Partager cette page</string>
+    <string name="dialog_history_long_press">Que voulez-vous faire avec cet historique ?</string>
+    <string name="dialog_bookmark">Que voulez-vous faire avec ce favori ?</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_blank">Page vide</string>
+    <string name="agent_default">Par défaut</string>
+    <string name="agent_desktop">Bureau</string>
+    <string name="agent_mobile">Mobile</string>
+    <string name="agent_custom">Personnalisé</string>
+    <string name="title_search_engine">Moteur de recherche</string>
+    <string name="action_ok">OK</string>
+    <string name="dialog_download">Voulez-vous télécharger ce fichier ?</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="title_warning">Avertissement</string>
+    <string name="dialog_adobe_not_installed">Adobe Flash Player n\'a pas été détecté.\nVeuillez installer Flash Player.</string>
+    <string name="title_user_agent">User Agent</string>
+    <string name="title_download_location">Téléchargement</string>
+    <string name="title_custom_homepage">Page d\'accueil personnalisée</string>
+    <string name="action_webpage">Page internet</string>
+    <string name="title_clear_history">Effacer l\'historique</string>
+    <string name="title_clear_cookies">Effacer les cookies</string>
+    <string name="dialog_history">Voulez-vous effacer tout l\'historique du navigateur ?</string>
+    <string name="dialog_cookies">Voulez-vous effacer tous les cookies du navigateur ?</string>
+    <string name="action_yes">Oui</string>
+    <string name="action_no">Non</string>
+    <string name="title_text_size">Taille du texte</string>
+    <string name="size_largest">Plus grand</string>
+    <string name="size_large">Grand</string>
+    <string name="size_normal">Normal</string>
+    <string name="size_small">Petit</string>
+    <string name="size_smallest">Plus petit</string>
+    <string name="title_error">Erreur</string>
+    <string name="dialog_import_error">Aucun navigateur n\'a été détecté pour importer les favoris.</string>
+    <string name="hint_title">Titre</string>
+    <string name="hint_url">Adresse</string>
+    <string name="title_edit_bookmark">Éditer le favori</string>
+    <string name="action_edit">Éditer</string>
+    <string name="action_incognito">Onglet incognito</string>
+    <string name="action_homepage">Par défaut</string>
+    <string name="action_back">Retour</string>
+    <string name="action_find">Rechercher dans la page</string>
+    <string name="download_pending">Démarrage du téléchargement\u2026</string>
+    <string name="cannot_download">Téléchargement d\'adresses \"http\" ou \"https\" uniquement.</string>
+    <string name="problem_download">Adresse invalide, impossible de télécharger</string>
+    <string name="problem_location_download">Impossible de télécharger à l\'emplacement spécifié</string>
+    <string name="download_no_sdcard_dlg_title">Aucune carte SD</string>
+    <string name="download_no_sdcard_dlg_msg">Le stockage USB est nécessaire pour télécharger le fichier.</string>
+    <string name="download_sdcard_busy_dlg_title">Stockage USB indisponible</string>
+    <string name="download_sdcard_busy_dlg_msg">Le stockage est occupé. Pour autoriser les téléchargements, appuyez sur Désactiver le stockage USB dans la notification.</string>
+    <string name="incognito_cookies">Activer les cookies en mode incognito</string>
+    <string name="title_flash">Adobe Flash</string>
+    <string name="action_manual">Manuel</string>
+    <string name="action_auto">Auto</string>
+    <string name="action_follow_me">Contact</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="clear_cache">Effacer le cache</string>
+    <string name="message_cache_cleared">Cache effacé</string>
+    <string name="message_import">Favoris ont été importés</string>
+    <string name="message_clear_history">Historique effacé</string>
+    <string name="message_cookies_cleared">Cookies effacés</string>
+    <string name="max_tabs">Onglets maximuns atteint</string>
+    <string name="message_text_copied">Texte copié dans le presse-papiers</string>
+    <string name="message_link_copied">Adresse copiée dans le presse-papiers</string>    
+    <string name="custom_url">Adresse personnalisée</string>
+    <string name="message_blocked_local">Le fichier local a été bloqué au chargement</string>
+    <string name="licenses">Licences open source</string>
+    <string name="suggestion">Recherche</string>
+    <string name="block_ads">Bloquer les publicités</string>
+    <string name="message_insecure_connection">La connexion à ce site n\'est pas sécurisée :\n%1$s\nContinuer ?</string>
+    <string name="message_certificate_date_invalid">la date du certificat est incorrecte</string>
+    <string name="message_certificate_expired">le certificat a expiré</string>
+    <string name="message_certificate_domain_mismatch">le domaine du certificat ne correspond pas au domaine du site</string>
+    <string name="message_certificate_invalid">le certificat est incorrect</string>
+    <string name="message_certificate_not_yet_valid">le certificat n\'est toujours pas correct</string>
+    <string name="message_certificate_untrusted">le certificat n\'est pas approuvé</string>
+    <string name="title_form_resubmission">Nouvel envoi du formulaire</string>
+    <string name="message_form_resubmission">Voulez-vous renvoyer les données ?</string>
+    <string name="message_location">\nSouhaiterait utiliser votre position</string>
+    <string name="action_allow">Autoriser</string>
+    <string name="action_dont_allow">Refuser</string>
+    <string name="title_sign_in">Connexion</string>
+    <string name="hint_username">Nom d\'utilisateur</string>
+    <string name="hint_password">Mot de passe</string>
+    <string name="google_suggestions">Suggestions de recherche</string>
+    <string name="powered_by_google">Proposé par Google</string>
+    <string name="http_proxy">Proxy HTTP</string>
+    <string-array name="proxy_choices_array">
+        <item>Aucun</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manuel</item>
+    </string-array>
+    <string name="manual_proxy">Proxy manuel</string>
+    <string name="host">Host :</string>
+    <string name="port">Port :</string>
+    <string name="use_tor_prompt">Il semble que vous avez installé Orbot. Voulez-vous utiliser Tor ?</string>
+    <string name="use_i2p_prompt">Il semble que vous avez installé I2P. Voulez-vous utiliser I2P ?</string>
+    <string name="install_orbot">Veuillez installer Orbot comme proxy avec Tor.</string>
+    <string name="i2p_not_running">I2P n\'est pas exécution.</string>
+    <string name="i2p_tunnels_not_ready">Les tunnels I2P ne sont pas encore prêts.</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
     <string name="clear_cookies_exit">Effacer les cookies en quittant</string>
     <string name="clear_history_exit">Effacer l\'historique en quittant</string>
-    <string name="flash">Activer Adobe Flash Player</string>
-    <string name="block_ads">Bloquer les publicités</string>
-    <string name="block">Bloquer les images</string>
-    <string name="third_party">Bloquer les cookies tiers</string>
-    <string name="home">Au démarrage</string>
-    <string name="fullscreen">Activer le mode plein écran</string>
-    <string name="java">Activer JavaScript</string>
-    <string name="invert_color">Inverser les couleurs</string>
-    <string name="dark_theme">Utiliser le thème sombre</string>
-    <string name="action_history">Historique</string>
-    <string name="action_bookmarks">Favoris</string>
-    <string name="action_add_bookmark">Ajouter aux favoris</string>
-    <string name="action_copy">Copier l\'URL</string>
-    <string name="action_share">Partager</string>
-    <string name="action_incognito">Onglet incognito</string>
-    <string name="action_new_tab">Nouvel onglet</string>
-    <string name="action_find">Rechercher dans la page</string>
-    <string name="reading_mode">Passer en mode lecture</string>
-    <string name="message_text_copied">Texte copié</string>
-    <string name="message_link_copied">URL copiée</string>
+    <string name="folder_default">Par défaut</string>
+    <string name="folder_custom">Personnalisé</string>
+    <string name="untitled">Exemple</string>
+    <string name="mpl_license">Licence Mozilla Public v. 2.0</string>
+    <string name="freeware">Freeware</string>
+    <string name="android_open_source_project">Android Open Source Project</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
+    <string name="deleted_tab">Réouvrir l\'ancien onglet</string>
+    <string name="rendering_mode">Mode de rendu</string>
+    <string name="name_inverted">Inversé</string>
+    <string name="name_grayscale">Niveaux de gris</string>
+    <string name="name_inverted_grayscale">Niveaux de gris inversés</string>
+    <string name="name_normal">Normal</string>
+    <string name="sync_history">Synchroniser l\'historique avec Google</string>
+    <string name="title_file_chooser">Explorateur de fichiers</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">Licence GNU Lesser General Public</string>
+    <string name="export_bookmarks">Exporter les favoris à sauvegarder</string>
+    <string name="import_backup">Importer les favoris depuis une sauvegarde</string>
+    <string name="bookmark_export_path">Favoris exportés dans</string>
+    <string name="bookmark_settings">Favoris</string>    
+    <string name="import_bookmark_error">Impossible d\'importer les favoris depuis le fichier</string>
+    <string name="title_chooser">Choisir un fichier</string>
     <string name="settings_general">Général</string>
-    <string name="bookmark_settings">Favoris</string>
     <string name="settings_display">Affichage</string>
     <string name="settings_privacy">Vie privée</string>
-    <string name="settings_about">A propos</string>
-    <string name="settings_about_explain">Tout savoir sur la version, l\'auteur et la licence.</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_about_explain">En savoir plus sur la version, l\'auteur et la licence.</string>
+    <string name="close_tab">Fermer l\'onglet</string>
+    <string name="close_all_tabs">Fermer tous les onglets</string>
+    <string name="third_party">Bloquer les cookies tiers</string>    
+    <string name="color_mode">Activer le mode couleur</string>
+    <string name="reading_mode">Mode lecteur</string>    
+    <string name="loading">Chargement&#8230;</string>
+    <string name="loading_failed">Impossible de charger quoi que ce soit depuis la page.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">Licence MIT</string>
+    <string name="url_contents">Contenu du champs adresse</string>
+    <string name="text_encoding">Encodage du texte</string>
+    <string-array name="url_content_array">
+        <item >Domaine (par défaut)</item>
+        <item >Adresse</item>
+        <item >Titre</item>
+    </string-array>
+        <string name="invert_color">Inverser la couleur</string>
+        <string name="dark_theme">Thème sombre</string>
+        <string name="tabs">Onglets</string>
+    <string name="theme">Thème</string>
+    <string name="light_theme">Thème clair</string>
+    <string name="black_theme">Thème noir (AMOLED)</string>
+    <string name="folder">Nom du dossier</string>
+    <string name="action_folder">Dossier</string>
+    <string name="action_rename">Renommer</string>
+    <string name="title_rename_folder">Renommer le dossier</string>
+    <string name="dialog_folder">Que voulez-vous faire avec ce dossier ?</string>
+    <string name="clear_web_storage">Effacer le stockage internet</string>
+    <string name="clear_web_storage_exit">Effacer le stockage internet en quittant</string>
+    <string name="message_web_storage_cleared">Stockage internet effacé</string>
+    <string name="hosts_source">Fichier Hosts source de blocage des publicités</string>
+    <string name="settings_adblock">Blocage des publicités</string>
+    <string name="tabs_in_drawer">Afficher les onglets dans le volet de navigation</string>
+    <string name="do_not_track">Demander de \'Ne pas pister\'</string>
+    <string name="remove_identifying_headers">Supprimer les en-têtes d\'dentification</string>
 </resources>
