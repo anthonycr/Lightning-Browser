@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -28,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,6 +62,7 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebView;
@@ -97,7 +96,6 @@ import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
-import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
@@ -119,7 +117,7 @@ import acr.browser.lightning.view.LightningView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public abstract class BrowserActivity extends ThemableBrowserActivity implements UIController, OnClickListener, OnLongClickListener {
+public abstract class BrowserActivity extends ThemableBrowserActivity implements OnClickListener, OnLongClickListener {
 
     // Static Layout
     @Bind(R.id.drawer_layout)
@@ -217,8 +215,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected abstract boolean isIncognito();
 
     abstract void closeActivity();
-
-    public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
     abstract void updateCookiePreference();
 
@@ -973,7 +969,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
     }
 
-    @Override
     public void closeEmptyTab() {
         final WebView currentWebView = mTabsManager.getCurrentWebView();
         if (currentWebView != null && currentWebView.copyBackForwardList().getSize() == 0) {
@@ -1239,7 +1234,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param favicon       the Bitmap to extract the color from
      * @param tabBackground the optional LinearLayout to color
      */
-    @Override
     public void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
         final int defaultColor = ContextCompat.getColor(this, R.color.primary_color);
         if (mCurrentUiColor == Color.BLACK) {
@@ -1288,18 +1282,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
     }
 
-    @Override
-    public boolean getUseDarkTheme() {
-        return mDarkTheme;
-    }
-
-    @ColorInt
-    @Override
     public int getUiColor() {
         return mCurrentUiColor;
     }
 
-    @Override
     public void updateUrl(@Nullable String url, boolean shortUrl) {
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
@@ -1332,30 +1318,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    @Override
     public void updateProgress(int n) {
         setIsLoading(n < 100);
         mProgressBar.setProgress(n);
-    }
-
-    void addItemToHistory(@Nullable final String title, @NonNull final String url) {
-        Runnable update = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mHistoryDatabase.visitHistoryItem(url, title);
-                } catch (IllegalStateException e) {
-                    Log.e(Constants.TAG, "IllegalStateException in updateHistory", e);
-                } catch (NullPointerException e) {
-                    Log.e(Constants.TAG, "NullPointerException in updateHistory", e);
-                } catch (SQLiteException e) {
-                    Log.e(Constants.TAG, "SQLiteException in updateHistory", e);
-                }
-            }
-        };
-        if (!UrlUtils.isSpecialUrl(url)) {
-            new Thread(update).start();
-        }
     }
 
     /**
@@ -1448,7 +1413,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * param ValueCallback is the message from the WebView indicating a file chooser
      * should be opened
      */
-    @Override
     public void openFileChooser(ValueCallback<Uri> uploadMsg) {
         mUploadMessage = uploadMsg;
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
@@ -1500,7 +1464,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mFilePathCallback = null;
     }
 
-    @Override
     public void showFileChooser(ValueCallback<Uri[]> filePathCallback) {
         if (mFilePathCallback != null) {
             mFilePathCallback.onReceiveValue(null);
@@ -1547,14 +1510,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         startActivityForResult(chooserIntent, 1);
     }
 
-    @Override
     public synchronized void onShowCustomView(View view, CustomViewCallback callback) {
         int requestedOrientation = mOriginalOrientation = getRequestedOrientation();
         onShowCustomView(view, callback, requestedOrientation);
     }
 
-    @Override
-    public synchronized void onShowCustomView(final View view, CustomViewCallback callback, int requestedOrientation) {
+    public synchronized void onShowCustomView(final View view, CustomViewCallback callback,
+                                              int requestedOrientation) {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (view == null || mCustomView != null) {
             if (callback != null) {
@@ -1600,7 +1562,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    @Override
     public void onHideCustomView() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mCustomView == null || mCustomViewCallback == null || currentTab == null) {
@@ -1714,7 +1675,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param resultMsg the transport message used to send the URL to
      *                  the newly created WebView.
      */
-    @Override
     public synchronized void onCreateWindow(Message resultMsg) {
         if (resultMsg == null) {
             return;
@@ -1740,7 +1700,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      *
      * @param view the LightningView to close, delete it.
      */
-    @Override
     public void onCloseWindow(LightningView view) {
         deleteTab(mTabsManager.positionOf(view));
     }
@@ -1750,7 +1709,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * mode. This method also re-parents the ActionBar if its parent is
      * incorrect so that the animation can happen correctly.
      */
-    @Override
     public void hideActionBar() {
         final WebView currentWebView = mTabsManager.getCurrentWebView();
         if (mFullScreen) {
@@ -1789,7 +1747,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * mode. This method also re-parents the ActionBar if its parent is
      * incorrect so that the animation can happen correctly.
      */
-    @Override
     public void showActionBar() {
         if (mFullScreen) {
             final WebView view = mTabsManager.getCurrentWebView();
@@ -2189,6 +2146,126 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 Utils.showSnackbar(BrowserActivity.this, event.message);
             } else {
                 Utils.showSnackbar(BrowserActivity.this, event.stringRes);
+            }
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningView} and by
+         * {@link acr.browser.lightning.view.LightningWebClient} to show the action bar
+         *
+         * @param event an event notifying to show the action bar
+         */
+        @Subscribe
+        public void showActionBar(final BrowserEvents.ShowActionBar event) {
+            BrowserActivity.this.showActionBar();
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningView.TouchListener#onTouch}
+         * and by {@link acr.browser.lightning.view.LightningView.CustomGestureListener#onFling}
+         * to hide the action bar
+         *
+         * @param event an event notifying to hide the action bar
+         */
+        @Subscribe
+        public void hideActionBar(final BrowserEvents.HideActionBar event) {
+            BrowserActivity.this.hideActionBar();
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningWebClient#onPageFinished}
+         * and {@link acr.browser.lightning.view.LightningWebClient#onPageStarted}
+         * to update the url bar
+         *
+         * @param event an event notifying to update the urlbar
+         */
+        @Subscribe
+        public void updateUrl(final BrowserEvents.UpdateUrl event) {
+            BrowserActivity.this.updateUrl(event.url, event.isShortUrl);
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningChromeClient#onProgressChanged}
+         * to update the progress of loading a page
+         * @param event an event notifying the page load progress
+         */
+        @Subscribe
+        public void updateProgress(final BrowserEvents.UpdateProgress event) {
+            BrowserActivity.this.updateProgress(event.progress);
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningChromeClient#onCreateWindow}
+         * requesting the browser to create a new window
+         * @param event an event requesting to create a new window
+         */
+        @Subscribe
+        public void createWindow(final BrowserEvents.CreateWindow event) {
+            BrowserActivity.this.onCreateWindow(event.resultMsg);
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningChromeClient#onCloseWindow(WebView)}
+         * requesting the browser to close the given webview
+         *
+         * @param event an event requesting to close a given webview
+         */
+        @Subscribe
+        public void closeWindow(final BrowserEvents.CloseWindow event) {
+            BrowserActivity.this.onCloseWindow(event.lightningView);
+        }
+
+        /**
+         *Used by {@link acr.browser.lightning.view.LightningChromeClient#openFileChooser}
+         * requesting the browser to show a file chooser
+         *
+         * @param event an event requesting to show a file chooser
+         */
+        @Subscribe
+        public void openFileChooser(final BrowserEvents.OpenFileChooser event) {
+            BrowserActivity.this.openFileChooser(event.uploadMsg);
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningChromeClient#onShowFileChooser}
+         * to tell the browser to show a file chooser.
+         * This is called to handle HTML forms with 'file' input type, in response to the
+         * user pressing the "Select File" button.
+         *
+         * @param event an event requesting to show a file chooser
+         */
+        @Subscribe
+        public void showFileChooser(final BrowserEvents.ShowFileChooser event) {
+            BrowserActivity.this.showFileChooser(event.filePathCallBack);
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningChromeClient#onHideCustomView()} to
+         * notify the browser that the current page has exited full screen mode and to hide the
+         * custom View
+         *
+         * @param event an event notifying to hide the custom view
+         */
+        @Subscribe
+        public void hideCustomView(final BrowserEvents.HideCustomView event) {
+            BrowserActivity.this.onHideCustomView();
+        }
+
+        /**
+         * Used by {@link acr.browser.lightning.view.LightningChromeClient#onShowCustomView} to
+         * notify the browser that the current page has entered full screen mode. The browser must
+         * show the custom View which contains the web contents: video or other HTML content in full
+         * screen mode or in a particular orientation.
+         *
+         * @param event an event notifying to show the custom view
+         */
+        @Subscribe
+        public void showCustomView(final BrowserEvents.ShowCustomView event) {
+            if(event.requestedOrientation == null) {
+                BrowserActivity.this.onShowCustomView(event.view, event.callback);
+            } else {
+                BrowserActivity.this.onShowCustomView(event.view, event.callback,
+                        event.requestedOrientation);
             }
         }
     };

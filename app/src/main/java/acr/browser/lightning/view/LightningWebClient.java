@@ -36,7 +36,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -47,14 +46,12 @@ class LightningWebClient extends WebViewClient {
 
     private final Activity mActivity;
     private final LightningView mLightningView;
-    private final UIController mUIController;
     private final AdBlock mAdBlock;
     private final Bus mEventBus;
     private final IntentUtils mIntentUtils;
 
     LightningWebClient(Activity activity, LightningView lightningView) {
         mActivity = activity;
-        mUIController = (UIController) activity;
         mLightningView = lightningView;
         mAdBlock = AdBlock.getInstance(activity);
         mAdBlock.updatePreference();
@@ -87,7 +84,7 @@ class LightningWebClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         if (view.isShown()) {
-            mUIController.updateUrl(url, true);
+            mEventBus.post(new BrowserEvents.UpdateUrl(url,true));
             view.postInvalidate();
         }
         if (view.getTitle() == null || view.getTitle().isEmpty()) {
@@ -106,8 +103,8 @@ class LightningWebClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         mLightningView.mTitle.setFavicon(null);
         if (mLightningView.isShown()) {
-            mUIController.updateUrl(url, false);
-            mUIController.showActionBar();
+            mEventBus.post(new BrowserEvents.UpdateUrl(url, false));
+            mEventBus.post(new BrowserEvents.ShowActionBar());
         }
         mEventBus.post(new BrowserEvents.TabsChanged());
     }

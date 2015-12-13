@@ -7,6 +7,7 @@ package acr.browser.lightning.view;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -49,7 +50,7 @@ import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -67,7 +68,6 @@ public class LightningView {
     final LightningViewTitle mTitle;
     private WebView mWebView;
     final boolean mIsIncognitoTab;
-    private final UIController mUIController;
     private final GestureDetector mGestureDetector;
     private final Activity mActivity;
     private static String mHomepage;
@@ -97,14 +97,17 @@ public class LightningView {
     @Inject
     LightningDialogBuilder mBookmarksDialogBuilder;
 
+    @Inject
+    HistoryDatabase mHistoryDatabase;
+
     @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
-        mUIController = (UIController) activity;
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
-        mTitle = new LightningViewTitle(activity, mUIController.getUseDarkTheme());
+        Boolean useDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito;
+        mTitle = new LightningViewTitle(activity, useDarkTheme);
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
@@ -744,9 +747,9 @@ public class LightningView {
             } else if (mAction == MotionEvent.ACTION_UP) {
                 final float distance = (mY - mLocation);
                 if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
-                    mUIController.showActionBar();
+                    mEventBus.post(new BrowserEvents.ShowActionBar());
                 } else if (distance < -SCROLL_UP_THRESHOLD) {
-                    mUIController.hideActionBar();
+                    mEventBus.post(new BrowserEvents.HideActionBar());
                 }
                 mLocation = 0;
             }
@@ -761,9 +764,9 @@ public class LightningView {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             int power = (int) (velocityY * 100 / mMaxFling);
             if (power < -10) {
-                mUIController.hideActionBar();
+                mEventBus.post(new BrowserEvents.HideActionBar());
             } else if (power > 15) {
-                mUIController.showActionBar();
+                mEventBus.post(new BrowserEvents.ShowActionBar());
             }
             return super.onFling(e1, e2, velocityX, velocityY);
         }
@@ -826,4 +829,25 @@ public class LightningView {
             }
         }
     }
+
+    void addItemToHistory(@Nullable final String title, @NonNull final String url) {
+        Runnable update = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mHistoryDatabase.visitHistoryItem(url, title);
+                } catch (IllegalStateException e) {
+                    Log.e(Constants.TAG, "IllegalStateException in updateHistory", e);
+                } catch (NullPointerException e) {
+                    Log.e(Constants.TAG, "NullPointerException in updateHistory", e);
+                } catch (SQLiteException e) {
+                    Log.e(Constants.TAG, "SQLiteException in updateHistory", e);
+                }
+            }
+        };
+        if (!UrlUtils.isSpecialUrl(url)) {
+            new Thread(update).start();
+        }
+    }
+
 }
