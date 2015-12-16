@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -317,6 +318,23 @@ public class LightningDialogBuilder {
                 return true;
             }
         });
+
+        item = menu.add(0, R.string.action_share, 0, R.string.action_share);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+
+                shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+
+                context.startActivity(shareIntent);
+
+                return true;
+            }
+        });
+
     }
 
 }
