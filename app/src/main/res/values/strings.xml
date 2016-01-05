@@ -70,7 +70,7 @@
     <string name="agent_custom">Custom</string>
     <string name="title_search_engine">Search Engine</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Do you want to download this file?</string>
+    <string name="dialog_download">Do you want to download this file? (Size {0})</string>
     <string name="action_cancel">Cancel</string>
     <string name="title_warning">Warning</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player was not detected.\nPlease install Flash Player.</string>
@@ -227,4 +227,5 @@
     <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
     <string name="remove_identifying_headers">Remove Identifying Headers</string>
+    <string name="unknown">Unknown</string>
 </resources>
