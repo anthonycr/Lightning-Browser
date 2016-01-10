@@ -1099,7 +1099,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
-    private void closeBrowser() {
+    public void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
         mTabsManager.shutdown();
