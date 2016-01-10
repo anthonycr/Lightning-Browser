@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -544,20 +543,6 @@ public class LightningView {
         if (mWebView != null) {
             mWebView.reload();
         }
-    }
-
-    /**
-     * Naive caching of the favicon according to the domain name of the URL
-     *
-     * @param icon the icon to cache
-     */
-    private void cacheFavicon(final Bitmap icon) {
-        if (icon == null) return;
-        final Uri uri = Uri.parse(getUrl());
-        if (uri.getHost() == null) {
-            return;
-        }
-        new Thread(new IconCacheTask(uri, icon)).start();
     }
 
     @SuppressLint("NewApi")

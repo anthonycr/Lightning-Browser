@@ -13,6 +13,8 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,6 +41,8 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     private static final String KEY_TIME_VISITED = "time";
 
     private SQLiteDatabase mDatabase;
+
+    private Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Inject
     public HistoryDatabase(Context context) {
@@ -72,6 +76,10 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     private synchronized boolean isClosed() {
         return mDatabase == null || !mDatabase.isOpen();
+    }
+
+    public Executor getIOThread() {
+        return mIOThread;
     }
 
     @Override

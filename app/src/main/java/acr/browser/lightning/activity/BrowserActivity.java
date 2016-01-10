@@ -173,7 +173,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private boolean mShowTabsInDrawer;
     private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor,
             mCurrentUiColor = Color.BLACK;
-    private String mSearchText, mUntitledTitle, mHomepage, mCameraPhotoPath;
+    private String mSearchText;
+    private String mUntitledTitle;
+    private String mCameraPhotoPath;
 
     // The singleton BookmarkManager
     @Inject
@@ -257,8 +259,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mDrawerLayout.setDrawerListener(new DrawerLocker());
 
         mWebpageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, mDarkTheme);
-
-        mHomepage = mPreferences.getHomepage();
 
         final TabsFragment tabsFragment = new TabsFragment();
         final int containerId = mShowTabsInDrawer ? R.id.left_drawer : R.id.tabs_toolbar_container;
@@ -1339,7 +1339,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     void addItemToHistory(@Nullable final String title, @NonNull final String url) {
-        Runnable update = new Runnable() {
+        if (UrlUtils.isSpecialUrl(url)) {
+            return;
+        }
+        BrowserApp.getAppComponent().getHistoryDatabase().getIOThread().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1352,10 +1355,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     Log.e(Constants.TAG, "SQLiteException in updateHistory", e);
                 }
             }
-        };
-        if (!UrlUtils.isSpecialUrl(url)) {
-            new Thread(update).start();
-        }
+        });
     }
 
     /**
@@ -1406,7 +1406,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private void openHistory() {
         // use a thread so that history retrieval doesn't block the UI
-        Thread history = new Thread(new Runnable() {
+        BrowserApp.getAppComponent().getHistoryDatabase().getIOThread().execute(new Runnable() {
 
             @Override
             public void run() {
@@ -1415,7 +1415,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
 
         });
-        history.run();
     }
 
     /**

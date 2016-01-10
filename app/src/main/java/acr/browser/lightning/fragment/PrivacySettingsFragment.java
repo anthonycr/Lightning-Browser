@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.webkit.WebView;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.LightningView;
@@ -148,13 +149,15 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                Thread clear = new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        clearHistory();
-                                    }
-                                });
-                                clear.start();
+                                BrowserApp.getAppComponent()
+                                        .getHistoryDatabase()
+                                        .getIOThread()
+                                        .execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                clearHistory();
+                                            }
+                                        });
                             }
                         })
                 .setNegativeButton(getResources().getString(R.string.action_no), null).show();
