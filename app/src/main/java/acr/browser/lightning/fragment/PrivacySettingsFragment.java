@@ -149,8 +149,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                BrowserApp.getAppComponent()
-                                        .getHistoryDatabase()
+                                BrowserApp.getHistoryDatabase()
                                         .getIOThread()
                                         .execute(new Runnable() {
                                             @Override

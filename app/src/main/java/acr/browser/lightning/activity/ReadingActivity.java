@@ -53,7 +53,7 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
-        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
+        mPreferences = BrowserApp.getPreferenceManager();
         mInvert = mPreferences.getInvertColors();
         final int color;
         if (mInvert) {

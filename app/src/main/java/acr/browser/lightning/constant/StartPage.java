@@ -24,7 +24,7 @@ public class StartPage {
             + "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />"
             + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
             + "<title>"
-            + BrowserApp.getAppContext().getString(R.string.home)
+            + BrowserApp.getContext().getString(R.string.home)
             + "</title>"
             + "</head>"
             + "<style>body{background:#f2f2f2;text-align:center;margin:0px;}#search_input{height:35px; "
@@ -57,7 +57,7 @@ public class StartPage {
         StringBuilder homepageBuilder = new StringBuilder(StartPage.HEAD);
         String icon;
         String searchUrl;
-        final PreferenceManager preferenceManager = BrowserApp.getAppComponent().getPreferenceManager();
+        final PreferenceManager preferenceManager = BrowserApp.getPreferenceManager();
         switch (preferenceManager.getSearchChoice()) {
             case 0:
                 // CUSTOM SEARCH

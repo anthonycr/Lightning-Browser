@@ -1342,7 +1342,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (UrlUtils.isSpecialUrl(url)) {
             return;
         }
-        BrowserApp.getAppComponent().getHistoryDatabase().getIOThread().execute(new Runnable() {
+        BrowserApp.getHistoryDatabase().getIOThread().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -1406,7 +1406,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private void openHistory() {
         // use a thread so that history retrieval doesn't block the UI
-        BrowserApp.getAppComponent().getHistoryDatabase().getIOThread().execute(new Runnable() {
+        BrowserApp.getHistoryDatabase().getIOThread().execute(new Runnable() {
 
             @Override
             public void run() {

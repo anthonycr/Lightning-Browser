@@ -28,13 +28,13 @@ public class ProxyUtils {
     private static ProxyUtils mInstance;
 
     private ProxyUtils(Context context) {
-        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
+        mPreferences = BrowserApp.getPreferenceManager();
         mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
     }
 
     public static ProxyUtils getInstance() {
         if (mInstance == null) {
-            mInstance = new ProxyUtils(BrowserApp.getAppContext());
+            mInstance = new ProxyUtils(BrowserApp.getContext());
         }
         return mInstance;
     }
@@ -147,11 +147,11 @@ public class ProxyUtils {
     public boolean isProxyReady() {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                BrowserApp.getAppComponent().getBus()
+                BrowserApp.getBus()
                         .post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                BrowserApp.getAppComponent().getBus()
+                BrowserApp.getBus()
                         .post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
                 return false;
             }
@@ -203,7 +203,7 @@ public class ProxyUtils {
                 break;
 
             case Constants.PROXY_I2P:
-                I2PAndroidHelper ih = new I2PAndroidHelper(BrowserApp.getAppContext());
+                I2PAndroidHelper ih = new I2PAndroidHelper(BrowserApp.getContext());
                 if (!ih.isI2PAndroidInstalled()) {
                     choice = Constants.NO_PROXY;
                     ih.promptToInstall(activity);

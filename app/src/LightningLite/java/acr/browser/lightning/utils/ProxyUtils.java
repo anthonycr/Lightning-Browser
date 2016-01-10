@@ -32,8 +32,8 @@ public class ProxyUtils {
     private final Bus mEventBus;
 
     private ProxyUtils(Context context) {
-        mPreferences = BrowserApp.getAppComponent().getPreferenceManager();
-        mEventBus = BrowserApp.getAppComponent().getBus();
+        mPreferences = BrowserApp.getPreferenceManager();
+        mEventBus = BrowserApp.getBus();
         mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
     }
 

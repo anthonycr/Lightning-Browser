@@ -176,7 +176,7 @@ public class LightningView {
         }
         File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 
-        BrowserApp.getAppComponent().getBookmarkPage().buildBookmarkPage(null);
+        BrowserApp.getBookmarkPage().buildBookmarkPage(null);
         mWebView.loadUrl(Constants.FILE + bookmarkWebPage, mRequestHeaders);
 
     }

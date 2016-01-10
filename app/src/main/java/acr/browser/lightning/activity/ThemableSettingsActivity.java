@@ -13,7 +13,7 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mTheme = BrowserApp.getAppComponent().getPreferenceManager().getUseTheme();
+        mTheme = BrowserApp.getPreferenceManager().getUseTheme();
 
         // set the theme
         if (mTheme == 0) {
@@ -32,7 +32,7 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
     @Override
     protected void onResume() {
         super.onResume();
-        if (BrowserApp.getAppComponent().getPreferenceManager().getUseTheme() != mTheme) {
+        if (BrowserApp.getPreferenceManager().getUseTheme() != mTheme) {
             restart();
         }
     }

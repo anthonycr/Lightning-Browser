@@ -106,7 +106,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     }
 
     private static void deleteOldCacheFiles() {
-        File dir = new File(BrowserApp.getAppContext().getCacheDir().toString());
+        File dir = new File(BrowserApp.getContext().getCacheDir().toString());
         String[] fileList = dir.list(new NameFilter());
         long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
         for (String fileName : fileList) {
@@ -373,11 +373,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
      * @return the cache file containing the suggestions
      */
     private static File downloadSuggestionsForQuery(String query, String language) {
-        File cacheFile = new File(BrowserApp.getAppContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
+        File cacheFile = new File(BrowserApp.getContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
-        if (!isNetworkConnected(BrowserApp.getAppContext())) {
+        if (!isNetworkConnected(BrowserApp.getContext())) {
             return cacheFile;
         }
         InputStream in = null;

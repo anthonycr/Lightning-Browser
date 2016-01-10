@@ -23,7 +23,7 @@ import acr.browser.lightning.utils.Utils;
 public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
-    private static final File mCacheDir = BrowserApp.getAppContext().getCacheDir();
+    private static final File mCacheDir = BrowserApp.getContext().getCacheDir();
     private final WeakReference<ImageView> bmImage;
     private final HistoryItem mWeb;
     private final String mUrl;

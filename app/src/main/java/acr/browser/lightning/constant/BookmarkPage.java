@@ -3,8 +3,6 @@
  */
 package acr.browser.lightning.constant;
 
-import android.content.Context;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,7 +29,7 @@ public final class BookmarkPage {
             "<meta content='text/html; charset=utf-8' http-equiv=Content-Type />\n" +
             "<meta name=viewport content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>\n" +
             "<title>" +
-            BrowserApp.getAppContext().getString(R.string.action_bookmarks) +
+            BrowserApp.getContext().getString(R.string.action_bookmarks) +
             "</title>\n" +
             "</head>\n" +
             "<style>body{background:#e1e1e1;max-width:100%;min-height:100%}#content{width:100%;max-width:800px;margin:0 auto;text-align:center}.box{vertical-align:middle;text-align:center;position:relative;display:inline-block;height:45px;width:150px;margin:10px;background-color:#fff;box-shadow:0 3px 6px rgba(0,0,0,0.25);font-family:Arial;color:#444;font-size:12px;-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px}.box-content{height:25px;width:100%;vertical-align:middle;text-align:center;display:table-cell}p.ellipses{" +
@@ -61,10 +59,10 @@ public final class BookmarkPage {
     private final File CACHE_DIR;
 
     @Inject
-    public BookmarkPage(Context context) {
+    public BookmarkPage() {
         BrowserApp.getAppComponent().inject(this);
-        FILES_DIR = context.getFilesDir();
-        CACHE_DIR = context.getCacheDir();
+        FILES_DIR = BrowserApp.getContext().getFilesDir();
+        CACHE_DIR = BrowserApp.getContext().getCacheDir();
     }
 
     public void buildBookmarkPage(final String folder) {

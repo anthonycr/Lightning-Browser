@@ -54,7 +54,7 @@ class FetchUrlMimeType extends Thread {
     public void run() {
         // User agent is likely to be null, though the AndroidHttpClient
         // seems ok with that.
-        final Bus eventBus = BrowserApp.getAppComponent().getBus();
+        final Bus eventBus = BrowserApp.getBus();
         String mimeType = null;
         String contentDisposition = null;
         HttpURLConnection connection = null;

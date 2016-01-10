@@ -58,7 +58,7 @@ class LightningWebClient extends WebViewClient {
         mLightningView = lightningView;
         mAdBlock = AdBlock.getInstance(activity);
         mAdBlock.updatePreference();
-        mEventBus = BrowserApp.getAppComponent().getBus();
+        mEventBus = BrowserApp.getBus();
         mIntentUtils = new IntentUtils(activity);
     }
 

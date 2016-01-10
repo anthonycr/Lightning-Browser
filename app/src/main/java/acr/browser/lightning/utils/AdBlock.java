@@ -44,11 +44,11 @@ public class AdBlock {
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);
         }
-        mBlockAds = BrowserApp.getAppComponent().getPreferenceManager().getAdBlockEnabled();
+        mBlockAds = BrowserApp.getPreferenceManager().getAdBlockEnabled();
     }
 
     public void updatePreference() {
-        mBlockAds = BrowserApp.getAppComponent().getPreferenceManager().getAdBlockEnabled();
+        mBlockAds = BrowserApp.getPreferenceManager().getAdBlockEnabled();
     }
 
     private void loadBlockedDomainsList(final Context context) {

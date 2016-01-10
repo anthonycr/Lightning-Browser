@@ -34,7 +34,7 @@ public class WebUtils {
     }
 
     public static void clearHistory(@NonNull Context context) {
-        BrowserApp.getAppComponent().getHistoryDatabase().deleteHistory();
+        BrowserApp.getHistoryDatabase().deleteHistory();
         WebViewDatabase m = WebViewDatabase.getInstance(context);
         m.clearFormData();
         m.clearHttpAuthUsernamePassword();

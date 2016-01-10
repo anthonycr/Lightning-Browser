@@ -31,7 +31,7 @@ class IconCacheTask implements Runnable{
         Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
         FileOutputStream fos = null;
         try {
-            File image = new File(BrowserApp.getAppContext().getCacheDir(), hash + ".png");
+            File image = new File(BrowserApp.getContext().getCacheDir(), hash + ".png");
             fos = new FileOutputStream(image);
             icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
