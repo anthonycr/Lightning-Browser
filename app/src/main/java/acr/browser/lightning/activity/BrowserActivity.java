@@ -1410,8 +1410,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
             @Override
             public void run() {
-                loadUrlInCurrentView(HistoryPage.getHistoryPage(BrowserActivity.this));
-                mSearch.setText("");
+                final String historyPage = HistoryPage.getHistoryPage(BrowserActivity.this);
+                BrowserActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadUrlInCurrentView(historyPage);
+                        mSearch.setText("");
+                    }
+                });
             }
 
         });
