@@ -42,8 +42,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     private SQLiteDatabase mDatabase;
 
-    private Executor mIOThread = Executors.newSingleThreadExecutor();
-
     @Inject
     public HistoryDatabase(Context context) {
         super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
@@ -76,10 +74,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     private synchronized boolean isClosed() {
         return mDatabase == null || !mDatabase.isOpen();
-    }
-
-    public Executor getIOThread() {
-        return mIOThread;
     }
 
     @Override

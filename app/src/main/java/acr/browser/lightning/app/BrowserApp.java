@@ -6,6 +6,9 @@ import android.content.Context;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -14,6 +17,7 @@ public class BrowserApp extends Application {
 
     private static BrowserApp sInstance;
     private static AppComponent appComponent;
+    private static Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Override
     public void onCreate() {
@@ -37,6 +41,10 @@ public class BrowserApp extends Application {
 
     public static HistoryDatabase getHistoryDatabase() {
         return appComponent.getHistoryDatabase();
+    }
+
+    public static Executor getIOThread() {
+        return mIOThread;
     }
 
     public static PreferenceManager getPreferenceManager() {

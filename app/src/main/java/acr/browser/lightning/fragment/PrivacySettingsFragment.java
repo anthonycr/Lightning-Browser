@@ -149,14 +149,12 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                BrowserApp.getHistoryDatabase()
-                                        .getIOThread()
-                                        .execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                clearHistory();
-                                            }
-                                        });
+                                BrowserApp.getIOThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        clearHistory();
+                                    }
+                                });
                             }
                         })
                 .setNegativeButton(getResources().getString(R.string.action_no), null).show();

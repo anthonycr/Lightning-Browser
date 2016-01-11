@@ -147,13 +147,32 @@ public class LightningView {
         if (mWebView == null) {
             return;
         }
-        if (mHomepage.startsWith("about:home")) {
-            mWebView.loadUrl(StartPage.getHomepage(mActivity), mRequestHeaders);
-        } else if (mHomepage.startsWith("about:bookmarks")) {
-            loadBookmarkpage();
-        } else {
-            mWebView.loadUrl(mHomepage, mRequestHeaders);
+        switch (mHomepage) {
+            case "about:home":
+                loadStartpage();
+                break;
+            case "about:bookmarks":
+                loadBookmarkpage();
+                break;
+            default:
+                mWebView.loadUrl(mHomepage, mRequestHeaders);
+                break;
         }
+    }
+
+    private void loadStartpage() {
+        BrowserApp.getIOThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String homepage = StartPage.getHomepage(mActivity);
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.loadUrl(homepage, mRequestHeaders);
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -162,23 +181,32 @@ public class LightningView {
     public void loadBookmarkpage() {
         if (mWebView == null)
             return;
-        Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
-        FileOutputStream outputStream = null;
-        File image = new File(mActivity.getCacheDir(), "folder.png");
-        try {
-            outputStream = new FileOutputStream(image);
-            folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            folderIcon.recycle();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(outputStream);
-        }
-        File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
+        BrowserApp.getIOThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
+                FileOutputStream outputStream = null;
+                File image = new File(mActivity.getCacheDir(), "folder.png");
+                try {
+                    outputStream = new FileOutputStream(image);
+                    folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                    folderIcon.recycle();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } finally {
+                    Utils.close(outputStream);
+                }
+                final File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 
-        BrowserApp.getBookmarkPage().buildBookmarkPage(null);
-        mWebView.loadUrl(Constants.FILE + bookmarkWebPage, mRequestHeaders);
-
+                BrowserApp.getBookmarkPage().buildBookmarkPage(null);
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.loadUrl(Constants.FILE + bookmarkWebPage, mRequestHeaders);
+                    }
+                });
+            }
+        });
     }
 
     /**
