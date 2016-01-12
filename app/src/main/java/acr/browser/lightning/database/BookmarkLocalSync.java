@@ -19,6 +19,8 @@ public class BookmarkLocalSync {
 
     private static final String STOCK_BOOKMARKS_CONTENT = "content://browser/bookmarks";
     private static final String CHROME_BOOKMARKS_CONTENT = "content://com.android.chrome.browser/bookmarks";
+    private static final String CHROME_BETA_BOOKMARKS_CONTENT = "content://com.chrome.beta.browser/bookmarks";
+    private static final String CHROME_DEV_BOOKMARKS_CONTENT = "content://com.chrome.dev.browser/bookmarks";
 
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_URL = "url";
@@ -140,6 +142,30 @@ public class BookmarkLocalSync {
             return null;
         }
         return cursor;
+    }
+
+    public void printAllColumns(){
+        printColumns(CHROME_BETA_BOOKMARKS_CONTENT);
+        printColumns(CHROME_BOOKMARKS_CONTENT);
+        printColumns(CHROME_DEV_BOOKMARKS_CONTENT);
+        printColumns(STOCK_BOOKMARKS_CONTENT);
+    }
+
+    public void printColumns(String contentProvider) {
+        Cursor cursor = null;
+        Log.e(TAG, contentProvider);
+        Uri uri = Uri.parse(contentProvider);
+        try {
+            cursor = mContext.getContentResolver().query(uri, null, null, null, null);
+        } catch (Exception e) {
+            Log.e(TAG, "Error Occurred", e);
+        }
+        if (cursor != null) {
+            for (int n = 0; n < cursor.getColumnCount(); n++) {
+                Log.d(TAG, cursor.getColumnName(n));
+            }
+            cursor.close();
+        }
     }
 
 }
