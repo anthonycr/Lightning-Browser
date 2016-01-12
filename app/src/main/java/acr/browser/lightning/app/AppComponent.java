@@ -20,9 +20,6 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.view.LightningView;
 import dagger.Component;
 
-/**
- * Created by Stefano Pacifici on 01/09/15.
- */
 @Singleton
 @Component(modules = {AppModule.class})
 public interface AppComponent {

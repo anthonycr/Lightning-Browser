@@ -2,9 +2,6 @@ package acr.browser.lightning.bus;
 
 import android.support.annotation.StringRes;
 
-/**
- * Created by Stefano Pacifici on 26/08/15.
- */
 public final class BrowserEvents {
 
     private BrowserEvents() {

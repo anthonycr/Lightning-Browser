@@ -139,6 +139,7 @@ public class StartPage {
         File homepage = new File(activity.getFilesDir(), StartPage.FILENAME);
         FileWriter hWriter = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             hWriter = new FileWriter(homepage, false);
             hWriter.write(homepageBuilder.toString());
         } catch (IOException e) {

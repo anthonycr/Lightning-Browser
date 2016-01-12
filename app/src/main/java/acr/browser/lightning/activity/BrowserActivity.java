@@ -1068,7 +1068,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Log.d(Constants.TAG, "deleted tab");
     }
 
-    public void performExitCleanUp() {
+    void performExitCleanUp() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mPreferences.getClearCacheExit() && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.getWebView());
@@ -1099,7 +1099,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
-    public void closeBrowser() {
+    void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
         mTabsManager.shutdown();

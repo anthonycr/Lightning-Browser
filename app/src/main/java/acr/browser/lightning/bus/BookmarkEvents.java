@@ -2,9 +2,6 @@ package acr.browser.lightning.bus;
 
 import acr.browser.lightning.database.HistoryItem;
 
-/**
- * Created by Stefano Pacifici on 26/08/15.
- */
 public final class BookmarkEvents {
 
     private BookmarkEvents() {

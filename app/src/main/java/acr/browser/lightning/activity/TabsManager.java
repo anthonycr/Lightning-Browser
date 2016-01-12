@@ -18,10 +18,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
@@ -186,12 +184,11 @@ public class TabsManager {
      * Remove a tab and return its reference or null if the position is not in tabs range
      *
      * @param position The position of the tab to remove
-     * @return The removed tab reference or null
      */
     @Nullable
-    private synchronized LightningView removeTab(final int position) {
+    private synchronized void removeTab(final int position) {
         if (position >= mWebViewList.size()) {
-            return null;
+            return;
         }
         final LightningView tab = mWebViewList.remove(position);
         if (mCurrentTab == tab) {
@@ -199,7 +196,6 @@ public class TabsManager {
         }
         tab.onDestroy();
         Log.d(Constants.TAG, tab.toString());
-        return tab;
     }
 
     public synchronized void deleteTab(int position) {

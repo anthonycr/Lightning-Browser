@@ -50,9 +50,6 @@ import acr.browser.lightning.async.ImageDownloadTask;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
 
-/**
- * Created by Stefano Pacifici on 25/08/15. Based on Anthony C. Restaino's code.
- */
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     private final static String TAG = BookmarksFragment.class.getSimpleName();
@@ -136,7 +133,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
-            handleLongPress(item, position);
+            handleLongPress(item);
             return true;
         }
     };
@@ -297,7 +294,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
-    private void handleLongPress(final HistoryItem item, final int position) {
+    private void handleLongPress(final HistoryItem item) {
         if (item.isFolder()) {
             mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {

@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -49,7 +50,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private String mDownloadLocation;
     private int mAgentChoice;
     private String mHomepage;
-    private CheckBoxPreference cbFlash, cbAds, cbImages, cbJsScript, cbColorMode, cbgooglesuggest, cbDrawerTabs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,13 +69,13 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         home = findPreference(SETTINGS_HOME);
         searchengine = findPreference(SETTINGS_SEARCHENGINE);
 
-        cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
-        cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
-        cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
-        cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
-        cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
-        cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
-        cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
+        CheckBoxPreference cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
+        CheckBoxPreference cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
+        CheckBoxPreference cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
+        CheckBoxPreference cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
+        CheckBoxPreference cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
+        CheckBoxPreference cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
+        CheckBoxPreference cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
 
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);

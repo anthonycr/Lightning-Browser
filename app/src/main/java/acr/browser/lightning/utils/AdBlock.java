@@ -59,6 +59,7 @@ public class AdBlock {
                 AssetManager asset = context.getAssets();
                 BufferedReader reader = null;
                 try {
+                    //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
                             asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;
@@ -139,6 +140,7 @@ public class AdBlock {
                 AssetManager asset = context.getAssets();
                 BufferedReader reader = null;
                 try {
+                    //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
                             asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;

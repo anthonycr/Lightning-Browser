@@ -148,7 +148,7 @@ public class DownloadHandler {
                 msg = context.getString(R.string.download_sdcard_busy_dlg_msg);
                 title = R.string.download_sdcard_busy_dlg_title;
             } else {
-                msg = context.getString(R.string.download_no_sdcard_dlg_msg, filename);
+                msg = context.getString(R.string.download_no_sdcard_dlg_msg);
                 title = R.string.download_no_sdcard_dlg_title;
             }
 

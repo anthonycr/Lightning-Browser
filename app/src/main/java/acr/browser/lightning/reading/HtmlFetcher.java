@@ -55,6 +55,7 @@ public class HtmlFetcher {
         BufferedWriter writer = null;
         try {
 
+            //noinspection IOResourceOpenedButNotSafelyClosed
             reader = new BufferedReader(new FileReader("urls.txt"));
             String line;
             Set<String> existing = new LinkedHashSet<>();
@@ -72,6 +73,7 @@ public class HtmlFetcher {
 
                 String html = new HtmlFetcher().fetchAsString(url, 2000);
                 String outFile = domainStr + counterStr + ".html";
+                //noinspection IOResourceOpenedButNotSafelyClosed
                 writer = new BufferedWriter(new FileWriter(outFile));
                 writer.write(html);
             }

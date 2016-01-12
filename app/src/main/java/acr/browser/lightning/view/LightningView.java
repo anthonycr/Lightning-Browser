@@ -61,7 +61,7 @@ public class LightningView {
 
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
-    public static final String HEADER_DNT = "DNT";
+    private static final String HEADER_DNT = "DNT";
 
     final LightningViewTitle mTitle;
     private WebView mWebView;
@@ -433,7 +433,7 @@ public class LightningView {
     }
 
     @NonNull
-    protected Map<String, String> getRequestHeaders() {
+    Map<String, String> getRequestHeaders() {
         return mRequestHeaders;
     }
 

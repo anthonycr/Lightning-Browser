@@ -102,6 +102,7 @@ public final class BookmarkPage {
         bookmarkBuilder.append(BookmarkPage.END);
         FileWriter bookWriter = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             bookWriter = new FileWriter(bookmarkWebPage, false);
             bookWriter.write(bookmarkBuilder.toString());
         } catch (IOException e) {

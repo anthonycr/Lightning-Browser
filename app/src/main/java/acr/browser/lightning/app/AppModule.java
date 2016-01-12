@@ -10,9 +10,6 @@ import acr.browser.lightning.database.BookmarkManager;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by Stefano Pacifici on 01/09/15.
- */
 @Module
 public class AppModule {
     private final BrowserApp app;

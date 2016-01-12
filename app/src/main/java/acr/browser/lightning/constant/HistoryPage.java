@@ -55,6 +55,7 @@ public class HistoryPage {
         File historyWebPage = new File(context.getFilesDir(), FILENAME);
         FileWriter historyWriter = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             historyWriter = new FileWriter(historyWebPage, false);
             historyWriter.write(historyBuilder.toString());
         } catch (IOException e) {

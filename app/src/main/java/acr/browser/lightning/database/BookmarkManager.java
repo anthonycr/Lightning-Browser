@@ -104,10 +104,12 @@ public class BookmarkManager {
                 InputStream inputStream = null;
                 try {
                     if (bookmarksFile.exists() && bookmarksFile.isFile()) {
+                        //noinspection IOResourceOpenedButNotSafelyClosed
                         inputStream = new FileInputStream(bookmarksFile);
                     } else {
                         inputStream = mContext.getResources().openRawResource(R.raw.default_bookmarks);
                     }
+                    //noinspection IOResourceOpenedButNotSafelyClosed
                     bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
                     String line;
                     while ((line = bookmarksReader.readLine()) != null) {
@@ -157,6 +159,7 @@ public class BookmarkManager {
             boolean success = false;
             BufferedWriter bookmarkWriter = null;
             try {
+                //noinspection IOResourceOpenedButNotSafelyClosed
                 bookmarkWriter = new BufferedWriter(new FileWriter(tempFile, false));
                 JSONObject object = new JSONObject();
                 for (HistoryItem item : mBookmarks) {
@@ -331,6 +334,7 @@ public class BookmarkManager {
         }
         BufferedWriter bookmarkWriter = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksExport,
                     false));
             JSONObject object = new JSONObject();
@@ -483,6 +487,7 @@ public class BookmarkManager {
         List<HistoryItem> list = new ArrayList<>();
         BufferedReader bookmarksReader = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             bookmarksReader = new BufferedReader(new FileReader(file));
             String line;
             int number = 0;
@@ -526,7 +531,7 @@ public class BookmarkManager {
     /**
      * This class sorts bookmarks alphabetically, with folders coming after bookmarks
      */
-    public static class SortIgnoreCase implements Comparator<HistoryItem> {
+    private static class SortIgnoreCase implements Comparator<HistoryItem> {
 
         public int compare(HistoryItem o1, HistoryItem o2) {
             if (o1 == null || o2 == null || o1.getTitle() == null || o2.getTitle() == null) {

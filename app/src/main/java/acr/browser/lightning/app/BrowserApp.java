@@ -1,7 +1,6 @@
 package acr.browser.lightning.app;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
@@ -17,7 +16,7 @@ public class BrowserApp extends Application {
 
     private static BrowserApp sInstance;
     private static AppComponent appComponent;
-    private static Executor mIOThread = Executors.newSingleThreadExecutor();
+    private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Override
     public void onCreate() {

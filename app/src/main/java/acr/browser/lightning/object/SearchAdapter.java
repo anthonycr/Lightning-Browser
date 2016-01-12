@@ -398,6 +398,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             in = connection.getInputStream();
 
             if (in != null) {
+                //noinspection IOResourceOpenedButNotSafelyClosed
                 fos = new FileOutputStream(cacheFile);
                 int buffer;
                 while ((buffer = in.read()) != -1) {
