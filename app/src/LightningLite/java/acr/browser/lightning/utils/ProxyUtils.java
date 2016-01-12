@@ -39,7 +39,7 @@ public class ProxyUtils {
 
     public static ProxyUtils getInstance() {
         if (mInstance == null) {
-            mInstance = new ProxyUtils(BrowserApp.getAppContext());
+            mInstance = new ProxyUtils(BrowserApp.getContext());
         }
         return mInstance;
     }
