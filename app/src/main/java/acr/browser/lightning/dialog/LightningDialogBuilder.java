@@ -5,9 +5,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -211,99 +214,127 @@ public class LightningDialogBuilder {
         editFolderDialog.show();
     }
 
-    public void showLongPressedHistoryLinkDialog(final Context context, final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+    public void buildLongPressedHistoryLinkDialog(final Context context, final String url, ContextMenu menu) {
+        MenuItem item = menu.add(0, R.string.action_open, 0, R.string.action_open);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        mHistoryDatabase.deleteHistoryItem(url);
-                        // openHistory();
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(HistoryPage.getHistoryPage(context)));
-                        break;
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                        break;
-                    default:
-                        break;
-                }
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                return true;
             }
-        };
+        });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.action_history)
-                .setMessage(R.string.dialog_history_long_press)
-                .setCancelable(true)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_delete, dialogClickListener)
-                .setNeutralButton(R.string.action_open, dialogClickListener)
-                .show();
+        item = menu.add(0, R.string.action_new_tab, 0, R.string.action_new_tab);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
+                return true;
+            }
+        });
+
+        item = menu.add(0, R.string.action_delete, 0, R.string.action_delete);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mHistoryDatabase.deleteHistoryItem(url);
+                // openHistory();
+                eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(HistoryPage.getHistoryPage(context)));
+                return true;
+            }
+        });
     }
+
 
     // TODO There should be a way in which we do not need an activity reference to dowload a file
-    public void showLongPressImageDialog(@NonNull final Activity activity, @NonNull final String url,
-                                          @NonNull final String userAgent) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                        break;
-                    case DialogInterface.BUTTON_NEUTRAL:
-                            Utils.downloadFile(activity, url,
-                                    userAgent, "attachment");
-                        break;
-                }
-            }
-        };
+    public void buildLongPressImageMenu(@NonNull final Activity activity, @NonNull final String url,
+                                        @NonNull final String userAgent, final ContextMenu menu) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(url.replace(Constants.HTTP, ""))
-                .setCancelable(true)
-                .setMessage(R.string.dialog_image)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_open, dialogClickListener)
-                .setNeutralButton(R.string.action_download, dialogClickListener)
-                .show();
+        MenuItem item = menu.add(0, R.string.action_open, 0, R.string.action_open);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                return true;
+            }
+        });
+
+        item = menu.add(0, R.string.action_new_tab, 0, R.string.action_new_tab);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
+                return true;
+            }
+        });
+
+        item = menu.add(0, R.string.action_download, 0, R.string.action_download);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Utils.downloadFile(activity, url,
+                        userAgent, "attachment");
+                return true;
+            }
+        });
     }
 
-    public void showLongPressLinkDialog(final Context context, final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+    public void buildLongPressLinkMenu(final Context context, final String url, final ContextMenu menu) {
+        MenuItem item = menu.add(0, R.string.action_open, 0, R.string.action_open);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                        break;
-
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("label", url);
-                        clipboard.setPrimaryClip(clip);
-                        break;
-                }
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                return true;
             }
-        };
+        });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context); // dialog
-        builder.setTitle(url)
-                .setCancelable(true)
-                .setMessage(R.string.dialog_link)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_open, dialogClickListener)
-                .setNeutralButton(R.string.action_copy, dialogClickListener)
-                .show();
+        item = menu.add(0, R.string.action_new_tab, 0, R.string.action_new_tab);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
+                return true;
+            }
+        });
+
+        item = menu.add(0, R.string.action_new_background_tab, 0, R.string.action_new_background_tab);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                eventBus.post(new BrowserEvents.OpenUrlInNewTab(url, false));
+                return true;
+            }
+        });
+
+
+        item = menu.add(0, R.string.action_copy, 0, R.string.action_copy);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("label", url);
+                clipboard.setPrimaryClip(clip);
+                return true;
+            }
+        });
+
+        item = menu.add(0, R.string.action_share, 0, R.string.action_share);
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+
+                shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+
+                context.startActivity(shareIntent);
+
+                return true;
+            }
+        });
+
     }
 
 }

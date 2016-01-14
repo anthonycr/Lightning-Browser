@@ -19,6 +19,7 @@
 
     <string name="app_name">Lightning</string>
     <string name="action_new_tab">New Tab</string>
+    <string name="action_new_background_tab">New Background Tab</string>
     <string name="action_share">Share</string>
     <string name="action_history">History</string>
     <string name="action_bookmarks">Bookmarks</string>
