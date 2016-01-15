@@ -61,7 +61,7 @@ class LightningChromeClient extends WebChromeClient {
 
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
-        mLightningView.mTitle.setFavicon(icon);
+        mLightningView.getTitleInfo().setFavicon(icon);
         eventBus.post(new BrowserEvents.TabsChanged());
         cacheFavicon(view.getUrl(), icon);
     }
@@ -101,9 +101,9 @@ class LightningChromeClient extends WebChromeClient {
     @Override
     public void onReceivedTitle(WebView view, String title) {
         if (title != null && !title.isEmpty()) {
-            mLightningView.mTitle.setTitle(title);
+            mLightningView.getTitleInfo().setTitle(title);
         } else {
-            mLightningView.mTitle.setTitle(mActivity.getString(R.string.untitled));
+            mLightningView.getTitleInfo().setTitle(mActivity.getString(R.string.untitled));
         }
         eventBus.post(new BrowserEvents.TabsChanged());
         if (view != null) {

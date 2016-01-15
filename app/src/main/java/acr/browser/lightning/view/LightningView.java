@@ -63,9 +63,9 @@ public class LightningView {
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
     private static final String HEADER_DNT = "DNT";
 
-    final LightningViewTitle mTitle;
+    private final LightningViewTitle mTitle;
     private WebView mWebView;
-    final boolean mIsIncognitoTab;
+    private final boolean mIsIncognitoTab;
     private final UIController mUIController;
     private final GestureDetector mGestureDetector;
     private final Activity mActivity;
@@ -129,7 +129,7 @@ public class LightningView {
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
         mDefaultUserAgent = mWebView.getSettings().getUserAgentString();
-        initializeSettings(mWebView.getSettings(), activity);
+        initializeSettings(mWebView.getSettings());
         initializePreferences(mWebView.getSettings(), activity);
 
         if (url != null) {
@@ -143,6 +143,12 @@ public class LightningView {
         }
     }
 
+    /**
+     * This method loads the homepage for the browser. Either
+     * it loads the URL stored as the homepage, or loads the
+     * startpage or bookmark page if either of those are set
+     * as the homepage.
+     */
     public void loadHomepage() {
         if (mWebView == null) {
             return;
@@ -160,6 +166,11 @@ public class LightningView {
         }
     }
 
+    /**
+     * This method gets the startpage URL from the {@link StartPage}
+     * class asynchronously and loads the URL in the WebView on the
+     * UI thread.
+     */
     private void loadStartpage() {
         BrowserApp.getIOThread().execute(new Runnable() {
             @Override
@@ -176,7 +187,9 @@ public class LightningView {
     }
 
     /**
-     * Load the HTML bookmarks page in this view
+     * This method gets the bookmark page URL from the {@link BookmarkPage}
+     * class asynchronously and loads the URL in the WebView on the
+     * UI thread. It also caches the default folder icon locally.
      */
     public void loadBookmarkpage() {
         if (mWebView == null)
@@ -210,11 +223,13 @@ public class LightningView {
     }
 
     /**
-     * Initialize the preference driven settings of the WebView
+     * Initialize the preference driven settings of the WebView. This method
+     * must be called whenever the preferences are changed within SharedPreferences.
      *
      * @param settings the WebSettings object to use, you can pass in null
-     *                 if you don't have a reference to them
-     * @param context  the context in which the WebView was created
+     *                 if you don't have a reference to them.
+     * @param context  the context in which the WebView was created, it is used
+     *                 to get the default UserAgent for the WebView.
      */
     @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
     public synchronized void initializePreferences(@Nullable WebSettings settings, Context context) {
@@ -344,10 +359,9 @@ public class LightningView {
      * be altered by the user. Distinguish between Incognito and Regular tabs here.
      *
      * @param settings the WebSettings object to use.
-     * @param context  the Context which was used to construct the WebView.
      */
     @SuppressLint("NewApi")
-    private void initializeSettings(WebSettings settings, Context context) {
+    private void initializeSettings(WebSettings settings) {
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             //noinspection deprecation
             settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -386,14 +400,40 @@ public class LightningView {
             settings.setAllowUniversalAccessFromFileURLs(false);
         }
 
-        settings.setAppCachePath(context.getDir("appcache", 0).getPath());
-        settings.setGeolocationDatabasePath(context.getDir("geolocation", 0).getPath());
+        settings.setAppCachePath(BrowserApp.getContext().getDir("appcache", 0).getPath());
+        settings.setGeolocationDatabasePath(BrowserApp.getContext().getDir("geolocation", 0).getPath());
         if (API < Build.VERSION_CODES.KITKAT) {
             //noinspection deprecation
-            settings.setDatabasePath(context.getDir("databases", 0).getPath());
+            settings.setDatabasePath(BrowserApp.getContext().getDir("databases", 0).getPath());
         }
     }
 
+    /**
+     * Getter for the {@link LightningViewTitle} of the
+     * current LightningView instance.
+     *
+     * @return a NonNull instance of LightningViewTitle
+     */
+    @NonNull
+    public LightningViewTitle getTitleInfo() {
+        return mTitle;
+    }
+
+    /**
+     * Returns whether or not the current tab is incognito or not.
+     *
+     * @return true if this tab is incognito, false otherwise
+     */
+    public boolean isIncognito() {
+        return mIsIncognitoTab;
+    }
+
+    /**
+     * This method is used to toggle the user agent between desktop
+     * and the current preference of the user.
+     *
+     * @param context the Context needed to set the user agent
+     */
     public void toggleDesktopUA(@NonNull Context context) {
         if (mWebView == null)
             return;
@@ -404,6 +444,22 @@ public class LightningView {
         mToggleDesktop = !mToggleDesktop;
     }
 
+    /**
+     * This method sets the user agent of the current tab.
+     * There are four options, 1, 2, 3, 4.
+     * </p>
+     * 1. use the default user agent
+     * </p>
+     * 2. use the desktop user agent
+     * </p>
+     * 3. use the mobile user agent
+     * </p>
+     * 4. use a custom user agent, or the default user agent
+     * if none was set.
+     *
+     * @param context the context needed to get the default user agent.
+     * @param choice  the choice of user agent to use, see above comments.
+     */
     @SuppressLint("NewApi")
     private void setUserAgent(Context context, int choice) {
         if (mWebView == null) return;
@@ -432,25 +488,49 @@ public class LightningView {
         }
     }
 
+    /**
+     * This method gets the additional headers that should be
+     * added with each request the browser makes.
+     *
+     * @return a non null Map of Strings with the additional
+     * request headers.
+     */
     @NonNull
     Map<String, String> getRequestHeaders() {
         return mRequestHeaders;
     }
 
+    /**
+     * This method determines whether the current tab is visible or not.
+     *
+     * @return true if the WebView is non-null and visible, false otherwise.
+     */
     public boolean isShown() {
         return mWebView != null && mWebView.isShown();
     }
 
+    /**
+     * Pause the current WebView instance
+     */
     public synchronized void onPause() {
         if (mWebView != null)
             mWebView.onPause();
     }
 
+    /**
+     * Resume the current WebView instance
+     */
     public synchronized void onResume() {
         if (mWebView != null)
             mWebView.onResume();
     }
 
+    /**
+     * Notify the LightningView that there is low memory and
+     * for the WebView to free memory. Only applicable on
+     * pre-Lollipop devices
+     */
+    @Deprecated
     public synchronized void freeMemory() {
         if (mWebView != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             //noinspection deprecation
@@ -458,15 +538,35 @@ public class LightningView {
         }
     }
 
+    /**
+     * This method sets the tab as the foreground tab or
+     * the background tab.
+     *
+     * @param isForeground true if the tab should be set as
+     *                     foreground, false otherwise.
+     */
     public void setForegroundTab(boolean isForeground) {
         isForegroundTab = isForeground;
         mEventBus.post(new BrowserEvents.TabsChanged());
     }
 
+    /**
+     * Determines if the tab is in the foreground or not.
+     *
+     * @return true if the tab is the foreground tab,
+     * false otherwise.
+     */
     public boolean isForegroundTab() {
         return isForegroundTab;
     }
 
+    /**
+     * Gets the current progress of the WebView.
+     *
+     * @return returns a number between 0 and 100 with
+     * the current progress of the WebView. If the WebView
+     * is null, then the progress returned will be 100.
+     */
     public int getProgress() {
         if (mWebView != null) {
             return mWebView.getProgress();
@@ -475,6 +575,9 @@ public class LightningView {
         }
     }
 
+    /**
+     * Notify the WebView to stop the current load.
+     */
     public synchronized void stopLoading() {
         if (mWebView != null) {
             mWebView.stopLoading();

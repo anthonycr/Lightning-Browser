@@ -91,9 +91,9 @@ class LightningWebClient extends WebViewClient {
             view.postInvalidate();
         }
         if (view.getTitle() == null || view.getTitle().isEmpty()) {
-            mLightningView.mTitle.setTitle(mActivity.getString(R.string.untitled));
+            mLightningView.getTitleInfo().setTitle(mActivity.getString(R.string.untitled));
         } else {
-            mLightningView.mTitle.setTitle(view.getTitle());
+            mLightningView.getTitleInfo().setTitle(view.getTitle());
         }
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT &&
                 mLightningView.getInvertePage()) {
@@ -104,7 +104,7 @@ class LightningWebClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mLightningView.mTitle.setFavicon(null);
+        mLightningView.getTitleInfo().setFavicon(null);
         if (mLightningView.isShown()) {
             mUIController.updateUrl(url, false);
             mUIController.showActionBar();
@@ -274,7 +274,7 @@ class LightningWebClient extends WebViewClient {
 
         Map<String, String> headers = mLightningView.getRequestHeaders();
 
-        if (mLightningView.mIsIncognitoTab) {
+        if (mLightningView.isIncognito()) {
             view.loadUrl(url, headers);
             return true;
         }
