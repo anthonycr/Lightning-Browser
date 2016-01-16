@@ -2,6 +2,8 @@ package acr.browser.lightning.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -15,10 +17,12 @@ class LightningViewTitle {
 
     private static Bitmap DEFAULT_ICON = null;
 
+    @NonNull
     private Bitmap mFavicon;
+    @NonNull
     private String mTitle;
 
-    public LightningViewTitle(Context context, boolean darkTheme) {
+    public LightningViewTitle(@NonNull Context context, boolean darkTheme) {
         if (DEFAULT_ICON == null) {
             DEFAULT_ICON = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
         }
@@ -26,7 +30,7 @@ class LightningViewTitle {
         mTitle = context.getString(R.string.action_new_tab);
     }
 
-    public void setFavicon(Bitmap favicon) {
+    public void setFavicon(@Nullable Bitmap favicon) {
         if (favicon == null) {
             mFavicon = DEFAULT_ICON;
         } else {
@@ -34,7 +38,7 @@ class LightningViewTitle {
         }
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@Nullable String title) {
         if (title == null) {
             mTitle = "";
         } else {
@@ -42,20 +46,17 @@ class LightningViewTitle {
         }
     }
 
-    public void setTitleAndFavicon(String title, Bitmap favicon) {
-        mTitle = title;
-
-        if (favicon == null) {
-            mFavicon = DEFAULT_ICON;
-        } else {
-            mFavicon = Utils.padFavicon(favicon);
-        }
+    public void setTitleAndFavicon(@Nullable String title, @Nullable Bitmap favicon) {
+        setTitle(title);
+        setFavicon(favicon);
     }
 
+    @NonNull
     public String getTitle() {
         return mTitle;
     }
 
+    @NonNull
     public Bitmap getFavicon() {
         return mFavicon;
     }

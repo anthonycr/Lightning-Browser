@@ -57,6 +57,12 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
+/**
+ * {@link LightningView} acts as a tab for the browser,
+ * handling WebView creation and handling logic, as well
+ * as properly initialing it. All interactions with the
+ * WebView should be made through this class.
+ */
 public class LightningView {
 
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
@@ -584,18 +590,44 @@ public class LightningView {
         }
     }
 
+    /**
+     * This method forces the layer type to hardware, which
+     * enables hardware rendering on the WebView instance
+     * of the current LightningView.
+     */
     private void setHardwareRendering() {
         mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, mPaint);
     }
 
+    /**
+     * This method sets the layer type to none, which
+     * means that either the GPU and CPU can both compose
+     * the layers when necessary.
+     */
     private void setNormalRendering() {
         mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
     }
 
+    /**
+     * This method forces the layer type to software, which
+     * disables hardware rendering on the WebView instance
+     * of the current LightningView and makes the CPU render
+     * the view.
+     */
     public void setSoftwareRendering() {
         mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
+    /**
+     * Sets the current rendering color of the WebView instance
+     * of the current LightningView. The for modes are normal
+     * rendering (0), inverted rendering (1), grayscale rendering (2),
+     * and inverted grayscale rendering (3)
+     *
+     * @param mode the integer mode to set as the rendering mode.
+     *             see the numbers in documentation above for the
+     *             values this method accepts.
+     */
     private void setColorMode(int mode) {
         mInvertPage = false;
         switch (mode) {
@@ -640,30 +672,57 @@ public class LightningView {
 
     }
 
+    /**
+     * Pauses the JavaScript timers of the
+     * WebView instance, which will trigger a
+     * pause for all WebViews in the app.
+     */
     public synchronized void pauseTimers() {
         if (mWebView != null) {
             mWebView.pauseTimers();
         }
     }
 
+    /**
+     * Resumes the JavaScript timers of the
+     * WebView instance, whihc will trigger a
+     * resume for all WebViews in the app.
+     */
     public synchronized void resumeTimers() {
         if (mWebView != null) {
             mWebView.resumeTimers();
         }
     }
 
+    /**
+     * Requests focus down on the WebView instance
+     * if the view does not already have focus.
+     */
     public void requestFocus() {
         if (mWebView != null && !mWebView.hasFocus()) {
             mWebView.requestFocus();
         }
     }
 
+    /**
+     * Sets the visibility of the WebView to either
+     * View.GONE, View.VISIBLE, or View.INVISIBLE.
+     * other values passed in will have no effect.
+     *
+     * @param visible the visibility to set on the WebView.
+     */
     public void setVisibility(int visible) {
         if (mWebView != null) {
             mWebView.setVisibility(visible);
         }
     }
 
+    /**
+     * Tells the WebView to reload the current page.
+     * If the proxy settings are not ready then the
+     * this method will not have an affect as the
+     * proxy must start before the load occurs.
+     */
     public synchronized void reload() {
         // Check if configured proxy is available
         if (!ProxyUtils.getInstance().isProxyReady()) {
@@ -676,6 +735,13 @@ public class LightningView {
         }
     }
 
+    /**
+     * Finds all the instances of the text passed to this
+     * method and highlights the instances of that text
+     * in the WebView.
+     *
+     * @param text the text to search for.
+     */
     @SuppressLint("NewApi")
     public synchronized void find(String text) {
         if (mWebView != null) {
@@ -688,6 +754,14 @@ public class LightningView {
         }
     }
 
+    /**
+     * Notify the tab to shutdown and destroy
+     * its WebView instance and to remove the reference
+     * to it. After this method is called, the current
+     * instance of the LightningView is useless as
+     * the WebView cannot be recreated using the public
+     * api.
+     */
     public synchronized void onDestroy() {
         if (mWebView != null) {
             mWebView.stopLoading();
@@ -704,12 +778,35 @@ public class LightningView {
         }
     }
 
+    /**
+     * Tell the WebView to navigate backwards
+     * in its history to the previous page.
+     */
     public synchronized void goBack() {
         if (mWebView != null) {
             mWebView.goBack();
         }
     }
 
+    /**
+     * Tell the WebView to navigate forwards
+     * in its history to the next page.
+     */
+    public synchronized void goForward() {
+        if (mWebView != null) {
+            mWebView.goForward();
+        }
+    }
+
+    /**
+     * Get the current user agent used
+     * by the WebView.
+     *
+     * @return retuns the current user agent
+     * of the WebView instance, or an empty
+     * string if the WebView is null.
+     */
+    @NonNull
     private String getUserAgent() {
         if (mWebView != null) {
             return mWebView.getSettings().getUserAgentString();
@@ -718,24 +815,35 @@ public class LightningView {
         }
     }
 
-    public synchronized void goForward() {
-        if (mWebView != null) {
-            mWebView.goForward();
-        }
-    }
-
+    /**
+     * Move the highlighted text in the WebView
+     * to the next matched text. This method will
+     * only have an affect after {@link LightningView#find(String)}
+     * is called. Otherwise it will do nothing.
+     */
     public synchronized void findNext() {
         if (mWebView != null) {
             mWebView.findNext(true);
         }
     }
 
+    /**
+     * Move the highlighted text in the WebView
+     * to the previous matched text. This method will
+     * only have an affect after {@link LightningView#find(String)}
+     * is called. Otherwise it will do nothing.
+     */
     public synchronized void findPrevious() {
         if (mWebView != null) {
             mWebView.findNext(false);
         }
     }
 
+    /**
+     * Clear the highlighted text in the WebView after
+     * {@link LightningView#find(String)} has been called.
+     * Otherwise it will have no affect.
+     */
     public synchronized void clearFindMatches() {
         if (mWebView != null) {
             mWebView.clearMatches();
@@ -743,20 +851,27 @@ public class LightningView {
     }
 
     /**
-     * Used by {@link LightningWebClient}
+     * Gets whether or not the page rendering is inverted or not.
+     * The main purpose of this is to indicate that JavaScript
+     * should be run at the end of a page load to invert only
+     * the images back to their uninverted states.
      *
-     * @return true if the page is in inverted mode, false otherwise
+     * @return true if the page is in inverted mode, false otherwise.
      */
     public boolean getInvertePage() {
         return mInvertPage;
     }
 
     /**
-     * handles a long click on the page, parameter String url
-     * is the url that should have been obtained from the WebView touch node
-     * thingy, if it is null, this method tries to deal with it and find a workaround
+     * Handles a long click on the page and delegates the URL to the
+     * proper dialog if it is not null, otherwise, it tries to get the
+     * URL using HitTestResult.
+     *
+     * @param url the url that should have been obtained from the WebView touch node
+     *            thingy, if it is null, this method tries to deal with it and find
+     *            a workaround.
      */
-    private void longClickPage(final String url) {
+    private void longClickPage(@Nullable final String url) {
         final WebView.HitTestResult result = mWebView.getHitTestResult();
         String currentUrl = mWebView.getUrl();
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
@@ -797,24 +912,61 @@ public class LightningView {
         }
     }
 
+    /**
+     * Determines whether or not the WebView can go
+     * backward or if it as the end of its history.
+     *
+     * @return true if the WebView can go back, false otherwise.
+     */
     public boolean canGoBack() {
         return mWebView != null && mWebView.canGoBack();
     }
 
+    /**
+     * Determine whether or not the WebView can go
+     * forward or if it is at the front of its history.
+     *
+     * @return true if it can go forward, false otherwise.
+     */
     public boolean canGoForward() {
         return mWebView != null && mWebView.canGoForward();
     }
 
+    /**
+     * Gets the current WebView instance of the tab.
+     *
+     * @return the WebView instance of the tab, which
+     * can be null.
+     */
     @Nullable
     public synchronized WebView getWebView() {
         return mWebView;
     }
 
+    /**
+     * Gets the favicon currently in use by
+     * the page. If the current page does not
+     * have a favicon, it returns a default
+     * icon.
+     *
+     * @return a non-null Bitmap with the
+     * current favicon.
+     */
+    @NonNull
     public Bitmap getFavicon() {
         return mTitle.getFavicon();
     }
 
-    public synchronized void loadUrl(String url) {
+    /**
+     * Loads the URL in the WebView. If the proxy settings
+     * are still initializing, then the URL will not load
+     * as it is necessary to have the settings initialized
+     * before a load occurs.
+     *
+     * @param url the non-null URL to attempt to load in
+     *            the WebView.
+     */
+    public synchronized void loadUrl(@NonNull String url) {
         // Check if configured proxy is available
         if (!ProxyUtils.getInstance().isProxyReady()) {
             return;
@@ -825,10 +977,24 @@ public class LightningView {
         }
     }
 
+    /**
+     * Get the current title of the page, retrieved from
+     * the title object.
+     *
+     * @return the title of the page, or an empty string
+     * if there is no title.
+     */
+    @NonNull
     public String getTitle() {
         return mTitle.getTitle();
     }
 
+    /**
+     * Get the current URL of the WebView, or an empty
+     * string if the WebView is null or the URL is null.
+     *
+     * @return the current URL or an empty string.
+     */
     @NonNull
     public String getUrl() {
         if (mWebView != null && mWebView.getUrl() != null) {
@@ -838,6 +1004,11 @@ public class LightningView {
         }
     }
 
+    /**
+     * The OnTouchListener used by the WebView so we can
+     * get scroll events and show/hide the action bar when
+     * the page is scrolled up/down.
+     */
     private class TouchListener implements OnTouchListener {
 
         float mLocation;
@@ -871,6 +1042,12 @@ public class LightningView {
         }
     }
 
+    /**
+     * The SimpleOnGestureListener used by the {@link TouchListener}
+     * in order to delegate show/hide events to the action bar when
+     * the user flings the page. Also handles long press events so
+     * that we can capture them accurately.
+     */
     private class CustomGestureListener extends SimpleOnGestureListener {
 
         @Override
@@ -924,6 +1101,12 @@ public class LightningView {
         }
     }
 
+    /**
+     * A Handler used to get the URL from a long click
+     * event on the WebView. It does not hold a hard
+     * reference to the WebView and therefore will not
+     * leak it if the WebView is garbage collected.
+     */
     private static class WebViewHandler extends Handler {
 
         private final WeakReference<LightningView> mReference;
