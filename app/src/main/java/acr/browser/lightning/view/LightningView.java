@@ -453,13 +453,13 @@ public class LightningView {
     /**
      * This method sets the user agent of the current tab.
      * There are four options, 1, 2, 3, 4.
-     * </p>
+     * <p>
      * 1. use the default user agent
-     * </p>
+     * <p>
      * 2. use the desktop user agent
-     * </p>
+     * <p>
      * 3. use the mobile user agent
-     * </p>
+     * <p>
      * 4. use a custom user agent, or the default user agent
      * if none was set.
      *
@@ -516,7 +516,7 @@ public class LightningView {
     }
 
     /**
-     * Pause the current WebView instance
+     * Pause the current WebView instance.
      */
     public synchronized void onPause() {
         if (mWebView != null)
@@ -524,7 +524,7 @@ public class LightningView {
     }
 
     /**
-     * Resume the current WebView instance
+     * Resume the current WebView instance.
      */
     public synchronized void onResume() {
         if (mWebView != null)
@@ -534,7 +534,7 @@ public class LightningView {
     /**
      * Notify the LightningView that there is low memory and
      * for the WebView to free memory. Only applicable on
-     * pre-Lollipop devices
+     * pre-Lollipop devices.
      */
     @Deprecated
     public synchronized void freeMemory() {
