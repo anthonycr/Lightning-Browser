@@ -12,6 +12,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,10 +45,12 @@ public class ThemeUtils {
         return color;
     }
 
+    @ColorInt
     public static int getIconLightThemeColor(@NonNull Context context) {
         return ContextCompat.getColor(context, R.color.icon_light_theme);
     }
 
+    @ColorInt
     public static int getIconDarkThemeColor(@NonNull Context context) {
         return ContextCompat.getColor(context, R.color.icon_dark_theme);
     }
@@ -92,7 +95,7 @@ public class ThemeUtils {
     }
 
     public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
-        final int color = (dark) ? ContextCompat.getColor(context, R.color.selected_dark) :
+        @ColorInt final int color = (dark) ? ContextCompat.getColor(context, R.color.selected_dark) :
                 ContextCompat.getColor(context, R.color.selected_light);
         return new ColorDrawable(color);
     }

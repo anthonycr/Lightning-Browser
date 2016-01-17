@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Build;

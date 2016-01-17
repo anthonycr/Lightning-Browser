@@ -154,7 +154,7 @@ public class BookmarkManager {
         @Override
         public void run() {
             final File tempFile = new File(mFilesDir,
-                    String.format("bm_%d.dat", System.currentTimeMillis()));
+                    String.format(Locale.US, "bm_%d.dat", System.currentTimeMillis()));
             final File bookmarksFile = new File(mFilesDir, FILE_BOOKMARKS);
             boolean success = false;
             BufferedWriter bookmarkWriter = null;
