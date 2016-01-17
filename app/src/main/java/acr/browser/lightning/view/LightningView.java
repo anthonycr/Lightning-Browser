@@ -762,6 +762,8 @@ public class LightningView {
      * the WebView cannot be recreated using the public
      * api.
      */
+    // TODO fix bug where WebView.destroy is being called before the tab
+    // is removed
     public synchronized void onDestroy() {
         if (mWebView != null) {
             mWebView.stopLoading();
