@@ -22,6 +22,7 @@ import android.graphics.Path;
 import android.graphics.Shader;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -47,6 +48,16 @@ import acr.browser.lightning.download.DownloadHandler;
 
 public final class Utils {
 
+    /**
+     * Downloads a file from the specified URL. Handles permissions
+     * requests, and creates all the necessary dialogs that must be
+     * showed to the user.
+     *
+     * @param activity           activity needed to created dialogs.
+     * @param url                url to download from.
+     * @param userAgent          the user agent of the browser.
+     * @param contentDisposition the content description of the file.
+     */
     public static void downloadFile(final Activity activity, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -67,6 +78,18 @@ public final class Utils {
 
     }
 
+    /**
+     * Creates a new intent that can launch the email
+     * app with a subject, address, body, and cc. It
+     * is used to handle mail:to links.
+     *
+     * @param address the address to send the email to.
+     * @param subject the subject of the email.
+     * @param body    the body of the email.
+     * @param cc      extra addresses to CC.
+     * @return a valid intent.
+     */
+    @NonNull
     public static Intent newEmailIntent(String address, String subject,
                                         String body, String cc) {
         Intent intent = new Intent(Intent.ACTION_SEND);
@@ -78,12 +101,19 @@ public final class Utils {
         return intent;
     }
 
-    public static void createInformativeDialog(Context context, @StringRes int title, @StringRes int message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    /**
+     * Creates a dialog with only a title, message, and okay button.
+     *
+     * @param activity the activity needed to create a dialog.
+     * @param title    the title of the dialog.
+     * @param message  the message of the dialog.
+     */
+    public static void createInformativeDialog(Activity activity, @StringRes int title, @StringRes int message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         builder.setMessage(message)
                 .setCancelable(true)
-                .setPositiveButton(context.getResources().getString(R.string.action_ok),
+                .setPositiveButton(activity.getResources().getString(R.string.action_ok),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
@@ -93,30 +123,50 @@ public final class Utils {
         alert.show();
     }
 
+    /**
+     * Displays a snackbar to the user with a String resource.
+     *
+     * @param activity the activity needed to create a snackbar.
+     * @param resource the string resource to show to the user.
+     */
     public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
         View view = activity.findViewById(android.R.id.content);
         if (view == null) return;
         Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
     }
 
-    public static void showSnackbar(@NonNull Activity activity, String message) {
+    /**
+     * Displays a snackbar to the user with a string message.
+     *
+     * @param activity the activity needed to create a snackbar.
+     * @param message  the string message to show to the user.
+     */
+    public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
         View view = activity.findViewById(android.R.id.content);
         if (view == null) return;
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 
     /**
-     * Converts Density Pixels (DP) to Pixels (PX)
+     * Converts Density Pixels (DP) to Pixels (PX).
      *
-     * @param dp the number of density pixels to convert
-     * @return the number of pixels
+     * @param dp the number of density pixels to convert.
+     * @return the number of pixels that the conversion generates.
      */
     public static int dpToPx(int dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return (int) (dp * metrics.density + 0.5f);
     }
 
-    public static String getDomainName(String url) {
+    /**
+     * Extracts the domain name from a URL.
+     *
+     * @param url the URL to extract the domain from.
+     * @return the domain name, or the URL if the domain
+     * could not be extracted. The domain name may include
+     * HTTPS if the URL is an SSL supported URL.
+     */
+    public static String getDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 
         boolean ssl = url.startsWith(Constants.HTTPS);
