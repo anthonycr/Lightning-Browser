@@ -25,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
@@ -453,13 +454,13 @@ public class LightningView {
     /**
      * This method sets the user agent of the current tab.
      * There are four options, 1, 2, 3, 4.
-     * <p>
+     * <p/>
      * 1. use the default user agent
-     * <p>
+     * <p/>
      * 2. use the desktop user agent
-     * <p>
+     * <p/>
      * 3. use the mobile user agent
-     * <p>
+     * <p/>
      * 4. use a custom user agent, or the default user agent
      * if none was set.
      *
@@ -763,9 +764,17 @@ public class LightningView {
      * api.
      */
     // TODO fix bug where WebView.destroy is being called before the tab
-    // is removed
+    // is removed and would cause a memory leak if the parent check
+    // was not in place.
     public synchronized void onDestroy() {
         if (mWebView != null) {
+            // Check to make sure the WebView has been removed
+            // before calling destroy() so that a memory leak is not created
+            ViewGroup parent = (ViewGroup) mWebView.getParent();
+            if (parent != null) {
+                Log.e(Constants.TAG, "WebView was not detached from window before onDestroy");
+                parent.removeView(mWebView);
+            }
             mWebView.stopLoading();
             mWebView.onPause();
             mWebView.clearHistory();
