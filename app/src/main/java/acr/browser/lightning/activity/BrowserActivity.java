@@ -1045,6 +1045,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             closeActivity();
             return;
         } else {
+            if (tabToDelete.getWebView() != null) {
+                mBrowserFrame.removeView(tabToDelete.getWebView());
+            }
             mTabsManager.deleteTab(position);
         }
         final LightningView afterTab = mTabsManager.getCurrentTab();
@@ -1102,6 +1105,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
+        LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null && currentTab.getWebView() != null) {
+            mBrowserFrame.removeView(currentTab.getWebView());
+        }
         mTabsManager.shutdown();
         mEventBus.post(new BrowserEvents.TabsChanged());
         finish();
