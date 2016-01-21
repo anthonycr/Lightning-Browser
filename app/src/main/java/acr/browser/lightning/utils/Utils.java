@@ -194,11 +194,6 @@ public final class Utils {
             return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
-    public static String getProtocol(String url) {
-        int index = url.indexOf('/');
-        return url.substring(0, index + 2);
-    }
-
     public static String[] getArray(String input) {
         return input.split(Constants.SEPARATOR);
     }

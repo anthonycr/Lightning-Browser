@@ -22,11 +22,6 @@ public class IncognitoActivity extends BrowserActivity {
         cookieManager.setAcceptCookie(mPreferences.getIncognitoCookiesEnabled());
     }
 
-//    @Override
-//    public synchronized void initializeTabs() {
-//        newTab(null, true);
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.incognito, menu);

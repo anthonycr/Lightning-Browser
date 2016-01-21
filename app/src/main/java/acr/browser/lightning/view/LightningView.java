@@ -136,8 +136,8 @@ public class LightningView {
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
         mDefaultUserAgent = mWebView.getSettings().getUserAgentString();
-        initializeSettings(mWebView.getSettings());
-        initializePreferences(mWebView.getSettings(), activity);
+        initializeSettings();
+        initializePreferences(activity);
 
         if (url != null) {
             if (!url.trim().isEmpty()) {
@@ -233,18 +233,16 @@ public class LightningView {
      * Initialize the preference driven settings of the WebView. This method
      * must be called whenever the preferences are changed within SharedPreferences.
      *
-     * @param settings the WebSettings object to use, you can pass in null
-     *                 if you don't have a reference to them.
-     * @param context  the context in which the WebView was created, it is used
-     *                 to get the default UserAgent for the WebView.
+     * @param context the context in which the WebView was created, it is used
+     *                to get the default UserAgent for the WebView.
      */
     @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
-    public synchronized void initializePreferences(@Nullable WebSettings settings, Context context) {
-        if (settings == null && mWebView == null) {
+    public synchronized void initializePreferences(Context context) {
+        if (mWebView == null) {
             return;
-        } else if (settings == null) {
-            settings = mWebView.getSettings();
         }
+
+        WebSettings settings = mWebView.getSettings();
 
         if (mPreferences.getDoNotTrackEnabled()) {
             mRequestHeaders.put(HEADER_DNT, "1");
@@ -365,10 +363,10 @@ public class LightningView {
      * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
      * be altered by the user. Distinguish between Incognito and Regular tabs here.
      *
-     * @param settings the WebSettings object to use.
      */
     @SuppressLint("NewApi")
-    private void initializeSettings(WebSettings settings) {
+    private void initializeSettings() {
+        WebSettings settings = mWebView.getSettings();
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             //noinspection deprecation
             settings.setAppCacheMaxSize(Long.MAX_VALUE);

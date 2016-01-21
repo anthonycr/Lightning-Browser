@@ -43,22 +43,37 @@ public class TabsManager {
     @Inject
     public TabsManager() {}
 
+    /**
+     * Restores old tabs that were open before the browser
+     * was closed. Handles the intent used to open the browser.
+     *
+     * @param activity  the activity needed to create tabs.
+     * @param intent    the intent that started the browser activity.
+     * @param incognito whether or not we are in incognito mode.
+     */
     public synchronized void restoreTabsAndHandleIntent(final Activity activity,
                                                         final Intent intent,
                                                         final boolean incognito) {
+        // If incognito, only create one tab, do not handle intent
+        // in order to protect user privacy
+        if (incognito && mWebViewList.isEmpty()) {
+            newTab(activity, null, true);
+            return;
+        }
+
         String url = null;
         if (intent != null) {
             url = intent.getDataString();
         }
         mWebViewList.clear();
         mCurrentTab = null;
-        if (!incognito && mPreferenceManager.getRestoreLostTabsEnabled()) {
+        if (mPreferenceManager.getRestoreLostTabsEnabled()) {
             final String mem = mPreferenceManager.getMemoryUrl();
             mPreferenceManager.setMemoryUrl("");
             String[] array = Utils.getArray(mem);
             for (String urlString : array) {
                 if (!urlString.isEmpty()) {
-                    newTab(activity, urlString, incognito);
+                    newTab(activity, urlString, false);
                 }
             }
         }
@@ -73,27 +88,17 @@ public class TabsManager {
                         .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                newTab(activity, urlToLoad, incognito);
+                                newTab(activity, urlToLoad, false);
                             }
                         })
                         .show();
             } else {
-                newTab(activity, url, incognito);
+                newTab(activity, url, false);
             }
         }
         if (mWebViewList.size() == 0) {
-            newTab(activity, null, incognito);
+            newTab(activity, null, false);
         }
-    }
-
-    /**
-     * Return a clone of the current tabs list. The list will not be updated, the user has to fetch
-     * a new copy when notified.
-     *
-     * @return a copy of the current tabs list
-     */
-    public List<LightningView> getTabsList() {
-        return new ArrayList<>(mWebViewList);
     }
 
     /**
@@ -139,7 +144,7 @@ public class TabsManager {
      */
     public synchronized void resume(final Context context) {
         for (LightningView tab : mWebViewList) {
-            tab.initializePreferences(null, context);
+            tab.initializePreferences(context);
         }
     }
 
@@ -185,7 +190,6 @@ public class TabsManager {
      *
      * @param position The position of the tab to remove
      */
-    @Nullable
     private synchronized void removeTab(final int position) {
         if (position >= mWebViewList.size()) {
             return;
@@ -205,7 +209,7 @@ public class TabsManager {
         if (current == position) {
             if (size() == 1) {
                 mCurrentTab = null;
-            } else if (current < size() - 1 ) {
+            } else if (current < size() - 1) {
                 // There is another tab after this one
                 mCurrentTab = getTabAtPosition(current + 1);
             } else {
@@ -231,7 +235,7 @@ public class TabsManager {
      * @return A string representation of the currently opened tabs
      */
     public String tabsString() {
-        final StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder(mWebViewList.size());
         for (LightningView tab : mWebViewList) {
             final String url = tab.getUrl();
             if (!url.isEmpty()) {
