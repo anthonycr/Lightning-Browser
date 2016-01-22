@@ -14,6 +14,7 @@ import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.view.LightningView;
+import acr.browser.lightning.view.LightningWebClient;
 import dagger.Component;
 
 @Singleton
@@ -45,5 +46,7 @@ public interface AppComponent {
     void inject(ProxyUtils proxyUtils);
 
     void inject(ReadingActivity activity);
+
+    void inject(LightningWebClient webClient);
 
 }

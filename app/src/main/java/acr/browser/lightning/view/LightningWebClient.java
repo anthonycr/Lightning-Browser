@@ -44,7 +44,7 @@ import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 
-class LightningWebClient extends WebViewClient {
+public class LightningWebClient extends WebViewClient {
 
 
     private final Activity mActivity;
@@ -54,10 +54,10 @@ class LightningWebClient extends WebViewClient {
     private final Bus mEventBus;
     private final IntentUtils mIntentUtils;
 
-    @Inject
-    ProxyUtils mProxyUtils;
+    @Inject ProxyUtils mProxyUtils;
 
     LightningWebClient(Activity activity, LightningView lightningView) {
+        BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
