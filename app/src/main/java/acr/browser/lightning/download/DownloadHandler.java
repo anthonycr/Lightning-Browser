@@ -134,7 +134,7 @@ public class DownloadHandler {
     /* package */
     private static void onDownloadStartNoStream(final Context context, String url, String userAgent,
                                                 String contentDisposition, String mimetype) {
-        final Bus eventBus = BrowserApp.getAppComponent().getBus();
+        final Bus eventBus = BrowserApp.getBus();
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard

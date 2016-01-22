@@ -35,4 +35,5 @@ public class AppModule {
     public Bus provideBus() {
         return bus;
     }
+
 }
