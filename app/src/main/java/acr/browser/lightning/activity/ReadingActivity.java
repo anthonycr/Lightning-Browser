@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
@@ -31,14 +33,21 @@ import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ReadingActivity extends AppCompatActivity {
 
-    private TextView mTitle;
-    private TextView mBody;
+    @Bind(R.id.textViewTitle)
+    TextView mTitle;
+
+    @Bind(R.id.textViewBody)
+    TextView mBody;
+
+    @Inject PreferenceManager mPreferences;
+
     private boolean mInvert;
     private String mUrl = null;
-    private PreferenceManager mPreferences;
     private int mTextSize;
     private ProgressDialog mProgressDialog;
     private PageLoader mLoaderReference;
@@ -52,8 +61,9 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        BrowserApp.getAppComponent().inject(this);
+
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
-        mPreferences = BrowserApp.getPreferenceManager();
         mInvert = mPreferences.getInvertColors();
         final int color;
         if (mInvert) {
@@ -67,15 +77,13 @@ public class ReadingActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reading_view);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mTitle = (TextView) findViewById(R.id.textViewTitle);
-        mBody = (TextView) findViewById(R.id.textViewBody);
 
         mTextSize = mPreferences.getReadingTextSize();
         mBody.setTextSize(getTextSize(mTextSize));

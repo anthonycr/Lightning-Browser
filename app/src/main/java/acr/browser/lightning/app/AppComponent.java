@@ -3,6 +3,7 @@ package acr.browser.lightning.app;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
@@ -42,5 +43,7 @@ public interface AppComponent {
     void inject(BrowserApp app);
 
     void inject(ProxyUtils proxyUtils);
+
+    void inject(ReadingActivity activity);
 
 }
