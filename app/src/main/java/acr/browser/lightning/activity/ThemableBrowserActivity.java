@@ -13,8 +13,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 
 public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
-    @Inject
-    PreferenceManager mPreferences;
+    @Inject PreferenceManager mPreferences;
 
     private int mTheme;
     private boolean mShowTabsInDrawer;

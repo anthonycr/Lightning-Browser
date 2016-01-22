@@ -178,26 +178,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private String mCameraPhotoPath;
 
     // The singleton BookmarkManager
-    @Inject
-    BookmarkManager mBookmarkManager;
+    @Inject BookmarkManager mBookmarkManager;
 
     // Event bus
-    @Inject
-    Bus mEventBus;
+    @Inject Bus mEventBus;
 
-    @Inject
-    BookmarkPage mBookmarkPage;
+    @Inject BookmarkPage mBookmarkPage;
 
-    @Inject
-    LightningDialogBuilder bookmarksDialogBuilder;
+    @Inject LightningDialogBuilder bookmarksDialogBuilder;
 
-    @Inject
-    TabsManager mTabsManager;
+    @Inject TabsManager mTabsManager;
 
-    // Preference manager was moved on ThemeableBrowserActivity
-
-    @Inject
-    HistoryDatabase mHistoryDatabase;
+    @Inject HistoryDatabase mHistoryDatabase;
 
     // Image
     private Bitmap mWebpageBitmap;
@@ -206,7 +198,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private DrawerArrowDrawable mArrowDrawable;
 
     // Proxy
-    private ProxyUtils mProxyUtils;
+    @Inject ProxyUtils mProxyUtils;
 
     // Constant
     private static final int API = android.os.Build.VERSION.SDK_INT;
@@ -310,8 +302,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mArrowImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         }
         arrowButton.setOnClickListener(this);
-
-        mProxyUtils = ProxyUtils.getInstance();
 
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) customView.findViewById(R.id.search);

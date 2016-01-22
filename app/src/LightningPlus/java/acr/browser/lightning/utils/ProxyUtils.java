@@ -8,6 +8,9 @@ import android.util.Log;
 
 import net.i2p.android.ui.I2PAndroidHelper;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
@@ -16,27 +19,18 @@ import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.web.WebkitProxy;
 
-/**
- * 6/4/2015 Anthony Restaino
- */
+@Singleton
 public class ProxyUtils {
     // Helper
-    private final I2PAndroidHelper mI2PHelper;
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
-    private final PreferenceManager mPreferences;
-    private static ProxyUtils mInstance;
 
-    private ProxyUtils(Context context) {
-        mPreferences = BrowserApp.getPreferenceManager();
-        mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
-    }
+    @Inject PreferenceManager mPreferences;
+    @Inject I2PAndroidHelper mI2PHelper;
 
-    public static ProxyUtils getInstance() {
-        if (mInstance == null) {
-            mInstance = new ProxyUtils(BrowserApp.getContext());
-        }
-        return mInstance;
+    @Inject
+    public ProxyUtils() {
+        BrowserApp.getAppComponent().inject(this);
     }
 
     /*

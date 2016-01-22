@@ -94,14 +94,10 @@ public class LightningView {
     private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
     private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
-    @Inject
-    Bus mEventBus;
-
-    @Inject
-    PreferenceManager mPreferences;
-
-    @Inject
-    LightningDialogBuilder mBookmarksDialogBuilder;
+    @Inject Bus mEventBus;
+    @Inject PreferenceManager mPreferences;
+    @Inject LightningDialogBuilder mBookmarksDialogBuilder;
+    @Inject ProxyUtils mProxyUtils;
 
     @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean isIncognito) {
@@ -362,7 +358,6 @@ public class LightningView {
     /**
      * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
      * be altered by the user. Distinguish between Incognito and Regular tabs here.
-     *
      */
     @SuppressLint("NewApi")
     private void initializeSettings() {
@@ -724,7 +719,7 @@ public class LightningView {
      */
     public synchronized void reload() {
         // Check if configured proxy is available
-        if (!ProxyUtils.getInstance().isProxyReady()) {
+        if (!mProxyUtils.isProxyReady()) {
             // User has been notified
             return;
         }
@@ -976,7 +971,7 @@ public class LightningView {
      */
     public synchronized void loadUrl(@NonNull String url) {
         // Check if configured proxy is available
-        if (!ProxyUtils.getInstance().isProxyReady()) {
+        if (!mProxyUtils.isProxyReady()) {
             return;
         }
 

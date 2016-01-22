@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.squareup.otto.Bus;
 
+import net.i2p.android.ui.I2PAndroidHelper;
+
 import javax.inject.Singleton;
 
 import acr.browser.lightning.database.BookmarkManager;
@@ -34,6 +36,12 @@ public class AppModule {
     @Provides
     public Bus provideBus() {
         return bus;
+    }
+
+    @Provides
+    @Singleton
+    public I2PAndroidHelper provideI2PAndroidHelper() {
+        return new I2PAndroidHelper(app.getApplicationContext());
     }
 
 }

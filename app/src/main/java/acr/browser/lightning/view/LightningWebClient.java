@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
@@ -51,6 +53,9 @@ class LightningWebClient extends WebViewClient {
     private final AdBlock mAdBlock;
     private final Bus mEventBus;
     private final IntentUtils mIntentUtils;
+
+    @Inject
+    ProxyUtils mProxyUtils;
 
     LightningWebClient(Activity activity, LightningView lightningView) {
         mActivity = activity;
@@ -267,7 +272,7 @@ class LightningWebClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         // Check if configured proxy is available
-        if (!ProxyUtils.getInstance().isProxyReady()) {
+        if (!mProxyUtils.isProxyReady()) {
             // User has been notified
             return true;
         }
