@@ -1,14 +1,14 @@
 package acr.browser.lightning.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import com.squareup.otto.Bus;
-
 import net.i2p.android.ui.I2PAndroidHelper;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
@@ -18,30 +18,18 @@ import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.web.WebkitProxy;
 
-/**
- * 6/4/2015 Anthony Restaino
- */
+@Singleton
 public class ProxyUtils {
     // Helper
-    private final I2PAndroidHelper mI2PHelper;
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
-    private final PreferenceManager mPreferences;
-    private static ProxyUtils mInstance;
 
-    private final Bus mEventBus;
+    @Inject PreferenceManager mPreferences;
+    @Inject I2PAndroidHelper mI2PHelper;
 
-    private ProxyUtils(Context context) {
-        mPreferences = BrowserApp.getPreferenceManager();
-        mEventBus = BrowserApp.getBus();
-        mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
-    }
-
-    public static ProxyUtils getInstance() {
-        if (mInstance == null) {
-            mInstance = new ProxyUtils(BrowserApp.getContext());
-        }
-        return mInstance;
+    @Inject
+    public ProxyUtils() {
+        BrowserApp.getAppComponent().inject(this);
     }
 
     /*
@@ -152,10 +140,12 @@ public class ProxyUtils {
     public boolean isProxyReady() {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                mEventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
+                BrowserApp.getBus()
+                        .post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                mEventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
+                BrowserApp.getBus()
+                        .post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
                 return false;
             }
         }
@@ -206,7 +196,7 @@ public class ProxyUtils {
                 break;
 
             case Constants.PROXY_I2P:
-                I2PAndroidHelper ih = new I2PAndroidHelper(activity.getApplicationContext());
+                I2PAndroidHelper ih = new I2PAndroidHelper(BrowserApp.getContext());
                 if (!ih.isI2PAndroidInstalled()) {
                     choice = Constants.NO_PROXY;
                     ih.promptToInstall(activity);
