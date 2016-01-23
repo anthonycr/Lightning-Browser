@@ -20,7 +20,6 @@ public class BrowserApp extends Application {
     private static AppComponent appComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
-    @Inject static Context context;
     @Inject static HistoryDatabase historyDatabase;
     @Inject static Bus bus;
     @Inject static PreferenceManager preferenceManager;
@@ -39,10 +38,6 @@ public class BrowserApp extends Application {
 
     public static AppComponent getAppComponent() {
         return appComponent;
-    }
-
-    public static Context getContext() {
-        return context;
     }
 
     public static HistoryDatabase getHistoryDatabase() {
