@@ -294,26 +294,28 @@ public class DownloadHandler {
      * @return the first existent parent
      */
     private static String getFirstRealParentDirectory(String directory) {
-        if (directory == null || directory.isEmpty()) {
-            return "/";
-        }
-        directory = addNecessarySlashes(directory);
-        File file = new File(directory);
-        if (!file.isDirectory()) {
-            int indexSlash = directory.lastIndexOf('/');
-            if (indexSlash > 0) {
-                String parent = directory.substring(0, indexSlash);
-                int previousIndex = parent.lastIndexOf('/');
-                if (previousIndex > 0) {
-                    return getFirstRealParentDirectory(parent.substring(0, previousIndex));
+        while (true) {
+            if (directory == null || directory.isEmpty()) {
+                return "/";
+            }
+            directory = addNecessarySlashes(directory);
+            File file = new File(directory);
+            if (!file.isDirectory()) {
+                int indexSlash = directory.lastIndexOf('/');
+                if (indexSlash > 0) {
+                    String parent = directory.substring(0, indexSlash);
+                    int previousIndex = parent.lastIndexOf('/');
+                    if (previousIndex > 0) {
+                        directory = parent.substring(0, previousIndex);
+                    } else {
+                        return "/";
+                    }
                 } else {
                     return "/";
                 }
             } else {
-                return "/";
+                return directory;
             }
-        } else {
-            return directory;
         }
     }
 

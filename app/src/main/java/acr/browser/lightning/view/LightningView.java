@@ -199,32 +199,8 @@ public class LightningView {
     public void loadBookmarkpage() {
         if (mWebView == null)
             return;
-        BrowserApp.getIOThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
-                FileOutputStream outputStream = null;
-                File image = new File(mActivity.getCacheDir(), "folder.png");
-                try {
-                    outputStream = new FileOutputStream(image);
-                    folderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                    folderIcon.recycle();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } finally {
-                    Utils.close(outputStream);
-                }
-                final File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
-
-                BookmarkPage.buildBookmarkPage(null, mBookmarkManager);
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWebView.loadUrl(Constants.FILE + bookmarkWebPage, mRequestHeaders);
-                    }
-                });
-            }
-        });
+        Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
+        new BookmarkPage(mBookmarkManager, this, BrowserApp.get(mActivity), folderIcon).executeOnExecutor(BrowserApp.getIOThread());
     }
 
     /**
