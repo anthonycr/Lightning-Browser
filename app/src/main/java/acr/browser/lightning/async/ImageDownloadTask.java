@@ -1,5 +1,6 @@
 package acr.browser.lightning.async;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -23,13 +24,16 @@ import acr.browser.lightning.utils.Utils;
 public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
-    private static final File mCacheDir = BrowserApp.getContext().getCacheDir();
+    private final File mCacheDir;
     private final WeakReference<ImageView> bmImage;
     private final HistoryItem mWeb;
     private final String mUrl;
     private final Bitmap mDefaultBitmap;
 
-    public ImageDownloadTask(@NonNull ImageView bmImage, @NonNull HistoryItem web, @NonNull Bitmap defaultBitmap) {
+    public ImageDownloadTask(@NonNull ImageView bmImage,
+                             @NonNull HistoryItem web,
+                             @NonNull Bitmap defaultBitmap,
+                             @NonNull Context context) {
         // Set a tag on the ImageView so we know if the view
         // has gone out of scope and should not be used
         bmImage.setTag(web.getUrl().hashCode());
@@ -37,6 +41,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         this.mWeb = web;
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
+        this.mCacheDir = BrowserApp.get(context).getCacheDir();
     }
 
     @Override

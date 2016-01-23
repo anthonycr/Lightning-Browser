@@ -1,5 +1,6 @@
 package acr.browser.lightning.object;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -93,7 +94,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mSearchSubtitle = mContext.getString(R.string.suggestion);
         mDarkTheme = dark || incognito;
         mIncognito = incognito;
-        Thread delete = new Thread(new ClearCacheRunnable());
+        Thread delete = new Thread(new ClearCacheRunnable(context));
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
@@ -102,18 +103,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mLanguage = Locale.getDefault().getLanguage();
         if (mLanguage.isEmpty()) {
             mLanguage = DEFAULT_LANGUAGE;
-        }
-    }
-
-    private static void deleteOldCacheFiles() {
-        File dir = new File(BrowserApp.getContext().getCacheDir().toString());
-        String[] fileList = dir.list(new NameFilter());
-        long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
-        for (String fileName : fileList) {
-            File file = new File(dir.getPath() + fileName);
-            if (earliestTimeAllowed > file.lastModified()) {
-                file.delete();
-            }
         }
     }
 
@@ -220,9 +209,23 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private static class ClearCacheRunnable implements Runnable {
 
+        private Context context;
+
+        public ClearCacheRunnable(Context context) {
+            this.context = BrowserApp.get(context);
+        }
+
         @Override
         public void run() {
-            deleteOldCacheFiles();
+            File dir = new File(context.getCacheDir().toString());
+            String[] fileList = dir.list(new NameFilter());
+            long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
+            for (String fileName : fileList) {
+                File file = new File(dir.getPath() + fileName);
+                if (earliestTimeAllowed > file.lastModified()) {
+                    file.delete();
+                }
+            }
         }
 
     }
@@ -310,7 +313,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            File cache = downloadSuggestionsForQuery(query, mLanguage);
+            File cache = downloadSuggestionsForQuery(query, mLanguage, BrowserApp.get(mContext));
             if (!cache.exists()) {
                 return filter;
             }
@@ -372,12 +375,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
      * @param query the query to get suggestions for
      * @return the cache file containing the suggestions
      */
-    private static File downloadSuggestionsForQuery(String query, String language) {
-        File cacheFile = new File(BrowserApp.getContext().getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
+    private static File downloadSuggestionsForQuery(String query, String language, Application app) {
+        File cacheFile = new File(app.getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
-        if (!isNetworkConnected(BrowserApp.getContext())) {
+        if (!isNetworkConnected(app)) {
             return cacheFile;
         }
         InputStream in = null;
