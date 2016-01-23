@@ -68,6 +68,9 @@ public final class BrowserEvents {
         }
     }
 
+    public final static class OpenHistoryInCurrentTab {
+    }
+
     /**
      * The user want to open the given url in the current tab
      */
