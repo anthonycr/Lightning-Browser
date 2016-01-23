@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
@@ -65,7 +66,7 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
     private final Bitmap mFolderIcon;
     private final String mTitle;
 
-    public BookmarkPage(BookmarkManager manager, LightningView tab, Application app, Bitmap folderIcon) {
+    public BookmarkPage(LightningView tab, Application app, BookmarkManager manager, Bitmap folderIcon) {
         mFilesDir = app.getFilesDir();
         mCacheDir = app.getCacheDir();
         mTitle = app.getString(R.string.action_bookmarks);
@@ -145,6 +146,10 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
         } finally {
             Utils.close(bookWriter);
         }
+    }
+
+    public void load() {
+        executeOnExecutor(BrowserApp.getIOThread());
     }
 
 }

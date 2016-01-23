@@ -34,9 +34,6 @@ import android.webkit.WebView;
 
 import com.squareup.otto.Bus;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
@@ -177,7 +174,7 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        new StartPage(this, BrowserApp.get(mActivity)).executeOnExecutor(BrowserApp.getIOThread());
+        new StartPage(this, BrowserApp.get(mActivity)).load();
     }
 
     /**
@@ -189,7 +186,7 @@ public class LightningView {
         if (mWebView == null)
             return;
         Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
-        new BookmarkPage(mBookmarkManager, this, BrowserApp.get(mActivity), folderIcon).executeOnExecutor(BrowserApp.getIOThread());
+        new BookmarkPage(this, BrowserApp.get(mActivity), mBookmarkManager, folderIcon).load();
     }
 
     /**

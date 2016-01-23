@@ -181,4 +181,8 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
         return Constants.FILE + homepage;
     }
 
+    public void load() {
+        executeOnExecutor(BrowserApp.getIOThread());
+    }
+
 }

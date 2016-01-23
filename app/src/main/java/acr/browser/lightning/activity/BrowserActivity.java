@@ -1400,22 +1400,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * function that opens the HTML history page in the browser
      */
     private void openHistory() {
-        // use a thread so that history retrieval doesn't block the UI
-        BrowserApp.getIOThread().execute(new Runnable() {
-
-            @Override
-            public void run() {
-                final String historyPage = HistoryPage.getHistoryPage(BrowserActivity.this);
-                BrowserActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadUrlInCurrentView(historyPage);
-                        mSearch.setText("");
-                    }
-                });
-            }
-
-        });
+        new HistoryPage(mTabsManager.getCurrentTab(), getApplication()).load();
     }
 
     /**
@@ -2000,6 +1985,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     mDrawerLayout.closeDrawer(mDrawerRight);
                 }
             }, 150);
+        }
+
+        @Subscribe
+        public void loadHistory(final BrowserEvents.OpenHistoryInCurrentTab event) {
+            new HistoryPage(mTabsManager.getCurrentTab(), getApplication()).load();
         }
 
         /**
