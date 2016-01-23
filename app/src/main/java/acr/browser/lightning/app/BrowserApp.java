@@ -21,7 +21,6 @@ public class BrowserApp extends Application {
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Inject static Context context;
-    @Inject static BookmarkPage bookmarkPage;
     @Inject static HistoryDatabase historyDatabase;
     @Inject static Bus bus;
     @Inject static PreferenceManager preferenceManager;
@@ -56,10 +55,6 @@ public class BrowserApp extends Application {
 
     public static Bus getBus() {
         return bus;
-    }
-
-    public static BookmarkPage getBookmarkPage() {
-        return bookmarkPage;
     }
 
 }

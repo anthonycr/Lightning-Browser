@@ -183,8 +183,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // Event bus
     @Inject Bus mEventBus;
 
-    @Inject BookmarkPage mBookmarkPage;
-
     @Inject LightningDialogBuilder bookmarksDialogBuilder;
 
     @Inject TabsManager mTabsManager;

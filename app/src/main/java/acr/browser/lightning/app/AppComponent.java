@@ -31,8 +31,6 @@ public interface AppComponent {
 
     void inject(LightningDialogBuilder builder);
 
-    void inject(BookmarkPage bookmarkPage);
-
     void inject(TabsFragment fragment);
 
     void inject(LightningView lightningView);

@@ -50,6 +50,7 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -98,6 +99,7 @@ public class LightningView {
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
+    @Inject BookmarkManager mBookmarkManager;
 
     @SuppressLint("NewApi")
     public LightningView(Activity activity, String url, boolean isIncognito) {
@@ -214,7 +216,7 @@ public class LightningView {
                 }
                 final File bookmarkWebPage = new File(mActivity.getFilesDir(), BookmarkPage.FILENAME);
 
-                BrowserApp.getBookmarkPage().buildBookmarkPage(null);
+                BookmarkPage.buildBookmarkPage(null, mBookmarkManager);
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

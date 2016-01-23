@@ -52,20 +52,12 @@ public final class BookmarkPage {
 
     private static final String END = "</div></body></html>";
 
-    @Inject
-    BookmarkManager manager;
+    private static final File FILES_DIR = BrowserApp.getContext().getFilesDir();
+    private static final File CACHE_DIR = BrowserApp.getContext().getCacheDir();
 
-    private final File FILES_DIR;
-    private final File CACHE_DIR;
+    private BookmarkPage() {}
 
-    @Inject
-    public BookmarkPage() {
-        BrowserApp.getAppComponent().inject(this);
-        FILES_DIR = BrowserApp.getContext().getFilesDir();
-        CACHE_DIR = BrowserApp.getContext().getCacheDir();
-    }
-
-    public void buildBookmarkPage(final String folder) {
+    public static void buildBookmarkPage(final String folder, final BookmarkManager manager) {
         final List<HistoryItem> list = manager.getBookmarksFromFolder(folder, true);
         final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {
@@ -87,7 +79,7 @@ public final class BookmarkPage {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        buildBookmarkPage(item.getTitle());
+                        buildBookmarkPage(item.getTitle(), manager);
                     }
                 }).run();
             } else {
