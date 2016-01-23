@@ -33,6 +33,10 @@ public class BrowserApp extends Application {
         LeakCanary.install(this);
     }
 
+    public static BrowserApp get(Context context) {
+        return (BrowserApp) context.getApplicationContext();
+    }
+
     public static AppComponent getAppComponent() {
         return appComponent;
     }

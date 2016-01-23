@@ -2,6 +2,7 @@ package acr.browser.lightning.view;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -28,8 +29,10 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
+
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
+
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -63,7 +66,7 @@ class LightningChromeClient extends WebChromeClient {
     public void onReceivedIcon(WebView view, Bitmap icon) {
         mLightningView.getTitleInfo().setFavicon(icon);
         eventBus.post(new BrowserEvents.TabsChanged());
-        cacheFavicon(view.getUrl(), icon);
+        cacheFavicon(view.getUrl(), icon, mActivity);
     }
 
     /**
@@ -71,30 +74,13 @@ class LightningChromeClient extends WebChromeClient {
      *
      * @param icon the icon to cache
      */
-    private static void cacheFavicon(final String url, final Bitmap icon) {
+    private static void cacheFavicon(final String url, final Bitmap icon, final Context context) {
         if (icon == null) return;
         final Uri uri = Uri.parse(url);
         if (uri.getHost() == null) {
             return;
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String hash = String.valueOf(uri.getHost().hashCode());
-                Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
-                FileOutputStream fos = null;
-                try {
-                    File image = new File(BrowserApp.getContext().getCacheDir(), hash + ".png");
-                    fos = new FileOutputStream(image);
-                    icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    Utils.close(fos);
-                }
-            }
-        }).start();
+        BrowserApp.getIOThread().execute(new IconCacheTask(uri, icon, context));
     }
 
 

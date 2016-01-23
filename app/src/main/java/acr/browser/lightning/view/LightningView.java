@@ -402,11 +402,11 @@ public class LightningView {
             settings.setAllowUniversalAccessFromFileURLs(false);
         }
 
-        settings.setAppCachePath(BrowserApp.getContext().getDir("appcache", 0).getPath());
-        settings.setGeolocationDatabasePath(BrowserApp.getContext().getDir("geolocation", 0).getPath());
+        settings.setAppCachePath(BrowserApp.get(mActivity).getDir("appcache", 0).getPath());
+        settings.setGeolocationDatabasePath(BrowserApp.get(mActivity).getDir("geolocation", 0).getPath());
         if (API < Build.VERSION_CODES.KITKAT) {
             //noinspection deprecation
-            settings.setDatabasePath(BrowserApp.getContext().getDir("databases", 0).getPath());
+            settings.setDatabasePath(BrowserApp.get(mActivity).getDir("databases", 0).getPath());
         }
     }
 
