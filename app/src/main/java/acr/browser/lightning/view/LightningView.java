@@ -177,18 +177,7 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        BrowserApp.getIOThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                final String homepage = StartPage.getHomepage(mActivity);
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWebView.loadUrl(homepage, mRequestHeaders);
-                    }
-                });
-            }
-        });
+        new StartPage(this, BrowserApp.get(mActivity)).executeOnExecutor(BrowserApp.getIOThread());
     }
 
     /**
