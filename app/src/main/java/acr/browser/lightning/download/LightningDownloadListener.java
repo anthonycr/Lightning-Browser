@@ -12,15 +12,23 @@ import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.preference.PreferenceManager;
+
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
+
+import javax.inject.Inject;
 
 public class LightningDownloadListener implements DownloadListener {
 
     private final Activity mActivity;
 
+    @Inject PreferenceManager mPreferenceManager;
+
     public LightningDownloadListener(Activity context) {
+        BrowserApp.getAppComponent().inject(this);
         mActivity = context;
     }
 
@@ -38,7 +46,7 @@ public class LightningDownloadListener implements DownloadListener {
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which) {
                                     case DialogInterface.BUTTON_POSITIVE:
-                                        DownloadHandler.onDownloadStart(mActivity, url, userAgent,
+                                        DownloadHandler.onDownloadStart(mActivity, mPreferenceManager, url, userAgent,
                                                 contentDisposition, mimetype);
                                         break;
 

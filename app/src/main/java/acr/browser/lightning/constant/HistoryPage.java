@@ -42,13 +42,15 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
     private final WeakReference<LightningView> mTabReference;
     private final File mFilesDir;
     private final String mTitle;
+    private final HistoryDatabase mHistoryDatabase;
 
     private String mHistoryUrl = null;
 
-    public HistoryPage(LightningView tab, Application app) {
+    public HistoryPage(LightningView tab, Application app, HistoryDatabase database) {
         mTabReference = new WeakReference<>(tab);
         mFilesDir = app.getFilesDir();
         mTitle = app.getString(R.string.action_history);
+        mHistoryDatabase = database;
     }
 
     @Override
@@ -69,7 +71,7 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
     @NonNull
     private String getHistoryPage() {
         StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
-        List<HistoryItem> historyList = getWebHistory();
+        List<HistoryItem> historyList = mHistoryDatabase.getLastHundredItems();
         Iterator<HistoryItem> it = historyList.iterator();
         HistoryItem helper;
         while (it.hasNext()) {
@@ -96,11 +98,6 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
             Utils.close(historyWriter);
         }
         return Constants.FILE + historyWebPage;
-    }
-
-    private static List<HistoryItem> getWebHistory() {
-        HistoryDatabase databaseHandler = BrowserApp.getHistoryDatabase();
-        return databaseHandler.getLastHundredItems();
     }
 
     public void load() {

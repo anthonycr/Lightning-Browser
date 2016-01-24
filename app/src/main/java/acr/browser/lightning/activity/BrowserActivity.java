@@ -1066,7 +1066,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             Log.d(Constants.TAG, "Cache Cleared");
         }
         if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
-            WebUtils.clearHistory(this);
+            WebUtils.clearHistory(this, mHistoryDatabase);
             Log.d(Constants.TAG, "History Cleared");
         }
         if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
@@ -1400,7 +1400,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * function that opens the HTML history page in the browser
      */
     private void openHistory() {
-        new HistoryPage(mTabsManager.getCurrentTab(), getApplication()).load();
+        new HistoryPage(mTabsManager.getCurrentTab(), getApplication(), mHistoryDatabase).load();
     }
 
     /**
@@ -1989,7 +1989,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         @Subscribe
         public void loadHistory(final BrowserEvents.OpenHistoryInCurrentTab event) {
-            new HistoryPage(mTabsManager.getCurrentTab(), getApplication()).load();
+            new HistoryPage(mTabsManager.getCurrentTab(), getApplication(), mHistoryDatabase).load();
         }
 
         /**

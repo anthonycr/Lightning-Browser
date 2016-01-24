@@ -29,6 +29,7 @@ import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.preference.PreferenceManager;
 
 /**
  * Handle download requests
@@ -53,7 +54,7 @@ public class DownloadHandler {
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
      */
-    public static void onDownloadStart(Context context, String url, String userAgent,
+    public static void onDownloadStart(Context context, PreferenceManager manager, String url, String userAgent,
                                        String contentDisposition, String mimetype) {
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
@@ -88,7 +89,7 @@ public class DownloadHandler {
                 }
             }
         }
-        onDownloadStartNoStream(context, url, userAgent, contentDisposition, mimetype);
+        onDownloadStartNoStream(context, manager, url, userAgent, contentDisposition, mimetype);
     }
 
     // This is to work around the fact that java.net.URI throws Exceptions
@@ -132,9 +133,10 @@ public class DownloadHandler {
      * @param mimetype           The mimetype of the content reported by the server
      */
     /* package */
-    private static void onDownloadStartNoStream(final Context context, String url, String userAgent,
+    private static void onDownloadStartNoStream(final Context context, PreferenceManager preferences,
+                                                String url, String userAgent,
                                                 String contentDisposition, String mimetype) {
-        final Bus eventBus = BrowserApp.getBus();
+        final Bus eventBus = BrowserApp.getBus(context);
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
@@ -186,7 +188,7 @@ public class DownloadHandler {
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
 
-        String location = BrowserApp.getPreferenceManager().getDownloadDirectory();
+        String location = preferences.getDownloadDirectory();
         Uri downloadFolder;
         if (location != null) {
             location = addNecessarySlashes(location);
@@ -194,7 +196,7 @@ public class DownloadHandler {
         } else {
             location = addNecessarySlashes(DEFAULT_DOWNLOAD_PATH);
             downloadFolder = Uri.parse(location);
-            BrowserApp.getPreferenceManager().setDownloadDirectory(location);
+            preferences.setDownloadDirectory(location);
         }
 
         File dir = new File(downloadFolder.getPath());

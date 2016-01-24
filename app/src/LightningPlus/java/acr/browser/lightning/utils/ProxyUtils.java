@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.squareup.otto.Bus;
+
 import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Inject;
@@ -26,6 +28,7 @@ public class ProxyUtils {
 
     @Inject PreferenceManager mPreferences;
     @Inject I2PAndroidHelper mI2PHelper;
+    @Inject Bus mBus;
 
     @Inject
     public ProxyUtils() {
@@ -140,12 +143,10 @@ public class ProxyUtils {
     public boolean isProxyReady() {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                BrowserApp.getBus()
-                        .post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
+                mBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                BrowserApp.getBus()
-                        .post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
+                mBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
                 return false;
             }
         }

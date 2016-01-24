@@ -3,17 +3,23 @@ package acr.browser.lightning.activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 
 public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivity {
 
     private int mTheme;
 
+    @Inject PreferenceManager mPreferenceManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mTheme = BrowserApp.getPreferenceManager().getUseTheme();
+        BrowserApp.getAppComponent().inject(this);
+        mTheme = mPreferenceManager.getUseTheme();
 
         // set the theme
         if (mTheme == 0) {
@@ -32,7 +38,7 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
     @Override
     protected void onResume() {
         super.onResume();
-        if (BrowserApp.getPreferenceManager().getUseTheme() != mTheme) {
+        if (mPreferenceManager.getUseTheme() != mTheme) {
             restart();
         }
     }

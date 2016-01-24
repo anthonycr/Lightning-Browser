@@ -52,7 +52,7 @@ class LightningChromeClient extends WebChromeClient {
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
-        eventBus = BrowserApp.getBus();
+        eventBus = BrowserApp.getBus(activity);
     }
 
     @Override

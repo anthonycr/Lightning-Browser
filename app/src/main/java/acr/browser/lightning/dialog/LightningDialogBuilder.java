@@ -26,27 +26,26 @@ import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 
 /**
  * TODO Rename this class it doesn't build dialogs only for bookmarks
- *
+ * <p/>
  * Created by Stefano Pacifici on 02/09/15, based on Anthony C. Restaino's code.
  */
 public class LightningDialogBuilder {
 
-    @Inject
-    BookmarkManager bookmarkManager;
+    @Inject BookmarkManager mBookmarkManager;
 
-    @Inject
-    HistoryDatabase mHistoryDatabase;
+    @Inject PreferenceManager mPreferenceManager;
 
-    @Inject
-    Bus eventBus;
+    @Inject HistoryDatabase mHistoryDatabase;
+
+    @Inject Bus mEventBus;
 
     @Inject
     public LightningDialogBuilder() {
@@ -56,8 +55,9 @@ public class LightningDialogBuilder {
     /**
      * Show the appropriated dialog for the long pressed link. It means that we try to understand
      * if the link is relative to a bookmark or is just a folder.
-     * @param context   used to show the dialog
-     * @param url   the long pressed url
+     *
+     * @param context used to show the dialog
+     * @param url     the long pressed url
      */
     public void showLongPressedDialogForBookmarkUrl(final Context context, final String url) {
         final HistoryItem item;
@@ -72,7 +72,7 @@ public class LightningDialogBuilder {
             item.setImageId(R.drawable.ic_folder);
             item.setUrl(Constants.FOLDER + folderTitle);
         } else {
-            item = bookmarkManager.findBookmarkForUrl(url);
+            item = mBookmarkManager.findBookmarkForUrl(url);
         }
         if (item != null) {
             if (item.isFolder()) {
@@ -90,11 +90,11 @@ public class LightningDialogBuilder {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
-                                eventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl()));
+                                mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl()));
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
-                                if (bookmarkManager.deleteBookmark(item)) {
-                                    eventBus.post(new BookmarkEvents.Deleted(item));
+                                if (mBookmarkManager.deleteBookmark(item)) {
+                                    mEventBus.post(new BookmarkEvents.Deleted(item));
                                 }
                                 break;
                             case DialogInterface.BUTTON_NEUTRAL:
@@ -126,7 +126,7 @@ public class LightningDialogBuilder {
                 (AutoCompleteTextView) dialogLayout.findViewById(R.id.bookmark_folder);
         getFolder.setHint(R.string.folder);
         getFolder.setText(item.getFolder());
-        final List<String> folders = bookmarkManager.getFolderTitles();
+        final List<String> folders = mBookmarkManager.getFolderTitles();
         final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_dropdown_item_1line, folders);
         getFolder.setThreshold(1);
@@ -142,8 +142,8 @@ public class LightningDialogBuilder {
                         editedItem.setUrl(getUrl.getText().toString());
                         editedItem.setUrl(getUrl.getText().toString());
                         editedItem.setFolder(getFolder.getText().toString());
-                        bookmarkManager.editBookmark(item, editedItem);
-                        eventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
+                        mBookmarkManager.editBookmark(item, editedItem);
+                        mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
                     }
                 });
         editBookmarkDialog.show();
@@ -161,9 +161,9 @@ public class LightningDialogBuilder {
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
-                                bookmarkManager.deleteFolder(item.getTitle());
+                                mBookmarkManager.deleteFolder(item.getTitle());
                                 // setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                                eventBus.post(new BookmarkEvents.Deleted(item));
+                                mEventBus.post(new BookmarkEvents.Deleted(item));
                                 break;
                         }
                     }
@@ -204,8 +204,8 @@ public class LightningDialogBuilder {
                         editedItem.setUrl(Constants.FOLDER + newTitle);
                         editedItem.setFolder(item.getFolder());
                         editedItem.setIsFolder(true);
-                        bookmarkManager.renameFolder(oldTitle, newTitle);
-                        eventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
+                        mBookmarkManager.renameFolder(oldTitle, newTitle);
+                        mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
                     }
                 });
         editFolderDialog.show();
@@ -217,15 +217,15 @@ public class LightningDialogBuilder {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
+                        mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         mHistoryDatabase.deleteHistoryItem(url);
                         // openHistory();
-                        eventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
+                        mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                        mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
                         break;
                     default:
                         break;
@@ -245,20 +245,19 @@ public class LightningDialogBuilder {
 
     // TODO There should be a way in which we do not need an activity reference to dowload a file
     public void showLongPressImageDialog(@NonNull final Activity activity, @NonNull final String url,
-                                          @NonNull final String userAgent) {
+                                         @NonNull final String userAgent) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
+                        mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                        mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
-                            Utils.downloadFile(activity, url,
-                                    userAgent, "attachment");
+                        Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
                         break;
                 }
             }
@@ -280,11 +279,11 @@ public class LightningDialogBuilder {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
+                        mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
-                        eventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                        mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
                         break;
 
                     case DialogInterface.BUTTON_NEUTRAL:

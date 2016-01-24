@@ -45,6 +45,7 @@ import java.util.Date;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.download.DownloadHandler;
+import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
 
@@ -58,15 +59,14 @@ public final class Utils {
      * @param userAgent          the user agent of the browser.
      * @param contentDisposition the content description of the file.
      */
-    public static void downloadFile(final Activity activity, final String url,
+    public static void downloadFile(final Activity activity, final PreferenceManager manager, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
             @Override
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);
-                DownloadHandler.onDownloadStart(activity, url, userAgent, contentDisposition, null
-                );
+                DownloadHandler.onDownloadStart(activity, manager, url, userAgent, contentDisposition, null);
                 Log.i(Constants.TAG, "Downloading" + fileName);
             }
 

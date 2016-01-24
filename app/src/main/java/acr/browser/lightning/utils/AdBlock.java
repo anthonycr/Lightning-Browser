@@ -13,8 +13,11 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.preference.PreferenceManager;
 
 public class AdBlock {
 
@@ -33,6 +36,8 @@ public class AdBlock {
     private static final Locale mLocale = Locale.getDefault();
     private static AdBlock mInstance;
 
+    @Inject PreferenceManager mPreferenceManager;
+
     public static AdBlock getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new AdBlock(context);
@@ -41,14 +46,15 @@ public class AdBlock {
     }
 
     private AdBlock(Context context) {
+        BrowserApp.getAppComponent().inject(this);
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);
         }
-        mBlockAds = BrowserApp.getPreferenceManager().getAdBlockEnabled();
+        mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
 
     public void updatePreference() {
-        mBlockAds = BrowserApp.getPreferenceManager().getAdBlockEnabled();
+        mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
 
     private void loadBlockedDomainsList(final Context context) {
@@ -80,6 +86,7 @@ public class AdBlock {
     /**
      * a method that determines if the given URL is an ad or not. It performs
      * a search of the URL's domain on the blocked domain hash set.
+     *
      * @param url the URL to check for being an ad
      * @return true if it is an ad, false if it is not an ad
      */
@@ -105,6 +112,7 @@ public class AdBlock {
 
     /**
      * Returns the probable domain name for a given URL
+     *
      * @param url the url to parse
      * @return returns the domain
      * @throws URISyntaxException throws an exception if the string cannot form a URI
@@ -130,6 +138,7 @@ public class AdBlock {
      * simply have a list of hostnames to block, or it can handle a full blown hosts file.
      * It will strip out comments, references to the base IP address and just extract the
      * domains to be used
+     *
      * @param context the context needed to read the file
      */
     private void loadHostsFile(final Context context) {

@@ -20,9 +20,7 @@ public class BrowserApp extends Application {
     private static AppComponent appComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
-    @Inject static HistoryDatabase historyDatabase;
-    @Inject static Bus bus;
-    @Inject static PreferenceManager preferenceManager;
+    @Inject Bus bus;
 
     @Override
     public void onCreate() {
@@ -40,20 +38,12 @@ public class BrowserApp extends Application {
         return appComponent;
     }
 
-    public static HistoryDatabase getHistoryDatabase() {
-        return historyDatabase;
-    }
-
     public static Executor getIOThread() {
         return mIOThread;
     }
 
-    public static PreferenceManager getPreferenceManager() {
-        return preferenceManager;
-    }
-
-    public static Bus getBus() {
-        return bus;
+    public static Bus getBus(Context context) {
+        return get(context).bus;
     }
 
 }

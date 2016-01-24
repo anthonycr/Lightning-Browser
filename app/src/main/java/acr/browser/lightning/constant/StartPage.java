@@ -11,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -54,9 +56,12 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
     private final File mFilesDir;
     private final WeakReference<LightningView> mTabReference;
 
+    @Inject PreferenceManager mPreferenceManager;
+
     private String mStartpageUrl;
 
     public StartPage(LightningView tab, Application app) {
+        BrowserApp.getAppComponent().inject(this);
         mTitle = app.getString(R.string.home);
         mFilesDir = app.getFilesDir();
         mTabReference = new WeakReference<>(tab);
@@ -87,12 +92,11 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
         StringBuilder homepageBuilder = new StringBuilder(HEAD_1 + mTitle + HEAD_2);
         String icon;
         String searchUrl;
-        final PreferenceManager preferenceManager = BrowserApp.getPreferenceManager();
-        switch (preferenceManager.getSearchChoice()) {
+        switch (mPreferenceManager.getSearchChoice()) {
             case 0:
                 // CUSTOM SEARCH
                 icon = "file:///android_asset/lightning.png";
-                searchUrl = preferenceManager.getSearchUrl();
+                searchUrl = mPreferenceManager.getSearchUrl();
                 break;
             case 1:
                 // GOOGLE_SEARCH;

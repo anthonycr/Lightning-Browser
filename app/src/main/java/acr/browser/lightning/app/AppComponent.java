@@ -5,13 +5,18 @@ import javax.inject.Singleton;
 import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
+import acr.browser.lightning.activity.ThemableSettingsActivity;
 import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
+import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
+import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
+import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.LightningWebClient;
@@ -46,5 +51,15 @@ public interface AppComponent {
     void inject(ReadingActivity activity);
 
     void inject(LightningWebClient webClient);
+
+    void inject(ThemableSettingsActivity activity);
+
+    void inject(AdBlock adBlock);
+
+    void inject(LightningDownloadListener listener);
+
+    void inject(PrivacySettingsFragment fragment);
+
+    void inject(StartPage startPage);
 
 }

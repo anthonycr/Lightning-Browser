@@ -14,8 +14,11 @@ import android.preference.Preference;
 import android.support.v7.app.AlertDialog;
 import android.webkit.WebView;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.LightningView;
@@ -37,11 +40,14 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
     private Activity mActivity;
-    private Handler messageHandler;
+    private Handler mMessageHandler;
+
+    @Inject HistoryDatabase mHistoryDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BrowserApp.getAppComponent().inject(this);
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_privacy);
 
@@ -96,7 +102,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
 
         cb3cookies.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
-        messageHandler = new MessageHandler(mActivity);
+        mMessageHandler = new MessageHandler(mActivity);
     }
 
     private static class MessageHandler extends Handler {
@@ -188,13 +194,13 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private void clearHistory() {
-        WebUtils.clearHistory(getActivity());
-        messageHandler.sendEmptyMessage(1);
+        WebUtils.clearHistory(getActivity(), mHistoryDatabase);
+        mMessageHandler.sendEmptyMessage(1);
     }
 
     private void clearCookies() {
         WebUtils.clearCookies(getActivity());
-        messageHandler.sendEmptyMessage(2);
+        mMessageHandler.sendEmptyMessage(2);
     }
 
     private void clearWebStorage() {
