@@ -1,5 +1,6 @@
 package acr.browser.lightning.app;
 
+import android.app.Application;
 import android.content.Context;
 
 import com.squareup.otto.Bus;
@@ -19,6 +20,11 @@ public class AppModule {
     public AppModule(BrowserApp app) {
         this.mApp = app;
         this.mBus = new Bus();
+    }
+
+    @Provides
+    public Application provideApplication() {
+        return mApp;
     }
 
     @Provides

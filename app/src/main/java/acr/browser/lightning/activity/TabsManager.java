@@ -1,9 +1,11 @@
 package acr.browser.lightning.activity;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -20,7 +22,7 @@ import javax.inject.Singleton;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -33,9 +35,12 @@ public class TabsManager {
     private static final String TAG = TabsManager.class.getSimpleName();
     private final List<LightningView> mWebViewList = new ArrayList<>();
     private LightningView mCurrentTab;
+    private static final String BUNDLE_KEY = "WEBVIEW_";
+    private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject Bus mEventBus;
+    @Inject Application mApp;
 
     @Inject
     public TabsManager() {}
@@ -65,14 +70,7 @@ public class TabsManager {
         mWebViewList.clear();
         mCurrentTab = null;
         if (mPreferenceManager.getRestoreLostTabsEnabled()) {
-            final String mem = mPreferenceManager.getMemoryUrl();
-            mPreferenceManager.setMemoryUrl("");
-            String[] array = Utils.getArray(mem);
-            for (String urlString : array) {
-                if (!urlString.isEmpty()) {
-                    newTab(activity, urlString, false);
-                }
-            }
+            restoreState(activity);
         }
         if (url != null) {
             if (url.startsWith(Constants.FILE)) {
@@ -228,18 +226,33 @@ public class TabsManager {
         return mWebViewList.indexOf(tab);
     }
 
-    /**
-     * @return A string representation of the currently opened tabs
-     */
-    public String tabsString() {
-        final StringBuilder builder = new StringBuilder(mWebViewList.size());
-        for (LightningView tab : mWebViewList) {
-            final String url = tab.getUrl();
-            if (!url.isEmpty()) {
-                builder.append(url).append("|$|SEPARATOR|$|");
+    public void saveState() {
+        Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
+        Log.d(Constants.TAG, "Saving tab state");
+        for (int n = 0; n < mWebViewList.size(); n++) {
+            LightningView tab = mWebViewList.get(n);
+            Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
+            if (tab.getWebView() != null) {
+                tab.getWebView().saveState(state);
+                outState.putBundle(BUNDLE_KEY + n, state);
             }
         }
-        return builder.toString();
+        FileUtils.writeBundleToStorage(mApp, outState, BUNDLE_STORAGE);
+    }
+
+    private void restoreState(Activity activity) {
+        Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
+        if (savedState != null) {
+            Log.d(Constants.TAG, "Restoring previous WebView state now");
+            for (String key : savedState.keySet()) {
+                if (key.startsWith(BUNDLE_KEY)) {
+                    LightningView tab = newTab(activity, "", false);
+                    if (tab.getWebView() != null) {
+                        tab.getWebView().restoreState(savedState.getBundle(key));
+                    }
+                }
+            }
+        }
     }
 
     /**

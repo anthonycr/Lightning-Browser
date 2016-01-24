@@ -33,7 +33,6 @@ public class PreferenceManager {
         public static final String SEARCH_URL = "searchurl";
         public static final String TEXT_REFLOW = "textreflow";
         public static final String TEXT_SIZE = "textsize";
-        public static final String URL_MEMORY = "memory";
         public static final String USE_WIDE_VIEWPORT = "wideviewport";
         public static final String USER_AGENT = "agentchoose";
         public static final String USER_AGENT_STRING = "userAgentString";
@@ -153,10 +152,6 @@ public class PreferenceManager {
 
     public boolean getLocationEnabled() {
         return mPrefs.getBoolean(Name.LOCATION, false);
-    }
-
-    public String getMemoryUrl() {
-        return mPrefs.getString(Name.URL_MEMORY, "");
     }
 
     public boolean getOverviewModeEnabled() {
@@ -365,10 +360,6 @@ public class PreferenceManager {
 
     public void setLocationEnabled(boolean enable) {
         putBoolean(Name.LOCATION, enable);
-    }
-
-    public void setMemoryUrl(String url) {
-        putString(Name.URL_MEMORY, url);
     }
 
     public void setOverviewModeEnabled(boolean enable) {
