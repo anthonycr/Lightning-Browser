@@ -35,10 +35,11 @@ import acr.browser.lightning.view.LightningView;
 public class TabsManager {
 
     private static final String TAG = TabsManager.class.getSimpleName();
-    private final List<LightningView> mTabList = new ArrayList<>(1);
-    private LightningView mCurrentTab;
     private static final String BUNDLE_KEY = "WEBVIEW_";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
+
+    private final List<LightningView> mTabList = new ArrayList<>(1);
+    private LightningView mCurrentTab;
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject Bus mEventBus;
@@ -124,6 +125,7 @@ public class TabsManager {
      */
     public synchronized void freeMemory() {
         for (LightningView tab : mTabList) {
+            //noinspection deprecation
             tab.freeMemory();
         }
     }

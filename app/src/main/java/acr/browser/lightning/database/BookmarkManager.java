@@ -55,7 +55,6 @@ public class BookmarkManager {
     private Map<String, HistoryItem> mBookmarksMap;
     private String mCurrentFolder = "";
     private final ExecutorService mExecutor;
-    private boolean mReady = false;
     private final File mFilesDir;
 
     @Inject
@@ -64,13 +63,6 @@ public class BookmarkManager {
         mFilesDir = context.getFilesDir();
         DEFAULT_BOOKMARK_TITLE = context.getString(R.string.untitled);
         mExecutor.execute(new BookmarkInitializer(context));
-    }
-
-    /**
-     * @return true if the BookmarkManager was initialized, false otherwise
-     */
-    public boolean isReady() {
-        return mReady;
     }
 
     /**
@@ -135,7 +127,6 @@ public class BookmarkManager {
                     Utils.close(inputStream);
                 }
                 mBookmarksMap = bookmarks;
-                mReady = true;
             }
         }
 
@@ -180,6 +171,7 @@ public class BookmarkManager {
 
             if (success) {
                 // Overwrite the bookmarks file by renaming the temp file
+                //noinspection ResultOfMethodCallIgnored
                 tempFile.renameTo(bookmarksFile);
             }
         }
@@ -418,20 +410,6 @@ public class BookmarkManager {
     }
 
     /**
-     * Method is used internally for searching the bookmarks
-     *
-     * @return a sorted map of all bookmarks, useful for seeing if a bookmark exists
-     */
-    private Set<String> getBookmarkUrls(List<HistoryItem> list) {
-        Set<String> set = new HashSet<>();
-        for (HistoryItem item : mBookmarksMap.values()) {
-            if (!item.isFolder())
-                set.add(item.getUrl());
-        }
-        return set;
-    }
-
-    /**
      * This method returns a list of all folders.
      * Folders cannot be empty as they are generated from
      * the list of bookmarks that have non-empty folder fields.
@@ -511,22 +489,6 @@ public class BookmarkManager {
         } finally {
             Utils.close(bookmarksReader);
         }
-    }
-
-    /**
-     * find the index of a bookmark in a list using only its URL
-     *
-     * @param list the list to search
-     * @param url  the url to compare
-     * @return returns the index of the bookmark or -1 if none was found
-     */
-    public static int getIndexOfBookmark(final List<HistoryItem> list, final String url) {
-        for (int n = 0; n < list.size(); n++) {
-            if (list.get(n).getUrl().equals(url)) {
-                return n;
-            }
-        }
-        return -1;
     }
 
     /**
