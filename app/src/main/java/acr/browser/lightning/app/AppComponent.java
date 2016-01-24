@@ -6,7 +6,6 @@ import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
-import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;

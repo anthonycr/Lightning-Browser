@@ -8,7 +8,6 @@ import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Singleton;
 
-import acr.browser.lightning.database.BookmarkManager;
 import dagger.Module;
 import dagger.Provides;
 
