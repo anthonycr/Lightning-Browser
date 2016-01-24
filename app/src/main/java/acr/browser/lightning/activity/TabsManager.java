@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -26,14 +27,15 @@ import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.view.LightningView;
 
 /**
- * @author Stefano Pacifici
- * @date 2015/09/14
+ * A manager singleton that holds all the {@link LightningView}
+ * and tracks the current tab. It handles creation, deletion,
+ * restoration, state saving, and switching of tabs.
  */
 @Singleton
 public class TabsManager {
 
     private static final String TAG = TabsManager.class.getSimpleName();
-    private final List<LightningView> mWebViewList = new ArrayList<>();
+    private final List<LightningView> mTabList = new ArrayList<>(1);
     private LightningView mCurrentTab;
     private static final String BUNDLE_KEY = "WEBVIEW_";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
@@ -53,12 +55,12 @@ public class TabsManager {
      * @param intent    the intent that started the browser activity.
      * @param incognito whether or not we are in incognito mode.
      */
-    public synchronized void restoreTabsAndHandleIntent(final Activity activity,
-                                                        final Intent intent,
+    public synchronized void restoreTabsAndHandleIntent(@NonNull final Activity activity,
+                                                        @Nullable final Intent intent,
                                                         final boolean incognito) {
         // If incognito, only create one tab, do not handle intent
         // in order to protect user privacy
-        if (incognito && mWebViewList.isEmpty()) {
+        if (incognito && mTabList.isEmpty()) {
             newTab(activity, null, true);
             return;
         }
@@ -67,7 +69,7 @@ public class TabsManager {
         if (intent != null) {
             url = intent.getDataString();
         }
-        mWebViewList.clear();
+        mTabList.clear();
         mCurrentTab = null;
         if (mPreferenceManager.getRestoreLostTabsEnabled()) {
             restoreState(activity);
@@ -91,65 +93,76 @@ public class TabsManager {
                 newTab(activity, url, false);
             }
         }
-        if (mWebViewList.size() == 0) {
+        if (mTabList.size() == 0) {
             newTab(activity, null, false);
         }
     }
 
     /**
-     * Return the tab at the given position in tabs list, or null if position is not in tabs list
-     * range.
+     * Return the tab at the given position in tabs list, or
+     * null if position is not in tabs list range.
      *
      * @param position the index in tabs list
-     * @return the corespondent {@link LightningView}, or null if the index is invalid
+     * @return the corespondent {@link LightningView},
+     * or null if the index is invalid
      */
     @Nullable
     public synchronized LightningView getTabAtPosition(final int position) {
-        if (position < 0 || position >= mWebViewList.size()) {
+        if (position < 0 || position >= mTabList.size()) {
             return null;
         }
 
-        return mWebViewList.get(position);
+        return mTabList.get(position);
     }
 
     /**
-     * Try to low memory pressure
+     * Frees memory for each tab in the
+     * manager. Note: this will only work
+     * on API < KITKAT as on KITKAT onward
+     * the WebViews manage their own
+     * memory correctly.
      */
     public synchronized void freeMemory() {
-        for (LightningView tab : mWebViewList) {
+        for (LightningView tab : mTabList) {
             tab.freeMemory();
         }
     }
 
     /**
-     * Shutdown the manager
+     * Shutdown the manager. This destroys
+     * all tabs and clears the references
+     * to those tabs. Current tab is also
+     * released for garbage collection.
      */
     public synchronized void shutdown() {
-        for (LightningView tab : mWebViewList) {
+        for (LightningView tab : mTabList) {
             tab.onDestroy();
         }
-        mWebViewList.clear();
+        mTabList.clear();
         mCurrentTab = null;
     }
 
     /**
-     * Resume the tabs
+     * Reinitializes the preferences for
+     * all the tabs in the list.
      *
-     * @param context
+     * @param context the context needed
+     *                to initialize the preferences.
      */
-    public synchronized void resume(final Context context) {
-        for (LightningView tab : mWebViewList) {
+    public synchronized void resume(@NonNull final Context context) {
+        for (LightningView tab : mTabList) {
             tab.initializePreferences(context);
         }
     }
 
     /**
-     * Forward network connection status to the webviews.
+     * Forwards network connection status to the WebViews.
      *
-     * @param isConnected
+     * @param isConnected whether there is a network
+     *                    connection or not.
      */
     public synchronized void notifyConnectionStatus(final boolean isConnected) {
-        for (LightningView tab : mWebViewList) {
+        for (LightningView tab : mTabList) {
             final WebView webView = tab.getWebView();
             if (webView != null) {
                 webView.setNetworkAvailable(isConnected);
@@ -158,38 +171,45 @@ public class TabsManager {
     }
 
     /**
-     * @return The number of currently opened tabs
+     * The current number of tabs in the manager.
+     *
+     * @return the number of tabs in the list.
      */
     public synchronized int size() {
-        return mWebViewList.size();
+        return mTabList.size();
     }
 
     /**
-     * Create and return a new tab. The tab is automatically added to the tabs list.
+     * Create and return a new tab. The tab is
+     * automatically added to the tabs list.
      *
-     * @param activity
-     * @param url
-     * @param isIncognito
-     * @return
+     * @param activity    the activity needed to create the tab.
+     * @param url         the URL to initialize the tab with.
+     * @param isIncognito whether the tab is an incognito
+     *                    tab or not.
+     * @return a valid initialized tab.
      */
-    public synchronized LightningView newTab(final Activity activity,
-                                             final String url,
+    @NonNull
+    public synchronized LightningView newTab(@NonNull final Activity activity,
+                                             @Nullable final String url,
                                              final boolean isIncognito) {
         final LightningView tab = new LightningView(activity, url, isIncognito);
-        mWebViewList.add(tab);
+        mTabList.add(tab);
         return tab;
     }
 
     /**
-     * Remove a tab and return its reference or null if the position is not in tabs range
+     * Removes a tab from the list and destroys the tab.
+     * If the tab removed is the current tab, the reference
+     * to the current tab will be nullified.
      *
-     * @param position The position of the tab to remove
+     * @param position The position of the tab to remove.
      */
     private synchronized void removeTab(final int position) {
-        if (position >= mWebViewList.size()) {
+        if (position >= mTabList.size()) {
             return;
         }
-        final LightningView tab = mWebViewList.remove(position);
+        final LightningView tab = mTabList.remove(position);
         if (mCurrentTab == tab) {
             mCurrentTab = null;
         }
@@ -197,6 +217,13 @@ public class TabsManager {
         Log.d(Constants.TAG, tab.toString());
     }
 
+    /**
+     * Deletes a tab from the manager. If the tab
+     * being deleted is the current tab, this method
+     * will switch the current tab to a new valid tab.
+     *
+     * @param position the position of the tab to delete.
+     */
     public synchronized void deleteTab(int position) {
         final LightningView currentTab = getCurrentTab();
         int current = positionOf(currentTab);
@@ -219,18 +246,24 @@ public class TabsManager {
     /**
      * Return the position of the given tab.
      *
-     * @param tab the tab to look for
-     * @return the position of the tab or -1 if the tab is not in the list
+     * @param tab the tab to look for.
+     * @return the position of the tab or -1
+     * if the tab is not in the list.
      */
     public synchronized int positionOf(final LightningView tab) {
-        return mWebViewList.indexOf(tab);
+        return mTabList.indexOf(tab);
     }
 
+    /**
+     * Saves the state of the current WebViews,
+     * to a bundle which is then stored in persistent
+     * storage and can be unparceled.
+     */
     public void saveState() {
         Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
         Log.d(Constants.TAG, "Saving tab state");
-        for (int n = 0; n < mWebViewList.size(); n++) {
-            LightningView tab = mWebViewList.get(n);
+        for (int n = 0; n < mTabList.size(); n++) {
+            LightningView tab = mTabList.get(n);
             Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
             if (tab.getWebView() != null) {
                 tab.getWebView().saveState(state);
@@ -240,7 +273,16 @@ public class TabsManager {
         FileUtils.writeBundleToStorage(mApp, outState, BUNDLE_STORAGE);
     }
 
-    private void restoreState(Activity activity) {
+    /**
+     * Restores the previously saved tabs from the
+     * bundle stored in peristent file storage.
+     * It will create new tabs for each tab saved
+     * and will delete the saved instance file when
+     * restoration is complete.
+     *
+     * @param activity the Activity needed to create tabs.
+     */
+    private void restoreState(@NonNull Activity activity) {
         Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
         if (savedState != null) {
             Log.d(Constants.TAG, "Restoring previous WebView state now");
@@ -256,9 +298,10 @@ public class TabsManager {
     }
 
     /**
-     * Return the {@link WebView} associated to the current tab, or null if there is no current tab
+     * Return the {@link WebView} associated to the current tab,
+     * or null if there is no current tab.
      *
-     * @return a {@link WebView} or null
+     * @return a {@link WebView} or null if there is no current tab.
      */
     @Nullable
     public synchronized WebView getCurrentWebView() {
@@ -266,9 +309,11 @@ public class TabsManager {
     }
 
     /**
-     * TODO We should remove also this, but probably not
+     * Return the current {@link LightningView} or null if
+     * no current tab has been set.
      *
-     * @return
+     * @return a {@link LightningView} or null if there
+     * is no current tab.
      */
     @Nullable
     public synchronized LightningView getCurrentTab() {
@@ -276,19 +321,18 @@ public class TabsManager {
     }
 
     /**
-     * Switch the current tab to the one at the given position. It returns the selected. After this
-     * call {@link TabsManager#getCurrentTab()} return the same reference returned by this method if
-     * position is valid.
+     * Switch the current tab to the one at the given position.
+     * It returns the selected tab that has been switced to.
      *
-     * @return the selected tab or null if position is out of tabs range
+     * @return the selected tab or null if position is out of tabs range.
      */
     @Nullable
     public synchronized LightningView switchToTab(final int position) {
-        if (position < 0 || position >= mWebViewList.size()) {
+        if (position < 0 || position >= mTabList.size()) {
             Log.e(TAG, "Returning a null LightningView requested for position: " + position);
             return null;
         } else {
-            final LightningView tab = mWebViewList.get(position);
+            final LightningView tab = mTabList.get(position);
             if (tab != null) {
                 mCurrentTab = tab;
             }
