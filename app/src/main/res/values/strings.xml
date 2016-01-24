@@ -104,10 +104,10 @@
     <string name="cannot_download">Can only download \"http\" or \"https\" URLs.</string>
     <string name="problem_download">Invalid URL encountered, cannot download</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
-    <string name="download_no_sdcard_dlg_title" >No SD card</string>
-    <string name="download_no_sdcard_dlg_msg" >USB storage is required to download the file.</string>
+    <string name="download_no_sdcard_dlg_title">No SD card</string>
+    <string name="download_no_sdcard_dlg_msg">USB storage is required to download the file.</string>
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
-    <string name="download_sdcard_busy_dlg_msg" >The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
+    <string name="download_sdcard_busy_dlg_msg">The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
     <string name="incognito_cookies">Enable Cookies in Incognito Mode</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -204,13 +204,13 @@
     <string name="url_contents">URL Box Contents</string>
     <string name="text_encoding">Text Encoding</string>
     <string-array name="url_content_array">
-        <item >Domain (default)</item>
-        <item >URL</item>
-        <item >Title</item>
+        <item>Domain (default)</item>
+        <item>URL</item>
+        <item>Title</item>
     </string-array>
-        <string name="invert_color">Invert color</string>
-        <string name="dark_theme">Dark Theme</string>
-        <string name="tabs">Tabs</string>
+    <string name="invert_color">Invert color</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="tabs">Tabs</string>
     <string name="theme">App Theme</string>
     <string name="light_theme">Light Theme</string>
     <string name="black_theme">Black Theme (AMOLED)</string>
@@ -227,4 +227,6 @@
     <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
     <string name="remove_identifying_headers">Remove Identifying Headers</string>
+    <string name="action_add_to_homescreen">Add to Homescreen</string>
+    <string name="message_added_to_homescreen">Shortcut Added to Homescreen</string>
 </resources>

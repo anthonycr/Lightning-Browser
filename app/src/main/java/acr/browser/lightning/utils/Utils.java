@@ -20,12 +20,14 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +45,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 
@@ -377,4 +381,21 @@ public final class Utils {
 
         canvas.drawPath(wallpath, paint);
     }
+
+    public static void createShortcut(@NonNull Activity activity, HistoryItem item) {
+        Log.d(Constants.TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
+        Intent shortcutIntent = new Intent(activity, MainActivity.class);
+        shortcutIntent.setData(Uri.parse(item.getUrl()));
+
+        final String title = TextUtils.isEmpty(item.getTitle()) ? activity.getString(R.string.untitled) : item.getTitle();
+
+        Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        activity.sendBroadcast(addIntent);
+        Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+    }
+
 }

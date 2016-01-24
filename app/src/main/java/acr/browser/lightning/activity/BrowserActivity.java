@@ -676,6 +676,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     currentView.goForward();
                 }
                 return true;
+            case R.id.action_add_to_homescreen:
+                if (currentView != null) {
+                    HistoryItem shortcut = new HistoryItem(currentView.getUrl(), currentView.getTitle());
+                    shortcut.setBitmap(currentView.getFavicon());
+                    Utils.createShortcut(this, shortcut);
+                }
+                return true;
             case R.id.action_new_tab:
                 newTab(null, true);
                 return true;
