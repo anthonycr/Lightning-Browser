@@ -94,7 +94,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mSearchSubtitle = mContext.getString(R.string.suggestion);
         mDarkTheme = dark || incognito;
         mIncognito = incognito;
-        Thread delete = new Thread(new ClearCacheRunnable(context));
+        Thread delete = new Thread(new ClearCacheRunnable(BrowserApp.get(context)));
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
@@ -209,15 +209,15 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private static class ClearCacheRunnable implements Runnable {
 
-        private Context context;
+        private Application app;
 
-        public ClearCacheRunnable(Context context) {
-            this.context = BrowserApp.get(context);
+        public ClearCacheRunnable(Application app) {
+            this.app = app;
         }
 
         @Override
         public void run() {
-            File dir = new File(context.getCacheDir().toString());
+            File dir = new File(app.getCacheDir().toString());
             String[] fileList = dir.list(new NameFilter());
             long earliestTimeAllowed = System.currentTimeMillis() - INTERVAL_DAY;
             for (String fileName : fileList) {
