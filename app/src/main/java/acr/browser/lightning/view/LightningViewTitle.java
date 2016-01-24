@@ -18,10 +18,8 @@ class LightningViewTitle {
 
     private static Bitmap DEFAULT_ICON = null;
 
-    @NonNull
-    private Bitmap mFavicon;
-    @NonNull
-    private String mTitle;
+    @NonNull private Bitmap mFavicon;
+    @NonNull private String mTitle;
 
     public LightningViewTitle(@NonNull Context context, boolean darkTheme) {
         if (DEFAULT_ICON == null) {

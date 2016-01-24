@@ -25,7 +25,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
     private final File mCacheDir;
-    private final WeakReference<ImageView> bmImage;
+    private final WeakReference<ImageView> mFaviconImage;
     private final HistoryItem mWeb;
     private final String mUrl;
     private final Bitmap mDefaultBitmap;
@@ -37,7 +37,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         // Set a tag on the ImageView so we know if the view
         // has gone out of scope and should not be used
         bmImage.setTag(web.getUrl().hashCode());
-        this.bmImage = new WeakReference<>(bmImage);
+        this.mFaviconImage = new WeakReference<>(bmImage);
         this.mWeb = web;
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
@@ -135,7 +135,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         super.onPostExecute(bitmap);
         AsyncExecutor.getInstance().notifyThreadFinish();
         final Bitmap fav = Utils.padFavicon(bitmap);
-        ImageView view = bmImage.get();
+        ImageView view = mFaviconImage.get();
         if (view != null && view.getTag().equals(mWeb.getUrl().hashCode())) {
             view.setImageBitmap(fav);
         }

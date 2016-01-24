@@ -80,7 +80,7 @@ class LightningChromeClient extends WebChromeClient {
         if (uri.getHost() == null) {
             return;
         }
-        BrowserApp.getIOThread().execute(new IconCacheTask(uri, icon, context));
+        BrowserApp.getIOThread().execute(new IconCacheTask(uri, icon, BrowserApp.get(context)));
     }
 
 

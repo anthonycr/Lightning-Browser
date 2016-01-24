@@ -50,18 +50,17 @@ public class LightningWebClient extends WebViewClient {
     private final Activity mActivity;
     private final LightningView mLightningView;
     private final UIController mUIController;
-    private final AdBlock mAdBlock;
     private final Bus mEventBus;
     private final IntentUtils mIntentUtils;
 
     @Inject ProxyUtils mProxyUtils;
+    @Inject AdBlock mAdBlock;
 
     LightningWebClient(Activity activity, LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
-        mAdBlock = AdBlock.getInstance(activity);
         mAdBlock.updatePreference();
         mEventBus = BrowserApp.getBus(activity);
         mIntentUtils = new IntentUtils(activity);

@@ -34,11 +34,8 @@ public class TabsManager {
     private final List<LightningView> mWebViewList = new ArrayList<>();
     private LightningView mCurrentTab;
 
-    @Inject
-    PreferenceManager mPreferenceManager;
-
-    @Inject
-    Bus mEventBus;
+    @Inject PreferenceManager mPreferenceManager;
+    @Inject Bus mEventBus;
 
     @Inject
     public TabsManager() {}

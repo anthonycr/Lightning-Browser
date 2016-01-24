@@ -73,14 +73,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     private LightningViewAdapter mTabsAdapter;
     private UIController mUiController;
 
-    @Inject
-    TabsManager tabsManager;
-
-    @Inject
-    Bus mBus;
-
-    @Inject
-    PreferenceManager mPreferences;
+    @Inject TabsManager tabsManager;
+    @Inject Bus mBus;
+    @Inject PreferenceManager mPreferences;
 
     public TabsFragment() {
         BrowserApp.getAppComponent().inject(this);

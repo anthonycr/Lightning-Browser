@@ -11,22 +11,18 @@ import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.constant.BookmarkPage;
-import acr.browser.lightning.database.HistoryDatabase;
-import acr.browser.lightning.preference.PreferenceManager;
-
 public class BrowserApp extends Application {
 
-    private static AppComponent appComponent;
+    private static AppComponent mAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
-    @Inject Bus bus;
+    @Inject Bus mBus;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        appComponent.inject(this);
+        mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
+        mAppComponent.inject(this);
         LeakCanary.install(this);
     }
 
@@ -35,7 +31,7 @@ public class BrowserApp extends Application {
     }
 
     public static AppComponent getAppComponent() {
-        return appComponent;
+        return mAppComponent;
     }
 
     public static Executor getIOThread() {
@@ -43,7 +39,7 @@ public class BrowserApp extends Application {
     }
 
     public static Bus getBus(Context context) {
-        return get(context).bus;
+        return get(context).mBus;
     }
 
 }

@@ -21,7 +21,7 @@ import acr.browser.lightning.R;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
-    private static final List<String> fragments = new ArrayList<>();
+    private static final List<String> mFragments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +44,19 @@ public class SettingsActivity extends ThemableSettingsActivity {
     @Override
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.preferences_headers, target);
-        fragments.clear();
+        mFragments.clear();
         for (Header header : target) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 // Workaround for bug in the AppCompat support library
                 header.iconRes = R.drawable.empty;
             }
-            fragments.add(header.fragment);
+            mFragments.add(header.fragment);
         }
     }
 
     @Override
     protected boolean isValidFragment(String fragmentName) {
-        return fragments.contains(fragmentName);
+        return mFragments.contains(fragmentName);
     }
 
     @Override

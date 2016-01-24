@@ -14,11 +14,13 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 
+@Singleton
 public class AdBlock {
 
     private static final String TAG = "AdBlock";
@@ -34,18 +36,11 @@ public class AdBlock {
     private final Set<String> mBlockedDomainsList = new HashSet<>();
     private boolean mBlockAds;
     private static final Locale mLocale = Locale.getDefault();
-    private static AdBlock mInstance;
 
     @Inject PreferenceManager mPreferenceManager;
 
-    public static AdBlock getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new AdBlock(context);
-        }
-        return mInstance;
-    }
-
-    private AdBlock(Context context) {
+    @Inject
+    public AdBlock(Context context) {
         BrowserApp.getAppComponent().inject(this);
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);

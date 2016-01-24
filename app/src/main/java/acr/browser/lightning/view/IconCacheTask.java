@@ -1,5 +1,6 @@
 package acr.browser.lightning.view;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,12 +17,12 @@ import acr.browser.lightning.utils.Utils;
 class IconCacheTask implements Runnable {
     private final Uri uri;
     private final Bitmap icon;
-    private final Context context;
+    private final Application app;
 
-    public IconCacheTask(final Uri uri, final Bitmap icon, final Context context) {
+    public IconCacheTask(final Uri uri, final Bitmap icon, final Application app) {
         this.uri = uri;
         this.icon = icon;
-        this.context = BrowserApp.get(context);
+        this.app = app;
     }
 
     @Override
@@ -30,7 +31,7 @@ class IconCacheTask implements Runnable {
         Log.d(Constants.TAG, "Caching icon for " + uri.getHost());
         FileOutputStream fos = null;
         try {
-            File image = new File(context.getCacheDir(), hash + ".png");
+            File image = new File(app.getCacheDir(), hash + ".png");
             fos = new FileOutputStream(image);
             icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();

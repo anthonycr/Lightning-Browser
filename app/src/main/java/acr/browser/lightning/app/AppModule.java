@@ -14,34 +14,28 @@ import dagger.Provides;
 
 @Module
 public class AppModule {
-    private final BrowserApp app;
-    private final Bus bus;
+    private final BrowserApp mApp;
+    private final Bus mBus;
 
     public AppModule(BrowserApp app) {
-        this.app = app;
-        this.bus = new Bus();
+        this.mApp = app;
+        this.mBus = new Bus();
     }
 
     @Provides
     public Context provideContext() {
-        return app.getApplicationContext();
-    }
-
-    @Provides
-    @Singleton
-    public BookmarkManager provideBookmarkManager() {
-        return new BookmarkManager(app.getApplicationContext());
+        return mApp.getApplicationContext();
     }
 
     @Provides
     public Bus provideBus() {
-        return bus;
+        return mBus;
     }
 
     @Provides
     @Singleton
     public I2PAndroidHelper provideI2PAndroidHelper() {
-        return new I2PAndroidHelper(app.getApplicationContext());
+        return new I2PAndroidHelper(mApp.getApplicationContext());
     }
 
 }

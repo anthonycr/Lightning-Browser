@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
@@ -52,12 +53,12 @@ public class BookmarkManager {
     private final String DEFAULT_BOOKMARK_TITLE;
 
     private Map<String, HistoryItem> mBookmarksMap;
-    // private final List<HistoryItem> mBookmarkList = new ArrayList<>();
     private String mCurrentFolder = "";
     private final ExecutorService mExecutor;
     private boolean mReady = false;
     private final File mFilesDir;
 
+    @Inject
     public BookmarkManager(Context context) {
         mExecutor = Executors.newSingleThreadExecutor();
         mFilesDir = context.getFilesDir();

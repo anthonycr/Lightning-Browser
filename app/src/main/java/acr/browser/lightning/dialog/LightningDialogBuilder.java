@@ -40,11 +40,8 @@ import acr.browser.lightning.utils.Utils;
 public class LightningDialogBuilder {
 
     @Inject BookmarkManager mBookmarkManager;
-
     @Inject PreferenceManager mPreferenceManager;
-
     @Inject HistoryDatabase mHistoryDatabase;
-
     @Inject Bus mEventBus;
 
     @Inject
