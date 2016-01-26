@@ -382,7 +382,20 @@ public final class Utils {
         canvas.drawPath(wallpath, paint);
     }
 
-    public static void createShortcut(@NonNull Activity activity, HistoryItem item) {
+    /**
+     * Creates a shortcut on the homescreen using the
+     * {@link HistoryItem} information that opens the
+     * browser. The icon, URL, and title are used in
+     * the creation of the shortcut.
+     *
+     * @param activity the activity needed to create
+     *                 the intent and show a snackbar message
+     * @param item     the HistoryItem to create the shortcut from
+     */
+    public static void createShortcut(@NonNull Activity activity, @NonNull HistoryItem item) {
+        if (TextUtils.isEmpty(item.getUrl())) {
+            return;
+        }
         Log.d(Constants.TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
         Intent shortcutIntent = new Intent(activity, MainActivity.class);
         shortcutIntent.setData(Uri.parse(item.getUrl()));
