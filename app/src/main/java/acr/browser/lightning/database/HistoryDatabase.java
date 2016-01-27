@@ -89,7 +89,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void deleteHistoryItem(String url) {
+    public synchronized void deleteHistoryItem(@NonNull String url) {
         openIfNecessary();
         mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
     }
@@ -118,7 +118,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         mDatabase.insert(TABLE_HISTORY, null, values);
     }
 
-    synchronized String getHistoryItem(String url) {
+    synchronized String getHistoryItem(@NonNull String url) {
         openIfNecessary();
         Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
                 KEY_URL + " = ?", new String[]{url}, null, null, null, null);
@@ -158,6 +158,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         return itemList;
     }
 
+    @NonNull
     public synchronized List<HistoryItem> getLastHundredItems() {
         openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(100);
@@ -180,6 +181,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         return itemList;
     }
 
+    @NonNull
     public synchronized List<HistoryItem> getAllHistoryItems() {
         openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();

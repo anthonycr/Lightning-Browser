@@ -209,7 +209,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private static class ClearCacheRunnable implements Runnable {
 
-        private Application app;
+        private final Application app;
 
         public ClearCacheRunnable(Application app) {
             this.app = app;
