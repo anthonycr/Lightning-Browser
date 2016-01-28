@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -31,7 +33,7 @@ public class IntentUtils {
         mActivity = activity;
     }
 
-    public boolean startActivityForUrl(WebView tab, String url) {
+    public boolean startActivityForUrl(@Nullable WebView tab, @NonNull String url) {
         Intent intent;
         try {
             intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);

@@ -15,6 +15,8 @@
  */
 package acr.browser.lightning.utils;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
@@ -58,7 +60,8 @@ public class UrlUtils {
      * @return a stripped url like "www.google.com", or the original string if it could
      * not be stripped
      */
-    public static String stripUrl(String url) {
+    @Nullable
+    public static String stripUrl(@Nullable String url) {
         if (url == null) return null;
         Matcher m = STRIP_URL_PATTERN.matcher(url);
         if (m.matches()) {
@@ -79,7 +82,7 @@ public class UrlUtils {
      *                    URL. If false, invalid URLs will return null
      * @return Original or modified URL
      */
-    public static String smartUrlFilter(String url, boolean canBeSearch, String searchUrl) {
+    public static String smartUrlFilter(@NonNull String url, boolean canBeSearch, String searchUrl) {
         String inUrl = url.trim();
         boolean hasSpace = inUrl.indexOf(' ') != -1;
         Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);
@@ -108,7 +111,8 @@ public class UrlUtils {
     }
 
     /* package */
-    static String fixUrl(String inUrl) {
+    @NonNull
+    static String fixUrl(@NonNull String inUrl) {
         // FIXME: Converting the url to lower case
         // duplicates functionality in smartUrlFilter().
         // However, changing all current callers of fixUrl to
@@ -140,7 +144,8 @@ public class UrlUtils {
 
     // Returns the filtered URL. Cannot return null, but can return an empty string
     /* package */
-    static String filteredUrl(String inUrl) {
+    @Nullable
+    static String filteredUrl(@Nullable String inUrl) {
         if (inUrl == null) {
             return "";
         }
@@ -154,7 +159,7 @@ public class UrlUtils {
     /**
      * Returns whether the given url is the bookmarks/history page or a normal website
      */
-    public static boolean isSpecialUrl(String url) {
+    public static boolean isSpecialUrl(@Nullable String url) {
         return url != null && url.startsWith(Constants.FILE) &&
                 (url.endsWith(BookmarkPage.FILENAME) ||
                         url.endsWith(HistoryPage.FILENAME) ||

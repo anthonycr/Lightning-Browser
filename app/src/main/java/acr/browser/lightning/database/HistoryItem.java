@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import acr.browser.lightning.utils.Preconditions;
+
 public class HistoryItem implements Comparable<HistoryItem> {
 
     // private variables
@@ -26,7 +28,6 @@ public class HistoryItem implements Comparable<HistoryItem> {
     private int mOrder = 0;
     private boolean mIsFolder = false;
 
-    // Empty constructor
     public HistoryItem() {}
 
     public HistoryItem(@NonNull HistoryItem item) {
@@ -37,15 +38,17 @@ public class HistoryItem implements Comparable<HistoryItem> {
         this.mIsFolder = item.mIsFolder;
     }
 
-    // constructor
     public HistoryItem(@NonNull String url, @NonNull String title) {
+        Preconditions.checkNonNull(url);
+        Preconditions.checkNonNull(title);
         this.mUrl = url;
         this.mTitle = title;
         this.mBitmap = null;
     }
 
-    // constructor
     public HistoryItem(@NonNull String url, @NonNull String title, int imageId) {
+        Preconditions.checkNonNull(url);
+        Preconditions.checkNonNull(title);
         this.mUrl = url;
         this.mTitle = title;
         this.mBitmap = null;
@@ -86,24 +89,20 @@ public class HistoryItem implements Comparable<HistoryItem> {
         return mBitmap;
     }
 
-    // getting name
     @NonNull
     public String getUrl() {
         return this.mUrl;
     }
 
-    // setting name
     public void setUrl(@Nullable String url) {
         this.mUrl = (url == null) ? "" : url;
     }
 
-    // getting phone number
     @NonNull
     public String getTitle() {
         return this.mTitle;
     }
 
-    // setting phone number
     public void setTitle(@Nullable String title) {
         this.mTitle = (title == null) ? "" : title;
     }

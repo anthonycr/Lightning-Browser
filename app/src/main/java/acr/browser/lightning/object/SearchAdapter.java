@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +61,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
     private final Object mLock = new Object();
-    private final Context mContext;
+    @NonNull private final Context mContext;
     private boolean mUseGoogle = true;
     private boolean mIsExecuting = false;
     private final boolean mDarkTheme;
@@ -70,11 +72,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private static final long INTERVAL_DAY = 86400000;
     private static final int MAX_SUGGESTIONS = 5;
     private static final SuggestionsComparator mComparator = new SuggestionsComparator();
-    private final String mSearchSubtitle;
+    @NonNull private final String mSearchSubtitle;
     private SearchFilter mFilter;
-    private final Drawable mSearchDrawable;
-    private final Drawable mHistoryDrawable;
-    private final Drawable mBookmarkDrawable;
+    @NonNull private final Drawable mSearchDrawable;
+    @NonNull private final Drawable mHistoryDrawable;
+    @NonNull private final Drawable mBookmarkDrawable;
     private String mLanguage;
 
     @Inject
@@ -86,7 +88,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     @Inject
     PreferenceManager mPreferenceManager;
 
-    public SearchAdapter(Context context, boolean dark, boolean incognito) {
+    public SearchAdapter(@NonNull Context context, boolean dark, boolean incognito) {
         BrowserApp.getAppComponent().inject(this);
         mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
         mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
@@ -109,7 +111,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private static class NameFilter implements FilenameFilter {
 
         @Override
-        public boolean accept(File dir, String filename) {
+        public boolean accept(File dir, @NonNull String filename) {
             return filename.endsWith(CACHE_FILE_TYPE);
         }
 
@@ -146,8 +148,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return 0;
     }
 
+    @Nullable
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
         SuggestionHolder holder;
 
         if (convertView == null) {
@@ -232,8 +235,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private class SearchFilter extends Filter {
 
+        @NonNull
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
+        protected FilterResults performFiltering(@Nullable CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null) {
                 return results;
@@ -273,7 +277,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
 
         @Override
-        public CharSequence convertResultToString(Object resultValue) {
+        public CharSequence convertResultToString(@NonNull Object resultValue) {
             return ((HistoryItem) resultValue).getUrl();
         }
 
@@ -301,6 +305,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         private XmlPullParserFactory mFactory;
         private XmlPullParser mXpp;
 
+        @NonNull
         @Override
         protected List<HistoryItem> doInBackground(String... arg0) {
             mIsExecuting = true;
@@ -351,7 +356,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         }
 
         @Override
-        protected void onPostExecute(List<HistoryItem> result) {
+        protected void onPostExecute(@NonNull List<HistoryItem> result) {
             mIsExecuting = false;
             synchronized (mSuggestions) {
                 mSuggestions.clear();
@@ -375,7 +380,8 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
      * @param query the query to get suggestions for
      * @return the cache file containing the suggestions
      */
-    private static File downloadSuggestionsForQuery(String query, String language, Application app) {
+    @NonNull
+    private static File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
         File cacheFile = new File(app.getCacheDir(), query.hashCode() + CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
@@ -419,12 +425,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return cacheFile;
     }
 
-    private static boolean isNetworkConnected(Context context) {
+    private static boolean isNetworkConnected(@NonNull Context context) {
         NetworkInfo networkInfo = getActiveNetworkInfo(context);
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    private static NetworkInfo getActiveNetworkInfo(Context context) {
+    private static NetworkInfo getActiveNetworkInfo(@NonNull Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
@@ -433,6 +439,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         return connectivity.getActiveNetworkInfo();
     }
 
+    @NonNull
     private synchronized List<HistoryItem> getFilteredList() {
         List<HistoryItem> list = new ArrayList<>(5);
         synchronized (mBookmarks) {
@@ -464,7 +471,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
     private static class SuggestionsComparator implements Comparator<HistoryItem> {
 
         @Override
-        public int compare(HistoryItem lhs, HistoryItem rhs) {
+        public int compare(@NonNull HistoryItem lhs, @NonNull HistoryItem rhs) {
             if (lhs.getImageId() == rhs.getImageId()) return 0;
             if (lhs.getImageId() == R.drawable.ic_bookmark) return -1;
             if (rhs.getImageId() == R.drawable.ic_bookmark) return 1;

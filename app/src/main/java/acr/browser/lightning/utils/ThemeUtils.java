@@ -74,12 +74,10 @@ public class ThemeUtils {
         return resultBitmap;
     }
 
-    @Nullable
+    @NonNull
     public static Drawable getThemedDrawable(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         final Drawable drawable = ContextCompat.getDrawable(context, res);
-        if (drawable == null)
-            return null;
         drawable.mutate();
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
         return drawable;

@@ -38,17 +38,17 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     private static final String KEY_TITLE = "title";
     private static final String KEY_TIME_VISITED = "time";
 
-    private SQLiteDatabase mDatabase;
+    @Nullable private SQLiteDatabase mDatabase;
 
     @Inject
-    public HistoryDatabase(Context context) {
+    public HistoryDatabase(@NonNull Context context) {
         super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
         mDatabase = this.getWritableDatabase();
     }
 
     // Creating Tables
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(@NonNull SQLiteDatabase db) {
         String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + '(' + KEY_ID
                 + " INTEGER PRIMARY KEY," + KEY_URL + " TEXT," + KEY_TITLE + " TEXT,"
                 + KEY_TIME_VISITED + " INTEGER" + ')';
@@ -57,7 +57,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     // Upgrading database
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if it exists
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HISTORY);
         // Create tables again
@@ -65,13 +65,10 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     public synchronized void deleteHistory() {
+        mDatabase = openIfNecessary();
         mDatabase.delete(TABLE_HISTORY, null, null);
         mDatabase.close();
         mDatabase = this.getWritableDatabase();
-    }
-
-    private synchronized boolean isClosed() {
-        return mDatabase == null || !mDatabase.isOpen();
     }
 
     @Override
@@ -83,19 +80,21 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         super.close();
     }
 
-    private void openIfNecessary() {
-        if (isClosed()) {
+    @NonNull
+    private SQLiteDatabase openIfNecessary() {
+        if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = this.getWritableDatabase();
         }
+        return mDatabase;
     }
 
     public synchronized void deleteHistoryItem(@NonNull String url) {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
     }
 
     public synchronized void visitHistoryItem(@NonNull String url, @Nullable String title) {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, title == null ? "" : title);
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
@@ -110,7 +109,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     private synchronized void addHistoryItem(@NonNull HistoryItem item) {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_URL, item.getUrl());
         values.put(KEY_TITLE, item.getTitle());
@@ -118,8 +117,9 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         mDatabase.insert(TABLE_HISTORY, null, values);
     }
 
+    @Nullable
     synchronized String getHistoryItem(@NonNull String url) {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
                 KEY_URL + " = ?", new String[]{url}, null, null, null, null);
         String m = null;
@@ -132,8 +132,9 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         return m;
     }
 
+    @NonNull
     public synchronized List<HistoryItem> findItemsContaining(@Nullable String search) {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(5);
         if (search == null) {
             return itemList;
@@ -160,7 +161,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @NonNull
     public synchronized List<HistoryItem> getLastHundredItems() {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(100);
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
                 + " DESC";
@@ -183,7 +184,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @NonNull
     public synchronized List<HistoryItem> getAllHistoryItems() {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
                 + " DESC";
@@ -204,7 +205,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     public synchronized int getHistoryItemsCount() {
-        openIfNecessary();
+        mDatabase = openIfNecessary();
         String countQuery = "SELECT * FROM " + TABLE_HISTORY;
         Cursor cursor = mDatabase.rawQuery(countQuery, null);
         int n = cursor.getCount();

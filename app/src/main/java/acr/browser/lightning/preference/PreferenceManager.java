@@ -2,6 +2,8 @@ package acr.browser.lightning.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -66,7 +68,7 @@ public class PreferenceManager {
     private static final String PREFERENCES = "settings";
 
     @Inject
-    PreferenceManager(final Context context) {
+    PreferenceManager(@NonNull final Context context) {
         mPrefs = context.getSharedPreferences(PREFERENCES, 0);
     }
 
@@ -114,6 +116,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.COOKIES, true);
     }
 
+    @NonNull
     public String getDownloadDirectory() {
         return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, DownloadHandler.DEFAULT_DOWNLOAD_PATH);
     }
@@ -134,6 +137,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.HIDE_STATUS_BAR, false);
     }
 
+    @NonNull
     public String getHomepage() {
         return mPrefs.getString(Name.HOMEPAGE, Constants.HOMEPAGE);
     }
@@ -162,6 +166,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.POPUPS, true);
     }
 
+    @NonNull
     public String getProxyHost() {
         return mPrefs.getString(Name.USE_PROXY_HOST, "localhost");
     }
@@ -182,6 +187,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.RESTORE_LOST_TABS, true);
     }
 
+    @Nullable
     public String getSavedUrl() {
         return mPrefs.getString(Name.SAVE_URL, null);
     }
@@ -194,6 +200,7 @@ public class PreferenceManager {
         return mPrefs.getInt(Name.SEARCH, 1);
     }
 
+    @NonNull
     public String getSearchUrl() {
         return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
     }
@@ -226,7 +233,8 @@ public class PreferenceManager {
         return mPrefs.getInt(Name.USER_AGENT, 1);
     }
 
-    public String getUserAgentString(String def) {
+    @Nullable
+    public String getUserAgentString(@Nullable String def) {
         return mPrefs.getString(Name.USER_AGENT_STRING, def);
     }
 
@@ -234,6 +242,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_WIDE_VIEWPORT, true);
     }
 
+    @NonNull
     public String getTextEncoding() {
         return mPrefs.getString(Name.TEXT_ENCODING, Constants.DEFAULT_ENCODING);
     }
@@ -250,15 +259,15 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
-    private void putBoolean(String name, boolean value) {
+    private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
 
-    private void putInt(String name, int value) {
+    private void putInt(@NonNull String name, int value) {
         mPrefs.edit().putInt(name, value).apply();
     }
 
-    private void putString(String name, String value) {
+    private void putString(@NonNull String name, @Nullable String value) {
         mPrefs.edit().putString(name, value).apply();
     }
 
@@ -274,7 +283,7 @@ public class PreferenceManager {
         putBoolean(Name.SHOW_TABS_IN_DRAWER, show);
     }
 
-    public void setTextEncoding(String encoding) {
+    public void setTextEncoding(@NonNull String encoding) {
         putString(Name.TEXT_ENCODING, encoding);
     }
 
@@ -382,7 +391,7 @@ public class PreferenceManager {
         putBoolean(Name.RESTORE_LOST_TABS, enable);
     }
 
-    public void setSavedUrl(String url) {
+    public void setSavedUrl(@NonNull String url) {
         putString(Name.SAVE_URL, url);
     }
 
@@ -394,7 +403,7 @@ public class PreferenceManager {
         putInt(Name.SEARCH, choice);
     }
 
-    public void setSearchUrl(String url) {
+    public void setSearchUrl(@NonNull String url) {
         putString(Name.SEARCH_URL, url);
     }
 
