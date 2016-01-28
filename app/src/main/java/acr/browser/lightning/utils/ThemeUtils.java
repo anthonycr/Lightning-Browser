@@ -83,11 +83,9 @@ public class ThemeUtils {
         return drawable;
     }
 
-    @Nullable
+    @NonNull
     public static Drawable getLightThemedDrawable(@NonNull Context context, @DrawableRes int res) {
         final Drawable drawable = ContextCompat.getDrawable(context, res);
-        if (drawable == null)
-            return null;
         drawable.mutate();
         drawable.setColorFilter(getIconLightThemeColor(context), PorterDuff.Mode.SRC_IN);
         return drawable;
