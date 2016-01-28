@@ -60,6 +60,7 @@ public class ThemeUtils {
         icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
+    @NonNull
     public static Bitmap getThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources(), res);
