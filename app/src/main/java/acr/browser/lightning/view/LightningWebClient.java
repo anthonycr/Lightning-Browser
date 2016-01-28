@@ -11,6 +11,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
@@ -41,23 +42,26 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningWebClient extends WebViewClient {
 
 
-    private final Activity mActivity;
-    private final LightningView mLightningView;
-    private final UIController mUIController;
-    private final Bus mEventBus;
-    private final IntentUtils mIntentUtils;
+    @NonNull private final Activity mActivity;
+    @NonNull private final LightningView mLightningView;
+    @NonNull private final UIController mUIController;
+    @NonNull private final Bus mEventBus;
+    @NonNull private final IntentUtils mIntentUtils;
 
     @Inject ProxyUtils mProxyUtils;
     @Inject AdBlock mAdBlock;
 
-    LightningWebClient(Activity activity, LightningView lightningView) {
+    LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
+        Preconditions.checkNonNull(activity);
+        Preconditions.checkNonNull(lightningView);
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
@@ -68,7 +72,7 @@ public class LightningWebClient extends WebViewClient {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+    public WebResourceResponse shouldInterceptRequest(WebView view, @NonNull WebResourceRequest request) {
         if (mAdBlock.isAd(request.getUrl().toString())) {
             ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
             return new WebResourceResponse("text/plain", "utf-8", EMPTY);
@@ -76,6 +80,7 @@ public class LightningWebClient extends WebViewClient {
         return super.shouldInterceptRequest(view, request);
     }
 
+    @Nullable
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
@@ -89,7 +94,7 @@ public class LightningWebClient extends WebViewClient {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
-    public void onPageFinished(WebView view, String url) {
+    public void onPageFinished(@NonNull WebView view, String url) {
         if (view.isShown()) {
             mUIController.updateUrl(url, true);
             view.postInvalidate();
@@ -166,7 +171,7 @@ public class LightningWebClient extends WebViewClient {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
-    public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
+    public void onScaleChanged(@NonNull final WebView view, final float oldScale, final float newScale) {
         if (view.isShown() && mLightningView.mPreferences.getTextReflowEnabled() &&
                 Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (mIsRunning)
@@ -187,7 +192,8 @@ public class LightningWebClient extends WebViewClient {
         }
     }
 
-    private static List<Integer> getAllSslErrorMessageCodes(SslError error) {
+    @NonNull
+    private static List<Integer> getAllSslErrorMessageCodes(@NonNull SslError error) {
         List<Integer> errorCodeMessageCodes = new ArrayList<>();
 
         if (error.hasError(SslError.SSL_DATE_INVALID)) {
@@ -213,7 +219,7 @@ public class LightningWebClient extends WebViewClient {
     }
 
     @Override
-    public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, SslError error) {
+    public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
         List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -245,7 +251,7 @@ public class LightningWebClient extends WebViewClient {
     }
 
     @Override
-    public void onFormResubmission(WebView view, @NonNull final Message dontResend, final Message resend) {
+    public void onFormResubmission(WebView view, @NonNull final Message dontResend, @NonNull final Message resend) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(mActivity.getString(R.string.title_form_resubmission));
         builder.setMessage(mActivity.getString(R.string.message_form_resubmission))
@@ -269,7 +275,7 @@ public class LightningWebClient extends WebViewClient {
     }
 
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
         // Check if configured proxy is available
         if (!mProxyUtils.isProxyReady()) {
             // User has been notified

@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,30 +19,28 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
 import com.squareup.otto.Bus;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.utils.Preconditions;
 
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
-
-/**
- * @author Stefano Pacifici based on Anthony C. Restaino code
- * @date 2015/09/21
- */
 class LightningChromeClient extends WebChromeClient {
 
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
-    private final Activity mActivity;
-    private final LightningView mLightningView;
-    private final UIController mUIController;
-    private final Bus eventBus;
+    @NonNull private final Activity mActivity;
+    @NonNull private final LightningView mLightningView;
+    @NonNull private final UIController mUIController;
+    @NonNull private final Bus eventBus;
 
-    LightningChromeClient(Activity activity, LightningView lightningView) {
+    LightningChromeClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
+        Preconditions.checkNonNull(activity);
+        Preconditions.checkNonNull(lightningView);
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
@@ -55,7 +55,7 @@ class LightningChromeClient extends WebChromeClient {
     }
 
     @Override
-    public void onReceivedIcon(WebView view, Bitmap icon) {
+    public void onReceivedIcon(@NonNull WebView view, Bitmap icon) {
         mLightningView.getTitleInfo().setFavicon(icon);
         eventBus.post(new BrowserEvents.TabsChanged());
         cacheFavicon(view.getUrl(), icon, mActivity);
@@ -66,7 +66,7 @@ class LightningChromeClient extends WebChromeClient {
      *
      * @param icon the icon to cache
      */
-    private static void cacheFavicon(final String url, final Bitmap icon, final Context context) {
+    private static void cacheFavicon(final String url, @Nullable final Bitmap icon, @NonNull final Context context) {
         if (icon == null) return;
         final Uri uri = Uri.parse(url);
         if (uri.getHost() == null) {
@@ -77,7 +77,7 @@ class LightningChromeClient extends WebChromeClient {
 
 
     @Override
-    public void onReceivedTitle(WebView view, String title) {
+    public void onReceivedTitle(@Nullable WebView view, @Nullable String title) {
         if (title != null && !title.isEmpty()) {
             mLightningView.getTitleInfo().setTitle(title);
         } else {
@@ -90,8 +90,8 @@ class LightningChromeClient extends WebChromeClient {
     }
 
     @Override
-    public void onGeolocationPermissionsShowPrompt(final String origin,
-                                                   final GeolocationPermissions.Callback callback) {
+    public void onGeolocationPermissionsShowPrompt(@NonNull final String origin,
+                                                   @NonNull final GeolocationPermissions.Callback callback) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, PERMISSIONS, new PermissionsResultAction() {
             @Override
             public void onGranted() {
@@ -170,11 +170,9 @@ class LightningChromeClient extends WebChromeClient {
      *
      * @return a Bitmap that can be used as a place holder for videos.
      */
+    @Nullable
     @Override
     public Bitmap getDefaultVideoPoster() {
-        if (mActivity == null) {
-            return null;
-        }
         final Resources resources = mActivity.getResources();
         return BitmapFactory.decodeResource(resources, android.R.drawable.spinner_background);
     }
