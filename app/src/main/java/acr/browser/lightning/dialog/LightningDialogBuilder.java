@@ -56,7 +56,7 @@ public class LightningDialogBuilder {
      * @param context used to show the dialog
      * @param url     the long pressed url
      */
-    public void showLongPressedDialogForBookmarkUrl(final Context context, final String url) {
+    public void showLongPressedDialogForBookmarkUrl(@NonNull final Context context, @NonNull final String url) {
         final HistoryItem item;
         if (url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME)) {
             // TODO hacky, make a better bookmark mechanism in the future
@@ -80,7 +80,7 @@ public class LightningDialogBuilder {
         }
     }
 
-    public void showLongPressedDialogForBookmarkUrl(final Context context, final HistoryItem item) {
+    public void showLongPressedDialogForBookmarkUrl(@NonNull final Context context, @NonNull final HistoryItem item) {
         final DialogInterface.OnClickListener dialogClickListener =
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -111,7 +111,7 @@ public class LightningDialogBuilder {
                 .show();
     }
 
-    private void showEditBookmarkDialog(final Context context, final HistoryItem item) {
+    private void showEditBookmarkDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
         final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(context);
         editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
         final View dialogLayout = View.inflate(context, R.layout.dialog_edit_bookmark, null);
@@ -146,7 +146,7 @@ public class LightningDialogBuilder {
         editBookmarkDialog.show();
     }
 
-    public void showBookmarkFolderLongPressedDialog(final Context context, final HistoryItem item) {
+    public void showBookmarkFolderLongPressedDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
         // assert item.isFolder();
         final DialogInterface.OnClickListener dialogClickListener =
                 new DialogInterface.OnClickListener() {
@@ -175,7 +175,7 @@ public class LightningDialogBuilder {
                 .show();
     }
 
-    private void showRenameFolderDialog(final Context context, final HistoryItem item) {
+    private void showRenameFolderDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
         // assert item.isFolder();
         final AlertDialog.Builder editFolderDialog = new AlertDialog.Builder(context);
         editFolderDialog.setTitle(R.string.title_rename_folder);
@@ -208,7 +208,7 @@ public class LightningDialogBuilder {
         editFolderDialog.show();
     }
 
-    public void showLongPressedHistoryLinkDialog(final Context context, final String url) {
+    public void showLongPressedHistoryLinkDialog(final Context context, @NonNull final String url) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -270,7 +270,7 @@ public class LightningDialogBuilder {
                 .show();
     }
 
-    public void showLongPressLinkDialog(final Context context, final String url) {
+    public void showLongPressLinkDialog(@NonNull final Context context, final String url) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

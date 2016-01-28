@@ -3,6 +3,7 @@ package acr.browser.lightning.utils;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -29,7 +30,7 @@ public class FileUtils {
      * @param bundle the bundle to store in persistent storage.
      * @param name   the name of the file to store the bundle in.
      */
-    public static void writeBundleToStorage(Application app, Bundle bundle, String name) {
+    public static void writeBundleToStorage(@NonNull Application app, Bundle bundle, @NonNull String name) {
         File outputFile = new File(app.getFilesDir(), name);
         FileOutputStream outputStream = null;
         try {
@@ -58,7 +59,7 @@ public class FileUtils {
      * or null if the method was unable to read the Bundle from storage.
      */
     @Nullable
-    public static Bundle readBundleFromStorage(Application app, String name) {
+    public static Bundle readBundleFromStorage(@NonNull Application app, @NonNull String name) {
         File inputFile = new File(app.getFilesDir(), name);
         FileInputStream inputStream = null;
         try {

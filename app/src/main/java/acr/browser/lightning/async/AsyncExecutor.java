@@ -22,6 +22,7 @@ public class AsyncExecutor implements Executor {
 
     private AsyncExecutor() {}
 
+    @NonNull
     public static AsyncExecutor getInstance() {
         return INSTANCE;
     }

@@ -1,5 +1,6 @@
 package acr.browser.lightning.bus;
 
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 public final class BrowserEvents {
@@ -53,7 +54,7 @@ public final class BrowserEvents {
      * Notify the Browser to display a SnackBar in the main activity
      */
     public static class ShowSnackBarMessage {
-        public final String message;
+        @Nullable public final String message;
         @StringRes
         public final int stringRes;
 

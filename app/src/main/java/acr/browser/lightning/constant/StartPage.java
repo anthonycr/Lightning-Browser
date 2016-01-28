@@ -5,6 +5,8 @@ package acr.browser.lightning.constant;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,21 +54,22 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
 
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
-    private final String mTitle;
+    @NonNull private final String mTitle;
     private final File mFilesDir;
-    private final WeakReference<LightningView> mTabReference;
+    @NonNull private final WeakReference<LightningView> mTabReference;
 
     @Inject PreferenceManager mPreferenceManager;
 
     private String mStartpageUrl;
 
-    public StartPage(LightningView tab, Application app) {
+    public StartPage(LightningView tab, @NonNull Application app) {
         BrowserApp.getAppComponent().inject(this);
         mTitle = app.getString(R.string.home);
         mFilesDir = app.getFilesDir();
         mTabReference = new WeakReference<>(tab);
     }
 
+    @Nullable
     @Override
     protected Void doInBackground(Void... params) {
         mStartpageUrl = getHomepage();
@@ -88,6 +91,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
      *
      * @return the URL to load
      */
+    @NonNull
     private String getHomepage() {
         StringBuilder homepageBuilder = new StringBuilder(HEAD_1 + mTitle + HEAD_2);
         String icon;

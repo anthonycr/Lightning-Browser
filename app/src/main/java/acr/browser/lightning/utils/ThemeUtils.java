@@ -55,12 +55,12 @@ public class ThemeUtils {
         return ContextCompat.getColor(context, R.color.icon_dark_theme);
     }
 
-    public static void themeImageView(ImageView icon, Context context, boolean dark) {
+    public static void themeImageView(@NonNull ImageView icon, @NonNull Context context, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
-    public static Bitmap getThemedBitmap(Context context, @DrawableRes int res, boolean dark) {
+    public static Bitmap getThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         Bitmap sourceBitmap = BitmapFactory.decodeResource(context.getResources(), res);
         Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -94,13 +94,14 @@ public class ThemeUtils {
         return drawable;
     }
 
+    @NonNull
     public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
         @ColorInt final int color = (dark) ? ContextCompat.getColor(context, R.color.selected_dark) :
                 ContextCompat.getColor(context, R.color.selected_light);
         return new ColorDrawable(color);
     }
 
-    public static int getTextColor(Context context) {
+    public static int getTextColor(@NonNull Context context) {
         return getColor(context, android.R.attr.editTextColor);
     }
 }

@@ -2,6 +2,7 @@ package acr.browser.lightning.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.squareup.otto.Bus;
 
@@ -15,7 +16,7 @@ import dagger.Provides;
 @Module
 public class AppModule {
     private final BrowserApp mApp;
-    private final Bus mBus;
+    @NonNull private final Bus mBus;
 
     public AppModule(BrowserApp app) {
         this.mApp = app;
@@ -32,11 +33,13 @@ public class AppModule {
         return mApp.getApplicationContext();
     }
 
+    @NonNull
     @Provides
     public Bus provideBus() {
         return mBus;
     }
 
+    @NonNull
     @Provides
     @Singleton
     public I2PAndroidHelper provideI2PAndroidHelper() {

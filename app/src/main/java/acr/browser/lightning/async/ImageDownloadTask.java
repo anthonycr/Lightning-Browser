@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -25,10 +26,10 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
     private final File mCacheDir;
-    private final WeakReference<ImageView> mFaviconImage;
-    private final HistoryItem mWeb;
+    @NonNull private final WeakReference<ImageView> mFaviconImage;
+    @NonNull private final HistoryItem mWeb;
     private final String mUrl;
-    private final Bitmap mDefaultBitmap;
+    @NonNull private final Bitmap mDefaultBitmap;
 
     public ImageDownloadTask(@NonNull ImageView bmImage,
                              @NonNull HistoryItem web,
@@ -44,6 +45,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         this.mCacheDir = BrowserApp.get(context).getCacheDir();
     }
 
+    @Nullable
     @Override
     protected Bitmap doInBackground(Void... params) {
         Bitmap mIcon = null;

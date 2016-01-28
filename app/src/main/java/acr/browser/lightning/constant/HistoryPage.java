@@ -6,6 +6,7 @@ package acr.browser.lightning.constant;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -39,20 +40,21 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
 
     private static final String END = "</div></body></html>";
 
-    private final WeakReference<LightningView> mTabReference;
+    @NonNull private final WeakReference<LightningView> mTabReference;
     private final File mFilesDir;
-    private final String mTitle;
+    @NonNull private final String mTitle;
     private final HistoryDatabase mHistoryDatabase;
 
-    private String mHistoryUrl = null;
+    @Nullable private String mHistoryUrl = null;
 
-    public HistoryPage(LightningView tab, Application app, HistoryDatabase database) {
+    public HistoryPage(LightningView tab, @NonNull Application app, HistoryDatabase database) {
         mTabReference = new WeakReference<>(tab);
         mFilesDir = app.getFilesDir();
         mTitle = app.getString(R.string.action_history);
         mHistoryDatabase = database;
     }
 
+    @Nullable
     @Override
     protected Void doInBackground(Void... params) {
         mHistoryUrl = getHistoryPage();

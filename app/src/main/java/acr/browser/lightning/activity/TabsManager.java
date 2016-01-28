@@ -39,7 +39,7 @@ public class TabsManager {
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
     private final List<LightningView> mTabList = new ArrayList<>(1);
-    private LightningView mCurrentTab;
+    @Nullable private LightningView mCurrentTab;
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject Bus mEventBus;

@@ -2,6 +2,7 @@ package acr.browser.lightning.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
@@ -26,7 +27,8 @@ public class BrowserApp extends Application {
         LeakCanary.install(this);
     }
 
-    public static BrowserApp get(Context context) {
+    @NonNull
+    public static BrowserApp get(@NonNull Context context) {
         return (BrowserApp) context.getApplicationContext();
     }
 
@@ -34,11 +36,12 @@ public class BrowserApp extends Application {
         return mAppComponent;
     }
 
+    @NonNull
     public static Executor getIOThread() {
         return mIOThread;
     }
 
-    public static Bus getBus(Context context) {
+    public static Bus getBus(@NonNull Context context) {
         return get(context).mBus;
     }
 

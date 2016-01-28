@@ -112,7 +112,7 @@ public final class Utils {
      * @param title    the title of the dialog.
      * @param message  the message of the dialog.
      */
-    public static void createInformativeDialog(Activity activity, @StringRes int title, @StringRes int message) {
+    public static void createInformativeDialog(@NonNull Activity activity, @StringRes int title, @StringRes int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         builder.setMessage(message)
@@ -170,6 +170,7 @@ public final class Utils {
      * could not be extracted. The domain name may include
      * HTTPS if the URL is an SSL supported URL.
      */
+    @Nullable
     public static String getDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 
@@ -198,11 +199,11 @@ public final class Utils {
             return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
-    public static String[] getArray(String input) {
+    public static String[] getArray(@NonNull String input) {
         return input.split(Constants.SEPARATOR);
     }
 
-    public static void trimCache(Context context) {
+    public static void trimCache(@NonNull Context context) {
         try {
             File dir = context.getCacheDir();
 
@@ -214,7 +215,7 @@ public final class Utils {
         }
     }
 
-    private static boolean deleteDir(File dir) {
+    private static boolean deleteDir(@Nullable File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
             for (String aChildren : children) {
@@ -235,7 +236,7 @@ public final class Utils {
      * @param bitmap is the bitmap to pad.
      * @return the padded bitmap.
      */
-    public static Bitmap padFavicon(Bitmap bitmap) {
+    public static Bitmap padFavicon(@NonNull Bitmap bitmap) {
         int padding = Utils.dpToPx(4);
 
         Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
@@ -296,7 +297,7 @@ public final class Utils {
      * @param context the context needed to obtain the PackageManager
      * @return true if flash is installed, false otherwise
      */
-    public static boolean isFlashInstalled(Context context) {
+    public static boolean isFlashInstalled(@NonNull Context context) {
         try {
             PackageManager pm = context.getPackageManager();
             ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
@@ -315,7 +316,7 @@ public final class Utils {
      *
      * @param closeable the object to close
      */
-    public static void close(Closeable closeable) {
+    public static void close(@Nullable Closeable closeable) {
         if (closeable == null)
             return;
         try {
@@ -332,7 +333,7 @@ public final class Utils {
      *
      * @param cursor the cursor to close
      */
-    public static void close(Cursor cursor) {
+    public static void close(@Nullable Cursor cursor) {
         if (cursor == null) {
             return;
         }
@@ -350,7 +351,7 @@ public final class Utils {
      * @param canvas the canvas to draw upon
      * @param color  the color to use to draw the tab
      */
-    public static void drawTrapezoid(Canvas canvas, int color, boolean withShader) {
+    public static void drawTrapezoid(@NonNull Canvas canvas, int color, boolean withShader) {
 
         Paint paint = new Paint();
         paint.setColor(color);

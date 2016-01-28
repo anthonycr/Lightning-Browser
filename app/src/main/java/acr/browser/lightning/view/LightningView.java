@@ -68,12 +68,12 @@ public class LightningView {
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
     private static final String HEADER_DNT = "DNT";
 
-    private final LightningViewTitle mTitle;
-    private WebView mWebView;
+    @NonNull private final LightningViewTitle mTitle;
+    @Nullable private WebView mWebView;
     private final boolean mIsIncognitoTab;
-    private final UIController mUIController;
-    private final GestureDetector mGestureDetector;
-    private final Activity mActivity;
+    @NonNull private final UIController mUIController;
+    @NonNull private final GestureDetector mGestureDetector;
+    @NonNull private final Activity mActivity;
     private static String mHomepage;
     private static String mDefaultUserAgent;
     private final Paint mPaint = new Paint();
@@ -99,7 +99,7 @@ public class LightningView {
     @Inject BookmarkManager mBookmarkManager;
 
     @SuppressLint("NewApi")
-    public LightningView(Activity activity, String url, boolean isIncognito) {
+    public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mUIController = (UIController) activity;
@@ -984,7 +984,7 @@ public class LightningView {
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
-        public boolean onTouch(View view, MotionEvent arg1) {
+        public boolean onTouch(@Nullable View view, @NonNull MotionEvent arg1) {
             if (view == null)
                 return false;
 
@@ -1076,14 +1076,14 @@ public class LightningView {
      */
     private static class WebViewHandler extends Handler {
 
-        private final WeakReference<LightningView> mReference;
+        @NonNull private final WeakReference<LightningView> mReference;
 
         public WebViewHandler(LightningView view) {
             mReference = new WeakReference<>(view);
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             final String url = msg.getData().getString("url");
             LightningView view = mReference.get();

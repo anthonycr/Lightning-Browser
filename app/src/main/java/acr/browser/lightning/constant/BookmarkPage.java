@@ -6,6 +6,8 @@ package acr.browser.lightning.constant;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,11 +64,11 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
     private final File mCacheDir;
 
     private final BookmarkManager mManager;
-    private final WeakReference<LightningView> mTabReference;
+    @NonNull private final WeakReference<LightningView> mTabReference;
     private final Bitmap mFolderIcon;
-    private final String mTitle;
+    @NonNull private final String mTitle;
 
-    public BookmarkPage(LightningView tab, Application app, BookmarkManager manager, Bitmap folderIcon) {
+    public BookmarkPage(LightningView tab, @NonNull Application app, BookmarkManager manager, Bitmap folderIcon) {
         mFilesDir = app.getFilesDir();
         mCacheDir = app.getCacheDir();
         mTitle = app.getString(R.string.action_bookmarks);
@@ -106,7 +108,7 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void buildBookmarkPage(final String folder, final BookmarkManager manager) {
+    private void buildBookmarkPage(@Nullable final String folder, @NonNull final BookmarkManager manager) {
         final List<HistoryItem> list = manager.getBookmarksFromFolder(folder, true);
         final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {

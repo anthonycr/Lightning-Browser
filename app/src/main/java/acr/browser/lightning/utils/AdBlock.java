@@ -2,6 +2,8 @@ package acr.browser.lightning.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -40,7 +42,7 @@ public class AdBlock {
     @Inject PreferenceManager mPreferenceManager;
 
     @Inject
-    public AdBlock(Context context) {
+    public AdBlock(@NonNull Context context) {
         BrowserApp.getAppComponent().inject(this);
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);
@@ -52,7 +54,7 @@ public class AdBlock {
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
 
-    private void loadBlockedDomainsList(final Context context) {
+    private void loadBlockedDomainsList(@NonNull final Context context) {
         Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -85,7 +87,7 @@ public class AdBlock {
      * @param url the URL to check for being an ad
      * @return true if it is an ad, false if it is not an ad
      */
-    public boolean isAd(String url) {
+    public boolean isAd(@Nullable String url) {
         if (!mBlockAds || url == null) {
             return false;
         }
@@ -112,7 +114,8 @@ public class AdBlock {
      * @return returns the domain
      * @throws URISyntaxException throws an exception if the string cannot form a URI
      */
-    private static String getDomainName(String url) throws URISyntaxException {
+    @NonNull
+    private static String getDomainName(@NonNull String url) throws URISyntaxException {
         int index = url.indexOf('/', 8);
         if (index != -1) {
             url = url.substring(0, index);
@@ -136,7 +139,7 @@ public class AdBlock {
      *
      * @param context the context needed to read the file
      */
-    private void loadHostsFile(final Context context) {
+    private void loadHostsFile(@NonNull final Context context) {
         Thread thread = new Thread(new Runnable() {
 
             @Override

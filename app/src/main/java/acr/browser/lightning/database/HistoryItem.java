@@ -29,7 +29,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
     // Empty constructor
     public HistoryItem() {}
 
-    public HistoryItem(HistoryItem item) {
+    public HistoryItem(@NonNull HistoryItem item) {
         this.mUrl = item.mUrl;
         this.mTitle = item.mTitle;
         this.mFolder = item.mFolder;
@@ -64,7 +64,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
         mBitmap = image;
     }
 
-    public void setFolder(String folder) {
+    public void setFolder(@Nullable String folder) {
         mFolder = (folder == null) ? "" : folder;
     }
 
@@ -76,31 +76,35 @@ public class HistoryItem implements Comparable<HistoryItem> {
         return mOrder;
     }
 
+    @NonNull
     public String getFolder() {
         return mFolder;
     }
 
+    @Nullable
     public Bitmap getBitmap() {
         return mBitmap;
     }
 
     // getting name
+    @NonNull
     public String getUrl() {
         return this.mUrl;
     }
 
     // setting name
-    public void setUrl(String url) {
+    public void setUrl(@Nullable String url) {
         this.mUrl = (url == null) ? "" : url;
     }
 
     // getting phone number
+    @NonNull
     public String getTitle() {
         return this.mTitle;
     }
 
     // setting phone number
-    public void setTitle(String title) {
+    public void setTitle(@Nullable String title) {
         this.mTitle = (title == null) ? "" : title;
     }
 
@@ -112,6 +116,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
         return mIsFolder;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return mTitle;
@@ -127,7 +132,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(@Nullable Object object) {
 
         if (this == object) return true;
         if (object == null) return false;
