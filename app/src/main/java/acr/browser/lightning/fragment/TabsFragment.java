@@ -69,8 +69,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     private boolean mColorMode = true;
     private boolean mShowInNavigationDrawer;
 
-    private RecyclerView mRecyclerView;
-    private LightningViewAdapter mTabsAdapter;
+    @Nullable private LightningViewAdapter mTabsAdapter;
     private UIController mUiController;
 
     @Inject TabsManager tabsManager;
@@ -99,7 +98,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view;
         final LayoutManager layoutManager;
         if (mShowInNavigationDrawer) {
@@ -114,11 +113,11 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             view = inflater.inflate(R.layout.tab_strip, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         }
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
-        mRecyclerView.setLayoutManager(layoutManager);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
+        recyclerView.setLayoutManager(layoutManager);
         mTabsAdapter = new LightningViewAdapter(mShowInNavigationDrawer);
-        mRecyclerView.setAdapter(mTabsAdapter);
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(mTabsAdapter);
+        recyclerView.setHasFixedSize(true);
         return view;
     }
 
@@ -134,7 +133,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRecyclerView = null;
         mTabsAdapter = null;
     }
 
@@ -148,7 +146,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public void onResume() {
         super.onResume();
         // Force adapter refresh
-        mTabsAdapter.notifyDataSetChanged();
+        if (mTabsAdapter != null) {
+            mTabsAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -165,7 +165,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.new_tab_button:
                 mBus.post(new TabEvents.NewTab());
@@ -184,7 +184,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public boolean onLongClick(View v) {
+    public boolean onLongClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.action_new_tab:
                 mBus.post(new TabEvents.NewTabLongPress());
@@ -198,9 +198,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
 
         private final int mLayoutResourceId;
-        private final Drawable mBackgroundTabDrawable;
-        private final Drawable mForegroundTabDrawable;
-        private final Bitmap mForegroundTabBitmap;
+        @Nullable private final Drawable mBackgroundTabDrawable;
+        @Nullable private final Drawable mForegroundTabDrawable;
+        @Nullable private final Bitmap mForegroundTabBitmap;
         private ColorMatrix mColorMatrix;
         private Paint mPaint;
         private ColorFilter mFilter;
@@ -229,15 +229,16 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             }
         }
 
+        @NonNull
         @Override
-        public LightningViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        public LightningViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
             View view = inflater.inflate(mLayoutResourceId, viewGroup, false);
             return new LightningViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final LightningViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final LightningViewHolder holder, int position) {
             holder.exitButton.setTag(position);
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
@@ -293,7 +294,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             return tabsManager.size();
         }
 
-        public Bitmap getDesaturatedBitmap(Bitmap favicon) {
+        public Bitmap getDesaturatedBitmap(@NonNull Bitmap favicon) {
             Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
                     favicon.getHeight(), Bitmap.Config.ARGB_8888);
 
@@ -312,7 +313,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
         public class LightningViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-            public LightningViewHolder(View view) {
+            public LightningViewHolder(@NonNull View view) {
                 super(view);
                 txtTitle = (TextView) view.findViewById(R.id.textTab);
                 favicon = (ImageView) view.findViewById(R.id.faviconTab);
@@ -326,11 +327,11 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 layout.setOnLongClickListener(this);
             }
 
-            final TextView txtTitle;
-            final ImageView favicon;
-            final ImageView exit;
-            final FrameLayout exitButton;
-            final LinearLayout layout;
+            @NonNull final TextView txtTitle;
+            @NonNull final ImageView favicon;
+            @NonNull final ImageView exit;
+            @NonNull final FrameLayout exitButton;
+            @NonNull final LinearLayout layout;
 
             @Override
             public void onClick(View v) {

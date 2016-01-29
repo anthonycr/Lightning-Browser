@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 import java.io.File;
@@ -27,8 +29,11 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
+
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
+
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -37,12 +42,13 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private static final String SETTINGS_IMPORT = "import_bookmark";
     private static final String SETTINGS_IMPORT_BROWSER = "import_browser";
 
-    private Activity mActivity;
-    @Inject
-    BookmarkManager mBookmarkManager;
+    @Nullable private Activity mActivity;
+
+    @Inject BookmarkManager mBookmarkManager;
     private File[] mFileList;
     private String[] mFileNameList;
-    private BookmarkLocalSync mSync;
+    @Nullable private BookmarkLocalSync mSync;
+
     private static final String[] REQUIRED_PERMISSIONS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -52,7 +58,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     private class ImportBookmarksTask extends AsyncTask<Void, Void, Integer> {
 
-        private final WeakReference<Activity> mActivityReference;
+        @NonNull private final WeakReference<Activity> mActivityReference;
 
         public ImportBookmarksTask(Activity activity) {
             mActivityReference = new WeakReference<>(activity);
@@ -61,10 +67,10 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         @Override
         protected Integer doInBackground(Void... params) {
             List<HistoryItem> list = null;
-            if (mSync.isStockSupported()) {
-                list = mSync.getBookmarksFromStockBrowser();
-            } else if (mSync.isChromeSupported()) {
-                list = mSync.getBookmarksFromChrome();
+            if (getSync().isStockSupported()) {
+                list = getSync().getBookmarksFromStockBrowser();
+            } else if (getSync().isChromeSupported()) {
+                list = getSync().getBookmarksFromChrome();
             }
             int count = 0;
             if (list != null && !list.isEmpty()) {
@@ -86,6 +92,16 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         }
     }
 
+    @NonNull
+    private BookmarkLocalSync getSync() {
+        Preconditions.checkNonNull(mActivity);
+        if (mSync == null) {
+            mSync = new BookmarkLocalSync(mActivity);
+        }
+
+        return mSync;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +110,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         addPreferencesFromResource(R.xml.preference_bookmarks);
 
         mActivity = getActivity();
+        mSync = new BookmarkLocalSync(mActivity);
 
         initPrefs();
 
@@ -117,8 +134,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         Preference exportpref = findPreference(SETTINGS_EXPORT);
         Preference importpref = findPreference(SETTINGS_IMPORT);
 
-        mSync = new BookmarkLocalSync(mActivity);
-
         exportpref.setOnPreferenceClickListener(this);
         importpref.setOnPreferenceClickListener(this);
 
@@ -129,13 +144,13 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         @Override
         public void run() {
             Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
-            importStock.setEnabled(mSync.isStockSupported() || mSync.isChromeSupported());
+            importStock.setEnabled(getSync().isStockSupported() || getSync().isChromeSupported());
             importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
         }
     };
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
@@ -175,7 +190,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         }
     }
 
-    private void loadFileList(File path) {
+    private void loadFileList(@Nullable File path) {
         File file;
         if (path != null) {
             file = path;
@@ -208,7 +223,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private static class SortName implements Comparator<File> {
 
         @Override
-        public int compare(File a, File b) {
+        public int compare(@NonNull File a, @NonNull File b) {
             if (a.isDirectory() && b.isDirectory())
                 return a.getName().compareTo(b.getName());
 

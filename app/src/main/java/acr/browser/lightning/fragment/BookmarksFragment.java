@@ -146,7 +146,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
         mBookmarksListView = (ListView) view.findViewById(R.id.right_drawer_list);
         mBookmarksListView.setOnItemClickListener(mItemClickListener);
@@ -187,14 +187,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Subscribe
-    public void addBookmark(final BrowserEvents.BookmarkAdded event) {
+    public void addBookmark(@NonNull final BrowserEvents.BookmarkAdded event) {
         updateBookmarkIndicator(event.url);
         String folder = mBookmarkManager.getCurrentFolder();
         setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
     @Subscribe
-    public void currentPageInfo(final BrowserEvents.CurrentPageUrl event) {
+    public void currentPageInfo(@NonNull final BrowserEvents.CurrentPageUrl event) {
         updateBookmarkIndicator(event.url);
         String folder = mBookmarkManager.getCurrentFolder();
         setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
@@ -227,7 +227,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Subscribe
-    public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
+    public void bookmarkDeleted(@NonNull final BookmarkEvents.Deleted event) {
         mBookmarks.remove(event.item);
         if (event.item.isFolder()) {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
@@ -236,7 +236,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
+    private void setBookmarkDataSet(@NonNull List<HistoryItem> items, boolean animate) {
         mBookmarks.clear();
         mBookmarks.addAll(items);
         mBookmarkAdapter.notifyDataSetChanged();
@@ -294,7 +294,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
-    private void handleLongPress(final HistoryItem item) {
+    private void handleLongPress(@NonNull final HistoryItem item) {
         if (item.isFolder()) {
             mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
@@ -303,7 +303,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.action_add_bookmark:
                 mEventBus.post(new BookmarkEvents.ToggleBookmarkForCurrentPage());
@@ -338,7 +338,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
         final Context context;
 
-        public BookmarkViewAdapter(Context context, List<HistoryItem> data) {
+        public BookmarkViewAdapter(Context context, @NonNull List<HistoryItem> data) {
             super(context, R.layout.bookmark_list_item, data);
             this.context = context;
         }

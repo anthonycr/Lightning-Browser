@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -503,7 +504,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_PROXY:
                 proxyChoicePicker();
@@ -526,7 +527,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
         boolean checked = false;
         if (newValue instanceof Boolean) {
             checked = (Boolean) newValue;
@@ -586,7 +587,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
         @Override
-        public void afterTextChanged(Editable s) {
+        public void afterTextChanged(@NonNull Editable s) {
             if (!DownloadHandler.isWriteAccessAvailable(s.toString())) {
                 this.getDownload.setTextColor(this.errorColor);
             } else {

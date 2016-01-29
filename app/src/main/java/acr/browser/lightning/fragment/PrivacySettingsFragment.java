@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.webkit.WebView;
 
@@ -114,7 +115,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case 1:
                     Utils.showSnackbar(mHandlerContext, R.string.message_clear_history);
@@ -128,7 +129,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_CLEARCACHE:
                 clearCache();
@@ -209,7 +210,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
         switch (preference.getKey()) {
             case SETTINGS_LOCATION:
                 mPreferenceManager.setLocationEnabled((Boolean) newValue);

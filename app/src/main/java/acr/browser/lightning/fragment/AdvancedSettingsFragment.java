@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 
 import java.util.Arrays;
@@ -88,7 +89,7 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_RENDERINGMODE:
                 renderPicker();
@@ -105,7 +106,7 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_NEWWINDOW:

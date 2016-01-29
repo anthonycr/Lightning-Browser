@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -83,7 +84,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_THEME:
                 themePicker();
@@ -97,7 +98,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_HIDESTATUSBAR:
