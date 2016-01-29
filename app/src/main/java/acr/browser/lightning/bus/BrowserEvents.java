@@ -58,7 +58,7 @@ public final class BrowserEvents {
         @StringRes
         public final int stringRes;
 
-        public ShowSnackBarMessage(final String message) {
+        public ShowSnackBarMessage(@Nullable final String message) {
             this.message = message;
             this.stringRes = -1;
         }
