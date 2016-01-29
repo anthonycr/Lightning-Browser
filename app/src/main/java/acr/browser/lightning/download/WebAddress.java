@@ -4,6 +4,7 @@
 package acr.browser.lightning.download;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -45,7 +46,7 @@ class WebAddress {
     /**
      * Parses given URI-like string.
      */
-    public WebAddress(String address) throws IllegalArgumentException {
+    public WebAddress(@Nullable String address) throws IllegalArgumentException {
 
         if (address == null) {
             throw new IllegalArgumentException("address can't be null");
@@ -113,6 +114,7 @@ class WebAddress {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
 

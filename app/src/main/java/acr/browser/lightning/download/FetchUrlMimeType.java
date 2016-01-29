@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
@@ -83,7 +84,7 @@ class FetchUrlMimeType extends Thread {
                     contentDisposition = contentDispositionHeader;
                 }
             }
-        } catch (IllegalArgumentException | IOException ex) {
+        } catch (@NonNull IllegalArgumentException | IOException ex) {
             if (connection != null)
                 connection.disconnect();
         } finally {

@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.animation.Animation;
@@ -39,12 +40,12 @@ public class AnimatedProgressBar extends LinearLayout {
     private int mDrawWidth = 0;
     private int mProgressColor;
 
-    public AnimatedProgressBar(Context context, AttributeSet attrs) {
+    public AnimatedProgressBar(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public AnimatedProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AnimatedProgressBar(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
@@ -55,7 +56,7 @@ public class AnimatedProgressBar extends LinearLayout {
      * @param context is the context passed by the constructor
      * @param attrs   is the attribute set passed by the constructor
      */
-    private void init(final Context context, AttributeSet attrs) {
+    private void init(@NonNull final Context context, AttributeSet attrs) {
         TypedArray array = context.getTheme().obtainStyledAttributes(attrs, R.styleable.AnimatedProgressBar, 0, 0);
         int backgroundColor;
         try {   // Retrieve the style of the progress bar that the user hopefully set
@@ -90,7 +91,7 @@ public class AnimatedProgressBar extends LinearLayout {
     private final Rect mRect = new Rect();
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         mPaint.setColor(mProgressColor);
         mPaint.setStrokeWidth(10);
         mRect.right = mRect.left + mDrawWidth;
@@ -209,6 +210,7 @@ public class AnimatedProgressBar extends LinearLayout {
         super.onRestoreInstanceState(state);
     }
 
+    @NonNull
     @Override
     protected Parcelable onSaveInstanceState() {
 

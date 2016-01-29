@@ -12,6 +12,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,8 +56,8 @@ public class DownloadHandler {
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
      */
-    public static void onDownloadStart(Context context, PreferenceManager manager, String url, String userAgent,
-                                       String contentDisposition, String mimetype) {
+    public static void onDownloadStart(@NonNull Context context, @NonNull PreferenceManager manager, String url, String userAgent,
+                                       @Nullable String contentDisposition, String mimetype) {
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
         if (contentDisposition == null
@@ -95,7 +97,8 @@ public class DownloadHandler {
     // This is to work around the fact that java.net.URI throws Exceptions
     // instead of just encoding URL's properly
     // Helper method for onDownloadStartNoStream
-    private static String encodePath(String path) {
+    @NonNull
+    private static String encodePath(@NonNull String path) {
         char[] chars = path.toCharArray();
 
         boolean needed = false;
@@ -133,9 +136,9 @@ public class DownloadHandler {
      * @param mimetype           The mimetype of the content reported by the server
      */
     /* package */
-    private static void onDownloadStartNoStream(final Context context, PreferenceManager preferences,
+    private static void onDownloadStartNoStream(@NonNull final Context context, @NonNull PreferenceManager preferences,
                                                 String url, String userAgent,
-                                                String contentDisposition, String mimetype) {
+                                                String contentDisposition, @Nullable String mimetype) {
         final Bus eventBus = BrowserApp.getBus(context);
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
@@ -190,14 +193,8 @@ public class DownloadHandler {
 
         String location = preferences.getDownloadDirectory();
         Uri downloadFolder;
-        if (location != null) {
-            location = addNecessarySlashes(location);
-            downloadFolder = Uri.parse(location);
-        } else {
-            location = addNecessarySlashes(DEFAULT_DOWNLOAD_PATH);
-            downloadFolder = Uri.parse(location);
-            preferences.setDownloadDirectory(location);
-        }
+        location = addNecessarySlashes(location);
+        downloadFolder = Uri.parse(location);
 
         File dir = new File(downloadFolder.getPath());
         if (!dir.isDirectory() && !dir.mkdirs()) {
@@ -264,7 +261,7 @@ public class DownloadHandler {
      * @return returns true if the directory can be written to or is in a directory that can
      * be written to. false if there is no write access.
      */
-    public static boolean isWriteAccessAvailable(String directory) {
+    public static boolean isWriteAccessAvailable(@Nullable String directory) {
         if (directory == null || directory.isEmpty()) {
             return false;
         }
@@ -275,6 +272,7 @@ public class DownloadHandler {
             if (!file.exists()) {
                 try {
                     if (file.createNewFile()) {
+                        //noinspection ResultOfMethodCallIgnored
                         file.delete();
                     }
                     return true;
@@ -295,7 +293,8 @@ public class DownloadHandler {
      * @param directory the directory to find the first existent parent
      * @return the first existent parent
      */
-    private static String getFirstRealParentDirectory(String directory) {
+    @Nullable
+    private static String getFirstRealParentDirectory(@Nullable String directory) {
         while (true) {
             if (directory == null || directory.isEmpty()) {
                 return "/";
@@ -321,10 +320,11 @@ public class DownloadHandler {
         }
     }
 
-    private static boolean isWriteAccessAvailable(Uri fileUri) {
+    private static boolean isWriteAccessAvailable(@NonNull Uri fileUri) {
         File file = new File(fileUri.getPath());
         try {
             if (file.createNewFile()) {
+                //noinspection ResultOfMethodCallIgnored
                 file.delete();
             }
             return true;
@@ -333,7 +333,8 @@ public class DownloadHandler {
         }
     }
 
-    public static String addNecessarySlashes(String originalPath) {
+    @NonNull
+    public static String addNecessarySlashes(@Nullable String originalPath) {
         if (originalPath == null || originalPath.length() == 0) {
             return "/";
         }
