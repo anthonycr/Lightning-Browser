@@ -45,8 +45,27 @@ public class TabsManager {
     @Inject Bus mEventBus;
     @Inject Application mApp;
 
+    @Nullable private TabChangeListener mListener;
+
+    public interface TabChangeListener {
+        void tabChanged(LightningView newTab);
+    }
+
     @Inject
     public TabsManager() {}
+
+    /**
+     * Sets the {@link TabChangeListener} to a new
+     * listener. Can be set to null if the caller
+     * wishes to unregister the listener.
+     *
+     * @param listener the new listener to use or
+     *                 null if the caller wishes to
+     *                 unregister the listener.
+     */
+    public void setTabChangeListener(@Nullable TabChangeListener listener) {
+        mListener = listener;
+    }
 
     /**
      * Restores old tabs that were open before the browser
@@ -137,6 +156,7 @@ public class TabsManager {
      * released for garbage collection.
      */
     public synchronized void shutdown() {
+        sendTabChangedEvent(null);
         for (LightningView tab : mTabList) {
             tab.onDestroy();
         }
@@ -195,6 +215,7 @@ public class TabsManager {
     public synchronized LightningView newTab(@NonNull final Activity activity,
                                              @Nullable final String url,
                                              final boolean isIncognito) {
+        Log.d(TAG, "New tab");
         final LightningView tab = new LightningView(activity, url, isIncognito);
         mTabList.add(tab);
         return tab;
@@ -227,6 +248,7 @@ public class TabsManager {
      * @param position the position of the tab to delete.
      */
     public synchronized void deleteTab(int position) {
+        Log.d(TAG, "Delete tab: " + position);
         final LightningView currentTab = getCurrentTab();
         int current = positionOf(currentTab);
 
@@ -239,6 +261,7 @@ public class TabsManager {
             } else {
                 mCurrentTab = getTabAtPosition(current - 1);
             }
+            sendTabChangedEvent(mCurrentTab);
             removeTab(current);
         } else {
             removeTab(position);
@@ -330,15 +353,33 @@ public class TabsManager {
      */
     @Nullable
     public synchronized LightningView switchToTab(final int position) {
+        Log.d(TAG, "switch to tab: " + position);
         if (position < 0 || position >= mTabList.size()) {
             Log.e(TAG, "Returning a null LightningView requested for position: " + position);
+            sendTabChangedEvent(null);
             return null;
         } else {
             final LightningView tab = mTabList.get(position);
             if (tab != null) {
                 mCurrentTab = tab;
             }
+            sendTabChangedEvent(tab);
             return tab;
+        }
+    }
+
+    /**
+     * Send the event that the current tab has changed to
+     * a new tab to the {@link TabChangeListener} if it is
+     * not null.
+     *
+     * @param newView the new tab that we have switcted to,
+     *                can be null if the last tab has been
+     *                deleted.
+     */
+    private void sendTabChangedEvent(@Nullable LightningView newView) {
+        if (mListener != null) {
+            mListener.tabChanged(newView);
         }
     }
 

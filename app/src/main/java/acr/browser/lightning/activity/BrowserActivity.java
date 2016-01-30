@@ -90,6 +90,8 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.browser.BrowserPresenter;
+import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
@@ -119,7 +121,7 @@ import acr.browser.lightning.view.LightningView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public abstract class BrowserActivity extends ThemableBrowserActivity implements UIController, OnClickListener, OnLongClickListener {
+public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
 
     // Static Layout
     @Bind(R.id.drawer_layout)
@@ -195,6 +197,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private Drawable mDeleteIcon, mRefreshIcon, mClearIcon, mIcon;
     private DrawerArrowDrawable mArrowDrawable;
 
+    private BrowserPresenter mPresenter;
+
     // Proxy
     @Inject ProxyUtils mProxyUtils;
 
@@ -221,6 +225,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         BrowserApp.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mPresenter = new BrowserPresenter(this);
+
         initialize();
     }
 
@@ -828,6 +835,102 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         builder.show();
     }
 
+    private View mCurrentView;
+
+    @Override
+    public void removeTabView() {
+
+        // Set the background color so the color mode color doesn't show through
+        mBrowserFrame.setBackgroundColor(mBackgroundColor);
+
+        mIsNewIntent = false;
+
+        mBrowserFrame.removeAllViews();
+
+        removeViewFromParent(mCurrentView);
+
+        if (mFullScreen) {
+            // mToolbarLayout has already been removed
+            mBrowserFrame.addView(mToolbarLayout);
+            mToolbarLayout.bringToFront();
+            mToolbarLayout.setTranslationY(0);
+        }
+
+        mCurrentView = null;
+
+        // Use a delayed handler to make the transition smooth
+        // otherwise it will get caught up with the showTab code
+        // and cause a janky motion
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerLayout.closeDrawers();
+            }
+        }, 200);
+
+    }
+
+    @Override
+    public void setTabView(@NonNull View view) {
+        if (mCurrentView == view) {
+            return;
+        }
+
+        // Set the background color so the color mode color doesn't show through
+        mBrowserFrame.setBackgroundColor(mBackgroundColor);
+
+        mIsNewIntent = false;
+
+        final float translation = mToolbarLayout.getTranslationY();
+        mBrowserFrame.removeAllViews();
+
+        removeViewFromParent(view);
+        removeViewFromParent(mCurrentView);
+
+        mBrowserFrame.addView(view, MATCH_PARENT);
+
+        view.requestFocus();
+
+        if (mFullScreen) {
+            // mToolbarLayout has already been removed
+            mBrowserFrame.addView(mToolbarLayout);
+            mToolbarLayout.bringToFront();
+            Log.d(Constants.TAG, "Move view to browser frame");
+            int height = mToolbarLayout.getHeight();
+            if (height == 0) {
+                mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                height = mToolbarLayout.getMeasuredHeight();
+            }
+            view.setTranslationY(translation + height);
+            mToolbarLayout.setTranslationY(translation);
+        } else {
+            view.setTranslationY(0);
+        }
+
+        mCurrentView = view;
+
+        showActionBar();
+
+        // Use a delayed handler to make the transition smooth
+        // otherwise it will get caught up with the showTab code
+        // and cause a janky motion
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerLayout.closeDrawers();
+            }
+        }, 200);
+
+        // new Handler().postDelayed(new Runnable() {
+        //     @Override
+        //     public void run() {
+        // Remove browser frame background to reduce overdraw
+        //TODO evaluate performance
+        //         mBrowserFrame.setBackgroundColor(Color.TRANSPARENT);
+        //     }
+        // }, 300);
+    }
+
     /**
      * displays the WebView contained in the LightningView Also handles the
      * removal of previous views
@@ -837,11 +940,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private synchronized void showTab(final int position) {
         final LightningView currentView = mTabsManager.getCurrentTab();
         final LightningView newView = mTabsManager.switchToTab(position);
-        switchTabs(currentView, newView);
+        //TODO move this code elsewhere
+//        switchTabs(currentView, newView);
     }
 
     // This is commodity to breack the flow between regular tab management and the CLIQZ's search
     // interface.
+    // TODO remove all usages, switch to using the presenter instead
+    @Deprecated
     private void switchTabs(final LightningView currentView, final LightningView newView) {
         final WebView newWebView = newView != null ? newView.getWebView() : null;
         if (newView == null || newWebView == null) {
@@ -912,7 +1018,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     }
 
-    private static void removeViewFromParent(View view) {
+    private static void removeViewFromParent(@Nullable View view) {
+        if (view == null) {
+            return;
+        }
         ViewGroup parent = ((ViewGroup) view.getParent());
         if (parent != null) {
             parent.removeView(view);
@@ -988,6 +1097,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    // TODO move to presenter
     private synchronized boolean newTab(String url, boolean show) {
         // Limit number of tabs for limited version of app
         if (!Constants.FULL_VERSION && mTabsManager.size() >= 10) {
@@ -1018,6 +1128,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
+    // TODO move this to presenter
     private synchronized void deleteTab(int position) {
         final LightningView tabToDelete = mTabsManager.getTabAtPosition(position);
 
@@ -1050,10 +1161,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             closeBrowser();
             return;
         } else if (afterTab != currentTab) {
-            switchTabs(currentTab, afterTab);
-            if (currentTab != null) {
-                currentTab.pauseTimers();
-            }
+            //TODO remove this?
+//            switchTabs(currentTab, afterTab);
+//            if (currentTab != null) {
+//                currentTab.pauseTimers();
+//            }
         }
 
         mEventBus.post(new BrowserEvents.TabsChanged());
@@ -1177,6 +1289,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onDestroy() {
         Log.d(Constants.TAG, "onDestroy");
+
+        if (mPresenter != null) {
+            mPresenter.destroy();
+        }
+
         if (mHistoryDatabase != null) {
             mHistoryDatabase.close();
             mHistoryDatabase = null;
