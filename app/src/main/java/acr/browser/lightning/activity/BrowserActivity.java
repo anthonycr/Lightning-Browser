@@ -1028,6 +1028,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     void handleNewIntent(Intent intent) {
+        final String PANIC_TRIGGER_ACTION = "info.guardianproject.panic.action.TRIGGER";
+        if (intent != null && PANIC_TRIGGER_ACTION.equals(intent.getAction())) {
+            closeBrowser();
+            return;
+        }
+
         final String url;
         if (intent != null) {
             url = intent.getDataString();
