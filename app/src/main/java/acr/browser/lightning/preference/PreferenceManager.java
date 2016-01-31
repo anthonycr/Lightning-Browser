@@ -391,7 +391,7 @@ public class PreferenceManager {
         putBoolean(Name.RESTORE_LOST_TABS, enable);
     }
 
-    public void setSavedUrl(@NonNull String url) {
+    public void setSavedUrl(@Nullable String url) {
         putString(Name.SAVE_URL, url);
     }
 

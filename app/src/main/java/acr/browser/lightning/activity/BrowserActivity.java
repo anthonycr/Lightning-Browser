@@ -559,8 +559,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         colorMode &= !mDarkTheme;
         if (!isIncognito() && !colorMode && !mDarkTheme && mWebpageBitmap != null) {
             changeToolbarBackground(mWebpageBitmap, null);
-        } else if (!isIncognito() && currentView != null && !mDarkTheme
-                && currentView.getFavicon() != null) {
+        } else if (!isIncognito() && currentView != null && !mDarkTheme) {
             changeToolbarBackground(currentView.getFavicon(), null);
         }
 
