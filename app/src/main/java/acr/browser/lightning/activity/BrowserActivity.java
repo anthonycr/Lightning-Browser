@@ -328,14 +328,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSearch.setOnEditorActionListener(search);
         mSearch.setOnTouchListener(search);
 
-        new Thread(new Runnable() {
+        BrowserApp.getTaskThread().execute(new Runnable() {
 
             @Override
             public void run() {
                 initializeSearchSuggestions(mSearch);
             }
 
-        }).run();
+        });
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START);
@@ -1480,42 +1480,49 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * previously searched URLs
      */
     private void initializeSearchSuggestions(final AutoCompleteTextView getUrl) {
-        getUrl.setThreshold(1);
-        getUrl.setDropDownWidth(-1);
-        getUrl.setDropDownAnchor(R.id.toolbar_layout);
-        getUrl.setOnItemClickListener(new OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                String url = null;
-                CharSequence urlString = ((TextView) view.findViewById(R.id.url)).getText();
-                if (urlString != null) {
-                    url = urlString.toString();
-                }
-                if (url == null || url.startsWith(BrowserActivity.this.getString(R.string.suggestion))) {
-                    CharSequence searchString = ((TextView) view.findViewById(R.id.title)).getText();
-                    if (searchString != null) {
-                        url = searchString.toString();
-                    }
-                }
-                if (url == null) {
-                    return;
-                }
-                getUrl.setText(url);
-                searchTheWeb(url);
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
-                final LightningView currentTab = mTabsManager.getCurrentTab();
-                if (currentTab != null) {
-                    currentTab.requestFocus();
-                }
-            }
-
-        });
-
-        getUrl.setSelectAllOnFocus(true);
         mSearchAdapter = new SearchAdapter(this, mDarkTheme, isIncognito());
-        getUrl.setAdapter(mSearchAdapter);
+
+        getUrl.post(new Runnable() {
+            @Override
+            public void run() {
+                getUrl.setThreshold(1);
+                getUrl.setDropDownWidth(-1);
+                getUrl.setDropDownAnchor(R.id.toolbar_layout);
+                getUrl.setOnItemClickListener(new OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                        String url = null;
+                        CharSequence urlString = ((TextView) view.findViewById(R.id.url)).getText();
+                        if (urlString != null) {
+                            url = urlString.toString();
+                        }
+                        if (url == null || url.startsWith(BrowserActivity.this.getString(R.string.suggestion))) {
+                            CharSequence searchString = ((TextView) view.findViewById(R.id.title)).getText();
+                            if (searchString != null) {
+                                url = searchString.toString();
+                            }
+                        }
+                        if (url == null) {
+                            return;
+                        }
+                        getUrl.setText(url);
+                        searchTheWeb(url);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
+                        final LightningView currentTab = mTabsManager.getCurrentTab();
+                        if (currentTab != null) {
+                            currentTab.requestFocus();
+                        }
+                    }
+
+                });
+
+                getUrl.setSelectAllOnFocus(true);
+                getUrl.setAdapter(mSearchAdapter);
+            }
+        });
     }
 
     /**

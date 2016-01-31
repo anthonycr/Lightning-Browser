@@ -137,7 +137,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         exportpref.setOnPreferenceClickListener(this);
         importpref.setOnPreferenceClickListener(this);
 
-        new Thread(mInitializeImportPreference).start();
+        BrowserApp.getTaskThread().execute(mInitializeImportPreference);
     }
 
     private final Runnable mInitializeImportPreference = new Runnable() {

@@ -228,7 +228,7 @@ public class DownloadHandler {
         } else {
             final DownloadManager manager = (DownloadManager) context
                     .getSystemService(Context.DOWNLOAD_SERVICE);
-            new Thread() {
+            BrowserApp.getTaskThread().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -243,7 +243,7 @@ public class DownloadHandler {
                         eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
                     }
                 }
-            }.start();
+            });
             eventBus.post(new BrowserEvents.ShowSnackBarMessage(
                     context.getString(R.string.download_pending) + ' ' + filename));
         }

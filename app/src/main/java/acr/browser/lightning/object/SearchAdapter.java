@@ -96,12 +96,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         mSearchSubtitle = mContext.getString(R.string.suggestion);
         mDarkTheme = dark || incognito;
         mIncognito = incognito;
-        Thread delete = new Thread(new ClearCacheRunnable(BrowserApp.get(context)));
+        BrowserApp.getTaskThread().execute(new ClearCacheRunnable(BrowserApp.get(context)));
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
-        delete.setPriority(Thread.MIN_PRIORITY);
-        delete.start();
         mLanguage = Locale.getDefault().getLanguage();
         if (mLanguage.isEmpty()) {
             mLanguage = DEFAULT_LANGUAGE;

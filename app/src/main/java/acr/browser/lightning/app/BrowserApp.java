@@ -16,6 +16,7 @@ public class BrowserApp extends Application {
 
     private static AppComponent mAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
+    private static final Executor mTaskThread = Executors.newCachedThreadPool();
 
     @Inject Bus mBus;
 
@@ -39,6 +40,11 @@ public class BrowserApp extends Application {
     @NonNull
     public static Executor getIOThread() {
         return mIOThread;
+    }
+
+    @NonNull
+    public static Executor getTaskThread() {
+        return mTaskThread;
     }
 
     public static Bus getBus(@NonNull Context context) {

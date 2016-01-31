@@ -170,7 +170,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
         // Must be called here, only here we have a reference to the ListView
-        new Thread(mInitBookmarkManager).run();
+        BrowserApp.getTaskThread().execute(mInitBookmarkManager);
         return view;
     }
 

@@ -55,7 +55,7 @@ public class AdBlock {
     }
 
     private void loadBlockedDomainsList(@NonNull final Context context) {
-        Thread thread = new Thread(new Runnable() {
+        BrowserApp.getTaskThread().execute(new Runnable() {
 
             @Override
             public void run() {
@@ -77,7 +77,6 @@ public class AdBlock {
                 }
             }
         });
-        thread.start();
     }
 
     /**
@@ -140,7 +139,7 @@ public class AdBlock {
      * @param context the context needed to read the file
      */
     private void loadHostsFile(@NonNull final Context context) {
-        Thread thread = new Thread(new Runnable() {
+        BrowserApp.getTaskThread().execute(new Runnable() {
 
             @Override
             public void run() {
@@ -181,6 +180,5 @@ public class AdBlock {
                 }
             }
         });
-        thread.start();
     }
 }
