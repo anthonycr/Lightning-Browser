@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import acr.browser.lightning.constant.Constants;
+
 public class IntentUtils {
 
     private final Activity mActivity;
@@ -61,7 +63,7 @@ public class IntentUtils {
             }
         }
         if (tab != null) {
-            intent.putExtra(mActivity.getPackageName() + ".Origin", 1);
+            intent.putExtra(Constants.INTENT_ORIGIN, 1);
         }
 
         Matcher m = ACCEPTED_URI_SCHEMA.matcher(url);

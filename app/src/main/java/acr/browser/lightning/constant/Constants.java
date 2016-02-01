@@ -62,4 +62,6 @@ public final class Constants {
     public static final String DEFAULT_ENCODING = "UTF-8";
 
     public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", "UTF-8", "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
+
+    public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
 }

@@ -378,6 +378,7 @@ public class TabsManager {
      *                deleted.
      */
     private void sendTabChangedEvent(@Nullable LightningView newView) {
+        Log.d(TAG, "NULL: " + (mListener == null));
         if (mListener != null) {
             mListener.tabChanged(newView);
         }
