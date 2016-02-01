@@ -948,7 +948,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     // TODO move to presenter
     private synchronized void showTab(final int position) {
-        mTabsManager.switchToTab(position);
+        mPresenter.tabChanged(position);
     }
 
     private static void removeViewFromParent(@Nullable View view) {
@@ -1106,6 +1106,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onDestroy() {
         Log.d(Constants.TAG, "onDestroy");
+
+        mPresenter.shutdown();
 
         if (mHistoryDatabase != null) {
             mHistoryDatabase.close();

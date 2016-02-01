@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
-import acr.browser.lightning.activity.TabsManager.TabChangeListener;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
@@ -40,25 +39,10 @@ public class BrowserPresenter {
     private boolean mIsIncognito;
     private boolean mIsNewIntent;
 
-    private static class TabListener implements TabChangeListener {
-
-        private BrowserPresenter mPresenter;
-
-        public TabListener(@NonNull BrowserPresenter presenter) {
-            mPresenter = presenter;
-        }
-
-        @Override
-        public void tabChanged(@Nullable LightningView newTab) {
-            mPresenter.onTabChanged(newTab);
-        }
-    }
-
     public BrowserPresenter(@NonNull BrowserView view, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
         mView = view;
         mIsIncognito = isIncognito;
-        mTabsModel.setTabChangeListener(new TabListener(this));
     }
 
     private void onTabChanged(@Nullable LightningView newTab) {
@@ -115,7 +99,10 @@ public class BrowserPresenter {
             if (isShown) {
                 mView.removeTabView();
             }
-            mTabsModel.deleteTab(position);
+            boolean currentDeleted = mTabsModel.deleteTab(position);
+            if (currentDeleted) {
+                tabChanged(mTabsModel.indexOfCurrentTab());
+            }
         }
         final LightningView afterTab = mTabsModel.getCurrentTab();
         if (afterTab == null) {
@@ -178,6 +165,18 @@ public class BrowserPresenter {
         currentTab.loadUrl(url);
     }
 
+    public void shutdown() {
+        onTabChanged(null);
+    }
+
+    public void tabChanged(int position) {
+        if (position < 0) {
+            return;
+        }
+        LightningView tab = mTabsModel.switchToTab(position);
+        onTabChanged(tab);
+    }
+
     public synchronized boolean newTab(String url, boolean show) {
         // Limit number of tabs for limited version of app
         if (!Constants.FULL_VERSION && mTabsModel.size() >= 10) {
@@ -191,7 +190,8 @@ public class BrowserPresenter {
         }
 
         if (show) {
-            mTabsModel.switchToTab(mTabsModel.size() - 1);
+            LightningView tab = mTabsModel.switchToTab(mTabsModel.size() - 1);
+            onTabChanged(tab);
         }
 
         // TODO Restore this
@@ -203,10 +203,6 @@ public class BrowserPresenter {
         // }, 300);
 
         return true;
-    }
-
-    public void destroy() {
-        mTabsModel.setTabChangeListener(null);
     }
 
 }
