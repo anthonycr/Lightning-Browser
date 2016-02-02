@@ -55,12 +55,11 @@ public class BookmarkManager {
     private Map<String, HistoryItem> mBookmarksMap;
     @NonNull private String mCurrentFolder = "";
     @NonNull private final ExecutorService mExecutor;
-    private final File mFilesDir;
+    private File mFilesDir;
 
     @Inject
     public BookmarkManager(@NonNull Context context) {
         mExecutor = Executors.newSingleThreadExecutor();
-        mFilesDir = context.getFilesDir();
         DEFAULT_BOOKMARK_TITLE = context.getString(R.string.untitled);
         mExecutor.execute(new BookmarkInitializer(context));
     }
@@ -90,6 +89,7 @@ public class BookmarkManager {
         @Override
         public void run() {
             synchronized (BookmarkManager.this) {
+                mFilesDir = mContext.getFilesDir();
                 final Map<String, HistoryItem> bookmarks = new HashMap<>();
                 final File bookmarksFile = new File(mFilesDir, FILE_BOOKMARKS);
 

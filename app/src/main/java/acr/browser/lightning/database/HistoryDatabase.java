@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 
 @Singleton
 public class HistoryDatabase extends SQLiteOpenHelper {
@@ -43,7 +44,18 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @Inject
     public HistoryDatabase(@NonNull Context context) {
         super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
-        mDatabase = this.getWritableDatabase();
+        initialize();
+    }
+
+    private void initialize() {
+        BrowserApp.getTaskThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (HistoryDatabase.this) {
+                    mDatabase = HistoryDatabase.this.getWritableDatabase();
+                }
+            }
+        });
     }
 
     // Creating Tables

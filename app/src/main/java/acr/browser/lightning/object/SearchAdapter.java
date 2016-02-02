@@ -430,6 +430,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
 
     private static NetworkInfo getActiveNetworkInfo(@NonNull Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
+                .getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
             return null;

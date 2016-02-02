@@ -41,7 +41,7 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
     private static final String END = "</div></body></html>";
 
     @NonNull private final WeakReference<LightningView> mTabReference;
-    private final File mFilesDir;
+    @NonNull private final Application mApp;
     @NonNull private final String mTitle;
     private final HistoryDatabase mHistoryDatabase;
 
@@ -49,7 +49,7 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
 
     public HistoryPage(LightningView tab, @NonNull Application app, HistoryDatabase database) {
         mTabReference = new WeakReference<>(tab);
-        mFilesDir = app.getFilesDir();
+        mApp = app;
         mTitle = app.getString(R.string.action_history);
         mHistoryDatabase = database;
     }
@@ -88,7 +88,7 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
         }
 
         historyBuilder.append(END);
-        File historyWebPage = new File(mFilesDir, FILENAME);
+        File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
         FileWriter historyWriter = null;
         try {
             //noinspection IOResourceOpenedButNotSafelyClosed

@@ -23,7 +23,12 @@ import javax.inject.Singleton;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.utils.FileUtils;
+import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -56,47 +61,72 @@ public class TabsManager {
      * @param intent    the intent that started the browser activity.
      * @param incognito whether or not we are in incognito mode.
      */
-    public synchronized void restoreTabsAndHandleIntent(@NonNull final Activity activity,
-                                                        @Nullable final Intent intent,
-                                                        final boolean incognito) {
-        // If incognito, only create one tab, do not handle intent
-        // in order to protect user privacy
-        if (incognito && mTabList.isEmpty()) {
-            newTab(activity, null, true);
-            return;
-        }
+    public synchronized Observable<Void> restoreTabsAndHandleIntent(@NonNull final Activity activity,
+                                                                    @Nullable final Intent intent,
+                                                                    final boolean incognito) {
+        return Observable.create(new Action<Void>() {
+            @Override
+            public void onSubscribe(final Subscriber<Void> subscriber) {
 
-        String url = null;
-        if (intent != null) {
-            url = intent.getDataString();
-        }
-        mTabList.clear();
-        mCurrentTab = null;
-        if (mPreferenceManager.getRestoreLostTabsEnabled()) {
-            restoreState(activity);
-        }
-        if (url != null) {
-            if (url.startsWith(Constants.FILE)) {
-                final String urlToLoad = url;
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setCancelable(true)
-                        .setTitle(R.string.title_warning)
-                        .setMessage(R.string.message_blocked_local)
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                newTab(activity, urlToLoad, false);
-                            }
-                        })
-                        .show();
-            } else {
-                newTab(activity, url, false);
+
+                // If incognito, only create one tab, do not handle intent
+                // in order to protect user privacy
+                if (incognito && mTabList.isEmpty()) {
+                    newTab(activity, null, true);
+                    subscriber.onComplete();
+                    return;
+                }
+
+                String dataString = null;
+                if (intent != null) {
+                    dataString = intent.getDataString();
+                }
+                final String url = dataString;
+                mTabList.clear();
+                mCurrentTab = null;
+                if (mPreferenceManager.getRestoreLostTabsEnabled()) {
+                    restoreState()
+                            .subscribeOn(Schedulers.worker())
+                            .observeOn(Schedulers.main())
+                            .subscribe(new Subscription<Bundle>() {
+                                @Override
+                                public void onComplete() {
+                                    if (url != null) {
+                                        if (url.startsWith(Constants.FILE)) {
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                                            builder.setCancelable(true)
+                                                    .setTitle(R.string.title_warning)
+                                                    .setMessage(R.string.message_blocked_local)
+                                                    .setNegativeButton(android.R.string.cancel, null)
+                                                    .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            newTab(activity, url, false);
+                                                        }
+                                                    }).show();
+                                        } else {
+                                            newTab(activity, url, false);
+                                        }
+                                    }
+                                    if (mTabList.size() == 0) {
+                                        newTab(activity, null, false);
+                                    }
+                                    subscriber.onComplete();
+                                }
+
+                                @Override
+                                public void onNext(Bundle item) {
+                                    LightningView tab = newTab(activity, "", false);
+                                    if (tab.getWebView() != null) {
+                                        tab.getWebView().restoreState(item);
+                                    }
+                                }
+                            });
+                }
+
             }
-        }
-        if (mTabList.size() == 0) {
-            newTab(activity, null, false);
-        }
+        });
+
     }
 
     /**
@@ -285,22 +315,23 @@ public class TabsManager {
      * It will create new tabs for each tab saved
      * and will delete the saved instance file when
      * restoration is complete.
-     *
-     * @param activity the Activity needed to create tabs.
      */
-    private void restoreState(@NonNull Activity activity) {
-        Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
-        if (savedState != null) {
-            Log.d(Constants.TAG, "Restoring previous WebView state now");
-            for (String key : savedState.keySet()) {
-                if (key.startsWith(BUNDLE_KEY)) {
-                    LightningView tab = newTab(activity, "", false);
-                    if (tab.getWebView() != null) {
-                        tab.getWebView().restoreState(savedState.getBundle(key));
+    private Observable<Bundle> restoreState() {
+        return Observable.create(new Action<Bundle>() {
+            @Override
+            public void onSubscribe(Subscriber<Bundle> subscriber) {
+                Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
+                if (savedState != null) {
+                    Log.d(Constants.TAG, "Restoring previous WebView state now");
+                    for (String key : savedState.keySet()) {
+                        if (key.startsWith(BUNDLE_KEY)) {
+                            subscriber.onNext(savedState.getBundle(key));
+                        }
                     }
                 }
+                subscriber.onComplete();
             }
-        }
+        });
     }
 
     /**

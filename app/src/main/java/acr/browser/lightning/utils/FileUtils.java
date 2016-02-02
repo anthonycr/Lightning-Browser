@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 
 /**
@@ -30,22 +31,27 @@ public class FileUtils {
      * @param bundle the bundle to store in persistent storage.
      * @param name   the name of the file to store the bundle in.
      */
-    public static void writeBundleToStorage(@NonNull Application app, Bundle bundle, @NonNull String name) {
-        File outputFile = new File(app.getFilesDir(), name);
-        FileOutputStream outputStream = null;
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            outputStream = new FileOutputStream(outputFile);
-            Parcel parcel = Parcel.obtain();
-            parcel.writeBundle(bundle);
-            outputStream.write(parcel.marshall());
-            outputStream.flush();
-            parcel.recycle();
-        } catch (IOException e) {
-            Log.e(Constants.TAG, "Unable to write bundle to storage");
-        } finally {
-            Utils.close(outputStream);
-        }
+    public static void writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
+        BrowserApp.getIOThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                File outputFile = new File(app.getFilesDir(), name);
+                FileOutputStream outputStream = null;
+                try {
+                    //noinspection IOResourceOpenedButNotSafelyClosed
+                    outputStream = new FileOutputStream(outputFile);
+                    Parcel parcel = Parcel.obtain();
+                    parcel.writeBundle(bundle);
+                    outputStream.write(parcel.marshall());
+                    outputStream.flush();
+                    parcel.recycle();
+                } catch (IOException e) {
+                    Log.e(Constants.TAG, "Unable to write bundle to storage");
+                } finally {
+                    Utils.close(outputStream);
+                }
+            }
+        });
     }
 
     /**

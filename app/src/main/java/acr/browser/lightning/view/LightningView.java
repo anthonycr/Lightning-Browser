@@ -34,6 +34,7 @@ import android.webkit.WebView;
 
 import com.squareup.otto.Bus;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
@@ -51,6 +52,11 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -325,7 +331,10 @@ public class LightningView {
      */
     @SuppressLint("NewApi")
     private void initializeSettings() {
-        WebSettings settings = mWebView.getSettings();
+        if (mWebView == null) {
+            return;
+        }
+        final WebSettings settings = mWebView.getSettings();
         if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             //noinspection deprecation
             settings.setAppCacheMaxSize(Long.MAX_VALUE);
@@ -364,12 +373,56 @@ public class LightningView {
             settings.setAllowUniversalAccessFromFileURLs(false);
         }
 
-        settings.setAppCachePath(BrowserApp.get(mActivity).getDir("appcache", 0).getPath());
-        settings.setGeolocationDatabasePath(BrowserApp.get(mActivity).getDir("geolocation", 0).getPath());
-        if (API < Build.VERSION_CODES.KITKAT) {
-            //noinspection deprecation
-            settings.setDatabasePath(BrowserApp.get(mActivity).getDir("databases", 0).getPath());
-        }
+        getPathObservable("appcache")
+                .subscribeOn(Schedulers.worker())
+                .subscribe(new Subscription<File>() {
+                    @Override
+                    public void onComplete() {}
+
+                    @Override
+                    public void onNext(File item) {
+                        settings.setAppCachePath(item.getPath());
+                    }
+                });
+
+        getPathObservable("geolocation")
+                .subscribeOn(Schedulers.worker())
+                .subscribe(new Subscription<File>() {
+                    @Override
+                    public void onComplete() {}
+
+                    @Override
+                    public void onNext(File item) {
+                        settings.setGeolocationDatabasePath(item.getPath());
+                    }
+                });
+
+        getPathObservable("databases")
+                .subscribeOn(Schedulers.worker())
+                .subscribe(new Subscription<File>() {
+                    @Override
+                    public void onComplete() {}
+
+                    @Override
+                    public void onNext(File item) {
+                        if (API < Build.VERSION_CODES.KITKAT) {
+                            //noinspection deprecation
+                            settings.setDatabasePath(item.getPath());
+                        }
+                    }
+                });
+
+    }
+
+    private Observable<File> getPathObservable(final String subFolder) {
+        return Observable.create(new Action<File>() {
+            @Override
+            public void onSubscribe(Subscriber<File> subscriber) {
+                File file = BrowserApp.get(mActivity).getDir(subFolder, 0);
+                subscriber.onNext(file);
+                subscriber.onComplete();
+            }
+        });
     }
 
     /**
@@ -554,6 +607,9 @@ public class LightningView {
      * of the current LightningView.
      */
     private void setHardwareRendering() {
+        if (mWebView == null) {
+            return;
+        }
         mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, mPaint);
     }
 
@@ -563,6 +619,9 @@ public class LightningView {
      * the layers when necessary.
      */
     private void setNormalRendering() {
+        if (mWebView == null) {
+            return;
+        }
         mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
     }
 
@@ -573,6 +632,9 @@ public class LightningView {
      * the view.
      */
     public void setSoftwareRendering() {
+        if (mWebView == null) {
+            return;
+        }
         mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
@@ -839,6 +901,9 @@ public class LightningView {
      *            a workaround.
      */
     private void longClickPage(@Nullable final String url) {
+        if (mWebView == null) {
+            return;
+        }
         final WebView.HitTestResult result = mWebView.getHitTestResult();
         String currentUrl = mWebView.getUrl();
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
@@ -1043,6 +1108,9 @@ public class LightningView {
                 Message msg = mWebViewHandler.obtainMessage();
                 if (msg != null) {
                     msg.setTarget(mWebViewHandler);
+                    if (mWebView == null) {
+                        return;
+                    }
                     mWebView.requestFocusNodeHref(msg);
                 }
             }

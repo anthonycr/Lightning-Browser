@@ -25,8 +25,8 @@ import acr.browser.lightning.utils.Utils;
 public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
-    private final File mCacheDir;
     @NonNull private final WeakReference<ImageView> mFaviconImage;
+    @NonNull private final WeakReference<Context> mContextReference;
     @NonNull private final HistoryItem mWeb;
     private final String mUrl;
     @NonNull private final Bitmap mDefaultBitmap;
@@ -42,7 +42,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         this.mWeb = web;
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
-        this.mCacheDir = BrowserApp.get(context).getCacheDir();
+        this.mContextReference = new WeakReference<>(context.getApplicationContext());
     }
 
     @Nullable
@@ -53,12 +53,17 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         if (mUrl == null) {
             return mDefaultBitmap;
         }
+        Context context = mContextReference.get();
+        if (context == null) {
+            return mDefaultBitmap;
+        }
+        File cache = context.getCacheDir();
         final Uri uri = Uri.parse(mUrl);
         if (uri.getHost() == null || uri.getScheme() == null) {
             return mDefaultBitmap;
         }
         final String hash = String.valueOf(uri.getHost().hashCode());
-        final File image = new File(mCacheDir, hash + ".png");
+        final File image = new File(cache, hash + ".png");
         final String urlDisplay = uri.getScheme() + "://" + uri.getHost() + "/favicon.ico";
         // checks to see if the image exists
         if (!image.exists()) {

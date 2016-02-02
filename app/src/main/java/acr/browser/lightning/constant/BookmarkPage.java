@@ -60,17 +60,17 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
 
     private static final String END = "</div></body></html>";
 
-    private final File mFilesDir;
-    private final File mCacheDir;
+    private File mFilesDir;
+    private File mCacheDir;
 
+    private Application mApp;
     private final BookmarkManager mManager;
     @NonNull private final WeakReference<LightningView> mTabReference;
     private final Bitmap mFolderIcon;
     @NonNull private final String mTitle;
 
     public BookmarkPage(LightningView tab, @NonNull Application app, BookmarkManager manager, Bitmap folderIcon) {
-        mFilesDir = app.getFilesDir();
-        mCacheDir = app.getCacheDir();
+        mApp = app;
         mTitle = app.getString(R.string.action_bookmarks);
         mManager = manager;
         mTabReference = new WeakReference<>(tab);
@@ -79,6 +79,8 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        mCacheDir = mApp.getCacheDir();
+        mFilesDir = mApp.getFilesDir();
         cacheDefaultFolderIcon();
         buildBookmarkPage(null, mManager);
         return null;

@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
@@ -89,6 +90,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BrowserPresenter;
@@ -108,10 +110,13 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.receiver.NetworkReceiver;
 
 import com.anthonycr.grant.PermissionsManager;
 
+import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -217,11 +222,26 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
-    abstract void updateCookiePreference();
+    abstract Observable<Void> updateCookiePreference();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectNetwork()
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedClosableObjects()
+                    .detectLeakedSqlLiteObjects()
+                    .penaltyLog()
+                    .build());
+        }
+
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
@@ -339,11 +359,21 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        mTabsManager.restoreTabsAndHandleIntent(this, getIntent(), isIncognito());
-        // At this point we always have at least a tab in the tab manager
-        showTab(0);
+        mTabsManager.restoreTabsAndHandleIntent(this, getIntent(), isIncognito())
+                .subscribe(new Subscription<Void>() {
+                    @Override
+                    public void onComplete() {
+                        // At this point we always have at least a tab in the tab manager
+                        showTab(0);
 
-        mProxyUtils.checkForProxy(this);
+                        mProxyUtils.checkForProxy(BrowserActivity.this);
+                    }
+
+                    @Override
+                    public void onNext(Void item) {
+
+                    }
+                });
     }
 
     private class SearchListenerClass implements OnKeyListener, OnEditorActionListener, OnFocusChangeListener, OnTouchListener {
@@ -624,7 +654,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 break;
         }
 
-        updateCookiePreference();
+        updateCookiePreference().subscribeOn(Schedulers.worker()).subscribe();
         mProxyUtils.updateProxySettings(this);
     }
 
@@ -1080,7 +1110,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             currentTab.onPause();
         }
         try {
-            unregisterReceiver(mNetworkReceiver);
+            BrowserApp.get(this).unregisterReceiver(mNetworkReceiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -1142,7 +1172,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(NETWORK_BROADCAST_ACTION);
-        registerReceiver(mNetworkReceiver, filter);
+        BrowserApp.get(this).registerReceiver(mNetworkReceiver, filter);
 
         mEventBus.register(mBusEventListener);
     }

@@ -55,7 +55,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
     @NonNull private final String mTitle;
-    private final File mFilesDir;
+    @NonNull private final Application mApp;
     @NonNull private final WeakReference<LightningView> mTabReference;
 
     @Inject PreferenceManager mPreferenceManager;
@@ -65,7 +65,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
     public StartPage(LightningView tab, @NonNull Application app) {
         BrowserApp.getAppComponent().inject(this);
         mTitle = app.getString(R.string.home);
-        mFilesDir = app.getFilesDir();
+        mApp = app;
         mTabReference = new WeakReference<>(tab);
     }
 
@@ -174,7 +174,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
         homepageBuilder.append(searchUrl);
         homepageBuilder.append(END);
 
-        File homepage = new File(mFilesDir, FILENAME);
+        File homepage = new File(mApp.getFilesDir(), FILENAME);
         FileWriter hWriter = null;
         try {
             //noinspection IOResourceOpenedButNotSafelyClosed
