@@ -367,7 +367,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     @Override
                     public void onComplete() {
                         // At this point we always have at least a tab in the tab manager
-                        showTab(0);
+                        showTab(mTabsManager.last());
 
                         mProxyUtils.checkForProxy(BrowserActivity.this);
                     }

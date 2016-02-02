@@ -215,6 +215,15 @@ public class TabsManager {
     }
 
     /**
+     * The index of the last tab in the manager.
+     *
+     * @return the last tab in the list or -1 if there are no tabs.
+     */
+    public synchronized int last() {
+        return mTabList.size() - 1;
+    }
+
+    /**
      * Create and return a new tab. The tab is
      * automatically added to the tabs list.
      *
