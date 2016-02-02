@@ -18,12 +18,12 @@ import acr.browser.lightning.utils.Preconditions;
  */
 public class Observable<T> {
 
-    private Action<T> mAction;
+    @NonNull private Action<T> mAction;
     @Nullable private Executor mSubscriber;
     @Nullable private Executor mObserver;
-    private final Executor mDefault;
+    @NonNull private final Executor mDefault;
 
-    public Observable(Action<T> action) {
+    public Observable(@NonNull Action<T> action) {
         mAction = action;
         Looper looper = Looper.myLooper();
         Preconditions.checkNonNull(looper);
