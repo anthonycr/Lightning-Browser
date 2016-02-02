@@ -359,19 +359,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        mTabsManager.restoreTabsAndHandleIntent(this, getIntent(), isIncognito())
+        mTabsManager.initializeTabs(this, getIntent(), isIncognito())
                 .subscribe(new Subscription<Void>() {
+                    @Override
+                    public void onNext(Void item) {}
+
                     @Override
                     public void onComplete() {
                         // At this point we always have at least a tab in the tab manager
                         showTab(0);
 
                         mProxyUtils.checkForProxy(BrowserActivity.this);
-                    }
-
-                    @Override
-                    public void onNext(Void item) {
-
                     }
                 });
     }

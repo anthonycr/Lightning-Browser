@@ -377,32 +377,29 @@ public class LightningView {
                 .subscribeOn(Schedulers.worker())
                 .subscribe(new Subscription<File>() {
                     @Override
-                    public void onComplete() {}
-
-                    @Override
                     public void onNext(File item) {
                         settings.setAppCachePath(item.getPath());
                     }
+
+                    @Override
+                    public void onComplete() {}
                 });
 
         getPathObservable("geolocation")
                 .subscribeOn(Schedulers.worker())
                 .subscribe(new Subscription<File>() {
                     @Override
-                    public void onComplete() {}
-
-                    @Override
                     public void onNext(File item) {
                         settings.setGeolocationDatabasePath(item.getPath());
                     }
+
+                    @Override
+                    public void onComplete() {}
                 });
 
         getPathObservable("databases")
                 .subscribeOn(Schedulers.worker())
                 .subscribe(new Subscription<File>() {
-                    @Override
-                    public void onComplete() {}
-
                     @Override
                     public void onNext(File item) {
                         if (API < Build.VERSION_CODES.KITKAT) {
@@ -410,6 +407,9 @@ public class LightningView {
                             settings.setDatabasePath(item.getPath());
                         }
                     }
+
+                    @Override
+                    public void onComplete() {}
                 });
 
     }

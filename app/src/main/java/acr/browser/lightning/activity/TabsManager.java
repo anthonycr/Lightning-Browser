@@ -61,12 +61,12 @@ public class TabsManager {
      * @param intent    the intent that started the browser activity.
      * @param incognito whether or not we are in incognito mode.
      */
-    public synchronized Observable<Void> restoreTabsAndHandleIntent(@NonNull final Activity activity,
-                                                                    @Nullable final Intent intent,
-                                                                    final boolean incognito) {
+    public synchronized Observable<Void> initializeTabs(@NonNull final Activity activity,
+                                                        @Nullable final Intent intent,
+                                                        final boolean incognito) {
         return Observable.create(new Action<Void>() {
             @Override
-            public void onSubscribe(final Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull final Subscriber<Void> subscriber) {
 
 
                 // If incognito, only create one tab, do not handle intent
@@ -85,48 +85,51 @@ public class TabsManager {
                 mTabList.clear();
                 mCurrentTab = null;
                 if (mPreferenceManager.getRestoreLostTabsEnabled()) {
-                    restoreState()
-                            .subscribeOn(Schedulers.worker())
-                            .observeOn(Schedulers.main())
-                            .subscribe(new Subscription<Bundle>() {
-                                @Override
-                                public void onComplete() {
-                                    if (url != null) {
-                                        if (url.startsWith(Constants.FILE)) {
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                            builder.setCancelable(true)
-                                                    .setTitle(R.string.title_warning)
-                                                    .setMessage(R.string.message_blocked_local)
-                                                    .setNegativeButton(android.R.string.cancel, null)
-                                                    .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            newTab(activity, url, false);
-                                                        }
-                                                    }).show();
-                                        } else {
-                                            newTab(activity, url, false);
-                                        }
-                                    }
-                                    if (mTabList.size() == 0) {
-                                        newTab(activity, null, false);
-                                    }
-                                    subscriber.onComplete();
-                                }
-
-                                @Override
-                                public void onNext(Bundle item) {
-                                    LightningView tab = newTab(activity, "", false);
-                                    if (tab.getWebView() != null) {
-                                        tab.getWebView().restoreState(item);
-                                    }
-                                }
-                            });
+                    restoreLostTabs(url, activity, subscriber);
                 }
 
             }
         });
 
+    }
+
+    private void restoreLostTabs(final String url, final Activity activity,
+                                 final Subscriber subscriber) {
+        restoreState().subscribeOn(Schedulers.worker())
+                .observeOn(Schedulers.main()).subscribe(new Subscription<Bundle>() {
+            @Override
+            public void onNext(Bundle item) {
+                LightningView tab = newTab(activity, "", false);
+                if (tab.getWebView() != null) {
+                    tab.getWebView().restoreState(item);
+                }
+            }
+
+            @Override
+            public void onComplete() {
+                if (url != null) {
+                    if (url.startsWith(Constants.FILE)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        builder.setCancelable(true)
+                                .setTitle(R.string.title_warning)
+                                .setMessage(R.string.message_blocked_local)
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        newTab(activity, url, false);
+                                    }
+                                }).show();
+                    } else {
+                        newTab(activity, url, false);
+                    }
+                }
+                if (mTabList.size() == 0) {
+                    newTab(activity, null, false);
+                }
+                subscriber.onComplete();
+            }
+        });
     }
 
     /**
@@ -319,7 +322,7 @@ public class TabsManager {
     private Observable<Bundle> restoreState() {
         return Observable.create(new Action<Bundle>() {
             @Override
-            public void onSubscribe(Subscriber<Bundle> subscriber) {
+            public void onSubscribe(@NonNull Subscriber<Bundle> subscriber) {
                 Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
                 if (savedState != null) {
                     Log.d(Constants.TAG, "Restoring previous WebView state now");
