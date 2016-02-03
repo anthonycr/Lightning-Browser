@@ -417,7 +417,7 @@ public class LightningView {
     private Observable<File> getPathObservable(final String subFolder) {
         return Observable.create(new Action<File>() {
             @Override
-            public void onSubscribe(Subscriber<File> subscriber) {
+            public void onSubscribe(@NonNull Subscriber<File> subscriber) {
                 File file = BrowserApp.get(mActivity).getDir(subFolder, 0);
                 subscriber.onNext(file);
                 subscriber.onComplete();

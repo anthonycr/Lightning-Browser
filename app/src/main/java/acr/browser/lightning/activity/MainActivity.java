@@ -20,7 +20,7 @@ public class MainActivity extends BrowserActivity {
     public Observable<Void> updateCookiePreference() {
         return Observable.create(new Action<Void>() {
             @Override
-            public void onSubscribe(Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
                 CookieManager cookieManager = CookieManager.getInstance();
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     CookieSyncManager.createInstance(MainActivity.this);
