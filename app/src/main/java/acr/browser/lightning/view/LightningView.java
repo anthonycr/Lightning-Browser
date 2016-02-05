@@ -55,8 +55,8 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.Action;
 import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.react.Subscriber;
-import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -375,7 +375,7 @@ public class LightningView {
 
         getPathObservable("appcache")
                 .subscribeOn(Schedulers.worker())
-                .subscribe(new Subscription<File>() {
+                .subscribe(new Subscriber<File>() {
                     @Override
                     public void onNext(File item) {
                         settings.setAppCachePath(item.getPath());
@@ -387,7 +387,7 @@ public class LightningView {
 
         getPathObservable("geolocation")
                 .subscribeOn(Schedulers.worker())
-                .subscribe(new Subscription<File>() {
+                .subscribe(new Subscriber<File>() {
                     @Override
                     public void onNext(File item) {
                         settings.setGeolocationDatabasePath(item.getPath());
@@ -399,7 +399,7 @@ public class LightningView {
 
         getPathObservable("databases")
                 .subscribeOn(Schedulers.worker())
-                .subscribe(new Subscription<File>() {
+                .subscribe(new Subscriber<File>() {
                     @Override
                     public void onNext(File item) {
                         if (API < Build.VERSION_CODES.KITKAT) {
@@ -417,10 +417,10 @@ public class LightningView {
     private Observable<File> getPathObservable(final String subFolder) {
         return Observable.create(new Action<File>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<File> subscriber) {
+            public void onSubscribe(@NonNull OnSubscribe<File> onSubscribe) {
                 File file = BrowserApp.get(mActivity).getDir(subFolder, 0);
-                subscriber.onNext(file);
-                subscriber.onComplete();
+                onSubscribe.onNext(file);
+                onSubscribe.onComplete();
             }
         });
     }

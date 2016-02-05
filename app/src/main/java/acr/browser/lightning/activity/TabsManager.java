@@ -24,9 +24,9 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.react.Subscriber;
-import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.view.LightningView;
@@ -66,14 +66,14 @@ public class TabsManager {
                                                         final boolean incognito) {
         return Observable.create(new Action<Void>() {
             @Override
-            public void onSubscribe(@NonNull final Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull final OnSubscribe<Void> onSubscribe) {
 
 
                 // If incognito, only create one tab, do not handle intent
                 // in order to protect user privacy
                 if (incognito && mTabList.isEmpty()) {
                     newTab(activity, null, true);
-                    subscriber.onComplete();
+                    onSubscribe.onComplete();
                     return;
                 }
 
@@ -85,7 +85,7 @@ public class TabsManager {
                 mTabList.clear();
                 mCurrentTab = null;
                 if (mPreferenceManager.getRestoreLostTabsEnabled()) {
-                    restoreLostTabs(url, activity, subscriber);
+                    restoreLostTabs(url, activity, onSubscribe);
                 }
 
             }
@@ -94,9 +94,9 @@ public class TabsManager {
     }
 
     private void restoreLostTabs(final String url, final Activity activity,
-                                 final Subscriber subscriber) {
+                                 final OnSubscribe onSubscribe) {
         restoreState().subscribeOn(Schedulers.worker())
-                .observeOn(Schedulers.main()).subscribe(new Subscription<Bundle>() {
+                .observeOn(Schedulers.main()).subscribe(new Subscriber<Bundle>() {
             @Override
             public void onNext(Bundle item) {
                 LightningView tab = newTab(activity, "", false);
@@ -127,7 +127,7 @@ public class TabsManager {
                 if (mTabList.size() == 0) {
                     newTab(activity, null, false);
                 }
-                subscriber.onComplete();
+                onSubscribe.onComplete();
             }
         });
     }
@@ -331,17 +331,17 @@ public class TabsManager {
     private Observable<Bundle> restoreState() {
         return Observable.create(new Action<Bundle>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<Bundle> subscriber) {
+            public void onSubscribe(@NonNull OnSubscribe<Bundle> onSubscribe) {
                 Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
                 if (savedState != null) {
                     Log.d(Constants.TAG, "Restoring previous WebView state now");
                     for (String key : savedState.keySet()) {
                         if (key.startsWith(BUNDLE_KEY)) {
-                            subscriber.onNext(savedState.getBundle(key));
+                            onSubscribe.onNext(savedState.getBundle(key));
                         }
                     }
                 }
-                subscriber.onComplete();
+                onSubscribe.onComplete();
             }
         });
     }

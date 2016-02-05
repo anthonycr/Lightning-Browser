@@ -22,8 +22,8 @@ public class Observable<T> {
     private static final String TAG = Observable.class.getSimpleName();
 
     @NonNull private final Action<T> mAction;
-    @Nullable private Executor mSubscriber;
-    @Nullable private Executor mObserver;
+    @Nullable private Executor mSubscriberThread;
+    @Nullable private Executor mObserverThread;
     @NonNull private final Executor mDefault;
 
     private Observable(@NonNull Action<T> action) {
@@ -49,14 +49,14 @@ public class Observable<T> {
     }
 
     /**
-     * Tells the Observable what Executor that the subscription
+     * Tells the Observable what Executor that the subscriber
      * work should run on.
      *
      * @param subscribeExecutor the Executor to run the work on.
      * @return returns this so that calls can be conveniently chained.
      */
     public Observable<T> subscribeOn(@NonNull Executor subscribeExecutor) {
-        mSubscriber = subscribeExecutor;
+        mSubscriberThread = subscribeExecutor;
         return this;
     }
 
@@ -68,7 +68,7 @@ public class Observable<T> {
      * @return returns this so that calls can be conveniently chained.
      */
     public Observable<T> observeOn(@NonNull Executor observerExecutor) {
-        mObserver = observerExecutor;
+        mObserverThread = observerExecutor;
         return this;
     }
 
@@ -80,9 +80,15 @@ public class Observable<T> {
         executeOnSubscriberThread(new Runnable() {
             @Override
             public void run() {
-                mAction.onSubscribe(new Subscriber<T>() {
+                mAction.onSubscribe(new OnSubscribe<T>(null) {
+                    @Override
+                    public void unsubscribe() {}
+
                     @Override
                     public void onComplete() {}
+
+                    @Override
+                    public void start() {}
 
                     @Override
                     public void onError(@NonNull Throwable throwable) {}
@@ -96,123 +102,140 @@ public class Observable<T> {
 
     /**
      * Immediately subscribes to the Observable and starts
-     * sending events from the Observable to the {@link Subscription}.
+     * sending events from the Observable to the {@link Subscriber}.
      *
-     * @param subscription the class that wishes to receive onNext and
-     *                     onComplete callbacks from the Observable.
+     * @param subscriber the class that wishes to receive onNext and
+     *                   onComplete callbacks from the Observable.
      */
-    public void subscribe(@NonNull final Subscription<T> subscription) {
-        Preconditions.checkNonNull(subscription);
-        executeOnSubscriberThread(new Runnable() {
+    public Subscription subscribe(@NonNull Subscriber<T> subscriber) {
+
+        Preconditions.checkNonNull(subscriber);
+
+        final OnSubscribe<T> onSubscribe = new OnSubscribe<T>(subscriber) {
+
+            @Override
+            public void unsubscribe() {
+                setSubscriber(null);
+            }
 
             private boolean mOnCompleteExecuted = false;
 
             @Override
-            public void run() {
+            public void onComplete() {
+                Subscriber<T> subscription = getSubscriber();
+                if (!mOnCompleteExecuted && subscription != null) {
+                    mOnCompleteExecuted = true;
+                    executeOnObserverThread(new OnCompleteRunnable<>(subscription));
+                } else {
+                    Log.e(TAG, "onComplete called more than once");
+                    throw new RuntimeException("onComplete called more than once");
+                }
+            }
+
+            @Override
+            public void start() {
+                Subscriber<T> subscription = getSubscriber();
                 executeOnObserverThread(new OnStartRunnable<>(subscription));
-                mAction.onSubscribe(new Subscriber<T>() {
-                    @Override
-                    public void onComplete() {
-                        if (!mOnCompleteExecuted) {
-                            mOnCompleteExecuted = true;
-                            executeOnObserverThread(new OnCompleteRunnable<>(subscription));
-                        } else {
-                            Log.e(TAG, "onComplete called more than once");
-                            throw new RuntimeException("onComplete called more than once");
-                        }
-                    }
+            }
 
-                    @Override
-                    public void onError(@NonNull final Throwable throwable) {
-                        if (!mOnCompleteExecuted) {
-                            mOnCompleteExecuted = true;
-                            executeOnObserverThread(new OnErrorRunnable<>(subscription, throwable));
-                        } else {
-                            Log.e(TAG, "onComplete already called");
-                            throw new RuntimeException("onComplete already called");
-                        }
-                    }
+            @Override
+            public void onError(@NonNull final Throwable throwable) {
+                Subscriber<T> subscription = getSubscriber();
+                if (!mOnCompleteExecuted && subscription != null) {
+                    mOnCompleteExecuted = true;
+                    executeOnObserverThread(new OnErrorRunnable<>(subscription, throwable));
+                } else {
+                    Log.e(TAG, "onComplete already called");
+                    throw new RuntimeException("onComplete already called");
+                }
+            }
 
-                    @Override
-                    public void onNext(final T item) {
-                        if (!mOnCompleteExecuted) {
-                            executeOnObserverThread(new OnNextRunnable<>(subscription, item));
-                        } else {
-                            Log.e(TAG, "onComplete has been already called, onNext should not be called");
-                            throw new RuntimeException("onNext should not be called after onComplete has been called");
-                        }
-                    }
-                });
+            @Override
+            public void onNext(final T item) {
+                Subscriber<T> subscription = getSubscriber();
+                if (!mOnCompleteExecuted && subscription != null) {
+                    executeOnObserverThread(new OnNextRunnable<>(subscription, item));
+                } else {
+                    Log.e(TAG, "onComplete has been already called, onNext should not be called");
+                    throw new RuntimeException("onNext should not be called after onComplete has been called");
+                }
+            }
+        };
+        executeOnSubscriberThread(new Runnable() {
 
+            @Override
+            public void run() {
+                mAction.onSubscribe(onSubscribe);
             }
         });
+        return onSubscribe;
     }
 
     private void executeOnObserverThread(@NonNull Runnable runnable) {
-        if (mObserver != null) {
-            mObserver.execute(runnable);
+        if (mObserverThread != null) {
+            mObserverThread.execute(runnable);
         } else {
             mDefault.execute(runnable);
         }
     }
 
     private void executeOnSubscriberThread(@NonNull Runnable runnable) {
-        if (mSubscriber != null) {
-            mSubscriber.execute(runnable);
+        if (mSubscriberThread != null) {
+            mSubscriberThread.execute(runnable);
         } else {
             mDefault.execute(runnable);
         }
     }
 
     private static class OnCompleteRunnable<T> implements Runnable {
-        private final Subscription<T> subscription;
+        private final Subscriber<T> subscriber;
 
-        public OnCompleteRunnable(Subscription<T> subscription) {this.subscription = subscription;}
+        public OnCompleteRunnable(Subscriber<T> subscriber) {this.subscriber = subscriber;}
 
         @Override
         public void run() {
-            subscription.onComplete();
+            subscriber.onComplete();
         }
     }
 
     private static class OnNextRunnable<T> implements Runnable {
-        private final Subscription<T> subscription;
+        private final Subscriber<T> subscriber;
         private final T item;
 
-        public OnNextRunnable(Subscription<T> subscription, T item) {
-            this.subscription = subscription;
+        public OnNextRunnable(Subscriber<T> subscriber, T item) {
+            this.subscriber = subscriber;
             this.item = item;
         }
 
         @Override
         public void run() {
-            subscription.onNext(item);
+            subscriber.onNext(item);
         }
     }
 
     private static class OnErrorRunnable<T> implements Runnable {
-        private final Subscription<T> subscription;
+        private final Subscriber<T> subscriber;
         private final Throwable throwable;
 
-        public OnErrorRunnable(Subscription<T> subscription, Throwable throwable) {
-            this.subscription = subscription;
+        public OnErrorRunnable(Subscriber<T> subscriber, Throwable throwable) {
+            this.subscriber = subscriber;
             this.throwable = throwable;
         }
 
         @Override
         public void run() {
-            subscription.onError(throwable);
+            subscriber.onError(throwable);
         }
     }
 
     private static class OnStartRunnable<T> implements Runnable {
-        private final Subscription<T> subscription;
+        private final Subscriber<T> subscriber;
 
-        public OnStartRunnable(Subscription<T> subscription) {this.subscription = subscription;}
+        public OnStartRunnable(Subscriber<T> subscriber) {this.subscriber = subscriber;}
 
         @Override
         public void run() {
-            subscription.onStart();
+            subscriber.onStart();
         }
     }
 }

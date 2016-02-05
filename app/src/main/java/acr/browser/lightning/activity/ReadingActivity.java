@@ -10,6 +10,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +31,12 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -50,7 +58,7 @@ public class ReadingActivity extends AppCompatActivity {
     private String mUrl = null;
     private int mTextSize;
     private ProgressDialog mProgressDialog;
-    private PageLoader mLoaderReference;
+    private Subscription mPageLoaderSubscription;
 
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
@@ -141,70 +149,87 @@ public class ReadingActivity extends AppCompatActivity {
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
-        mLoaderReference = new PageLoader(this);
-        mLoaderReference.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
+        mPageLoaderSubscription = loadPage(mUrl).subscribeOn(Schedulers.worker())
+                .observeOn(Schedulers.main())
+                .subscribe(new Subscriber<ReaderInfo>() {
+                    @Override
+                    public void onStart() {
+                        mProgressDialog = new ProgressDialog(ReadingActivity.this);
+                        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        mProgressDialog.setCancelable(false);
+                        mProgressDialog.setIndeterminate(true);
+                        mProgressDialog.setMessage(getString(R.string.loading));
+                        mProgressDialog.show();
+                    }
+
+                    @Override
+                    public void onNext(@Nullable ReaderInfo item) {
+                        if (item == null || item.getTitle().isEmpty() || item.getBody().isEmpty()) {
+                            setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                        } else {
+                            setText(item.getTitle(), item.getBody());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable throwable) {
+                        setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+                    }
+                });
         return true;
     }
 
-    private class PageLoader extends AsyncTask<String, Void, Void> {
+    private static Observable<ReaderInfo> loadPage(@NonNull final String url) {
+        return Observable.create(new Action<ReaderInfo>() {
+            @Override
+            public void onSubscribe(@NonNull OnSubscribe<ReaderInfo> onSubscribe) {
+                HtmlFetcher fetcher = new HtmlFetcher();
+                try {
+                    JResult result = fetcher.fetchAndExtract(url, 2500, true);
+                    onSubscribe.onNext(new ReaderInfo(result.getTitle(), result.getText()));
+                } catch (Exception e) {
+                    onSubscribe.onError(new Throwable("Encountered exception"));
+                    e.printStackTrace();
+                } catch (OutOfMemoryError e) {
+                    System.gc();
+                    onSubscribe.onError(new Throwable("Out of memory"));
+                    e.printStackTrace();
+                }
+                onSubscribe.onComplete();
+            }
+        });
+    }
 
-        private final WeakReference<Activity> mActivityReference;
-        private String mTitleText;
-        private String mBodyText;
+    private static class ReaderInfo {
+        @NonNull private final String mTitleText;
+        @NonNull private final String mBodyText;
 
-        public PageLoader(Activity activity) {
-            mActivityReference = new WeakReference<>(activity);
+        public ReaderInfo(@NonNull String title, @NonNull String body) {
+            mTitleText = title;
+            mBodyText = body;
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Activity activity = mActivityReference.get();
-            if (activity != null) {
-                mProgressDialog = new ProgressDialog(activity);
-                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                mProgressDialog.setCancelable(false);
-                mProgressDialog.setIndeterminate(true);
-                mProgressDialog.setMessage(activity.getString(R.string.loading));
-                mProgressDialog.show();
-            }
+        @NonNull
+        public String getTitle() {
+            return mTitleText;
         }
 
-        @Override
-        protected Void doInBackground(String... params) {
-
-            HtmlFetcher fetcher = new HtmlFetcher();
-            try {
-                JResult result = fetcher.fetchAndExtract(params[0], 2500, true);
-                mTitleText = result.getTitle();
-                mBodyText = result.getText();
-            } catch (Exception e) {
-                mTitleText = "";
-                mBodyText = "";
-                e.printStackTrace();
-            } catch (OutOfMemoryError e) {
-                System.gc();
-                mTitleText = "";
-                mBodyText = "";
-                e.printStackTrace();
-            }
-            return null;
+        @NonNull
+        public String getBody() {
+            return mBodyText;
         }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            if (mTitleText.isEmpty() || mBodyText.isEmpty()) {
-                setText(getString(R.string.untitled), getString(R.string.loading_failed));
-            } else {
-                setText(mTitleText, mBodyText);
-            }
-            super.onPostExecute(result);
-        }
-
     }
 
     private void setText(String title, String body) {
@@ -235,11 +260,12 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        mPageLoaderSubscription.unsubscribe();
+
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
             mProgressDialog = null;
         }
-        mLoaderReference.cancel(true);
         super.onDestroy();
     }
 

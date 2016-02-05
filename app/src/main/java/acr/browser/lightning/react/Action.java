@@ -4,13 +4,13 @@ import android.support.annotation.NonNull;
 
 public interface Action<T> {
     /**
-     * Should be overridden to send the subscriber
-     * events such as {@link Subscriber#onNext(Object)}
-     * or {@link Subscriber#onComplete()}.
+     * Should be overridden to send the onSubscribe
+     * events such as {@link OnSubscribe#onNext(Object)}
+     * or {@link OnSubscribe#onComplete()}.
      *
-     * @param subscriber the subscriber that is sent in
+     * @param onSubscribe the onSubscribe that is sent in
      *                   when the user of the Observable
      *                   subscribes.
      */
-    void onSubscribe(@NonNull Subscriber<T> subscriber);
+    void onSubscribe(@NonNull OnSubscribe<T> onSubscribe);
 }
