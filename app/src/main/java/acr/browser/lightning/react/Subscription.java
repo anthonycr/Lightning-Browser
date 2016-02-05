@@ -1,8 +1,29 @@
 package acr.browser.lightning.react;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public interface Subscription<T> {
+public abstract class Subscription<T> {
+
+    /**
+     * Called when the observable
+     * runs into an error that will
+     * cause it to abort and not finish.
+     * Receiving this callback means that
+     * the observable is dead and no
+     * {@link #onComplete()} or {@link #onNext(Object)}
+     * callbacks will be called.
+     *
+     * @param throwable an optional throwable that could
+     *                  be sent.
+     */
+    public void onError(@NonNull Throwable throwable) {}
+
+    /**
+     * Called before the observer begins
+     * to process and emit items or complete.
+     */
+    public void onStart() {}
 
     /**
      * Called when the Observer emits an
@@ -13,7 +34,7 @@ public interface Subscription<T> {
      * @param item the item that has been emitted,
      *             can be null.
      */
-    void onNext(@Nullable T item);
+    public void onNext(@Nullable T item) {}
 
     /**
      * This method is called when the observer is
@@ -22,5 +43,5 @@ public interface Subscription<T> {
      * called on the Subscription after this method
      * has been called.
      */
-    void onComplete();
+    public void onComplete() {}
 }
