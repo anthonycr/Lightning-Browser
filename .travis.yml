@@ -18,4 +18,4 @@ before_install:
 install:
   - ./gradlew
 script:
-  - ./gradlew assembleRelease --stacktrace
+  - ./gradlew assembleDebug --stacktrace
