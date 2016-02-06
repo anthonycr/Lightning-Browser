@@ -110,8 +110,8 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
+import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.react.Schedulers;
-import acr.browser.lightning.react.Subscriber;
 import acr.browser.lightning.receiver.NetworkReceiver;
 
 import com.anthonycr.grant.PermissionsManager;
@@ -360,7 +360,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         mTabsManager.initializeTabs(this, getIntent(), isIncognito())
-                .subscribe(new Subscriber<Void>() {
+                .subscribe(new OnSubscribe<Void>() {
                     @Override
                     public void onNext(Void item) {}
 

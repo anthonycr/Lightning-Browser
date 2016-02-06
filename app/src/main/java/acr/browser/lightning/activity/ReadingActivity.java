@@ -1,14 +1,12 @@
 package acr.browser.lightning.activity;
 
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,8 +21,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
-
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
@@ -34,8 +30,8 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.Action;
 import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.react.OnSubscribe;
-import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
@@ -151,7 +147,7 @@ public class ReadingActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
         mPageLoaderSubscription = loadPage(mUrl).subscribeOn(Schedulers.worker())
                 .observeOn(Schedulers.main())
-                .subscribe(new Subscriber<ReaderInfo>() {
+                .subscribe(new OnSubscribe<ReaderInfo>() {
                     @Override
                     public void onStart() {
                         mProgressDialog = new ProgressDialog(ReadingActivity.this);
@@ -194,20 +190,20 @@ public class ReadingActivity extends AppCompatActivity {
     private static Observable<ReaderInfo> loadPage(@NonNull final String url) {
         return Observable.create(new Action<ReaderInfo>() {
             @Override
-            public void onSubscribe(@NonNull OnSubscribe<ReaderInfo> onSubscribe) {
+            public void onSubscribe(@NonNull Subscriber<ReaderInfo> subscriber) {
                 HtmlFetcher fetcher = new HtmlFetcher();
                 try {
                     JResult result = fetcher.fetchAndExtract(url, 2500, true);
-                    onSubscribe.onNext(new ReaderInfo(result.getTitle(), result.getText()));
+                    subscriber.onNext(new ReaderInfo(result.getTitle(), result.getText()));
                 } catch (Exception e) {
-                    onSubscribe.onError(new Throwable("Encountered exception"));
+                    subscriber.onError(new Throwable("Encountered exception"));
                     e.printStackTrace();
                 } catch (OutOfMemoryError e) {
                     System.gc();
-                    onSubscribe.onError(new Throwable("Out of memory"));
+                    subscriber.onError(new Throwable("Out of memory"));
                     e.printStackTrace();
                 }
-                onSubscribe.onComplete();
+                subscriber.onComplete();
             }
         });
     }

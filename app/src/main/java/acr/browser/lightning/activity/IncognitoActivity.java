@@ -11,7 +11,7 @@ import android.webkit.CookieSyncManager;
 import acr.browser.lightning.R;
 import acr.browser.lightning.react.Action;
 import acr.browser.lightning.react.Observable;
-import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Subscriber;
 
 @SuppressWarnings("deprecation")
 public class IncognitoActivity extends BrowserActivity {
@@ -20,13 +20,13 @@ public class IncognitoActivity extends BrowserActivity {
     public Observable<Void> updateCookiePreference() {
         return Observable.create(new Action<Void>() {
             @Override
-            public void onSubscribe(@NonNull OnSubscribe<Void> onSubscribe) {
+            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
                 CookieManager cookieManager = CookieManager.getInstance();
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     CookieSyncManager.createInstance(IncognitoActivity.this);
                 }
                 cookieManager.setAcceptCookie(mPreferences.getIncognitoCookiesEnabled());
-                onSubscribe.onComplete();
+                subscriber.onComplete();
             }
         });
     }

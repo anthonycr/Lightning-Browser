@@ -3,25 +3,7 @@ package acr.browser.lightning.react;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public abstract class OnSubscribe<T> implements Subscription {
-
-    @Nullable private Subscriber<T> mSubscriber;
-
-    public OnSubscribe(@Nullable Subscriber<T> subscriber) {
-        mSubscriber = subscriber;
-        start();
-    }
-
-    public abstract void start();
-
-    @Nullable
-    public Subscriber<T> getSubscriber() {
-        return mSubscriber;
-    }
-
-    public void setSubscriber(@Nullable Subscriber<T> subscriber) {
-        mSubscriber = subscriber;
-    }
+public abstract class OnSubscribe<T> {
 
     /**
      * Called when the observable
@@ -35,7 +17,13 @@ public abstract class OnSubscribe<T> implements Subscription {
      * @param throwable an optional throwable that could
      *                  be sent.
      */
-    public abstract void onError(@NonNull Throwable throwable);
+    public void onError(@NonNull Throwable throwable) {}
+
+    /**
+     * Called before the observer begins
+     * to process and emit items or complete.
+     */
+    public void onStart() {}
 
     /**
      * Called when the Observer emits an
@@ -46,14 +34,14 @@ public abstract class OnSubscribe<T> implements Subscription {
      * @param item the item that has been emitted,
      *             can be null.
      */
-    public abstract void onNext(@Nullable T item);
+    public void onNext(@Nullable T item) {}
 
     /**
      * This method is called when the observer is
      * finished sending the subscriber events. It
      * is guaranteed that no other methods will be
-     * called on the Subscriber after this method
+     * called on the OnSubscribe after this method
      * has been called.
      */
-    public abstract void onComplete();
+    public void onComplete() {}
 }
