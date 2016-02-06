@@ -77,6 +77,18 @@ public class BrowserPresenter {
         mCurrentTab = newTab;
     }
 
+    public void closeAllOtherTabs() {
+
+        while (mTabsModel.last() != mTabsModel.indexOfCurrentTab()) {
+            deleteTab(mTabsModel.last());
+        }
+
+        while (0 != mTabsModel.indexOfCurrentTab()) {
+            deleteTab(0);
+        }
+
+    }
+
     public void deleteTab(int position) {
         final LightningView tabToDelete = mTabsModel.getTabAtPosition(position);
 

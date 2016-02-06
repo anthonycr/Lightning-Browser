@@ -193,6 +193,7 @@
     <string name="settings_about_explain">Details about version, author and license.</string>
     <string name="close_tab">Close tab</string>
     <string name="close_all_tabs">Close all tabs</string>
+    <string name="close_other_tabs">Close other tabs</string>
     <string name="third_party">Block 3rd Party Cookies</string>
     <string name="color_mode">Enable Color Mode</string>
     <string name="reading_mode">Reader Mode</string>

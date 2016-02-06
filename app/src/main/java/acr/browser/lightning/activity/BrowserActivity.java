@@ -834,19 +834,23 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line);
-        adapter.add(this.getString(R.string.close_tab));
+                android.R.layout.simple_list_item_1);
         adapter.add(this.getString(R.string.close_all_tabs));
+        adapter.add(this.getString(R.string.close_other_tabs));
+        adapter.add(this.getString(R.string.close_tab));
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
-                        deleteTab(position);
+                        closeBrowser();
                         break;
                     case 1:
-                        closeBrowser();
+                        mPresenter.closeAllOtherTabs();
+                        break;
+                    case 2:
+                        deleteTab(position);
                         break;
                     default:
                         break;
