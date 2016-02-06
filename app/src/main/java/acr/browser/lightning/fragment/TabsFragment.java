@@ -167,6 +167,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onClick(@NonNull View v) {
         switch (v.getId()) {
+            case R.id.tab_header_button:
+                mUiController.showCloseDialog(tabsManager.indexOfCurrentTab());
+                break;
             case R.id.new_tab_button:
                 mBus.post(new TabEvents.NewTab());
                 break;

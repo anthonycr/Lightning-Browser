@@ -51,4 +51,6 @@ public interface UIController {
 
     void closeEmptyTab();
 
+    void showCloseDialog(int position);
+
 }

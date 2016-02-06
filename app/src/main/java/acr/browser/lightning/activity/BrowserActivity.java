@@ -828,7 +828,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         quit.setOnClickListener(this);
     }
 
-    private void showCloseDialog(final int position) {
+    @Override
+    public void showCloseDialog(final int position) {
         if (position < 0) {
             return;
         }
