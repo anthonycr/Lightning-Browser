@@ -1023,6 +1023,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return mPresenter.newTab(url, show);
     }
 
+    @Override
+    public void newTabClicked() {
+        mPresenter.newTab(null, true);
+    }
+
     // TODO move this to presenter
     private synchronized void deleteTab(int position) {
         mPresenter.deleteTab(position);

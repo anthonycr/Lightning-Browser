@@ -53,4 +53,6 @@ public interface UIController {
 
     void showCloseDialog(int position);
 
+    void newTabClicked();
+
 }

@@ -112,6 +112,14 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            ImageView newTab = (ImageView) view.findViewById(R.id.new_tab_button);
+            newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(getActivity()));
+            newTab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mUiController.newTabClicked();
+                }
+            });
         }
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
         recyclerView.setLayoutManager(layoutManager);
