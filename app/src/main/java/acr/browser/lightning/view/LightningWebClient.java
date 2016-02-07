@@ -194,7 +194,7 @@ public class LightningWebClient extends WebViewClient {
 
     @NonNull
     private static List<Integer> getAllSslErrorMessageCodes(@NonNull SslError error) {
-        List<Integer> errorCodeMessageCodes = new ArrayList<>();
+        List<Integer> errorCodeMessageCodes = new ArrayList<>(1);
 
         if (error.hasError(SslError.SSL_DATE_INVALID)) {
             errorCodeMessageCodes.add(R.string.message_certificate_date_invalid);

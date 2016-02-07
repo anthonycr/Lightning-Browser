@@ -283,6 +283,16 @@ public class BookmarkManager {
     }
 
     /**
+     * This method deletes ALL bookmarks created
+     * by the user. Use this method carefully and
+     * do not use it without explicit user consent.
+     */
+    public synchronized void deleteAllBookmarks() {
+        mBookmarksMap = new HashMap<>();
+        mExecutor.execute(new BookmarksWriter(new LinkedList<>(mBookmarksMap.values())));
+    }
+
+    /**
      * This method edits a particular bookmark in the bookmark database
      *
      * @param oldItem This is the old item that you wish to edit

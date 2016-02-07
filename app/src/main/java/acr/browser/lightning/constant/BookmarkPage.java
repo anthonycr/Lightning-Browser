@@ -63,7 +63,7 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
     private File mFilesDir;
     private File mCacheDir;
 
-    private Application mApp;
+    private final Application mApp;
     private final BookmarkManager mManager;
     @NonNull private final WeakReference<LightningView> mTabReference;
     private final Bitmap mFolderIcon;

@@ -144,7 +144,7 @@ public class Observable<T> {
     private static class SubscriberImpl<T> implements Subscriber<T> {
 
         @Nullable private OnSubscribe<T> mOnSubscribe;
-        @NonNull private Observable<T> mObservable;
+        @NonNull private final Observable<T> mObservable;
         private boolean mOnCompleteExecuted = false;
 
         public SubscriberImpl(@NonNull OnSubscribe<T> onSubscribe, @NonNull Observable<T> observable) {

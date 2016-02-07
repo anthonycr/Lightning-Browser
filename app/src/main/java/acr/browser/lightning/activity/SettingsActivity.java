@@ -21,7 +21,7 @@ import acr.browser.lightning.R;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
-    private static final List<String> mFragments = new ArrayList<>();
+    private static final List<String> mFragments = new ArrayList<>(6);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

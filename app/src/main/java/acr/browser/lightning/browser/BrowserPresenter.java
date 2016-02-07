@@ -33,10 +33,10 @@ public class BrowserPresenter {
     @Inject PreferenceManager mPreferences;
     @Inject Bus mEventBus;
 
-    @NonNull private BrowserView mView;
+    @NonNull private final BrowserView mView;
     @Nullable private LightningView mCurrentTab;
 
-    private boolean mIsIncognito;
+    private final boolean mIsIncognito;
     private boolean mIsNewIntent;
 
     public BrowserPresenter(@NonNull BrowserView view, boolean isIncognito) {

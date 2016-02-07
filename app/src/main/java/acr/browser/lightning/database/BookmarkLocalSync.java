@@ -11,6 +11,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.Subscriber;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkLocalSync {
@@ -28,155 +31,152 @@ public class BookmarkLocalSync {
 
     @NonNull private final Context mContext;
 
+    public enum Source {
+        STOCK,
+        CHROME_STABLE,
+        CHROME_BETA,
+        CHROME_DEV
+    }
+
     public BookmarkLocalSync(@NonNull Context context) {
         mContext = context;
+    }
+
+    public List<HistoryItem> getBookmarksFromContentUri(String contentUri) {
+        List<HistoryItem> list = new ArrayList<>();
+        Cursor cursor = getBrowserCursor(contentUri);
+        try {
+            if (cursor != null) {
+                for (int n = 0; n < cursor.getColumnCount(); n++) {
+                    Log.d(TAG, cursor.getColumnName(n));
+                }
+
+                while (cursor.moveToNext()) {
+                    if (cursor.getInt(2) == 1) {
+                        String url = cursor.getString(0);
+                        String title = cursor.getString(1);
+                        if (url.isEmpty()) {
+                            continue;
+                        }
+                        if (title == null || title.isEmpty()) {
+                            title = Utils.getDomainName(url);
+                        }
+                        if (title != null) {
+                            list.add(new HistoryItem(url, title));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Utils.close(cursor);
+        return list;
+    }
+
+    @Nullable
+    @WorkerThread
+    private Cursor getBrowserCursor(String contentUri) {
+        Cursor cursor;
+        Uri uri = Uri.parse(contentUri);
+        try {
+            cursor = mContext.getContentResolver().query(uri,
+                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        return cursor;
+    }
+
+    @NonNull
+    public Observable<List<Source>> getSupportedBrowsers() {
+        return Observable.create(new Action<List<Source>>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<List<Source>> subscriber) {
+                List<Source> sources = new ArrayList<>(1);
+                if (isBrowserSupported(STOCK_BOOKMARKS_CONTENT)) {
+                    sources.add(Source.STOCK);
+                }
+                if (isBrowserSupported(CHROME_BOOKMARKS_CONTENT)) {
+                    sources.add(Source.CHROME_STABLE);
+                }
+                if (isBrowserSupported(CHROME_BETA_BOOKMARKS_CONTENT)) {
+                    sources.add(Source.CHROME_BETA);
+                }
+                if (isBrowserSupported(CHROME_DEV_BOOKMARKS_CONTENT)) {
+                    sources.add(Source.CHROME_DEV);
+                }
+                subscriber.onNext(sources);
+                subscriber.onComplete();
+            }
+        });
+    }
+
+    private boolean isBrowserSupported(String contentUri) {
+        Cursor cursor = getBrowserCursor(contentUri);
+        boolean supported = cursor != null;
+        Utils.close(cursor);
+        return supported;
     }
 
     @NonNull
     @WorkerThread
     public List<HistoryItem> getBookmarksFromStockBrowser() {
-        List<HistoryItem> list = new ArrayList<>();
-        if (!isStockSupported()) {
-            return list;
-        }
-        Cursor cursor = getStockCursor();
-        try {
-            if (cursor != null) {
-                for (int n = 0; n < cursor.getColumnCount(); n++) {
-                    Log.d(TAG, cursor.getColumnName(n));
-                }
-
-                while (cursor.moveToNext()) {
-                    if (cursor.getInt(2) == 1) {
-                        String url = cursor.getString(0);
-                        String title = cursor.getString(1);
-                        if (url.isEmpty()) {
-                            continue;
-                        }
-                        if (title == null || title.isEmpty()) {
-                            title = Utils.getDomainName(url);
-                        }
-                        if (title != null) {
-                            list.add(new HistoryItem(url, title));
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Utils.close(cursor);
-        return list;
+        return getBookmarksFromContentUri(STOCK_BOOKMARKS_CONTENT);
     }
 
     @NonNull
     @WorkerThread
     public List<HistoryItem> getBookmarksFromChrome() {
-        List<HistoryItem> list = new ArrayList<>();
-        if (!isChromeSupported()) {
-            return list;
-        }
-        Cursor cursor = getChromeCursor();
-        try {
-            if (cursor != null) {
-                for (int n = 0; n < cursor.getColumnCount(); n++) {
-                    Log.d(TAG, cursor.getColumnName(n));
-                }
+        return getBookmarksFromContentUri(CHROME_BOOKMARKS_CONTENT);
+    }
 
-                while (cursor.moveToNext()) {
-                    if (cursor.getInt(2) == 1) {
-                        String url = cursor.getString(0);
-                        String title = cursor.getString(1);
-                        if (url.isEmpty()) {
-                            continue;
-                        }
-                        if (title == null || title.isEmpty()) {
-                            title = Utils.getDomainName(url);
-                        }
-                        if (title != null) {
-                            list.add(new HistoryItem(url, title));
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Utils.close(cursor);
-        return list;
+    @NonNull
+    @WorkerThread
+    public List<HistoryItem> getBookmarksFromChromeBeta() {
+        return getBookmarksFromContentUri(CHROME_BETA_BOOKMARKS_CONTENT);
+    }
+
+    @NonNull
+    @WorkerThread
+    public List<HistoryItem> getBookmarksFromChromeDev() {
+        return getBookmarksFromContentUri(CHROME_DEV_BOOKMARKS_CONTENT);
     }
 
     @WorkerThread
-    public boolean isStockSupported() {
-        Cursor cursor = getStockCursor();
-        Utils.close(cursor);
-        return cursor != null;
-    }
-
-    @WorkerThread
-    public boolean isChromeSupported() {
-        Cursor cursor = getChromeCursor();
-        Utils.close(cursor);
+    public boolean isBrowserImportSupported() {
+        Cursor chrome = getChromeCursor();
+        Utils.close(chrome);
         Cursor dev = getChromeDevCursor();
         Utils.close(dev);
         Cursor beta = getChromeBetaCursor();
-        return cursor != null || dev != null || beta != null;
+        Cursor stock = getStockCursor();
+        Utils.close(stock);
+        return chrome != null || dev != null || beta != null || stock != null;
     }
 
     @Nullable
     @WorkerThread
     private Cursor getChromeBetaCursor() {
-        Cursor cursor;
-        Uri uri = Uri.parse(CHROME_BETA_BOOKMARKS_CONTENT);
-        try {
-            cursor = mContext.getContentResolver().query(uri,
-                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-        return cursor;
+        return getBrowserCursor(CHROME_BETA_BOOKMARKS_CONTENT);
     }
 
     @Nullable
     @WorkerThread
     private Cursor getChromeDevCursor() {
-        Cursor cursor;
-        Uri uri = Uri.parse(CHROME_DEV_BOOKMARKS_CONTENT);
-        try {
-            cursor = mContext.getContentResolver().query(uri,
-                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-        return cursor;
+        return getBrowserCursor(CHROME_DEV_BOOKMARKS_CONTENT);
     }
 
     @Nullable
     @WorkerThread
     private Cursor getChromeCursor() {
-        Cursor cursor;
-        Uri uri = Uri.parse(CHROME_BOOKMARKS_CONTENT);
-        try {
-            cursor = mContext.getContentResolver().query(uri,
-                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-        return cursor;
+        return getBrowserCursor(CHROME_BOOKMARKS_CONTENT);
     }
 
     @Nullable
     @WorkerThread
     private Cursor getStockCursor() {
-        Cursor cursor;
-        Uri uri = Uri.parse(STOCK_BOOKMARKS_CONTENT);
-        try {
-            cursor = mContext.getContentResolver().query(uri,
-                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-        return cursor;
+        return getBrowserCursor(STOCK_BOOKMARKS_CONTENT);
     }
 
     public void printAllColumns() {

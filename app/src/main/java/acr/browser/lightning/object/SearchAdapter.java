@@ -308,7 +308,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
         protected List<HistoryItem> doInBackground(String... arg0) {
             mIsExecuting = true;
 
-            List<HistoryItem> filter = new ArrayList<>();
+            List<HistoryItem> filter = new ArrayList<>(5);
             String query = arg0[0];
             try {
                 query = SPACE_PATTERN.matcher(query).replaceAll("+");

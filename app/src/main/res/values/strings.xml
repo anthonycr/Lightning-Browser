@@ -42,7 +42,7 @@
     <string name="block">Block Images</string>
     <string name="window">Allow sites to open new windows</string>
     <string name="cookies">Enable Cookies</string>
-    <string name="importbookmarks">Import bookmarks from Browser</string>
+    <string name="importbookmarks">Import bookmarks from browser</string>
     <string name="size">Text size</string>
     <string name="recommended">Recommended</string>
     <string name="search">Search Engine</string>
@@ -50,6 +50,8 @@
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>
+    <string name="supported_browsers_title">Supported Browsers</string>
+    <string name="stock_browser">Stock Browser</string>
     <string name="stock_browser_unavailable">No stock browser detected</string>
     <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
@@ -230,4 +232,5 @@
     <string name="remove_identifying_headers">Remove Identifying Headers</string>
     <string name="action_add_to_homescreen">Add to Homescreen</string>
     <string name="message_added_to_homescreen">Shortcut Added to Homescreen</string>
+    <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
 </resources>
