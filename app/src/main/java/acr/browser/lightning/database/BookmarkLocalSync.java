@@ -56,7 +56,9 @@ public class BookmarkLocalSync {
                         if (title == null || title.isEmpty()) {
                             title = Utils.getDomainName(url);
                         }
-                        list.add(new HistoryItem(url, title));
+                        if (title != null) {
+                            list.add(new HistoryItem(url, title));
+                        }
                     }
                 }
             }
@@ -91,7 +93,9 @@ public class BookmarkLocalSync {
                         if (title == null || title.isEmpty()) {
                             title = Utils.getDomainName(url);
                         }
-                        list.add(new HistoryItem(url, title));
+                        if (title != null) {
+                            list.add(new HistoryItem(url, title));
+                        }
                     }
                 }
             }
@@ -113,7 +117,38 @@ public class BookmarkLocalSync {
     public boolean isChromeSupported() {
         Cursor cursor = getChromeCursor();
         Utils.close(cursor);
-        return cursor != null;
+        Cursor dev = getChromeDevCursor();
+        Utils.close(dev);
+        Cursor beta = getChromeBetaCursor();
+        return cursor != null || dev != null || beta != null;
+    }
+
+    @Nullable
+    @WorkerThread
+    private Cursor getChromeBetaCursor() {
+        Cursor cursor;
+        Uri uri = Uri.parse(CHROME_BETA_BOOKMARKS_CONTENT);
+        try {
+            cursor = mContext.getContentResolver().query(uri,
+                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        return cursor;
+    }
+
+    @Nullable
+    @WorkerThread
+    private Cursor getChromeDevCursor() {
+        Cursor cursor;
+        Uri uri = Uri.parse(CHROME_DEV_BOOKMARKS_CONTENT);
+        try {
+            cursor = mContext.getContentResolver().query(uri,
+                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        return cursor;
     }
 
     @Nullable
@@ -144,7 +179,7 @@ public class BookmarkLocalSync {
         return cursor;
     }
 
-    public void printAllColumns(){
+    public void printAllColumns() {
         printColumns(CHROME_BETA_BOOKMARKS_CONTENT);
         printColumns(CHROME_BOOKMARKS_CONTENT);
         printColumns(CHROME_DEV_BOOKMARKS_CONTENT);
