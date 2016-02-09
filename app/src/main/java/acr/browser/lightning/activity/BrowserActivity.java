@@ -42,7 +42,6 @@ import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
-import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -60,7 +59,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
@@ -82,6 +80,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
+import com.anthonycr.grant.PermissionsManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -110,13 +109,10 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.object.SearchAdapter;
-import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.receiver.NetworkReceiver;
-
-import com.anthonycr.grant.PermissionsManager;
-
-import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -201,7 +197,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private Bitmap mWebpageBitmap;
     private final ColorDrawable mBackground = new ColorDrawable();
     private Drawable mDeleteIcon, mRefreshIcon, mClearIcon, mIcon;
-    private DrawerArrowDrawable mArrowDrawable;
 
     private BrowserPresenter mPresenter;
 
@@ -319,9 +314,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         FrameLayout arrowButton = (FrameLayout) customView.findViewById(R.id.arrow_button);
         if (mShowTabsInDrawer) {
             // Use hardware acceleration for the animation
-            mArrowDrawable = new DrawerArrowDrawable(this);
             mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            mArrowImage.setImageDrawable(mArrowDrawable);
+            if (mArrowImage.getWidth() <= 0) {
+                mArrowImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            }
+            updateTabNumber(0);
         } else {
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
             mArrowImage.setImageResource(R.drawable.ic_action_home);
@@ -359,19 +356,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        mTabsManager.initializeTabs(this, getIntent(), isIncognito())
-                .subscribe(new OnSubscribe<Void>() {
-                    @Override
-                    public void onNext(Void item) {}
-
-                    @Override
-                    public void onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        showTab(mTabsManager.last());
-
-                        mProxyUtils.checkForProxy(BrowserActivity.this);
-                    }
-                });
+        mPresenter.setupTabs(getIntent(), isIncognito());
+        mProxyUtils.checkForProxy(BrowserActivity.this);
     }
 
     private class SearchListenerClass implements OnKeyListener, OnEditorActionListener, OnFocusChangeListener, OnTouchListener {
@@ -434,55 +420,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mIcon = mClearIcon;
                 mSearch.setCompoundDrawables(null, null, mClearIcon, null);
             }
-            final Animation anim = new Animation() {
-
-                @Override
-                protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    if (!hasFocus) {
-                        mArrowDrawable.setProgress(1.0f - interpolatedTime);
-                    } else {
-                        mArrowDrawable.setProgress(interpolatedTime);
-                    }
-                }
-
-                @Override
-                public boolean willChangeBounds() {
-                    return true;
-                }
-
-            };
-            anim.setDuration(300);
-            anim.setInterpolator(new DecelerateInterpolator());
-            anim.setAnimationListener(new AnimationListener() {
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (!hasFocus) {
-                        mArrowDrawable.setProgress(0.0f);
-                    } else {
-                        mArrowDrawable.setProgress(1.0f);
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-            });
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (mArrowDrawable != null) {
-                        mArrowImage.startAnimation(anim);
-                    }
-                }
-
-            }, 100);
 
             if (!hasFocus) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1300,6 +1237,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 url = "";
             }
             mSearch.setText(url);
+        }
+    }
+
+    @Override
+    public void updateTabNumber(int number) {
+        if (mArrowImage != null) {
+            mArrowImage.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24),
+                    Utils.dpToPx(24), ThemeUtils.getIconThemeColor(this, mDarkTheme), Utils.dpToPx(2)));
         }
     }
 

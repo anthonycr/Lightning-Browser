@@ -15,6 +15,8 @@ public interface BrowserView {
 
     void updateProgress(int progress);
 
+    void updateTabNumber(int number);
+
     void closeBrowser();
 
     void closeActivity();

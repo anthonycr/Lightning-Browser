@@ -17,6 +17,7 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
@@ -43,6 +44,21 @@ public class BrowserPresenter {
         BrowserApp.getAppComponent().inject(this);
         mView = view;
         mIsIncognito = isIncognito;
+    }
+
+    public void setupTabs(Intent intent, boolean isIncognito) {
+        mTabsModel.initializeTabs((Activity) mView, intent, isIncognito)
+                .subscribe(new OnSubscribe<Void>() {
+                    @Override
+                    public void onNext(Void item) {}
+
+                    @Override
+                    public void onComplete() {
+                        // At this point we always have at least a tab in the tab manager
+                        tabChanged(mTabsModel.last());
+                        mView.updateTabNumber(mTabsModel.size());
+                    }
+                });
     }
 
     private void onTabChanged(@Nullable LightningView newTab) {
@@ -135,6 +151,8 @@ public class BrowserPresenter {
             mView.closeActivity();
         }
 
+        mView.updateTabNumber(mTabsModel.size());
+
         Log.d(Constants.TAG, "deleted tab");
     }
 
@@ -195,6 +213,7 @@ public class BrowserPresenter {
             mView.showSnackbar(R.string.max_tabs);
             return false;
         }
+
         mIsNewIntent = false;
         LightningView startingTab = mTabsModel.newTab((Activity) mView, url, mIsIncognito);
         if (mTabsModel.size() == 1) {
@@ -213,6 +232,8 @@ public class BrowserPresenter {
         //        mDrawerListLeft.smoothScrollToPosition(mTabsManager.size() - 1);
         //    }
         // }, 300);
+
+        mView.updateTabNumber(mTabsModel.size());
 
         return true;
     }

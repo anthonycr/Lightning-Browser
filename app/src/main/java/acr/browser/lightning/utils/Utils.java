@@ -157,7 +157,7 @@ public final class Utils {
      * @param dp the number of density pixels to convert.
      * @return the number of pixels that the conversion generates.
      */
-    public static int dpToPx(int dp) {
+    public static int dpToPx(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return (int) (dp * metrics.density + 0.5f);
     }

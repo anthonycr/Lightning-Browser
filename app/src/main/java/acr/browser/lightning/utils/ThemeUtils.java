@@ -54,6 +54,11 @@ public class ThemeUtils {
         return ContextCompat.getColor(context, R.color.icon_dark_theme);
     }
 
+    @ColorInt
+    public static int getIconThemeColor(@NonNull Context context, boolean dark) {
+        return (dark) ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
+    }
+
     public static void themeImageView(@NonNull ImageView icon, @NonNull Context context, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
