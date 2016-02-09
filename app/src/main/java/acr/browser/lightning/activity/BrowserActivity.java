@@ -1244,7 +1244,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void updateTabNumber(int number) {
         if (mArrowImage != null) {
             mArrowImage.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24),
-                    Utils.dpToPx(24), ThemeUtils.getIconThemeColor(this, mDarkTheme), Utils.dpToPx(2)));
+                    Utils.dpToPx(24), ThemeUtils.getIconThemeColor(this, mDarkTheme), Utils.dpToPx(2.5f)));
         }
     }
 

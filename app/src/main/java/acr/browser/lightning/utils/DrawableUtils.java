@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 
 public class DrawableUtils {
 
@@ -22,8 +23,9 @@ public class DrawableUtils {
         Canvas canvas = new Canvas(image);
         Paint paint = new Paint();
         paint.setColor(color);
+        Typeface boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
+        paint.setTypeface(boldText);
         paint.setTextSize(Utils.dpToPx(14));
-        paint.setFakeBoldText(true);
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
