@@ -791,7 +791,8 @@ public class LightningView {
             // before calling destroy() so that a memory leak is not created
             ViewGroup parent = (ViewGroup) mWebView.getParent();
             if (parent != null) {
-                throw new RuntimeException("WebView was not detached from window before onDestroy");
+                Log.e(Constants.TAG, "WebView was not detached from window before onDestroy");
+                parent.removeView(mWebView);
             }
             mWebView.stopLoading();
             mWebView.onPause();
