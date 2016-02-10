@@ -44,6 +44,12 @@ public class BrowserPresenter {
         BrowserApp.getAppComponent().inject(this);
         mView = view;
         mIsIncognito = isIncognito;
+        mTabsModel.setTabNumberChangedListener(new TabsManager.TabNumberChangedListener() {
+            @Override
+            public void tabNumberChanged(int newNumber) {
+                mView.updateTabNumber(newNumber);
+            }
+        });
     }
 
     public void setupTabs(Intent intent, boolean isIncognito) {
@@ -213,6 +219,8 @@ public class BrowserPresenter {
             mView.showSnackbar(R.string.max_tabs);
             return false;
         }
+
+        Log.d(TAG, "New tab, show: " + show);
 
         mIsNewIntent = false;
         LightningView startingTab = mTabsModel.newTab((Activity) mView, url, mIsIncognito);

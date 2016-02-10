@@ -45,6 +45,7 @@ public class TabsManager {
 
     private final List<LightningView> mTabList = new ArrayList<>(1);
     @Nullable private LightningView mCurrentTab;
+    @Nullable private TabNumberChangedListener mTabNumberListener;
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject Bus mEventBus;
@@ -52,6 +53,16 @@ public class TabsManager {
 
     @Inject
     public TabsManager() {}
+
+    // TODO remove and make presenter call new tab methods so it always knows
+    @Deprecated
+    public interface TabNumberChangedListener {
+        void tabNumberChanged(int newNumber);
+    }
+
+    public void setTabNumberChangedListener(@Nullable TabNumberChangedListener listener) {
+        mTabNumberListener = listener;
+    }
 
     /**
      * Restores old tabs that were open before the browser
@@ -240,6 +251,9 @@ public class TabsManager {
         Log.d(TAG, "New tab");
         final LightningView tab = new LightningView(activity, url, isIncognito);
         mTabList.add(tab);
+        if (mTabNumberListener != null) {
+            mTabNumberListener.tabNumberChanged(size());
+        }
         return tab;
     }
 
@@ -284,9 +298,15 @@ public class TabsManager {
                 mCurrentTab = getTabAtPosition(current - 1);
             }
             removeTab(current);
+            if (mTabNumberListener != null) {
+                mTabNumberListener.tabNumberChanged(size());
+            }
             return true;
         } else {
             removeTab(position);
+            if (mTabNumberListener != null) {
+                mTabNumberListener.tabNumberChanged(size());
+            }
             return false;
         }
     }
