@@ -141,7 +141,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onResume() {
         super.onResume();
-        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+        if (mBookmarkAdapter != null) {
+            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+        }
     }
 
     @Nullable
