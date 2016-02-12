@@ -39,8 +39,12 @@ public class MainActivity extends BrowserActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        handleNewIntent(intent);
-        super.onNewIntent(intent);
+        if (isPanicTrigger(intent)) {
+            panicClean();
+        } else {
+            handleNewIntent(intent);
+            super.onNewIntent(intent);
+        }
     }
 
     @Override

@@ -55,6 +55,21 @@ public class FileUtils {
     }
 
     /**
+     * Use this method to delete the bundle with the specified name.
+     * This is a blocking call and should be used within a worker
+     * thread unless immediate deletion is necessary.
+     *
+     * @param app  the application object needed to get the file.
+     * @param name the name of the file.
+     */
+    public static void deleteBundleInStorage(final @NonNull Application app, final @NonNull String name) {
+        File outputFile = new File(app.getFilesDir(), name);
+        if (outputFile.exists()) {
+            outputFile.delete();
+        }
+    }
+
+    /**
      * Reads a bundle from the file with the specified
      * name in the peristent storage files directory.
      * This method is a blocking operation.

@@ -342,6 +342,15 @@ public class TabsManager {
     }
 
     /**
+     * Use this method to clear the saved
+     * state if you do not wish it to be
+     * restored when the browser next starts.
+     */
+    public void clearSavedState() {
+        FileUtils.deleteBundleInStorage(mApp, BUNDLE_STORAGE);
+    }
+
+    /**
      * Restores the previously saved tabs from the
      * bundle stored in peristent file storage.
      * It will create new tabs for each tab saved

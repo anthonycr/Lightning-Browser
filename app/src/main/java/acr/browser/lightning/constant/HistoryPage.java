@@ -106,4 +106,18 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
         executeOnExecutor(BrowserApp.getIOThread());
     }
 
+    /**
+     * Use this method to immediately delete the history
+     * page on the current thread. This will clear the
+     * cached history page that was stored on file.
+     *
+     * @param application the application object needed to get the file.
+     */
+    public static void deleteHistoryPage(@NonNull Application application) {
+        File historyWebPage = new File(application.getFilesDir(), FILENAME);
+        if (historyWebPage.exists()) {
+            historyWebPage.delete();
+        }
+    }
+
 }

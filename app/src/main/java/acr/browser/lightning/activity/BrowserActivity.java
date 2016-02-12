@@ -125,6 +125,8 @@ import butterknife.ButterKnife;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
 
+    private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
+
     // Static Layout
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -171,12 +173,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // Primatives
     private boolean mFullScreen;
     private boolean mDarkTheme;
-    private boolean mIsNewIntent = false;
     private boolean mIsFullScreen = false;
     private boolean mIsImmersive = false;
     private boolean mShowTabsInDrawer;
-    private int mOriginalOrientation, mBackgroundColor, mIdGenerator, mIconColor,
-            mCurrentUiColor = Color.BLACK;
+    private int mOriginalOrientation;
+    private int mBackgroundColor;
+    private int mIconColor;
+    private int mCurrentUiColor = Color.BLACK;
     private String mSearchText;
     private String mUntitledTitle;
     private String mCameraPhotoPath;
@@ -356,8 +359,29 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        mPresenter.setupTabs(getIntent(), isIncognito());
-        mProxyUtils.checkForProxy(BrowserActivity.this);
+        if (isPanicTrigger(getIntent())) {
+            panicClean();
+        } else {
+            mPresenter.setupTabs(getIntent(), isIncognito());
+            mProxyUtils.checkForProxy(BrowserActivity.this);
+        }
+    }
+
+    boolean isPanicTrigger(Intent intent) {
+        return intent != null && INTENT_PANIC_TRIGGER.equals(intent.getAction());
+    }
+
+    void panicClean() {
+        Log.d(Constants.TAG, "Closing browser");
+        mTabsManager.newTab(this, "", false);
+        mTabsManager.switchToTab(0);
+        mTabsManager.clearSavedState();
+        HistoryPage.deleteHistoryPage(getApplication());
+        closeBrowser();
+        // System exit needed in the case of receiving
+        // the panic intent since finish() isn't completely
+        // closing the browser
+        System.exit(1);
     }
 
     private class SearchListenerClass implements OnKeyListener, OnEditorActionListener, OnFocusChangeListener, OnTouchListener {
@@ -806,8 +830,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
 
-        mIsNewIntent = false;
-
         mBrowserFrame.removeAllViews();
 
         removeViewFromParent(mCurrentView);
@@ -841,8 +863,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
-
-        mIsNewIntent = false;
 
         final float translation = mToolbarLayout.getTranslationY();
         mBrowserFrame.removeAllViews();
