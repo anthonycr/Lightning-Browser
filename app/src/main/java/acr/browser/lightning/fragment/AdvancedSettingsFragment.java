@@ -74,6 +74,9 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
             case 3:
                 renderingmode.setSummary(getString(R.string.name_inverted_grayscale));
                 break;
+            case 4:
+                renderingmode.setSummary(getString(R.string.name_increase_contrast));
+                break;
         }
 
         textEncoding.setSummary(mPreferenceManager.getTextEncoding());
@@ -136,7 +139,8 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
         CharSequence[] chars = {mActivity.getString(R.string.name_normal),
                 mActivity.getString(R.string.name_inverted),
                 mActivity.getString(R.string.name_grayscale),
-                mActivity.getString(R.string.name_inverted_grayscale)};
+                mActivity.getString(R.string.name_inverted_grayscale),
+                mActivity.getString(R.string.name_increase_contrast)};
 
         int n = mPreferenceManager.getRenderingMode();
 
@@ -156,6 +160,9 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                         break;
                     case 3:
                         renderingmode.setSummary(getString(R.string.name_inverted_grayscale));
+                        break;
+                    case 4:
+                        renderingmode.setSummary(getString(R.string.name_increase_contrast));
                         break;
                 }
             }

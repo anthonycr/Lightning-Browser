@@ -135,6 +135,7 @@
     <string name="name_inverted">반전</string>
     <string name="name_grayscale">그레이스케일</string>
     <string name="name_inverted_grayscale">반전된 그레이스케일</string>
+    <string name="name_increase_contrast">대비 증가</string>
     <string name="name_normal">보통</string>
     <string name="sync_history">Google과 기록 동기화</string>
     <string name="title_file_chooser">파일 선택기</string>

@@ -95,6 +95,12 @@ public class LightningView {
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
+    private static final float[] mIncreaseContrastColorArray = {
+            2.0f, 0, 0, 0, -160.f, // red
+            0, 2.0f, 0, 0, -160.f, // green
+            0, 0, 2.0f, 0, -160.f, // blue
+            0, 0, 0, 1.0f, 0 // alpha
+    };
     private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
     private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
@@ -686,6 +692,13 @@ public class LightningView {
                 setHardwareRendering();
 
                 mInvertPage = true;
+                break;
+
+            case 4:
+                ColorMatrixColorFilter IncreaseHighContrast = new ColorMatrixColorFilter(
+                        mIncreaseContrastColorArray);
+                mPaint.setColorFilter(IncreaseHighContrast);
+                setHardwareRendering();
                 break;
 
         }

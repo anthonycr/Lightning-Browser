@@ -177,6 +177,7 @@
     <string name="name_inverted">Inverted</string>
     <string name="name_grayscale">Grayscale</string>
     <string name="name_inverted_grayscale">Inverted Grayscale</string>
+    <string name="name_increase_contrast">Increase Contrast</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sync history with Google</string>
     <string name="title_file_chooser">File Chooser</string>
