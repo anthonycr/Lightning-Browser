@@ -217,4 +217,6 @@
     <string name="tabs_in_drawer">Mostra le schede nel menù</string>
     <string name="do_not_track">\'Non tenere traccia\'</string>
     <string name="remove_identifying_headers">Rimuovi header di identificazione</string>
+    <string name="action_add_to_homescreen">Aggiungi a Homescreen</string>
+    <string name="message_added_to_homescreen">Scorciatoia Aggiunta</string>
 </resources>
