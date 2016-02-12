@@ -25,4 +25,8 @@ public interface BrowserView {
 
     void showSnackbar(@StringRes int resource);
 
+    void setForwardButtonEnabled(boolean enabled);
+
+    void setBackButtonEnabled(boolean enabled);
+
 }

@@ -55,4 +55,8 @@ public interface UIController {
 
     void newTabClicked();
 
+    void setForwardButtonEnabled(boolean enabled);
+
+    void setBackButtonEnabled(boolean enabled);
+
 }

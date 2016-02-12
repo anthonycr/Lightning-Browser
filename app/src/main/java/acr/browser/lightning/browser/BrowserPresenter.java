@@ -91,6 +91,8 @@ public class BrowserPresenter {
                 newTab.resumeTimers();
                 newTab.setForegroundTab(true);
                 mView.updateProgress(newTab.getProgress());
+                mView.setBackButtonEnabled(newTab.canGoBack());
+                mView.setForwardButtonEnabled(newTab.canGoForward());
                 mView.updateUrl(newTab.getUrl(), true);
                 mView.setTabView(newTab.getWebView());
             }

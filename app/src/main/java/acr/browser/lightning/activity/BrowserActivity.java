@@ -179,6 +179,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private int mOriginalOrientation;
     private int mBackgroundColor;
     private int mIconColor;
+    private int mDisabledIconColor;
     private int mCurrentUiColor = Color.BLACK;
     private String mSearchText;
     private String mUntitledTitle;
@@ -258,6 +259,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         //TODO make sure dark theme flag gets set correctly
         mDarkTheme = mPreferences.getUseTheme() != 0 || isIncognito();
         mIconColor = mDarkTheme ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
+        mDisabledIconColor = mDarkTheme ? ContextCompat.getColor(this, R.color.icon_dark_theme_disabled) :
+                ContextCompat.getColor(this, R.color.icon_light_theme_disabled);
         mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
         // initialize background ColorDrawable
@@ -1361,13 +1364,44 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public void setForwardButtonEnabled(boolean enabled) {
+        if (mForwardMenuItem != null && mForwardMenuItem.getIcon() != null) {
+            int colorFilter;
+            if (enabled) {
+                colorFilter = mIconColor;
+            } else {
+                colorFilter = mDisabledIconColor;
+            }
+            mForwardMenuItem.getIcon().setColorFilter(colorFilter, PorterDuff.Mode.SRC_IN);
+            mForwardMenuItem.setIcon(mForwardMenuItem.getIcon());
+        }
+    }
+
+    @Override
+    public void setBackButtonEnabled(boolean enabled) {
+        if (mBackMenuItem != null && mBackMenuItem.getIcon() != null) {
+            int colorFilter;
+            if (enabled) {
+                colorFilter = mIconColor;
+            } else {
+                colorFilter = mDisabledIconColor;
+            }
+            mBackMenuItem.getIcon().setColorFilter(colorFilter, PorterDuff.Mode.SRC_IN);
+            mBackMenuItem.setIcon(mBackMenuItem.getIcon());
+        }
+    }
+
+    private MenuItem mBackMenuItem;
+    private MenuItem mForwardMenuItem;
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem back = menu.findItem(R.id.action_back);
-        MenuItem forward = menu.findItem(R.id.action_forward);
-        if (back != null && back.getIcon() != null)
-            back.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
-        if (forward != null && forward.getIcon() != null)
-            forward.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+        mBackMenuItem = menu.findItem(R.id.action_back);
+        mForwardMenuItem = menu.findItem(R.id.action_forward);
+        if (mBackMenuItem != null && mBackMenuItem.getIcon() != null)
+            mBackMenuItem.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+        if (mForwardMenuItem != null && mForwardMenuItem.getIcon() != null)
+            mForwardMenuItem.getIcon().setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         return super.onCreateOptionsMenu(menu);
     }
 

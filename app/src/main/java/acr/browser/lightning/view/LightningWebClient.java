@@ -97,6 +97,8 @@ public class LightningWebClient extends WebViewClient {
     public void onPageFinished(@NonNull WebView view, String url) {
         if (view.isShown()) {
             mUIController.updateUrl(url, true);
+            mUIController.setBackButtonEnabled(view.canGoBack());
+            mUIController.setForwardButtonEnabled(view.canGoForward());
             view.postInvalidate();
         }
         if (view.getTitle() == null || view.getTitle().isEmpty()) {
