@@ -1242,7 +1242,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void updateTabNumber(int number) {
-        if (mArrowImage != null) {
+        if (mArrowImage != null && mShowTabsInDrawer) {
             mArrowImage.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24),
                     Utils.dpToPx(24), ThemeUtils.getIconThemeColor(this, mDarkTheme), Utils.dpToPx(2.5f)));
         }
