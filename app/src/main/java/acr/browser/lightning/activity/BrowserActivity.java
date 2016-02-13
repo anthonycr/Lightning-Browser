@@ -1039,6 +1039,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mToolbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize));
         mToolbar.setMinimumHeight(toolbarSize);
         mToolbar.requestLayout();
+
+        if (mCurrentView != null && mFullScreen) {
+            showActionBar();
+            mCurrentView.setTranslationY(toolbarSize);
+            mToolbarLayout.setTranslationY(0);
+        }
     }
 
     public void closeBrowser() {
