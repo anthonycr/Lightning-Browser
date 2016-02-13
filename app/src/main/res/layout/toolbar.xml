@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
+<LinearLayout
     android:id="@+id/toolbar_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
@@ -9,20 +10,20 @@
     android:orientation="vertical">
 
     <FrameLayout
+        android:id="@+id/tabs_toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:id="@+id/tabs_toolbar_container"/>
+        android:layout_height="30dp"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:paddingBottom="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:paddingTop="2dp"
-        android:paddingBottom="0dp"
         custom:contentInsetEnd="0dp"
-        custom:contentInsetStart="0dp" />
+        custom:contentInsetStart="0dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,7 +36,7 @@
             android:layout_height="2dp"
             custom:backgroundColor="#00000000"
             custom:bidirectionalAnimate="false"
-            custom:progressColor="?attr/colorAccent" />
+            custom:progressColor="?attr/colorAccent"/>
     </LinearLayout>
 
 </LinearLayout>

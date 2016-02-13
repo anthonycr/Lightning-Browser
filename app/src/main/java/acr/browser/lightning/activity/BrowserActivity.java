@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -75,6 +76,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -154,6 +156,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
 
     // Toolbar Views
+    private Toolbar mToolbar;
     private AutoCompleteTextView mSearch;
     private ImageView mArrowImage;
 
@@ -252,8 +255,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private synchronized void initialize() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
 
         //TODO make sure dark theme flag gets set correctly
@@ -1022,6 +1025,20 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             showCloseDialog(mTabsManager.positionOf(currentTab));
         }
         return true;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int toolbarSize;
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            toolbarSize = Utils.dpToPx(56);
+        } else {
+            toolbarSize = Utils.dpToPx(48);
+        }
+        mToolbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize));
+        mToolbar.setMinimumHeight(toolbarSize);
+        mToolbar.requestLayout();
     }
 
     public void closeBrowser() {
