@@ -243,14 +243,6 @@ public class BrowserPresenter {
             onTabChanged(tab);
         }
 
-        // TODO Restore this
-        // new Handler().postDelayed(new Runnable() {
-        //    @Override
-        //    public void run() {
-        //        mDrawerListLeft.smoothScrollToPosition(mTabsManager.size() - 1);
-        //    }
-        // }, 300);
-
         mView.updateTabNumber(mTabsModel.size());
 
         return true;

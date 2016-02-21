@@ -21,6 +21,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.fragment.anim.HorizontalItemAnimator;
+import acr.browser.lightning.fragment.anim.VerticalItemAnimator;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -72,6 +75,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     @Nullable private LightningViewAdapter mTabsAdapter;
     private UIController mUiController;
+    private RecyclerView mRecyclerView;
 
     @Inject TabsManager tabsManager;
     @Inject Bus mBus;
@@ -122,11 +126,24 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 }
             });
         }
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
+        SimpleItemAnimator animator;
+        if (mShowInNavigationDrawer) {
+            animator = new VerticalItemAnimator();
+        } else {
+            animator = new HorizontalItemAnimator();
+        }
+        animator.setSupportsChangeAnimations(false);
+        animator.setAddDuration(200);
+        animator.setChangeDuration(0);
+        animator.setRemoveDuration(200);
+        animator.setMoveDuration(200);
+        mRecyclerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        mRecyclerView.setItemAnimator(animator);
+        mRecyclerView.setLayoutManager(layoutManager);
         mTabsAdapter = new LightningViewAdapter(mShowInNavigationDrawer);
-        recyclerView.setAdapter(mTabsAdapter);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mTabsAdapter);
+        mRecyclerView.setHasFixedSize(true);
         return view;
     }
 
@@ -211,6 +228,12 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public void tabAdded() {
         if (mTabsAdapter != null) {
             mTabsAdapter.notifyItemInserted(tabsManager.last());
+            mRecyclerView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mRecyclerView.smoothScrollToPosition(mTabsAdapter.getItemCount() - 1);
+                }
+            }, 500);
         }
     }
 
@@ -320,7 +343,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 }
                 holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
             }
-            holder.itemView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
 
         @Override
