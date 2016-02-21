@@ -570,7 +570,7 @@ public class LightningView {
      */
     public void setForegroundTab(boolean isForeground) {
         isForegroundTab = isForeground;
-        mEventBus.post(new BrowserEvents.TabsChanged());
+        mUIController.tabChanged(this);
     }
 
     /**

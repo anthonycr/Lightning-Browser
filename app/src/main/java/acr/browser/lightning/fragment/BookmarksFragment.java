@@ -57,22 +57,17 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
 
     // Managers
-    @Inject
-    BookmarkManager mBookmarkManager;
+    @Inject BookmarkManager mBookmarkManager;
 
     // Event bus
-    @Inject
-    Bus mEventBus;
+    @Inject Bus mEventBus;
 
     // Dialog builder
-    @Inject
-    LightningDialogBuilder mBookmarksDialogBuilder;
+    @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
-    @Inject
-    PreferenceManager mPreferenceManager;
+    @Inject PreferenceManager mPreferenceManager;
 
-    @Inject
-    TabsManager mTabsManager;
+    @Inject TabsManager mTabsManager;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;

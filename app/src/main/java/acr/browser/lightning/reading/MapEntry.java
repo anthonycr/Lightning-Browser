@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2010 Peter Karich <>
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * Simple impl of Map.Entry. So that we can have ordered maps.
- * 
+ *
  * @author Peter Karich, peat_hal ‘at’ users ‘dot’ sourceforge ‘dot’
  *         net
  */
@@ -60,13 +60,12 @@ public class MapEntry<K, V> implements Map.Entry<K, V>, Serializable {
     public boolean equals(Object obj) {
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof Map<?, ?>))
             return false;
-        final MapEntry<K, V> other = (MapEntry<K, V>) obj;
-        if (this.key != other.key && (this.key == null || !this.key.equals(other.key)))
-            return false;
-        return !(this.value != other.value && (this.value == null || !this.value
-                .equals(other.value)));
+        final MapEntry<?, ?> other = (MapEntry<?, ?>) obj;
+
+        return !(this.key != other.key && (this.key == null || !this.key.equals(other.key))) &&
+                !(this.value != other.value && (this.value == null || !this.value.equals(other.value)));
     }
 
     @Override

@@ -57,6 +57,7 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -96,6 +97,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
+import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
@@ -160,6 +162,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private AutoCompleteTextView mSearch;
     private ImageView mArrowImage;
 
+    // Current tab view being displayed
+    private View mCurrentView;
+
     // Full Screen Video Views
     private FrameLayout mFullscreenContainer;
     private VideoView mVideoView;
@@ -206,6 +211,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private Drawable mDeleteIcon, mRefreshIcon, mClearIcon, mIcon;
 
     private BrowserPresenter mPresenter;
+    private TabsView mTabsView;
 
     // Proxy
     @Inject ProxyUtils mProxyUtils;
@@ -283,6 +289,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mWebpageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, mDarkTheme);
 
         final TabsFragment tabsFragment = new TabsFragment();
+        mTabsView = tabsFragment;
         final int containerId = mShowTabsInDrawer ? R.id.left_drawer : R.id.tabs_toolbar_container;
         final Bundle tabsFragmentArguments = new Bundle();
         tabsFragmentArguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito());
@@ -552,31 +559,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             changeToolbarBackground(currentView.getFavicon(), null);
         }
 
-        if (mFullScreen) {
-            mToolbarLayout.setTranslationY(0);
-            int height = mToolbarLayout.getHeight();
-            if (height == 0) {
-                mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                height = mToolbarLayout.getMeasuredHeight();
-            }
-            if (currentWebView != null)
-                currentWebView.setTranslationY(height);
-            mBrowserFrame.setLayoutTransition(null);
-            if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
-                mUiLayout.removeView(mToolbarLayout);
-                mBrowserFrame.addView(mToolbarLayout);
-                mToolbarLayout.bringToFront();
-            }
-        } else {
-            mToolbarLayout.setTranslationY(0);
-            if (mBrowserFrame.findViewById(R.id.toolbar_layout) != null) {
-                mBrowserFrame.removeView(mToolbarLayout);
-                mUiLayout.addView(mToolbarLayout, 0);
-            }
-            mBrowserFrame.setLayoutTransition(new LayoutTransition());
-            if (currentWebView != null)
-                currentWebView.setTranslationY(0);
-        }
+        mToolbarLayout.setTranslationY(0);
+        mBrowserFrame.setLayoutTransition(new LayoutTransition());
+        initializeTabHeight();
+        mBrowserFrame.setTranslationY(0);
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
 
         switch (mPreferences.getSearchChoice()) {
@@ -828,7 +814,28 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         builder.show();
     }
 
-    private View mCurrentView;
+    @Override
+    public void notifyTabViewRemoved(int position) {
+        Log.d(Constants.TAG, "Notify Tab Removed: " + position);
+        mTabsView.tabRemoved(position);
+    }
+
+    @Override
+    public void notifyTabViewAdded() {
+        Log.d(Constants.TAG, "Notify Tab Added");
+        mTabsView.tabAdded();
+    }
+
+    @Override
+    public void notifyTabViewChanged(int position) {
+        Log.d(Constants.TAG, "Notify Tab Changed: " + position);
+        mTabsView.tabChanged(position);
+    }
+
+    @Override
+    public void tabChanged(LightningView tab) {
+        mPresenter.tabChangeOccurred(tab);
+    }
 
     @Override
     public void removeTabView() {
@@ -839,13 +846,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mBrowserFrame.removeAllViews();
 
         removeViewFromParent(mCurrentView);
-
-        if (mFullScreen) {
-            // mToolbarLayout has already been removed
-            mBrowserFrame.addView(mToolbarLayout);
-            mToolbarLayout.bringToFront();
-            mToolbarLayout.setTranslationY(0);
-        }
 
         mCurrentView = null;
 
@@ -862,7 +862,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void setTabView(@NonNull View view) {
+    public void setTabView(@NonNull final View view) {
         if (mCurrentView == view) {
             return;
         }
@@ -870,7 +870,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
 
-        final float translation = mToolbarLayout.getTranslationY();
         mBrowserFrame.removeAllViews();
 
         removeViewFromParent(view);
@@ -879,22 +878,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mBrowserFrame.addView(view, MATCH_PARENT);
 
         view.requestFocus();
-
-        if (mFullScreen) {
-            // mToolbarLayout has already been removed
-            mBrowserFrame.addView(mToolbarLayout);
-            mToolbarLayout.bringToFront();
-            Log.d(Constants.TAG, "Move view to browser frame");
-            int height = mToolbarLayout.getHeight();
-            if (height == 0) {
-                mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                height = mToolbarLayout.getMeasuredHeight();
-            }
-            view.setTranslationY(translation + height);
-            mToolbarLayout.setTranslationY(translation);
-        } else {
-            view.setTranslationY(0);
-        }
 
         mCurrentView = view;
 
@@ -1042,7 +1025,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         if (mCurrentView != null && mFullScreen) {
             showActionBar();
-            mCurrentView.setTranslationY(toolbarSize);
+            mBrowserFrame.setTranslationY(0);
             mToolbarLayout.setTranslationY(0);
         }
     }
@@ -1737,19 +1720,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public void hideActionBar() {
-        final WebView currentWebView = mTabsManager.getCurrentWebView();
         if (mFullScreen) {
-            if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
-                mUiLayout.removeView(mToolbarLayout);
-                mBrowserFrame.addView(mToolbarLayout);
-                mToolbarLayout.bringToFront();
-                Log.d(Constants.TAG, "Move view to browser frame");
-                mToolbarLayout.setTranslationY(0);
-                if (currentWebView != null) {
-                    currentWebView.setTranslationY(mToolbarLayout.getHeight());
-                }
-            }
-            if (mToolbarLayout == null || currentWebView == null)
+            if (mToolbarLayout == null || mBrowserFrame == null)
                 return;
 
             final int height = mToolbarLayout.getHeight();
@@ -1759,12 +1731,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
                         float trans = (1.0f - interpolatedTime) * height;
                         mToolbarLayout.setTranslationY(trans - height);
-                        currentWebView.setTranslationY(trans);
+                        mBrowserFrame.setTranslationY(trans - height);
                     }
                 };
                 show.setDuration(250);
                 show.setInterpolator(new DecelerateInterpolator());
-                currentWebView.startAnimation(show);
+                mBrowserFrame.startAnimation(show);
             }
         }
     }
@@ -1777,8 +1749,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void showActionBar() {
         if (mFullScreen) {
-            final WebView view = mTabsManager.getCurrentWebView();
-
             if (mToolbarLayout == null)
                 return;
 
@@ -1788,16 +1758,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 height = mToolbarLayout.getMeasuredHeight();
             }
 
-            if (mBrowserFrame.findViewById(R.id.toolbar_layout) == null) {
-                mUiLayout.removeView(mToolbarLayout);
-                mBrowserFrame.addView(mToolbarLayout);
-                mToolbarLayout.bringToFront();
-                Log.d(Constants.TAG, "Move view to browser frame");
-                mToolbarLayout.setTranslationY(0);
-                if (view != null) {
-                    view.setTranslationY(height);
-                }
-            }
             final LightningView currentTab = mTabsManager.getCurrentTab();
             if (currentTab == null)
                 return;
@@ -1809,18 +1769,44 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
                         float trans = interpolatedTime * totalHeight;
                         mToolbarLayout.setTranslationY(trans - totalHeight);
-                        // null pointer here on close
-                        if (view != null)
-                            view.setTranslationY(trans);
+                        mBrowserFrame.setTranslationY(trans - totalHeight);
                     }
                 };
                 show.setDuration(250);
                 show.setInterpolator(new DecelerateInterpolator());
-                if (view != null) {
-                    view.startAnimation(show);
-                }
+                mBrowserFrame.startAnimation(show);
             }
         }
+    }
+
+    private void initializeTabHeight() {
+        mUiLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                setTabHeight();
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    mUiLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    mUiLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
+
+    }
+
+    private void setTabHeight() {
+        if (mUiLayout.getHeight() == 0) {
+            mUiLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        }
+
+        if (mFullScreen) {
+            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, mUiLayout.getHeight()));
+        } else {
+            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        }
+
+        mBrowserFrame.requestLayout();
     }
 
     /**

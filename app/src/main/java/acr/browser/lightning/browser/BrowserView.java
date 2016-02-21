@@ -29,4 +29,10 @@ public interface BrowserView {
 
     void setBackButtonEnabled(boolean enabled);
 
+    void notifyTabViewRemoved(int position);
+
+    void notifyTabViewAdded();
+
+    void notifyTabViewChanged(int position);
+
 }

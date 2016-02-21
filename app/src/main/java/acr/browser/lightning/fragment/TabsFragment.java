@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
@@ -53,7 +54,7 @@ import acr.browser.lightning.view.LightningView;
  * to change. This class contains the adapter used by both the drawer tabs and
  * the desktop tabs. It delegates touch events for the tab UI appropriately.
  */
-public class TabsFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class TabsFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, TabsView {
 
     private static final String TAG = TabsFragment.class.getSimpleName();
 
@@ -206,6 +207,27 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         return true;
     }
 
+    @Override
+    public void tabAdded() {
+        if (mTabsAdapter != null) {
+            mTabsAdapter.notifyItemInserted(tabsManager.last());
+        }
+    }
+
+    @Override
+    public void tabRemoved(int position) {
+        if (mTabsAdapter != null) {
+            mTabsAdapter.notifyItemRemoved(position);
+        }
+    }
+
+    @Override
+    public void tabChanged(int position) {
+        if (mTabsAdapter != null) {
+            mTabsAdapter.notifyItemChanged(position);
+        }
+    }
+
     public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
 
         private final int mLayoutResourceId;
@@ -298,6 +320,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 }
                 holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
             }
+            holder.itemView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
 
         @Override

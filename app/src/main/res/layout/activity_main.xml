@@ -1,10 +1,10 @@
 <!-- Copyright 2014 ACR Development -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@null"
-    android:orientation="vertical">
+<LinearLayout android:id="@+id/main_layout"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@null"
+              android:orientation="vertical">
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -18,30 +18,30 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <include layout="@layout/toolbar" />
+            <include layout="@layout/toolbar"/>
 
-            <include layout="@layout/browser_content" />
+            <include layout="@layout/browser_content"/>
 
-            <include layout="@layout/search_interface" />
+            <include layout="@layout/search_interface"/>
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/left_drawer"
             android:layout_width="@dimen/navigation_width"
             android:layout_height="match_parent"
-            android:background="?attr/drawerBackground"
-            android:id="@+id/left_drawer"
-            android:fitsSystemWindows="true"
             android:layout_gravity="start"
-            android:weightSum="1" />
+            android:background="?attr/drawerBackground"
+            android:fitsSystemWindows="true"
+            android:weightSum="1"/>
 
         <FrameLayout
-            android:weightSum="1"
-            android:layout_gravity="end"
-            android:fitsSystemWindows="true"
             android:id="@+id/right_drawer"
-            android:background="?attr/drawerBackground"
             android:layout_width="@dimen/navigation_width"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="?attr/drawerBackground"
+            android:fitsSystemWindows="true"
+            android:weightSum="1"/>
 
     </android.support.v4.widget.DrawerLayout>
 

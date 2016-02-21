@@ -67,6 +67,10 @@ public class BrowserPresenter {
                 });
     }
 
+    public void tabChangeOccurred(LightningView tab) {
+        mView.notifyTabViewChanged(mTabsModel.indexOfTab(tab));
+    }
+
     private void onTabChanged(@Nullable LightningView newTab) {
         Log.d(TAG, "On tab changed");
         if (newTab == null) {
@@ -95,6 +99,7 @@ public class BrowserPresenter {
                 mView.setForwardButtonEnabled(newTab.canGoForward());
                 mView.updateUrl(newTab.getUrl(), true);
                 mView.setTabView(newTab.getWebView());
+                mView.notifyTabViewChanged(mTabsModel.indexOfTab(newTab));
             }
         }
 
@@ -141,6 +146,7 @@ public class BrowserPresenter {
             }
         }
         final LightningView afterTab = mTabsModel.getCurrentTab();
+        mView.notifyTabViewRemoved(position);
         if (afterTab == null) {
             mView.closeBrowser();
             return;
@@ -150,9 +156,8 @@ public class BrowserPresenter {
 //            if (currentTab != null) {
 //                currentTab.pauseTimers();
 //            }
+            mView.notifyTabViewChanged(mTabsModel.indexOfCurrentTab());
         }
-
-        mEventBus.post(new BrowserEvents.TabsChanged());
 
         if (shouldClose) {
             mIsNewIntent = false;
@@ -231,8 +236,10 @@ public class BrowserPresenter {
             startingTab.resumeTimers();
         }
 
+        mView.notifyTabViewAdded();
+
         if (show) {
-            LightningView tab = mTabsModel.switchToTab(mTabsModel.size() - 1);
+            LightningView tab = mTabsModel.switchToTab(mTabsModel.last());
             onTabChanged(tab);
         }
 

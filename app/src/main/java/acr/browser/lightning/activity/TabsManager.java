@@ -397,6 +397,15 @@ public class TabsManager {
     }
 
     /**
+     * Returns the index of the tab.
+     *
+     * @return Return the index of the tab, or -1 if the tab isn't in the list.
+     */
+    public int indexOfTab(LightningView tab) {
+        return mTabList.indexOf(tab);
+    }
+
+    /**
      * Return the current {@link LightningView} or null if
      * no current tab has been set.
      *

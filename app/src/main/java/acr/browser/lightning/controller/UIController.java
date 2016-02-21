@@ -59,4 +59,6 @@ public interface UIController {
 
     void setBackButtonEnabled(boolean enabled);
 
+    void tabChanged(LightningView tab);
+
 }

@@ -110,7 +110,7 @@ public class LightningWebClient extends WebViewClient {
                 mLightningView.getInvertePage()) {
             view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
         }
-        mEventBus.post(new BrowserEvents.TabsChanged());
+        mUIController.tabChanged(mLightningView);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class LightningWebClient extends WebViewClient {
             mUIController.updateUrl(url, false);
             mUIController.showActionBar();
         }
-        mEventBus.post(new BrowserEvents.TabsChanged());
+        mUIController.tabChanged(mLightningView);
     }
 
     @Override
