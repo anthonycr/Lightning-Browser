@@ -273,7 +273,6 @@ public class TabsManager {
             mCurrentTab = null;
         }
         tab.onDestroy();
-        Log.d(Constants.TAG, tab.toString());
     }
 
     /**

@@ -560,7 +560,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         mToolbarLayout.setTranslationY(0);
-        mBrowserFrame.setLayoutTransition(new LayoutTransition());
+        // TODO layout transition causing memory leak
+//        mBrowserFrame.setLayoutTransition(new LayoutTransition());
         initializeTabHeight();
         mBrowserFrame.setTranslationY(0);
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
@@ -1023,7 +1024,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mToolbar.setMinimumHeight(toolbarSize);
         mToolbar.requestLayout();
 
-        if (mCurrentView != null && mFullScreen) {
+        if (mFullScreen) {
             showActionBar();
             mBrowserFrame.setTranslationY(0);
             mToolbarLayout.setTranslationY(0);
@@ -1033,11 +1034,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
-        LightningView currentTab = mTabsManager.getCurrentTab();
-        if (currentTab != null && currentTab.getWebView() != null) {
-            mBrowserFrame.removeView(currentTab.getWebView());
-        }
+        mBrowserFrame.removeAllViews();
         mTabsManager.shutdown();
+        mCurrentView = null;
         mEventBus.post(new BrowserEvents.TabsChanged());
         finish();
     }
