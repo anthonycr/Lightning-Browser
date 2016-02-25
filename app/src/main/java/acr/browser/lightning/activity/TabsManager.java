@@ -47,6 +47,9 @@ public class TabsManager {
     @Nullable private LightningView mCurrentTab;
     @Nullable private TabNumberChangedListener mTabNumberListener;
 
+    private boolean mIsInitialized = false;
+    private List<Runnable> mPostInitializationWorkList = new ArrayList<>();
+
     @Inject PreferenceManager mPreferenceManager;
     @Inject Bus mEventBus;
     @Inject Application mApp;
@@ -64,8 +67,9 @@ public class TabsManager {
         mTabNumberListener = listener;
     }
 
-    private boolean mIsInitialized = false;
-    private List<Runnable> mPostInitializationWorkList = new ArrayList<>();
+    public void cancelPendingWork() {
+        mPostInitializationWorkList.clear();
+    }
 
     public void doAfterInitialization(@NonNull Runnable runnable) {
         if (mIsInitialized) {

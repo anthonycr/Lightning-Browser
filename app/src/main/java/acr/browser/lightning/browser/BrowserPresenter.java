@@ -216,6 +216,7 @@ public class BrowserPresenter {
     public void shutdown() {
         onTabChanged(null);
         mTabsModel.setTabNumberChangedListener(null);
+        mTabsModel.cancelPendingWork();
     }
 
     public void tabChanged(int position) {
