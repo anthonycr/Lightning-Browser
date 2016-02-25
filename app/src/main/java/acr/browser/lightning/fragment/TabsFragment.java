@@ -138,7 +138,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         animator.setChangeDuration(0);
         animator.setRemoveDuration(200);
         animator.setMoveDuration(200);
-        mRecyclerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        mRecyclerView.setLayerType(View.LAYER_TYPE_NONE, null);
         mRecyclerView.setItemAnimator(animator);
         mRecyclerView.setLayoutManager(layoutManager);
         mTabsAdapter = new LightningViewAdapter(mShowInNavigationDrawer);

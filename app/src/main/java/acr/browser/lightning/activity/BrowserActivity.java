@@ -276,8 +276,30 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mBackground.setColor(((ColorDrawable) mToolbarLayout.getBackground()).getColor());
 
         // Drawer stutters otherwise
-        mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        mDrawerLeft.setLayerType(View.LAYER_TYPE_NONE, null);
+        mDrawerRight.setLayerType(View.LAYER_TYPE_NONE, null);
+
+        mDrawerLayout.addDrawerListener(new DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {}
+
+            @Override
+            public void onDrawerOpened(View drawerView) {}
+
+            @Override
+            public void onDrawerClosed(View drawerView) {}
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                if (newState == DrawerLayout.STATE_DRAGGING) {
+                    mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                    mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                } else if (newState == DrawerLayout.STATE_IDLE) {
+                    mDrawerLeft.setLayerType(View.LAYER_TYPE_NONE, null);
+                    mDrawerRight.setLayerType(View.LAYER_TYPE_NONE, null);
+                }
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mShowTabsInDrawer) {
             getWindow().setStatusBarColor(Color.BLACK);
@@ -329,8 +351,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mArrowImage = (ImageView) customView.findViewById(R.id.arrow);
         FrameLayout arrowButton = (FrameLayout) customView.findViewById(R.id.arrow_button);
         if (mShowTabsInDrawer) {
-            // Use hardware acceleration for the animation
-            mArrowImage.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             if (mArrowImage.getWidth() <= 0) {
                 mArrowImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             }
