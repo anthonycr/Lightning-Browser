@@ -169,33 +169,38 @@ public class BrowserPresenter {
         Log.d(Constants.TAG, "deleted tab");
     }
 
-    public void onNewIntent(Intent intent) {
-        final String url;
-        if (intent != null) {
-            url = intent.getDataString();
-        } else {
-            url = null;
-        }
-        int num = 0;
-        if (intent != null && intent.getExtras() != null) {
-            num = intent.getExtras().getInt(Constants.INTENT_ORIGIN);
-        }
+    public void onNewIntent(final Intent intent) {
+        mTabsModel.doAfterInitialization(new Runnable() {
+            @Override
+            public void run() {
+                final String url;
+                if (intent != null) {
+                    url = intent.getDataString();
+                } else {
+                    url = null;
+                }
+                int num = 0;
+                if (intent != null && intent.getExtras() != null) {
+                    num = intent.getExtras().getInt(Constants.INTENT_ORIGIN);
+                }
 
-        if (num == 1) {
-            loadUrlInCurrentView(url);
-        } else if (url != null) {
-            if (url.startsWith(Constants.FILE)) {
-                mView.showBlockedLocalFileDialog(new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                if (num == 1) {
+                    loadUrlInCurrentView(url);
+                } else if (url != null) {
+                    if (url.startsWith(Constants.FILE)) {
+                        mView.showBlockedLocalFileDialog(new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                newTab(url, true);
+                            }
+                        });
+                    } else {
                         newTab(url, true);
                     }
-                });
-            } else {
-                newTab(url, true);
+                    mIsNewIntent = true;
+                }
             }
-            mIsNewIntent = true;
-        }
+        });
     }
 
     public void loadUrlInCurrentView(final String url) {

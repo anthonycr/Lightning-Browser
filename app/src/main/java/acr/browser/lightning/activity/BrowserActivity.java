@@ -549,7 +549,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void initializePreferences() {
         final LightningView currentView = mTabsManager.getCurrentTab();
-        final WebView currentWebView = mTabsManager.getCurrentWebView();
         mFullScreen = mPreferences.getFullScreenEnabled();
         boolean colorMode = mPreferences.getColorModeEnabled();
         colorMode &= !mDarkTheme;

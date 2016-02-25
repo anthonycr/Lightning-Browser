@@ -64,6 +64,24 @@ public class TabsManager {
         mTabNumberListener = listener;
     }
 
+    private boolean mIsInitialized = false;
+    private List<Runnable> mPostInitializationWorkList = new ArrayList<>();
+
+    public void doAfterInitialization(@NonNull Runnable runnable) {
+        if (mIsInitialized) {
+            runnable.run();
+        } else {
+            mPostInitializationWorkList.add(runnable);
+        }
+    }
+
+    private void finishInitialization() {
+        mIsInitialized = true;
+        for (Runnable runnable : mPostInitializationWorkList) {
+            runnable.run();
+        }
+    }
+
     /**
      * Restores old tabs that were open before the browser
      * was closed. Handles the intent used to open the browser.
@@ -79,10 +97,12 @@ public class TabsManager {
             @Override
             public void onSubscribe(@NonNull final Subscriber<Void> subscriber) {
 
+                // Make sure we start with a clean tab list
+                shutdown();
 
                 // If incognito, only create one tab, do not handle intent
                 // in order to protect user privacy
-                if (incognito && mTabList.isEmpty()) {
+                if (incognito) {
                     newTab(activity, null, true);
                     subscriber.onComplete();
                     return;
@@ -93,10 +113,12 @@ public class TabsManager {
                     dataString = intent.getDataString();
                 }
                 final String url = dataString;
-                mTabList.clear();
                 mCurrentTab = null;
                 if (mPreferenceManager.getRestoreLostTabsEnabled()) {
                     restoreLostTabs(url, activity, subscriber);
+                } else {
+                    newTab(activity, null, false);
+                    finishInitialization();
                 }
 
             }
@@ -138,6 +160,7 @@ public class TabsManager {
                 if (mTabList.size() == 0) {
                     newTab(activity, null, false);
                 }
+                finishInitialization();
                 subscriber.onComplete();
             }
         });
