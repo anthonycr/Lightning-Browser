@@ -1,5 +1,4 @@
 <resources>
-
     <string name="app_name">Lightning</string>
     <string name="action_new_tab">Nueva pestaña</string>
     <string name="action_share">Compartir</string>
@@ -9,19 +8,19 @@
     <string name="action_copy">Copiar enlace</string>
     <string name="action_forward">Adelante</string>
     <string name="settings">Ajustes</string>
-    <string name="location">Acceder a tu ubicación</string>
-    <string name="password">Almacenar contraseñas</string>
+    <string name="location">Acceso a tu ubicación</string>
+    <string name="password">Almacenar tus contraseñas</string>
     <string name="agent">Agente de usuario</string>
     <string name="flash">Habilitar Adobe Flash</string>
     <string name="home">Página de inicio</string>
-    <string name="fullscreen">Habilitar pantalla completa</string>
+    <string name="fullscreen">Modo de pantalla completa</string>
     <string name="java">Habilitar JavaScript</string>
     <string name="download">Ruta de descargas</string>
     <string name="settings_advanced">Ajustes avanzados</string>
-    <string name="apache">Apache License 2.0</string>
+    <string name="apache">Licencia Apache 2.0</string>
     <string name="version">Versión</string>
     <string name="cache">Vaciar caché al salir</string>
-    <string name="reflow">Activar el Text Reflow</string>
+    <string name="reflow">Activar la recolocación dinámica de texto</string>
     <string name="block">Bloquear imágenes</string>
     <string name="window">Permitir a los sitios abrir nuevas ventanas</string>
     <string name="cookies">Habilitar cookies</string>
@@ -30,11 +29,11 @@
     <string name="recommended">(Recomendado)</string>
     <string name="search">Motor de búsqueda</string>
     <string name="search_hint">Buscar</string>
-    <string name="wideViewPort">Utilizar viewport normal</string>
+    <string name="wideViewPort">Utilizar ventana de visualización normal</string>
     <string name="overViewMode">Visualizar la página de lejos al cargar</string>
     <string name="restore">Restaurar pestañas cerradas al iniciar</string>
-    <string name="stock_browser_unavailable">(No se detecta navegador de sistema)</string>
-    <string name="stock_browser_available">(Detectado navegador de sistema soportado)</string>
+    <string name="stock_browser_unavailable">Navegador de sistema no detectado</string>
+    <string name="stock_browser_available">Detectado navegador de sistema soportado</string>
     <string name="fullScreenOption">Ocultar barra de estado al navegar</string>
     <string name="clear_cookies">Limpiar cookies</string>
     <string name="clear_history">Limpiar historial</string>
@@ -57,7 +56,7 @@
     <string name="title_warning">Aviso</string>
     <string name="dialog_adobe_not_installed">No se detecta Adobe Flash Player.\nPor favor, instálalo.</string>
     <string name="title_user_agent">Agente de usuario</string>
-    <string name="title_download_location">Ruta de descargas</string>
+    <string name="title_download_location">Ruta para las descargas</string>
     <string name="title_custom_homepage">Página de inicio personalizada</string>
     <string name="action_webpage">Página web</string>
     <string name="title_clear_history">Borrar historial</string>
@@ -67,27 +66,27 @@
     <string name="action_yes">Sí</string>
     <string name="action_no">No</string>
     <string name="title_text_size">Tamaño de la tipografía</string>
-    <string name="size_largest">Más grande</string>
+    <string name="size_largest">Muy grande</string>
     <string name="size_large">Grande</string>
     <string name="size_normal">Normal</string>
     <string name="size_small">Pequeño</string>
-    <string name="size_smallest">Más pequeño</string>
+    <string name="size_smallest">Muy pequeño</string>
     <string name="title_error">Error</string>
     <string name="dialog_import_error">No se ha detectado navegador del cual importar marcadores.</string>
     <string name="hint_title">Título</string>
-    <string name="hint_url">URL</string>
+    <string name="hint_url">Dirección URL</string>
     <string name="title_edit_bookmark">Editar marcador</string>
     <string name="action_edit">Editar</string>
-    <string name="action_incognito">Nueva pestaña privada</string>
+    <string name="action_incognito">Nueva pestaña de incógnito</string>
     <string name="action_homepage">Por defecto</string>
     <string name="action_back">Atrás</string>
     <string name="action_find">Buscar en la página</string>
     <string name="download_pending">Iniciando descarga\u2026</string>
-    <string name="cannot_download">Sólo se puede descargar de URLs \"http\" o \"https\".</string>
-    <string name="download_no_sdcard_dlg_title" >No hay tarjeta SD</string>
-    <string name="download_no_sdcard_dlg_msg" >Se requiere de almacenamiento USB para descargar el archivo.</string>
+    <string name="cannot_download">Sólo se puede descargar de direcciones \"http\" o \"https\".</string>
+    <string name="download_no_sdcard_dlg_title">No hay tarjeta SD</string>
+    <string name="download_no_sdcard_dlg_msg">Se requiere de almacenamiento USB para descargar el archivo.</string>
     <string name="download_sdcard_busy_dlg_title">Almacenamiento USB no disponible</string>
-    <string name="download_sdcard_busy_dlg_msg" >El almacenamiento está ocupado. Para permitir las descargar, desactiva el almacenamiento USB desde el área de notificación.</string>
+    <string name="download_sdcard_busy_dlg_msg">El almacenamiento está ocupado. Para permitir las descargar, desactiva el almacenamiento USB desde el área de notificación.</string>
     <string name="incognito_cookies">Habilitar cookies en el modo incógnito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -95,14 +94,14 @@
     <string name="action_follow_me">Contáctame</string>
     <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Limpiar caché</string>
-    <string name="message_cache_cleared">La caché se ha borrado</string>
-    <string name="message_import">Los marcadores se han importado</string>
-    <string name="message_clear_history">El historial se ha borrado</string>
-    <string name="message_cookies_cleared">Las cookies se han borrado</string>
+    <string name="message_cache_cleared">La caché ha sido borrada</string>
+    <string name="message_import">Se han importado los marcadores</string>
+    <string name="message_clear_history">El historial ha sido borrado</string>
+    <string name="message_cookies_cleared">Las cookies han sido borradas</string>
     <string name="max_tabs">Se ha alcanzado el máximo de pestañas</string>
-    <string name="message_text_copied">El texto se ha copiado al portapapeles</string>
+    <string name="message_text_copied">El texto ha sido copiado al portapapeles</string>
     <string name="message_link_copied">El enlace se ha copiado al portapapeles</string>
-    <string name="custom_url">URL personalizada</string>
+    <string name="custom_url">Dirección personalizada</string>
     <string name="message_blocked_local">Se ha bloqueado la carga del archivo local</string>
     <string name="licenses">Licencias de código abierto (open source)</string>
     <string name="suggestion">Buscar</string>
@@ -113,7 +112,7 @@
     <string name="action_allow">Permitir</string>
     <string name="action_dont_allow">No permitir</string>
     <string name="title_sign_in">Iniciar sesión</string>
-    <string name="hint_username">Usuario</string>
+    <string name="hint_username">Nombre de usuario</string>
     <string name="hint_password">Contraseña</string>
     <string name="search_suggestions">Sugerencias de búsqueda</string>
     <string name="powered_by_google">Proporcionadas por Google</string>
@@ -127,7 +126,7 @@
     <string name="folder_custom">Personalizado</string>
     <string name="untitled">Sin título</string>
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
-    <string name="freeware">Freeware</string>
+    <string name="freeware">Software gratuito</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
     <string name="deleted_tab">Pestaña reabierta</string>
@@ -137,15 +136,15 @@
     <string name="name_inverted_grayscale">Escala de grises invertida</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sincronizar historial con Google</string>
-    <string name="title_file_chooser">Selector de archivo</string>
+    <string name="title_file_chooser">Selector de archivos</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
-    <string name="export_bookmarks">Exportar marcadores a la copia de seguridad</string>
-    <string name="import_backup">Importar marcadores a una copia de seguridad</string>
+    <string name="export_bookmarks">Exportar marcadores a una copia de seguridad</string>
+    <string name="import_backup">Importar marcadores desde una copia de seguridad</string>
     <string name="bookmark_export_path">Marcadores exportados a</string>
     <string name="bookmark_settings">Ajustes de marcadores</string>
     <string name="import_bookmark_error">No se pudo importar los marcadores del archivo</string>
-    <string name="title_chooser">Elija un archivo</string>
+    <string name="title_chooser">Elige un archivo</string>
     <string name="settings_general">Ajustes generales</string>
     <string name="settings_display">Ajustes de pantalla</string>
     <string name="settings_privacy">Ajustes de privacidad</string>
@@ -157,17 +156,49 @@
     <string name="color_mode">Habilitar modo de color</string>
     <string name="reading_mode">Modo de lectura</string>
     <string name="loading">Cargando&#8230;</string>
-    <string name="loading_failed">No se pudo extraer contenido de la página.</string>
+    <string name="loading_failed">No se pudo cargar de la página.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
-    <string name="mit_license">MIT License</string>
-    <string name="url_contents">Contenido de la caja de la URL</string>
+    <string name="mit_license">Licencia MIT</string>
+    <string name="url_contents">Contenido de la caja de la dirección</string>
     <string-array name="url_content_array">
-        <item >Dominio (por defecto)</item>
-        <item >URL</item>
-        <item >Título</item>
+        <item>Dominio (por defecto)</item>
+        <item>Dirección URL</item>
+        <item>Título</item>
     </string-array>
     <string name="invert_color">Invertir color</string>
-    <string name="dark_theme">Usar tema oscuro</string>
+    <string name="dark_theme">Tema oscuro</string>
     <string name="tabs">Pestañas</string>
+    <string name="action_folder">Carpeta</string>
+    <string name="action_rename">Renombrar</string>
+    <string name="black_theme">Tema negro (AMOLED)</string>
+    <string name="clear_web_storage">Vaciar almacenamiento web</string>
+    <string name="clear_web_storage_exit">Vaciar almacenamiento web al salir</string>
+    <string name="dialog_folder">¿Qué quieres hacer con esta carpeta?</string>
+    <string name="dialog_history_long_press">¿Qué quieres hacer con este elemento del historial?</string>
+    <string name="folder">Nombre de la carpeta</string>
+    <string name="hosts_source">Fichero hosts para filtrado de anuncios</string>
+    <string name="http_proxy">Proxy HTTP</string>
+    <string name="i2p_not_running">I2P no está corriendo.</string>
+    <string name="i2p_tunnels_not_ready">Los túneles I2P no están preparados aún.</string>
+    <string name="light_theme">Tema claro</string>
+    <string name="manual_proxy">Proxy manual</string>
+    <string name="message_certificate_date_invalid">la fecha del certificado no es válida</string>
+    <string name="message_certificate_domain_mismatch">el dominio en el certificado no corresponde al dominio del sitio</string>
+    <string name="message_certificate_expired">el certificado expiró</string>
+    <string name="message_certificate_invalid">el certificado no es válido</string>
+    <string name="message_certificate_not_yet_valid">el certificado no es válido todavía</string>
+    <string name="message_certificate_untrusted">el certificado no es confiable</string>
+    <string name="message_insecure_connection">La conexión a este sitio no es segura:\n%1$s\n¿Continuar en cualquier caso?</string>
+    <string name="message_web_storage_cleared">El almacenamiento web ha sido borrado</string>
+    <string name="port">Puerto:</string>
+    <string name="problem_download">La dirección no es válida, no se pudo descargar</string>
+    <string name="problem_location_download">No se pudo descargar en la localización específica</string>
+    <string name="settings_adblock">Ajustes del bloqueo de anuncios</string>
+    <string name="tabs_in_drawer">Mostrar pestañas en el menú lateral</string>
+    <string name="text_encoding">Codificación del texto</string>
+    <string name="theme">Tema gráfico de la aplicación</string>
+    <string name="title_rename_folder">Renombrar carpeta</string>
+    <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
+    <string name="host">Servidor:</string>
 </resources>
