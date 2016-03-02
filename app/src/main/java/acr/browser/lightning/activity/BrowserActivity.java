@@ -1068,7 +1068,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mTabsManager.shutdown();
         mCurrentView = null;
         for (int n = 0; n < size; n++) {
-            mTabsView.tabRemoved(n);
+            mTabsView.tabRemoved(0);
         }
         finish();
     }
