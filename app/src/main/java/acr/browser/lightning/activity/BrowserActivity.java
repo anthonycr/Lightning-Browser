@@ -5,7 +5,6 @@
 package acr.browser.lightning.activity;
 
 import android.animation.ArgbEvaluator;
-import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
@@ -132,6 +131,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
 
     // Static Layout
+    @Bind(R.id.main_layout)
+    View mRootLayout;
+
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
@@ -1031,23 +1033,31 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        int toolbarSize;
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            toolbarSize = Utils.dpToPx(56);
-        } else {
-            toolbarSize = Utils.dpToPx(48);
-        }
-        mToolbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize));
-        mToolbar.setMinimumHeight(toolbarSize);
-        mToolbar.requestLayout();
 
         if (mFullScreen) {
             showActionBar();
             mBrowserFrame.setTranslationY(0);
             mToolbarLayout.setTranslationY(0);
         }
+
+        initializeTabHeight();
+
+        doOnLayout(mRootLayout, new Runnable() {
+            @Override
+            public void run() {
+                int toolbarSize;
+                if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    toolbarSize = Utils.dpToPx(56);
+                } else {
+                    toolbarSize = Utils.dpToPx(48);
+                }
+                mToolbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize));
+                mToolbar.setMinimumHeight(toolbarSize);
+                mToolbar.requestLayout();
+            }
+        });
     }
 
     public void closeBrowser() {
@@ -1798,28 +1808,35 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private void initializeTabHeight() {
-        mUiLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        doOnLayout(mRootLayout, new Runnable() {
             @Override
-            public void onGlobalLayout() {
+            public void run() {
                 setTabHeight();
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    mUiLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    mUiLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
             }
         });
+    }
 
+    private static void doOnLayout(@NonNull final View view, @NonNull final Runnable runnable) {
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                runnable.run();
+            }
+        });
     }
 
     private void setTabHeight() {
-        if (mUiLayout.getHeight() == 0) {
-            mUiLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        if (mRootLayout.getHeight() == 0) {
+            mRootLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         }
 
         if (mFullScreen) {
-            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, mUiLayout.getHeight()));
+            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, mRootLayout.getHeight()));
         } else {
             mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
