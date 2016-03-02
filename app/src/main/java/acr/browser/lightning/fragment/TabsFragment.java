@@ -183,13 +183,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         mBus.unregister(this);
     }
 
-    @Subscribe
-    public void tabsChanged(final BrowserEvents.TabsChanged event) {
-        if (mTabsAdapter != null) {
-            mTabsAdapter.notifyDataSetChanged();
-        }
-    }
-
     @Override
     public void onClick(@NonNull View v) {
         switch (v.getId()) {

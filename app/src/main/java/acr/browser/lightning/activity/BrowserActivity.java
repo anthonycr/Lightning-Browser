@@ -1064,9 +1064,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
         performExitCleanUp();
         mBrowserFrame.removeAllViews();
+        int size = mTabsManager.size();
         mTabsManager.shutdown();
         mCurrentView = null;
-        mEventBus.post(new BrowserEvents.TabsChanged());
+        for (int n = 0; n < size; n++) {
+            mTabsView.tabRemoved(n);
+        }
         finish();
     }
 
@@ -1393,8 +1396,39 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mDrawerLayout.openDrawer(mDrawerRight);
     }
 
-    void closeDrawers() {
+    /**
+     * This method closes any open drawer and executes
+     * the runnable after the drawers are completely closed.
+     *
+     * @param runnable an optional runnable to run after
+     *                 the drawers are closed.
+     */
+    void closeDrawers(@Nullable final Runnable runnable) {
+        if (!mDrawerLayout.isDrawerOpen(mDrawerLeft) && !mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+            if (runnable != null) {
+                runnable.run();
+                return;
+            }
+        }
         mDrawerLayout.closeDrawers();
+        mDrawerLayout.addDrawerListener(new DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {}
+
+            @Override
+            public void onDrawerOpened(View drawerView) {}
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                if (runnable != null) {
+                    runnable.run();
+                }
+                mDrawerLayout.removeDrawerListener(this);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {}
+        });
     }
 
     @Override
@@ -1913,7 +1947,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             case R.id.action_toggle_desktop:
                 currentTab.toggleDesktopUA(this);
                 currentTab.reload();
-                closeDrawers();
+                closeDrawers(null);
                 break;
         }
     }
@@ -2174,7 +2208,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             final LightningView currentTab = mTabsManager.getCurrentTab();
             if (currentTab != null) {
                 currentTab.loadHomepage();
-                closeDrawers();
+                closeDrawers(null);
             }
         }
 

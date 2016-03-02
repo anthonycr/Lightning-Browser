@@ -41,12 +41,6 @@ public final class BrowserEvents {
     }
 
     /**
-     * Notify that the user closed or opened a tab
-     */
-    public static class TabsChanged {
-    }
-
-    /**
      *
      */
 

@@ -65,9 +65,13 @@ public class MainActivity extends BrowserActivity {
 
     @Override
     public void closeActivity() {
-        closeDrawers();
-        performExitCleanUp();
-        moveTaskToBack(true);
+        closeDrawers(new Runnable() {
+            @Override
+            public void run() {
+                performExitCleanUp();
+                moveTaskToBack(true);
+            }
+        });
     }
 
 

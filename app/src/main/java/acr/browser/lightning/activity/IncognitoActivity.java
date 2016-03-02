@@ -61,7 +61,11 @@ public class IncognitoActivity extends BrowserActivity {
 
     @Override
     public void closeActivity() {
-        closeDrawers();
-        closeBrowser();
+        closeDrawers(new Runnable() {
+            @Override
+            public void run() {
+                closeBrowser();
+            }
+        });
     }
 }
