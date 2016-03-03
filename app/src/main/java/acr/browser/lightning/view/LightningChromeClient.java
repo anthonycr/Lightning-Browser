@@ -1,6 +1,7 @@
 package acr.browser.lightning.view;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
@@ -31,12 +33,13 @@ import acr.browser.lightning.utils.Preconditions;
 
 class LightningChromeClient extends WebChromeClient {
 
+    private static final String TAG = LightningChromeClient.class.getSimpleName();
+
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @NonNull private final Activity mActivity;
     @NonNull private final LightningView mLightningView;
     @NonNull private final UIController mUIController;
-    @NonNull private final Bus eventBus;
 
     LightningChromeClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         Preconditions.checkNonNull(activity);
@@ -44,7 +47,6 @@ class LightningChromeClient extends WebChromeClient {
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
-        eventBus = BrowserApp.getBus(activity);
     }
 
     @Override
@@ -158,6 +160,7 @@ class LightningChromeClient extends WebChromeClient {
         mUIController.openFileChooser(uploadMsg);
     }
 
+    @Override
     public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
                                      WebChromeClient.FileChooserParams fileChooserParams) {
         mUIController.showFileChooser(filePathCallback);
