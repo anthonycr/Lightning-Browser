@@ -1841,6 +1841,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /**
+     * This method initializes the height of the
+     * view that holds the current WebView. It waits
+     * for the root layout to be laid out before setting
+     * the height as it needs the root layout to be measured
+     * first.
+     */
     private void initializeTabHeight() {
         doOnLayout(mRootLayout, new Runnable() {
             @Override
@@ -1850,6 +1857,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
     }
 
+    /**
+     * Performs an action when the provided view is laid out.
+     *
+     * @param view     the view to listen to for layouts.
+     * @param runnable the runnable to run when the view is
+     *                 laid out.
+     */
     private static void doOnLayout(@NonNull final View view, @NonNull final Runnable runnable) {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -1864,6 +1878,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
     }
 
+    /**
+     * This method sets the height of the browser
+     * frame view that holds the current WebView.
+     * It requires the root layout to be properly
+     * laid out in order to set the correct height.
+     */
     private void setTabHeight() {
         if (mRootLayout.getHeight() == 0) {
             mRootLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
