@@ -24,11 +24,11 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.Action;
-import acr.browser.lightning.react.OnSubscribe;
-import acr.browser.lightning.react.Subscriber;
-import acr.browser.lightning.react.Schedulers;
-import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -308,6 +308,8 @@ public class TabsManager {
      * will switch the current tab to a new valid tab.
      *
      * @param position the position of the tab to delete.
+     * @return returns true if the current tab
+     * was deleted, false otherwise.
      */
     public synchronized boolean deleteTab(int position) {
         Log.d(TAG, "Delete tab: " + position);
@@ -319,22 +321,17 @@ public class TabsManager {
                 mCurrentTab = null;
             } else if (current < size() - 1) {
                 // There is another tab after this one
-                mCurrentTab = getTabAtPosition(current + 1);
+                switchToTab(current + 1);
             } else {
-                mCurrentTab = getTabAtPosition(current - 1);
+                switchToTab(current - 1);
             }
-            removeTab(current);
-            if (mTabNumberListener != null) {
-                mTabNumberListener.tabNumberChanged(size());
-            }
-            return true;
-        } else {
-            removeTab(position);
-            if (mTabNumberListener != null) {
-                mTabNumberListener.tabNumberChanged(size());
-            }
-            return false;
         }
+
+        removeTab(position);
+        if (mTabNumberListener != null) {
+            mTabNumberListener.tabNumberChanged(size());
+        }
+        return current == position;
     }
 
     /**

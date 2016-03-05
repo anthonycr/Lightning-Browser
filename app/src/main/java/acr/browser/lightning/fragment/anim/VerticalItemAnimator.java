@@ -22,7 +22,10 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +200,8 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         mRemoveAnimations.add(holder);
         animation.setDuration(getRemoveDuration())
-                .alpha(0).translationX(-holder.itemView.getWidth() / 2).setListener(new VpaListenerAdapter() {
+                .alpha(0).translationX(-holder.itemView.getWidth() / 2)
+                .setInterpolator(new AccelerateInterpolator()).setListener(new VpaListenerAdapter() {
             @Override
             public void onAnimationStart(View view) {
                 dispatchRemoveStarting(holder);
@@ -207,6 +211,7 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
             public void onAnimationEnd(View view) {
                 animation.setListener(null);
                 ViewCompat.setAlpha(view, 1);
+                ViewCompat.setTranslationX(view, 0);
                 dispatchRemoveFinished(holder);
                 mRemoveAnimations.remove(holder);
                 dispatchFinishedWhenDone();
@@ -227,8 +232,8 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
         final View view = holder.itemView;
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         mAddAnimations.add(holder);
-        animation.alpha(1).translationX(0).setDuration(getAddDuration()).
-                setListener(new VpaListenerAdapter() {
+        animation.alpha(1).translationX(0).setDuration(getAddDuration())
+                .setInterpolator(new DecelerateInterpolator()).setListener(new VpaListenerAdapter() {
                     @Override
                     public void onAnimationStart(View view) {
                         dispatchAddStarting(holder);
@@ -237,6 +242,7 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
                     @Override
                     public void onAnimationCancel(View view) {
                         ViewCompat.setAlpha(view, 1);
+                        ViewCompat.setTranslationX(view, 0);
                     }
 
                     @Override
@@ -316,6 +322,17 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
     @Override
     public boolean animateChange(ViewHolder oldHolder, ViewHolder newHolder,
                                  int fromX, int fromY, int toX, int toY) {
+//        if (oldHolder != newHolder) {
+//            if (oldHolder != null) {
+//                dispatchChangeFinished(oldHolder, true);
+//            }
+//            if (newHolder != null) {
+//                dispatchChangeFinished(newHolder, false);
+//            }
+//        } else if (oldHolder != null) {
+//            dispatchChangeFinished(oldHolder, true);
+//        }
+//        return false;
         if (oldHolder == newHolder) {
             // Don't know how to run change animations when the same view holder is re-used.
             // run a move animation to handle position changes.

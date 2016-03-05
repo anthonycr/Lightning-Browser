@@ -99,7 +99,10 @@ public class BrowserPresenter {
                 mView.setForwardButtonEnabled(newTab.canGoForward());
                 mView.updateUrl(newTab.getUrl(), true);
                 mView.setTabView(newTab.getWebView());
-                mView.notifyTabViewChanged(mTabsModel.indexOfTab(newTab));
+                int index = mTabsModel.indexOfTab(newTab);
+                if (index >= 0) {
+                    mView.notifyTabViewChanged(mTabsModel.indexOfTab(newTab));
+                }
             }
         }
 
