@@ -22,7 +22,6 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -262,13 +261,13 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
         final View view = holder.itemView;
         fromX += ViewCompat.getTranslationX(holder.itemView);
         fromY += ViewCompat.getTranslationY(holder.itemView);
-        resetAnimation(holder);
         int deltaX = toX - fromX;
         int deltaY = toY - fromY;
         if (deltaX == 0 && deltaY == 0) {
             dispatchMoveFinished(holder);
             return false;
         }
+        resetAnimation(holder);
         if (deltaX != 0) {
             ViewCompat.setTranslationX(view, -deltaX);
         }
@@ -337,6 +336,10 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
         if (oldHolder == newHolder) {
             // Don't know how to run change animations when the same view holder is re-used.
             // run a move animation to handle position changes.
+            if ((fromX - toX) == 0 && (fromY - toY) == 0) {
+                dispatchMoveFinished(oldHolder);
+                return false;
+            }
             return animateMove(oldHolder, fromX, fromY, toX, toY);
         }
         final float prevTranslationX = ViewCompat.getTranslationX(oldHolder.itemView);

@@ -131,9 +131,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
 
     // Static Layout
-    @Bind(R.id.main_layout)
-    View mRootLayout;
-
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
@@ -1044,7 +1041,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         initializeTabHeight();
 
-        doOnLayout(mRootLayout, new Runnable() {
+        doOnLayout(mUiLayout, new Runnable() {
             @Override
             public void run() {
                 int toolbarSize;
@@ -1849,7 +1846,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * first.
      */
     private void initializeTabHeight() {
-        doOnLayout(mRootLayout, new Runnable() {
+        doOnLayout(mUiLayout, new Runnable() {
             @Override
             public void run() {
                 setTabHeight();
@@ -1885,12 +1882,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * laid out in order to set the correct height.
      */
     private void setTabHeight() {
-        if (mRootLayout.getHeight() == 0) {
-            mRootLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        if (mUiLayout.getHeight() == 0) {
+            mUiLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         }
 
         if (mFullScreen) {
-            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, mRootLayout.getHeight()));
+            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, mUiLayout.getHeight()));
         } else {
             mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
