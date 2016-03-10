@@ -278,27 +278,28 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mDrawerLeft.setLayerType(View.LAYER_TYPE_NONE, null);
         mDrawerRight.setLayerType(View.LAYER_TYPE_NONE, null);
 
-        mDrawerLayout.addDrawerListener(new DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {}
-
-            @Override
-            public void onDrawerOpened(View drawerView) {}
-
-            @Override
-            public void onDrawerClosed(View drawerView) {}
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                if (newState == DrawerLayout.STATE_DRAGGING) {
-                    mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                    mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                } else if (newState == DrawerLayout.STATE_IDLE) {
-                    mDrawerLeft.setLayerType(View.LAYER_TYPE_NONE, null);
-                    mDrawerRight.setLayerType(View.LAYER_TYPE_NONE, null);
-                }
-            }
-        });
+        //TODO restore when upgrading support library
+//        mDrawerLayout.addDrawerListener(new DrawerListener() {
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {}
+//
+//            @Override
+//            public void onDrawerOpened(View drawerView) {}
+//
+//            @Override
+//            public void onDrawerClosed(View drawerView) {}
+//
+//            @Override
+//            public void onDrawerStateChanged(int newState) {
+//                if (newState == DrawerLayout.STATE_DRAGGING) {
+//                    mDrawerLeft.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//                    mDrawerRight.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//                } else if (newState == DrawerLayout.STATE_IDLE) {
+//                    mDrawerLeft.setLayerType(View.LAYER_TYPE_NONE, null);
+//                    mDrawerRight.setLayerType(View.LAYER_TYPE_NONE, null);
+//                }
+//            }
+//        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mShowTabsInDrawer) {
             getWindow().setStatusBarColor(Color.BLACK);
@@ -1408,24 +1409,30 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
         }
         mDrawerLayout.closeDrawers();
-        mDrawerLayout.addDrawerListener(new DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {}
 
-            @Override
-            public void onDrawerOpened(View drawerView) {}
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                if (runnable != null) {
-                    runnable.run();
-                }
-                mDrawerLayout.removeDrawerListener(this);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {}
-        });
+        // TODO restore after updating to latest support lib
+        // delete this code after restoring
+        if (runnable != null) {
+            runnable.run();
+        }
+//        mDrawerLayout.addDrawerListener(new DrawerListener() {
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {}
+//
+//            @Override
+//            public void onDrawerOpened(View drawerView) {}
+//
+//            @Override
+//            public void onDrawerClosed(View drawerView) {
+//                if (runnable != null) {
+//                    runnable.run();
+//                }
+//                mDrawerLayout.removeDrawerListener(this);
+//            }
+//
+//            @Override
+//            public void onDrawerStateChanged(int newState) {}
+//        });
     }
 
     @Override

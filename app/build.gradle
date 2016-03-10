@@ -69,17 +69,10 @@ dexcount {
 
 dependencies {
     // support libraries
-    compile 'com.android.support:palette-v7:23.2.0'
-    compile('com.android.support:appcompat-v7:23.2.0') {
-        exclude group: 'com.android.support', module: 'support-v4'
-    }
-    compile('com.android.support:design:23.2.0') {
-        exclude group: 'com.android.support', module: 'support-v4'
-    }
-    compile('com.android.support:recyclerview-v7:23.2.0') {
-        exclude group: 'com.android.support', module: 'support-v4'
-    }
-    // Temp downgrade until google fixes the support lib
+    compile 'com.android.support:palette-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
 
     // html parsing fo reading mode
