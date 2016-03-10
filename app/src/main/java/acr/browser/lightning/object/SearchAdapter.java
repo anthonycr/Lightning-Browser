@@ -400,6 +400,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             if (connection.getResponseCode() >= HttpURLConnection.HTTP_MULT_CHOICE ||
                     connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
                 Log.e(TAG, "Search API Responded with code: " + connection.getResponseCode());
+                connection.disconnect();
                 return cacheFile;
             }
             in = connection.getInputStream();
