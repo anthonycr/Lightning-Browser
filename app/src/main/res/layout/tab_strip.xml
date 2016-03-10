@@ -12,9 +12,9 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:fadingEdge="horizontal"
         android:overScrollMode="never"
-        android:scrollbars="none"
-        android:fadingEdge="horizontal"/>
+        android:scrollbars="none"/>
 
     <ImageView
         android:id="@+id/new_tab_button"
