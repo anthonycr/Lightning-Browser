@@ -413,6 +413,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
                 }
                 fos.flush();
             }
+            connection.disconnect();
             cacheFile.setLastModified(System.currentTimeMillis());
         } catch (Exception e) {
             e.printStackTrace();
