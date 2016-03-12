@@ -1,0 +1,17 @@
+{
+  "name": "Lightning-Browser",
+  "scripts": {
+  },
+  "env": {
+  },
+  "addons": [
+    "herokuconnect",
+    "herokuconnect",
+    "heroku-postgresql",
+    "heroku-postgresql",
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+
+  ]
+}
