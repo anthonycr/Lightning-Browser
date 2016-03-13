@@ -177,12 +177,9 @@ public class Observable<T> {
 
         @Override
         public void onError(@NonNull final Throwable throwable) {
-            if (!mOnCompleteExecuted && mOnSubscribe != null) {
+            if (mOnSubscribe != null) {
                 mOnCompleteExecuted = true;
                 mObservable.executeOnObserverThread(new OnErrorRunnable<>(mOnSubscribe, throwable));
-            } else {
-                Log.e(TAG, "onComplete already called");
-                throw new RuntimeException("onComplete already called");
             }
         }
 

@@ -47,6 +47,11 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.async.ImageDownloadTask;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
 
@@ -85,16 +90,16 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Colors
     private int mIconColor, mScrollIndex;
 
-    // Init asynchronously the bookmark manager
-    private final Runnable mInitBookmarkManager = new Runnable() {
-        @Override
-        public void run() {
-            final Context context = getContext();
-            mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
-            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-            mBookmarksListView.setAdapter(mBookmarkAdapter);
-        }
-    };
+    private Observable<BookmarkViewAdapter> initBookmarkManager() {
+        return Observable.create(new Action<BookmarkViewAdapter>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<BookmarkViewAdapter> subscriber) {
+                mBookmarkAdapter = new BookmarkViewAdapter(getContext(), mBookmarks);
+                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+                subscriber.onNext(mBookmarkAdapter);
+            }
+        });
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -166,8 +171,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
-        // Must be called here, only here we have a reference to the ListView
-        BrowserApp.getTaskThread().execute(mInitBookmarkManager);
+        initBookmarkManager().subscribeOn(Schedulers.worker())
+                .observeOn(Schedulers.main())
+                .subscribe(new OnSubscribe<BookmarkViewAdapter>() {
+                    @Override
+                    public void onNext(@Nullable BookmarkViewAdapter item) {
+                        mBookmarksListView.setAdapter(mBookmarkAdapter);
+                    }
+                });
         return view;
     }
 
