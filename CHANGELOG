@@ -1,0 +1,1933 @@
+3.42.38 2016-02-25
+==================
+Remove sharing commands (available as access now)
+
+3.42.37 2016-02-22
+==================
+Add fix for Gem::Specification method_missing
+
+3.42.36 2016-02-11
+==================
+Call org_api.lock_app when --locked flag is passed
+
+3.42.35 2016-02-10
+==================
+Scrub URI::InvalidURIError message for rollbar
+
+3.42.34 2016-02-08
+==================
+Encode error as utf-8 before joining
+
+3.42.33 2016-01-28
+==================
+Deprecated ruby sudo
+
+3.42.32 2016-01-27
+==================
+Skip analytics for now
+
+3.42.31 2016-01-21
+==================
+Submit analytics in the foreground on windows
+
+3.42.30 2016-01-18
+==================
+Fix for old netrc gem installs
+Remove duplicate commands from suggester
+Show better error for OSX PPC machines
+Allow updating to dev channel for v4
+
+3.42.29 2016-01-13
+==================
+Fixed analytics to not report when not a tty
+
+3.42.28 2016-01-13
+==================
+Added analytics
+Install git with /verysilent on windows
+Deprecate heroku-spaces ruby plugin
+
+3.42.27 2016-01-07
+==================
+Bump version for release
+
+3.42.26 2016-01-07
+==================
+Fix bug with international characters & createdb
+Update copyright notice to 2016
+
+3.42.25 2015-12-08
+==================
+Use system & exit on windows when non-ascii args
+
+3.42.24 2015-12-04
+==================
+Revert exec to shellescape while I fix windows bug
+
+3.42.23 2015-12-03
+==================
+Update RELEASE-FULL.md OSX notes
+switch to osslsigncode to fix windows installs
+upgrade ruby to 2.1.7 and git to 2.6.3 on windows
+small copy tweak
+clear up unknown database error
+Remove rendezvous spec that fails when not a tty
+Add plugins:command to track progress
+spaces: ensure we still request version 3
+Change exec(args) to exec(shelljoin(string))
+Remove readline dep & unused protected methods
+show extra plugin info
+Be more descriptive about uninstalling Accounts
+Fix Windows cryllic character from ENV issues
+
+3.42.22 2015-11-18
+==================
+prefix update messaging
+update v4 plugins when running plugins:update
+Adding verification test for config:get not found
+use $XDG_DATA_HOME if available
+Adding test for config:get --shell not found
+Use attachment SSO url if it can be determined
+Fixing tests so they can run under windows
+Making the required init-wine task more obvious
+Freeze net-ssh to 2.9.2 to preserve 1.9.3 support
+
+3.42.21 2015-10-30
+==================
+Remove protocol prefix for buildpack URN
+Fix documentation for pg:maintenance
+Use v4 for login
+Hide updating on windows
+Remove v3 domain name variant
+
+3.42.20 2015-10-10
+==================
+Prevent running v4 hidden commands by default
+
+3.42.19 2015-10-10
+==================
+Fix help indices for v4 topics
+
+3.42.18 2015-10-09
+==================
+Fix LOCALAPPDATA dir on Windows with non-ASCII characters
+Increase timeout when downloading v4
+
+3.42.17 2015-10-09
+==================
+Make utf-8 the default encoding
+
+3.42.16 2015-10-08
+==================
+Improve handling of shareable addons with postgres
+Fix bug that deleted v4 if there was an issue reading commands
+Ensure windows uninstall will remove everything
+Update asynchronously
+Report errors in removing old versions to rollbar
+
+3.42.15 2015-09-31
+==================
+Catch all errors when attempting to delete old v4 release
+
+3.42.14 2015-09-30
+==================
+Ensure v4 is not 4.24.* which won't autoupdate on Windows
+Revert cygwin patch in 3.42.6 since it broke git bash
+
+3.42.13 2015-09-30
+==================
+Resolve add-ons for pg:* commands with API
+
+3.42.12 2015-09-29
+==================
+Fixed help for v4 commands that are overridden (such as `addons`)
+
+3.42.11 2015-09-28
+==================
+Reverted addon removal until all v4 clients have it
+
+3.42.10 2015-09-28
+==================
+Moved addons to v4
+
+3.42.9 2015-09-28
+=================
+Updated Gemfile.lock
+
+3.42.8 2015-09-28
+=================
+Fixed auto-login with --app flags
+
+3.42.7 2015-09-28
+=================
+Moved heroku-cli back to ~/.heroku/heroku-cli
+
+3.42.6 2015-09-28
+=================
+Fix cygwin exec
+
+3.42.5 2015-09-28
+=================
+Move v4 windows directory to LOCALAPPDATA
+
+3.42.4 2015-09-28
+=================
+Move v4 windows directory to LOCALAPPDIR
+Move help logic to v3
+Fix cygwin setup
+Fix for non-ascii windows home directories
+Allow debian users to manually update v4
+Fully deprecate ddollar/heroku-accounts
+
+3.42.3 2015-09-22
+=================
+Require v4 CLI for all commands
+
+3.42.2 2015-09-21
+=================
+Fix heroku-account deprecation warning
+
+3.42.1 2015-09-21
+=================
+Re-release of 3.42.0
+
+3.42.0 2015-09-21
+=================
+Resolve addons with API
+Consolidate addon output
+Use HEROKU_FORCE for pg:* commands
+Add support for CET and CEST zones
+Added v4 2fa shim
+Fixed login under windows machines without crtdll
+Ensure HEROKU_HEADERS is used with orgs requests
+Make warning for using heroku-accounts more admonishing
+Display current dyno formation with ps:scale
+Added HEROKU_DEBUG_HEADERS flag
+Lock gem versions down
+Fix domains call with very large number of domains
+Removed redis shim
+
+3.41.5 2015-08-31
+=================
+Added preauth to pg:backups capture
+Fixed buildpack set with buildpack at end of list
+Fix addons:open service plan resolution
+Remove extra SQL command for execsql
+
+3.41.4 2015-08-24
+=================
+Always display unjoined org apps
+Ensure HEROKU_HEADERS are used for pg:backups commands
+HEROKU_DEBUG improvements
+Support custom kernels (internal only)
+
+3.41.3 2015-08-12
+=================
+Fix incomplete release
+
+3.41.2 2015-08-12
+=================
+Fix OSX releases without homebrew
+
+3.41.1 2015-08-12
+=================
+Fix debian releases without foreman
+
+3.41.0 2015-08-12
+=================
+Fixed OSX installer for El Capitan
+Removed foreman in place of heroku local
+
+3.40.11 2015-08-11
+==================
+Removed auto-tier switching logic
+
+3.40.10 2015-08-11
+==================
+Update dyno costs
+
+3.40.9 2015-08-04
+=================
+Update dyno costs
+Use resource name for pg services
+Fixed bugs with pgbackups
+
+3.40.7 2015-07-29
+=================
+Automatic SSH tunneling for HPG
+
+3.40.6 2015-07-23
+=================
+Fix for space conflicts wrt HEROKU_ORGANIZATION
+
+3.40.5 2015-07-22
+=================
+Add space option to apps, apps:info, and apps:create
+Change addons:add to addons:create
+Clarify release guide
+Display provider messages for addons upgrade/downgrade
+block specifying both space and org to app list
+
+
+3.39.5 2015-07-10
+=================
+Group attachments by resource in pg:info
+Added missing method used in pg:links
+Fixed pg for sudo commands
+Updated help for local
+Fixed SSL bug with devclouds and org api
+
+3.39.4 2015-07-06
+=================
+Fixed bug with v4 command name splitting
+
+3.39.2 2015-07-03
+=================
+Error out if v4 plugin fails to install
+Updated domains command
+Fix v4 commands with ':' in command name
+Fixed ps pricing for unknown types
+
+3.39.1 2015-06-26
+=================
+Fix pg:links remote resolver
+
+3.39.0 2015-06-24
+=================
+Add pg:links command
+
+3.38.3 2015-06-19
+=================
+Added HEROKU_HEADERS to append extra request headers
+
+3.38.2 2015-06-19
+=================
+Added --wait-interval to pgbackups commands
+Fixed minor display bug with ps:scale
+Added default flag for v4 commands
+
+3.38.1 2015-06-15
+=================
+Fix ps:type for new process types
+Made ps:type output consistent
+
+3.38.0 2015-06-15
+=================
+Fix ps:scale for new process types
+
+3.37.7 2015-06-11
+=================
+pgbackups bug fixes https://github.com/heroku/heroku/pull/1604
+Ensure errors are shown when there is an error displaying the error
+
+3.37.6 2015-06-03
+=================
+Fix non-ascii windows username issue for Ruby 2.0+
+Increased pgbackups polling sleep interval to prevent rate limiting
+
+3.37.5 2015-06-01
+=================
+Fixed auth:whoami on first run
+
+3.37.4 2015-06-01
+=================
+Use toolbelt v4 for auth:whoami
+Fix ps:scale with Standard-1X dynos
+Fix arm support on some machines
+Allow pg:backups cancel to take an optional transfer name
+Fix sorting on pg:backups
+Fixed config:unset for paranoid apps
+
+3.37.3 2015-05-28
+=================
+Added arm support for Toolbelt v4
+
+3.37.2 2015-05-27
+=================
+Made confirmation language clearer for pg:copy
+Add --force-colors to logs
+Removed switzerland variant
+Display price of add-on plan on some commands
+
+3.37.1 2015-05-18
+=================
+Hide hidden commands
+Fixed bug with copying cacert when `~/.heroku` does not exist
+
+3.37.0 2015-05-16
+=================
+Fixed bug in updater checking version strings
+
+3.36.11 2015-05-15
+==================
+Allow HEROKU_SSL_VERIFY=disable for v4 setup
+
+3.36.10 2015-05-15
+==================
+Updated CA Certs
+Add cacert.pem to ~/.heroku for use in v4 CLI
+Fix pgbackups:unschedule issues
+
+3.36.8 2015-05-14
+=================
+Changed fork to use --from and --to instead of --app
+Added note that process types must be alphanumeric for ps:scale
+Fixed issues with DATABASE_URL
+Fixed display of addon attachments when specifying attachment name
+Improved updating text
+
+3.36.7 2015-05-12
+=================
+Update plugins if they fail to load
+Show message for ps validation
+Moved heroku status to v4 CLI
+
+3.36.6 2015-05-12
+=================
+Fixed bug with pgbackups polling
+Fixed plugin command help
+Fixed rbconfig bug on ruby 1.9.2
+
+3.36.5 2015-05-11
+=================
+Added redis commands
+Added plugins:link v4 shim
+Bug fixe for users with partial privileges on apps:info
+Removed usage tracking
+
+3.36.4 2015-05-07
+=================
+Made v4 autofix safer
+
+3.36.3 2015-05-07
+=================
+Autofix broken v4 installs
+More robust backup polling
+
+3.36.2 2015-05-07
+=================
+Documented new run functionality
+Fixed issue on windows with spaces in username
+Show warning if Toolbelt is currently updating
+
+3.36.1 2015-05-07
+=================
+Big performance boost to v4 commands by running them before v3 is setup
+Optimize ruby require order
+
+3.36.0 2015-05-06
+=================
+Included hpg addon:create shortcuts from heroku-pg-extras
+Add quota indicator for ps
+Show release update warnings less frequently
+Switch to v4 version of maintenance commands
+Switch to v4 version of git commands
+
+3.35.1 2015-05-05
+=================
+Enabled v4 version of run for commands with a '--' argument
+
+3.35.0 2015-05-05
+=================
+Added --exit-code flag to run command
+Fixed addons:open for paranoid apps
+
+3.34.0 2015-05-04
+=================
+Pull in heroku-addon-attachments plugin
+
+3.33.0 2015-05-01
+=================
+Added shell flag to config:get
+Renamed buildpack to buildpacks
+Removed shell escaping from config:get --shell if it is not a tty
+Fixed bug when api returned no certificate on certs:info
+Added output for pg:backups commands
+Merged the dyno-types plugin
+Allow cedar-10 as stack in apps:create
+
+3.32.0 2015-04-21
+=================
+Added new fork implementation
+Added --verbose option to pg:ps
+Fixed bug with pg in_maintenance? flag
+Fixed issue with windows home folders and non-ascii characters
+No longer exits if netrc is missing but HEROKU_API_KEY is provided
+
+3.31.3 2015-04-09
+=================
+Fixed some bugs around pg:backups
+Fixed v4 download on windows
+Add FreeBSD as supported os for v4
+
+3.31.2 2015-04-08
+=================
+Downgraded bundled version of rest-client to one that does not require ffi on windows
+
+3.31.1 2015-04-08
+=================
+Removed windows-specific gems from Gemfile.lock
+
+3.31.0 2015-04-08
+=================
+Removed support for Ruby 1.8.7
+Updated all dependencies to latest
+Show backups that will be migrated from PGBackups
+
+3.30.6 2015-04-02
+=================
+Skipped calling of `stty icanon echo` on Windows
+Updated 1.8.7 warning
+
+3.30.5 2015-04-02
+=================
+Added warning for ruby 1.8.7
+
+3.30.4 2015-04-01
+=================
+Postgres backups cleanup and fixes
+
+3.30.3 2015-03-21
+=================
+Reverted v4 fork implmentation
+
+3.30.2 2015-03-19
+=================
+Made updater also update v4 if it is setup
+
+3.30.1 2015-03-19
+=================
+Updated gems
+
+3.30.0 2015-03-18
+=================
+New fork implementation
+Only show request ids on error
+
+3.29.0 2015-03-17
+=================
+Fixed architecture detection on jruby for jsplugins
+Relaxed version requirement for multi_json
+Added request ID logging on API errors
+
+3.28.6 2015-03-11
+=================
+Changed fork to use new pgbackup implementation
+Show who is using psql and how
+Present cedar as cedar-10
+Use full_host_uri.host for checking netrc
+
+3.28.4 2015-03-10
+=================
+Reverted new pgbackup implementation for fork
+
+3.28.3 2015-03-09
+=================
+Show message that toolbelt v4 is installing
+Changed fork to use new pgbackup implementation
+
+3.28.2 2015-03-02
+=================
+Fixed bug with --wait-interval flag for pg:wait
+
+3.28.1 2015-02-27
+=================
+Renamed local:start to just local
+
+3.28.0 2015-02-27
+=================
+Added `heroku local`
+Added flag to customize poll interval for pg:wait
+Fixed error message for default orgs
+Allow org for all commands
+Improved help formatting for v4 plugins
+
+3.27.2 2015-02-24
+=================
+Added restart to primary commands in help
+Fixed issue with argument passing to v4 plugins
+Added full help for v4 plugins
+
+3.27.1 2015-02-24
+=================
+Bumped gem version number to 3.27.1
+
+3.27.0 2015-02-24
+=================
+Make pgbackups work with config vars other than DATABASE_URL
+Require confirmation for dangerous pg:backups commands
+Updated netrc to 0.10.3
+Fix pg:backups unschedule
+Deprecated heroku-push plugin
+
+3.26.1 2015-02-18
+=================
+Added buildpack command
+Ignore HEROKU_ORGANIZATION env var if blank
+Added OpenBSD to v4 plugins
+
+3.26.0 2015-02-10
+=================
+Removed default orgs in place of HEROKU_ORGANIZATION env var (#1395)
+Display errors if rollbar does not accept it (#1412)
+Fix case-sensitive reading of X-Confirmation-Required header (#1410)
+Fix v4 plugin commands without command name and topic only
+Bug fixes for v4 plugins on Windows
+Show rollbar errors in ~/.heroku/error.log (#1408)
+Allow db:push and db:pull to work with remote databases (#1386)
+Cleaner error messages when failing to read netrc files (#1404)
+Create heroku directory if it does not exist when writing ~/.heroku/error.log (#1403)
+More descriptive error message when heroku run has an SSL error (#1401)
+Change plugin example to use heroku-production-check instead of heroku-accounts (#1400)
+Updated help text for twofactor commands (#1398)
+Show warning if CLI is run under jruby (#1396)
+Show out of date warning if toolbelt is not autoupdatable (#1394)
+
+3.25.0 2015-01-29
+=================
+Added `plugins:uninstall` for toolbelt v4 plugins
+Prevent fork from deleting an existing app
+Added okjson back in for users that have not updated their plugins
+Show app name in `run:detached`
+
+3.24.5 2015-01-28
+=================
+Better errors when git is not found or not working
+Fixed bug with unhandled EPIPE exception
+Fixed credential warning message
+Added ruby version to exception tracking
+Added disabling of error tracking with HEROKU_DISABLE_ERROR_REPORTING
+
+3.24.4 2015-01-27
+=================
+Rolled Rollbar creds
+
+3.24.3 2015-01-27
+=================
+Reverted db:push and db:pull feature that allowed remote databases due to bugs
+Enabled error tracking on unhandled exceptions
+
+3.24.2 2015-01-27
+=================
+Temporarily disable rollbar error reporting since it's too noisy
+
+3.24.1 2015-01-27
+=================
+Skip error reporting for errors like ctrl-c and command failures.
+
+3.24.0 2015-01-27
+=================
+Added error tracking with rollbar
+Added pg:backups from pg-extras plugin
+Allow db:push and db:pull to use remote databases (for setups like docker)
+Fixed apps:info for paranoid apps
+Upgraded excon to 0.43.0
+
+3.23.3 2015-01-16
+=================
+Fixed bug where jsplugins could override core commands
+Prevent non-autoupdatable clients from autoupdating
+
+3.23.2 2015-01-16
+=================
+Added certs:generate command
+Fixed bug with plugins
+Show request-id on HEROKU_DEBUG
+
+3.23.1 2015-01-13
+=================
+Fixed authentication failure in release
+
+3.23.0 2015-01-13
+=================
+Added help for jsplugins
+Fixed remote setting in git:remote
+Fixed bug with newlines in .bashrc on OSX
+
+3.22.1 2015-01-05
+=================
+Updated cacert.pem
+
+3.22.0 2015-01-05
+=================
+Added JavaScript-based plugin support
+
+3.21.4 2014-12-31
+=================
+Fixed bug with git warnings
+Removed git warnings for non-osx and non-windows environments
+Happy New Year!
+
+3.21.3 2014-12-23
+=================
+Show warning for insecure Git clients
+Fix issue with MultiJson require
+Happy Festivus!
+
+3.21.1 2014-12-17
+=================
+No changes, needed to bump the version
+
+3.21.0 2014-12-17
+=================
+Upgraded heroku-api gem
+Explicitly preauth for 2fa commands instead of automatically on every failure
+Show warning when using heroku-accounts (since it is incompatible with http-git)
+Added HTTP instrumentor for debugging with HEROKU_DEBUG=true
+
+3.20.0 2014-12-10
+=================
+Upgraded excon and netrc gems
+Use Dir.home for Ruby 1.9+
+Show plugins in `heroku version`
+
+3.19.0 2014-12-09
+=================
+Simplified updating by performing updates synchonously instead of in a separate process
+
+3.18.0 2014-12-05
+=================
+Upgraded gems (notably netrc, heroku-api and excon)
+Show warning if HEROKU_API_KEY is set
+Tweaks to manager url
+
+3.17.1 2014-12-04
+=================
+Added debug logging for auth
+
+3.17.0 2014-12-03
+=================
+Default to http git
+Reduced update check duration to 10 minutes
+
+3.16.2 2014-11-23
+=================
+Clean build dist directory before releasing
+
+3.16.1 2014-11-23
+=================
+Fixed bug with nil release description
+
+3.16.0 2014-11-20
+=================
+Fixed update spawn command on some windows installs
+Added warning for https git when netrc doesn't have credentials
+Made runnable without readline
+
+3.15.3 2014-11-10
+=================
+Removed bamboo from stack command
+Reverted 2fa input masking
+
+3.15.2 2014-11-04
+=================
+Mask 2fa inputs longer than 12 characters
+
+3.15.1 2014-11-04
+=================
+Upgraded launchy to 2.4.3
+Only lock for updates when updating, not checking for updates
+
+3.15.0 2014-10-24
+=================
+Skip preauth with no app context
+Fixed Debian control file dependencies
+
+3.14.0 2014-10-21
+=================
+Use preauth instead of 2fa for all API calls
+
+3.13.0 2014-10-20
+=================
+Switch to multi_json
+Overwrite git remotes with `heroku git:remote`
+
+3.12.1 2014-10-07
+=================
+Fixed Excon 0.40.0 in Gemfile
+Fixed git finders to work with env vars
+Symbolic config vars
+
+3.12.0 2014-10-06
+=================
+Excon 0.40.0
+Unique output warnings
+More git options
+
+3.11.3 2014-10-02
+=================
+Replace code. with git. in .netrc
+Always use preauth for 2fa
+
+3.11.2 2014-09-26
+=================
+Use server-side connection for pg:killall
+Send orgs requests to api.heroku.com
+
+3.10.6 2014-09-04
+=================
+Added ssh-keygen shim for Windows
+
+3.10.5 2014-08-27
+=================
+Ocra support for building standalone heroku-ocra.exe
+
+3.10.4 2014-08-22
+=================
+Upgraded excon to 0.39.5
+
+3.10.3 2014-08-21
+=================
+Fixed minor issue with recording fork source
+
+3.10.2 2014-08-21
+=================
+Removed lazy-loading of heroku-api and rest_client (was swallowing errors)
+Fail fast for issue with pgbackups:transfer
+Removed price tier from info
+Help info for two factor topic
+Send deploy type and source metadata for forks
+
+3.10.1 2014-08-14
+=================
+No changes, just verifying new release code is in order
+
+3.10.0 2014-08-14
+=================
+Fixed beta releases
+Upgrade heroku-api and excon
+
+3.9.7 2014-08-12
+================
+Bring 2fa:disable back
+Several pg and pgbackups command improvements
+
+3.9.4 2014-07-21
+================
+Actually fix a bug where setting HEROKU_API_KEY would cause failures
+
+3.9.3 2014-07-21
+================
+Fix a bug where setting HEROKU_API_KEY would cause failures
+
+3.9.2 2014-07-21
+================
+New pg:upgrade and pg:maintenance commands (from pg-extras)
+Fix pg:psql -c prompt quoting on windows
+
+3.9.1 2014-07-08
+================
+Support for HEROKU_DEBUG to show backtrace even on interrupt
+
+3.9.0 2014-07-02
+================
+Updated bundled SSL certs
+Added pg:diagnose
+
+3.8.4 2014-06-18
+================
+Fix issue with rest-client dependency
+Fix issue parsing errors from old API endpoints
+
+3.8.3 2014-06-11
+================
+Replace Cisaurus slug copy with v3 Releases API
+
+3.8.2 2014-05-27
+================
+Rename stack:migrate to stack:set
+Bug fixes for the certs commands and another issue with 1.8 compatibility
+
+3.8.1 2014-05-23
+================
+Handle 2FA errors on all commands
+Fix bug with CentOS 6
+
+3.8.0 2014-05-20
+================
+Remove 2fa:enable/disable, please visit https://dashboard.heroku.com for these
+
+3.7.5 2014-05-19
+================
+Keep using the system json gem when possible
+
+3.7.4 2014-05-19
+================
+Fix issue with json dependency in ps commands
+
+3.7.3 2014-05-05
+================
+Fix compatibility with 1.8.7
+
+3.7.2 2014-05-02
+================
+Fix 2fa:enable --browser
+
+3.7.0 2014-05-02
+================
+Fix issue with dependencies not being packaged for auto-update
+Bring two-factor plugin in
+Several bug fixes on pg and certs commands
+
+3.6.0 2014-03-14
+================
+Remove multi_json, not working well existing toolbelt environments
+
+3.5.0 2014-03-10
+================
+Fixed bug in Heroku Fork that could cause it to delete the source app
+Added multi_json so a faster encoder is used when available
+
+3.4.3 2014-03-06
+================
+Show server-side warnings when tailing logs.
+
+3.4.2 2014-03-04
+================
+Fix quoting style originally used to set the nice prompt with `pg:psql` on Windows.
+
+3.4.1 2014-02-28
+================
+Add pgbackups:transfer, for direct database to database transfers
+Use app::color-style prompt for psql
+Improvements to Heroku Fork:
+  - Collapse pgbackups steps into one direct transfer
+  - Clear fork app on error
+
+
+3.3.0 2014-01-30
+================
+Improved ps commands to support PX dynos
+
+3.2.3 2014-01-24
+================
+Add a `-n`, `--num` flag to the `releases` index command, to specify the number of releases to be shown.
+Exit value 1 with authentication failure from an API key.
+Fix inaccurate 'internal server error' message when using some pg commands outside of a project.
+Fix issue where forking an application with a Hobby database would timeout and fail.
+Uses secure RubyGems URL
+
+Full changes here https://github.com/heroku/heroku/compare/v3.2.2...v3.2.3
+
+
+
+3.2.2 2014-01-08
+================
+bugfix for some orgs and pg commands
+
+3.2.1 2013-12-18
+================
+fix ps:scale with relative values (eg: web+2)
+
+3.2.0 2013-12-06
+================
+merge heroku-orgs plugin
+
+3.1.1 2013-12-02
+================
+Use bulk scale+resize API in ps:scale
+Default to primary database plan if no plan specified in fork/follow/rollback
+
+3.1.0 2013-11-22
+================
+Support resizing in ps:scale
+Allow env var PGPORT to indicate port used by Postgres locally
+Enhanced output of pg:ps
+Avoid redundant API calls
+Take optional path on apps:open
+
+3.0.1 2013-10-16
+================
+support rollback flag for Postgres addons
+
+3.0.0 2013-09-30
+================
+drop support for Taps (db:push/pull), users should use pg:push/pull instead
+
+2.41.0 2013-09-18
+=================
+certs:remove, certs:rollback, certs:update now require confirmation
+certs:info, certs:remove, certs:rollback, certs:update now take optional --endpoint
+
+2.40.1 2013-08-31
+=================
+change commands to use dashes instead of underscores
+
+2.40.0 2013-08-05
+=================
+bring commands pg:ps, pg:kill and pg:killall from pg-extras plugin
+add shorthand database identifiers
+show info on archived apps
+
+2.39.5 2013-07-25
+=================
+allow stdin pipe to `heroku run`
+fix Heroku::Client#list_domains
+
+2.39.4 2013-05-29
+=================
+only show app region on heroku create when specified
+
+2.39.3 2013-05-15
+=================
+change the URL used for SSO with add-ons
+
+2.39.2 2013-04-26
+=================
+show --regions info in addons:list help output
+
+2.39.1 2013-04-25
+=================
+correct "process" to "dyno" in output
+
+2.39.0 2013-04-24
+=================
+enable region support
+
+2.38.2 2013-04-23
+=================
+disable use of sslv2 to rendezvous by forcing tlsv1
+
+2.38.1 2013-04-23
+=================
+check for proper cisaurus job response code
+
+2.38.0 2013-04-22
+=================
+send command options on addons:list
+
+2.37.2 2013-04-04
+=================
+fix issue with heroku ps sorting
+
+2.37.1 2013-04-04
+=================
+deprecate plugin heroku-dyno-size
+
+2.37.0 2013-04-03
+=================
+heroku ps now shows dyno sizes
+support heroku ps:resize to change dyno sizes
+support heroku run --size to run on a different dyno size
+
+2.36.1 2013-04-02
+=================
+bump release version to force gem push of pre-release 2.36.0
+
+2.36.0 2013-03-22
+=================
+merge heroku-fork plugin into CLI
+
+2.35.0 2013-02-06
+=================
+don't hide the command if an opt is hidden
+fixing hidden help
+update specs for run:console
+fully deprecate `heroku console`
+
+2.34.0 2013-01-11
+=================
+update spec
+include region in app list for non-us apps
+output region instead of stack if it's returned
+suggest pgbackups logs on restore errors as well
+fix colorization when output has foo[bar] in it
+fix typo in "keys" command help text
+adds extra test coverage around stripping query data off of DATABASE_URL setting.
+allowing query options on database url for matching DATABASE_URL to attachment
+deprecate heroku-sql-console
+myapp ⇒ example
+fix clearing of caches to fix DB promotion after credential reset
+get the name before messaging to be able to give an early error message
+swap restclient for excon
+merge heroku-ssl-doctor plugin (https://github.com/heroku/heroku-ssl-doctor)
+search slightly more liberally for git remotes.
+
+2.33.5 2012-12-13
+=================
+fix region/remote collision
+
+2.33.4 2012-12-13
+=================
+fix region option
+
+2.33.3 2012-12-06
+=================
+add basic region support
+skip namespaces or commands that contain HIDDEN: or DEPRECATED:
+do not raise when the base host doesn't have a TLD (eg localhost)
+
+2.33.2 2012-11-26
+=================
+bump excon for proxy fixes
+
+2.33.1 2012-11-15
+=================
+better pgbackups retry
+error when creating a fork or follower of a starter tier database
+bump heroku-api
+
+2.33.0 2012-10-25
+=================
+tweak the argument format for git:clone
+verify signature for updates
+show transfer status in pgbackups list
+
+2.32.14 2012-10-16
+==================
+fix updater process for paths with spaces
+
+2.32.13 2012-10-15
+==================
+fix updater in the presence of multiple heroku binaries
+
+2.32.12 2012-10-15
+==================
+add gem deprecation warning to install output
+
+2.32.11 2012-10-10
+==================
+fix useragent reporting
+
+2.32.10 2012-10-10
+==================
+fix useragent reporting
+
+2.32.9 2012-10-09
+=================
+backoff retries of pgbackups status api
+
+2.32.8 2012-10-04
+=================
+patch release to bump debian installer
+
+2.32.7 2012-10-04
+=================
+proper error messages for labs features that do not exist
+PATH manipulation in toolbelt packaging
+package ruby-1.9.3 with OSX toolbelt
+
+2.32.6 2012-09-27
+=================
+fix bug in labs for user_env_compile
+
+2.32.5 2012-09-27
+=================
+fix corner case bug in pg resolver
+rework labs output
+
+2.32.4 09/24/2012
+=================
+
+prevent excon from using nonblocking calls to avoid ruby 1.8.7 problems
+
+2.32.3 09/24/2012
+=================
+
+make sure ~/.heroku directory exists before trying to use it
+
+2.32.2 09/24/2012
+=================
+
+wait 5 minutes between autoupdate attempts
+
+2.32.1 09/20/2012
+=================
+
+autoupdate on by default
+make host verification more robust
+
+2.31.5 09/21/2012
+=================
+
+fix shared database regression in pg:info
+
+2.31.4 09/20/2012
+=================
+
+fix shared database regression in pg resolver
+
+2.31.3 09/18/2012
+=================
+
+fix docs and options check for apps:info to use --shell
+use blocking requests for excon in status/updater
+fix punctuation for no app specified and remove helpers duplication
+retry get_transfer while polling
+remove aspen from example stack list
+remove redundant messaging on ssl endpoint cert removal
+show actual times instead of only approximate times
+update should check ENV['HEROKU_AUTOUPDATE'], not set it
+use updated heroku.rb
+simplify time_ago logic
+update time displays to consistently show same format
+remove duplication of DATABASE_URL label adding
+normalize heroku status help messages
+clarify pgbackups:capture --expire option help
+fix time value formatting display in status
+rearrange command to facilitate anonymous command capture
+clearer error messages when lacking internet connectivity
+collect usage locally, segregated by version
+allow/ignore usage writing failures
+use HerokuPostgres v11 API
+disable update when autoupdate is enabled
+fix punctuation in plugins:install messaging
+
+2.31.2 09/02/2012
+=================
+
+fix to properly reference error helpers in autoupdate
+delete autoupdate mutex with rm_f
+fix timing of autoupdate mutex
+
+2.31.1 08/28/2012
+=================
+
+change update command to check gem version before executing
+use spawn instead of fork for autoupdate, except ruby 1.8
+
+2.31.0 08/28/2012
+=================
+
+require 'command/base' in accounts
+fix formatting for json validation errors
+improve punctuation and simplify no app specified messages
+indicate deprecation on stacks as appropriate
+remove officious version from optparse, instead of overriding
+change -r/--raw to -s/--shell for apps:info
+default autoupdate to on for new installs
+
+2.30.5 08/23/2012
+=================
+
+fix for helpers not being reloaded after inject_libpath
+
+2.30.4 08/22/2012
+=================
+
+free -v for other usage
+remove v2/v3 compatability hack from apps#domain_name
+use Heroku::Auth.host instead of Heroku::Client.new.host in git_remotes
+use HEROKU_GIT_HOST || HEROKU_HOST || default host for git remote detection
+DRY launchy usage
+update release notes to mention setting current in core
+prevent double CR in rendezvous on windows
+fix capitalizotion in help
+display help/commands when calling `heroku auth`
+remove beta indication on cedar in stacks help example
+reload helpers after inject_libpaths
+add error logging for autoupdate
+consolidate user_agent handling, improve gem vs toolbelt and add autoupdate
+add simple file based mutex for autoupdate
+alpha sort deprecated plugins list
+add heroku-credentials to deprecated plugins
+add stats rake task to give info on commands/namespaces
+
+2.30.3 08/15/2012
+=================
+
+standardize formatting for certs
+vendor latest okjson
+format_date now converts 'GMT' to 'UTC' for consistency
+standardize casing of 'SSL Endpoint' on certs output
+remove builtin_plugin, which doesn't apper ever to be used
+make pg:reset usage message more consistent
+fix docs for labs:list
+cleanup labs index/list and better errors when no features are available
+more consistent global/command option handling
+setup for anonymized and normalized commands
+fix some flaky tests
+remove nocov to better emphasize code to be removed
+bump netrc to fix parsing stuff missing username or password
+softer messaging on symlinked plugins
+encoding fix for okjson
+bump netrc to add newline as needed between entries
+bump heroku-api for excon SSLv3 and nonblock fixes
+
+2.30.2 08/02/2012
+=================
+
+standardize/consolidate confirm_billing handling
+use heroku.rb to poll app creation status
+deprecate client's app methods in favor of heroku-api
+deprecate client's config methods in favor of heroku-api
+more consistent usage error for pgbackups:destroy
+more consistent usage errors for keys
+more consistent usage errors for sharing
+simplify sharing as collaborator list always includes at least owner
+more consistent styling/usage for labs, add labs:list
+remove logs:cron (has been deprecated for a very long time)
+don't display 'Additional Commands' if all additional are deprecated
+fix double period in some styled error messages
+remove erroneous chdir in git:remote
+don't assume launchy return value responds to join (doesn't on windows)
+update labs:enable example to include docs hint
+more consistent usage errors for labs
+more consistent addons messaging
+remove deprecated logs:drains from coverage consideration
+deprecate client's collaborator methods in favor of heroku-api
+deprecate client's domain methods in favor of heroku-api
+deprecate client's keys methods in favor of heroku-api
+remove long deprecated cron_logs from client and specs
+deprecate client's maintenance methods in favor of heroku-api
+deprecate client's dynos/workers/ps methods in favor of heroku-api
+deprecate client's release methods in favor of heroku-api
+deprecate client's logs methods in favor of heroku-api
+deprecate client's features methods in favor of heroku-api
+deprecate client's stacks methods in favor of heroku-api
+remove deprecated client#release usage from addons
+remove deprecated client#key usage from auth
+bump heroku-api dep
+avoid creating remote in git:clone if clone fails
+deprecate client#auth in favor of heroku-api
+more consistent usage errors and empty list for certs
+better errors and messaging for certs
+use heroku-api to retrieve release in addons_run
+fix ssl command by using heroku.rb/json responses
+deprecate client's rake/start methods in favor of rendezvous
+
+2.30.1 07/25/2012
+=================
+
+clearer, more consistent usage errors for pg
+fix labs commands when no app is specified
+simplify/shorten pg:wait logic
+more consistent deprecation message for heroku run:console
+
+2.30.0 07/25/2012
+=================
+
+more consistent header display for config
+more consistent messaging for no addons for app message
+add period to addons:docs suggestions
+simplify wording around modifying addons
+clarify wording for addons up/down-grade messaging
+more consistent usage errors for addons:(docs|open)
+bump to heroku-api 0.3.0 (escapes config/domains/keys)
+add maintenance command to display apps maintenance status
+wait for launchy to finish before continuing
+more consistent usage/help for config and ps
+update tests to match new usage messages
+exact match to an addon type should not be treated as ambiguous by addon:docs
+fix messaging around opening addons:docs with exact matches
+more consistent deprecation messaging for logs:drains
+remove no longer used Heroku::Command::Help.usage_for_command
+standardize pgbackups table display with display_table
+more consistent --confirm handling
+more explicit apps examples
+add git:remote command to seutp heroku remote
+more explicit output for pg when app has no databases
+defer to index in pg:info without argument
+backport domain_names fix to deal with v2 api data format
+
+2.29.0 07/19/2012
+=================
+
+more consistent usage error for apps:rename
+fix apps:info -r to properly include addons/collaborators
+display addon names, rather than descriptions, from apps:info
+avoid displaying postgres follower credentials
+warn, then `run console` for `console` on cedar
+add `git:clone` to clone an apps repo and setup heroku remote
+clearer update messaging when already up to date
+display installed plugins in nice error output
+consolidate/centralize nice error handling/display
+fix an intermitent spec failure in confirm_command
+bump heroku.rb to get a fix for nonblock errors and readline
+more consistent usage error for config:get
+update docs for addons:remove to reflect one or more usage
+
+2.28.15 07/17/2012
+==================
+
+bump heroku-api for subsequent proxy fixes
+
+2.28.14 07/16/2012
+==================
+
+updated release stuff to describe changelog task
+reduce space between columns in styled_array
+bump heroku-api version for further proxy fixes
+
+2.28.13 07/16/2012
+==================
+
+update apps:create to use consistent helpers
+fix -h to work with namespaces without index commands
+fix confirm_command to work properly in Heroku::Command context
+remove legacy rails related warning from failed plugin installation
+make version dependency explicit (used by user-agent)
+bump to latest heroku-api to get excon proxy fixes
+add post install toolbelt recommendation for gem
+updated release to mention fisticuffs
+
+2.28.12 07/11/2012
+==================
+
+output app name from api response instead of passed param
+fix auth spec to avoid deleting local credentials
+bump heroku.rb, returning to always using okjson
+
+2.28.11 07/11/2012
+==================
+
+fix for pg:info sometimes not labelling DATABASE_URL
+allow apps:create -a myapp to use myapp as the new app name
+update apps:create examples to reflect cedar as default
+clearer messaging around ssh key creation/upload errors
+skip plugins:update for symlinked plugins
+
+2.28.10 07/06/2012
+==================
+
+fix certs command to prevent TIME_FORMAT defined warning
+
+2.28.9 07/06/2012
+=================
+
+ensure rest_client is required for console commands
+handle nil short names in addons:list
+avoid displaying nil message after addons:remove
+require rest_client in 1.8.6 as rescue/reraise fails
+remove simplecov
+bump to latest heroku.rb and excon
+
+2.28.8 07/03/2012
+=================
+
+fix errors related to excon refactoring
+ensure that plugins directory exists before installing plugins
+
+2.28.7 06/27/2012
+=================
+
+fix inverted logic in updater version check
+
+2.28.6 06/27/2012
+=================
+
+fixes for heroku-api and rest_client availability in error handling
+fix updater version checking
+fix user_agent setting for updater
+
+2.28.5 06/26/2012
+=================
+
+replace maximum_version in updater with simpler compare_versions
+fix regression around heroku-api not being required prior to login
+require excon in updater as heroku-api won't have been required
+
+2.28.4 06/26/2012
+=================
+
+fix user agent for pkg toolbelt
+defer rest_client and heroku-api load
+
+2.28.3 06/25/2012
+=================
+
+further fixes around config value parsing/display
+update to latest netrc
+
+2.28.2 06/22/2012
+=================
+
+strip color codes for windows consoles
+fix inverted logic in updater inject_libpath
+
+2.28.1 06/22/2012
+=================
+
+handle occasional [['base', 'message']] errors
+make ps sort numerically
+add experimental rpm packaging
+dup shift_argument to avoid frozen strings
+only set sync when stdin/stdout are tty
+reload updater in inject_loadpath
+fix error formatting in plugins:update
+fix display of quoted config values
+
+2.28.0 06/20/2012
+=================
+
+fix pg:unfollow specs to better reflect real usage
+add tests to pg resolver for uri and SHARED_DATABASE arguments
+suggest `addons:docs` instead of listing doc urls after addon modification
+version now displays additional info (like user-agent)
+update plugin load errors to be inline with pretty errors
+improved plugin:install using git clone instead of checkout
+add plugin:update to update all (or specified) plugins
+add non-default host and proxy settings to nice errors
+set special user agent when doing autoupdate
+set stdin/stdout sync to avoid buffering
+get updates through toolbelt app to allow better metric tracking
+remove rubygems dependency from updater
+allow HEROKU_APP to provide a default app value to commands
+
+2.27.3 06/15/2012
+=================
+
+fix for pg:unfollow
+preserve order of data in pg:info
+
+2.27.2 06/15/2012
+=================
+
+properly preserve capitalization of plugin arguments
+clear status after it is displayed
+cleanup apps:destroy to clarify explicit vs implicit app arg
+simplify by removing downcase from shift_argument
+
+2.27.1 06/14/2012
+=================
+
+fix resolver to deal with postgres:// style input
+require rbuygems for updater, needed for version comparison
+
+2.27.0 06/14/2012
+=================
+
+only load ~/.heroku/client if it is newer than installed version
+only complete update if downloaded version is newer
+more consistent help for config:remove and add config:unset alias
+add config:get to return a single config value
+default to config set/get and make add/remove aliases
+move interrupt rescue to CLI.start so that toolbelts get it too
+skip inject_libpath on deb toolbelt
+add magic comment for UTF-8 to toolbelt bin files
+consolidate rubygems load attempt (remove duplication in toolbelt bins)
+remove deprecated services api
+centralize/expand user agents and give toolbelt a non-gem user agent
+make background autoupdate opt in based on presence of ~/.heroku/autoupdate
+newer libssl for deb
+nicer error formatting with suggestions on getting help
+line_formatter no longer fails on nil values in arrays
+
+
+2.26.7 06/11/2012
+=================
+
+add rendezvous related specs
+tweak unknown command error message for clarity
+bump netrc to get cygwin permissions fix
+loosen time ago so that it can display '24h ago'
+update netrc to allow for encrypted files
+fix billing link in confirm_billing
+allow port/scheme overide for HEROKU_HOST
+properly send release with rollback command
+re-promote master databases after pg:reset
+fix pg:info to work properly with shared databases
+update rollback to work/display more consistently
+add status specs, update status formatting
+simplify specs by stubbing time_ago (instead of time)
+loosen shared_database matchers to fix failing shared database commands
+
+2.26.6 06/04/2012
+=================
+
+updates to release process
+fixes for SHARED_DATABASE recognition and reset
+
+2.26.5 06/01/2012
+=================
+
+cleanup/fix for force_encoding checks in rendezvous
+
+2.26.4 06/01/2012
+=================
+
+fix addons index to account for mixed lists with/without attachments
+fix formatting for X-Heroku-Warning messages
+fix locked error handling to accomodate either heroku.rb or rest-client
+sort heroku.rb error handling above rest-client
+change -v to go all the way through the version command
+consolidate confirm logic and allow either 'y' or 'yes' to affirm
+fix time formatting in ps
+update excon and subsequently simplify stubbing
+only use force_encoding in rendezvous if it is defined
+fix a pg pretty name edge case (where no config vars match)
+
+2.26.3 05/30/2012
+=================
+
+ideal updates for addons#open
+add ambiguous addons to excon to provide more accurate tests
+more reusable spellcheck/suggestion code
+add suggestions for addons#open
+ideal addons#index
+add addons#doc to open devcenter article
+add docs hint after addons changes
+fix maintenance mode handling
+force utf-8 encoding from rendezvous
+display X-Heroku-Warning messages via heroku.rb
+truncate release descriptions at 40 characters
+add spec to cover release truncation
+strip dashes in extract_option for better backwards compatibility
+convert to symbol for better extract_option compatibility
+add --no-remote to apps#create
+skip downcasing for url argument in pgbackups#restore
+fix reversed messaging in pgbackups capture/restore
+fix hpg_resolve to provide pretty names
+fix hpg_resolve to allow color shorthand
+more consistency around prettified pg names
+fix add-on not found error messaging
+
+2.26.2 05/25/2012
+=================
+
+fix ssl verification settings for the login special case
+fix extract_option definition for backwards compatibility
+
+2.26.1 05/24/2012
+=================
+
+report unknown commands on stderr
+fix running attached commands (they were hanging)
+tweak output formatting for ps and releases
+fixes for missing help and help formatting
+fix SSL_VERIFY setting logic error
+fix for intermitent test failure related to error_with failure
+
+2.26.0 05/23/2012
+=================
+
+use new ssl endpoints API namespace
+reimplement `heroku rake` to use modern attached process API
+allow running rake commands even with crashed web processes
+consolidate rendezvous_session code
+deprecate heroku-certs (now in mainline)
+fix rendezvous mocks
+test consistency fixes
+more consistent apps:info output
+fix sort order for releases
+standardize "message... done" action formatting
+update apps to use heroku-api, validate options, have examples and standardized output
+better argument validation and warnings on invalid arguments
+explictly error on the 'pp' app caused by passing '-app'
+use new heroku.rb exceptions
+use explicit shift_argument to consolidate and interface with validation
+fix SKIP_PLUGINS to use either ' ' or ',' delineators, not ' ,'
+add examples to help
+add magic UTF-8 comment to bin/heroku
+update domains to use heroku-api, validate options, have examples and standardized output
+cleanup error and display formatting
+update run to use heroku-api, validate options, have examples and standardized output
+updates for pg/pgbackup to simplify and make more consistent
+update keys to use heroku-api, validate options, have examples and standardized output
+provide better messaging when asking for help of an aliased command
+automatically display help when invalid options are passed
+simplify error_with_failure
+update maintenance to use heroku-api, validate options, have examples and standardized output
+more consistent USAGE error messaging
+update config to use heroku-api, validate options, have examples and standardized output
+use heroku.rb for login
+add auth:whoami
+update plugins to use heroku-api, validate options, have examples and standardized output
+update ps to use heroku-api, validate options, have examples and standardized output
+update accounts to use heroku-api, validate options, have examples and standardized output
+update sharing to use heroku-api, validate options, have examples and standardized output
+update version to use heroku-api, validate options, have examples and standardized output
+display current and new versions during update
+ensure heroku.rb user-agent is overridden
+update auth to use heroku-api, validate options, have examples and standardized output
+update account to use heroku-api, validate options, have examples and standardized output
+update help to use heroku-api, validate options, have examples and standardized output
+allow HEROKU_STATUS_HOST to override default status location
+forward SIGQUIT (^\) signal
+lazily require launchy
+updates to status to better reflect new status site
+update releases to use heroku-api, validate options, have examples and standardized output
+fix heroku.rb to properly respect existing ssl verification settings
+update logs to use heroku-api, validate options, have examples and standardized output
+update run to use heroku-api, validate options, have examples and standardized output
+lazily require db/taps related stuff
+fix short argument parsing to avoid implied short arguments
+update labs to use heroku-api, validate options, have examples and standardized output
+
+2.25.0 04/24/2012
+=================
+
+tests cleanup/consistency updates
+add initial certs commands
+fix to properly recognize/message timeouts
+fix for keys:add where -1 would sometimes erroneously be used
+update for pg credentials rotation endpoint
+
+2.24.1 04/11/2012
+=================
+
+mark taps tests pending when taps is unavailable
+use releases current API in addons/config instead of getting last from list
+fix license inclusion for gem
+more consistent error messaging (removes trailing periods)
+fix for argument parsing where argument only has a long option
+
+2.24.0 04/05/2012
+=================
+
+toolbelt related cleanup/fixes
+remove redundant API calls in apps:create
+make config:remove messaging more consistent
+add `pg` command to list all databases for an app
+raise error on plugins:uninstall for non-existent plugins
+better error messaging from pg resolver when there are no databases
+properly label add-on downgrading
+fix heroku run output to only remove ^M for non-tty
+remove hardcoding of bundler usage in specs
+avoid redundant Auth.write_credentials for heroku-accounts users
+optimizations around help parsing
+fixes around ssl setup for logplex to allow using against dev/test logplexes
+
+2.23.0 03/26/2012
+=================
+
+warn that password entry will be hidden
+update heroku-shared-postgres to use postgres-addon instead
+
+2.22.0 03/23/2012
+=================
+
+deprecate ps:dynos and ps:workers in favor of ps:scale
+allow --help and -h to trigger help
+fix heroku-accounts + netrc integration
+add pg:credentials --reset
+strip ^M from run output
+alias help now redirects to its targets help
+disabled gem updater redirects users to toolbelt
+merge heroku-labs
+better error messaging when multiple git remotes match
+fix spacing incosistency in logs output
+fix login with proxy usage
+error_with_failure now uses STDERR
+cleanup rake tasks
+add release checklist
+
+2.21.3 03/14/2012
+=================
+
+pass confirm properly after add-on remove confirmation
+remove term-ansicolor and manipulate colors directly
+add netrc dependency (instead of vendoring)
+more consistent tty checking with isatty
+explicitly warn about add-ons destruction in apps:destroy
+consolidate/improve ctrl-c handling edge cases
+git remote handling fixes
+improved messaging around database ingresses
+use ssl verification against logplex
+use HTTPS_PROXY settings if using https
+update vendored okjson
+fix to allow --version to be passed through (for postgres)
+test cleanup/fixes
+
+2.21.2 03/02/2012
+=================
+
+revert broken logplex ssl certification
+warn on deb toolbelt install when gem already exists
+
+2.21.1 02/29/2012
+=================
+
+add libreadline-ruby1.9.1 to debian dependencies
+fix for windows users with non-ascii usernames
+status command now uses proxy setting correctly
+logplex now verifies ssl in production
+
+2.21.0 02/28/2012
+=================
+
+truncate API keys to use first 40 characters
+cleaner output when using ctrl-c to cancel commands
+add explicit dependency on libopenssl-ruby1.9.1
+rename deb and don't pull in git/foreman
+specify newer libssl dependency
+change credential storage to use ~/.netrc
+refactoring/cleanup in auth
+more explicit help for specifying addons to apps:create
+build jruby, rbx and ree in travis (but allow failures)
+make `heroku -v` and `heroku --version` return version string
+allow apps:destroy with just --confirm (instead of also requiring --app)
+
+2.20.1 02/16/2012
+=================
+
+packaging related fixes
+add ability to pass credentials via ENV['HEROKU_API_KEY']
+consistency fixes for indentation/formatting
+fix for error type in apps:destroy
+link to contributors rather than explicitly listing
+proxy fixes (prepend missing http(s)://, don't use if value is empty string)
+fix x_confirmation_required response handling
+include license
+
+
+2.20.0 02/10/2012 4a96f9199ebaa6fa087df186c3ec4ecce08c94fa
+==========================================================
+
+leveraged put and get helper methods
+upgrade rake
+add auth:token command
+Merge pull request #227 from heroku/auth-token
+helps to have an api_key method
+update pkg installing
+remove version from inner package
+stub old pkg:release
+Merge pull request #225 from heroku/api_calls
+more explicit usage instructions of apps:destroy error.     closes #228
+better error when missing fork/follow argument for resolver     closes #229
+
+
+2.19.2 02/01/2012 946ef8889bd673089efe2164490bdbdd1283836f
+==========================================================
+
+fix pg:wait with no arguments to loop over all databases
+fix default hostname when parsing database.yml for db:push and db:pull
+fix apps:destroy to prevent improperly defaulting to app from current directory
+deb build/release are now in toolbelt
+
+2.19.1 01/27/2012
+=================
+
+fix formatting for collaborators in app info
+fix error around adding addons to an app which has no releases
+use vendored OkJson instead of JSON for shared database client
+
+
+2.19.0 01/26/2012 818b34d8e6592bf3a3ea08beb4b4868e1582c9b3
+==========================================================
+
+Possible to do 'heroku logs' via proxy
+connect to postgresql domain socket
+deprecate old foo=bar style provisioning params
+Support Heroku Shared PostgreSQL (Yobuko)
+Deprecate heroku-shared-postgresql plugin
+New command: pg:credentials
+Much better prompting and output
+make git installation optional with default detected appropriately
+gem version of the client should disable heroku update
+use Heroku::CLI to simulate runs
+bump rubyzip for better 1.9 compat
+fix broken load path setup
+Allow pg:promote to receive case-sensitive postgres URLs
+Add example for checking heroku pg:info RONIN
+Switch .deb to depending on Ruby 1.9.
+Disable updates when installed via deb.
+confirm command on addon removal
+allow for the shortcut lowercase color with the addition of case sensitive url ids
+more explicit success for login
+update apps:info to show only the email address for collaborators
+remove duplicate .git in remotes after app:rename
+provide better error from Client#info when argument is nil
+
+2.18.1 01/09/2012 3dbc88b55c1c5621b53d002007525808626285bb
+==========================================================
+
+fix typo
+
+2.18.0 01/09/2012 b145e6ae57bd89c7c8c7a21a1054d79831129e5c
+==========================================================
+
+clean up windows installer
+allow extract_app to work, but warn of deprecation
+use returned git_url instead of contructed url
+silently alias apps:delete to apps:destroy, as I keep mistyping this
+fix help for logs:drains
+
+2.17.0 12/19/2011 9532885dbc4b880088da4a7a3a9a61b9e0c3b462
+==========================================================
+
+add travis icon to README
+Fix bug in partitioned states that prevented add-ons being listed.
+[run:detached] add ability to run detached processes
+Merge pull request #200 from wuputah/run-detached
+Merge pull request #201 from heroku/fix-partition-addons
+
+
+2.16.3 12/16/2011 26bc36811ba2f78e87c23c9838bec56e38bdf94b
+==========================================================
+
+Partition add-ons based on state.
+Don't display URL.
+Add some specs for partitioning addons by state.
+Use the new display_object helper to show partitioned add-on states.
+Merge pull request #190 from heroku/partition-states
+[release] consolidated local_build and release tasks
+remove no longer used 'display_addons'
+merge in functionality from heroku-suggest plugin
+alphasort command suggestions for consistency
+
+
+2.16.2 12/13/2011 14ffe86d48c6b7b2871ecaeb04cc7647dfc72338
+==========================================================
+
+Revert "[bin] make load paths local"
+cleaner loadpath setup
+dont go to the next line during creation
+Merge pull request #193 from heroku/disable-dynos-and-workers-on-cedar
+error out when running ps:dynos/workers on cedar apps
+cosmetics, format cedar error messages like the others
+[bin] make load paths local
+[base] avoid redefining BaseWithApp
+fix double bangs on some errors
+fix specs for extract_error
+[plugins] deprecate heroku-kill and heroku-stop
+
+2.16.1 12/10/2011 3bdfb86750af86fbf8e81e56e669857ecb16ef13
+==========================================================
+
+fix bad hputs call
+
+2.16.0 12/09/2011 5f6ad0c259cec3acac5eeb9a15014bf50e7f9717
+==========================================================
+
+Found this while debugging new Yobuko plugin.
+retry without ssl verification if there's a failure
+[apps] replace display with t/f with hputs/hprint
+[apps] assume that info always has web/git urls
+[apps] capitilization consistincy fixes for info
+[apps] more consistent helper usage
+[base] consolidate Base and BaseWithApp
+[base] remove explicit extract_app
+[command] simplify/consolidate confirmation
+[command|base] Re-add BaseWithApp alias for backwards compatibility
+Revert "retry without ssl verification if there's a failure"
+[client] re-add ssl error to prevent silent fail
+integrate heroku-status plugin
+[command] update extract_error
+[command] nicer messaging around 500 error status suggestion
+
+
+2.15.3 12/07/2011 72cb70f16d44657f072ba440d31e064ead43dff9
+==========================================================
+
+use http for travis webhook for now
+skip subfolders for dist/deb.rake
+[helpers] fix format for error
+[help] display all namespaces in alpha order
+reduce duplication when responding to invalid commands
+remove commented out require
+[helpers] work toward consolidated display by type
+[helpers] fix reused object name
+[helpers] alphasort list with headers in display_object
+[apps:destroy] explain info, remove unused line
+wrap stty in with_tty to catch errors
+
+
+2.15.1 12/02/2011 a9b5ecd79b58434155bd3d403388c38f301e6382
+==========================================================
+
+remove windows locks
+try using dev/null for stdin during tests
+Revert "try using dev/null for stdin during tests"
+Revert "replace aws/s3 with fog"
+modify output format for travis to aide in debugging
+correction for travis config
+remove test which timeouts on travis (and isn't very useful)
+create 'pkg' directory during build
+Add raketask to generate changelog
+[release] deb:build now more consistent with other builds
+[release] DRY deb rake task by not hard-coding repeated dir
+remove spec helper which gets overwritten anyway
+require heroku/helpers because Heroku::Plugin relies on it
+use @cli.home_directory consistently in auth_spec
+set home_directory to a tmpdir in tests
