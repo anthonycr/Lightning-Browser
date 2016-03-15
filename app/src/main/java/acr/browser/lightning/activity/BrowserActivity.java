@@ -128,32 +128,20 @@ import butterknife.ButterKnife;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
 
+    private static final String TAG = BrowserActivity.class.getSimpleName();
+
     private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
 
     // Static Layout
-    @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-
-    @Bind(R.id.content_frame)
-    FrameLayout mBrowserFrame;
-
-    @Bind(R.id.left_drawer)
-    ViewGroup mDrawerLeft;
-
-    @Bind(R.id.right_drawer)
-    ViewGroup mDrawerRight;
-
-    @Bind(R.id.ui_layout)
-    ViewGroup mUiLayout;
-
-    @Bind(R.id.toolbar_layout)
-    ViewGroup mToolbarLayout;
-
-    @Bind(R.id.progress_view)
-    AnimatedProgressBar mProgressBar;
-
-    @Bind(R.id.search_bar)
-    RelativeLayout mSearchBar;
+    @Bind(Window.ID_ANDROID_CONTENT) View mRoot;
+    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @Bind(R.id.content_frame) FrameLayout mBrowserFrame;
+    @Bind(R.id.left_drawer) ViewGroup mDrawerLeft;
+    @Bind(R.id.right_drawer) ViewGroup mDrawerRight;
+    @Bind(R.id.ui_layout) ViewGroup mUiLayout;
+    @Bind(R.id.toolbar_layout) ViewGroup mToolbarLayout;
+    @Bind(R.id.progress_view) AnimatedProgressBar mProgressBar;
+    @Bind(R.id.search_bar) RelativeLayout mSearchBar;
 
 
     // Toolbar Views
@@ -231,7 +219,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     abstract Observable<Void> updateCookiePreference();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -257,6 +244,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mPresenter = new BrowserPresenter(this, isIncognito());
 
         initialize();
+
     }
 
     private synchronized void initialize() {
@@ -399,7 +387,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    boolean isPanicTrigger(Intent intent) {
+    static boolean isPanicTrigger(@Nullable Intent intent) {
         return intent != null && INTENT_PANIC_TRIGGER.equals(intent.getAction());
     }
 
@@ -1029,9 +1017,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
+
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+        Log.d(TAG, "onConfigurationChanged");
 
         if (mFullScreen) {
             showActionBar();
@@ -1696,6 +1687,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG, "onWindowFocusChanged");
         if (hasFocus) {
             setFullscreen(mIsFullScreen, mIsImmersive);
         }
@@ -1883,12 +1875,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * laid out in order to set the correct height.
      */
     private void setTabHeight() {
-        if (mUiLayout.getHeight() == 0) {
-            mUiLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        if (mRoot.getHeight() == 0) {
+            mRoot.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         }
 
         if (mFullScreen) {
-            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, mUiLayout.getHeight()));
+            int height = mRoot.getHeight() - mUiLayout.getTop();
+            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height));
         } else {
             mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
