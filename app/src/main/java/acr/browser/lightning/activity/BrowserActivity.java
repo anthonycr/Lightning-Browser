@@ -7,6 +7,7 @@ package acr.browser.lightning.activity;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -58,6 +59,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -565,12 +567,26 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             changeToolbarBackground(currentView.getFavicon(), null);
         }
 
-        mToolbarLayout.setTranslationY(0);
+
         // TODO layout transition causing memory leak
 //        mBrowserFrame.setLayoutTransition(new LayoutTransition());
-        initializeTabHeight();
+
+        mToolbarLayout.setTranslationY(0);
         mBrowserFrame.setTranslationY(0);
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
+
+        initializeTabHeight();
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            mRoot.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    initializeTabHeight();
+                    return mRoot.onApplyWindowInsets(insets);
+                }
+            });
+        }
 
         switch (mPreferences.getSearchChoice()) {
             case 0:
@@ -1017,7 +1033,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
-
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -1031,6 +1046,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         initializeTabHeight();
+        supportInvalidateOptionsMenu();
 
         doOnLayout(mUiLayout, new Runnable() {
             @Override
@@ -1839,6 +1855,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * first.
      */
     private void initializeTabHeight() {
+        Log.d(TAG, "initializeTabHeight");
         doOnLayout(mUiLayout, new Runnable() {
             @Override
             public void run() {
@@ -1875,9 +1892,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * laid out in order to set the correct height.
      */
     private void setTabHeight() {
+        Log.d(TAG, "setTabHeight");
         if (mRoot.getHeight() == 0) {
             mRoot.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         }
+
+        Log.d(TAG, "UI Layout top: " + mUiLayout.getTop());
 
         if (mFullScreen) {
             int height = mRoot.getHeight() - mUiLayout.getTop();
