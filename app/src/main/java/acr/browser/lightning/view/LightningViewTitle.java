@@ -16,16 +16,15 @@ import acr.browser.lightning.utils.Utils;
  */
 class LightningViewTitle {
 
-    @Nullable private static Bitmap DEFAULT_ICON;
+    @Nullable private static Bitmap DEFAULT_DARK_ICON;
+    @Nullable private static Bitmap DEFAULT_LIGHT_ICON;
 
-    @NonNull private final Bitmap mDefault;
-    @NonNull private Bitmap mFavicon;
+    @Nullable private Bitmap mFavicon = null;
     @NonNull private String mTitle;
+    @NonNull Context mContext;
 
-    public LightningViewTitle(@NonNull Context context, boolean darkTheme) {
-        DEFAULT_ICON = getDefault(context, darkTheme);
-        mDefault = DEFAULT_ICON;
-        mFavicon = mDefault;
+    public LightningViewTitle(@NonNull Context context) {
+        mContext = context;
         mTitle = context.getString(R.string.action_new_tab);
     }
 
@@ -37,25 +36,32 @@ class LightningViewTitle {
      */
     public void setFavicon(@Nullable Bitmap favicon) {
         if (favicon == null) {
-            mFavicon = mDefault;
+            mFavicon = null;
         } else {
             mFavicon = Utils.padFavicon(favicon);
         }
     }
 
     /**
-     * Helper method to initialize the DEFAULT_ICON variable.
+     * Helper method to initialize the DEFAULT_ICON variables
      *
      * @param context   the context needed to initialize the Bitmap.
      * @param darkTheme whether the icon should be themed dark or not.
      * @return a not null icon.
      */
     @NonNull
-    private static Bitmap getDefault(@NonNull Context context, boolean darkTheme) {
-        if (DEFAULT_ICON == null) {
-            DEFAULT_ICON = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
+    private static Bitmap getDefaultIcon(@NonNull Context context, boolean darkTheme) {
+        if (darkTheme) {
+            if (DEFAULT_DARK_ICON == null) {
+                DEFAULT_DARK_ICON = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, true);
+            }
+            return DEFAULT_DARK_ICON;
+        } else {
+            if (DEFAULT_LIGHT_ICON == null) {
+                DEFAULT_LIGHT_ICON = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, false);
+            }
+            return DEFAULT_LIGHT_ICON;
         }
-        return DEFAULT_ICON;
     }
 
     /**
@@ -90,7 +96,10 @@ class LightningViewTitle {
      * @return the favicon or a default if that is null.
      */
     @NonNull
-    public Bitmap getFavicon() {
+    public Bitmap getFavicon(boolean darkTheme) {
+        if (mFavicon == null) {
+            return getDefaultIcon(mContext, darkTheme);
+        }
         return mFavicon;
     }
 

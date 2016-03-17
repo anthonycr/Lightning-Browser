@@ -117,7 +117,7 @@ public class LightningView {
         mUIController = (UIController) activity;
         mWebView = new WebView(activity);
         mIsIncognitoTab = isIncognito;
-        mTitle = new LightningViewTitle(activity, mUIController.getUseDarkTheme());
+        mTitle = new LightningViewTitle(activity);
 
         mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
@@ -1000,7 +1000,7 @@ public class LightningView {
      */
     @NonNull
     public Bitmap getFavicon() {
-        return mTitle.getFavicon();
+        return mTitle.getFavicon(mUIController.getUseDarkTheme());
     }
 
     /**
