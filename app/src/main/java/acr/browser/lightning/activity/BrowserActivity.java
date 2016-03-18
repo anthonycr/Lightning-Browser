@@ -382,9 +382,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         if (isPanicTrigger(getIntent())) {
+            setIntent(null);
             panicClean();
         } else {
             mPresenter.setupTabs(getIntent(), isIncognito());
+            setIntent(null);
             mProxyUtils.checkForProxy(BrowserActivity.this);
         }
     }
@@ -1159,6 +1161,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onStart() {
         super.onStart();
         mProxyUtils.onStart(this);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mTabsManager.shutdown();
     }
 
     @Override

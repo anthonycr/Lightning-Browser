@@ -112,11 +112,11 @@ public class TabsManager {
                     return;
                 }
 
-                String dataString = null;
+                String url = null;
                 if (intent != null) {
-                    dataString = intent.getDataString();
+                    url = intent.getDataString();
                 }
-                final String url = dataString;
+                Log.d(TAG, "URL from intent: " + url);
                 mCurrentTab = null;
                 if (mPreferenceManager.getRestoreLostTabsEnabled()) {
                     restoreLostTabs(url, activity, subscriber);
@@ -130,8 +130,8 @@ public class TabsManager {
 
     }
 
-    private void restoreLostTabs(final String url, final Activity activity,
-                                 final Subscriber subscriber) {
+    private void restoreLostTabs(@Nullable final String url, @NonNull final Activity activity,
+                                 @NonNull final Subscriber subscriber) {
         restoreState().subscribeOn(Schedulers.worker())
                 .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
             @Override
@@ -212,6 +212,7 @@ public class TabsManager {
             tab.onDestroy();
         }
         mTabList.clear();
+        mIsInitialized = false;
         mCurrentTab = null;
     }
 
@@ -393,6 +394,7 @@ public class TabsManager {
                         }
                     }
                 }
+                FileUtils.deleteBundleInStorage(mApp, BUNDLE_STORAGE);
                 subscriber.onComplete();
             }
         });

@@ -52,12 +52,9 @@ public class BrowserPresenter {
         });
     }
 
-    public void setupTabs(Intent intent, boolean isIncognito) {
+    public void setupTabs(@Nullable Intent intent, boolean isIncognito) {
         mTabsModel.initializeTabs((Activity) mView, intent, isIncognito)
                 .subscribe(new OnSubscribe<Void>() {
-                    @Override
-                    public void onNext(Void item) {}
-
                     @Override
                     public void onComplete() {
                         // At this point we always have at least a tab in the tab manager
