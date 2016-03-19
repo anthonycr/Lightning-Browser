@@ -147,6 +147,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
 
     // Toolbar Views
+    private View mSearchBackground;
     private Toolbar mToolbar;
     private AutoCompleteTextView mSearch;
     private ImageView mArrowImage;
@@ -262,7 +263,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
         // initialize background ColorDrawable
-        mBackground.setColor(((ColorDrawable) mToolbarLayout.getBackground()).getColor());
+        int primaryColor = ThemeUtils.getPrimaryColor(this);
+        mBackground.setColor(primaryColor);
 
         // Drawer stutters otherwise
         mDrawerLeft.setLayerType(View.LAYER_TYPE_NONE, null);
@@ -353,11 +355,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         // create the search EditText in the ToolBar
         mSearch = (AutoCompleteTextView) customView.findViewById(R.id.search);
+        mSearchBackground = customView.findViewById(R.id.search_container);
+
+        // initialize search background color
+        mSearchBackground.getBackground().setColorFilter(getSearchBarColor(primaryColor, primaryColor), PorterDuff.Mode.SRC_IN);
+        mSearch.setHintTextColor(ThemeUtils.getThemedTextHintColor(mDarkTheme));
+        mSearch.setTextColor(mDarkTheme ? Color.WHITE : Color.BLACK);
+
         mUntitledTitle = getString(R.string.untitled);
-        mBackgroundColor = ContextCompat.getColor(this, R.color.primary_color);
-        mDeleteIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
-        mRefreshIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_refresh);
-        mClearIcon = ThemeUtils.getLightThemedDrawable(this, R.drawable.ic_action_delete);
+        mBackgroundColor = ThemeUtils.getPrimaryColor(this);
+        mDeleteIcon = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, mDarkTheme);
+        mRefreshIcon = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_refresh, mDarkTheme);
+        mClearIcon = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, mDarkTheme);
 
         int iconBounds = Utils.dpToPx(30);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
@@ -1232,7 +1241,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 // OR with opaque black to remove transparency glitches
                 int color = 0xff000000 | palette.getVibrantColor(defaultColor);
 
-                int finalColor; // Lighten up the dark color if it is
+                final int finalColor; // Lighten up the dark color if it is
                 // too dark
                 if (!mShowTabsInDrawer || Utils.isColorTooDark(color)) {
                     finalColor = Utils.mixTwoColors(defaultColor, color, 0.25f);
@@ -1240,17 +1249,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     finalColor = color;
                 }
 
-                ValueAnimator anim = ValueAnimator.ofInt(mCurrentUiColor, finalColor);
-                anim.setEvaluator(new ArgbEvaluator());
+
                 final Window window = getWindow();
                 if (!mShowTabsInDrawer) {
                     window.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
                 }
-                anim.addUpdateListener(new AnimatorUpdateListener() {
 
+                final int startSearchColor = getSearchBarColor(mCurrentUiColor, defaultColor);
+                final int finalSearchColor = getSearchBarColor(finalColor, defaultColor);
+
+                Animation animation = new Animation() {
                     @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        final int color = (Integer) animation.getAnimatedValue();
+                    protected void applyTransformation(float interpolatedTime, Transformation t) {
+                        final int color = DrawableUtils.mixColor(interpolatedTime, mCurrentUiColor, finalColor);
                         if (mShowTabsInDrawer) {
                             mBackground.setColor(color);
                             window.setBackgroundDrawable(mBackground);
@@ -1259,13 +1270,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         }
                         mCurrentUiColor = color;
                         mToolbarLayout.setBackgroundColor(color);
+                        mSearchBackground.getBackground().setColorFilter(DrawableUtils.mixColor(interpolatedTime,
+                                startSearchColor, finalSearchColor), PorterDuff.Mode.SRC_IN);
                     }
-
-                });
-                anim.setDuration(300);
-                anim.start();
+                };
+                animation.setDuration(300);
+                mToolbarLayout.startAnimation(animation);
             }
         });
+    }
+
+    private int getSearchBarColor(int requestedColor, int defaultColor) {
+        if (requestedColor == defaultColor) {
+            return mDarkTheme ? DrawableUtils.mixColor(0.25f, defaultColor, Color.WHITE): Color.WHITE;
+        } else {
+            return DrawableUtils.mixColor(0.5f, requestedColor, Color.WHITE);
+        }
     }
 
     @Override

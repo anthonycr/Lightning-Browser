@@ -48,8 +48,7 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
     }
 
     private void restart() {
-        Intent intent = getIntent();
         finish();
-        startActivity(intent);
+        startActivity(new Intent(this, getClass()));
     }
 }

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -88,18 +89,14 @@ public class ThemeUtils {
     }
 
     @NonNull
-    public static Drawable getLightThemedDrawable(@NonNull Context context, @DrawableRes int res) {
-        final Drawable drawable = ContextCompat.getDrawable(context, res);
-        drawable.mutate();
-        drawable.setColorFilter(getIconLightThemeColor(context), PorterDuff.Mode.SRC_IN);
-        return drawable;
-    }
-
-    @NonNull
     public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
         @ColorInt final int color = (dark) ? ContextCompat.getColor(context, R.color.selected_dark) :
                 ContextCompat.getColor(context, R.color.selected_light);
         return new ColorDrawable(color);
+    }
+
+    public static int getThemedTextHintColor(boolean dark){
+        return 0x80ffffff & (dark ? Color.WHITE : Color.BLACK);
     }
 
     public static int getTextColor(@NonNull Context context) {
