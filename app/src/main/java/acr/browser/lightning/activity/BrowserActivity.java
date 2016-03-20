@@ -250,6 +250,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private synchronized void initialize() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        initializeToolbarHeight(getResources().getConfiguration());
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
 
@@ -1061,15 +1062,21 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         initializeTabHeight();
         supportInvalidateOptionsMenu();
+        initializeToolbarHeight(newConfig);
+    }
 
+    private void initializeToolbarHeight(@NonNull final Configuration configuration){
+        // TODO externalize the dimensions
         doOnLayout(mUiLayout, new Runnable() {
             @Override
             public void run() {
                 int toolbarSize;
-                if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    // In portrait toolbar should be 56 dp tall
                     toolbarSize = Utils.dpToPx(56);
                 } else {
-                    toolbarSize = Utils.dpToPx(48);
+                    // In landscape toolbar should be 48 dp tall
+                    toolbarSize = Utils.dpToPx(52);
                 }
                 mToolbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize));
                 mToolbar.setMinimumHeight(toolbarSize);
