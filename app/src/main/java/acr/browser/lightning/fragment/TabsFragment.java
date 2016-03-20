@@ -31,7 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
@@ -39,7 +38,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.controller.UIController;
@@ -77,7 +75,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     private UIController mUiController;
     private RecyclerView mRecyclerView;
 
-    @Inject TabsManager tabsManager;
+    private TabsManager mTabsManager;
     @Inject Bus mBus;
     @Inject PreferenceManager mPreferences;
 
@@ -91,6 +89,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         final Bundle arguments = getArguments();
         final Context context = getContext();
         mUiController = (UIController) getActivity();
+        mTabsManager = mUiController.getTabModel();
         mIsIncognito = arguments.getBoolean(IS_INCOGNITO, false);
         mShowInNavigationDrawer = arguments.getBoolean(VERTICAL_MODE, true);
         mDarkTheme = mPreferences.getUseTheme() != 0 || mIsIncognito;
@@ -187,7 +186,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.tab_header_button:
-                mUiController.showCloseDialog(tabsManager.indexOfCurrentTab());
+                mUiController.showCloseDialog(mTabsManager.indexOfCurrentTab());
                 break;
             case R.id.new_tab_button:
                 mBus.post(new TabEvents.NewTab());
@@ -220,7 +219,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void tabAdded() {
         if (mTabsAdapter != null) {
-            mTabsAdapter.notifyItemInserted(tabsManager.last());
+            mTabsAdapter.notifyItemInserted(mTabsManager.last());
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -292,7 +291,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
 
-            LightningView web = tabsManager.getTabAtPosition(position);
+            LightningView web = mTabsManager.getTabAtPosition(position);
             if (web == null) {
                 return;
             }
@@ -340,7 +339,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
         @Override
         public int getItemCount() {
-            return tabsManager.size();
+            return mTabsManager.size();
         }
 
         public Bitmap getDesaturatedBitmap(@NonNull Bitmap favicon) {

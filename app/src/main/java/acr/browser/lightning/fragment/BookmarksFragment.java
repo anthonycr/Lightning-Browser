@@ -42,6 +42,7 @@ import acr.browser.lightning.async.AsyncExecutor;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
@@ -72,7 +73,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Inject PreferenceManager mPreferenceManager;
 
-    @Inject TabsManager mTabsManager;
+    private TabsManager mTabsManager;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -107,6 +108,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         BrowserApp.getAppComponent().inject(this);
         final Bundle arguments = getArguments();
         final Context context = getContext();
+        mTabsManager = ((UIController) context).getTabModel();
         boolean isIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
         boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || isIncognito;
         mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);

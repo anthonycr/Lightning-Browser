@@ -4,9 +4,6 @@
 
 package acr.browser.lightning.activity;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
@@ -191,7 +188,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
-    @Inject TabsManager mTabsManager;
+    private TabsManager mTabsManager;
 
     @Inject HistoryDatabase mHistoryDatabase;
 
@@ -244,6 +241,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        mTabsManager = new TabsManager();
         mPresenter = new BrowserPresenter(this, isIncognito());
 
         initialize();
@@ -816,6 +814,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public TabsManager getTabModel() {
+        return mTabsManager;
+    }
+
+    @Override
     public void showCloseDialog(final int position) {
         if (position < 0) {
             return;
@@ -1284,7 +1287,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (requestedColor == defaultColor) {
             return mDarkTheme ? DrawableUtils.mixColor(0.25f, defaultColor, Color.WHITE): Color.WHITE;
         } else {
-            return DrawableUtils.mixColor(0.5f, requestedColor, Color.WHITE);
+            return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
         }
     }
 

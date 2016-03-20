@@ -16,6 +16,7 @@ import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.utils.UrlUtils;
@@ -30,7 +31,7 @@ public class BrowserPresenter {
 
     private static final String TAG = BrowserPresenter.class.getSimpleName();
 
-    @Inject TabsManager mTabsModel;
+    private TabsManager mTabsModel;
     @Inject PreferenceManager mPreferences;
     @Inject Bus mEventBus;
 
@@ -42,6 +43,7 @@ public class BrowserPresenter {
 
     public BrowserPresenter(@NonNull BrowserView view, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
+        mTabsModel = ((UIController) view).getTabModel();
         mView = view;
         mIsIncognito = isIncognito;
         mTabsModel.setTabNumberChangedListener(new TabsManager.TabNumberChangedListener() {

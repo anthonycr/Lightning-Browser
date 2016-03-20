@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.Action;
@@ -36,7 +37,6 @@ import acr.browser.lightning.view.LightningView;
  * and tracks the current tab. It handles creation, deletion,
  * restoration, state saving, and switching of tabs.
  */
-@Singleton
 public class TabsManager {
 
     private static final String TAG = TabsManager.class.getSimpleName();
@@ -54,8 +54,9 @@ public class TabsManager {
     @Inject Bus mEventBus;
     @Inject Application mApp;
 
-    @Inject
-    public TabsManager() {}
+    public TabsManager() {
+        BrowserApp.getAppComponent().inject(this);
+    }
 
     // TODO remove and make presenter call new tab methods so it always knows
     @Deprecated

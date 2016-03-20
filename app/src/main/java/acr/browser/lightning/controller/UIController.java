@@ -14,6 +14,7 @@ import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 
+import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.view.LightningView;
 
 public interface UIController {
@@ -60,5 +61,7 @@ public interface UIController {
     void setBackButtonEnabled(boolean enabled);
 
     void tabChanged(LightningView tab);
+
+    TabsManager getTabModel();
 
 }

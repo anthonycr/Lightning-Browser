@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.ReadingActivity;
+import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
 import acr.browser.lightning.browser.BrowserPresenter;
@@ -63,5 +64,7 @@ public interface AppComponent {
     void inject(StartPage startPage);
 
     void inject(BrowserPresenter presenter);
+
+    void inject(TabsManager manager);
 
 }

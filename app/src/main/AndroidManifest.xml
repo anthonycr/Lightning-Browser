@@ -129,7 +129,6 @@
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:process=":incognito"
             android:theme="@style/Theme.DarkTheme"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
