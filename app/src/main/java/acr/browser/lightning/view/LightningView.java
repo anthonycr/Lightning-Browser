@@ -132,7 +132,6 @@ public class LightningView {
             //noinspection deprecation
             mWebView.setAlwaysDrawnWithCacheEnabled(false);
         }
-        mWebView.setBackgroundColor(Color.WHITE);
 
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
@@ -329,6 +328,8 @@ public class LightningView {
             CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
                     !mPreferences.getBlockThirdPartyCookiesEnabled());
         }
+
+        mWebView.setBackgroundColor(ThemeUtils.getPrimaryColor(context));
     }
 
     /**
