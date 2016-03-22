@@ -243,7 +243,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-    public class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
+    private class LightningViewAdapter extends RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder> {
 
         private final int mLayoutResourceId;
         @Nullable private final Drawable mBackgroundTabDrawable;

@@ -316,8 +316,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager
                 .beginTransaction()
-                .add(containerId, tabsFragment)
-                .add(R.id.right_drawer, bookmarksFragment)
+                .replace(containerId, tabsFragment)
+                .replace(R.id.right_drawer, bookmarksFragment)
                 .commit();
         if (mShowTabsInDrawer) {
             mToolbarLayout.removeView(findViewById(R.id.tabs_toolbar_container));
