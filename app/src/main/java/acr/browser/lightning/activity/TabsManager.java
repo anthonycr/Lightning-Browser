@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;

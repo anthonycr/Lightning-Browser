@@ -308,7 +308,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     }
 
     @Nullable
-    private String getTitle(@NonNull Activity activity, @NonNull String packageName) {
+    private static String getTitle(@NonNull Activity activity, @NonNull String packageName) {
         PackageManager pm = activity.getPackageManager();
         try {
             ApplicationInfo info = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);

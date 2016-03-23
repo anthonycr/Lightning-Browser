@@ -1,7 +1,6 @@
 package acr.browser.lightning.view;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +12,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
@@ -23,11 +21,9 @@ import android.webkit.WebView;
 
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
-import com.squareup.otto.Bus;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.utils.Preconditions;
 
