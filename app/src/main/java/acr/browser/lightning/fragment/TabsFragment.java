@@ -1,5 +1,6 @@
 package acr.browser.lightning.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -180,6 +181,22 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public void onStop() {
         super.onStop();
         mBus.unregister(this);
+    }
+
+    public void reinitializePreferences() {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        mDarkTheme = mPreferences.getUseTheme() != 0 || mIsIncognito;
+        mColorMode = mPreferences.getColorModeEnabled();
+        mColorMode &= !mDarkTheme;
+        mIconColor = mDarkTheme ?
+                ThemeUtils.getIconDarkThemeColor(activity) :
+                ThemeUtils.getIconLightThemeColor(activity);
+        if (mTabsAdapter != null) {
+            mTabsAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

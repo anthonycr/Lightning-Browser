@@ -1,5 +1,6 @@
 package acr.browser.lightning.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -91,6 +92,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Colors
     private int mIconColor, mScrollIndex;
 
+    private boolean mIsIncognito;
+
     private Observable<BookmarkViewAdapter> initBookmarkManager() {
         return Observable.create(new Action<BookmarkViewAdapter>() {
             @Override
@@ -109,8 +112,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         final Bundle arguments = getArguments();
         final Context context = getContext();
         mTabsManager = ((UIController) context).getTabModel();
-        boolean isIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
-        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || isIncognito;
+        mIsIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
         mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
@@ -194,6 +197,18 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+    }
+
+    public void reinitializePreferences() {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
+        mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
+        mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
+        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
+                ThemeUtils.getIconLightThemeColor(activity);
     }
 
     @Subscribe

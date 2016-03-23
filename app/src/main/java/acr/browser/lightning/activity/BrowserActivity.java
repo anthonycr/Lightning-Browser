@@ -32,6 +32,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -130,6 +131,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final String TAG = BrowserActivity.class.getSimpleName();
 
     private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
+
+    private static final String TAG_BOOKMARK_FRAGMENT = "TAG_BOOKMARK_FRAGMENT";
+    private static final String TAG_TABS_FRAGMENT = "TAG_TABS_FRAGMENT";
 
     // Static Layout
     @Bind(Window.ID_ANDROID_CONTENT) View mRoot;
@@ -316,8 +320,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager
                 .beginTransaction()
-                .replace(containerId, tabsFragment)
-                .replace(R.id.right_drawer, bookmarksFragment)
+                .replace(containerId, tabsFragment, TAG_TABS_FRAGMENT)
+                .replace(R.id.right_drawer, bookmarksFragment, TAG_BOOKMARK_FRAGMENT)
                 .commit();
         if (mShowTabsInDrawer) {
             mToolbarLayout.removeView(findViewById(R.id.tabs_toolbar_container));
@@ -575,6 +579,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             changeToolbarBackground(mWebpageBitmap, null);
         } else if (!isIncognito() && currentView != null && !mDarkTheme) {
             changeToolbarBackground(currentView.getFavicon(), null);
+        } else if (!isIncognito() && !mDarkTheme && mWebpageBitmap != null) {
+            changeToolbarBackground(mWebpageBitmap, null);
+        }
+
+        FragmentManager manager = getSupportFragmentManager();
+        Fragment tabsFragment = manager.findFragmentByTag(TAG_TABS_FRAGMENT);
+        if (tabsFragment instanceof TabsFragment) {
+            ((TabsFragment) tabsFragment).reinitializePreferences();
+        }
+        Fragment bookmarksFragment = manager.findFragmentByTag(TAG_BOOKMARK_FRAGMENT);
+        if (bookmarksFragment instanceof BookmarksFragment) {
+            ((BookmarksFragment) bookmarksFragment).reinitializePreferences();
         }
 
 
