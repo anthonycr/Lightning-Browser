@@ -9,8 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionName "4.2.3.1"
-
+        versionName "4.3.0"
         generatedDensities = []
     }
 
@@ -43,10 +42,11 @@ android {
             applicationId "acr.browser.lightning"
             versionCode 85
         }
+
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
             applicationId "acr.browser.barebones"
-            versionCode 86
+            versionCode 87
         }
     }
 
@@ -68,6 +68,7 @@ dexcount {
 }
 
 dependencies {
+
     // support libraries
     compile 'com.android.support:palette-v7:23.2.1'
     compile 'com.android.support:appcompat-v7:23.2.1'
@@ -93,16 +94,14 @@ dependencies {
 
     // proxy support
     compile 'net.i2p.android:client:0.7'
+
     // Use the following code to update the libnetcipher submodule
     // git submodule foreach git reset --hard
     // git submodule update --remote
-    compile(project(':libnetcipher'))
+    compile project(':libnetcipher')
 
     // memory leak analysis
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
-//    compile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
-
     provided 'javax.annotation:jsr250-api:1.0'
-
 }

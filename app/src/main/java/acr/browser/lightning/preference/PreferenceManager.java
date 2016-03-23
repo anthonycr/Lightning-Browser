@@ -109,7 +109,7 @@ public class PreferenceManager {
     }
 
     public boolean getColorModeEnabled() {
-        return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, false);
+        return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, true);
     }
 
     public boolean getCookiesEnabled() {
