@@ -50,6 +50,8 @@
     <string name="wideViewPort">Széles nézőport használata</string>
     <string name="overViewMode">Oldalak betöltése áttekinthető módban</string>
     <string name="restore">Elvesztett lapok visszaállítása induláskor</string>
+    <string name="supported_browsers_title">Támogatott Böngészők</string>
+    <string name="stock_browser">Gyári Böngésző</string>
     <string name="stock_browser_unavailable">Nincs gyári böngésző észlelve</string>
     <string name="stock_browser_available">Támogatott gyári böngésző észlelve</string>
     <string name="fullScreenOption">Állapotsáv elrejtése böngészés közben</string>
@@ -60,7 +62,8 @@
     <string name="action_open">Megnyitás</string>
     <string name="dialog_link">Mit szeretnél csinálni ezzel a linkkel?</string>
     <string name="dialog_title_share">Oldal megosztása</string>
-    <string name="dialog_bookmark">Mit szeretnél csinálni ezzel a könyvjelzővel?</string>
+    <string name="dialog_history_long_press">Mit szeretnél csinálni, ezzel az előzménnyel?</string>
+    <string name="dialog_bookmark">Mit szeretnél csinálni, ezzel a könyvjelzővel?</string>
     <string name="action_delete">Törlés</string>
     <string name="action_blank">Üres oldal</string>
     <string name="agent_default">Alapértelmezett</string>
@@ -101,6 +104,8 @@
     <string name="action_find">Keresés az oldalon</string>
     <string name="download_pending">Letöltés elkezdése\u2026</string>
     <string name="cannot_download">Csak \"http\" vagy \"https\" URL-eket lehet letölteni.</string>
+    <string name="problem_download">Érvénytelen URL, nem sikerült a letöltés</string>
+    <string name="problem_location_download">Nem lehet letölteni a kiválasztott helyre</string>
     <string name="download_no_sdcard_dlg_title" >Nincs SD kártya</string>
     <string name="download_no_sdcard_dlg_msg" >USB tárolóra van szükség a fájl letöltéséhez.</string>
     <string name="download_sdcard_busy_dlg_title">USB-tár nem elérhető</string>
@@ -124,6 +129,13 @@
     <string name="licenses">Nyílt forráskódú licencek</string>
     <string name="suggestion">Keresés</string>
     <string name="block_ads">Reklámok blokkolása</string>
+    <string name="message_insecure_connection">Kapcsolódás ehhez a weboldalhoz, nem biztonságos:\n%1$s\nFolytatja mindenképpen?</string>
+    <string name="message_certificate_date_invalid">az tanúsítvány dátuma érvénytelen</string>
+    <string name="message_certificate_expired">a tanúsítvány lejárt</string>
+    <string name="message_certificate_domain_mismatch">a domain a tanúsítványban, nem egyezik az domainjével</string>
+    <string name="message_certificate_invalid">a tanúsítvány érvénytelen</string>
+    <string name="message_certificate_not_yet_valid">a tanúsítvány, még nem érvényes</string>
+    <string name="message_certificate_untrusted">a tanúsítvány nem megbízható</string>
     <string name="title_form_resubmission">Űrlap újraküldése</string>
     <string name="message_form_resubmission">Szeretnél újból elküldi az adatokat?</string>
     <string name="message_location">\nSzeretné használni a saját helyét?</string>
@@ -134,8 +146,21 @@
     <string name="hint_password">Jelszó</string>
     <string name="google_suggestions">Keresési javaslatok</string>
     <string name="powered_by_google">A Google támogatásával</string>
-    <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot.Szeretné használni Tor-t?</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>Egyik sem</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manuális</item>
+    </string-array>
+    <string name="manual_proxy">Manuális proxy</string>
+    <string name="host">Hoszt:</string>
+    <string name="port">Port:</string>
+    <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot. Szeretné használni a Tor-t?</string>
+    <string name="use_i2p_prompt">Úgy tűnik, hogy önnek telepítve van az I2P. Szeretné használni az I2P-t?</string>
     <string name="install_orbot">Kérjük telepítse az Orbot-ot annak érdekében, hogy működjön a proxy a Tor-ral.</string>
+    <string name="i2p_not_running">I2P, nem fut.</string>
+    <string name="i2p_tunnels_not_ready">I2P alagútak, nem állnak készen még.</string>
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="clear_cookies_exit">Cookie-ek törlése kilépéskor</string>
@@ -152,6 +177,7 @@
     <string name="name_inverted">Negatív</string>
     <string name="name_grayscale">Szürkeárnyalatos</string>
     <string name="name_inverted_grayscale">Negatív szürkeárnyalatos</string>
+    <string name="name_increase_contrast">Kontraszt Növelése</string>
     <string name="name_normal">Normál</string>
     <string name="sync_history">Előzmények szinkronizálása Google-val</string>
     <string name="title_file_chooser">Fájl választó</string>
@@ -170,6 +196,7 @@
     <string name="settings_about_explain">Részletek az alkalmazás verziószámáról, a készítőről és a licencekről.</string>
     <string name="close_tab">Lap bezárása</string>
     <string name="close_all_tabs">Összes lap bezárása</string>
+    <string name="close_other_tabs">Másik lapok bezárása</string>
     <string name="third_party">Harmadik féltől származó Cookie-k letiltása</string>
     <string name="color_mode">Színes mód engedélyezése</string>
     <string name="reading_mode">Olvasó mód</string>
@@ -177,14 +204,34 @@
     <string name="loading_failed">Nem sikerült semmit betölteni az oldalról.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
-    <string name="mit_license">MIT License</string>
+    <string name="mit_license">MIT Licenc</string>
     <string name="url_contents">URL doboz tartalma</string>
+    <string name="text_encoding">Szöveg Kódolás</string>
     <string-array name="url_content_array">
-        <item >Domain (alapértelmezett)</item>
-        <item >URL</item>
-        <item >Cím</item>
+        <item>Domain (alapértelmezett)</item>
+        <item>URL</item>
+        <item>Cím</item>
     </string-array>
-        <string name="invert_color">Negatív szín</string>
-        <string name="dark_theme">Sötét téma </string>
-        <string name="tabs">Lapok</string>
+    <string name="invert_color">Negatív szín</string>
+    <string name="dark_theme">Sötét téma</string>
+    <string name="tabs">Lapok</string>
+    <string name="theme">Alkalmazás Téma</string>
+    <string name="light_theme">Világos Téma</string>
+    <string name="black_theme">Fekete Téma (AMOLED)</string>
+    <string name="folder">Mappanév</string>
+    <string name="action_folder">Mappa</string>
+    <string name="action_rename">Átnevez</string>
+    <string name="title_rename_folder">Mappa átnevezése</string>
+    <string name="dialog_folder">Mit szeretnél csinálni, ezzel a mappával?</string>
+    <string name="clear_web_storage">Webtárhely törlése</string>
+    <string name="clear_web_storage_exit">Webtárhely törlése kilépéskor</string>
+    <string name="message_web_storage_cleared">Webtárhely törölve</string>
+    <string name="hosts_source">Reklámblokkoló hosztfájl forrása</string>
+    <string name="settings_adblock">Reklámblokkoló beállítások</string>
+    <string name="tabs_in_drawer">Oldalak mutatása a navigációs fiókban</string>
+    <string name="do_not_track">\'Ne kövessen nyomon\' kérése</string>
+    <string name="remove_identifying_headers">Azonosító fejléc eltávolítása</string>
+    <string name="action_add_to_homescreen">Hozzáadás a kezdőképernyőhöz</string>
+    <string name="message_added_to_homescreen">Parancsikon hozzáadva a kezdőképernyőhöz</string>
+    <string name="action_delete_all_bookmarks">Összes könyvjelző törlése</string>
 </resources>
