@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -116,6 +117,7 @@ import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.utils.DrawableUtils;
+import acr.browser.lightning.utils.KeyboardHelper;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -154,7 +156,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ImageView mArrowImage;
 
     // Current tab view being displayed
-    private View mCurrentView;
+    @Nullable private View mCurrentView;
 
     // Full Screen Video Views
     private FrameLayout mFullscreenContainer;
@@ -250,6 +252,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         initialize();
 
+        KeyboardHelper keyboardHelper = new KeyboardHelper(mRoot);
+        keyboardHelper.registerKeyboardListener(new KeyboardHelper.KeyboardListener() {
+            @Override
+            public void keyboardVisibilityChanged(boolean visible) {
+                if (visible) {
+                    setTabHeightForKeyboard();
+                } else {
+                    setTabHeight();
+                }
+            }
+        });
     }
 
     private synchronized void initialize() {
@@ -603,7 +616,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         initializeTabHeight();
 
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            // Sets the tab height correctly if the status bar is hidden
+            // Also ensures that tab is correct height on rotation
             mRoot.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
                 @Override
@@ -1081,7 +1096,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         initializeToolbarHeight(newConfig);
     }
 
-    private void initializeToolbarHeight(@NonNull final Configuration configuration){
+    private void initializeToolbarHeight(@NonNull final Configuration configuration) {
         // TODO externalize the dimensions
         doOnLayout(mUiLayout, new Runnable() {
             @Override
@@ -1308,7 +1323,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private int getSearchBarColor(int requestedColor, int defaultColor) {
         if (requestedColor == defaultColor) {
-            return mDarkTheme ? DrawableUtils.mixColor(0.25f, defaultColor, Color.WHITE): Color.WHITE;
+            return mDarkTheme ? DrawableUtils.mixColor(0.25f, defaultColor, Color.WHITE) : Color.WHITE;
         } else {
             return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
         }
@@ -1948,7 +1963,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private void setTabHeight() {
         Log.d(TAG, "setTabHeight");
         if (mRoot.getHeight() == 0) {
-            mRoot.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mRoot.measure(View.MeasureSpec.EXACTLY, View.MeasureSpec.EXACTLY);
         }
 
         Log.d(TAG, "UI Layout top: " + mUiLayout.getTop());
@@ -1957,10 +1972,26 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             int height = mRoot.getHeight() - mUiLayout.getTop();
             mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height));
         } else {
-            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            params.weight = 1;
+            mBrowserFrame.setLayoutParams(params);
         }
 
         mBrowserFrame.requestLayout();
+    }
+
+    private void setTabHeightForKeyboard() {
+        doOnLayout(mUiLayout, new Runnable() {
+            @Override
+            public void run() {
+                Rect rect = new Rect();
+                mRoot.getWindowVisibleDisplayFrame(rect);
+
+                int height = rect.bottom - mUiLayout.getTop();
+                mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height));
+                mBrowserFrame.requestLayout();
+            }
+        });
     }
 
     /**
