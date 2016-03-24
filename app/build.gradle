@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionName "4.3.0"
+        versionName "4.3.1"
         generatedDensities = []
     }
 
@@ -40,13 +40,13 @@ android {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
             applicationId "acr.browser.lightning"
-            versionCode 85
+            versionCode 86
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
             applicationId "acr.browser.barebones"
-            versionCode 87
+            versionCode 88
         }
     }
 
