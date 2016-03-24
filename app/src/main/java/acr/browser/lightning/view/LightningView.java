@@ -196,8 +196,7 @@ public class LightningView {
     public void loadBookmarkpage() {
         if (mWebView == null)
             return;
-        Bitmap folderIcon = ThemeUtils.getThemedBitmap(mActivity, R.drawable.ic_folder, false);
-        new BookmarkPage(this, BrowserApp.get(mActivity), mBookmarkManager, folderIcon).load();
+        new BookmarkPage(this, mActivity, mBookmarkManager).load();
     }
 
     /**

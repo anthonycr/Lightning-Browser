@@ -166,4 +166,34 @@ public class UrlUtils {
                         url.endsWith(HistoryPage.FILENAME) ||
                         url.endsWith(StartPage.FILENAME));
     }
+
+    /**
+     * Determines if the url is a url for the bookmark page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a bookmark url, false otherwise.
+     */
+    public static boolean isBookmarkUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME);
+    }
+
+    /**
+     * Determines if the url is a url for the history page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a history url, false otherwise.
+     */
+    public static boolean isHistoryUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(HistoryPage.FILENAME);
+    }
+
+    /**
+     * Determines if the url is a url for the start page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a start page url, false otherwise.
+     */
+    public static boolean isStartPageUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(StartPage.FILENAME);
+    }
 }

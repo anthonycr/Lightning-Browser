@@ -21,7 +21,12 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
+import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.database.BookmarkManager;
+import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.react.Action;
 import acr.browser.lightning.react.Observable;
@@ -29,6 +34,7 @@ import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.react.Subscriber;
 import acr.browser.lightning.utils.FileUtils;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
 /**
@@ -40,6 +46,7 @@ public class TabsManager {
 
     private static final String TAG = TabsManager.class.getSimpleName();
     private static final String BUNDLE_KEY = "WEBVIEW_";
+    private static final String URL_KEY = "URL_KEY";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
     private final List<LightningView> mTabList = new ArrayList<>(1);
@@ -50,6 +57,8 @@ public class TabsManager {
     private List<Runnable> mPostInitializationWorkList = new ArrayList<>();
 
     @Inject PreferenceManager mPreferenceManager;
+    @Inject BookmarkManager mBookmarkManager;
+    @Inject HistoryDatabase mHistoryManager;
     @Inject Bus mEventBus;
     @Inject Application mApp;
 
@@ -123,6 +132,7 @@ public class TabsManager {
                 } else {
                     newTab(activity, null, false);
                     finishInitialization();
+                    subscriber.onComplete();
                 }
 
             }
@@ -132,12 +142,22 @@ public class TabsManager {
 
     private void restoreLostTabs(@Nullable final String url, @NonNull final Activity activity,
                                  @NonNull final Subscriber subscriber) {
+
         restoreState().subscribeOn(Schedulers.worker())
                 .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
             @Override
             public void onNext(Bundle item) {
                 LightningView tab = newTab(activity, "", false);
-                if (tab.getWebView() != null) {
+                String url = item.getString(URL_KEY);
+                if (url != null && tab.getWebView() != null) {
+                    if (UrlUtils.isBookmarkUrl(url)) {
+                        new BookmarkPage(tab, activity, mBookmarkManager).load();
+                    } else if (UrlUtils.isStartPageUrl(url)) {
+                        new StartPage(tab, mApp).load();
+                    } else if (UrlUtils.isHistoryUrl(url)) {
+                        new HistoryPage(tab, mApp, mHistoryManager).load();
+                    }
+                } else if (tab.getWebView() != null) {
                     tab.getWebView().restoreState(item);
                 }
             }
@@ -357,8 +377,11 @@ public class TabsManager {
         for (int n = 0; n < mTabList.size(); n++) {
             LightningView tab = mTabList.get(n);
             Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
-            if (tab.getWebView() != null) {
+            if (tab.getWebView() != null && !UrlUtils.isSpecialUrl(tab.getUrl())) {
                 tab.getWebView().saveState(state);
+                outState.putBundle(BUNDLE_KEY + n, state);
+            } else if (tab.getWebView() != null) {
+                state.putString(URL_KEY, tab.getUrl());
                 outState.putBundle(BUNDLE_KEY + n, state);
             }
         }

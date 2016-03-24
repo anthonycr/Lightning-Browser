@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.constant;
 
+import android.app.Activity;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
@@ -69,9 +71,10 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
     private final Bitmap mFolderIcon;
     @NonNull private final String mTitle;
 
-    public BookmarkPage(LightningView tab, @NonNull Application app, BookmarkManager manager, Bitmap folderIcon) {
-        mApp = app;
-        mTitle = app.getString(R.string.action_bookmarks);
+    public BookmarkPage(LightningView tab, @NonNull Activity activity, BookmarkManager manager) {
+        mApp = BrowserApp.get(activity);
+        final Bitmap folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false);
+        mTitle = mApp.getString(R.string.action_bookmarks);
         mManager = manager;
         mTabReference = new WeakReference<>(tab);
         mFolderIcon = folderIcon;
