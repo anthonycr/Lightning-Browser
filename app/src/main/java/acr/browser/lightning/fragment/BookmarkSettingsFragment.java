@@ -162,9 +162,15 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         BrowserApp.getTaskThread().execute(new Runnable() {
             @Override
             public void run() {
-                Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
-                importStock.setEnabled(getSync().isBrowserImportSupported());
-                importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
+                final boolean isBrowserImportSupported = getSync().isBrowserImportSupported();
+                Schedulers.main().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
+                        importStock.setEnabled(isBrowserImportSupported);
+                        importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
+                    }
+                });
             }
         });
 
