@@ -2,21 +2,32 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
     <header
         android:fragment="acr.browser.lightning.fragment.GeneralSettingsFragment"
-        android:title="@string/settings_general" />
+        android:title="@string/settings_general"/>
     <header
         android:fragment="acr.browser.lightning.fragment.BookmarkSettingsFragment"
-        android:title="@string/bookmark_settings" />
+        android:title="@string/bookmark_settings"/>
     <header
         android:fragment="acr.browser.lightning.fragment.DisplaySettingsFragment"
-        android:title="@string/settings_display" />
+        android:title="@string/settings_display"/>
     <header
         android:fragment="acr.browser.lightning.fragment.PrivacySettingsFragment"
-        android:title="@string/settings_privacy" />
+        android:title="@string/settings_privacy"/>
     <header
         android:fragment="acr.browser.lightning.fragment.AdvancedSettingsFragment"
-        android:title="@string/settings_advanced" />
+        android:title="@string/settings_advanced"/>
     <header
         android:fragment="acr.browser.lightning.fragment.AboutSettingsFragment"
-        android:title="@string/settings_about"
-        android:summary="@string/settings_about_explain" />
+        android:summary="@string/settings_about_explain"
+        android:title="@string/settings_about"/>
+    <header
+        android:summary="@string/faq_description"
+        android:title="@string/faq">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://acrdevelopment.org/lightning/faq">
+            <extra
+                android:name="SOURCE"
+                android:value="SELF"/>
+        </intent>
+    </header>
 </preference-headers>
