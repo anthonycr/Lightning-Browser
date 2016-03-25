@@ -387,12 +387,42 @@ public class BookmarkManager {
      */
     @NonNull
     public synchronized List<HistoryItem> getBookmarksFromFolder(@Nullable String folder, boolean sort) {
-        List<HistoryItem> bookmarks = new ArrayList<>();
+        List<HistoryItem> bookmarks = new ArrayList<>(1);
         if (folder == null || folder.isEmpty()) {
             bookmarks.addAll(getFolders(sort));
             folder = "";
         }
         mCurrentFolder = folder;
+        for (HistoryItem item : mBookmarksMap.values()) {
+            if (item.getFolder().equals(folder))
+                bookmarks.add(item);
+        }
+        if (sort) {
+            Collections.sort(bookmarks, new SortIgnoreCase());
+        }
+        return bookmarks;
+    }
+
+    /**
+     * Different from {@link #getBookmarksFromFolder(String, boolean)} only in
+     * that it doesn't affect the internal state of the bookmark manager which
+     * tracks the current folder used by the bookmark drawer.
+     * <p/>
+     * This method returns a list of bookmarks and folders located in the specified folder.
+     * This method should generally be used by the UI when it needs a list to display to the
+     * user as it returns a subset of all bookmarks and includes folders as well which are
+     * really 'fake' bookmarks.
+     *
+     * @param folder the name of the folder to retrieve bookmarks from
+     * @return a list of bookmarks found in that folder
+     */
+    @NonNull
+    public synchronized List<HistoryItem> getBookmarksCopyFromFolder(@Nullable String folder, boolean sort) {
+        List<HistoryItem> bookmarks = new ArrayList<>(1);
+        if (folder == null || folder.isEmpty()) {
+            bookmarks.addAll(getFolders(sort));
+            folder = "";
+        }
         for (HistoryItem item : mBookmarksMap.values()) {
             if (item.getFolder().equals(folder))
                 bookmarks.add(item);

@@ -114,7 +114,7 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
     }
 
     private void buildBookmarkPage(@Nullable final String folder, @NonNull final BookmarkManager manager) {
-        final List<HistoryItem> list = manager.getBookmarksFromFolder(folder, true);
+        final List<HistoryItem> list = manager.getBookmarksCopyFromFolder(folder, true);
         final File bookmarkWebPage;
         if (folder == null || folder.isEmpty()) {
             bookmarkWebPage = new File(mFilesDir, FILENAME);
