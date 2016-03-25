@@ -95,8 +95,11 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbcookiesexit.setChecked(mPreferenceManager.getClearCookiesExitEnabled());
         cb3cookies.setChecked(mPreferenceManager.getBlockThirdPartyCookiesEnabled());
         cbwebstorageexit.setChecked(mPreferenceManager.getClearWebStorageExitEnabled());
-        cbDoNotTrack.setChecked(mPreferenceManager.getDoNotTrackEnabled());
-        cbIdentifyingHeaders.setChecked(mPreferenceManager.getRemoveIdentifyingHeadersEnabled());
+        cbDoNotTrack.setChecked(mPreferenceManager.getDoNotTrackEnabled() && Utils.doesSupportHeaders());
+        cbIdentifyingHeaders.setChecked(mPreferenceManager.getRemoveIdentifyingHeadersEnabled() && Utils.doesSupportHeaders());
+
+        cbDoNotTrack.setEnabled(Utils.doesSupportHeaders());
+        cbIdentifyingHeaders.setEnabled(Utils.doesSupportHeaders());
 
         String identifyingHeadersSummary = LightningView.HEADER_REQUESTED_WITH + ", " + LightningView.HEADER_WAP_PROFILE;
         cbIdentifyingHeaders.setSummary(identifyingHeadersSummary);

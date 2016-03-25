@@ -47,11 +47,9 @@ import acr.browser.lightning.utils.Utils;
 
 public class LightningWebClient extends WebViewClient {
 
-
     @NonNull private final Activity mActivity;
     @NonNull private final LightningView mLightningView;
     @NonNull private final UIController mUIController;
-    @NonNull private final Bus mEventBus;
     @NonNull private final IntentUtils mIntentUtils;
 
     @Inject ProxyUtils mProxyUtils;
@@ -65,7 +63,6 @@ public class LightningWebClient extends WebViewClient {
         mUIController = (UIController) activity;
         mLightningView = lightningView;
         mAdBlock.updatePreference();
-        mEventBus = BrowserApp.getBus(activity);
         mIntentUtils = new IntentUtils(activity);
     }
 
@@ -285,11 +282,11 @@ public class LightningWebClient extends WebViewClient {
 
         Map<String, String> headers = mLightningView.getRequestHeaders();
 
-        if (mLightningView.isIncognito()) {
+        if (mLightningView.isIncognito() && Utils.doesSupportHeaders()) {
             view.loadUrl(url, headers);
             return true;
         }
-        if (url.startsWith("about:")) {
+        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
             view.loadUrl(url, headers);
             return true;
         }
@@ -322,9 +319,9 @@ public class LightningWebClient extends WebViewClient {
             }
         }
 
-        if (!mIntentUtils.startActivityForUrl(view, url)) {
+        if (!mIntentUtils.startActivityForUrl(view, url) && Utils.doesSupportHeaders()) {
             view.loadUrl(url, headers);
         }
-        return true;
+        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
     }
 }
