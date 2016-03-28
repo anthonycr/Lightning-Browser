@@ -98,9 +98,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         return Observable.create(new Action<BookmarkViewAdapter>() {
             @Override
             public void onSubscribe(@NonNull Subscriber<BookmarkViewAdapter> subscriber) {
-                mBookmarkAdapter = new BookmarkViewAdapter(getContext(), mBookmarks);
-                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                subscriber.onNext(mBookmarkAdapter);
+                Context context = getContext();
+                if (context != null) {
+                    mBookmarkAdapter = new BookmarkViewAdapter(getContext(), mBookmarks);
+                    setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+                    subscriber.onNext(mBookmarkAdapter);
+                }
+                subscriber.onComplete();
             }
         });
     }
