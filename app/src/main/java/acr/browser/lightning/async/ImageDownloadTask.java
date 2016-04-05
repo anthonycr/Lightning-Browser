@@ -1,5 +1,6 @@
 package acr.browser.lightning.async;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -141,9 +142,19 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         super.onPostExecute(bitmap);
         AsyncExecutor.getInstance().notifyThreadFinish();
         final Bitmap fav = Utils.padFavicon(bitmap);
-        ImageView view = mFaviconImage.get();
+        final ImageView view = mFaviconImage.get();
         if (view != null && view.getTag().equals(mWeb.getUrl().hashCode())) {
-            view.setImageBitmap(fav);
+            Context context = view.getContext();
+            if (context instanceof Activity) {
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setImageBitmap(fav);
+                    }
+                });
+            } else {
+                view.setImageBitmap(fav);
+            }
         }
         mWeb.setBitmap(fav);
     }

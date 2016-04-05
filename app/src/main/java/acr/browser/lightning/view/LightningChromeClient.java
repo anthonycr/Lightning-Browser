@@ -64,8 +64,8 @@ class LightningChromeClient extends WebChromeClient {
      *
      * @param icon the icon to cache
      */
-    private static void cacheFavicon(final String url, @Nullable final Bitmap icon, @NonNull final Context context) {
-        if (icon == null) return;
+    private static void cacheFavicon(@Nullable final String url, @Nullable final Bitmap icon, @NonNull final Context context) {
+        if (icon == null || url == null) return;
         final Uri uri = Uri.parse(url);
         if (uri.getHost() == null) {
             return;
@@ -82,7 +82,7 @@ class LightningChromeClient extends WebChromeClient {
             mLightningView.getTitleInfo().setTitle(mActivity.getString(R.string.untitled));
         }
         mUIController.tabChanged(mLightningView);
-        if (view != null) {
+        if (view != null && view.getUrl() != null) {
             mUIController.updateHistory(title, view.getUrl());
         }
     }

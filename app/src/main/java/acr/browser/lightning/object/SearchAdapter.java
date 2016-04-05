@@ -417,7 +417,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable {
             connection.disconnect();
             cacheFile.setLastModified(System.currentTimeMillis());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.w(TAG, "Problem getting search suggestions", e);
         } finally {
             Utils.close(in);
             Utils.close(fos);

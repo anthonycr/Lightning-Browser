@@ -100,7 +100,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             public void onSubscribe(@NonNull Subscriber<BookmarkViewAdapter> subscriber) {
                 Context context = getContext();
                 if (context != null) {
-                    mBookmarkAdapter = new BookmarkViewAdapter(getContext(), mBookmarks);
+                    mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
                     setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
                     subscriber.onNext(mBookmarkAdapter);
                 }

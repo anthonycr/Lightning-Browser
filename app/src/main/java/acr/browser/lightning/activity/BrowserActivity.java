@@ -1752,6 +1752,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mCustomViewCallback = null;
         setRequestedOrientation(mOriginalOrientation);
+        setTabHeight();
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,
@@ -1795,8 +1796,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Window window = getWindow();
         View decor = window.getDecorView();
         if (enabled) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if (immersive) {
                 decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -1804,7 +1803,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            } else {
+                decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             }
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
