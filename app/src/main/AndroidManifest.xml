@@ -130,7 +130,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/Theme.DarkTheme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.INCOGNITO"/>
 
