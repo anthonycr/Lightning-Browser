@@ -44,7 +44,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
     private final List<HistoryItem> mSuggestions = new ArrayList<>(5);
     private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
-    @NonNull private final Context mContext;
+
     private boolean mUseGoogle = true;
     private boolean mIsExecuting = false;
     private final boolean mDarkTheme;
@@ -52,20 +52,17 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
     private static final String CACHE_FILE_TYPE = ".sgg";
     private static final long INTERVAL_DAY = 86400000;
     private static final int MAX_SUGGESTIONS = 5;
-    private static final SuggestionsComparator mComparator = new SuggestionsComparator();
-    private SearchFilter mFilter;
+    private static final SuggestionsComparator sComparator = new SuggestionsComparator();
+
+    @NonNull private final Context mContext;
+    @Nullable private SearchFilter mFilter;
     @NonNull private final Drawable mSearchDrawable;
     @NonNull private final Drawable mHistoryDrawable;
     @NonNull private final Drawable mBookmarkDrawable;
 
-    @Inject
-    HistoryDatabase mDatabaseHandler;
-
-    @Inject
-    BookmarkManager mBookmarkManager;
-
-    @Inject
-    PreferenceManager mPreferenceManager;
+    @Inject HistoryDatabase mDatabaseHandler;
+    @Inject BookmarkManager mBookmarkManager;
+    @Inject PreferenceManager mPreferenceManager;
 
     public SuggestionsAdapter(@NonNull Context context, boolean dark, boolean incognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -78,15 +75,6 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
-    }
-
-    private static class NameFilter implements FilenameFilter {
-
-        @Override
-        public boolean accept(File dir, @NonNull String filename) {
-            return filename.endsWith(CACHE_FILE_TYPE);
-        }
-
     }
 
     public void refreshPreferences() {
@@ -118,6 +106,12 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
     @Override
     public long getItemId(int position) {
         return 0;
+    }
+
+    private static class SuggestionHolder {
+        ImageView mImage;
+        TextView mTitle;
+        TextView mUrl;
     }
 
     @Nullable
@@ -204,6 +198,15 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
             }
         }
 
+        private static class NameFilter implements FilenameFilter {
+
+            @Override
+            public boolean accept(File dir, @NonNull String filename) {
+                return filename.endsWith(CACHE_FILE_TYPE);
+            }
+
+        }
+
     }
 
     private class SearchFilter extends Filter {
@@ -260,18 +263,12 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
             synchronized (mFilteredList) {
                 mFilteredList.clear();
                 List<HistoryItem> filtered = getFilteredList();
-                Collections.sort(filtered, mComparator);
+                Collections.sort(filtered, sComparator);
                 mFilteredList.addAll(filtered);
             }
             notifyDataSetChanged();
         }
 
-    }
-
-    private static class SuggestionHolder {
-        ImageView mImage;
-        TextView mTitle;
-        TextView mUrl;
     }
 
     @Override
@@ -284,7 +281,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
         synchronized (mFilteredList) {
             mFilteredList.clear();
             List<HistoryItem> filtered = getFilteredList();
-            Collections.sort(filtered, mComparator);
+            Collections.sort(filtered, sComparator);
             mFilteredList.addAll(filtered);
             notifyDataSetChanged();
         }
