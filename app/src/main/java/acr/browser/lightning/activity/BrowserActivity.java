@@ -112,7 +112,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
-import acr.browser.lightning.adapter.SearchAdapter;
+import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.receiver.NetworkReceiver;
@@ -164,7 +164,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private View mCustomView;
 
     // Adapter
-    private SearchAdapter mSearchAdapter;
+    private SuggestionsAdapter mSuggestionsAdapter;
 
     // Callback
     private CustomViewCallback mCustomViewCallback;
@@ -787,7 +787,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 ? new HistoryItem(url, title)
                 : null;
         if (item != null && mBookmarkManager.addBookmark(item)) {
-            mSearchAdapter.refreshBookmarks();
+            mSuggestionsAdapter.refreshBookmarks();
             mEventBus.post(new BrowserEvents.BookmarkAdded(title, url));
         }
     }
@@ -797,7 +797,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 ? new HistoryItem(url, title)
                 : null;
         if (item != null && mBookmarkManager.deleteBookmark(item)) {
-            mSearchAdapter.refreshBookmarks();
+            mSuggestionsAdapter.refreshBookmarks();
             mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
         }
     }
@@ -1229,9 +1229,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         super.onResume();
         final LightningView currentTab = mTabsManager.getCurrentTab();
         Log.d(TAG, "onResume");
-        if (mSearchAdapter != null) {
-            mSearchAdapter.refreshPreferences();
-            mSearchAdapter.refreshBookmarks();
+        if (mSuggestionsAdapter != null) {
+            mSuggestionsAdapter.refreshPreferences();
+            mSuggestionsAdapter.refreshBookmarks();
         }
         if (currentTab != null) {
             currentTab.resumeTimers();
@@ -1418,7 +1418,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private void initializeSearchSuggestions(final AutoCompleteTextView getUrl) {
 
-        mSearchAdapter = new SearchAdapter(this, mDarkTheme, isIncognito());
+        mSuggestionsAdapter = new SuggestionsAdapter(this, mDarkTheme, isIncognito());
 
         getUrl.setThreshold(1);
         getUrl.setDropDownWidth(-1);
@@ -1454,7 +1454,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
 
         getUrl.setSelectAllOnFocus(true);
-        getUrl.setAdapter(mSearchAdapter);
+        getUrl.setAdapter(mSuggestionsAdapter);
     }
 
     /**
