@@ -219,6 +219,7 @@ public class DownloadHandler {
         request.addRequestHeader(COOKIE_REQUEST_HEADER, cookies);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         if (mimetype == null) {
+            Log.d(TAG, "Mimetype is null");
             if (TextUtils.isEmpty(addressString)) {
                 return;
             }
@@ -226,24 +227,20 @@ public class DownloadHandler {
             // are not sure of the mimetype in this case, so do a head request
             new FetchUrlMimeType(context, request, addressString, cookies, userAgent).start();
         } else {
+            Log.d(TAG, "Valid mimetype, attempting to download");
             final DownloadManager manager = (DownloadManager) context
                     .getSystemService(Context.DOWNLOAD_SERVICE);
-            BrowserApp.getTaskThread().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        manager.enqueue(request);
-                    } catch (IllegalArgumentException e) {
-                        // Probably got a bad URL or something
-                        e.printStackTrace();
-                        eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
-                    } catch (SecurityException e) {
-                        // TODO write a download utility that downloads files rather than rely on the system
-                        // because the system can only handle Environment.getExternal... as a path
-                        eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
-                    }
-                }
-            });
+            try {
+                manager.enqueue(request);
+            } catch (IllegalArgumentException e) {
+                // Probably got a bad URL or something
+                Log.e(TAG, "Unable to enqueue request", e);
+                eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
+            } catch (SecurityException e) {
+                // TODO write a download utility that downloads files rather than rely on the system
+                // because the system can only handle Environment.getExternal... as a path
+                eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
+            }
             eventBus.post(new BrowserEvents.ShowSnackBarMessage(
                     context.getString(R.string.download_pending) + ' ' + filename));
         }

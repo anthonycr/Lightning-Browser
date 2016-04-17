@@ -146,8 +146,10 @@ public class BrowserPresenter {
                 tabChanged(mTabsModel.indexOfCurrentTab());
             }
         }
+
         final LightningView afterTab = mTabsModel.getCurrentTab();
         mView.notifyTabViewRemoved(position);
+
         if (afterTab == null) {
             mView.closeBrowser();
             return;
@@ -167,7 +169,7 @@ public class BrowserPresenter {
 
         mView.updateTabNumber(mTabsModel.size());
 
-        Log.d(Constants.TAG, "deleted tab");
+        Log.d(TAG, "deleted tab");
     }
 
     public void onNewIntent(final Intent intent) {

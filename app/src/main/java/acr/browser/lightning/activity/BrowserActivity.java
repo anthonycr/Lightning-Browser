@@ -112,7 +112,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
-import acr.browser.lightning.object.SearchAdapter;
+import acr.browser.lightning.adapter.SearchAdapter;
 import acr.browser.lightning.react.Observable;
 import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.receiver.NetworkReceiver;
@@ -421,7 +421,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     void panicClean() {
-        Log.d(Constants.TAG, "Closing browser");
+        Log.d(TAG, "Closing browser");
         mTabsManager.newTab(this, "", false);
         mTabsManager.switchToTab(0);
         mTabsManager.clearSavedState();
@@ -885,19 +885,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void notifyTabViewRemoved(int position) {
-        Log.d(Constants.TAG, "Notify Tab Removed: " + position);
+        Log.d(TAG, "Notify Tab Removed: " + position);
         mTabsView.tabRemoved(position);
     }
 
     @Override
     public void notifyTabViewAdded() {
-        Log.d(Constants.TAG, "Notify Tab Added");
+        Log.d(TAG, "Notify Tab Added");
         mTabsView.tabAdded();
     }
 
     @Override
     public void notifyTabViewChanged(int position) {
-        Log.d(Constants.TAG, "Notify Tab Changed: " + position);
+        Log.d(TAG, "Notify Tab Changed: " + position);
         mTabsView.tabChanged(position);
     }
 
@@ -908,6 +908,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void removeTabView() {
+
+        Log.d(TAG, "Remove the tab view");
 
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
@@ -935,6 +937,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mCurrentView == view) {
             return;
         }
+
+        Log.d(TAG, "Setting the tab view");
 
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
@@ -1028,7 +1032,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void onTrimMemory(int level) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            Log.d(Constants.TAG, "Low Memory, Free Memory");
+            Log.d(TAG, "Low Memory, Free Memory");
             mTabsManager.freeMemory();
         }
     }
@@ -1052,19 +1056,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mPreferences.getClearCacheExit() && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.getWebView());
-            Log.d(Constants.TAG, "Cache Cleared");
+            Log.d(TAG, "Cache Cleared");
         }
         if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
             WebUtils.clearHistory(this, mHistoryDatabase);
-            Log.d(Constants.TAG, "History Cleared");
+            Log.d(TAG, "History Cleared");
         }
         if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
             WebUtils.clearCookies(this);
-            Log.d(Constants.TAG, "Cookies Cleared");
+            Log.d(TAG, "Cookies Cleared");
         }
         if (mPreferences.getClearWebStorageExitEnabled() && !isIncognito()) {
             WebUtils.clearWebStorage();
-            Log.d(Constants.TAG, "WebStorage Cleared");
+            Log.d(TAG, "WebStorage Cleared");
         } else if (isIncognito()) {
             WebUtils.clearWebStorage();     // We want to make sure incognito mode is secure
         }
@@ -1138,7 +1142,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mEventBus.post(new BrowserEvents.UserPressedBack());
         } else {
             if (currentTab != null) {
-                Log.d(Constants.TAG, "onBackPressed");
+                Log.d(TAG, "onBackPressed");
                 if (mSearch.hasFocus()) {
                     currentTab.requestFocus();
                 } else if (currentTab.canGoBack()) {
@@ -1155,7 +1159,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     }
                 }
             } else {
-                Log.e(Constants.TAG, "This shouldn't happen ever");
+                Log.e(TAG, "This shouldn't happen ever");
                 super.onBackPressed();
             }
         }
@@ -1165,7 +1169,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onPause() {
         super.onPause();
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        Log.d(Constants.TAG, "onPause");
+        Log.d(TAG, "onPause");
         if (currentTab != null) {
             currentTab.pauseTimers();
             currentTab.onPause();
@@ -1196,7 +1200,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     protected void onDestroy() {
-        Log.d(Constants.TAG, "onDestroy");
+        Log.d(TAG, "onDestroy");
 
         mPresenter.shutdown();
 
@@ -1204,6 +1208,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mHistoryDatabase.close();
             mHistoryDatabase = null;
         }
+
         super.onDestroy();
     }
 
@@ -1223,7 +1228,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onResume() {
         super.onResume();
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        Log.d(Constants.TAG, "onResume");
+        Log.d(TAG, "onResume");
         if (mSearchAdapter != null) {
             mSearchAdapter.refreshPreferences();
             mSearchAdapter.refreshBookmarks();
@@ -1397,11 +1402,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 try {
                     mHistoryDatabase.visitHistoryItem(url, title);
                 } catch (IllegalStateException e) {
-                    Log.e(Constants.TAG, "IllegalStateException in updateHistory", e);
+                    Log.e(TAG, "IllegalStateException in updateHistory", e);
                 } catch (NullPointerException e) {
-                    Log.e(Constants.TAG, "NullPointerException in updateHistory", e);
+                    Log.e(TAG, "NullPointerException in updateHistory", e);
                 } catch (SQLiteException e) {
-                    Log.e(Constants.TAG, "SQLiteException in updateHistory", e);
+                    Log.e(TAG, "SQLiteException in updateHistory", e);
                 }
             }
         });
@@ -1620,7 +1625,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                Log.e(Constants.TAG, "Unable to create Image File", ex);
+                Log.e(TAG, "Unable to create Image File", ex);
             }
 
             // Continue only if the File was successfully created
@@ -1665,7 +1670,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 try {
                     callback.onCustomViewHidden();
                 } catch (Exception e) {
-                    Log.e(Constants.TAG, "Error hiding custom view", e);
+                    Log.e(TAG, "Error hiding custom view", e);
                 }
             }
             return;
@@ -1673,7 +1678,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         try {
             view.setKeepScreenOn(true);
         } catch (SecurityException e) {
-            Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
+            Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
         mOriginalOrientation = getRequestedOrientation();
         mCustomViewCallback = callback;
@@ -1712,18 +1717,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 try {
                     mCustomViewCallback.onCustomViewHidden();
                 } catch (Exception e) {
-                    Log.e(Constants.TAG, "Error hiding custom view", e);
+                    Log.e(TAG, "Error hiding custom view", e);
                 }
                 mCustomViewCallback = null;
             }
             return;
         }
-        Log.d(Constants.TAG, "onHideCustomView");
+        Log.d(TAG, "onHideCustomView");
         currentTab.setVisibility(View.VISIBLE);
         try {
             mCustomView.setKeepScreenOn(false);
         } catch (SecurityException e) {
-            Log.e(Constants.TAG, "WebView is not allowed to keep the screen on");
+            Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
         if (mFullscreenContainer != null) {
@@ -1737,7 +1742,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mFullscreenContainer = null;
         mCustomView = null;
         if (mVideoView != null) {
-            Log.d(Constants.TAG, "VideoView is being stopped");
+            Log.d(TAG, "VideoView is being stopped");
             mVideoView.stopPlayback();
             mVideoView.setOnErrorListener(null);
             mVideoView.setOnCompletionListener(null);
@@ -1747,7 +1752,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             try {
                 mCustomViewCallback.onCustomViewHidden();
             } catch (Exception e) {
-                Log.e(Constants.TAG, "Error hiding custom view", e);
+                Log.e(TAG, "Error hiding custom view", e);
             }
         }
         mCustomViewCallback = null;
@@ -2118,7 +2123,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         public void onReceive(Context context, Intent intent) {
             super.onReceive(context, intent);
             boolean isConnected = isConnected(context);
-            Log.d(Constants.TAG, "Network Connected: " + String.valueOf(isConnected));
+            Log.d(TAG, "Network Connected: " + String.valueOf(isConnected));
             mTabsManager.notifyConnectionStatus(isConnected);
         }
     };

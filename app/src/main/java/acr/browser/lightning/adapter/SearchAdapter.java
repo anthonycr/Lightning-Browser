@@ -1,4 +1,4 @@
-package acr.browser.lightning.object;
+package acr.browser.lightning.adapter;
 
 import android.app.Application;
 import android.content.Context;
