@@ -410,7 +410,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             setIntent(null);
             panicClean();
         } else {
-            mPresenter.setupTabs(getIntent(), isIncognito());
+            mPresenter.setupTabs(getIntent());
             setIntent(null);
             mProxyUtils.checkForProxy(BrowserActivity.this);
         }

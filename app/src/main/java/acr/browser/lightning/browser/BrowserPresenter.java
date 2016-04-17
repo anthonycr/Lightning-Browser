@@ -53,8 +53,14 @@ public class BrowserPresenter {
         });
     }
 
-    public void setupTabs(@Nullable Intent intent, boolean isIncognito) {
-        mTabsModel.initializeTabs((Activity) mView, intent, isIncognito)
+    /**
+     * Initializes the tab manager with the new intent
+     * that is handed in by the BrowserActivity.
+     *
+     * @param intent the intent to handle, may be null.
+     */
+    public void setupTabs(@Nullable Intent intent) {
+        mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
                 .subscribe(new OnSubscribe<Void>() {
                     @Override
                     public void onComplete() {
@@ -65,7 +71,15 @@ public class BrowserPresenter {
                 });
     }
 
-    public void tabChangeOccurred(LightningView tab) {
+    /**
+     * Notify the presenter that a change occurred to
+     * the current tab. Currently doesn't do anything
+     * other than tell the view to notify the adapter
+     * about the change.
+     *
+     * @param tab the tab that changed, may be null.
+     */
+    public void tabChangeOccurred(@Nullable LightningView tab) {
         mView.notifyTabViewChanged(mTabsModel.indexOfTab(tab));
     }
 
@@ -107,6 +121,9 @@ public class BrowserPresenter {
         mCurrentTab = newTab;
     }
 
+    /**
+     * Closes all tabs but the current tab.
+     */
     public void closeAllOtherTabs() {
 
         while (mTabsModel.last() != mTabsModel.indexOfCurrentTab()) {
@@ -119,6 +136,12 @@ public class BrowserPresenter {
 
     }
 
+    /**
+     * Deletes the tab at the specified position.
+     *
+     * @param position the position at which to
+     *                 delete the tab.
+     */
     public void deleteTab(int position) {
         final LightningView tabToDelete = mTabsModel.getTabAtPosition(position);
 
@@ -172,7 +195,14 @@ public class BrowserPresenter {
         Log.d(TAG, "deleted tab");
     }
 
-    public void onNewIntent(final Intent intent) {
+    /**
+     * Handle a new intent from the the main
+     * BrowserActivity.
+     *
+     * @param intent the intent to handle,
+     *               may be null.
+     */
+    public void onNewIntent(@Nullable final Intent intent) {
         mTabsModel.doAfterInitialization(new Runnable() {
             @Override
             public void run() {
@@ -206,7 +236,13 @@ public class BrowserPresenter {
         });
     }
 
-    public void loadUrlInCurrentView(final String url) {
+    /**
+     * Loads a URL in the current tab.
+     *
+     * @param url the URL to load, must
+     *            not be null.
+     */
+    public void loadUrlInCurrentView(@NonNull final String url) {
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (currentTab == null) {
             // This is a problem, probably an assert will be better than a return
@@ -216,21 +252,49 @@ public class BrowserPresenter {
         currentTab.loadUrl(url);
     }
 
+    /**
+     * Notifies the presenter that it should
+     * shut down. This should be called when
+     * the BrowserActivity is destroyed so that
+     * we don't leak any memory.
+     */
     public void shutdown() {
         onTabChanged(null);
         mTabsModel.setTabNumberChangedListener(null);
         mTabsModel.cancelPendingWork();
     }
 
-    public void tabChanged(int position) {
-        if (position < 0) {
+    /**
+     * Notifies the presenter that we wish
+     * to switch to a different tab at the
+     * specified position. If the position
+     * is not in the model, this method will
+     * do nothing.
+     *
+     * @param position the position of the
+     *                 tab to switch to.
+     */
+    public synchronized void tabChanged(int position) {
+        if (position < 0 || position >= mTabsModel.size()) {
             return;
         }
         LightningView tab = mTabsModel.switchToTab(position);
         onTabChanged(tab);
     }
 
-    public synchronized boolean newTab(String url, boolean show) {
+    /**
+     * Open a new tab with the specified URL. You
+     * can choose to show the tab or load it in the
+     * background.
+     *
+     * @param url  the URL to load, may be null if you
+     *             don't wish to load anything.
+     * @param show whether or not to switch to this
+     *             tab after opening it.
+     * @return true if we successfully created the tab,
+     * false if we have hit max tabs.
+     */
+    public synchronized boolean newTab(@Nullable String url, boolean show) {
         // Limit number of tabs for limited version of app
         if (!Constants.FULL_VERSION && mTabsModel.size() >= 10) {
             mView.showSnackbar(R.string.max_tabs);
