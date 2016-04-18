@@ -30,7 +30,7 @@ public class BrowserPresenter {
 
     private static final String TAG = BrowserPresenter.class.getSimpleName();
 
-    private TabsManager mTabsModel;
+    @NonNull private final TabsManager mTabsModel;
     @Inject PreferenceManager mPreferences;
     @Inject Bus mEventBus;
 

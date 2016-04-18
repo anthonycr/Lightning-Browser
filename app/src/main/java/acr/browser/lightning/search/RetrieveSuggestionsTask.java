@@ -33,7 +33,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
-public class RetrieveSuggestionsTask extends AsyncTask<Void, Void, List<HistoryItem>> {
+class RetrieveSuggestionsTask extends AsyncTask<Void, Void, List<HistoryItem>> {
 
     private static final String TAG = RetrieveSuggestionsTask.class.getSimpleName();
 
@@ -42,12 +42,12 @@ public class RetrieveSuggestionsTask extends AsyncTask<Void, Void, List<HistoryI
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = 86400000;
     private static final String DEFAULT_LANGUAGE = "en";
-    private static XmlPullParser sXpp;
-    private static String sLanguage;
-    private WeakReference<SuggestionsResult> mResultCallback;
-    private Application mApplication;
-    private String mSearchSubtitle;
-    private String mQuery;
+    @Nullable private static XmlPullParser sXpp;
+    @Nullable private static String sLanguage;
+    @NonNull private final WeakReference<SuggestionsResult> mResultCallback;
+    @NonNull private final Application mApplication;
+    @NonNull private final String mSearchSubtitle;
+    @NonNull private String mQuery;
 
     public RetrieveSuggestionsTask(@NonNull String query,
                                    @NonNull SuggestionsResult callback,

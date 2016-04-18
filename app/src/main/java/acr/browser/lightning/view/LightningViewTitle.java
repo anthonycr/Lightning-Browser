@@ -21,7 +21,7 @@ class LightningViewTitle {
 
     @Nullable private Bitmap mFavicon = null;
     @NonNull private String mTitle;
-    @NonNull Context mContext;
+    @NonNull private final Context mContext;
 
     public LightningViewTitle(@NonNull Context context) {
         mContext = context;

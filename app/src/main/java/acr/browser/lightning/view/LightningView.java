@@ -40,7 +40,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
@@ -57,7 +56,6 @@ import acr.browser.lightning.react.Schedulers;
 import acr.browser.lightning.react.Subscriber;
 import acr.browser.lightning.react.OnSubscribe;
 import acr.browser.lightning.utils.ProxyUtils;
-import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 

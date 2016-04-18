@@ -54,7 +54,7 @@ public class TabsManager {
     @Nullable private TabNumberChangedListener mTabNumberListener;
 
     private boolean mIsInitialized = false;
-    private List<Runnable> mPostInitializationWorkList = new ArrayList<>();
+    private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject BookmarkManager mBookmarkManager;

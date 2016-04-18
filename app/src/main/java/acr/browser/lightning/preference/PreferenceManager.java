@@ -63,7 +63,7 @@ public class PreferenceManager {
         public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
     }
 
-    private final SharedPreferences mPrefs;
+    @NonNull private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
 
@@ -255,7 +255,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.DO_NOT_TRACK, false);
     }
 
-    public boolean getRemoveIdentifyingHeadersEnabled(){
+    public boolean getRemoveIdentifyingHeadersEnabled() {
         return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
@@ -271,7 +271,7 @@ public class PreferenceManager {
         mPrefs.edit().putString(name, value).apply();
     }
 
-    public void setRemoveIdentifyingHeadersEnabled(boolean enabled){
+    public void setRemoveIdentifyingHeadersEnabled(boolean enabled) {
         putBoolean(Name.IDENTIFYING_HEADERS, enabled);
     }
 
@@ -331,7 +331,7 @@ public class PreferenceManager {
         putBoolean(Name.COOKIES, enable);
     }
 
-    public void setDownloadDirectory(String directory) {
+    public void setDownloadDirectory(@NonNull String directory) {
         putString(Name.DOWNLOAD_DIRECTORY, directory);
     }
 
@@ -351,7 +351,7 @@ public class PreferenceManager {
         putBoolean(Name.HIDE_STATUS_BAR, enable);
     }
 
-    public void setHomepage(String homepage) {
+    public void setHomepage(@NonNull String homepage) {
         putString(Name.HOMEPAGE, homepage);
     }
 
@@ -438,7 +438,7 @@ public class PreferenceManager {
         putInt(Name.PROXY_CHOICE, choice);
     }
 
-    public void setProxyHost(String proxyHost) {
+    public void setProxyHost(@NonNull String proxyHost) {
         putString(Name.USE_PROXY_HOST, proxyHost);
     }
 
@@ -450,7 +450,7 @@ public class PreferenceManager {
         putInt(Name.USER_AGENT, choice);
     }
 
-    public void setUserAgentString(String agent) {
+    public void setUserAgentString(@Nullable String agent) {
         putString(Name.USER_AGENT_STRING, agent);
     }
 

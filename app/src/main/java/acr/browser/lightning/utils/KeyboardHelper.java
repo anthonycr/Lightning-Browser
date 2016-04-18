@@ -19,7 +19,7 @@ public class KeyboardHelper {
         void keyboardVisibilityChanged(boolean visible);
     }
 
-    @NonNull private View mView;
+    @NonNull private final View mView;
     private int mLastRight = -1;
     private int mLastBottom = -1;
 

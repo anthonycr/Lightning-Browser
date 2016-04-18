@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
@@ -316,11 +317,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             final Bitmap favicon = web.getFavicon();
             if (web.isForegroundTab()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    holder.txtTitle.setTextAppearance(R.style.boldText);
-                } else {
-                    holder.txtTitle.setTextAppearance(getContext(), R.style.boldText);
-                }
+                TextViewCompat.setTextAppearance(holder.txtTitle, R.style.boldText);
                 Drawable foregroundDrawable;
                 if (!mDrawerTabs) {
                     foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
@@ -340,11 +337,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 }
                 holder.favicon.setImageBitmap(favicon);
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    holder.txtTitle.setTextAppearance(R.style.normalText);
-                } else {
-                    holder.txtTitle.setTextAppearance(getContext(), R.style.normalText);
-                }
+                TextViewCompat.setTextAppearance(holder.txtTitle, R.style.normalText);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     holder.layout.setBackground(mBackgroundTabDrawable);
                 } else {

@@ -6,7 +6,7 @@ import java.util.List;
 
 import acr.browser.lightning.database.HistoryItem;
 
-public interface SuggestionsResult {
+interface SuggestionsResult {
 
     /**
      * Called when the search suggestions have

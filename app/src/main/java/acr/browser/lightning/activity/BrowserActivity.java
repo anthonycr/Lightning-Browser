@@ -313,7 +313,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         setNavigationDrawerWidth();
-        mDrawerLayout.setDrawerListener(new DrawerLocker());
+        mDrawerLayout.addDrawerListener(new DrawerLocker());
 
         mWebpageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, mDarkTheme);
 
@@ -541,12 +541,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         @Override
-        public void onDrawerSlide(View v, float arg) {
-        }
+        public void onDrawerSlide(View v, float arg) {}
 
         @Override
-        public void onDrawerStateChanged(int arg) {
-        }
+        public void onDrawerStateChanged(int arg) {}
 
     }
 
