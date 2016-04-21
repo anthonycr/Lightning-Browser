@@ -180,7 +180,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
-        initBookmarkManager().subscribeOn(Schedulers.worker())
+        initBookmarkManager().subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<BookmarkViewAdapter>() {
                     @Override

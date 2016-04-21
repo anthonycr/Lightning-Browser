@@ -67,39 +67,43 @@ import acr.browser.lightning.utils.Utils;
  */
 public class LightningView {
 
+    private static final String TAG = LightningView.class.getSimpleName();
+
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
     private static final String HEADER_DNT = "DNT";
-
-    @NonNull private final LightningViewTitle mTitle;
-    @Nullable private WebView mWebView;
-    private final boolean mIsIncognitoTab;
-    @NonNull private final UIController mUIController;
-    @NonNull private final GestureDetector mGestureDetector;
-    @NonNull private final Activity mActivity;
-    private static String mHomepage;
-    private static String mDefaultUserAgent;
-    private final Paint mPaint = new Paint();
-    private boolean isForegroundTab;
-    private boolean mInvertPage = false;
-    private boolean mToggleDesktop = false;
-    private static float mMaxFling;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
-    private static final float[] mNegativeColorArray = {
+
+    private static String sHomepage;
+    private static String sDefaultUserAgent;
+    private static float mMaxFling;
+    private static final float[] sNegativeColorArray = {
             -1.0f, 0, 0, 0, 255, // red
             0, -1.0f, 0, 0, 255, // green
             0, 0, -1.0f, 0, 255, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
-    private static final float[] mIncreaseContrastColorArray = {
+    private static final float[] sIncreaseContrastColorArray = {
             2.0f, 0, 0, 0, -160.f, // red
             0, 2.0f, 0, 0, -160.f, // green
             0, 0, 2.0f, 0, -160.f, // blue
             0, 0, 0, 1.0f, 0 // alpha
     };
-    private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
-    private final Map<String, String> mRequestHeaders = new ArrayMap<>();
+
+    @NonNull private final LightningViewTitle mTitle;
+    @Nullable private WebView mWebView;
+    @NonNull private final UIController mUIController;
+    @NonNull private final GestureDetector mGestureDetector;
+    @NonNull private final Activity mActivity;
+    @NonNull private final Paint mPaint = new Paint();
+    @Nullable private Object mTag;
+    private final boolean mIsIncognitoTab;
+    private boolean isForegroundTab;
+    private boolean mInvertPage = false;
+    private boolean mToggleDesktop = false;
+    @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
+    @NonNull private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
     @Inject Bus mEventBus;
     @Inject PreferenceManager mPreferences;
@@ -107,7 +111,6 @@ public class LightningView {
     @Inject ProxyUtils mProxyUtils;
     @Inject BookmarkManager mBookmarkManager;
 
-    @SuppressLint("NewApi")
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
@@ -139,7 +142,7 @@ public class LightningView {
         mWebView.setDownloadListener(new LightningDownloadListener(activity));
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
-        mDefaultUserAgent = mWebView.getSettings().getUserAgentString();
+        sDefaultUserAgent = mWebView.getSettings().getUserAgentString();
         initializeSettings();
         initializePreferences(activity);
 
@@ -155,6 +158,28 @@ public class LightningView {
     }
 
     /**
+     * Sets the tag on the object,
+     * a reference to this object is held
+     * indefinitely.
+     *
+     * @param tag the tag to set, may be null.
+     */
+    public void setTag(@Nullable Object tag) {
+        mTag = tag;
+    }
+
+    /**
+     * The tag set on the object.
+     *
+     * @return the tag set on the object,
+     * may be null.
+     */
+    @Nullable
+    public Object getTag() {
+        return mTag;
+    }
+
+    /**
      * This method loads the homepage for the browser. Either
      * it loads the URL stored as the homepage, or loads the
      * startpage or bookmark page if either of those are set
@@ -164,7 +189,7 @@ public class LightningView {
         if (mWebView == null) {
             return;
         }
-        switch (mHomepage) {
+        switch (sHomepage) {
             case "about:home":
                 loadStartpage();
                 break;
@@ -172,7 +197,7 @@ public class LightningView {
                 loadBookmarkpage();
                 break;
             default:
-                mWebView.loadUrl(mHomepage, mRequestHeaders);
+                mWebView.loadUrl(sHomepage, mRequestHeaders);
                 break;
         }
     }
@@ -227,7 +252,7 @@ public class LightningView {
         }
 
         settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
-        mHomepage = mPreferences.getHomepage();
+        sHomepage = mPreferences.getHomepage();
         setColorMode(mPreferences.getRenderingMode());
 
         if (!mIsIncognitoTab) {
@@ -286,7 +311,7 @@ public class LightningView {
                 } catch (Exception e) {
                     // This shouldn't be necessary, but there are a number
                     // of KitKat devices that crash trying to set this
-                    Log.e(Constants.TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING");
+                    Log.e(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING");
                 }
             }
         } else {
@@ -376,7 +401,8 @@ public class LightningView {
         }
 
         getPathObservable("appcache")
-                .subscribeOn(Schedulers.worker())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<File>() {
                     @Override
                     public void onNext(File item) {
@@ -388,7 +414,8 @@ public class LightningView {
                 });
 
         getPathObservable("geolocation")
-                .subscribeOn(Schedulers.worker())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<File>() {
                     @Override
                     public void onNext(File item) {
@@ -400,7 +427,8 @@ public class LightningView {
                 });
 
         getPathObservable("databases")
-                .subscribeOn(Schedulers.worker())
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<File>() {
                     @Override
                     public void onNext(File item) {
@@ -488,7 +516,7 @@ public class LightningView {
                 if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     settings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
                 } else {
-                    settings.setUserAgentString(mDefaultUserAgent);
+                    settings.setUserAgentString(sDefaultUserAgent);
                 }
                 break;
             case 2:
@@ -498,7 +526,7 @@ public class LightningView {
                 settings.setUserAgentString(Constants.MOBILE_USER_AGENT);
                 break;
             case 4:
-                String ua = mPreferences.getUserAgentString(mDefaultUserAgent);
+                String ua = mPreferences.getUserAgentString(sDefaultUserAgent);
                 if (ua == null || ua.isEmpty()) {
                     ua = " ";
                 }
@@ -663,7 +691,7 @@ public class LightningView {
                 break;
             case 1:
                 ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
-                        mNegativeColorArray);
+                        sNegativeColorArray);
                 mPaint.setColorFilter(filterInvert);
                 setHardwareRendering();
 
@@ -678,7 +706,7 @@ public class LightningView {
                 break;
             case 3:
                 ColorMatrix matrix = new ColorMatrix();
-                matrix.set(mNegativeColorArray);
+                matrix.set(sNegativeColorArray);
                 ColorMatrix matrixGray = new ColorMatrix();
                 matrixGray.setSaturation(0);
                 ColorMatrix concat = new ColorMatrix();
@@ -692,7 +720,7 @@ public class LightningView {
 
             case 4:
                 ColorMatrixColorFilter IncreaseHighContrast = new ColorMatrixColorFilter(
-                        mIncreaseContrastColorArray);
+                        sIncreaseContrastColorArray);
                 mPaint.setColorFilter(IncreaseHighContrast);
                 setHardwareRendering();
                 break;
@@ -800,7 +828,7 @@ public class LightningView {
             // before calling destroy() so that a memory leak is not created
             ViewGroup parent = (ViewGroup) mWebView.getParent();
             if (parent != null) {
-                Log.e(Constants.TAG, "WebView was not detached from window before onDestroy");
+                Log.e(TAG, "WebView was not detached from window before onDestroy");
                 parent.removeView(mWebView);
             }
             mWebView.stopLoading();

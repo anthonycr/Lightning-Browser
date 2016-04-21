@@ -197,7 +197,7 @@ public class Observable<T> {
     private static class OnCompleteRunnable<T> implements Runnable {
         private final OnSubscribe<T> onSubscribe;
 
-        public OnCompleteRunnable(OnSubscribe<T> onSubscribe) {this.onSubscribe = onSubscribe;}
+        public OnCompleteRunnable(@NonNull OnSubscribe<T> onSubscribe) {this.onSubscribe = onSubscribe;}
 
         @Override
         public void run() {
@@ -209,7 +209,7 @@ public class Observable<T> {
         private final OnSubscribe<T> onSubscribe;
         private final T item;
 
-        public OnNextRunnable(OnSubscribe<T> onSubscribe, T item) {
+        public OnNextRunnable(@NonNull OnSubscribe<T> onSubscribe, T item) {
             this.onSubscribe = onSubscribe;
             this.item = item;
         }
@@ -224,7 +224,7 @@ public class Observable<T> {
         private final OnSubscribe<T> onSubscribe;
         private final Throwable throwable;
 
-        public OnErrorRunnable(OnSubscribe<T> onSubscribe, Throwable throwable) {
+        public OnErrorRunnable(@NonNull OnSubscribe<T> onSubscribe, @NonNull Throwable throwable) {
             this.onSubscribe = onSubscribe;
             this.throwable = throwable;
         }
@@ -238,7 +238,7 @@ public class Observable<T> {
     private static class OnStartRunnable<T> implements Runnable {
         private final OnSubscribe<T> onSubscribe;
 
-        public OnStartRunnable(OnSubscribe<T> onSubscribe) {this.onSubscribe = onSubscribe;}
+        public OnStartRunnable(@NonNull OnSubscribe<T> onSubscribe) {this.onSubscribe = onSubscribe;}
 
         @Override
         public void run() {

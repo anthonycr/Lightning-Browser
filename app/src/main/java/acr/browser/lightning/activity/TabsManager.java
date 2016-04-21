@@ -143,7 +143,7 @@ public class TabsManager {
     private void restoreLostTabs(@Nullable final String url, @NonNull final Activity activity,
                                  @NonNull final Subscriber subscriber) {
 
-        restoreState().subscribeOn(Schedulers.worker())
+        restoreState().subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
             @Override
             public void onNext(Bundle item) {
@@ -280,6 +280,21 @@ public class TabsManager {
      */
     public synchronized int last() {
         return mTabList.size() - 1;
+    }
+
+
+    /**
+     * The last tab in the tab manager.
+     *
+     * @return the last tab, or null if
+     * there are no tabs.
+     */
+    @Nullable
+    public synchronized LightningView lastTab() {
+        if (last() < 0) {
+            return null;
+        }
+        return mTabList.get(last());
     }
 
     /**

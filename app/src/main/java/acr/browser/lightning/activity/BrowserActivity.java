@@ -250,7 +250,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mTabsManager = new TabsManager();
         mPresenter = new BrowserPresenter(this, isIncognito());
 
-        initialize();
+        initialize(savedInstanceState);
 
         KeyboardHelper keyboardHelper = new KeyboardHelper(mRoot);
         keyboardHelper.registerKeyboardListener(new KeyboardHelper.KeyboardListener() {
@@ -265,7 +265,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         });
     }
 
-    private synchronized void initialize() {
+    private synchronized void initialize(Bundle savedInstanceState) {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         initializeToolbarHeight(getResources().getConfiguration());
         setSupportActionBar(mToolbar);
@@ -406,11 +406,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        if (isPanicTrigger(getIntent())) {
+        Intent intent = savedInstanceState == null ? getIntent() : null;
+
+        if (isPanicTrigger(intent)) {
             setIntent(null);
             panicClean();
         } else {
-            mPresenter.setupTabs(getIntent());
+            mPresenter.setupTabs(intent);
             setIntent(null);
             mProxyUtils.checkForProxy(BrowserActivity.this);
         }

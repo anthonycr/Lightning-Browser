@@ -7,11 +7,14 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Schedulers {
-    private static final Executor sWorker = Executors.newCachedThreadPool();
+    private static final Executor sWorker = Executors.newFixedThreadPool(4);
+    private static final Executor sIOWorker = Executors.newSingleThreadExecutor();
     private static final Executor sMain = new ThreadExecutor(Looper.getMainLooper());
 
     /**
-     * The worker thread.
+     * The worker thread executor, will
+     * execute work on any one of multiple
+     * threads.
      *
      * @return a non-null executor.
      */
@@ -28,5 +31,16 @@ public class Schedulers {
     @NonNull
     public static Executor main() {
         return sMain;
+    }
+
+    /**
+     * The io thread.
+     *
+     * @return a non-null executor that does
+     * work on a single thread off the main thread.
+     */
+    @NonNull
+    public static Executor io() {
+        return sIOWorker;
     }
 }

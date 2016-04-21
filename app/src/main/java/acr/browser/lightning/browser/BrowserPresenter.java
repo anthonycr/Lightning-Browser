@@ -38,7 +38,7 @@ public class BrowserPresenter {
     @Nullable private LightningView mCurrentTab;
 
     private final boolean mIsIncognito;
-    private boolean mIsNewIntent;
+    private boolean mShouldClose;
 
     public BrowserPresenter(@NonNull BrowserView view, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -152,8 +152,9 @@ public class BrowserPresenter {
         if (!UrlUtils.isSpecialUrl(tabToDelete.getUrl()) && !mIsIncognito) {
             mPreferences.setSavedUrl(tabToDelete.getUrl());
         }
+
         final boolean isShown = tabToDelete.isShown();
-        boolean shouldClose = mIsNewIntent && isShown;
+        boolean shouldClose = mShouldClose && isShown && Boolean.TRUE.equals(tabToDelete.getTag());
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
                 (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
@@ -186,7 +187,7 @@ public class BrowserPresenter {
         }
 
         if (shouldClose) {
-            mIsNewIntent = false;
+            mShouldClose = false;
             mView.closeActivity();
         }
 
@@ -230,7 +231,11 @@ public class BrowserPresenter {
                     } else {
                         newTab(url, true);
                     }
-                    mIsNewIntent = true;
+                    mShouldClose = true;
+                    LightningView tab = mTabsModel.lastTab();
+                    if (tab != null) {
+                        tab.setTag(true);
+                    }
                 }
             }
         });
@@ -303,7 +308,6 @@ public class BrowserPresenter {
 
         Log.d(TAG, "New tab, show: " + show);
 
-        mIsNewIntent = false;
         LightningView startingTab = mTabsModel.newTab((Activity) mView, url, mIsIncognito);
         if (mTabsModel.size() == 1) {
             startingTab.resumeTimers();
