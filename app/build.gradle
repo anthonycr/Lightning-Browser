@@ -4,12 +4,12 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionName "4.3.2"
+        versionName "4.3.3"
         generatedDensities = []
     }
 
@@ -40,13 +40,13 @@ android {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
             applicationId "acr.browser.lightning"
-            versionCode 87
+            versionCode 88
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
             applicationId "acr.browser.barebones"
-            versionCode 89
+            versionCode 90
         }
     }
 
