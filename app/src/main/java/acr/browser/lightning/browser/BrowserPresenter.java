@@ -100,12 +100,16 @@ public class BrowserPresenter {
                 }
             } else {
                 if (mCurrentTab != null) {
-                    mCurrentTab.onPause();
+                    // TODO: Restore this when Google fixes the bug where the WebView is
+                    // blank after calling onPause followed by onResume.
+                    // mCurrentTab.onPause();
                     mCurrentTab.setForegroundTab(false);
                 }
-                newTab.onResume();
+
                 newTab.resumeTimers();
+                newTab.onResume();
                 newTab.setForegroundTab(true);
+
                 mView.updateProgress(newTab.getProgress());
                 mView.setBackButtonEnabled(newTab.canGoBack());
                 mView.setForwardButtonEnabled(newTab.canGoForward());
@@ -143,6 +147,7 @@ public class BrowserPresenter {
      *                 delete the tab.
      */
     public void deleteTab(int position) {
+        Log.d(TAG, "delete Tab");
         final LightningView tabToDelete = mTabsModel.getTabAtPosition(position);
 
         if (tabToDelete == null) {
@@ -280,6 +285,7 @@ public class BrowserPresenter {
      *                 tab to switch to.
      */
     public synchronized void tabChanged(int position) {
+        Log.d(TAG, "tabChanged: " + position);
         if (position < 0 || position >= mTabsModel.size()) {
             return;
         }

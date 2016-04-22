@@ -77,7 +77,7 @@ public class LightningView {
 
     private static String sHomepage;
     private static String sDefaultUserAgent;
-    private static float mMaxFling;
+    private static float sMaxFling;
     private static final float[] sNegativeColorArray = {
             -1.0f, 0, 0, 0, 255, // red
             0, -1.0f, 0, 0, 255, // green
@@ -116,10 +116,13 @@ public class LightningView {
         mActivity = activity;
         mUIController = (UIController) activity;
         mWebView = new WebView(activity);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            mWebView.setId(View.generateViewId());
+        }
         mIsIncognitoTab = isIncognito;
         mTitle = new LightningViewTitle(activity);
 
-        mMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
+        sMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
 
         mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
         mWebView.setFocusableInTouchMode(true);
@@ -560,16 +563,20 @@ public class LightningView {
      * Pause the current WebView instance.
      */
     public synchronized void onPause() {
-        if (mWebView != null)
+        if (mWebView != null) {
             mWebView.onPause();
+            Log.d(TAG, "WebView onPause: " + mWebView.getId());
+        }
     }
 
     /**
      * Resume the current WebView instance.
      */
     public synchronized void onResume() {
-        if (mWebView != null)
+        if (mWebView != null) {
             mWebView.onResume();
+            Log.d(TAG, "WebView onResume: " + mWebView.getId());
+        }
     }
 
     /**
@@ -737,17 +744,19 @@ public class LightningView {
     public synchronized void pauseTimers() {
         if (mWebView != null) {
             mWebView.pauseTimers();
+            Log.d(TAG, "Pausing JS timers");
         }
     }
 
     /**
      * Resumes the JavaScript timers of the
-     * WebView instance, whihc will trigger a
+     * WebView instance, which will trigger a
      * resume for all WebViews in the app.
      */
     public synchronized void resumeTimers() {
         if (mWebView != null) {
             mWebView.resumeTimers();
+            Log.d(TAG, "Resuming JS timers");
         }
     }
 
@@ -1122,7 +1131,7 @@ public class LightningView {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            int power = (int) (velocityY * 100 / mMaxFling);
+            int power = (int) (velocityY * 100 / sMaxFling);
             if (power < -10) {
                 mUIController.hideActionBar();
             } else if (power > 15) {

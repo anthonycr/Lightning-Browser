@@ -186,6 +186,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private String mUntitledTitle;
     private String mCameraPhotoPath;
 
+    private final Handler mDrawerHandler = new Handler();
+
     // The singleton BookmarkManager
     @Inject BookmarkManager mBookmarkManager;
 
@@ -923,7 +925,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        new Handler().postDelayed(new Runnable() {
+       mDrawerHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
@@ -959,14 +961,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        new Handler().postDelayed(new Runnable() {
+        mDrawerHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
             }
         }, 200);
 
-        // new Handler().postDelayed(new Runnable() {
+        // mDrawerHandler.postDelayed(new Runnable() {
         //     @Override
         //     public void run() {
         // Remove browser frame background to reduce overdraw
@@ -1168,16 +1170,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        final LightningView currentTab = mTabsManager.getCurrentTab();
         Log.d(TAG, "onPause");
-        if (currentTab != null) {
-            currentTab.pauseTimers();
-            currentTab.onPause();
-        }
+        mTabsManager.pauseAll();
         try {
             BrowserApp.get(this).unregisterReceiver(mNetworkReceiver);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Receiver was not registered", e);
         }
         if (isIncognito() && isFinishing()) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
@@ -1227,16 +1225,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        final LightningView currentTab = mTabsManager.getCurrentTab();
         Log.d(TAG, "onResume");
         if (mSuggestionsAdapter != null) {
             mSuggestionsAdapter.refreshPreferences();
             mSuggestionsAdapter.refreshBookmarks();
         }
-        if (currentTab != null) {
-            currentTab.resumeTimers();
-            currentTab.onResume();
-        }
+        mTabsManager.resumeAll();
         initializePreferences();
         mTabsManager.resume(this);
 
@@ -2157,8 +2151,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mPresenter.loadUrlInCurrentView(event.url);
             // keep any jank from happening when the drawer is closed after the
             // URL starts to load
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mDrawerLayout.closeDrawer(mDrawerRight);

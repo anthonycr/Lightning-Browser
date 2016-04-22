@@ -143,7 +143,7 @@ public class Observable<T> {
 
     private static class SubscriberImpl<T> implements Subscriber<T> {
 
-        @Nullable private OnSubscribe<T> mOnSubscribe;
+        @Nullable private volatile OnSubscribe<T> mOnSubscribe;
         @NonNull private final Observable<T> mObservable;
         private boolean mOnCompleteExecuted = false;
 
@@ -159,9 +159,10 @@ public class Observable<T> {
 
         @Override
         public void onComplete() {
-            if (!mOnCompleteExecuted && mOnSubscribe != null) {
+            OnSubscribe<T> onSubscribe = mOnSubscribe;
+            if (!mOnCompleteExecuted && onSubscribe != null) {
                 mOnCompleteExecuted = true;
-                mObservable.executeOnObserverThread(new OnCompleteRunnable<>(mOnSubscribe));
+                mObservable.executeOnObserverThread(new OnCompleteRunnable<>(onSubscribe));
             } else {
                 Log.e(TAG, "onComplete called more than once");
                 throw new RuntimeException("onComplete called more than once");
@@ -170,23 +171,26 @@ public class Observable<T> {
 
         @Override
         public void onStart() {
-            if (mOnSubscribe != null) {
-                mObservable.executeOnObserverThread(new OnStartRunnable<>(mOnSubscribe));
+            OnSubscribe<T> onSubscribe = mOnSubscribe;
+            if (onSubscribe != null) {
+                mObservable.executeOnObserverThread(new OnStartRunnable<>(onSubscribe));
             }
         }
 
         @Override
         public void onError(@NonNull final Throwable throwable) {
-            if (mOnSubscribe != null) {
+            OnSubscribe<T> onSubscribe = mOnSubscribe;
+            if (onSubscribe != null) {
                 mOnCompleteExecuted = true;
-                mObservable.executeOnObserverThread(new OnErrorRunnable<>(mOnSubscribe, throwable));
+                mObservable.executeOnObserverThread(new OnErrorRunnable<>(onSubscribe, throwable));
             }
         }
 
         @Override
         public void onNext(final T item) {
-            if (!mOnCompleteExecuted && mOnSubscribe != null) {
-                mObservable.executeOnObserverThread(new OnNextRunnable<>(mOnSubscribe, item));
+            OnSubscribe<T> onSubscribe = mOnSubscribe;
+            if (!mOnCompleteExecuted && onSubscribe != null) {
+                mObservable.executeOnObserverThread(new OnNextRunnable<>(onSubscribe, item));
             } else {
                 Log.e(TAG, "onComplete has been already called, onNext should not be called");
                 throw new RuntimeException("onNext should not be called after onComplete has been called");

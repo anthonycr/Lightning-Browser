@@ -191,6 +191,44 @@ public class TabsManager {
     }
 
     /**
+     * Method used to resume all the tabs in the browser.
+     * This is necessary because we cannot pause the
+     * WebView when the app is open currently due to a
+     * bug in the WebView, where calling onResume doesn't
+     * consistently resume it.
+     */
+    public void resumeAll() {
+        LightningView current = getCurrentTab();
+        if (current != null) {
+            current.resumeTimers();
+        }
+        for (LightningView tab : mTabList) {
+            if (tab != null) {
+                tab.onResume();
+            }
+        }
+    }
+
+    /**
+     * Method used to pause all the tabs in the browser.
+     * This is necessary because we cannot pause the
+     * WebView when the app is open currently due to a
+     * bug in the WebView, where calling onResume doesn't
+     * consistently resume it.
+     */
+    public void pauseAll() {
+        LightningView current = getCurrentTab();
+        if (current != null) {
+            current.pauseTimers();
+        }
+        for (LightningView tab : mTabList) {
+            if (tab != null) {
+                tab.onPause();
+            }
+        }
+    }
+
+    /**
      * Return the tab at the given position in tabs list, or
      * null if position is not in tabs list range.
      *
