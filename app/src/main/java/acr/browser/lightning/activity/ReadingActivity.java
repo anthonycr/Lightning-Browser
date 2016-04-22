@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +42,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ReadingActivity extends AppCompatActivity {
+
+    private static final String TAG = ReadingActivity.class.getSimpleName();
 
     @Bind(R.id.textViewTitle)
     TextView mTitle;
@@ -197,11 +200,11 @@ public class ReadingActivity extends AppCompatActivity {
                     subscriber.onNext(new ReaderInfo(result.getTitle(), result.getText()));
                 } catch (Exception e) {
                     subscriber.onError(new Throwable("Encountered exception"));
-                    e.printStackTrace();
+                    Log.e(TAG, "Error parsing page", e);
                 } catch (OutOfMemoryError e) {
                     System.gc();
                     subscriber.onError(new Throwable("Out of memory"));
-                    e.printStackTrace();
+                    Log.e(TAG, "Out of memory", e);
                 }
                 subscriber.onComplete();
             }
