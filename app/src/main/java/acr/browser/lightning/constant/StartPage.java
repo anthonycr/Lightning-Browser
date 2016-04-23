@@ -3,29 +3,36 @@
  */
 package acr.browser.lightning.constant;
 
-import android.app.Activity;
+import android.app.Application;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
-import acr.browser.lightning.app.BrowserApp;
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.view.LightningView;
 
-public class StartPage {
+public class StartPage extends AsyncTask<Void, Void, Void> {
 
-    private static final String FILENAME = "homepage.html";
+    public static final String FILENAME = "homepage.html";
 
-    private static final String HEAD = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
+    private static final String HEAD_1 = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
             + "<head>"
             + "<meta content=\"en-us\" http-equiv=\"Content-Language\" />"
             + "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />"
             + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
-            + "<title>"
-            + BrowserApp.getAppContext().getString(R.string.home)
-            + "</title>"
+            + "<title>";
+
+    private static final String HEAD_2 = "</title>"
             + "</head>"
             + "<style>body{background:#f2f2f2;text-align:center;margin:0px;}#search_input{height:35px; "
             + "width:100%;outline:none;border:none;font-size: 16px;background-color:transparent;}"
@@ -41,11 +48,42 @@ public class StartPage {
             + "font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;"
             + "border-radius: 2px;}</style><body> <div class=\"outer\"><div class=\"middle\"><div class=\"inner\"><img class=\"smaller\" src=\"";
 
-    private static final String MIDDLE = "\" ></br></br><form onsubmit=\"return search()\" class=\"search_bar\">"
+    private static final String MIDDLE = "\" ></br></br><form onsubmit=\"return search()\" class=\"search_bar\" autocomplete=\"off\">"
             + "<input type=\"submit\" id=\"search_submit\" value=\"Search\" ><span><input class=\"search\" type=\"text\" value=\"\" id=\"search_input\" >"
             + "</span></form></br></br></div></div></div><script type=\"text/javascript\">function search(){if(document.getElementById(\"search_input\").value != \"\"){window.location.href = \"";
 
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
+
+    @NonNull private final String mTitle;
+    @NonNull private final Application mApp;
+    @NonNull private final WeakReference<LightningView> mTabReference;
+
+    @Inject PreferenceManager mPreferenceManager;
+
+    private String mStartpageUrl;
+
+    public StartPage(LightningView tab, @NonNull Application app) {
+        BrowserApp.getAppComponent().inject(this);
+        mTitle = app.getString(R.string.home);
+        mApp = app;
+        mTabReference = new WeakReference<>(tab);
+    }
+
+    @Nullable
+    @Override
+    protected Void doInBackground(Void... params) {
+        mStartpageUrl = getHomepage();
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        LightningView tab = mTabReference.get();
+        if (tab != null) {
+            tab.loadUrl(mStartpageUrl);
+        }
+    }
 
     /**
      * This method builds the homepage and returns the local URL to be loaded
@@ -53,15 +91,16 @@ public class StartPage {
      *
      * @return the URL to load
      */
-    public static String getHomepage(Activity activity) {
-        StringBuilder homepageBuilder = new StringBuilder(StartPage.HEAD);
+    @NonNull
+    private String getHomepage() {
+        StringBuilder homepageBuilder = new StringBuilder(HEAD_1 + mTitle + HEAD_2);
         String icon;
         String searchUrl;
-        switch (PreferenceManager.getInstance().getSearchChoice()) {
+        switch (mPreferenceManager.getSearchChoice()) {
             case 0:
                 // CUSTOM SEARCH
                 icon = "file:///android_asset/lightning.png";
-                searchUrl = PreferenceManager.getInstance().getSearchUrl();
+                searchUrl = mPreferenceManager.getSearchUrl();
                 break;
             case 1:
                 // GOOGLE_SEARCH;
@@ -88,14 +127,14 @@ public class StartPage {
                 break;
             case 5:
                 // STARTPAGE_SEARCH;
-                icon = "file:///android_asset/startpage.png";
-                // "https://startpage.com/graphics/startp_logo.gif";
+                icon = "file:///android_asset/png";
+                // "https://com/graphics/startp_logo.gif";
                 searchUrl = Constants.STARTPAGE_SEARCH;
                 break;
             case 6:
                 // STARTPAGE_MOBILE
-                icon = "file:///android_asset/startpage.png";
-                // "https://startpage.com/graphics/startp_logo.gif";
+                icon = "file:///android_asset/png";
+                // "https://com/graphics/startp_logo.gif";
                 searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
                 break;
             case 7:
@@ -131,13 +170,14 @@ public class StartPage {
         }
 
         homepageBuilder.append(icon);
-        homepageBuilder.append(StartPage.MIDDLE);
+        homepageBuilder.append(MIDDLE);
         homepageBuilder.append(searchUrl);
-        homepageBuilder.append(StartPage.END);
+        homepageBuilder.append(END);
 
-        File homepage = new File(activity.getFilesDir(), StartPage.FILENAME);
+        File homepage = new File(mApp.getFilesDir(), FILENAME);
         FileWriter hWriter = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             hWriter = new FileWriter(homepage, false);
             hWriter.write(homepageBuilder.toString());
         } catch (IOException e) {
@@ -148,4 +188,9 @@ public class StartPage {
 
         return Constants.FILE + homepage;
     }
+
+    public void load() {
+        executeOnExecutor(BrowserApp.getIOThread());
+    }
+
 }

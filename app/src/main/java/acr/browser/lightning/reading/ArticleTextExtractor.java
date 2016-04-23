@@ -491,8 +491,7 @@ public class ArticleTextExtractor {
             Element el = elems.get(0);
             if (el.hasAttr("content")) {
                 dateStr = el.attr("content");
-                Date parsedDate = parseDate(dateStr);
-                return parsedDate;
+                return parseDate(dateStr);
             }
         }
 

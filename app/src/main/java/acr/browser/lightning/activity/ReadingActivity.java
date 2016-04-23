@@ -1,18 +1,19 @@
 package acr.browser.lightning.activity;
 
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,23 +22,42 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscription;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ReadingActivity extends AppCompatActivity {
 
-    private TextView mTitle;
-    private TextView mBody;
+    private static final String TAG = ReadingActivity.class.getSimpleName();
+
+    @Bind(R.id.textViewTitle)
+    TextView mTitle;
+
+    @Bind(R.id.textViewBody)
+    TextView mBody;
+
+    @Inject PreferenceManager mPreferences;
+
     private boolean mInvert;
     private String mUrl = null;
-    private PreferenceManager mPreferences;
     private int mTextSize;
     private ProgressDialog mProgressDialog;
+    private Subscription mPageLoaderSubscription;
 
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
@@ -48,8 +68,9 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        BrowserApp.getAppComponent().inject(this);
+
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
-        mPreferences = PreferenceManager.getInstance();
         mInvert = mPreferences.getInvertColors();
         final int color;
         if (mInvert) {
@@ -63,15 +84,13 @@ public class ReadingActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reading_view);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mTitle = (TextView) findViewById(R.id.textViewTitle);
-        mBody = (TextView) findViewById(R.id.textViewBody);
 
         mTextSize = mPreferences.getReadingTextSize();
         mBody.setTextSize(getTextSize(mTextSize));
@@ -129,66 +148,87 @@ public class ReadingActivity extends AppCompatActivity {
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
-        new PageLoader(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUrl);
+        mPageLoaderSubscription = loadPage(mUrl).subscribeOn(Schedulers.worker())
+                .observeOn(Schedulers.main())
+                .subscribe(new OnSubscribe<ReaderInfo>() {
+                    @Override
+                    public void onStart() {
+                        mProgressDialog = new ProgressDialog(ReadingActivity.this);
+                        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        mProgressDialog.setCancelable(false);
+                        mProgressDialog.setIndeterminate(true);
+                        mProgressDialog.setMessage(getString(R.string.loading));
+                        mProgressDialog.show();
+                    }
+
+                    @Override
+                    public void onNext(@Nullable ReaderInfo item) {
+                        if (item == null || item.getTitle().isEmpty() || item.getBody().isEmpty()) {
+                            setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                        } else {
+                            setText(item.getTitle(), item.getBody());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable throwable) {
+                        setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+                    }
+                });
         return true;
     }
 
-    private class PageLoader extends AsyncTask<String, Void, Void> {
-
-        private final Activity mActivity;
-        private String mTitleText;
-        private String mBodyText;
-
-        public PageLoader(Activity activity) {
-            mActivity = activity;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressDialog = new ProgressDialog(mActivity);
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setMessage(mActivity.getString(R.string.loading));
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(String... params) {
-
-            HtmlFetcher fetcher = new HtmlFetcher();
-            try {
-                JResult result = fetcher.fetchAndExtract(params[0], 2500, true);
-                mTitleText = result.getTitle();
-                mBodyText = result.getText();
-            } catch (Exception e) {
-                mTitleText = "";
-                mBodyText = "";
-                e.printStackTrace();
-            } catch (OutOfMemoryError e) {
-                System.gc();
-                mTitleText = "";
-                mBodyText = "";
-                e.printStackTrace();
+    private static Observable<ReaderInfo> loadPage(@NonNull final String url) {
+        return Observable.create(new Action<ReaderInfo>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<ReaderInfo> subscriber) {
+                HtmlFetcher fetcher = new HtmlFetcher();
+                try {
+                    JResult result = fetcher.fetchAndExtract(url, 2500, true);
+                    subscriber.onNext(new ReaderInfo(result.getTitle(), result.getText()));
+                } catch (Exception e) {
+                    subscriber.onError(new Throwable("Encountered exception"));
+                    Log.e(TAG, "Error parsing page", e);
+                } catch (OutOfMemoryError e) {
+                    System.gc();
+                    subscriber.onError(new Throwable("Out of memory"));
+                    Log.e(TAG, "Out of memory", e);
+                }
+                subscriber.onComplete();
             }
-            return null;
+        });
+    }
+
+    private static class ReaderInfo {
+        @NonNull private final String mTitleText;
+        @NonNull private final String mBodyText;
+
+        public ReaderInfo(@NonNull String title, @NonNull String body) {
+            mTitleText = title;
+            mBodyText = body;
         }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            if (mTitleText.isEmpty() || mBodyText.isEmpty()) {
-                setText(getString(R.string.untitled), getString(R.string.loading_failed));
-            } else {
-                setText(mTitleText, mBodyText);
-            }
-            super.onPostExecute(result);
+        @NonNull
+        public String getTitle() {
+            return mTitleText;
         }
 
+        @NonNull
+        public String getBody() {
+            return mBodyText;
+        }
     }
 
     private void setText(String title, String body) {
@@ -219,6 +259,8 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        mPageLoaderSubscription.unsubscribe();
+
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
             mProgressDialog = null;

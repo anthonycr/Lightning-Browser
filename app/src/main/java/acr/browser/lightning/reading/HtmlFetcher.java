@@ -33,6 +33,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import acr.browser.lightning.utils.Utils;
+
 /**
  * Class to fetch articles. This class is thread safe.
  *
@@ -49,28 +51,36 @@ public class HtmlFetcher {
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader reader = new BufferedReader(new FileReader("urls.txt"));
-        String line;
-        Set<String> existing = new LinkedHashSet<>();
-        while ((line = reader.readLine()) != null) {
-            int index1 = line.indexOf('\"');
-            int index2 = line.indexOf('\"', index1 + 1);
-            String url = line.substring(index1 + 1, index2);
-            String domainStr = SHelper.extractDomain(url, true);
-            String counterStr = "";
-            // TODO more similarities
-            if (existing.contains(domainStr))
-                counterStr = "2";
-            else
-                existing.add(domainStr);
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try {
 
-            String html = new HtmlFetcher().fetchAsString(url, 2000);
-            String outFile = domainStr + counterStr + ".html";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-            writer.write(html);
-            writer.close();
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            reader = new BufferedReader(new FileReader("urls.txt"));
+            String line;
+            Set<String> existing = new LinkedHashSet<>();
+            while ((line = reader.readLine()) != null) {
+                int index1 = line.indexOf('\"');
+                int index2 = line.indexOf('\"', index1 + 1);
+                String url = line.substring(index1 + 1, index2);
+                String domainStr = SHelper.extractDomain(url, true);
+                String counterStr = "";
+                // TODO more similarities
+                if (existing.contains(domainStr))
+                    counterStr = "2";
+                else
+                    existing.add(domainStr);
+
+                String html = new HtmlFetcher().fetchAsString(url, 2000);
+                String outFile = domainStr + counterStr + ".html";
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                writer = new BufferedWriter(new FileWriter(outFile));
+                writer.write(html);
+            }
+        } finally {
+            Utils.close(reader);
+            Utils.close(writer);
         }
-        reader.close();
     }
 
     private String referrer = "http://jetsli.de/crawler";
@@ -386,8 +396,8 @@ public class HtmlFetcher {
             if (responseCode / 100 == 3 && newUrl != null && num_redirects < 5) {
                 newUrl = SPACE.matcher(newUrl).replaceAll("+");
                 // some services use (none-standard) utf8 in their location header
-                if (urlAsString.startsWith("http://bit.ly")
-                        || urlAsString.startsWith("http://is.gd"))
+                if (urlAsString.contains("://bit.ly")
+                        || urlAsString.contains("://is.gd"))
                     newUrl = encodeUriFromHeader(newUrl);
 
                 // AP: This code is not longer need, instead we always follow

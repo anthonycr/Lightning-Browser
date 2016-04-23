@@ -7,6 +7,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -14,6 +17,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import acr.browser.lightning.constant.Constants;
 
 public class IntentUtils {
 
@@ -23,20 +28,26 @@ public class IntentUtils {
             + // switch on case insensitive matching
             '('
             + // begin group for schema
-            "(?:http|https|file):\\/\\/" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
+            "(?:http|https|file)://" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
             + ')' + "(.*)");
 
     public IntentUtils(Activity activity) {
         mActivity = activity;
     }
 
-    public boolean startActivityForUrl(WebView tab, String url) {
+    public boolean startActivityForUrl(@Nullable WebView tab, @NonNull String url) {
         Intent intent;
         try {
             intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
         } catch (URISyntaxException ex) {
             Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
             return false;
+        }
+
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.setComponent(null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            intent.setSelector(null);
         }
 
         if (mActivity.getPackageManager().resolveActivity(intent, 0) == null) {
@@ -51,10 +62,8 @@ public class IntentUtils {
                 return false;
             }
         }
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        intent.setComponent(null);
         if (tab != null) {
-            intent.putExtra(mActivity.getPackageName() + ".Origin", 1);
+            intent.putExtra(Constants.INTENT_ORIGIN, 1);
         }
 
         Matcher m = ACCEPTED_URI_SCHEMA.matcher(url);

@@ -1,48 +1,46 @@
 package acr.browser.lightning.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.squareup.otto.Bus;
+
 import net.i2p.android.ui.I2PAndroidHelper;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.web.WebkitProxy;
 
-/**
- * 6/4/2015 Anthony Restaino
- */
+@Singleton
 public class ProxyUtils {
     // Helper
-    private final I2PAndroidHelper mI2PHelper;
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
-    private final PreferenceManager mPreferences;
-    private static ProxyUtils mInstance;
 
-    private ProxyUtils(Context context) {
-        mPreferences = PreferenceManager.getInstance();
-        mI2PHelper = new I2PAndroidHelper(context.getApplicationContext());
-    }
+    @Inject PreferenceManager mPreferences;
+    @Inject I2PAndroidHelper mI2PHelper;
+    @Inject Bus mBus;
 
-    public static ProxyUtils getInstance() {
-        if (mInstance == null) {
-            mInstance = new ProxyUtils(BrowserApp.getAppContext());
-        }
-        return mInstance;
+    @Inject
+    public ProxyUtils() {
+        BrowserApp.getAppComponent().inject(this);
     }
 
     /*
      * If Orbot/Tor or I2P is installed, prompt the user if they want to enable
      * proxying for this session
      */
-    public void checkForProxy(final Activity activity) {
+    public void checkForProxy(@NonNull final Activity activity) {
         boolean useProxy = mPreferences.getUseProxy();
 
         final boolean orbotInstalled = OrbotHelper.isOrbotInstalled(activity);
@@ -105,7 +103,7 @@ public class ProxyUtils {
     /*
      * Initialize WebKit Proxying
      */
-    private void initializeProxy(Activity activity) {
+    private void initializeProxy(@NonNull Activity activity) {
         String host;
         int port;
 
@@ -143,13 +141,13 @@ public class ProxyUtils {
 
     }
 
-    public boolean isProxyReady(Activity activity) {
+    public boolean isProxyReady() {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                Utils.showSnackbar(activity, R.string.i2p_not_running);
+                mBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                Utils.showSnackbar(activity, R.string.i2p_tunnels_not_ready);
+                mBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
                 return false;
             }
         }
@@ -157,7 +155,7 @@ public class ProxyUtils {
         return true;
     }
 
-    public void updateProxySettings(Activity activity) {
+    public void updateProxySettings(@NonNull Activity activity) {
         if (mPreferences.getUseProxy()) {
             initializeProxy(activity);
         } else {
@@ -190,7 +188,7 @@ public class ProxyUtils {
         }
     }
 
-    public static int setProxyChoice(int choice, Activity activity) {
+    public static int setProxyChoice(int choice, @NonNull Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 if (!OrbotHelper.isOrbotInstalled(activity)) {
@@ -200,7 +198,7 @@ public class ProxyUtils {
                 break;
 
             case Constants.PROXY_I2P:
-                I2PAndroidHelper ih = new I2PAndroidHelper(activity.getApplicationContext());
+                I2PAndroidHelper ih = new I2PAndroidHelper(BrowserApp.get(activity));
                 if (!ih.isI2PAndroidInstalled()) {
                     choice = Constants.NO_PROXY;
                     ih.promptToInstall(activity);

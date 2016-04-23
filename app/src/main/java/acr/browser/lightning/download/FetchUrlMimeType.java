@@ -3,19 +3,24 @@
  */
 package acr.browser.lightning.download;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
+
+import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.bus.BrowserEvents;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -27,7 +32,7 @@ import acr.browser.lightning.utils.Utils;
  */
 class FetchUrlMimeType extends Thread {
 
-    private final Activity mActivity;
+    private final Context mContext;
 
     private final DownloadManager.Request mRequest;
 
@@ -37,9 +42,9 @@ class FetchUrlMimeType extends Thread {
 
     private final String mUserAgent;
 
-    public FetchUrlMimeType(Activity activity, DownloadManager.Request request, String uri,
+    public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
                             String cookies, String userAgent) {
-        mActivity = activity;
+        mContext = context;
         mRequest = request;
         mUri = uri;
         mCookies = cookies;
@@ -50,6 +55,7 @@ class FetchUrlMimeType extends Thread {
     public void run() {
         // User agent is likely to be null, though the AndroidHttpClient
         // seems ok with that.
+        final Bus eventBus = BrowserApp.getBus(mContext);
         String mimeType = null;
         String contentDisposition = null;
         HttpURLConnection connection = null;
@@ -78,7 +84,7 @@ class FetchUrlMimeType extends Thread {
                     contentDisposition = contentDispositionHeader;
                 }
             }
-        } catch (IllegalArgumentException | IOException ex) {
+        } catch (@NonNull IllegalArgumentException | IOException ex) {
             if (connection != null)
                 connection.disconnect();
         } finally {
@@ -101,9 +107,16 @@ class FetchUrlMimeType extends Thread {
         }
 
         // Start the download
-        DownloadManager manager = (DownloadManager) mActivity
+        DownloadManager manager = (DownloadManager) mContext
                 .getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(mRequest);
-        Utils.showSnackbar(mActivity, mActivity.getString(R.string.download_pending) + ' ' + filename);
+        Handler handler = new Handler(Looper.getMainLooper());
+        final String file = filename;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                eventBus.post(new BrowserEvents.ShowSnackBarMessage(mContext.getString(R.string.download_pending) + ' ' + file));
+            }
+        });
     }
 }

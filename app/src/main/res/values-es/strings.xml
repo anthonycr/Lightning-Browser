@@ -37,6 +37,7 @@
     <string name="stock_browser_available">(Detectado navegador de sistema soportado)</string>
     <string name="fullScreenOption">Ocultar barra de estado al navegar</string>
     <string name="clear_cookies">Limpiar cookies</string>
+    <string name="clear_history">Limpiar historial</string>
     <string name="dialog_image">¿Qué quieres hacer con esta imagen?</string>
     <string name="action_download">Descargar</string>
     <string name="action_open">Abrir</string>

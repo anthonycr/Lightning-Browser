@@ -2,6 +2,7 @@ package acr.browser.lightning.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -30,40 +31,50 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
+import acr.browser.lightning.activity.ReadingActivity;
+import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.async.AsyncExecutor;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.dialog.BookmarksDialogBuilder;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.async.ImageDownloadTask;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
 import acr.browser.lightning.utils.ThemeUtils;
+import acr.browser.lightning.view.LightningView;
 
-/**
- * Created by Stefano Pacifici on 25/08/15. Based on Anthony C. Restaino's code.
- */
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
+    private final static String TAG = BookmarksFragment.class.getSimpleName();
+
+    public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
+
     // Managers
-    @Inject
-    BookmarkManager mBookmarkManager;
+    @Inject BookmarkManager mBookmarkManager;
 
     // Event bus
-    @Inject
-    Bus mEventBus;
+    @Inject Bus mEventBus;
 
     // Dialog builder
-    @Inject
-    BookmarksDialogBuilder mBookmarksDialogBuilder;
+    @Inject LightningDialogBuilder mBookmarksDialogBuilder;
+
+    @Inject PreferenceManager mPreferenceManager;
+
+    private TabsManager mTabsManager;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -81,21 +92,36 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Colors
     private int mIconColor, mScrollIndex;
 
-    // Init asynchronously the bookmark manager
-    private final Runnable mInitBookmarkManager = new Runnable() {
-        @Override
-        public void run() {
-            final Context context = getContext();
-            mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
-            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-            mBookmarksListView.setAdapter(mBookmarkAdapter);
-        }
-    };
+    private boolean mIsIncognito;
+
+    private Observable<BookmarkViewAdapter> initBookmarkManager() {
+        return Observable.create(new Action<BookmarkViewAdapter>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<BookmarkViewAdapter> subscriber) {
+                Context context = getContext();
+                if (context != null) {
+                    mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
+                    setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+                    subscriber.onNext(mBookmarkAdapter);
+                }
+                subscriber.onComplete();
+            }
+        });
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
+        final Bundle arguments = getArguments();
+        final Context context = getContext();
+        mTabsManager = ((UIController) context).getTabModel();
+        mIsIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
+        mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
+        mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
+        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
+                ThemeUtils.getIconLightThemeColor(context);
     }
 
     // Handle bookmark click
@@ -107,7 +133,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 mScrollIndex = mBookmarksListView.getFirstVisiblePosition();
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
-                mEventBus.post(new BookmarkEvents.Clicked(item));
+                mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(item.getUrl()));
             }
         }
     };
@@ -116,7 +142,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             final HistoryItem item = mBookmarks.get(position);
-            handleLongPress(item, position);
+            handleLongPress(item);
             return true;
         }
     };
@@ -124,17 +150,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onResume() {
         super.onResume();
-        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+        if (mBookmarkAdapter != null) {
+            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+        }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
         mBookmarksListView = (ListView) view.findViewById(R.id.right_drawer_list);
         mBookmarksListView.setOnItemClickListener(mItemClickListener);
         mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage = (ImageView) view.findViewById(R.id.starIcon);
+        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         mBookmarkImage = (ImageView) view.findViewById(R.id.icon_star);
         final View backView = view.findViewById(R.id.bookmark_back_button);
         backView.setOnClickListener(new View.OnClickListener() {
@@ -148,24 +177,18 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             }
         });
         setupNavigationButton(view, R.id.action_add_bookmark, R.id.icon_star);
+        setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
+        setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
-        // Must be called here, only here we have a reference to the ListView
-        new Thread(mInitBookmarkManager).run();
+        initBookmarkManager().subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new OnSubscribe<BookmarkViewAdapter>() {
+                    @Override
+                    public void onNext(@Nullable BookmarkViewAdapter item) {
+                        mBookmarksListView.setAdapter(mBookmarkAdapter);
+                    }
+                });
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        // TODO remove dependency on BrowserActivity
-        super.onActivityCreated(savedInstanceState);
-        final Activity activity = getActivity();
-        final PreferenceManager preferenceManager = PreferenceManager.getInstance();
-        boolean darkTheme = preferenceManager.getUseTheme() != 0 || ((BrowserActivity) activity).isIncognito();
-        mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
-        mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
-        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
-                ThemeUtils.getIconLightThemeColor(activity);
-        mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
     @Override
@@ -180,21 +203,30 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mEventBus.unregister(this);
     }
 
-    @Subscribe
-    public void addBookmark(final BrowserEvents.AddBookmark event) {
-        final HistoryItem item = new HistoryItem(event.url, event.title);
-        if (mBookmarkManager.addBookmark(item)) {
-            mBookmarks.add(item);
-            Collections.sort(mBookmarks, new BookmarkManager.SortIgnoreCase());
-            mBookmarkAdapter.notifyDataSetChanged();
-            mEventBus.post(new BookmarkEvents.Added(item));
-            updateBookmarkIndicator(event.url);
+    public void reinitializePreferences() {
+        Activity activity = getActivity();
+        if (activity == null) {
+            return;
         }
+        boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
+        mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
+        mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
+        mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
+                ThemeUtils.getIconLightThemeColor(activity);
     }
 
     @Subscribe
-    public void currentPageInfo(final BrowserEvents.CurrentPageUrl event) {
+    public void addBookmark(@NonNull final BrowserEvents.BookmarkAdded event) {
         updateBookmarkIndicator(event.url);
+        String folder = mBookmarkManager.getCurrentFolder();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
+    }
+
+    @Subscribe
+    public void currentPageInfo(@NonNull final BrowserEvents.CurrentPageUrl event) {
+        updateBookmarkIndicator(event.url);
+        String folder = mBookmarkManager.getCurrentFolder();
+        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
     @Subscribe
@@ -224,7 +256,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Subscribe
-    public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
+    public void bookmarkDeleted(@NonNull final BookmarkEvents.Deleted event) {
         mBookmarks.remove(event.item);
         if (event.item.isFolder()) {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
@@ -233,7 +265,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void setBookmarkDataSet(List<HistoryItem> items, boolean animate) {
+    private void setBookmarkDataSet(@NonNull List<HistoryItem> items, boolean animate) {
         mBookmarks.clear();
         mBookmarks.addAll(items);
         mBookmarkAdapter.notifyDataSetChanged();
@@ -291,19 +323,35 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
-    private void handleLongPress(final HistoryItem item, final int position) {
+    private void handleLongPress(@NonNull final HistoryItem item) {
         if (item.isFolder()) {
             mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getContext(), item);
         } else {
-            mBookmarksDialogBuilder.showLongPressedDialogForUrl(getContext(), item);
+            mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(getContext(), item);
         }
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.action_add_bookmark:
-                mEventBus.post(new BookmarkEvents.WantToBookmarkCurrentPage());
+                mEventBus.post(new BookmarkEvents.ToggleBookmarkForCurrentPage());
+                break;
+            case R.id.action_reading:
+                LightningView currentTab = mTabsManager.getCurrentTab();
+                if (currentTab != null) {
+                    Intent read = new Intent(getActivity(), ReadingActivity.class);
+                    read.putExtra(Constants.LOAD_READING_URL, currentTab.getUrl());
+                    startActivity(read);
+                }
+                break;
+            case R.id.action_toggle_desktop:
+                LightningView current = mTabsManager.getCurrentTab();
+                if (current != null) {
+                    current.toggleDesktopUA(getActivity());
+                    current.reload();
+                    // TODO add back drawer closing
+                }
                 break;
             default:
                 break;
@@ -319,7 +367,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
         final Context context;
 
-        public BookmarkViewAdapter(Context context, List<HistoryItem> data) {
+        public BookmarkViewAdapter(Context context, @NonNull List<HistoryItem> data) {
             super(context, R.layout.bookmark_list_item, data);
             this.context = context;
         }
@@ -349,7 +397,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 holder.favicon.setImageBitmap(mFolderBitmap);
             } else if (web.getBitmap() == null) {
                 holder.favicon.setImageBitmap(mWebpageBitmap);
-                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap)
+                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap, context)
                         .executeOnExecutor(AsyncExecutor.getInstance());
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());

@@ -2,6 +2,8 @@ package acr.browser.lightning.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -13,9 +15,14 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 
+@Singleton
 public class AdBlock {
 
     private static final String TAG = "AdBlock";
@@ -31,34 +38,31 @@ public class AdBlock {
     private final Set<String> mBlockedDomainsList = new HashSet<>();
     private boolean mBlockAds;
     private static final Locale mLocale = Locale.getDefault();
-    private static AdBlock mInstance;
 
-    public static AdBlock getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new AdBlock(context);
-        }
-        return mInstance;
-    }
+    @Inject PreferenceManager mPreferenceManager;
 
-    private AdBlock(Context context) {
+    @Inject
+    public AdBlock(@NonNull Context context) {
+        BrowserApp.getAppComponent().inject(this);
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile(context);
         }
-        mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
+        mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
 
     public void updatePreference() {
-        mBlockAds = PreferenceManager.getInstance().getAdBlockEnabled();
+        mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
 
-    private void loadBlockedDomainsList(final Context context) {
-        Thread thread = new Thread(new Runnable() {
+    private void loadBlockedDomainsList(@NonNull final Context context) {
+        BrowserApp.getTaskThread().execute(new Runnable() {
 
             @Override
             public void run() {
                 AssetManager asset = context.getAssets();
                 BufferedReader reader = null;
                 try {
+                    //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
                             asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;
@@ -73,16 +77,16 @@ public class AdBlock {
                 }
             }
         });
-        thread.start();
     }
 
     /**
      * a method that determines if the given URL is an ad or not. It performs
      * a search of the URL's domain on the blocked domain hash set.
+     *
      * @param url the URL to check for being an ad
      * @return true if it is an ad, false if it is not an ad
      */
-    public boolean isAd(String url) {
+    public boolean isAd(@Nullable String url) {
         if (!mBlockAds || url == null) {
             return false;
         }
@@ -104,11 +108,13 @@ public class AdBlock {
 
     /**
      * Returns the probable domain name for a given URL
+     *
      * @param url the url to parse
      * @return returns the domain
      * @throws URISyntaxException throws an exception if the string cannot form a URI
      */
-    private static String getDomainName(String url) throws URISyntaxException {
+    @NonNull
+    private static String getDomainName(@NonNull String url) throws URISyntaxException {
         int index = url.indexOf('/', 8);
         if (index != -1) {
             url = url.substring(0, index);
@@ -129,16 +135,18 @@ public class AdBlock {
      * simply have a list of hostnames to block, or it can handle a full blown hosts file.
      * It will strip out comments, references to the base IP address and just extract the
      * domains to be used
+     *
      * @param context the context needed to read the file
      */
-    private void loadHostsFile(final Context context) {
-        Thread thread = new Thread(new Runnable() {
+    private void loadHostsFile(@NonNull final Context context) {
+        BrowserApp.getTaskThread().execute(new Runnable() {
 
             @Override
             public void run() {
                 AssetManager asset = context.getAssets();
                 BufferedReader reader = null;
                 try {
+                    //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
                             asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;
@@ -172,6 +180,5 @@ public class AdBlock {
                 }
             }
         });
-        thread.start();
     }
 }

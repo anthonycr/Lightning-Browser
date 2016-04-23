@@ -15,11 +15,18 @@
  */
 package acr.browser.lightning.utils;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
+import acr.browser.lightning.constant.StartPage;
 
 /**
  * Utility methods for Url manipulation
@@ -28,7 +35,7 @@ public class UrlUtils {
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
             "(?i)" + // switch on case insensitive matching
                     '(' +    // begin group for schema
-                    "(?:http|https|file):\\/\\/" +
+                    "(?:http|https|file)://" +
                     "|(?:inline|data|about|javascript):" +
                     "|(?:.*:.*@)" +
                     ')' +
@@ -53,7 +60,8 @@ public class UrlUtils {
      * @return a stripped url like "www.google.com", or the original string if it could
      * not be stripped
      */
-    public static String stripUrl(String url) {
+    @Nullable
+    public static String stripUrl(@Nullable String url) {
         if (url == null) return null;
         Matcher m = STRIP_URL_PATTERN.matcher(url);
         if (m.matches()) {
@@ -74,7 +82,8 @@ public class UrlUtils {
      *                    URL. If false, invalid URLs will return null
      * @return Original or modified URL
      */
-    public static String smartUrlFilter(String url, boolean canBeSearch, String searchUrl) {
+    @NonNull
+    public static String smartUrlFilter(@NonNull String url, boolean canBeSearch, String searchUrl) {
         String inUrl = url.trim();
         boolean hasSpace = inUrl.indexOf(' ') != -1;
         Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);
@@ -99,11 +108,12 @@ public class UrlUtils {
             return URLUtil.composeSearchUrl(inUrl,
                     searchUrl, QUERY_PLACE_HOLDER);
         }
-        return null;
+        return "";
     }
 
     /* package */
-    static String fixUrl(String inUrl) {
+    @NonNull
+    static String fixUrl(@NonNull String inUrl) {
         // FIXME: Converting the url to lower case
         // duplicates functionality in smartUrlFilter().
         // However, changing all current callers of fixUrl to
@@ -135,7 +145,8 @@ public class UrlUtils {
 
     // Returns the filtered URL. Cannot return null, but can return an empty string
     /* package */
-    static String filteredUrl(String inUrl) {
+    @Nullable
+    static String filteredUrl(@Nullable String inUrl) {
         if (inUrl == null) {
             return "";
         }
@@ -144,5 +155,45 @@ public class UrlUtils {
             return "";
         }
         return inUrl;
+    }
+
+    /**
+     * Returns whether the given url is the bookmarks/history page or a normal website
+     */
+    public static boolean isSpecialUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) &&
+                (url.endsWith(BookmarkPage.FILENAME) ||
+                        url.endsWith(HistoryPage.FILENAME) ||
+                        url.endsWith(StartPage.FILENAME));
+    }
+
+    /**
+     * Determines if the url is a url for the bookmark page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a bookmark url, false otherwise.
+     */
+    public static boolean isBookmarkUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME);
+    }
+
+    /**
+     * Determines if the url is a url for the history page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a history url, false otherwise.
+     */
+    public static boolean isHistoryUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(HistoryPage.FILENAME);
+    }
+
+    /**
+     * Determines if the url is a url for the start page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a start page url, false otherwise.
+     */
+    public static boolean isStartPageUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(StartPage.FILENAME);
     }
 }

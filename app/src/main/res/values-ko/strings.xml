@@ -37,6 +37,7 @@
     <string name="stock_browser_available">지원되는 기본 브라우저 감지됨</string>
     <string name="fullScreenOption">브라우징 도중에는 상태 표시줄 숨기기</string>
     <string name="clear_cookies">브라우저 쿠키 지우기</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">이 이미지로 무엇을 할까요?</string>
     <string name="action_download">다운로드</string>
     <string name="action_open">열기</string>
@@ -134,6 +135,7 @@
     <string name="name_inverted">반전</string>
     <string name="name_grayscale">그레이스케일</string>
     <string name="name_inverted_grayscale">반전된 그레이스케일</string>
+    <string name="name_increase_contrast">대비 증가</string>
     <string name="name_normal">보통</string>
     <string name="sync_history">Google과 기록 동기화</string>
     <string name="title_file_chooser">파일 선택기</string>

@@ -54,6 +54,7 @@
     <string name="stock_browser_available">Támogatott gyári böngésző észlelve</string>
     <string name="fullScreenOption">Állapotsáv elrejtése böngészés közben</string>
     <string name="clear_cookies">Cookie-k törlése</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Mit szeretnél csinálni ezzel a képpel?</string>
     <string name="action_download">Letöltés</string>
     <string name="action_open">Megnyitás</string>

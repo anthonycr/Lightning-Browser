@@ -4,7 +4,11 @@
 ####Download
 * [Download APK from here](https://github.com/anthonycr/Lightning-Browser/releases)
 
-* [Download from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
+* [Download from F-Droid](https://f-droid.org/repository/browse/?fdfilter=lightning&fdid=acr.browser.lightning)
+
+* [Download Free from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
+
+* [Download Paid from Google Play](https://play.google.com/store/apps/details?id=acr.browser.lightning)
 
 ####Master Branch
 * [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
@@ -46,12 +50,14 @@
 * Please add translations/translation fixes as you see need
 
 ####Contributing
+* [The Trello Board](https://trello.com/b/Gwjx8MC3/lightning-browser)
 * Contributions are always welcome
 * If you want a feature and can code, feel free to fork and add the change yourself and make a pull request
 * PLEASE use the ````dev```` branch when contributing as the ````master```` branch is supposed to be for stable builds. I will not reject your pull request if you make it on master, but it will annoy me and make my life harder.
 * Code Style
-    * Standard Java camel case
-    * Member variables are preceded with an 'm'
+    * Hungarian Notation
+         * Prefix member variables with 'm'
+         * Prefix static member variables with 's'
     * Use 4 spaces instead of a tab (\t)
 
 ####Setting Up the Project

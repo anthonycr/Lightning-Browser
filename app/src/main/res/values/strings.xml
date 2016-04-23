@@ -42,7 +42,7 @@
     <string name="block">Block Images</string>
     <string name="window">Allow sites to open new windows</string>
     <string name="cookies">Enable Cookies</string>
-    <string name="importbookmarks">Import bookmarks from Browser</string>
+    <string name="importbookmarks">Import bookmarks from browser</string>
     <string name="size">Text size</string>
     <string name="recommended">Recommended</string>
     <string name="search">Search Engine</string>
@@ -50,10 +50,13 @@
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>
+    <string name="supported_browsers_title">Supported Browsers</string>
+    <string name="stock_browser">Stock Browser</string>
     <string name="stock_browser_unavailable">No stock browser detected</string>
     <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
     <string name="clear_cookies">Clear Browser Cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">What would you like to do with this image?</string>
     <string name="action_download">Download</string>
     <string name="action_open">Open</string>
@@ -103,10 +106,10 @@
     <string name="cannot_download">Can only download \"http\" or \"https\" URLs.</string>
     <string name="problem_download">Invalid URL encountered, cannot download</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
-    <string name="download_no_sdcard_dlg_title" >No SD card</string>
-    <string name="download_no_sdcard_dlg_msg" >USB storage is required to download the file.</string>
+    <string name="download_no_sdcard_dlg_title">No SD card</string>
+    <string name="download_no_sdcard_dlg_msg">USB storage is required to download the file.</string>
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
-    <string name="download_sdcard_busy_dlg_msg" >The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
+    <string name="download_sdcard_busy_dlg_msg">The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
     <string name="incognito_cookies">Enable Cookies in Incognito Mode</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -174,6 +177,7 @@
     <string name="name_inverted">Inverted</string>
     <string name="name_grayscale">Grayscale</string>
     <string name="name_inverted_grayscale">Inverted Grayscale</string>
+    <string name="name_increase_contrast">Increase Contrast</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sync history with Google</string>
     <string name="title_file_chooser">File Chooser</string>
@@ -192,6 +196,7 @@
     <string name="settings_about_explain">Details about version, author and license.</string>
     <string name="close_tab">Close tab</string>
     <string name="close_all_tabs">Close all tabs</string>
+    <string name="close_other_tabs">Close other tabs</string>
     <string name="third_party">Block 3rd Party Cookies</string>
     <string name="color_mode">Enable Color Mode</string>
     <string name="reading_mode">Reader Mode</string>
@@ -203,13 +208,13 @@
     <string name="url_contents">URL Box Contents</string>
     <string name="text_encoding">Text Encoding</string>
     <string-array name="url_content_array">
-        <item >Domain (default)</item>
-        <item >URL</item>
-        <item >Title</item>
+        <item>Domain (default)</item>
+        <item>URL</item>
+        <item>Title</item>
     </string-array>
-        <string name="invert_color">Invert color</string>
-        <string name="dark_theme">Dark Theme</string>
-        <string name="tabs">Tabs</string>
+    <string name="invert_color">Invert color</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="tabs">Tabs</string>
     <string name="theme">App Theme</string>
     <string name="light_theme">Light Theme</string>
     <string name="black_theme">Black Theme (AMOLED)</string>
@@ -224,4 +229,12 @@
     <string name="hosts_source">Hosts File Ad Blocking Source</string>
     <string name="settings_adblock">Ad Block Settings</string>
     <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
+    <string name="do_not_track">Request \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Remove Identifying Headers</string>
+    <string name="action_add_to_homescreen">Add to Homescreen</string>
+    <string name="message_added_to_homescreen">Shortcut Added to Homescreen</string>
+    <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Frequently Asked Questions</string>
 </resources>

@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
@@ -11,15 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.anthonycr.grant.PermissionsManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.utils.PermissionsManager;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
-    private static final List<String> fragments = new ArrayList<>();
+    private static final List<String> mFragments = new ArrayList<>(6);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +44,19 @@ public class SettingsActivity extends ThemableSettingsActivity {
     @Override
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.preferences_headers, target);
-        fragments.clear();
+        mFragments.clear();
         for (Header header : target) {
-            fragments.add(header.fragment);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                // Workaround for bug in the AppCompat support library
+                header.iconRes = R.drawable.empty;
+            }
+            mFragments.add(header.fragment);
         }
     }
 
     @Override
     protected boolean isValidFragment(String fragmentName) {
-        return fragments.contains(fragmentName);
+        return mFragments.contains(fragmentName);
     }
 
     @Override
@@ -61,7 +67,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions);
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

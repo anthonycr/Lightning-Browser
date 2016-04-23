@@ -1,41 +1,49 @@
 package acr.browser.lightning.app;
 
+import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.squareup.otto.Bus;
 
+import net.i2p.android.ui.I2PAndroidHelper;
+
 import javax.inject.Singleton;
 
-import acr.browser.lightning.database.BookmarkManager;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by Stefano Pacifici on 01/09/15.
- */
 @Module
 public class AppModule {
-    private final BrowserApp app;
-    private final Bus bus;
+    private final BrowserApp mApp;
+    @NonNull private final Bus mBus;
 
     public AppModule(BrowserApp app) {
-        this.app = app;
-        this.bus = new Bus();
+        this.mApp = app;
+        this.mBus = new Bus();
+    }
+
+    @Provides
+    public Application provideApplication() {
+        return mApp;
     }
 
     @Provides
     public Context provideContext() {
-        return app.getApplicationContext();
+        return mApp.getApplicationContext();
     }
 
-    @Provides
-    @Singleton
-    public BookmarkManager provideBookmarkManager() {
-        return new BookmarkManager(app.getApplicationContext());
-    }
-
+    @NonNull
     @Provides
     public Bus provideBus() {
-        return bus;
+        return mBus;
     }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public I2PAndroidHelper provideI2PAndroidHelper() {
+        return new I2PAndroidHelper(mApp.getApplicationContext());
+    }
+
 }

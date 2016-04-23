@@ -3,27 +3,32 @@
  */
 package acr.browser.lightning.constant;
 
+import android.app.Application;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;
 
-import android.content.Context;
-
-import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.view.LightningView;
 
-public class HistoryPage {
+public class HistoryPage extends AsyncTask<Void, Void, Void> {
 
     public static final String FILENAME = "history.html";
 
-    private static final String HEADING = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta content=\"en-us\" http-equiv=\"Content-Language\" /><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"><title>"
-            + BrowserApp.getAppContext().getString(R.string.action_history)
-            + "</title></head><style>body { background: #e1e1e1;}.box { vertical-align:middle;position:relative; display: block; margin: 10px;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px; background-color:#fff;box-shadow: 0px 2px 3px rgba( 0, 0, 0, 0.25 );font-family: Arial;color: #444;font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;}.box a { width: 100%; height: 100%; position: absolute; left: 0; top: 0;}.black {color: black;font-size: 15px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}.font {color: gray;font-size: 10px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}</style><body><div id=\"content\">";
+    private static final String HEADING_1 = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta content=\"en-us\" http-equiv=\"Content-Language\" /><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"><title>";
+
+    private static final String HEADING_2 = "</title></head><style>body { background: #e1e1e1;}.box { vertical-align:middle;position:relative; display: block; margin: 10px;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px; background-color:#fff;box-shadow: 0px 2px 3px rgba( 0, 0, 0, 0.25 );font-family: Arial;color: #444;font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;}.box a { width: 100%; height: 100%; position: absolute; left: 0; top: 0;}.black {color: black;font-size: 15px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}.font {color: gray;font-size: 10px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}</style><body><div id=\"content\">";
 
     private static final String PART1 = "<div class=\"box\"><a href=\"";
 
@@ -35,26 +40,58 @@ public class HistoryPage {
 
     private static final String END = "</div></body></html>";
 
-    public static String getHistoryPage(Context context) {
-        StringBuilder historyBuilder = new StringBuilder(HistoryPage.HEADING);
-        List<HistoryItem> historyList = getWebHistory(context);
+    @NonNull private final WeakReference<LightningView> mTabReference;
+    @NonNull private final Application mApp;
+    @NonNull private final String mTitle;
+    private final HistoryDatabase mHistoryDatabase;
+
+    @Nullable private String mHistoryUrl = null;
+
+    public HistoryPage(LightningView tab, @NonNull Application app, HistoryDatabase database) {
+        mTabReference = new WeakReference<>(tab);
+        mApp = app;
+        mTitle = app.getString(R.string.action_history);
+        mHistoryDatabase = database;
+    }
+
+    @Nullable
+    @Override
+    protected Void doInBackground(Void... params) {
+        mHistoryUrl = getHistoryPage();
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        LightningView tab = mTabReference.get();
+        if (tab != null && mHistoryUrl != null) {
+            tab.loadUrl(mHistoryUrl);
+        }
+    }
+
+    @NonNull
+    private String getHistoryPage() {
+        StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
+        List<HistoryItem> historyList = mHistoryDatabase.getLastHundredItems();
         Iterator<HistoryItem> it = historyList.iterator();
         HistoryItem helper;
         while (it.hasNext()) {
             helper = it.next();
-            historyBuilder.append(HistoryPage.PART1);
+            historyBuilder.append(PART1);
             historyBuilder.append(helper.getUrl());
-            historyBuilder.append(HistoryPage.PART2);
+            historyBuilder.append(PART2);
             historyBuilder.append(helper.getTitle());
-            historyBuilder.append(HistoryPage.PART3);
+            historyBuilder.append(PART3);
             historyBuilder.append(helper.getUrl());
-            historyBuilder.append(HistoryPage.PART4);
+            historyBuilder.append(PART4);
         }
 
-        historyBuilder.append(HistoryPage.END);
-        File historyWebPage = new File(context.getFilesDir(), FILENAME);
+        historyBuilder.append(END);
+        File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
         FileWriter historyWriter = null;
         try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
             historyWriter = new FileWriter(historyWebPage, false);
             historyWriter.write(historyBuilder.toString());
         } catch (IOException e) {
@@ -65,8 +102,22 @@ public class HistoryPage {
         return Constants.FILE + historyWebPage;
     }
 
-    private static List<HistoryItem> getWebHistory(Context context) {
-        HistoryDatabase databaseHandler = HistoryDatabase.getInstance();
-        return databaseHandler.getLastHundredItems();
+    public void load() {
+        executeOnExecutor(BrowserApp.getIOThread());
     }
+
+    /**
+     * Use this method to immediately delete the history
+     * page on the current thread. This will clear the
+     * cached history page that was stored on file.
+     *
+     * @param application the application object needed to get the file.
+     */
+    public static void deleteHistoryPage(@NonNull Application application) {
+        File historyWebPage = new File(application.getFilesDir(), FILENAME);
+        if (historyWebPage.exists()) {
+            historyWebPage.delete();
+        }
+    }
+
 }

@@ -8,7 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,9 +19,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.preference.PreferenceManager;
 
-public class DisplaySettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+public class DisplaySettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_HIDESTATUSBAR = "fullScreenOption";
     private static final String SETTINGS_FULLSCREEN = "fullscreen";
@@ -38,7 +37,6 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
     private static final float XSMALL = 10.0f;
 
     private Activity mActivity;
-    private PreferenceManager mPreferences;
     private CheckBoxPreference cbstatus, cbfullscreen, cbviewport, cboverview, cbreflow;
     private Preference theme;
     private String[] mThemeOptions;
@@ -57,9 +55,8 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
 
     private void initPrefs() {
         // mPreferences storage
-        mPreferences = PreferenceManager.getInstance();
         mThemeOptions = this.getResources().getStringArray(R.array.themes);
-        mCurrentTheme = mPreferences.getUseTheme();
+        mCurrentTheme = mPreferenceManager.getUseTheme();
 
         theme = findPreference(SETTINGS_THEME);
         Preference textsize = findPreference(SETTINGS_TEXTSIZE);
@@ -77,17 +74,17 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         cboverview.setOnPreferenceChangeListener(this);
         cbreflow.setOnPreferenceChangeListener(this);
 
-        cbstatus.setChecked(mPreferences.getHideStatusBarEnabled());
-        cbfullscreen.setChecked(mPreferences.getFullScreenEnabled());
-        cbviewport.setChecked(mPreferences.getUseWideViewportEnabled());
-        cboverview.setChecked(mPreferences.getOverviewModeEnabled());
-        cbreflow.setChecked(mPreferences.getTextReflowEnabled());
+        cbstatus.setChecked(mPreferenceManager.getHideStatusBarEnabled());
+        cbfullscreen.setChecked(mPreferenceManager.getFullScreenEnabled());
+        cbviewport.setChecked(mPreferenceManager.getUseWideViewportEnabled());
+        cboverview.setChecked(mPreferenceManager.getOverviewModeEnabled());
+        cbreflow.setChecked(mPreferenceManager.getTextReflowEnabled());
 
-        theme.setSummary(mThemeOptions[mPreferences.getUseTheme()]);
+        theme.setSummary(mThemeOptions[mPreferenceManager.getUseTheme()]);
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
             case SETTINGS_THEME:
                 themePicker();
@@ -101,27 +98,27 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
+    public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_HIDESTATUSBAR:
-                mPreferences.setHideStatusBarEnabled((Boolean) newValue);
+                mPreferenceManager.setHideStatusBarEnabled((Boolean) newValue);
                 cbstatus.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_FULLSCREEN:
-                mPreferences.setFullScreenEnabled((Boolean) newValue);
+                mPreferenceManager.setFullScreenEnabled((Boolean) newValue);
                 cbfullscreen.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_VIEWPORT:
-                mPreferences.setUseWideViewportEnabled((Boolean) newValue);
+                mPreferenceManager.setUseWideViewportEnabled((Boolean) newValue);
                 cbviewport.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_OVERVIEWMODE:
-                mPreferences.setOverviewModeEnabled((Boolean) newValue);
+                mPreferenceManager.setOverviewModeEnabled((Boolean) newValue);
                 cboverview.setChecked((Boolean) newValue);
                 return true;
             case SETTINGS_REFLOW:
-                mPreferences.setTextReflowEnabled((Boolean) newValue);
+                mPreferenceManager.setTextReflowEnabled((Boolean) newValue);
                 cbreflow.setChecked((Boolean) newValue);
                 return true;
             default:
@@ -142,14 +139,14 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         bar.setOnSeekBarChangeListener(new TextSeekBarListener(sample));
         final int MAX = 5;
         bar.setMax(MAX);
-        bar.setProgress(MAX - mPreferences.getTextSize());
+        bar.setProgress(MAX - mPreferenceManager.getTextSize());
         builder.setView(view);
         builder.setTitle(R.string.title_text_size);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                mPreferences.setTextSize(MAX - bar.getProgress());
+                mPreferenceManager.setTextSize(MAX - bar.getProgress());
             }
 
         });
@@ -179,12 +176,12 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.theme));
 
-        int n = mPreferences.getUseTheme();
+        int n = mPreferenceManager.getUseTheme();
         picker.setSingleChoiceItems(mThemeOptions, n, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPreferences.setUseTheme(which);
+                mPreferenceManager.setUseTheme(which);
                 if (which < mThemeOptions.length) {
                     theme.setSummary(mThemeOptions[which]);
                 }
@@ -195,7 +192,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mCurrentTheme != mPreferences.getUseTheme()) {
+                        if (mCurrentTheme != mPreferenceManager.getUseTheme()) {
                             getActivity().onBackPressed();
                         }
                     }
@@ -203,7 +200,7 @@ public class DisplaySettingsFragment extends PreferenceFragment implements Prefe
         picker.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                if (mCurrentTheme != mPreferences.getUseTheme()) {
+                if (mCurrentTheme != mPreferenceManager.getUseTheme()) {
                     getActivity().onBackPressed();
                 }
             }
