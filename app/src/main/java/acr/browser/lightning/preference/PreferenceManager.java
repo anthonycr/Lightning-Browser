@@ -61,6 +61,8 @@ public class PreferenceManager {
         public static final String USE_PROXY_PORT = "useProxyPort";
         public static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
         public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
+
+        public static final String LEAK_CANARY = "leakCanary";
     }
 
     @NonNull private final SharedPreferences mPrefs;
@@ -421,6 +423,14 @@ public class PreferenceManager {
 
     public void setUseTheme(int theme) {
         putInt(Name.THEME, theme);
+    }
+
+    public void setUseLeakCanary(boolean useLeakCanary) {
+        putBoolean(Name.LEAK_CANARY, useLeakCanary);
+    }
+
+    public boolean getUseLeakCanary() {
+        return mPrefs.getBoolean(Name.LEAK_CANARY, false);
     }
 
     /**

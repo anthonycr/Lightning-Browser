@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
+import acr.browser.lightning.preference.PreferenceManager;
 
 public class BrowserApp extends Application {
 
@@ -23,14 +24,18 @@ public class BrowserApp extends Application {
     private static final Executor mTaskThread = Executors.newCachedThreadPool();
 
     @Inject Bus mBus;
+    @Inject PreferenceManager mPreferenceManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         mAppComponent.inject(this);
-        LeakCanary.install(this);
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+        if (mPreferenceManager.getUseLeakCanary() && !isRelease()) {
+            LeakCanary.install(this);
+        }
+        if (!isRelease() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
     }
@@ -56,6 +61,15 @@ public class BrowserApp extends Application {
 
     public static Bus getBus(@NonNull Context context) {
         return get(context).mBus;
+    }
+
+    /**
+     * Determines whether this is a release build.
+     *
+     * @return true if this is a release build, false otherwise.
+     */
+    public static boolean isRelease() {
+        return !BuildConfig.DEBUG || BuildConfig.BUILD_TYPE.toLowerCase().equals("release");
     }
 
 }

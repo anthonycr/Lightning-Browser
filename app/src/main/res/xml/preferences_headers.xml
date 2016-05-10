@@ -30,4 +30,7 @@
                 android:value="SELF"/>
         </intent>
     </header>
+    <header
+        android:fragment="acr.browser.lightning.fragment.DebugSettingsFragment"
+        android:title="@string/debug_title"/>
 </preference-headers>

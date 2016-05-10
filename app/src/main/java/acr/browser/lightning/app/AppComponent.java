@@ -1,5 +1,7 @@
 package acr.browser.lightning.app;
 
+import android.preference.PreferenceFragment;
+
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
@@ -13,6 +15,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
+import acr.browser.lightning.fragment.DebugSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
@@ -66,5 +69,7 @@ public interface AppComponent {
     void inject(BrowserPresenter presenter);
 
     void inject(TabsManager manager);
+
+    void inject(DebugSettingsFragment fragment);
 
 }

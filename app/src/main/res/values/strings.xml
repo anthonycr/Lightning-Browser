@@ -237,4 +237,9 @@
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Frequently Asked Questions</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Debug Settings</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Please restart the app for the change to take effect.</string>
 </resources>
