@@ -1,7 +1,5 @@
 package acr.browser.lightning.app;
 
-import android.preference.PreferenceFragment;
-
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;

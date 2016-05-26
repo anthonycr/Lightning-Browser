@@ -233,7 +233,7 @@ public class LightningView {
      *                to get the default UserAgent for the WebView.
      */
     @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
-    public synchronized void initializePreferences(Context context) {
+    public synchronized void initializePreferences(@NonNull Context context) {
         if (mWebView == null) {
             return;
         }

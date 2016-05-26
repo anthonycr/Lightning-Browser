@@ -196,8 +196,11 @@ public class TabsManager {
      * WebView when the app is open currently due to a
      * bug in the WebView, where calling onResume doesn't
      * consistently resume it.
+     *
+     * @param context the context needed to initialize
+     *                the LightningView preferences.
      */
-    public void resumeAll() {
+    public void resumeAll(@NonNull Context context) {
         LightningView current = getCurrentTab();
         if (current != null) {
             current.resumeTimers();
@@ -205,6 +208,7 @@ public class TabsManager {
         for (LightningView tab : mTabList) {
             if (tab != null) {
                 tab.onResume();
+                tab.initializePreferences(context);
             }
         }
     }
@@ -272,19 +276,6 @@ public class TabsManager {
         mTabList.clear();
         mIsInitialized = false;
         mCurrentTab = null;
-    }
-
-    /**
-     * Reinitializes the preferences for
-     * all the tabs in the list.
-     *
-     * @param context the context needed
-     *                to initialize the preferences.
-     */
-    public synchronized void resume(@NonNull final Context context) {
-        for (LightningView tab : mTabList) {
-            tab.initializePreferences(context);
-        }
     }
 
     /**

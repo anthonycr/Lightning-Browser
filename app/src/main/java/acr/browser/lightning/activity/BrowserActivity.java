@@ -43,6 +43,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.text.Selection;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -125,6 +126,7 @@ import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
+import acr.browser.lightning.view.SearchView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -152,7 +154,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // Toolbar Views
     private View mSearchBackground;
     private Toolbar mToolbar;
-    private AutoCompleteTextView mSearch;
+    private SearchView mSearch;
     private ImageView mArrowImage;
 
     // Current tab view being displayed
@@ -372,7 +374,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         arrowButton.setOnClickListener(this);
 
         // create the search EditText in the ToolBar
-        mSearch = (AutoCompleteTextView) customView.findViewById(R.id.search);
+        mSearch = (SearchView) customView.findViewById(R.id.search);
         mSearchBackground = customView.findViewById(R.id.search_container);
 
         // initialize search background color
@@ -397,6 +399,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSearch.setOnFocusChangeListener(search);
         mSearch.setOnEditorActionListener(search);
         mSearch.setOnTouchListener(search);
+        mSearch.setOnPreFocusListener(search);
 
         initializeSearchSuggestions(mSearch);
 
@@ -437,12 +440,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         System.exit(1);
     }
 
-    private class SearchListenerClass implements OnKeyListener, OnEditorActionListener, OnFocusChangeListener, OnTouchListener {
+    private class SearchListenerClass implements OnKeyListener, OnEditorActionListener,
+            OnFocusChangeListener, OnTouchListener, SearchView.PreFocusListener {
 
         @Override
-        public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
+        public boolean onKey(View searchView, int keyCode, KeyEvent keyEvent) {
 
-            switch (arg1) {
+            switch (keyCode) {
                 case KeyEvent.KEYCODE_ENTER:
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
@@ -480,20 +484,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         @Override
-        public void onFocusChange(View v, final boolean hasFocus) {
+        public void onFocusChange(final View v, final boolean hasFocus) {
             final LightningView currentView = mTabsManager.getCurrentTab();
             if (!hasFocus && currentView != null) {
                 setIsLoading(currentView.getProgress() < 100);
                 updateUrl(currentView.getUrl(), true);
             } else if (hasFocus && currentView != null) {
-                String url = currentView.getUrl();
-                if (UrlUtils.isSpecialUrl(url)) {
-                    mSearch.setText("");
-                } else {
-                    mSearch.setText(url);
-                }
+
                 // Hack to make sure the text gets selected
-                ((AutoCompleteTextView) v).selectAll();
+                ((SearchView) v).selectAll();
                 mIcon = mClearIcon;
                 mSearch.setCompoundDrawables(null, null, mClearIcon, null);
             }
@@ -521,6 +520,20 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 }
             }
             return false;
+        }
+
+        @Override
+        public void onPreFocus() {
+            final LightningView currentView = mTabsManager.getCurrentTab();
+            if (currentView == null) {
+                return;
+            }
+            String url = currentView.getUrl();
+            if (UrlUtils.isSpecialUrl(url)) {
+                mSearch.setText("");
+            } else {
+                mSearch.setText(url);
+            }
         }
     }
 
@@ -612,8 +625,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // TODO layout transition causing memory leak
 //        mBrowserFrame.setLayoutTransition(new LayoutTransition());
 
-        mToolbarLayout.setTranslationY(0);
-        mBrowserFrame.setTranslationY(0);
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
 
         initializeTabHeight();
@@ -673,6 +684,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         updateCookiePreference().subscribeOn(Schedulers.worker()).subscribe();
         mProxyUtils.updateProxySettings(this);
+    }
+
+    @Override
+    public void onWindowVisibleToUserAfterResume() {
+        super.onWindowVisibleToUserAfterResume();
+        mToolbarLayout.setTranslationY(0);
+        mBrowserFrame.setTranslationY(0);
     }
 
     @Override
@@ -925,7 +943,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-       mDrawerHandler.postDelayed(new Runnable() {
+        mDrawerHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
@@ -1230,9 +1248,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mSuggestionsAdapter.refreshPreferences();
             mSuggestionsAdapter.refreshBookmarks();
         }
-        mTabsManager.resumeAll();
+        mTabsManager.resumeAll(this);
         initializePreferences();
-        mTabsManager.resume(this);
 
         supportInvalidateOptionsMenu();
 
@@ -1888,6 +1905,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void showActionBar() {
         if (mFullScreen) {
+            Log.d(TAG, "showActionBar");
             if (mToolbarLayout == null)
                 return;
 
