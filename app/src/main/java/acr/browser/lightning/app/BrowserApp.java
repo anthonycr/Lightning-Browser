@@ -1,9 +1,11 @@
 package acr.browser.lightning.app;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.webkit.WebView;
 
 import com.squareup.leakcanary.LeakCanary;
@@ -16,8 +18,11 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.MemoryLeakUtils;
 
 public class BrowserApp extends Application {
+
+    private static final String TAG = BrowserApp.class.getSimpleName();
 
     private static AppComponent mAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
@@ -38,6 +43,14 @@ public class BrowserApp extends Application {
         if (!isRelease() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
+
+        registerActivityLifecycleCallbacks(new MemoryLeakUtils.LifecycleAdapter() {
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                Log.d(TAG, "Cleaning up after the Android framework");
+                MemoryLeakUtils.clearNextServedView(BrowserApp.this);
+            }
+        });
     }
 
     @NonNull
