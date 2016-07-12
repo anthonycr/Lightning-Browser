@@ -101,6 +101,8 @@ dependencies {
     // git submodule update --remote
     compile project(':libnetcipher')
 
+    compile project(':bonsai')
+
     // memory leak analysis
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'

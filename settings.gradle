@@ -1,4 +1,6 @@
 include ':app'
 include ':libnetcipher'
+include ':bonsai'
 
 project(':libnetcipher').projectDir = new File(rootProject.projectDir, 'external/netcipher/libnetcipher')
+project(':bonsai').projectDir = new File(rootProject.projectDir, 'Bonsai/library')
