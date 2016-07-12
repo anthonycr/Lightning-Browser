@@ -3,11 +3,7 @@ package acr.browser.lightning.activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 import javax.inject.Inject;
 

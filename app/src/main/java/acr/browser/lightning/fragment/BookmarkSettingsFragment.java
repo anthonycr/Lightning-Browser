@@ -39,8 +39,8 @@ import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.react.OnSubscribe;
-import acr.browser.lightning.react.Schedulers;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 

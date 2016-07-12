@@ -217,9 +217,14 @@ public class LightningDialogBuilder {
                         mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
-                        mHistoryDatabase.deleteHistoryItem(url);
-                        // openHistory();
-                        mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
+                        BrowserApp.getIOThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mHistoryDatabase.deleteHistoryItem(url);
+                                // openHistory();
+                                mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
+                            }
+                        });
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
                         mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));

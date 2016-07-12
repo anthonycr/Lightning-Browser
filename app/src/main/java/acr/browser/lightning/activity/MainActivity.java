@@ -9,9 +9,9 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.react.Action;
-import acr.browser.lightning.react.Observable;
-import acr.browser.lightning.react.Subscriber;
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.Subscriber;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {

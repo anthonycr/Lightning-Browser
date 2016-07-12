@@ -17,6 +17,7 @@ import acr.browser.lightning.fragment.DebugSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
+import acr.browser.lightning.search.Suggestions;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -69,5 +70,7 @@ public interface AppComponent {
     void inject(TabsManager manager);
 
     void inject(DebugSettingsFragment fragment);
+
+    void inject(Suggestions suggestions);
 
 }

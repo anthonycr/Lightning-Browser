@@ -49,11 +49,11 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.async.ImageDownloadTask;
-import acr.browser.lightning.react.Action;
-import acr.browser.lightning.react.Observable;
-import acr.browser.lightning.react.OnSubscribe;
-import acr.browser.lightning.react.Schedulers;
-import acr.browser.lightning.react.Subscriber;
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscriber;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
 

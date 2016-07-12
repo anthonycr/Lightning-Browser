@@ -32,6 +32,8 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.webkit.URLUtil;
 
 import com.anthonycr.grant.PermissionsManager;
@@ -53,6 +55,8 @@ import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
+
+    private static final String TAG = Utils.class.getSimpleName();
 
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -139,7 +143,11 @@ public final class Utils {
      * @param resource the string resource to show to the user.
      */
     public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
-        View view = activity.findViewById(android.R.id.content);
+        View view = activity.findViewById(R.id.coordinator_layout);
+        if (view == null) {
+            Log.d(TAG, "Unable to find coordinator layout, using content view");
+            view = activity.findViewById(android.R.id.content);
+        }
         if (view == null) return;
         Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
     }
@@ -151,7 +159,11 @@ public final class Utils {
      * @param message  the string message to show to the user.
      */
     public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
-        View view = activity.findViewById(android.R.id.content);
+        View view = activity.findViewById(R.id.coordinator_layout);
+        if (view == null) {
+            Log.d(TAG, "Unable to find coordinator layout, using content view");
+            view = activity.findViewById(android.R.id.content);
+        }
         if (view == null) return;
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }

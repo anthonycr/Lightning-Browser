@@ -1,49 +1,57 @@
 <!-- Copyright 2014 ACR Development -->
-<LinearLayout
-    android:id="@+id/main_layout"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinator_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@null"
-    android:orientation="vertical">
+    tools:context=".activity.BrowserActivity">
 
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
+    <LinearLayout
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:background="@null"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/ui_layout"
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:fitsSystemWindows="true">
 
-            <include layout="@layout/toolbar"/>
+            <LinearLayout
+                android:id="@+id/ui_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <include layout="@layout/browser_content"/>
+                <include layout="@layout/toolbar"/>
 
-            <include layout="@layout/search_interface"/>
-        </LinearLayout>
+                <include layout="@layout/browser_content"/>
 
-        <FrameLayout
-            android:id="@+id/left_drawer"
-            android:layout_width="@dimen/navigation_width"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="?attr/drawerBackground"
-            android:fitsSystemWindows="true"
-            android:weightSum="1"/>
+                <include layout="@layout/search_interface"/>
+            </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/right_drawer"
-            android:layout_width="@dimen/navigation_width"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:background="?attr/drawerBackground"
-            android:fitsSystemWindows="true"
-            android:weightSum="1"/>
+            <FrameLayout
+                android:id="@+id/left_drawer"
+                android:layout_width="@dimen/navigation_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="?attr/drawerBackground"
+                android:fitsSystemWindows="true"
+                android:weightSum="1"/>
 
-    </android.support.v4.widget.DrawerLayout>
+            <FrameLayout
+                android:id="@+id/right_drawer"
+                android:layout_width="@dimen/navigation_width"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="?attr/drawerBackground"
+                android:fitsSystemWindows="true"
+                android:weightSum="1"/>
 
-</LinearLayout>
+        </android.support.v4.widget.DrawerLayout>
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

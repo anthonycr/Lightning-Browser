@@ -227,6 +227,8 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable, Sugge
             int counter = 0;
             synchronized (mBookmarks) {
                 mBookmarks.clear();
+                // TODO Synchronizing on this... freezes up during getFilteredList method execution since
+                // both are synchronized on this
                 synchronized (SuggestionsAdapter.this) {
                     for (int n = 0; n < mAllBookmarks.size(); n++) {
                         if (counter >= 5) {

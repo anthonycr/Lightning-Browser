@@ -330,6 +330,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     holder.layout.setBackground(foregroundDrawable);
                 } else {
+                    //noinspection deprecation
                     holder.layout.setBackgroundDrawable(foregroundDrawable);
                 }
                 if (!mIsIncognito && mColorMode) {
@@ -341,6 +342,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     holder.layout.setBackground(mBackgroundTabDrawable);
                 } else {
+                    //noinspection deprecation
                     holder.layout.setBackgroundDrawable(mBackgroundTabDrawable);
                 }
                 holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
