@@ -84,6 +84,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
 import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.progress.AnimatedProgressBar;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -126,7 +127,6 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
-import acr.browser.lightning.view.AnimatedProgressBar;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.SearchView;
 import butterknife.Bind;
