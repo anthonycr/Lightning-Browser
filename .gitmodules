@@ -7,4 +7,4 @@
 	url = https://github.com/anthonycr/Bonsai.git
 [submodule "AnimatedProgressBar"]
 	path = AnimatedProgressBar
-	url = git@github.com:anthonycr/AnimatedProgressBar.git
+	url = https://github.com/anthonycr/AnimatedProgressBar.git
