@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebView;
@@ -34,6 +35,17 @@ public class BrowserApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
+        }
+
         mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         mAppComponent.inject(this);
 
@@ -48,7 +60,7 @@ public class BrowserApp extends Application {
             @Override
             public void onActivityDestroyed(Activity activity) {
                 Log.d(TAG, "Cleaning up after the Android framework");
-                MemoryLeakUtils.clearNextServedView(BrowserApp.this);
+                MemoryLeakUtils.clearNextServedView(activity, BrowserApp.this);
             }
         });
     }

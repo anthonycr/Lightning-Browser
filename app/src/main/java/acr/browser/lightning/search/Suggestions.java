@@ -34,12 +34,14 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.preference.PreferenceManager;
+
 import com.anthonycr.bonsai.Action;
 import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Scheduler;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Subscriber;
+
 import acr.browser.lightning.utils.ThemeUtils;
 
 public class Suggestions extends BaseAdapter implements Filterable {
@@ -87,16 +89,14 @@ public class Suggestions extends BaseAdapter implements Filterable {
         mSearchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, mDarkTheme);
         mBookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, mDarkTheme);
         mHistoryDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, mDarkTheme);
-
-        clearCache();
     }
 
     public void refreshPreferences() {
         mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
     }
 
-    private void clearCache() {
-        BrowserApp.getTaskThread().execute(new ClearCacheRunnable(BrowserApp.get(mContext)));
+    public void clearCache() {
+        Schedulers.io().execute(new ClearCacheRunnable(BrowserApp.get(mContext)));
     }
 
     public void refreshBookmarks() {

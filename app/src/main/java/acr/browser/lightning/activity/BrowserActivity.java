@@ -4,7 +4,6 @@
 
 package acr.browser.lightning.activity;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -17,7 +16,6 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -26,7 +24,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
@@ -56,9 +53,9 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -83,6 +80,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;
 import com.squareup.otto.Bus;
@@ -93,7 +92,6 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BrowserPresenter;
@@ -113,15 +111,9 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
-import acr.browser.lightning.search.Suggestions;
-import acr.browser.lightning.search.SuggestionsAdapter;
-
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Schedulers;
-
 import acr.browser.lightning.receiver.NetworkReceiver;
+import acr.browser.lightning.search.Suggestions;
 import acr.browser.lightning.utils.DrawableUtils;
-import acr.browser.lightning.utils.KeyboardHelper;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -233,18 +225,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
-        }
-
         super.onCreate(savedInstanceState);
         BrowserApp.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
@@ -254,18 +234,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mPresenter = new BrowserPresenter(this, isIncognito());
 
         initialize(savedInstanceState);
-
-        KeyboardHelper keyboardHelper = new KeyboardHelper(mRoot);
-        keyboardHelper.registerKeyboardListener(new KeyboardHelper.KeyboardListener() {
-            @Override
-            public void keyboardVisibilityChanged(boolean visible) {
-                if (visible) {
-                    setTabHeightForKeyboard();
-                } else {
-                    setTabHeight();
-                }
-            }
-        });
     }
 
     private synchronized void initialize(Bundle savedInstanceState) {
@@ -630,21 +598,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
 
-        initializeTabHeight();
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            // Sets the tab height correctly if the status bar is hidden
-            // Also ensures that tab is correct height on rotation
-            mRoot.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-                @Override
-                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                    initializeTabHeight();
-                    return mRoot.onApplyWindowInsets(insets);
-                }
-            });
-        }
-
         switch (mPreferences.getSearchChoice()) {
             case 0:
                 mSearchText = mPreferences.getSearchUrl();
@@ -693,7 +646,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void onWindowVisibleToUserAfterResume() {
         super.onWindowVisibleToUserAfterResume();
         mToolbarLayout.setTranslationY(0);
-        mBrowserFrame.setTranslationY(0);
+        setWebViewTranslation(mToolbarLayout.getHeight());
     }
 
     @Override
@@ -825,6 +778,38 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    private void putToolbarInRoot() {
+        if (mToolbarLayout.getParent() != mUiLayout) {
+            if (mToolbarLayout.getParent() != null) {
+                ((ViewGroup) mToolbarLayout.getParent()).removeView(mToolbarLayout);
+            }
+
+            mUiLayout.addView(mToolbarLayout, 0);
+            mUiLayout.requestLayout();
+        }
+        setWebViewTranslation(0);
+    }
+
+    private void overlayToolbarOnWebView() {
+        if (mToolbarLayout.getParent() != mBrowserFrame) {
+            if (mToolbarLayout.getParent() != null) {
+                ((ViewGroup) mToolbarLayout.getParent()).removeView(mToolbarLayout);
+            }
+
+            mBrowserFrame.addView(mToolbarLayout);
+            mBrowserFrame.requestLayout();
+        }
+        setWebViewTranslation(mToolbarLayout.getHeight());
+    }
+
+    private void setWebViewTranslation(float translation) {
+        if (mFullScreen && mCurrentView != null) {
+            mCurrentView.setTranslationY(translation);
+        } else if (mCurrentView != null) {
+            mCurrentView.setTranslationY(0);
+        }
+    }
+
     /**
      * method that shows a dialog asking what string the user wishes to search
      * for. It highlights the text entered.
@@ -937,8 +922,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
 
-        mBrowserFrame.removeAllViews();
-
         removeViewFromParent(mCurrentView);
 
         mCurrentView = null;
@@ -966,12 +949,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Set the background color so the color mode color doesn't show through
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
 
-        mBrowserFrame.removeAllViews();
-
         removeViewFromParent(view);
         removeViewFromParent(mCurrentView);
 
-        mBrowserFrame.addView(view, MATCH_PARENT);
+        mBrowserFrame.addView(view, 0, MATCH_PARENT);
+        if (mFullScreen) {
+            view.setTranslationY(mToolbarLayout.getHeight() + mToolbarLayout.getTranslationY());
+        } else {
+            view.setTranslationY(0);
+        }
 
         view.requestFocus();
 
@@ -1030,9 +1016,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (view == null) {
             return;
         }
-        ViewGroup parent = ((ViewGroup) view.getParent());
-        if (parent != null) {
-            parent.removeView(view);
+        ViewParent parent = view.getParent();
+        if (parent instanceof ViewGroup) {
+            ((ViewGroup) parent).removeView(view);
         }
     }
 
@@ -1095,6 +1081,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         } else if (isIncognito()) {
             WebUtils.clearWebStorage();     // We want to make sure incognito mode is secure
         }
+        mSuggestionsAdapter.clearCache();
     }
 
     @Override
@@ -1114,11 +1101,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         if (mFullScreen) {
             showActionBar();
-            mBrowserFrame.setTranslationY(0);
             mToolbarLayout.setTranslationY(0);
+            setWebViewTranslation(mToolbarLayout.getHeight());
         }
 
-        initializeTabHeight();
         supportInvalidateOptionsMenu();
         initializeToolbarHeight(newConfig);
     }
@@ -1138,15 +1124,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 }
                 mToolbar.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize));
                 mToolbar.setMinimumHeight(toolbarSize);
+                doOnLayout(mToolbar, new Runnable() {
+                    @Override
+                    public void run() {
+                        setWebViewTranslation(mToolbarLayout.getHeight());
+                    }
+                });
                 mToolbar.requestLayout();
+
             }
         });
     }
 
     public void closeBrowser() {
         mBrowserFrame.setBackgroundColor(mBackgroundColor);
+        removeViewFromParent(mCurrentView);
         performExitCleanUp();
-        mBrowserFrame.removeAllViews();
         int size = mTabsManager.size();
         mTabsManager.shutdown();
         mCurrentView = null;
@@ -1263,6 +1256,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         BrowserApp.get(this).registerReceiver(mNetworkReceiver, filter);
 
         mEventBus.register(mBusEventListener);
+
+        if (mFullScreen) {
+            overlayToolbarOnWebView();
+        } else {
+            putToolbarInRoot();
+        }
     }
 
     /**
@@ -1773,7 +1772,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
         mCustomViewCallback = null;
         setRequestedOrientation(mOriginalOrientation);
-        setTabHeight();
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,
@@ -1890,9 +1888,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 Animation show = new Animation() {
                     @Override
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
-                        float trans = (1.0f - interpolatedTime) * height;
-                        mToolbarLayout.setTranslationY(trans - height);
-                        mBrowserFrame.setTranslationY(trans - height);
+                        float trans = interpolatedTime * height;
+                        mToolbarLayout.setTranslationY(-trans);
+                        setWebViewTranslation(height - trans);
                     }
                 };
                 show.setDuration(250);
@@ -1931,7 +1929,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
                         float trans = interpolatedTime * totalHeight;
                         mToolbarLayout.setTranslationY(trans - totalHeight);
-                        mBrowserFrame.setTranslationY(trans - totalHeight);
+                        setWebViewTranslation(trans);
                     }
                 };
                 show.setDuration(250);
@@ -1939,23 +1937,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mBrowserFrame.startAnimation(show);
             }
         }
-    }
-
-    /**
-     * This method initializes the height of the
-     * view that holds the current WebView. It waits
-     * for the root layout to be laid out before setting
-     * the height as it needs the root layout to be measured
-     * first.
-     */
-    private void initializeTabHeight() {
-        Log.d(TAG, "initializeTabHeight");
-        doOnLayout(mUiLayout, new Runnable() {
-            @Override
-            public void run() {
-                setTabHeight();
-            }
-        });
     }
 
     /**
@@ -1976,46 +1957,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
                 runnable.run();
-            }
-        });
-    }
-
-    /**
-     * This method sets the height of the browser
-     * frame view that holds the current WebView.
-     * It requires the root layout to be properly
-     * laid out in order to set the correct height.
-     */
-    private void setTabHeight() {
-        Log.d(TAG, "setTabHeight");
-        if (mRoot.getHeight() == 0) {
-            mRoot.measure(View.MeasureSpec.EXACTLY, View.MeasureSpec.EXACTLY);
-        }
-
-        Log.d(TAG, "UI Layout top: " + mUiLayout.getTop());
-
-        if (mFullScreen) {
-            int height = mRoot.getHeight() - mUiLayout.getTop();
-            mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height));
-        } else {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            params.weight = 1;
-            mBrowserFrame.setLayoutParams(params);
-        }
-
-        mBrowserFrame.requestLayout();
-    }
-
-    private void setTabHeightForKeyboard() {
-        doOnLayout(mUiLayout, new Runnable() {
-            @Override
-            public void run() {
-                Rect rect = new Rect();
-                mRoot.getWindowVisibleDisplayFrame(rect);
-
-                int height = rect.bottom - mUiLayout.getTop();
-                mBrowserFrame.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height));
-                mBrowserFrame.requestLayout();
             }
         });
     }
