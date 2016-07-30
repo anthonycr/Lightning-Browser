@@ -154,8 +154,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
 
     // Toolbar Views
+    @Bind(R.id.toolbar) Toolbar mToolbar;
     private View mSearchBackground;
-    private Toolbar mToolbar;
     private SearchView mSearch;
     private ImageView mArrowImage;
 
@@ -236,14 +236,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()
+                .detectAll()
                 .penaltyLog()
                 .build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectLeakedClosableObjects()
-                .detectLeakedSqlLiteObjects()
+                .detectAll()
                 .penaltyLog()
                 .build());
         }
@@ -272,7 +269,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private synchronized void initialize(Bundle savedInstanceState) {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         initializeToolbarHeight(getResources().getConfiguration());
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -415,10 +411,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         Intent intent = savedInstanceState == null ? getIntent() : null;
 
+        boolean launchedFromHistory = intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+
         if (isPanicTrigger(intent)) {
             setIntent(null);
             panicClean();
         } else {
+            if (launchedFromHistory) {
+                intent = null;
+            }
             mPresenter.setupTabs(intent);
             setIntent(null);
             mProxyUtils.checkForProxy(BrowserActivity.this);
