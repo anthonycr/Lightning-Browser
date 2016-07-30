@@ -17,7 +17,9 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
+
 import com.anthonycr.bonsai.OnSubscribe;
+
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
@@ -61,14 +63,15 @@ public class BrowserPresenter {
      */
     public void setupTabs(@Nullable Intent intent) {
         mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
-                .subscribe(new OnSubscribe<Void>() {
-                    @Override
-                    public void onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        tabChanged(mTabsModel.last());
-                        mView.updateTabNumber(mTabsModel.size());
-                    }
-                });
+            .subscribe(new OnSubscribe<Void>() {
+                @Override
+                public void onComplete() {
+                    // At this point we always have at least a tab in the tab manager
+                    tabChanged(mTabsModel.last());
+                    mView.notifyTabViewAdded();
+                    mView.updateTabNumber(mTabsModel.size());
+                }
+            });
     }
 
     /**
@@ -162,8 +165,8 @@ public class BrowserPresenter {
         boolean shouldClose = mShouldClose && isShown && Boolean.TRUE.equals(tabToDelete.getTag());
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
-                (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
-                        currentTab.getUrl().equals(mPreferences.getHomepage()))) {
+            (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
+                currentTab.getUrl().equals(mPreferences.getHomepage()))) {
             mView.closeActivity();
             return;
         } else {
