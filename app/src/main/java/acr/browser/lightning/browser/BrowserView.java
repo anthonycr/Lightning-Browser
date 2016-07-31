@@ -35,4 +35,6 @@ public interface BrowserView {
 
     void notifyTabViewChanged(int position);
 
+    void notifyTabViewInitialized();
+
 }

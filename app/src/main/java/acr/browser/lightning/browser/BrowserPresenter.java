@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
@@ -63,13 +64,14 @@ public class BrowserPresenter {
      */
     public void setupTabs(@Nullable Intent intent) {
         mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
+            .subscribeOn(Schedulers.main())
             .subscribe(new OnSubscribe<Void>() {
                 @Override
                 public void onComplete() {
                     // At this point we always have at least a tab in the tab manager
-                    tabChanged(mTabsModel.last());
-                    mView.notifyTabViewAdded();
+                    mView.notifyTabViewInitialized();
                     mView.updateTabNumber(mTabsModel.size());
+                    tabChanged(mTabsModel.last());
                 }
             });
     }

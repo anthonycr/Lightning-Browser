@@ -484,7 +484,7 @@ public class TabsManager {
      * @return Return the index of the current tab, or -1 if the
      * current tab is null.
      */
-    public int indexOfCurrentTab() {
+    public synchronized int indexOfCurrentTab() {
         return mTabList.indexOf(mCurrentTab);
     }
 
@@ -493,7 +493,7 @@ public class TabsManager {
      *
      * @return Return the index of the tab, or -1 if the tab isn't in the list.
      */
-    public int indexOfTab(LightningView tab) {
+    public synchronized int indexOfTab(LightningView tab) {
         return mTabList.indexOf(tab);
     }
 

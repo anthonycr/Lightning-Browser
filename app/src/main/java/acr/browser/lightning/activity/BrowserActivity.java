@@ -909,6 +909,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public void notifyTabViewInitialized() {
+        Log.d(TAG, "Notify Tabs Initialized");
+        mTabsView.tabsInitialized();
+    }
+
+    @Override
     public void tabChanged(LightningView tab) {
         mPresenter.tabChangeOccurred(tab);
     }

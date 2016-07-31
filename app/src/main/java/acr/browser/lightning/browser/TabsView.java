@@ -8,4 +8,5 @@ public interface TabsView {
 
     void tabChanged(int position);
 
+    void tabsInitialized();
 }

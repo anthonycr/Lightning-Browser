@@ -98,8 +98,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         mColorMode = mPreferences.getColorModeEnabled();
         mColorMode &= !mDarkTheme;
         mIconColor = mDarkTheme ?
-                ThemeUtils.getIconDarkThemeColor(context) :
-                ThemeUtils.getIconLightThemeColor(context);
+            ThemeUtils.getIconDarkThemeColor(context) :
+            ThemeUtils.getIconLightThemeColor(context);
     }
 
     @Nullable
@@ -184,6 +184,13 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         mBus.unregister(this);
     }
 
+    @Override
+    public void tabsInitialized() {
+        if (mTabsAdapter != null) {
+            mTabsAdapter.notifyDataSetChanged();
+        }
+    }
+
     public void reinitializePreferences() {
         Activity activity = getActivity();
         if (activity == null) {
@@ -193,8 +200,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         mColorMode = mPreferences.getColorModeEnabled();
         mColorMode &= !mDarkTheme;
         mIconColor = mDarkTheme ?
-                ThemeUtils.getIconDarkThemeColor(activity) :
-                ThemeUtils.getIconLightThemeColor(activity);
+            ThemeUtils.getIconDarkThemeColor(activity) :
+            ThemeUtils.getIconLightThemeColor(activity);
         if (mTabsAdapter != null) {
             mTabsAdapter.notifyDataSetChanged();
         }
@@ -356,7 +363,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
         public Bitmap getDesaturatedBitmap(@NonNull Bitmap favicon) {
             Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
-                    favicon.getHeight(), Bitmap.Config.ARGB_8888);
+                favicon.getHeight(), Bitmap.Config.ARGB_8888);
 
             Canvas c = new Canvas(grayscaleBitmap);
             if (mColorMatrix == null || mFilter == null || mPaint == null) {
