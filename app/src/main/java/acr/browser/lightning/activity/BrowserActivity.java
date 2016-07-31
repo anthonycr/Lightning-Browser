@@ -40,6 +40,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -108,6 +109,7 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
@@ -815,22 +817,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * for. It highlights the text entered.
      */
     private void findInPage() {
-        final AlertDialog.Builder finder = new AlertDialog.Builder(this);
-        finder.setTitle(getResources().getString(R.string.action_find));
-        final EditText getHome = new EditText(this);
-        getHome.setHint(getResources().getString(R.string.search_hint));
-        finder.setView(getHome);
-        finder.setPositiveButton(getResources().getString(R.string.search_hint),
-            new DialogInterface.OnClickListener() {
-
+        BrowserDialog.showEditText(this,
+            R.string.action_find,
+            R.string.search_hint,
+            R.string.search_hint, new BrowserDialog.EditorListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String query = getHome.getText().toString();
-                    if (!query.isEmpty())
-                        showSearchInterfaceBar(query);
+                public void onClick(String text) {
+                    if (!TextUtils.isEmpty(text)) {
+                        showSearchInterfaceBar(text);
+                    }
                 }
             });
-        finder.show();
     }
 
     private void showSearchInterfaceBar(String text) {
@@ -863,32 +860,25 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (position < 0) {
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-            android.R.layout.simple_list_item_1);
-        adapter.add(this.getString(R.string.close_all_tabs));
-        adapter.add(this.getString(R.string.close_other_tabs));
-        adapter.add(this.getString(R.string.close_tab));
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        closeBrowser();
-                        break;
-                    case 1:
-                        mPresenter.closeAllOtherTabs();
-                        break;
-                    case 2:
-                        deleteTab(position);
-                        break;
-                    default:
-                        break;
+        BrowserDialog.show(this,
+            new BrowserDialog.Item(R.string.close_all_tabs) {
+                @Override
+                public void onClick() {
+                    closeBrowser();
                 }
-            }
-        });
-        builder.show();
+            },
+            new BrowserDialog.Item(R.string.close_other_tabs) {
+                @Override
+                public void onClick() {
+                    mPresenter.closeAllOtherTabs();
+                }
+            },
+            new BrowserDialog.Item(R.string.close_tab) {
+                @Override
+                public void onClick() {
+                    deleteTab(position);
+                }
+            });
     }
 
     @Override
