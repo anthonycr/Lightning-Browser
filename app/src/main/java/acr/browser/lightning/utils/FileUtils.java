@@ -2,6 +2,7 @@ package acr.browser.lightning.utils;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
@@ -107,6 +109,29 @@ public class FileUtils {
             Utils.close(inputStream);
         }
         return null;
+    }
+
+    /**
+     * Writes a stacktrace to the downloads folder with
+     * the following filename: [EXCEPTION]_[TIME OF CRASH IN MILLIS].txt
+     *
+     * @param throwable the Throwable to log to external storage
+     */
+    public static void writeCrashToStorage(@NonNull Throwable throwable) {
+        String fileName = throwable.getClass().getSimpleName() + '_' + System.currentTimeMillis() + ".txt";
+        File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
+
+        FileOutputStream outputStream = null;
+        try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            outputStream = new FileOutputStream(outputFile);
+            throwable.printStackTrace(new PrintStream(outputStream));
+            outputStream.flush();
+        } catch (IOException e) {
+            Log.e(Constants.TAG, "Unable to write bundle to storage");
+        } finally {
+            Utils.close(outputStream);
+        }
     }
 
 }

@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.MemoryLeakUtils;
 
 public class BrowserApp extends Application {
@@ -45,6 +46,24 @@ public class BrowserApp extends Application {
                 .penaltyLog()
                 .build());
         }
+
+        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+
+                if (BuildConfig.DEBUG) {
+                    FileUtils.writeCrashToStorage(ex);
+                }
+
+                if (defaultHandler != null) {
+                    defaultHandler.uncaughtException(thread, ex);
+                } else {
+                    System.exit(2);
+                }
+            }
+        });
 
         mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         mAppComponent.inject(this);
