@@ -353,12 +353,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mRefreshIcon = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_refresh, mDarkTheme);
         mClearIcon = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, mDarkTheme);
 
-        int iconBounds = Utils.dpToPx(30);
+        int iconBounds = Utils.dpToPx(24);
         mDeleteIcon.setBounds(0, 0, iconBounds, iconBounds);
         mRefreshIcon.setBounds(0, 0, iconBounds, iconBounds);
         mClearIcon.setBounds(0, 0, iconBounds, iconBounds);
         mIcon = mRefreshIcon;
         SearchListenerClass search = new SearchListenerClass();
+        mSearch.setCompoundDrawablePadding(Utils.dpToPx(3));
         mSearch.setCompoundDrawables(null, null, mRefreshIcon, null);
         mSearch.setOnKeyListener(search);
         mSearch.setOnFocusChangeListener(search);
@@ -2163,10 +2164,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return;
             }
 
-            if (!mBookmarkManager.isBookmark(url)) {
-                addBookmark(title, url);
-            } else {
-                deleteBookmark(title, url);
+            if (!UrlUtils.isSpecialUrl(url)) {
+                if (!mBookmarkManager.isBookmark(url)) {
+                    addBookmark(title, url);
+                } else {
+                    deleteBookmark(title, url);
+                }
             }
         }
 

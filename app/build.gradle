@@ -10,11 +10,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionName "4.3.3"
-        generatedDensities = []
-    }
-
-    aaptOptions {
-        additionalParameters "--no-version-vectors"
+        vectorDrawables.useSupportLibrary = true
     }
 
     sourceSets {

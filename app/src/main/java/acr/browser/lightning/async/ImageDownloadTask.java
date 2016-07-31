@@ -45,7 +45,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         this.mContextReference = new WeakReference<>(context.getApplicationContext());
     }
 
-    @Nullable
+    @NonNull
     @Override
     protected Bitmap doInBackground(Void... params) {
         Bitmap mIcon = null;
@@ -65,6 +65,9 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         final String hash = String.valueOf(uri.getHost().hashCode());
         final File image = new File(cache, hash + ".png");
         final String urlDisplay = uri.getScheme() + "://" + uri.getHost() + "/favicon.ico";
+        if (Constants.FILE.startsWith(uri.getScheme())) {
+            return mDefaultBitmap;
+        }
         // checks to see if the image exists
         if (!image.exists()) {
             FileOutputStream fos = null;

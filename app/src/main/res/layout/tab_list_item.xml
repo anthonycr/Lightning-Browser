@@ -7,7 +7,8 @@
               android:clickable="true"
               android:gravity="center_vertical"
               android:orientation="horizontal"
-              android:weightSum="1">
+              android:weightSum="1"
+              xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/faviconTab"
@@ -48,6 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="Delete Tab"
-            android:src="@drawable/ic_action_delete"/>
+            app:srcCompat="@drawable/ic_action_delete"/>
     </FrameLayout>
 </LinearLayout>
