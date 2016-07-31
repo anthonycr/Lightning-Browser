@@ -236,15 +236,20 @@ public class BrowserPresenter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 newTab(url, true);
+                                mShouldClose = true;
+                                LightningView tab = mTabsModel.lastTab();
+                                if (tab != null) {
+                                    tab.setTag(true);
+                                }
                             }
                         });
                     } else {
                         newTab(url, true);
-                    }
-                    mShouldClose = true;
-                    LightningView tab = mTabsModel.lastTab();
-                    if (tab != null) {
-                        tab.setTag(true);
+                        mShouldClose = true;
+                        LightningView tab = mTabsModel.lastTab();
+                        if (tab != null) {
+                            tab.setTag(true);
+                        }
                     }
                 }
             }

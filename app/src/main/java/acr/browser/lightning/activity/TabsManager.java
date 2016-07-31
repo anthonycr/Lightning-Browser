@@ -28,11 +28,13 @@ import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.preference.PreferenceManager;
+
 import com.anthonycr.bonsai.Action;
 import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Subscriber;
+
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
@@ -144,7 +146,7 @@ public class TabsManager {
                                  @NonNull final Subscriber subscriber) {
 
         restoreState().subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
+            .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
             @Override
             public void onNext(Bundle item) {
                 LightningView tab = newTab(activity, "", false);
@@ -168,24 +170,40 @@ public class TabsManager {
                     if (url.startsWith(Constants.FILE)) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                         builder.setCancelable(true)
-                                .setTitle(R.string.title_warning)
-                                .setMessage(R.string.message_blocked_local)
-                                .setNegativeButton(android.R.string.cancel, null)
-                                .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        newTab(activity, url, false);
+                            .setTitle(R.string.title_warning)
+                            .setMessage(R.string.message_blocked_local)
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    if (mTabList.isEmpty()) {
+                                        newTab(activity, null, false);
                                     }
-                                }).show();
+                                    finishInitialization();
+                                    subscriber.onComplete();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    newTab(activity, url, false);
+                                }
+                            }).show();
                     } else {
                         newTab(activity, url, false);
+                        if (mTabList.isEmpty()) {
+                            newTab(activity, null, false);
+                        }
+                        finishInitialization();
+                        subscriber.onComplete();
                     }
+                } else {
+                    if (mTabList.isEmpty()) {
+                        newTab(activity, null, false);
+                    }
+                    finishInitialization();
+                    subscriber.onComplete();
                 }
-                if (mTabList.size() == 0) {
-                    newTab(activity, null, false);
-                }
-                finishInitialization();
-                subscriber.onComplete();
             }
         });
     }
