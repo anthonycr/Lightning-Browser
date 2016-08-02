@@ -14,6 +14,7 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="dividerColor">@color/divider_light</item>
+        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Light</item>
     </style>
 
     <style name="Theme.SettingsTheme.Dark" parent="Theme.AppCompat">
@@ -29,6 +30,7 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="dividerColor">@color/divider_dark</item>
+        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Dark</item>
     </style>
 
     <style name="Theme.SettingsTheme.Black" parent="Theme.AppCompat">
@@ -44,6 +46,7 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="dividerColor">@color/divider_dark</item>
+        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Black</item>
     </style>
 
     <style name="Theme.LightTheme" parent="Theme.AppCompat.Light">
@@ -69,6 +72,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/secondary_color</item>
         <item name="android:windowTranslucentStatus">false</item>
+        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Light</item>
         <!-- READ THIS:
             windowTranslucentStatus will set a semitransparent color to the status bar
             primaryColorDark will set a color below the actual status bar color that
@@ -100,6 +104,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/secondary_color</item>
         <item name="android:windowTranslucentStatus">false</item>
+        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Dark</item>
     </style>
 
     <style name="Theme.BlackTheme" parent="Theme.AppCompat">
@@ -125,6 +130,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/black</item>
         <item name="android:windowTranslucentStatus">false</item>
+        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Black</item>
     </style>
 
 </resources>
