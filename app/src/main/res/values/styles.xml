@@ -1,120 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.SettingsTheme" parent="Theme.AppCompat.Light">
-
-        <!-- customize the color palette -->
+    <!-- Settings themes -->
+    <style name="Theme.SettingsTheme" parent="Theme.LightTheme">
         <item name="android:windowBackground">@null</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate</item>
-        <item name="listBackground">@drawable/list_bg</item>
-        <item name="colorPrimary">@color/primary_color</item>
-        <item name="colorPrimaryDark">@color/secondary_color_settings</item>
-        <item name="colorAccent">@color/accent_color</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="dividerColor">@color/divider_light</item>
-        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Light</item>
     </style>
 
-    <style name="Theme.SettingsTheme.Dark" parent="Theme.AppCompat">
-
-        <!-- customize the color palette -->
+    <style name="Theme.SettingsTheme.Dark" parent="Theme.DarkTheme">
         <item name="android:windowBackground">@null</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_dark</item>
-        <item name="listBackground">@drawable/list_bg</item>
-        <item name="colorPrimary">@color/primary_color_dark</item>
+
+        <!-- Dark settings has a special primary dark -->
         <item name="colorPrimaryDark">@color/secondary_color_settings_dark</item>
-        <item name="colorAccent">@color/accent_color</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="dividerColor">@color/divider_dark</item>
-        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Dark</item>
     </style>
 
-    <style name="Theme.SettingsTheme.Black" parent="Theme.AppCompat">
-
-        <!-- customize the color palette -->
+    <style name="Theme.SettingsTheme.Black" parent="Theme.BlackTheme">
         <item name="android:windowBackground">@null</item>
         <item name="toolbarSettingsBackground">@drawable/toolbar_elevate_black</item>
-        <item name="listBackground">@drawable/list_bg</item>
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/accent_color</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="dividerColor">@color/divider_dark</item>
-        <item name="alertDialogTheme">@style/AppCompatDialogStyle.Black</item>
     </style>
 
-    <style name="Theme.LightTheme" parent="Theme.AppCompat.Light">
-
-        <!-- customize the color palette -->
+    <!-- Regular themes -->
+    <style name="Theme.LightTheme" parent="Theme.BaseLightTheme">
         <item name="searchBackground">@drawable/card_bg_elevate</item>
         <item name="listBackground">@drawable/list_bg</item>
+        <item name="progressBackgroundColor">@color/secondary_color</item>
+    </style>
+
+    <style name="Theme.DarkTheme" parent="Theme.BaseDarkTheme">
+        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="listBackground">@drawable/list_bg</item>
+        <item name="progressBackgroundColor">@color/secondary_color</item>
+    </style>
+
+    <style name="Theme.BlackTheme" parent="Theme.BaseBlackTheme">
+        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="listBackground">@drawable/list_bg</item>
+        <item name="progressBackgroundColor">@color/black</item>
+    </style>
+
+    <!-- Base Themes -->
+    <style name="Theme.BaseLightTheme" parent="Theme.AppCompat.Light">
+
+        <!-- Theme Colors -->
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/secondary_color</item>
         <item name="colorAccent">@color/accent_color</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="progressBackgroundColor">@color/secondary_color</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="progressColor">@color/gray_medium</item>
-        <item name="numberColor">@color/gray_dark</item>
-        <item name="autoCompleteTitleColor">@color/black</item>
-        <item name="autoCompleteUrlColor">@color/gray_medium</item>
-        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
         <item name="drawerBackground">@color/drawer_background</item>
         <item name="dividerColor">@color/divider_light</item>
+
         <item name="selectedBackground">@drawable/list_bg_light</item>
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Overflow menu -->
+        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
+
+        <!-- Alert dialogs -->
         <item name="alertDialogTheme">@style/AppCompatDialogStyle.Light</item>
+
     </style>
 
-    <style name="Theme.DarkTheme" parent="Theme.AppCompat">
+    <style name="Theme.BaseDarkTheme" parent="Theme.AppCompat">
 
-        <!-- customize the color palette -->
-        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <!-- Theme colors -->
         <item name="colorPrimary">@color/primary_color_dark</item>
         <item name="colorPrimaryDark">@color/secondary_color</item>
         <item name="colorAccent">@color/accent_color</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="progressBackgroundColor">@color/secondary_color</item>
-        <item name="listBackground">@drawable/list_bg</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="progressColor">@color/gray_medium</item>
-        <item name="numberColor">@color/gray_dark</item>
-        <item name="autoCompleteTitleColor">@color/black</item>
-        <item name="autoCompleteUrlColor">@color/gray_medium</item>
-        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
         <item name="drawerBackground">@color/drawer_background_dark</item>
         <item name="dividerColor">@color/divider_dark</item>
+
         <item name="selectedBackground">@drawable/list_bg_dark</item>
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Overflow menu -->
+        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
+
+        <!-- Alert dialogs -->
         <item name="alertDialogTheme">@style/AppCompatDialogStyle.Dark</item>
     </style>
 
-    <style name="Theme.BlackTheme" parent="Theme.AppCompat">
+    <style name="Theme.BaseBlackTheme" parent="Theme.AppCompat">
 
-        <!-- customize the color palette -->
-        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <!-- Theme Colors -->
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/accent_color</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="progressBackgroundColor">@color/black</item>
-        <item name="listBackground">@drawable/list_bg</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="progressColor">@color/gray_medium</item>
-        <item name="numberColor">@color/gray_dark</item>
-        <item name="autoCompleteTitleColor">@color/black</item>
-        <item name="autoCompleteUrlColor">@color/gray_medium</item>
-        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
         <item name="drawerBackground">@color/black</item>
         <item name="dividerColor">@color/black</item>
+
         <item name="selectedBackground">@drawable/list_bg_dark</item>
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Overflow menu -->
+        <item name="actionOverflowButtonStyle">@style/overFlowButtonStyle</item>
+
+        <!-- Alert dialogs -->
         <item name="alertDialogTheme">@style/AppCompatDialogStyle.Black</item>
     </style>
 
