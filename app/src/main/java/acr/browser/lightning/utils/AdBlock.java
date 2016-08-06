@@ -37,7 +37,6 @@ public class AdBlock {
     private static final String EMPTY = "";
     private final Set<String> mBlockedDomainsList = new HashSet<>();
     private boolean mBlockAds;
-    private static final Locale mLocale = Locale.getDefault();
 
     @Inject PreferenceManager mPreferenceManager;
 
@@ -64,14 +63,14 @@ public class AdBlock {
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
-                            asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
+                        asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        mBlockedDomainsList.add(line.trim().toLowerCase(mLocale));
+                        mBlockedDomainsList.add(line.trim());
                     }
                 } catch (IOException e) {
                     Log.wtf(TAG, "Reading blocked domains list from file '"
-                            + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
+                        + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
                 } finally {
                     Utils.close(reader);
                 }
@@ -99,7 +98,7 @@ public class AdBlock {
             return false;
         }
 
-        boolean isOnBlacklist = mBlockedDomainsList.contains(domain.toLowerCase(mLocale));
+        boolean isOnBlacklist = mBlockedDomainsList.contains(domain);
         if (isOnBlacklist) {
             Log.d(TAG, "URL '" + url + "' is an ad");
         }
@@ -148,14 +147,14 @@ public class AdBlock {
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
-                            asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
+                        asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     String line;
                     while ((line = reader.readLine()) != null) {
                         if (!line.isEmpty() && !line.startsWith(COMMENT)) {
                             line = line.replace(LOCAL_IP_V4, EMPTY)
-                                    .replace(LOCAL_IP_V4_ALT, EMPTY)
-                                    .replace(LOCAL_IP_V6, EMPTY)
-                                    .replace(TAB, EMPTY);
+                                .replace(LOCAL_IP_V4_ALT, EMPTY)
+                                .replace(LOCAL_IP_V6, EMPTY)
+                                .replace(TAB, EMPTY);
                             int comment = line.indexOf(COMMENT);
                             if (comment >= 0) {
                                 line = line.substring(0, comment);
@@ -174,7 +173,7 @@ public class AdBlock {
                     }
                 } catch (IOException e) {
                     Log.wtf(TAG, "Reading blocked domains list from file '"
-                            + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
+                        + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
                 } finally {
                     Utils.close(reader);
                 }
