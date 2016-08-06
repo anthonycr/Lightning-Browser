@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -70,10 +69,10 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
 
-    private boolean mDarkTheme;
+    private final boolean mDarkTheme;
     private boolean mUseGoogle = true;
     private boolean mIsIncognito = true;
-    @NonNull private Context mContext;
+    @NonNull private final Context mContext;
 
     public Suggestions(@NonNull Context context, boolean dark, boolean incognito) {
         super();
@@ -124,15 +123,15 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     private static class SuggestionHolder {
 
-        public SuggestionHolder(View view) {
+        public SuggestionHolder(@NonNull View view) {
             mTitle = (TextView) view.findViewById(R.id.title);
             mUrl = (TextView) view.findViewById(R.id.url);
             mImage = (ImageView) view.findViewById(R.id.suggestionIcon);
         }
 
-        ImageView mImage;
-        TextView mTitle;
-        TextView mUrl;
+        final ImageView mImage;
+        final TextView mTitle;
+        final TextView mUrl;
 
     }
 
@@ -154,29 +153,25 @@ public class Suggestions extends BaseAdapter implements Filterable {
         holder.mTitle.setText(web.getTitle());
         holder.mUrl.setText(web.getUrl());
 
+        if (mDarkTheme) {
+            holder.mTitle.setTextColor(Color.WHITE);
+        }
+
         Drawable image;
         switch (web.getImageId()) {
             case R.drawable.ic_bookmark: {
-                if (mDarkTheme)
-                    holder.mTitle.setTextColor(Color.WHITE);
                 image = mBookmarkDrawable;
                 break;
             }
             case R.drawable.ic_search: {
-                if (mDarkTheme)
-                    holder.mTitle.setTextColor(Color.WHITE);
                 image = mSearchDrawable;
                 break;
             }
             case R.drawable.ic_history: {
-                if (mDarkTheme)
-                    holder.mTitle.setTextColor(Color.WHITE);
                 image = mHistoryDrawable;
                 break;
             }
             default:
-                if (mDarkTheme)
-                    holder.mTitle.setTextColor(Color.WHITE);
                 image = mSearchDrawable;
                 break;
         }
@@ -312,7 +307,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     private static class SearchFilter extends Filter {
 
-        @NonNull private Suggestions mSuggestions;
+        @NonNull private final Suggestions mSuggestions;
 
         public SearchFilter(@NonNull Suggestions suggestions) {
             mSuggestions = suggestions;
