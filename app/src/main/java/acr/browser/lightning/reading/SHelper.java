@@ -28,6 +28,7 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -203,12 +204,12 @@ class SHelper {
     public static boolean isVideoLink(String url) {
         url = extractDomain(url, true);
         return url.startsWith("youtube.com") || url.startsWith("video.yahoo.com")
-                || url.startsWith("vimeo.com") || url.startsWith("blip.tv");
+            || url.startsWith("vimeo.com") || url.startsWith("blip.tv");
     }
 
     public static boolean isVideo(String url) {
         return url.endsWith(".mpeg") || url.endsWith(".mpg") || url.endsWith(".avi") || url.endsWith(".mov")
-                || url.endsWith(".mpg4") || url.endsWith(".mp4") || url.endsWith(".flv") || url.endsWith(".wmv");
+            || url.endsWith(".mpg4") || url.endsWith(".mp4") || url.endsWith(".flv") || url.endsWith(".wmv");
     }
 
     public static boolean isAudio(String url) {
@@ -217,12 +218,12 @@ class SHelper {
 
     public static boolean isDoc(String url) {
         return url.endsWith(".pdf") || url.endsWith(".ppt") || url.endsWith(".doc")
-                || url.endsWith(".swf") || url.endsWith(".rtf") || url.endsWith(".xls");
+            || url.endsWith(".swf") || url.endsWith(".rtf") || url.endsWith(".xls");
     }
 
     public static boolean isPackage(String url) {
         return url.endsWith(".gz") || url.endsWith(".tgz") || url.endsWith(".zip")
-                || url.endsWith(".rar") || url.endsWith(".deb") || url.endsWith(".rpm") || url.endsWith(".7z");
+            || url.endsWith(".rar") || url.endsWith(".deb") || url.endsWith(".rpm") || url.endsWith(".7z");
     }
 
     public static boolean isApp(String url) {
@@ -231,7 +232,7 @@ class SHelper {
 
     public static boolean isImage(String url) {
         return url.endsWith(".png") || url.endsWith(".jpeg") || url.endsWith(".gif")
-                || url.endsWith(".jpg") || url.endsWith(".bmp") || url.endsWith(".ico") || url.endsWith(".eps");
+            || url.endsWith(".jpg") || url.endsWith(".bmp") || url.endsWith(".ico") || url.endsWith(".eps");
     }
 
     /**
@@ -417,11 +418,19 @@ class SHelper {
     private static class DefaultTrustManager implements X509TrustManager {
 
         @Override
-        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        public void checkClientTrusted(X509Certificate[] certs, String arg1) throws CertificateException {
+            Date today = new Date();
+            for (X509Certificate certificate : certs) {
+                certificate.checkValidity(today);
+            }
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        public void checkServerTrusted(X509Certificate[] certs, String arg1) throws CertificateException {
+            Date today = new Date();
+            for (X509Certificate certificate : certs) {
+                certificate.checkValidity(today);
+            }
         }
 
         @Override
