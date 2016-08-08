@@ -7,8 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,10 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import acr.browser.lightning.R;
-import acr.browser.lightning.bus.BookmarkEvents;
-import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
 /**

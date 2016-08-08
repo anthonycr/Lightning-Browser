@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;

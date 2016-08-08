@@ -32,8 +32,6 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.webkit.URLUtil;
 
 import com.anthonycr.grant.PermissionsManager;
