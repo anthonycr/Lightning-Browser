@@ -40,7 +40,7 @@ public class ThemeUtils {
         return getColor(context, R.attr.colorAccent);
     }
 
-    private static int getColor(@NonNull Context context, @AttrRes int resource) {
+    public static int getColor(@NonNull Context context, @AttrRes int resource) {
         TypedArray a = context.obtainStyledAttributes(sTypedValue.data, new int[]{resource});
         int color = a.getColor(0, 0);
         a.recycle();
