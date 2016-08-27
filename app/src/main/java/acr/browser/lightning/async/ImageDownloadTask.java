@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.anthonycr.bonsai.Schedulers;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -146,17 +148,12 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         final Bitmap fav = Utils.padFavicon(bitmap);
         final ImageView view = mFaviconImage.get();
         if (view != null && view.getTag().equals(mWeb.getUrl().hashCode())) {
-            Context context = view.getContext();
-            if (context instanceof Activity) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.setImageBitmap(fav);
-                    }
-                });
-            } else {
-                view.setImageBitmap(fav);
-            }
+            Schedulers.main().execute(new Runnable() {
+                @Override
+                public void run() {
+                    view.setImageBitmap(fav);
+                }
+            });
         }
         mWeb.setBitmap(fav);
     }
