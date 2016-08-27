@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
 import java.util.List;
@@ -193,7 +194,12 @@ public class LightningDialogBuilder {
                         public void run() {
                             mHistoryDatabase.deleteHistoryItem(url);
                             // openHistory();
-                            mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
+                            Schedulers.main().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
+                                }
+                            });
                         }
                     });
                 }
