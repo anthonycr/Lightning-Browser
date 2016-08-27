@@ -18,6 +18,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -162,7 +163,7 @@ public class LightningWebClient extends WebViewClient {
 
     }
 
-    private boolean mIsRunning = false;
+    private volatile boolean mIsRunning = false;
     private float mZoomScale = 0.0f;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -172,16 +173,19 @@ public class LightningWebClient extends WebViewClient {
             Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (mIsRunning)
                 return;
-            if (Math.abs(mZoomScale - newScale) > 0.01f) {
+            float changeInPercent = Math.abs(100 - 100 / mZoomScale * newScale);
+            if (changeInPercent > 2.5f && !mIsRunning) {
                 mIsRunning = view.postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         mZoomScale = newScale;
-                        view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
-                        mIsRunning = false;
+                        view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                                mIsRunning = false;
+                            }
+                        });
                     }
-
                 }, 100);
             }
 
