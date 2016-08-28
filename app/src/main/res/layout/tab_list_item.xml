@@ -27,7 +27,7 @@
         android:layout_marginRight="16dp"
         android:layout_weight="1"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="sans-serif"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"

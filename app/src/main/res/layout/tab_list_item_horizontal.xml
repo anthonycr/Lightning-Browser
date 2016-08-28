@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="sans-serif"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
@@ -44,8 +44,8 @@
 
         <ImageView
             android:id="@+id/deleteButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center"
             android:contentDescription="Delete Tab"
             app:srcCompat="@drawable/ic_action_delete"/>
