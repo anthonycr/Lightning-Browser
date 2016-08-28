@@ -25,36 +25,46 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
 
     public static final String FILENAME = "homepage.html";
 
-    private static final String HEAD_1 = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\">"
-            + "<head>"
-            + "<meta content=\"en-us\" http-equiv=\"Content-Language\" />"
-            + "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />"
-            + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
-            + "<title>";
+    private static final String HEAD_1 = "<!DOCTYPE html>" +
+            "<html lang=\"en\">" +
+            "<head>" +
+            "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" +
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">" +
+            "<title>";
 
-    private static final String HEAD_2 = "</title>"
-            + "</head>"
-            + "<style>body{background:#f5f5f5;text-align:center;margin:0px;}#search_input{height:35px; "
-            + "width:100%;outline:none;border:none;font-size: 16px;background-color:transparent;}"
-            + "span { display: block; overflow: hidden; padding-left:5px;vertical-align:middle;}"
-            + ".search_bar{display:table;vertical-align:middle;width:90%;height:35px;max-width:500px;margin:0 auto;background-color:#fff;box-shadow: 0px 2px 3px rgba( 0, 0, 0, 0.25 );"
-            + "font-family: Arial;color: #444;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;}"
-            + "#search_submit{outline:none;height:37px;float:right;color:#404040;font-size:16px;font-weight:bold;border:none;"
-            + "background-color:transparent;}.outer { display: table; position: absolute; height: 100%; width: 100%;}"
-            + ".middle { display: table-cell; vertical-align: middle;}.inner { margin-left: auto; margin-right: auto; "
-            + "margin-bottom:10%; width: 100%;}img.smaller{width:50%;max-width:300px;}"
-            + ".box { vertical-align:middle;position:relative; display: block; margin: 10px;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;"
-            + " background-color:#fff;box-shadow: 0px 3px rgba( 0, 0, 0, 0.1 );font-family: Arial;color: #444;"
-            + "font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;"
-            + "border-radius: 2px;}</style><body> <div class=\"outer\"><div class=\"middle\"><div class=\"inner\"><img class=\"smaller\" src=\"";
+    private static final String HEAD_2 = "</title>" +
+            "<style>" +
+            "html{height: 100%;display:table;width: 100%;}" +
+            "body{background: #f5f5f5;text-align: center;margin: 0;display: table-cell;vertical-align: middle;}" +
+            "#search_input {margin-top: 2.5em;border: 1px solid #999;border-radius: 2px;width: 85%;max-width: 500px;outline: none;font-size: 16px;padding: .5em .6em;background-color: #fff;}" +
+            "#search_input:active,#search_input:focus{border: 1px solid #777;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);}" +
+            "#search_submit{outline: none;color: #fff;font-size: 16px;font-weight: 700;border: none;border-radius: 2px;cursor: pointer;margin-top: 1.5em;" +
+            "padding: .8em 1.8em;background-color: #777;}" +
+            "#search_submit:active {background-color: #999;box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);}" +
+            "#logo {width: 50%;max-width: 300px;}" +
+            "</style>" +
+            "</head>" +
+            "<body>" +
+            "<div id=\"wrapper\">" +
+            "<img id=\"logo\" src=\"";
 
-    private static final String MIDDLE = "\" ></br></br><form onsubmit=\"return search()\" class=\"search_bar\" autocomplete=\"off\">"
-            + "<input type=\"submit\" id=\"search_submit\" value=\"Search\" ><span><input class=\"search\" type=\"text\" value=\"\" id=\"search_input\" >"
-            + "</span></form></br></br></div></div></div><script type=\"text/javascript\">function search(){if(document.getElementById(\"search_input\").value != \"\"){window.location.href = \"";
+    private static final String MIDDLE_1 = "\"><br>" +
+            "<form autocomplete=\"off\" onsubmit=\"return search()\">" +
+            "<input id=\"search_input\" type=\"text\" value=\"\"> <br>" +
+            "<input id=\"search_submit\" type=\"submit\" value=\"";
+
+    private static final String MIDDLE_2 = "\">" +
+            "</form>" +
+            "</div>" +
+            "<script type=\"text/javascript\">" +
+            "function search() {" +
+            "if (document.getElementById(\"search_input\").value != \"\") {" +
+            "window.location.href = \"";
 
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
     @NonNull private final String mTitle;
+    @NonNull private final String mSearchButtonValue;
     @NonNull private final Application mApp;
     @NonNull private final WeakReference<LightningView> mTabReference;
 
@@ -65,6 +75,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
     public StartPage(LightningView tab, @NonNull Application app) {
         BrowserApp.getAppComponent().inject(this);
         mTitle = app.getString(R.string.home);
+        mSearchButtonValue = app.getString(R.string.search_hint);
         mApp = app;
         mTabReference = new WeakReference<>(tab);
     }
@@ -93,7 +104,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
      */
     @NonNull
     private String getHomepage() {
-        StringBuilder homepageBuilder = new StringBuilder(HEAD_1 + mTitle + HEAD_2);
+        StringBuilder homepageBuilder = new StringBuilder(HEAD_1).append(mTitle).append(HEAD_2);
         String icon;
         String searchUrl;
         switch (mPreferenceManager.getSearchChoice()) {
@@ -127,13 +138,13 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
                 break;
             case 5:
                 // STARTPAGE_SEARCH;
-                icon = "file:///android_asset/png";
+                icon = "file:///android_asset/startpage.png";
                 // "https://com/graphics/startp_logo.gif";
                 searchUrl = Constants.STARTPAGE_SEARCH;
                 break;
             case 6:
                 // STARTPAGE_MOBILE
-                icon = "file:///android_asset/png";
+                icon = "file:///android_asset/startpage.png";
                 // "https://com/graphics/startp_logo.gif";
                 searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
                 break;
@@ -170,14 +181,15 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
         }
 
         homepageBuilder.append(icon);
-        homepageBuilder.append(MIDDLE);
+        homepageBuilder.append(MIDDLE_1);
+        homepageBuilder.append(mSearchButtonValue);
+        homepageBuilder.append(MIDDLE_2);
         homepageBuilder.append(searchUrl);
         homepageBuilder.append(END);
 
         File homepage = new File(mApp.getFilesDir(), FILENAME);
         FileWriter hWriter = null;
         try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
             hWriter = new FileWriter(homepage, false);
             hWriter.write(homepageBuilder.toString());
         } catch (IOException e) {
