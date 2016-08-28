@@ -194,7 +194,7 @@
     <string name="settings_privacy">Privacy Settings</string>
     <string name="settings_about">About</string>
     <string name="settings_about_explain">Details about version, author and license.</string>
-    <string name="close_tab">Close tab</string>
+    <string name="close_tab">Close current tab</string>
     <string name="close_all_tabs">Close all tabs</string>
     <string name="close_other_tabs">Close other tabs</string>
     <string name="third_party">Block 3rd Party Cookies</string>
@@ -242,4 +242,17 @@
     <string name="debug_title">Debug Settings</string>
     <string name="debug_leak_canary">LeakCanary</string>
     <string name="app_restart">Please restart the app for the change to take effect.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Open in new tab</string>
+    <string name="dialog_open_background_tab">Open in background tab</string>
+    <string name="dialog_open_incognito_tab">Open in incognito tab</string>
+    <string name="dialog_remove_bookmark">Remove bookmark</string>
+    <string name="dialog_edit_bookmark">Edit bookmark</string>
+    <string name="dialog_remove_from_history">Remove from history</string>
+    <string name="dialog_download_image">Download image</string>
+    <string name="dialog_copy_link">Copy link</string>
+    <string name="dialog_rename_folder">Rename folder</string>
+    <string name="dialog_remove_folder">Remove folder</string>
+    <string name="dialog_title_close_browser">Close browser</string>
 </resources>

@@ -115,18 +115,18 @@ public class TabsManager {
                 // Make sure we start with a clean tab list
                 shutdown();
 
-                // If incognito, only create one tab, do not handle intent
-                // in order to protect user privacy
-                if (incognito) {
-                    newTab(activity, null, true);
-                    subscriber.onComplete();
-                    return;
-                }
-
                 String url = null;
                 if (intent != null) {
                     url = intent.getDataString();
                 }
+
+                // If incognito, only create one tab
+                if (incognito) {
+                    newTab(activity, url, true);
+                    subscriber.onComplete();
+                    return;
+                }
+
                 Log.d(TAG, "URL from intent: " + url);
                 mCurrentTab = null;
                 if (mPreferenceManager.getRestoreLostTabsEnabled()) {

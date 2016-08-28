@@ -22,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
@@ -81,15 +82,33 @@ public class LightningDialogBuilder {
         }
     }
 
-    public void showLongPressedDialogForBookmarkUrl(@NonNull final Activity context, @NonNull final HistoryItem item) {
-        BrowserDialog.show(context, R.string.action_bookmarks,
-            new BrowserDialog.Item(R.string.action_new_tab) {
+    public void showLongPressedDialogForBookmarkUrl(@NonNull final Activity activity, @NonNull final HistoryItem item) {
+        BrowserDialog.show(activity, R.string.action_bookmarks,
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
                 @Override
                 public void onClick() {
-                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl()));
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl(), BrowserEvents.OpenUrlInNewTab.Location.NEW_TAB));
                 }
             },
-            new BrowserDialog.Item(R.string.action_delete) {
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl(), BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl(), BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, item.getUrl());
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_remove_bookmark) {
                 @Override
                 public void onClick() {
                     if (mBookmarkManager.deleteBookmark(item)) {
@@ -97,18 +116,18 @@ public class LightningDialogBuilder {
                     }
                 }
             },
-            new BrowserDialog.Item(R.string.action_edit) {
+            new BrowserDialog.Item(R.string.dialog_edit_bookmark) {
                 @Override
                 public void onClick() {
-                    showEditBookmarkDialog(context, item);
+                    showEditBookmarkDialog(activity, item);
                 }
             });
     }
 
-    private void showEditBookmarkDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
-        final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(context);
+    private void showEditBookmarkDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {
+        final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(activity);
         editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
-        final View dialogLayout = View.inflate(context, R.layout.dialog_edit_bookmark, null);
+        final View dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null);
         final EditText getTitle = (EditText) dialogLayout.findViewById(R.id.bookmark_title);
         getTitle.setText(item.getTitle());
         final EditText getUrl = (EditText) dialogLayout.findViewById(R.id.bookmark_url);
@@ -118,12 +137,12 @@ public class LightningDialogBuilder {
         getFolder.setHint(R.string.folder);
         getFolder.setText(item.getFolder());
         final List<String> folders = mBookmarkManager.getFolderTitles();
-        final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(context,
+        final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(activity,
             android.R.layout.simple_dropdown_item_1line, folders);
         getFolder.setThreshold(1);
         getFolder.setAdapter(suggestionsAdapter);
         editBookmarkDialog.setView(dialogLayout);
-        editBookmarkDialog.setPositiveButton(context.getString(R.string.action_ok),
+        editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok),
             new DialogInterface.OnClickListener() {
 
                 @Override
@@ -140,16 +159,16 @@ public class LightningDialogBuilder {
         editBookmarkDialog.show();
     }
 
-    public void showBookmarkFolderLongPressedDialog(@NonNull final Activity context, @NonNull final HistoryItem item) {
+    public void showBookmarkFolderLongPressedDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {
 
-        BrowserDialog.show(context, R.string.action_folder,
-            new BrowserDialog.Item(R.string.action_rename) {
+        BrowserDialog.show(activity, R.string.action_folder,
+            new BrowserDialog.Item(R.string.dialog_rename_folder) {
                 @Override
                 public void onClick() {
-                    showRenameFolderDialog(context, item);
+                    showRenameFolderDialog(activity, item);
                 }
             },
-            new BrowserDialog.Item(R.string.action_delete) {
+            new BrowserDialog.Item(R.string.dialog_remove_folder) {
                 @Override
                 public void onClick() {
                     mBookmarkManager.deleteFolder(item.getTitle());
@@ -158,8 +177,8 @@ public class LightningDialogBuilder {
             });
     }
 
-    private void showRenameFolderDialog(@NonNull final Activity context, @NonNull final HistoryItem item) {
-        BrowserDialog.showEditText(context, R.string.title_rename_folder,
+    private void showRenameFolderDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {
+        BrowserDialog.showEditText(activity, R.string.title_rename_folder,
             R.string.hint_title, item.getTitle(),
             R.string.action_ok, new BrowserDialog.EditorListener() {
                 @Override
@@ -178,15 +197,33 @@ public class LightningDialogBuilder {
             });
     }
 
-    public void showLongPressedHistoryLinkDialog(final Activity context, @NonNull final String url) {
-        BrowserDialog.show(context, R.string.action_history,
-            new BrowserDialog.Item(R.string.action_new_tab) {
+    public void showLongPressedHistoryLinkDialog(@NonNull final Activity activity, @NonNull final String url) {
+        BrowserDialog.show(activity, R.string.action_history,
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
                 @Override
                 public void onClick() {
                     mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
             },
-            new BrowserDialog.Item(R.string.action_delete) {
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, url);
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_remove_from_history) {
                 @Override
                 public void onClick() {
                     BrowserApp.getIOThread().execute(new Runnable() {
@@ -203,12 +240,6 @@ public class LightningDialogBuilder {
                         }
                     });
                 }
-            },
-            new BrowserDialog.Item(R.string.action_open) {
-                @Override
-                public void onClick() {
-                    mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                }
             });
     }
 
@@ -216,19 +247,31 @@ public class LightningDialogBuilder {
     public void showLongPressImageDialog(@NonNull final Activity activity, @NonNull final String url,
                                          @NonNull final String userAgent) {
         BrowserDialog.show(activity, url.replace(Constants.HTTP, ""),
-            new BrowserDialog.Item(R.string.action_new_tab) {
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
                 @Override
                 public void onClick() {
                     mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
             },
-            new BrowserDialog.Item(R.string.action_open) {
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
                 @Override
                 public void onClick() {
-                    mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
                 }
             },
-            new BrowserDialog.Item(R.string.action_download) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, url);
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_download_image) {
                 @Override
                 public void onClick() {
                     Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
@@ -236,26 +279,30 @@ public class LightningDialogBuilder {
             });
     }
 
-    public void showLongPressLinkDialog(@NonNull final Activity context, final String url) {
-        BrowserDialog.show(context, url,
-            new BrowserDialog.Item(R.string.action_new_tab) {
+    public void showLongPressLinkDialog(@NonNull final Activity activity, final String url) {
+        BrowserDialog.show(activity, url,
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
                 @Override
                 public void onClick() {
                     mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
             },
-            new BrowserDialog.Item(R.string.action_open) {
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
                 @Override
                 public void onClick() {
-                    mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
                 }
             },
-            new BrowserDialog.Item(R.string.action_copy) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
                 @Override
                 public void onClick() {
-                    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("label", url);
-                    clipboard.setPrimaryClip(clip);
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, url);
                 }
             });
     }

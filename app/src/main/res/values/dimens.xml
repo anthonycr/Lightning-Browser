@@ -4,4 +4,10 @@
     <dimen name="navigation_width">260dp</dimen>
     <dimen name="search_bar_height">48dp</dimen>
 
+    <dimen name="dialog_max_size">350dp</dimen>
+    <dimen name="dialog_padding">24dp</dimen>
+
+    <dimen name="default_padding">8dp</dimen>
+    <dimen name="extra_padding">16dp</dimen>
+
 </resources>
