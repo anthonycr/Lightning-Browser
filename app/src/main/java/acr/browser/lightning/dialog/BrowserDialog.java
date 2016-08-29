@@ -1,20 +1,29 @@
 package acr.browser.lightning.dialog;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import acr.browser.lightning.R;
+import acr.browser.lightning.utils.DeviceUtils;
+import acr.browser.lightning.utils.ResourceUtils;
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -45,6 +54,12 @@ public class BrowserDialog {
     public static abstract class Item {
 
         private int mTitle;
+        private boolean mCondition = true;
+
+        public Item(@StringRes int title, boolean condition) {
+            this(title);
+            mCondition = condition;
+        }
 
         public Item(@StringRes int title) {
             mTitle = title;
@@ -53,6 +68,10 @@ public class BrowserDialog {
         @StringRes
         private int getTitle() {
             return mTitle;
+        }
+
+        private boolean isConditionMet() {
+            return mCondition;
         }
 
         public abstract void onClick();
@@ -69,13 +88,25 @@ public class BrowserDialog {
 
     public static void show(@NonNull Activity activity, @Nullable String title, @NonNull Item item, @Nullable Item... items) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        View layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null);
+
+        TextView titleView = (TextView) layout.findViewById(R.id.dialog_title);
+        ListView listView = (ListView) layout.findViewById(R.id.dialog_list);
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
             android.R.layout.simple_list_item_1);
 
         final List<Item> itemList = new ArrayList<>(1);
-        itemList.add(item);
+        if (item.isConditionMet()) {
+            itemList.add(item);
+        }
         if (items != null) {
-            itemList.addAll(Arrays.asList(items));
+            for (Item it : items) {
+                if (it.isConditionMet()) {
+                    itemList.add(it);
+                }
+            }
         }
 
         for (Item it : itemList) {
@@ -83,16 +114,31 @@ public class BrowserDialog {
         }
 
         if (!TextUtils.isEmpty(title)) {
-            builder.setTitle(title);
+            titleView.setText(title);
         }
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 
+        listView.setAdapter(adapter);
+
+        listView.setDivider(null);
+        builder.setView(layout);
+
+        int maxWidth = ResourceUtils.dimen(activity, R.dimen.dialog_max_size);
+        int padding = ResourceUtils.dimen(activity, R.dimen.dialog_padding);
+        int screenSize = DeviceUtils.getScreenWidth(activity);
+        if (maxWidth > screenSize - 2 * padding) {
+            maxWidth = screenSize - 2 * padding;
+        }
+
+        final Dialog dialog = builder.show();
+        dialog.getWindow().setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                itemList.get(which).onClick();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                itemList.get(position).onClick();
+                dialog.dismiss();
             }
         });
-        builder.show();
     }
 
     public static void showEditText(@NonNull Activity activity, @StringRes int title,

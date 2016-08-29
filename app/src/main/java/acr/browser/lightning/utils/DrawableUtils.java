@@ -1,5 +1,7 @@
 package acr.browser.lightning.utils;
 
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -7,6 +9,13 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.AttrRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.TypedValue;
+import android.view.View;
 
 public class DrawableUtils {
 
@@ -65,10 +74,29 @@ public class DrawableUtils {
         int endG = (endInt >> 8) & 0xff;
         int endB = endInt & 0xff;
 
-        return (startA + (int)(fraction * (endA - startA))) << 24 |
-                (startR + (int)(fraction * (endR - startR))) << 16 |
-                (startG + (int)(fraction * (endG - startG))) << 8 |
-                (startB + (int)(fraction * (endB - startB)));
+        return (startA + (int) (fraction * (endA - startA))) << 24 |
+            (startR + (int) (fraction * (endR - startR))) << 16 |
+            (startG + (int) (fraction * (endG - startG))) << 8 |
+            (startB + (int) (fraction * (endB - startB)));
+    }
+
+    public static Drawable resolveDrawableAttribute(@NonNull Context context, @AttrRes int res) {
+        int[] attribute = new int[]{res};
+        int indexOfAttrTextSize = 0;
+        TypedValue typedValue = new TypedValue();
+        TypedArray a = context.obtainStyledAttributes(typedValue.data, attribute);
+        Drawable drawable = a.getDrawable(indexOfAttrTextSize);
+        a.recycle();
+        return drawable;
+    }
+
+    public static void setBackground(@NonNull View view, @Nullable Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackground(drawable);
+        } else {
+            //noinspection deprecation
+            view.setBackgroundDrawable(drawable);
+        }
     }
 
 }

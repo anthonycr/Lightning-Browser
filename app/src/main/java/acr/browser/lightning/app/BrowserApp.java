@@ -2,6 +2,8 @@ package acr.browser.lightning.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
@@ -114,6 +116,12 @@ public class BrowserApp extends Application {
      */
     public static boolean isRelease() {
         return !BuildConfig.DEBUG || BuildConfig.BUILD_TYPE.toLowerCase().equals("release");
+    }
+
+    public static void copyToClipboard(@NonNull Context context, @NonNull String string) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("URL", string);
+        clipboard.setPrimaryClip(clip);
     }
 
 }

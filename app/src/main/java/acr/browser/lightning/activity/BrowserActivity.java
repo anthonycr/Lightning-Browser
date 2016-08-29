@@ -858,11 +858,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (position < 0) {
             return;
         }
-        BrowserDialog.show(this,
-            new BrowserDialog.Item(R.string.close_all_tabs) {
+        BrowserDialog.show(this, R.string.dialog_title_close_browser,
+            new BrowserDialog.Item(R.string.close_tab) {
                 @Override
                 public void onClick() {
-                    closeBrowser();
+                    deleteTab(position);
                 }
             },
             new BrowserDialog.Item(R.string.close_other_tabs) {
@@ -871,10 +871,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     mPresenter.closeAllOtherTabs();
                 }
             },
-            new BrowserDialog.Item(R.string.close_tab) {
+            new BrowserDialog.Item(R.string.close_all_tabs) {
                 @Override
                 public void onClick() {
-                    deleteTab(position);
+                    closeBrowser();
                 }
             });
     }
@@ -2132,8 +2132,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
          */
         @Subscribe
         public void loadUrlInNewTab(final BrowserEvents.OpenUrlInNewTab event) {
-            BrowserActivity.this.newTab(event.url, true);
             mDrawerLayout.closeDrawers();
+            if (event.location == BrowserEvents.OpenUrlInNewTab.Location.NEW_TAB) {
+                BrowserActivity.this.newTab(event.url, true);
+            } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND) {
+                BrowserActivity.this.newTab(event.url, false);
+            } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO) {
+                Intent intent = new Intent(BrowserActivity.this, IncognitoActivity.class);
+                intent.setData(Uri.parse(event.url));
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
+            }
         }
 
         /**
