@@ -215,5 +215,16 @@
     <string name="text_encoding">文本编码</string>
     <string name="theme">程序主题</string>
     <string name="use_i2p_prompt">看起来您安装了I2P.您想要使用I2P吗？</string>
+    <string name="dialog_open_background_tab">在后台标签中打开</string>
+    <string name="dialog_open_incognito_tab">在匿名标签中打开</string>
+    <string name="dialog_open_new_tab">在新标签中打开</string>
+    <string name="dialog_remove_bookmark">移除书签</string>
+    <string name="dialog_remove_folder">移除文件夹</string>
+    <string name="dialog_remove_from_history">从历史中移除</string>
+    <string name="dialog_rename_folder">重命名文件夹</string>
+    <string name="dialog_title_close_browser">关闭浏览器</string>
+    <string name="dialog_copy_link">复制链接</string>
+    <string name="dialog_download_image">下载图像</string>
+    <string name="dialog_edit_bookmark">编辑书签</string>
     <!-- <string name="exit">退出</string> -->
 </resources>
