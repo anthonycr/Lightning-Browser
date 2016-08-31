@@ -2,6 +2,7 @@ package acr.browser.lightning.activity;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 
 import com.anthonycr.bonsai.Action;
@@ -169,7 +171,7 @@ public class TabsManager {
                 if (url != null) {
                     if (url.startsWith(Constants.FILE)) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                        builder.setCancelable(true)
+                        Dialog dialog = builder.setCancelable(true)
                             .setTitle(R.string.title_warning)
                             .setMessage(R.string.message_blocked_local)
                             .setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -189,6 +191,7 @@ public class TabsManager {
                                     newTab(activity, url, false);
                                 }
                             }).show();
+                        BrowserDialog.setDialogSize(activity, dialog);
                     } else {
                         newTab(activity, url, false);
                         if (mTabList.isEmpty()) {

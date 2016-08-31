@@ -2,6 +2,7 @@ package acr.browser.lightning.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -122,15 +123,9 @@ public class BrowserDialog {
         listView.setDivider(null);
         builder.setView(layout);
 
-        int maxWidth = ResourceUtils.dimen(activity, R.dimen.dialog_max_size);
-        int padding = ResourceUtils.dimen(activity, R.dimen.dialog_padding);
-        int screenSize = DeviceUtils.getScreenWidth(activity);
-        if (maxWidth > screenSize - 2 * padding) {
-            maxWidth = screenSize - 2 * padding;
-        }
-
         final Dialog dialog = builder.show();
-        dialog.getWindow().setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        setDialogSize(activity, dialog);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -172,7 +167,19 @@ public class BrowserDialog {
                     listener.onClick(editText.getText().toString());
                 }
             });
-        editorDialog.show();
+
+        Dialog dialog = editorDialog.show();
+        setDialogSize(activity, dialog);
+    }
+
+    public static void setDialogSize(@NonNull Context context, @NonNull Dialog dialog) {
+        int maxWidth = ResourceUtils.dimen(context, R.dimen.dialog_max_size);
+        int padding = ResourceUtils.dimen(context, R.dimen.dialog_padding);
+        int screenSize = DeviceUtils.getScreenWidth(context);
+        if (maxWidth > screenSize - 2 * padding) {
+            maxWidth = screenSize - 2 * padding;
+        }
+        dialog.getWindow().setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
 }

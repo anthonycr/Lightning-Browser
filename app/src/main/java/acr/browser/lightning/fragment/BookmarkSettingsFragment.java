@@ -5,6 +5,7 @@ package acr.browser.lightning.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -41,6 +42,8 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
+
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
@@ -245,7 +248,8 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                 mBookmarkManager.deleteAllBookmarks();
             }
         });
-        builder.show();
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     @NonNull
@@ -310,7 +314,8 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                 }
             }
         });
-        builder.show();
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     @Nullable
@@ -379,12 +384,17 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     }
 
     private void createDialog() {
+        if(mActivity == null){
+            return;
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 
         final String title = getString(R.string.title_chooser);
         builder.setTitle(title + ": " + Environment.getExternalStorageDirectory());
         if (mFileList == null) {
-            builder.show();
+            Dialog dialog = builder.show();
+            BrowserDialog.setDialogSize(mActivity, dialog);
+            return;
         }
         builder.setItems(mFileNameList, new DialogInterface.OnClickListener() {
 
@@ -394,13 +404,15 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                     builder.setTitle(title + ": " + mFileList[which]);
                     loadFileList(mFileList[which]);
                     builder.setItems(mFileNameList, this);
-                    builder.show();
+                    Dialog dialog1 = builder.show();
+                    BrowserDialog.setDialogSize(mActivity, dialog1);
                 } else {
                     mBookmarkManager.importBookmarksFromFile(mFileList[which], getActivity());
                 }
             }
 
         });
-        builder.show();
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 }

@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.download;
 
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -31,6 +32,7 @@ import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 
 /**
@@ -157,9 +159,10 @@ public class DownloadHandler {
                 title = R.string.download_no_sdcard_dlg_title;
             }
 
-            new AlertDialog.Builder(context).setTitle(title)
+            Dialog dialog = new AlertDialog.Builder(context).setTitle(title)
                     .setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
                     .setPositiveButton(R.string.action_ok, null).show();
+            BrowserDialog.setDialogSize(context, dialog);
             return;
         }
 
