@@ -1,6 +1,7 @@
 package acr.browser.lightning.activity;
 
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import com.anthonycr.bonsai.Action;
 import com.anthonycr.bonsai.Observable;
@@ -159,6 +161,7 @@ public class ReadingActivity extends AppCompatActivity {
                         mProgressDialog.setIndeterminate(true);
                         mProgressDialog.setMessage(getString(R.string.loading));
                         mProgressDialog.show();
+                        BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
                     }
 
                     @Override
@@ -321,7 +324,8 @@ public class ReadingActivity extends AppCompatActivity {
                     }
 
                 });
-                builder.show();
+                Dialog dialog = builder.show();
+                BrowserDialog.setDialogSize(this, dialog);
                 break;
             default:
                 finish();

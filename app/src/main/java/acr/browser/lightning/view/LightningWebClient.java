@@ -2,6 +2,7 @@ package acr.browser.lightning.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -160,7 +162,7 @@ public class LightningWebClient extends WebViewClient {
                 });
         AlertDialog alert = builder.create();
         alert.show();
-
+        BrowserDialog.setDialogSize(mActivity, alert);
     }
 
     private volatile boolean mIsRunning = false;
@@ -247,7 +249,8 @@ public class LightningWebClient extends WebViewClient {
                         handler.cancel();
                     }
                 });
-        builder.create().show();
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     @Override
@@ -272,6 +275,7 @@ public class LightningWebClient extends WebViewClient {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+        BrowserDialog.setDialogSize(mActivity, alert);
     }
 
     @Override

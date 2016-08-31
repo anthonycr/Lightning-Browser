@@ -4,6 +4,7 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -19,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.dialog.BrowserDialog;
 
 public class DisplaySettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -150,7 +152,8 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
             }
 
         });
-        builder.show();
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private static float getTextSize(int size) {
@@ -187,7 +190,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
+        picker.setPositiveButton(getResources().getString(R.string.action_ok),
                 new DialogInterface.OnClickListener() {
 
                     @Override
@@ -205,7 +208,8 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
                 }
             }
         });
-        picker.show();
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private static class TextSeekBarListener implements SeekBar.OnSeekBarChangeListener {

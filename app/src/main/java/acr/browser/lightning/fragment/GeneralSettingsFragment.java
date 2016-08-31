@@ -4,6 +4,7 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.LinearLayout;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -167,7 +169,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                                 + text);
                     }
                 });
-        urlPicker.show();
+        Dialog dialog = urlPicker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void getFlashChoice() {
@@ -199,6 +202,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         });
         AlertDialog alert = builder.create();
         alert.show();
+        BrowserDialog.setDialogSize(mActivity, alert);
     }
 
     private void proxyChoicePicker() {
@@ -212,8 +216,9 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         setProxyChoice(which);
                     }
                 });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void setProxyChoice(int choice) {
@@ -250,7 +255,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         eProxyHost.setText(mPreferenceManager.getProxyHost());
         eProxyPort.setText(Integer.toString(mPreferenceManager.getProxyPort()));
 
-        new AlertDialog.Builder(mActivity)
+        Dialog dialog = new AlertDialog.Builder(mActivity)
                 .setTitle(R.string.manual_proxy)
                 .setView(v)
                 .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
@@ -270,6 +275,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         proxy.setSummary(proxyHost + ':' + proxyPort);
                     }
                 }).show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void searchDialog() {
@@ -290,8 +296,9 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 setSearchEngineSummary(which);
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void homepageDialog() {
@@ -332,8 +339,9 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         }
                     }
                 });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void homePicker() {
@@ -357,7 +365,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         home.setSummary(text);
                     }
                 });
-        homePicker.show();
+        Dialog dialog = homePicker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void downloadLocDialog() {
@@ -386,8 +395,9 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         }
                     }
                 });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void agentDialog() {
@@ -416,8 +426,9 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         }
                     }
                 });
-        agentPicker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        agentPicker.show();
+        agentPicker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = agentPicker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void agentPicker() {
@@ -434,7 +445,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         useragent.setSummary(getResources().getString(R.string.agent_custom));
                     }
                 });
-        agentStringPicker.show();
+        Dialog dialog = agentStringPicker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void downPicker() {
@@ -463,7 +475,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                         downloadloc.setSummary(text);
                     }
                 });
-        downLocationPicker.show();
+        Dialog dialog = downLocationPicker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void setSearchEngineSummary(int which) {

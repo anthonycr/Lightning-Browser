@@ -25,6 +25,7 @@ import com.anthonycr.grant.PermissionsResultAction;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;
 
 class LightningChromeClient extends WebChromeClient {
@@ -120,6 +121,7 @@ class LightningChromeClient extends WebChromeClient {
                                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+                BrowserDialog.setDialogSize(mActivity, alert);
             }
 
             @Override

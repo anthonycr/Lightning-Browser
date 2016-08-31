@@ -49,6 +49,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 
@@ -132,6 +133,7 @@ public final class Utils {
                         });
         AlertDialog alert = builder.create();
         alert.show();
+        BrowserDialog.setDialogSize(activity, alert);
     }
 
     /**

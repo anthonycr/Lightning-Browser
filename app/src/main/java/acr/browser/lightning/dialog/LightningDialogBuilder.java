@@ -1,6 +1,7 @@
 package acr.browser.lightning.dialog;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -156,7 +157,8 @@ public class LightningDialogBuilder {
                     mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
                 }
             });
-        editBookmarkDialog.show();
+        Dialog dialog = editBookmarkDialog.show();
+        BrowserDialog.setDialogSize(activity, dialog);
     }
 
     public void showBookmarkFolderLongPressedDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {

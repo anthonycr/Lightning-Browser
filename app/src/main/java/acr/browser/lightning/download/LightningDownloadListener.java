@@ -5,6 +5,7 @@ package acr.browser.lightning.download;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.webkit.URLUtil;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 
 import com.anthonycr.grant.PermissionsManager;
@@ -56,12 +58,13 @@ public class LightningDownloadListener implements DownloadListener {
                         };
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
-                        builder.setTitle(fileName)
+                        Dialog dialog = builder.setTitle(fileName)
                                 .setMessage(mActivity.getResources().getString(R.string.dialog_download))
                                 .setPositiveButton(mActivity.getResources().getString(R.string.action_download),
                                         dialogClickListener)
                                 .setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),
                                         dialogClickListener).show();
+                        BrowserDialog.setDialogSize(mActivity, dialog);
                         Log.i(Constants.TAG, "Downloading" + fileName);
                     }
 
