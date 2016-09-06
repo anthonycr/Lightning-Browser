@@ -149,7 +149,7 @@ class RetrieveSuggestionsTask extends AsyncTask<Void, Void, List<HistoryItem>> {
         try {
             // Old API that doesn't support HTTPS
             // http://google.com/complete/search?q= + query + &output=toolbar&hl= + language
-            URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&hl="
+            URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&oe=latin1&hl="
                     + language + "&q=" + query);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
