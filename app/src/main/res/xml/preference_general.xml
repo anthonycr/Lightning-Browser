@@ -3,10 +3,6 @@
 
     <PreferenceCategory android:title="@string/settings_general">
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="cb_drawertabs"
-            android:title="@string/tabs_in_drawer" />
-        <CheckBoxPreference
             android:defaultValue="false"
             android:key="cb_flash"
             android:title="@string/flash" />

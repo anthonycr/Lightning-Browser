@@ -54,6 +54,7 @@ public class PreferenceManager {
         public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
         public static final String DO_NOT_TRACK = "doNotTrack";
         public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
+        public static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -72,6 +73,14 @@ public class PreferenceManager {
     @Inject
     PreferenceManager(@NonNull final Context context) {
         mPrefs = context.getSharedPreferences(PREFERENCES, 0);
+    }
+
+    public boolean getBookmarksAndTabsSwapped() {
+        return mPrefs.getBoolean(Name.SWAP_BOOKMARKS_AND_TABS, false);
+    }
+
+    public void setBookmarkAndTabsSwapped(boolean swap) {
+        putBoolean(Name.SWAP_BOOKMARKS_AND_TABS, swap);
     }
 
     public boolean getAdBlockEnabled() {

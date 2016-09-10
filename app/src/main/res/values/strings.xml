@@ -225,10 +225,11 @@
     <string name="dialog_folder">What would you like to do with this folder?</string>
     <string name="clear_web_storage">Clear Web Storage</string>
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
-    <string name="message_web_storage_cleared">Web Storage Cleared</string>
+    <string name="message_web_storage_cleared">Web storage cleared</string>
     <string name="hosts_source">Hosts File Ad Blocking Source</string>
     <string name="settings_adblock">Ad Block Settings</string>
-    <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
+    <string name="tabs_in_drawer">Show tabs in navigation drawer</string>
+    <string name="swap_bookmarks_and_tabs">Swap bookmark and tab drawers</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
     <string name="remove_identifying_headers">Remove Identifying Headers</string>
     <string name="action_add_to_homescreen">Add to Homescreen</string>

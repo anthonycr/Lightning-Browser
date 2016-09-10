@@ -43,8 +43,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_HOME = "home";
     private static final String SETTINGS_SEARCHENGINE = "search";
     private static final String SETTINGS_GOOGLESUGGESTIONS = "google_suggestions";
-    private static final String SETTINGS_DRAWERTABS = "cb_drawertabs";
-
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private CharSequence[] mProxyChoices;
@@ -77,7 +75,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         CheckBoxPreference cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
         CheckBoxPreference cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
         CheckBoxPreference cbgooglesuggest = (CheckBoxPreference) findPreference(SETTINGS_GOOGLESUGGESTIONS);
-        CheckBoxPreference cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
 
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);
@@ -90,7 +87,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbJsScript.setOnPreferenceChangeListener(this);
         cbColorMode.setOnPreferenceChangeListener(this);
         cbgooglesuggest.setOnPreferenceChangeListener(this);
-        cbDrawerTabs.setOnPreferenceChangeListener(this);
 
         mAgentChoice = mPreferenceManager.getUserAgentChoice();
         mHomepage = mPreferenceManager.getHomepage();
@@ -149,7 +145,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbAds.setChecked(Constants.FULL_VERSION && mPreferenceManager.getAdBlockEnabled());
         cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
         cbgooglesuggest.setChecked(mPreferenceManager.getGoogleSearchSuggestionsEnabled());
-        cbDrawerTabs.setChecked(mPreferenceManager.getShowTabsInDrawer(true));
     }
 
     private void searchUrlPicker() {
@@ -543,7 +538,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
         boolean checked = false;
         if (newValue instanceof Boolean) {
-            checked = (Boolean) newValue;
+            checked = Boolean.TRUE.equals(newValue);
         }
         switch (preference.getKey()) {
             case SETTINGS_FLASH:
@@ -573,9 +568,6 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 return true;
             case SETTINGS_GOOGLESUGGESTIONS:
                 mPreferenceManager.setGoogleSearchSuggestionsEnabled(checked);
-                return true;
-            case SETTINGS_DRAWERTABS:
-                mPreferenceManager.setShowTabsInDrawer(checked);
                 return true;
             default:
                 return false;
