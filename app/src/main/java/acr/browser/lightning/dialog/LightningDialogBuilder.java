@@ -2,9 +2,6 @@ package acr.browser.lightning.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
