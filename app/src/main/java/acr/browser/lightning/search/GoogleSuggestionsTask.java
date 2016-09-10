@@ -27,16 +27,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
 import acr.browser.lightning.utils.Utils;
 
-public class SuggestionsTask {
+public class GoogleSuggestionsTask {
 
     private static final String TAG = RetrieveSuggestionsTask.class.getSimpleName();
 
@@ -51,32 +50,9 @@ public class SuggestionsTask {
     @NonNull private final String mSearchSubtitle;
     @NonNull private String mQuery;
 
-    private static volatile boolean sIsTaskExecuting = false;
-
-    public static boolean isRequestInProgress() {
-        return sIsTaskExecuting;
-    }
-
-    public static Observable<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context) {
-        return Observable.create(new Action<List<HistoryItem>>() {
-            @Override
-            public void onSubscribe(@NonNull final Subscriber<List<HistoryItem>> subscriber) {
-                sIsTaskExecuting = true;
-                new SuggestionsTask(query, BrowserApp.get(context), new SuggestionsResult() {
-                    @Override
-                    public void resultReceived(@NonNull List<HistoryItem> searchResults) {
-                        subscriber.onNext(searchResults);
-                        subscriber.onComplete();
-                    }
-                }).run();
-                sIsTaskExecuting = false;
-            }
-        });
-    }
-
-    private SuggestionsTask(@NonNull String query,
-                            @NonNull Application application,
-                            @NonNull SuggestionsResult callback) {
+    GoogleSuggestionsTask(@NonNull String query,
+                          @NonNull Application application,
+                          @NonNull SuggestionsResult callback) {
         mQuery = query;
         mResultCallback = callback;
         mApplication = application;
@@ -104,11 +80,11 @@ public class SuggestionsTask {
         return sXpp;
     }
 
-    private void run() {
+    void run() {
         List<HistoryItem> filter = new ArrayList<>(5);
         try {
             mQuery = SPACE_PATTERN.matcher(mQuery).replaceAll("+");
-            URLEncoder.encode(mQuery, ENCODING);
+            mQuery = URLEncoder.encode(mQuery, ENCODING);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -128,7 +104,7 @@ public class SuggestionsTask {
                 if (eventType == XmlPullParser.START_TAG && "suggestion".equals(parser.getName())) {
                     String suggestion = parser.getAttributeValue(null, "data");
                     filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
-                            suggestion, R.drawable.ic_search));
+                        suggestion, R.drawable.ic_search));
                     counter++;
                     if (counter >= 5) {
                         break;
@@ -137,6 +113,7 @@ public class SuggestionsTask {
                 eventType = parser.next();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             post(filter);
             return;
         } finally {
@@ -171,12 +148,13 @@ public class SuggestionsTask {
             // Old API that doesn't support HTTPS
             // http://google.com/complete/search?q= + query + &output=toolbar&hl= + language
             URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&hl="
-                    + language + "&q=" + query);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                + language + "&q=" + query);
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setDoInput(true);
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.connect();
             if (connection.getResponseCode() >= HttpURLConnection.HTTP_MULT_CHOICE ||
-                    connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
+                connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
                 Log.e(TAG, "Search API Responded with code: " + connection.getResponseCode());
                 connection.disconnect();
                 return cacheFile;
@@ -185,6 +163,7 @@ public class SuggestionsTask {
 
             if (in != null) {
                 //noinspection IOResourceOpenedButNotSafelyClosed
+                in = new GZIPInputStream(in);
                 fos = new FileOutputStream(cacheFile);
                 int buffer;
                 while ((buffer = in.read()) != -1) {
@@ -211,8 +190,8 @@ public class SuggestionsTask {
     @Nullable
     private static NetworkInfo getActiveNetworkInfo(@NonNull Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
-                .getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+            .getApplicationContext()
+            .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
             return null;
         }

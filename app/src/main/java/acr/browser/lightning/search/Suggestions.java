@@ -286,7 +286,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     @NonNull
     private Observable<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
-        return SuggestionsTask.getObservable(query, mContext);
+        return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.GOOGLE);
     }
 
     @NonNull
@@ -322,7 +322,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
             }
             String query = constraint.toString().toLowerCase(Locale.getDefault());
 
-            if (mSuggestions.shouldRequestNetwork() && !SuggestionsTask.isRequestInProgress()) {
+            if (mSuggestions.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress()) {
                 mSuggestions.getSuggestionsForQuery(query)
                     .subscribeOn(Schedulers.worker())
                     .observeOn(Schedulers.main())
