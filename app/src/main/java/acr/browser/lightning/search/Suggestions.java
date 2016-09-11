@@ -70,9 +70,9 @@ public class Suggestions extends BaseAdapter implements Filterable {
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
 
     private final boolean mDarkTheme;
-    private boolean mUseGoogle = true;
     private boolean mIsIncognito = true;
     @NonNull private final Context mContext;
+    PreferenceManager.Suggestion mSuggestionChoice;
 
     public Suggestions(@NonNull Context context, boolean dark, boolean incognito) {
         super();
@@ -81,7 +81,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
         mDarkTheme = dark || incognito;
         mIsIncognito = incognito;
 
-        mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
+        refreshPreferences();
 
         refreshBookmarks();
 
@@ -91,7 +91,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
     }
 
     public void refreshPreferences() {
-        mUseGoogle = mPreferenceManager.getGoogleSearchSuggestionsEnabled();
+        mSuggestionChoice = mPreferenceManager.getSearchSuggestionChoice();
     }
 
     public void clearCache() {
@@ -286,7 +286,19 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     @NonNull
     private Observable<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
-        return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.GOOGLE);
+        if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_GOOGLE) {
+            return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.GOOGLE);
+        } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
+            return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.DUCK);
+        } else {
+            return Observable.create(new Action<List<HistoryItem>>() {
+                @Override
+                public void onSubscribe(@NonNull Subscriber<List<HistoryItem>> subscriber) {
+                    //TODO add an Observable.empty() method to generate an empty Observable
+                    subscriber.onComplete();
+                }
+            });
+        }
     }
 
     @NonNull
@@ -302,7 +314,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
     }
 
     private boolean shouldRequestNetwork() {
-        return mUseGoogle && !mIsIncognito;
+        return !mIsIncognito && mSuggestionChoice != PreferenceManager.Suggestion.SUGGESTION_NONE;
     }
 
     private static class SearchFilter extends Filter {

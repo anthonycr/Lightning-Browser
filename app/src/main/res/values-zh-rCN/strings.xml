@@ -116,7 +116,7 @@
     <string name="title_sign_in">登录</string>
     <string name="hint_username">用户名</string>
     <string name="hint_password">密码</string>
-    <string name="google_suggestions">搜索建议</string>
+    <string name="search_suggestions">搜索建议</string>
     <string name="powered_by_google">由 Google 提供支持</string>
     <string name="use_tor_prompt">看起来你已经安装了 Orbot. 你想要使用 Tor 吗？</string>
     <string name="install_orbot">请安装 Orbot 以便通过 Tor 全使用代理。</string>

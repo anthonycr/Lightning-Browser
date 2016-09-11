@@ -71,6 +71,12 @@ public class GoogleSuggestionsTask {
     }
 
     @NonNull
+    private static String getQueryUrl(@NonNull String query, @NonNull String language) {
+        return "https://suggestqueries.google.com/complete/search?output=toolbar&hl="
+            + language + "&q=" + query;
+    }
+
+    @NonNull
     private static synchronized XmlPullParser getParser() throws XmlPullParserException {
         if (sXpp == null) {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -135,7 +141,8 @@ public class GoogleSuggestionsTask {
      */
     @NonNull
     private static File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
-        File cacheFile = new File(app.getCacheDir(), query.hashCode() + Suggestions.CACHE_FILE_TYPE);
+        String queryUrl = getQueryUrl(query, language);
+        File cacheFile = new File(app.getCacheDir(), queryUrl.hashCode() + Suggestions.CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
@@ -147,8 +154,7 @@ public class GoogleSuggestionsTask {
         try {
             // Old API that doesn't support HTTPS
             // http://google.com/complete/search?q= + query + &output=toolbar&hl= + language
-            URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&hl="
-                + language + "&q=" + query);
+            URL url = new URL(queryUrl);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.setRequestProperty("Accept-Encoding", "gzip");

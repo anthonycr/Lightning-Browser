@@ -115,7 +115,7 @@
     <string name="title_sign_in">Iniciar sesión</string>
     <string name="hint_username">Usuario</string>
     <string name="hint_password">Contraseña</string>
-    <string name="google_suggestions">Sugerencias de búsqueda</string>
+    <string name="search_suggestions">Sugerencias de búsqueda</string>
     <string name="powered_by_google">Proporcionadas por Google</string>
     <string name="use_tor_prompt">Parece que tienes Orbot instalado. ¿Quieres usar Tor?</string>
     <string name="install_orbot">Por favor, instala Orbot para usar Tor.</string>

@@ -115,7 +115,7 @@
     <string name="title_sign_in">로그인</string>
     <string name="hint_username">사용자 이름</string>
     <string name="hint_password">암호</string>
-    <string name="google_suggestions">검색 제안</string>
+    <string name="search_suggestions">검색 제안</string>
     <string name="powered_by_google">Google이 제공함</string>
     <string name="use_tor_prompt">Orbot이 설치되어 있습니다. Tor를 사용할까요?</string>
     <string name="install_orbot">Tor를 사용하려면 Orbot을 설치하세요.</string>

@@ -2,8 +2,13 @@ package acr.browser.lightning.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,7 +43,6 @@ public class PreferenceManager {
         public static final String USE_WIDE_VIEWPORT = "wideviewport";
         public static final String USER_AGENT = "agentchoose";
         public static final String USER_AGENT_STRING = "userAgentString";
-        public static final String GOOGLE_SEARCH_SUGGESTIONS = "GoogleSearchSuggestions";
         public static final String CLEAR_HISTORY_EXIT = "clearHistoryExit";
         public static final String CLEAR_COOKIES_EXIT = "clearCookiesExit";
         public static final String SAVE_URL = "saveUrl";
@@ -55,6 +59,7 @@ public class PreferenceManager {
         public static final String DO_NOT_TRACK = "doNotTrack";
         public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
         public static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
+        public static final String SEARCH_SUGGESTIONS = "searchSuggestions";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -66,6 +71,12 @@ public class PreferenceManager {
         public static final String LEAK_CANARY = "leakCanary";
     }
 
+    public enum Suggestion {
+        SUGGESTION_GOOGLE,
+        SUGGESTION_DUCK,
+        SUGGESTION_NONE
+    }
+
     @NonNull private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
@@ -73,6 +84,19 @@ public class PreferenceManager {
     @Inject
     PreferenceManager(@NonNull final Context context) {
         mPrefs = context.getSharedPreferences(PREFERENCES, 0);
+    }
+
+    @NonNull
+    public Suggestion getSearchSuggestionChoice() {
+        try {
+            return Suggestion.valueOf(mPrefs.getString(Name.SEARCH_SUGGESTIONS, Suggestion.SUGGESTION_GOOGLE.name()));
+        } catch (IllegalArgumentException ignored) {
+            return Suggestion.SUGGESTION_NONE;
+        }
+    }
+
+    public void setSearchSuggestionChoice(@NonNull Suggestion suggestion) {
+        putString(Name.SEARCH_SUGGESTIONS, suggestion.name());
     }
 
     public boolean getBookmarksAndTabsSwapped() {
@@ -138,10 +162,6 @@ public class PreferenceManager {
 
     public boolean getFullScreenEnabled() {
         return mPrefs.getBoolean(Name.FULL_SCREEN, false);
-    }
-
-    public boolean getGoogleSearchSuggestionsEnabled() {
-        return mPrefs.getBoolean(Name.GOOGLE_SEARCH_SUGGESTIONS, true);
     }
 
     public boolean getHideStatusBarEnabled() {
@@ -352,10 +372,6 @@ public class PreferenceManager {
 
     public void setFullScreenEnabled(boolean enable) {
         putBoolean(Name.FULL_SCREEN, enable);
-    }
-
-    public void setGoogleSearchSuggestionsEnabled(boolean enabled) {
-        putBoolean(Name.GOOGLE_SEARCH_SUGGESTIONS, enabled);
     }
 
     public void setHideStatusBarEnabled(boolean enable) {

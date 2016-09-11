@@ -83,6 +83,11 @@ public final class DuckSuggestionsTask {
         return sLanguage;
     }
 
+    @NonNull
+    private static String getQueryUrl(@NonNull String query) {
+        return "https://duckduckgo.com/ac/?q=" + query;
+    }
+
     void run() {
         List<HistoryItem> filter = new ArrayList<>(5);
         try {
@@ -135,7 +140,8 @@ public final class DuckSuggestionsTask {
      */
     @NonNull
     private static File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
-        File cacheFile = new File(app.getCacheDir(), query.hashCode() + Suggestions.CACHE_FILE_TYPE);
+        String queryUrl = getQueryUrl(query);
+        File cacheFile = new File(app.getCacheDir(), queryUrl.hashCode() + Suggestions.CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
@@ -145,7 +151,7 @@ public final class DuckSuggestionsTask {
         InputStream in = null;
         FileOutputStream fos = null;
         try {
-            URL url = new URL("https://duckduckgo.com/ac/?q=" + query);
+            URL url = new URL(queryUrl);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.setRequestProperty("Accept-Encoding", "gzip");
