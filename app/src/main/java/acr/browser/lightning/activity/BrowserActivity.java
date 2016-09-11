@@ -1164,9 +1164,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public synchronized void onBackPressed() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
-            mDrawerLayout.closeDrawer(mDrawerLeft);
-        } else if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
+        if (mDrawerLayout.isDrawerOpen(getTabDrawer())) {
+            mDrawerLayout.closeDrawer(getTabDrawer());
+        } else if (mDrawerLayout.isDrawerOpen(getBookmarkDrawer())) {
             mEventBus.post(new BrowserEvents.UserPressedBack());
         } else {
             if (currentTab != null) {
@@ -1494,14 +1494,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         new HistoryPage(mTabsManager.getCurrentTab(), getApplication(), mHistoryDatabase).load();
     }
 
+    private View getBookmarkDrawer() {
+        return mSwapBookmarksAndTabs ? mDrawerLeft : mDrawerRight;
+    }
+
+    private View getTabDrawer() {
+        return mSwapBookmarksAndTabs ? mDrawerRight : mDrawerLeft;
+    }
+
     /**
      * helper function that opens the bookmark drawer
      */
     private void openBookmarks() {
-        if (mDrawerLayout.isDrawerOpen(mDrawerLeft)) {
+        if (mDrawerLayout.isDrawerOpen(getTabDrawer())) {
             mDrawerLayout.closeDrawers();
         }
-        mDrawerLayout.openDrawer(mDrawerRight);
+        mDrawerLayout.openDrawer(getBookmarkDrawer());
     }
 
     /**
@@ -2022,7 +2030,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (mSearch != null && mSearch.hasFocus()) {
                     currentTab.requestFocus();
                 } else if (mShowTabsInDrawer) {
-                    mDrawerLayout.openDrawer(mDrawerLeft);
+                    mDrawerLayout.openDrawer(getTabDrawer());
                 } else {
                     currentTab.loadHomepage();
                 }
