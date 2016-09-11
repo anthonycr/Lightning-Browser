@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -39,7 +38,6 @@ public class GoogleSuggestionsTask {
 
     private static final String TAG = RetrieveSuggestionsTask.class.getSimpleName();
 
-    private static final Pattern SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
     private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toMillis(1);
     private static final String DEFAULT_LANGUAGE = "en";
@@ -89,7 +87,6 @@ public class GoogleSuggestionsTask {
     void run() {
         List<HistoryItem> filter = new ArrayList<>(5);
         try {
-            mQuery = SPACE_PATTERN.matcher(mQuery).replaceAll("+");
             mQuery = URLEncoder.encode(mQuery, ENCODING);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

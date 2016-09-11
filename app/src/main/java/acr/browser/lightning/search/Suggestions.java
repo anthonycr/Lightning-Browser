@@ -332,7 +332,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
                 mSuggestions.clearSuggestions();
                 return results;
             }
-            String query = constraint.toString().toLowerCase(Locale.getDefault());
+            String query = constraint.toString().toLowerCase(Locale.getDefault()).trim();
 
             if (mSuggestions.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress()) {
                 mSuggestions.getSuggestionsForQuery(query)
