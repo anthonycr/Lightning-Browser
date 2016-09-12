@@ -226,5 +226,7 @@
     <string name="dialog_copy_link">复制链接</string>
     <string name="dialog_download_image">下载图像</string>
     <string name="dialog_edit_bookmark">编辑书签</string>
+    <string name="search_suggestions_off">无搜索建议</string>
+    <string name="swap_bookmarks_and_tabs">交换书签和标签抽屉</string>
     <!-- <string name="exit">退出</string> -->
 </resources>
