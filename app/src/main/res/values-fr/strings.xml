@@ -142,7 +142,7 @@
     <string name="title_sign_in">Connexion</string>
     <string name="hint_username">Nom d\'utilisateur</string>
     <string name="hint_password">Mot de passe</string>
-    <string name="google_suggestions">Suggestions de recherche</string>
+    <string name="search_suggestions">Suggestions de recherche</string>
     <string name="powered_by_google">Proposé par Google</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">

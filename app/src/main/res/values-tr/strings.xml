@@ -116,7 +116,7 @@
     <string name="title_sign_in">Giriş Yap</string>
     <string name="hint_username">Kullanıcı adı</string>
     <string name="hint_password">Parola</string>
-    <string name="google_suggestions">Önerilenleri ara</string>
+    <string name="search_suggestions">Önerilenleri ara</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="use_tor_prompt">Cihazında Orbot yüklü görünüyor. Tor kullanmak ister misin?</string>
     <string name="install_orbot">Tor proxy ağı ile gezinmek için Orbot yüklemelisin.</string>

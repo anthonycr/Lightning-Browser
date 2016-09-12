@@ -132,7 +132,7 @@
     <string name="title_sign_in">Anmelden</string>
     <string name="hint_username">Benutzername</string>
     <string name="hint_password">Passwort</string>
-    <string name="google_suggestions">Suchvorschläge</string>
+    <string name="search_suggestions">Suchvorschläge</string>
     <string name="powered_by_google">Unterstützt durch Google</string>
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
     <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>

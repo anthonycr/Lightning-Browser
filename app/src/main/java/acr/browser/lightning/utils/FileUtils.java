@@ -8,11 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import acr.browser.lightning.app.BrowserApp;
@@ -132,6 +135,17 @@ public class FileUtils {
         } finally {
             Utils.close(outputStream);
         }
+    }
+
+    @NonNull
+    public static String readStringFromFile(@NonNull InputStream inputStream, @NonNull String encoding) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, encoding));
+        StringBuilder result = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.append(line);
+        }
+        return result.toString();
     }
 
 }

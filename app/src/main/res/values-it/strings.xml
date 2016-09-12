@@ -132,7 +132,7 @@
     <string name="title_sign_in">Registrati</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
-    <string name="google_suggestions">Suggerimenti di ricerca</string>
+    <string name="search_suggestions">Suggerimenti di ricerca</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">

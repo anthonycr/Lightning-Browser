@@ -18,6 +18,12 @@
         <item>@string/action_bookmarks</item>
         <item>@string/action_webpage</item>
     </string-array>
+
+    <string-array name="suggestions">
+        <item>@string/powered_by_google</item>
+        <item>@string/powered_by_duck</item>
+        <item>@string/search_suggestions_off</item>
+    </string-array>
     
     <string-array name="text_size">
         <item>@string/size_largest</item>

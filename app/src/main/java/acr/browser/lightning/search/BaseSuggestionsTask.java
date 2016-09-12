@@ -9,11 +9,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,61 +21,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
-import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import javax.net.ssl.HttpsURLConnection;
+
 import acr.browser.lightning.database.HistoryItem;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
 import acr.browser.lightning.utils.Utils;
 
-public class SuggestionsTask {
+abstract class BaseSuggestionsTask {
 
-    private static final String TAG = RetrieveSuggestionsTask.class.getSimpleName();
+    private static final String TAG = BaseSuggestionsTask.class.getSimpleName();
 
-    private static final Pattern SPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
-    private static final String ENCODING = "ISO-8859-1";
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toMillis(1);
     private static final String DEFAULT_LANGUAGE = "en";
-    @Nullable private static XmlPullParser sXpp;
     @Nullable private static String sLanguage;
     @NonNull private final SuggestionsResult mResultCallback;
     @NonNull private final Application mApplication;
-    @NonNull private final String mSearchSubtitle;
     @NonNull private String mQuery;
 
-    private static volatile boolean sIsTaskExecuting = false;
+    protected abstract String getQueryUrl(@NonNull String query, @NonNull String language);
 
-    public static boolean isRequestInProgress() {
-        return sIsTaskExecuting;
-    }
+    protected abstract void parseResults(FileInputStream inputStream, List<HistoryItem> results) throws Exception;
 
-    public static Observable<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context) {
-        return Observable.create(new Action<List<HistoryItem>>() {
-            @Override
-            public void onSubscribe(@NonNull final Subscriber<List<HistoryItem>> subscriber) {
-                sIsTaskExecuting = true;
-                new SuggestionsTask(query, BrowserApp.get(context), new SuggestionsResult() {
-                    @Override
-                    public void resultReceived(@NonNull List<HistoryItem> searchResults) {
-                        subscriber.onNext(searchResults);
-                        subscriber.onComplete();
-                    }
-                }).run();
-                sIsTaskExecuting = false;
-            }
-        });
-    }
+    protected abstract String getEncoding();
 
-    private SuggestionsTask(@NonNull String query,
-                            @NonNull Application application,
-                            @NonNull SuggestionsResult callback) {
+    BaseSuggestionsTask(@NonNull String query,
+                        @NonNull Application application,
+                        @NonNull SuggestionsResult callback) {
         mQuery = query;
         mResultCallback = callback;
         mApplication = application;
-        mSearchSubtitle = mApplication.getString(R.string.suggestion);
     }
 
     @NonNull
@@ -94,50 +64,25 @@ public class SuggestionsTask {
         return sLanguage;
     }
 
-    @NonNull
-    private static synchronized XmlPullParser getParser() throws XmlPullParserException {
-        if (sXpp == null) {
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            sXpp = factory.newPullParser();
-        }
-        return sXpp;
-    }
-
-    private void run() {
+    void run() {
         List<HistoryItem> filter = new ArrayList<>(5);
         try {
-            mQuery = SPACE_PATTERN.matcher(mQuery).replaceAll("+");
-            URLEncoder.encode(mQuery, ENCODING);
+            mQuery = URLEncoder.encode(mQuery, getEncoding());
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to encode the URL", e);
         }
         File cache = downloadSuggestionsForQuery(mQuery, getLanguage(), mApplication);
         if (!cache.exists()) {
             post(filter);
             return;
         }
-        InputStream fileInput = null;
+        FileInputStream fileInput = null;
         try {
-            fileInput = new BufferedInputStream(new FileInputStream(cache));
-            XmlPullParser parser = getParser();
-            parser.setInput(fileInput, ENCODING);
-            int eventType = parser.getEventType();
-            int counter = 0;
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG && "suggestion".equals(parser.getName())) {
-                    String suggestion = parser.getAttributeValue(null, "data");
-                    filter.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
-                            suggestion, R.drawable.ic_search));
-                    counter++;
-                    if (counter >= 5) {
-                        break;
-                    }
-                }
-                eventType = parser.next();
-            }
+            fileInput = new FileInputStream(cache);
+            parseResults(fileInput, filter);
         } catch (Exception e) {
             post(filter);
+            Log.e(TAG, "Unable to parse results", e);
             return;
         } finally {
             Utils.close(fileInput);
@@ -157,8 +102,9 @@ public class SuggestionsTask {
      * @return the cache file containing the suggestions
      */
     @NonNull
-    private static File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
-        File cacheFile = new File(app.getCacheDir(), query.hashCode() + Suggestions.CACHE_FILE_TYPE);
+    private File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
+        String queryUrl = getQueryUrl(query, language);
+        File cacheFile = new File(app.getCacheDir(), queryUrl.hashCode() + Suggestions.CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
@@ -168,22 +114,22 @@ public class SuggestionsTask {
         InputStream in = null;
         FileOutputStream fos = null;
         try {
-            // Old API that doesn't support HTTPS
-            // http://google.com/complete/search?q= + query + &output=toolbar&hl= + language
-            URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&hl="
-                    + language + "&q=" + query);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            URL url = new URL(queryUrl);
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setDoInput(true);
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.connect();
             if (connection.getResponseCode() >= HttpURLConnection.HTTP_MULT_CHOICE ||
-                    connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
+                connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
                 Log.e(TAG, "Search API Responded with code: " + connection.getResponseCode());
                 connection.disconnect();
                 return cacheFile;
             }
+
             in = connection.getInputStream();
 
             if (in != null) {
+                in = new GZIPInputStream(in);
                 //noinspection IOResourceOpenedButNotSafelyClosed
                 fos = new FileOutputStream(cacheFile);
                 int buffer;
@@ -211,8 +157,8 @@ public class SuggestionsTask {
     @Nullable
     private static NetworkInfo getActiveNetworkInfo(@NonNull Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
-                .getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+            .getApplicationContext()
+            .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
             return null;
         }

@@ -142,7 +142,7 @@
     <string name="title_sign_in">Пријава</string>
     <string name="hint_username">Корисничко име</string>
     <string name="hint_password">Лозинка</string>
-    <string name="google_suggestions">Предлози претраге</string>
+    <string name="search_suggestions">Предлози претраге</string>
     <string name="powered_by_google">Погоњено Гуглом</string>
     <string name="http_proxy">ХТТП прокси</string>
     <string-array name="proxy_choices_array">

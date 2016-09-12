@@ -116,7 +116,7 @@
     <string name="title_sign_in">Εγγραφή</string>
     <string name="hint_username">Όνομα χρήστη</string>
     <string name="hint_password">Κώδικός</string>
-    <string name="google_suggestions">Προτάσεις αναζήτησης</string>
+    <string name="search_suggestions">Προτάσεις αναζήτησης</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="use_tor_prompt">Φαίνεται οτι έχετε εγκατεστημένο το Orbot. Θα θέλατε να χρησιμοποιήσετε το Tor?</string>
     <string name="install_orbot">Παρακαλώ εγκαταστήστε το Orbot για να χρησιμοποιήσετε το Tor.</string>

@@ -3,10 +3,6 @@
 
     <PreferenceCategory android:title="@string/settings_general">
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="cb_drawertabs"
-            android:title="@string/tabs_in_drawer" />
-        <CheckBoxPreference
             android:defaultValue="false"
             android:key="cb_flash"
             android:title="@string/flash" />
@@ -41,10 +37,8 @@
         <Preference
             android:key="search"
             android:title="@string/search" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="google_suggestions"
-            android:title="@string/google_suggestions"
-            android:summary="@string/powered_by_google" />
+        <Preference
+            android:key="suggestions_choice"
+            android:title="@string/search_suggestions" />
     </PreferenceCategory>
 </PreferenceScreen>

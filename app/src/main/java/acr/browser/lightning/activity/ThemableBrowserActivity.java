@@ -68,7 +68,7 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
         return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
-    private void restart() {
+    protected void restart() {
         finish();
         startActivity(new Intent(this, getClass()));
     }

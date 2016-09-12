@@ -249,7 +249,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
             }
         });
         Dialog dialog = builder.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
+        BrowserDialog.setDialogSize(activity, dialog);
     }
 
     @NonNull
@@ -315,7 +315,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
             }
         });
         Dialog dialog = builder.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
+        BrowserDialog.setDialogSize(activity, dialog);
     }
 
     @Nullable
