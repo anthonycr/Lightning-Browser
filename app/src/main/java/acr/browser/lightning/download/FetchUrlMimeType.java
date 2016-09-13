@@ -95,7 +95,7 @@ class FetchUrlMimeType extends Thread {
             if (mimeType.equalsIgnoreCase("text/plain")
                 || mimeType.equalsIgnoreCase("application/octet-stream")) {
                 String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    MimeTypeMap.getFileExtensionFromUrl(mUri));
+                    DownloadHandler.guessFileExtension(mUri));
                 if (newMimeType != null) {
                     mRequest.setMimeType(newMimeType);
                 }

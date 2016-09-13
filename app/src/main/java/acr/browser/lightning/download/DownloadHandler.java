@@ -19,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
 import com.squareup.otto.Bus;
@@ -44,9 +45,17 @@ public class DownloadHandler {
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     public static final String DEFAULT_DOWNLOAD_PATH =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    .getPath();
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            .getPath();
 
+    @Nullable
+    public static String guessFileExtension(@NonNull String filename) {
+        int lastIndex = filename.lastIndexOf('.') + 1;
+        if (lastIndex > 0 && filename.length() > lastIndex) {
+            return filename.substring(lastIndex, filename.length());
+        }
+        return null;
+    }
 
     /**
      * Notify the host application a download should be done, or that the data
@@ -60,10 +69,16 @@ public class DownloadHandler {
      */
     public static void onDownloadStart(@NonNull Context context, @NonNull PreferenceManager manager, String url, String userAgent,
                                        @Nullable String contentDisposition, String mimetype) {
+
+        Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
+        Log.d(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
+        Log.d(TAG, "DOWNLOAD: Mimetype: " + mimetype);
+        Log.d(TAG, "DOWNLOAD: User agent: " + userAgent);
+
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
         if (contentDisposition == null
-                || !contentDisposition.regionMatches(true, 0, "attachment", 0, 10)) {
+            || !contentDisposition.regionMatches(true, 0, "attachment", 0, 10)) {
             // query the package manager to see if there's a registered handler
             // that matches.
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -75,12 +90,12 @@ public class DownloadHandler {
                 intent.setSelector(null);
             }
             ResolveInfo info = context.getPackageManager().resolveActivity(intent,
-                    PackageManager.MATCH_DEFAULT_ONLY);
+                PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {
                 // If we resolved to ourselves, we don't want to attempt to
                 // load the url only to try and download it again.
                 if (BuildConfig.APPLICATION_ID.equals(info.activityInfo.packageName)
-                        || MainActivity.class.getName().equals(info.activityInfo.name)) {
+                    || MainActivity.class.getName().equals(info.activityInfo.name)) {
                     // someone (other than us) knows how to handle this mime
                     // type with this scheme, don't download.
                     try {
@@ -160,8 +175,8 @@ public class DownloadHandler {
             }
 
             Dialog dialog = new AlertDialog.Builder(context).setTitle(title)
-                    .setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
-                    .setPositiveButton(R.string.action_ok, null).show();
+                .setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
+                .setPositiveButton(R.string.action_ok, null).show();
             BrowserDialog.setDialogSize(context, dialog);
             return;
         }
@@ -189,11 +204,10 @@ public class DownloadHandler {
             eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
             return;
         }
-        request.setMimeType(mimetype);
+
         // set downloaded file destination to /sdcard/Download.
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
-
         String location = preferences.getDownloadDirectory();
         Uri downloadFolder;
         location = addNecessarySlashes(location);
@@ -210,6 +224,9 @@ public class DownloadHandler {
             eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
             return;
         }
+        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(guessFileExtension(filename));
+        Log.d(TAG, "New mimetype: " + newMimeType);
+        request.setMimeType(newMimeType);
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
         // let this downloaded file be scanned by MediaScanner - so that it can
         // show up in Gallery app, for example.
@@ -221,6 +238,8 @@ public class DownloadHandler {
         String cookies = CookieManager.getInstance().getCookie(url);
         request.addRequestHeader(COOKIE_REQUEST_HEADER, cookies);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+        //noinspection VariableNotUsedInsideIf
         if (mimetype == null) {
             Log.d(TAG, "Mimetype is null");
             if (TextUtils.isEmpty(addressString)) {
@@ -232,7 +251,7 @@ public class DownloadHandler {
         } else {
             Log.d(TAG, "Valid mimetype, attempting to download");
             final DownloadManager manager = (DownloadManager) context
-                    .getSystemService(Context.DOWNLOAD_SERVICE);
+                .getSystemService(Context.DOWNLOAD_SERVICE);
             try {
                 manager.enqueue(request);
             } catch (IllegalArgumentException e) {
@@ -245,9 +264,8 @@ public class DownloadHandler {
                 eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
             }
             eventBus.post(new BrowserEvents.ShowSnackBarMessage(
-                    context.getString(R.string.download_pending) + ' ' + filename));
+                context.getString(R.string.download_pending) + ' ' + filename));
         }
-
     }
 
     private static final String sFileName = "test";
