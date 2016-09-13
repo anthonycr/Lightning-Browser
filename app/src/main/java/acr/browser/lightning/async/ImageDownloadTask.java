@@ -1,5 +1,6 @@
 package acr.browser.lightning.async;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,7 +27,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
     @NonNull private final WeakReference<ImageView> mFaviconImage;
-    @NonNull private final WeakReference<Context> mContextReference;
+    @NonNull private final Application mContext;
     @NonNull private final HistoryItem mWeb;
     private final String mUrl;
     @NonNull private final Bitmap mDefaultBitmap;
@@ -34,7 +35,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
     public ImageDownloadTask(@NonNull ImageView bmImage,
                              @NonNull HistoryItem web,
                              @NonNull Bitmap defaultBitmap,
-                             @NonNull Context context) {
+                             @NonNull Application context) {
         // Set a tag on the ImageView so we know if the view
         // has gone out of scope and should not be used
         bmImage.setTag(web.getUrl().hashCode());
@@ -42,7 +43,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         this.mWeb = web;
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
-        this.mContextReference = new WeakReference<>(context.getApplicationContext());
+        this.mContext = context;
     }
 
     @NonNull
@@ -53,11 +54,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         if (mUrl == null) {
             return mDefaultBitmap;
         }
-        Context context = mContextReference.get();
-        if (context == null) {
-            return mDefaultBitmap;
-        }
-        File cache = context.getCacheDir();
+        File cache = mContext.getCacheDir();
         final Uri uri = Uri.parse(mUrl);
         if (uri.getHost() == null || uri.getScheme() == null) {
             return mDefaultBitmap;

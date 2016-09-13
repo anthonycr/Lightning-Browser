@@ -399,7 +399,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 holder.favicon.setImageBitmap(mFolderBitmap);
             } else if (web.getBitmap() == null) {
                 holder.favicon.setImageBitmap(mWebpageBitmap);
-                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap, context)
+                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap, BrowserApp.get(context))
                     .executeOnExecutor(AsyncExecutor.getInstance());
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());

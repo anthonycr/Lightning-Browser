@@ -7,6 +7,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,6 +24,8 @@ import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
 public class HistoryPage extends AsyncTask<Void, Void, Void> {
+
+    private static final String TAG = HistoryPage.class.getSimpleName();
 
     public static final String FILENAME = "history.html";
 
@@ -95,7 +98,7 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
             historyWriter = new FileWriter(historyWebPage, false);
             historyWriter.write(historyBuilder.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to write history page to disk", e);
         } finally {
             Utils.close(historyWriter);
         }

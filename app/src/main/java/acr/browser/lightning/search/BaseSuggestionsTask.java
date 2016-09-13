@@ -118,6 +118,7 @@ abstract class BaseSuggestionsTask {
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.setRequestProperty("Accept-Encoding", "gzip");
+            connection.setRequestProperty("Accept-Charset", getEncoding());
             connection.connect();
             if (connection.getResponseCode() >= HttpURLConnection.HTTP_MULT_CHOICE ||
                 connection.getResponseCode() < HttpURLConnection.HTTP_OK) {

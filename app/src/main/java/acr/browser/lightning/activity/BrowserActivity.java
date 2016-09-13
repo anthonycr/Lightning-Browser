@@ -2073,27 +2073,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return true;
     }
 
-    // TODO Check if all the calls are relative to TabsFragement
-
-    /**
-     * A utility method that creates a FrameLayout button with the given ID and
-     * sets the image of the button to the given image ID. The OnClick and OnLongClick
-     * listeners are set to this class, so BrowserActivity should handle those events
-     * there. Additionally, it tints the images according to the current theme.
-     * This method only is a convenience so that this code does not have to be repeated
-     * for the several "Buttons" that use this.
-     *
-     * @param buttonId the view id of the button
-     * @param imageId  the image to set as the button image
-     */
-    private void setupFrameLayoutButton(@IdRes int buttonId, @IdRes int imageId) {
-        final View frameButton = findViewById(buttonId);
-        final ImageView buttonImage = (ImageView) findViewById(imageId);
-        frameButton.setOnClickListener(this);
-        frameButton.setOnLongClickListener(this);
-        buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
-    }
-
     /**
      * This NetworkReceiver notifies each of the WebViews in the browser whether
      * the network is currently connected or not. This is important because some
@@ -2102,10 +2081,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private final NetworkReceiver mNetworkReceiver = new NetworkReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            super.onReceive(context, intent);
-            boolean isConnected = isConnected(context);
-            Log.d(TAG, "Network Connected: " + String.valueOf(isConnected));
+        public void onConnectivityChange(boolean isConnected) {
+            Log.d(TAG, "Network Connected: " + isConnected);
             mTabsManager.notifyConnectionStatus(isConnected);
         }
     };

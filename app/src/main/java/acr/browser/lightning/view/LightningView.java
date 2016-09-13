@@ -193,10 +193,10 @@ public class LightningView {
             return;
         }
         switch (sHomepage) {
-            case "about:home":
+            case Constants.SCHEME_HOMEPAGE:
                 loadStartpage();
                 break;
-            case "about:bookmarks":
+            case Constants.SCHEME_BOOKMARKS:
                 loadBookmarkpage();
                 break;
             default:

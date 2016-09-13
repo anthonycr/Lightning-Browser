@@ -2,13 +2,8 @@ package acr.browser.lightning.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -170,7 +165,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getHomepage() {
-        return mPrefs.getString(Name.HOMEPAGE, Constants.HOMEPAGE);
+        return mPrefs.getString(Name.HOMEPAGE, Constants.SCHEME_HOMEPAGE);
     }
 
     public boolean getIncognitoCookiesEnabled() {

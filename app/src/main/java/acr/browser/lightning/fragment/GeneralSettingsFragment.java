@@ -124,11 +124,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         }
 
 
-        if (mHomepage.contains("about:home")) {
+        if (mHomepage.contains(Constants.SCHEME_HOMEPAGE)) {
             home.setSummary(getResources().getString(R.string.action_homepage));
-        } else if (mHomepage.contains("about:blank")) {
+        } else if (mHomepage.contains(Constants.SCHEME_BLANK)) {
             home.setSummary(getResources().getString(R.string.action_blank));
-        } else if (mHomepage.contains("about:bookmarks")) {
+        } else if (mHomepage.contains(Constants.SCHEME_BOOKMARKS)) {
             home.setSummary(getResources().getString(R.string.action_bookmarks));
         } else {
             home.setSummary(mHomepage);
@@ -316,11 +316,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         picker.setTitle(getResources().getString(R.string.home));
         mHomepage = mPreferenceManager.getHomepage();
         int n;
-        if (mHomepage.contains("about:home")) {
+        if (mHomepage.startsWith(Constants.SCHEME_HOMEPAGE)) {
             n = 1;
-        } else if (mHomepage.contains("about:blank")) {
+        } else if (mHomepage.startsWith(Constants.SCHEME_BLANK)) {
             n = 2;
-        } else if (mHomepage.contains("about:bookmarks")) {
+        } else if (mHomepage.startsWith(Constants.SCHEME_BOOKMARKS)) {
             n = 3;
         } else {
             n = 4;
@@ -332,15 +332,15 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which + 1) {
                         case 1:
-                            mPreferenceManager.setHomepage("about:home");
+                            mPreferenceManager.setHomepage(Constants.SCHEME_HOMEPAGE);
                             home.setSummary(getResources().getString(R.string.action_homepage));
                             break;
                         case 2:
-                            mPreferenceManager.setHomepage("about:blank");
+                            mPreferenceManager.setHomepage(Constants.SCHEME_BLANK);
                             home.setSummary(getResources().getString(R.string.action_blank));
                             break;
                         case 3:
-                            mPreferenceManager.setHomepage("about:bookmarks");
+                            mPreferenceManager.setHomepage(Constants.SCHEME_BOOKMARKS);
                             home.setSummary(getResources().getString(R.string.action_bookmarks));
                             break;
                         case 4:
@@ -402,7 +402,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         homePicker.setTitle(getResources().getString(R.string.title_custom_homepage));
         final EditText getHome = new EditText(mActivity);
         mHomepage = mPreferenceManager.getHomepage();
-        if (!mHomepage.startsWith("about:")) {
+        if (!mHomepage.startsWith(Constants.ABOUT)) {
             getHome.setText(mHomepage);
         } else {
             String defaultUrl = "https://www.google.com";

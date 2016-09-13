@@ -216,10 +216,6 @@ public final class Utils {
             return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
-    public static String[] getArray(@NonNull String input) {
-        return input.split(Constants.SEPARATOR);
-    }
-
     public static void trimCache(@NonNull Context context) {
         try {
             File dir = context.getCacheDir();

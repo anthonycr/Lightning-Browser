@@ -295,7 +295,7 @@ public class LightningWebClient extends WebViewClient {
                 // If we are in incognito, immediately load, we don't want the url to leave the app
                 return super.shouldOverrideUrlLoading(view, url);
             }
-            if (url.startsWith("about:")) {
+            if (url.startsWith(Constants.ABOUT)) {
                 // If this is an about page, immediately load, we don't need to leave the app
                 return super.shouldOverrideUrlLoading(view, url);
             }
@@ -310,7 +310,7 @@ public class LightningWebClient extends WebViewClient {
                 view.loadUrl(url, headers);
                 return true;
             }
-            if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
+            if (url.startsWith(Constants.ABOUT) && Utils.doesSupportHeaders()) {
                 // If this is an about page, immediately load, we don't need to leave the app
                 view.loadUrl(url, headers);
                 return true;
