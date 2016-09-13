@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -441,6 +442,9 @@ public class TabsManager {
         Log.d(Constants.TAG, "Saving tab state");
         for (int n = 0; n < mTabList.size(); n++) {
             LightningView tab = mTabList.get(n);
+            if (TextUtils.isEmpty(tab.getUrl())) {
+                continue;
+            }
             Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
             if (tab.getWebView() != null && !UrlUtils.isSpecialUrl(tab.getUrl())) {
                 tab.getWebView().saveState(state);
