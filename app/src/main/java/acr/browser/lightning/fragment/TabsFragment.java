@@ -332,7 +332,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                         foregroundDrawable.setColorFilter(mUiController.getUiColor(), PorterDuff.Mode.SRC_IN);
                     }
                 }
-                if (!mIsIncognito && mColorMode) {
+                if (!mIsIncognito && mColorMode && !web.usingDefaultIcon()) {
                     mUiController.changeToolbarBackground(favicon, foregroundDrawable);
                 }
 
