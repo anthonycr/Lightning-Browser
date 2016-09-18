@@ -62,21 +62,21 @@ public class ProxyUtils {
             if (orbotInstalled && i2pInstalled) {
                 String[] proxyChoices = activity.getResources().getStringArray(R.array.proxy_choices_array);
                 builder.setTitle(activity.getResources().getString(R.string.http_proxy))
-                        .setSingleChoiceItems(proxyChoices, mPreferences.getProxyChoice(),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mPreferences.setProxyChoice(which);
-                                    }
-                                })
-                        .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (mPreferences.getUseProxy())
-                                            initializeProxy(activity);
-                                    }
-                                });
+                    .setSingleChoiceItems(proxyChoices, mPreferences.getProxyChoice(),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mPreferences.setProxyChoice(which);
+                            }
+                        })
+                    .setPositiveButton(activity.getResources().getString(R.string.action_ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (mPreferences.getUseProxy())
+                                    initializeProxy(activity);
+                            }
+                        });
             } else {
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
@@ -84,7 +84,7 @@ public class ProxyUtils {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 mPreferences.setProxyChoice(orbotInstalled ?
-                                        Constants.PROXY_ORBOT : Constants.PROXY_I2P);
+                                    Constants.PROXY_ORBOT : Constants.PROXY_I2P);
                                 initializeProxy(activity);
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -95,8 +95,8 @@ public class ProxyUtils {
                 };
 
                 builder.setMessage(orbotInstalled ? R.string.use_tor_prompt : R.string.use_i2p_prompt)
-                        .setPositiveButton(R.string.yes, dialogClickListener)
-                        .setNegativeButton(R.string.no, dialogClickListener);
+                    .setPositiveButton(R.string.yes, dialogClickListener)
+                    .setNegativeButton(R.string.no, dialogClickListener);
             }
             Dialog dialog = builder.show();
             BrowserDialog.setDialogSize(activity, dialog);
@@ -114,14 +114,12 @@ public class ProxyUtils {
             case Constants.NO_PROXY:
                 // We shouldn't be here
                 return;
-
             case Constants.PROXY_ORBOT:
                 if (!OrbotHelper.isOrbotRunning(activity))
                     OrbotHelper.requestStartTor(activity);
                 host = "localhost";
                 port = 8118;
                 break;
-
             case Constants.PROXY_I2P:
                 mI2PProxyInitialized = true;
                 if (mI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
@@ -130,10 +128,14 @@ public class ProxyUtils {
                 host = "localhost";
                 port = 4444;
                 break;
-
             default:
                 host = mPreferences.getProxyHost();
                 port = mPreferences.getProxyPort();
+                break;
+            case Constants.PROXY_MANUAL:
+                host = mPreferences.getProxyHost();
+                port = mPreferences.getProxyPort();
+                break;
         }
 
         try {
@@ -191,6 +193,7 @@ public class ProxyUtils {
         }
     }
 
+    @Constants.PROXY
     public static int setProxyChoice(int choice, @NonNull Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:

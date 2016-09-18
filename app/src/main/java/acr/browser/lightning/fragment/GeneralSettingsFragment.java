@@ -231,7 +231,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void setProxyChoice(int choice) {
+    private void setProxyChoice(@Constants.PROXY int choice) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 choice = ProxyUtils.setProxyChoice(choice, mActivity);
@@ -316,17 +316,22 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         picker.setTitle(getResources().getString(R.string.home));
         mHomepage = mPreferenceManager.getHomepage();
         int n;
-        if (mHomepage.startsWith(Constants.SCHEME_HOMEPAGE)) {
-            n = 1;
-        } else if (mHomepage.startsWith(Constants.SCHEME_BLANK)) {
-            n = 2;
-        } else if (mHomepage.startsWith(Constants.SCHEME_BOOKMARKS)) {
-            n = 3;
-        } else {
-            n = 4;
+        switch (mHomepage) {
+            case Constants.SCHEME_HOMEPAGE:
+                n = 0;
+                break;
+            case Constants.SCHEME_BLANK:
+                n = 1;
+                break;
+            case Constants.SCHEME_BOOKMARKS:
+                n = 2;
+                break;
+            default:
+                n = 3;
+                break;
         }
 
-        picker.setSingleChoiceItems(R.array.homepage, n - 1,
+        picker.setSingleChoiceItems(R.array.homepage, n,
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

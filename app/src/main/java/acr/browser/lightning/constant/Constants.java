@@ -3,6 +3,11 @@
  */
 package acr.browser.lightning.constant;
 
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import acr.browser.lightning.BuildConfig;
 
 public final class Constants {
@@ -66,6 +71,10 @@ public final class Constants {
     public static final String TAG = "Lightning";
 
     // These should match the order of @array/proxy_choices_array
+    @IntDef({NO_PROXY, PROXY_ORBOT, PROXY_I2P, PROXY_MANUAL})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PROXY {}
+
     public static final int NO_PROXY = 0;
     public static final int PROXY_ORBOT = 1;
     public static final int PROXY_I2P = 2;
