@@ -72,7 +72,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
     private final boolean mDarkTheme;
     private boolean mIsIncognito = true;
     @NonNull private final Context mContext;
-    PreferenceManager.Suggestion mSuggestionChoice;
+    private PreferenceManager.Suggestion mSuggestionChoice;
 
     public Suggestions(@NonNull Context context, boolean dark, boolean incognito) {
         super();

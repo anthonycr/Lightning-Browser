@@ -42,7 +42,7 @@ public class BookmarkLocalSync {
         mContext = context;
     }
 
-    public List<HistoryItem> getBookmarksFromContentUri(String contentUri) {
+    private List<HistoryItem> getBookmarksFromContentUri(String contentUri) {
         List<HistoryItem> list = new ArrayList<>();
         Cursor cursor = getBrowserCursor(contentUri);
         try {
@@ -186,7 +186,7 @@ public class BookmarkLocalSync {
         printColumns(STOCK_BOOKMARKS_CONTENT);
     }
 
-    public void printColumns(String contentProvider) {
+    private void printColumns(String contentProvider) {
         Cursor cursor = null;
         Log.e(TAG, contentProvider);
         Uri uri = Uri.parse(contentProvider);

@@ -374,8 +374,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             this.context = context;
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View row = convertView;
             BookmarkViewHolder holder;
 

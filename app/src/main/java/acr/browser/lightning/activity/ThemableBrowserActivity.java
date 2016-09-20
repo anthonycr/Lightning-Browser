@@ -49,7 +49,7 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
      * Called by onWindowFocusChanged only if
      * onResume has been called.
      */
-    public void onWindowVisibleToUserAfterResume() {
+    void onWindowVisibleToUserAfterResume() {
 
     }
 
@@ -68,7 +68,7 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
         return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
-    protected void restart() {
+    void restart() {
         finish();
         startActivity(new Intent(this, getClass()));
     }

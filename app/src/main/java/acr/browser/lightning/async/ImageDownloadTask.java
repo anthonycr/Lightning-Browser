@@ -1,7 +1,6 @@
 package acr.browser.lightning.async;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;

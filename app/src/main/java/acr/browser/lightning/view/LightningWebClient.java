@@ -278,8 +278,19 @@ public class LightningWebClient extends WebViewClient {
         BrowserDialog.setDialogSize(mActivity, alert);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
+    }
+
+    @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
+        return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
+    }
+
+    private boolean shouldOverrideLoading(WebView view, String url) {
         // Check if configured proxy is available
         if (!mProxyUtils.isProxyReady()) {
             // User has been notified
@@ -293,11 +304,11 @@ public class LightningWebClient extends WebViewClient {
         if (headers.isEmpty()) {
             if (mLightningView.isIncognito()) {
                 // If we are in incognito, immediately load, we don't want the url to leave the app
-                return super.shouldOverrideUrlLoading(view, url);
+                return false;
             }
             if (url.startsWith(Constants.ABOUT)) {
                 // If this is an about page, immediately load, we don't need to leave the app
-                return super.shouldOverrideUrlLoading(view, url);
+                return false;
             }
 
             if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
@@ -326,7 +337,7 @@ public class LightningWebClient extends WebViewClient {
             }
         }
         // If none of those instances was true, revert back to the old way of loading
-        return super.shouldOverrideUrlLoading(view, url);
+        return false;
     }
 
     private boolean isMailOrIntent(@NonNull String url, @NonNull WebView view) {

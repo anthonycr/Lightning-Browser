@@ -26,7 +26,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.download.DownloadHandler;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;

@@ -50,11 +50,13 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
+
 import com.anthonycr.bonsai.Action;
 import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Subscriber;
 import com.anthonycr.bonsai.OnSubscribe;
+
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
@@ -79,16 +81,16 @@ public class LightningView {
     private static String sDefaultUserAgent;
     private static float sMaxFling;
     private static final float[] sNegativeColorArray = {
-            -1.0f, 0, 0, 0, 255, // red
-            0, -1.0f, 0, 0, 255, // green
-            0, 0, -1.0f, 0, 255, // blue
-            0, 0, 0, 1.0f, 0 // alpha
+        -1.0f, 0, 0, 0, 255, // red
+        0, -1.0f, 0, 0, 255, // green
+        0, 0, -1.0f, 0, 255, // blue
+        0, 0, 0, 1.0f, 0 // alpha
     };
     private static final float[] sIncreaseContrastColorArray = {
-            2.0f, 0, 0, 0, -160.f, // red
-            0, 2.0f, 0, 0, -160.f, // green
-            0, 0, 2.0f, 0, -160.f, // blue
-            0, 0, 0, 1.0f, 0 // alpha
+        2.0f, 0, 0, 0, -160.f, // red
+        0, 2.0f, 0, 0, -160.f, // green
+        0, 0, 2.0f, 0, -160.f, // blue
+        0, 0, 0, 1.0f, 0 // alpha
     };
 
     @NonNull private final LightningViewTitle mTitle;
@@ -351,7 +353,7 @@ public class LightningView {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
-                    !mPreferences.getBlockThirdPartyCookiesEnabled());
+                !mPreferences.getBlockThirdPartyCookiesEnabled());
         }
     }
 
@@ -404,46 +406,49 @@ public class LightningView {
         }
 
         getPathObservable("appcache")
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new OnSubscribe<File>() {
+                @Override
+                public void onNext(File item) {
+                    settings.setAppCachePath(item.getPath());
+                }
+
+                @Override
+                public void onComplete() {}
+            });
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            getPathObservable("geolocation")
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<File>() {
                     @Override
                     public void onNext(File item) {
-                        settings.setAppCachePath(item.getPath());
-                    }
-
-                    @Override
-                    public void onComplete() {}
-                });
-
-        getPathObservable("geolocation")
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<File>() {
-                    @Override
-                    public void onNext(File item) {
+                        //noinspection deprecation
                         settings.setGeolocationDatabasePath(item.getPath());
                     }
 
                     @Override
                     public void onComplete() {}
                 });
+        }
 
         getPathObservable("databases")
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<File>() {
-                    @Override
-                    public void onNext(File item) {
-                        if (API < Build.VERSION_CODES.KITKAT) {
-                            //noinspection deprecation
-                            settings.setDatabasePath(item.getPath());
-                        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new OnSubscribe<File>() {
+                @Override
+                public void onNext(File item) {
+                    if (API < Build.VERSION_CODES.KITKAT) {
+                        //noinspection deprecation
+                        settings.setDatabasePath(item.getPath());
                     }
+                }
 
-                    @Override
-                    public void onComplete() {}
-                });
+                @Override
+                public void onComplete() {}
+            });
 
     }
 
@@ -698,7 +703,7 @@ public class LightningView {
                 break;
             case 1:
                 ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
-                        sNegativeColorArray);
+                    sNegativeColorArray);
                 mPaint.setColorFilter(filterInvert);
                 setHardwareRendering();
 
@@ -727,7 +732,7 @@ public class LightningView {
 
             case 4:
                 ColorMatrixColorFilter IncreaseHighContrast = new ColorMatrixColorFilter(
-                        sIncreaseContrastColorArray);
+                    sIncreaseContrastColorArray);
                 mPaint.setColorFilter(IncreaseHighContrast);
                 setHardwareRendering();
                 break;
