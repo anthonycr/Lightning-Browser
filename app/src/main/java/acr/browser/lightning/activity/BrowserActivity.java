@@ -1350,7 +1350,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         final int color = DrawableUtils.mixColor(interpolatedTime, mCurrentUiColor, finalColor);
                         if (mShowTabsInDrawer) {
                             mBackground.setColor(color);
-                            window.setBackgroundDrawable(mBackground);
+                            Handlers.MAIN.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    window.setBackgroundDrawable(mBackground);
+                                }
+                            });
                         } else if (tabBackground != null) {
                             tabBackground.setColorFilter(color, PorterDuff.Mode.SRC_IN);
                         }
