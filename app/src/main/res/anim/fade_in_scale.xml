@@ -4,7 +4,7 @@
         android:duration="@integer/animation_time_medium"
         android:fromXScale="0.85"
         android:fromYScale="0.85"
-        android:interpolator="@android:interpolator/decelerate_cubic"
+        android:interpolator="@anim/bezier_decelerate"
         android:pivotX="50%p"
         android:pivotY="50%p"
         android:toXScale="1.0"

@@ -29,6 +29,8 @@ import android.view.animation.DecelerateInterpolator;
 import java.util.ArrayList;
 import java.util.List;
 
+import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
+
 /**
  * This implementation of {@link RecyclerView.ItemAnimator} provides basic
  * animations on remove, add, and move events that happen to the items in
@@ -235,7 +237,7 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         mAddAnimations.add(holder);
         animation.alpha(1).translationX(0).setDuration(getAddDuration())
-                .setInterpolator(new DecelerateInterpolator()).setListener(new VpaListenerAdapter() {
+                .setInterpolator(new BezierDecelerateInterpolator()).setListener(new VpaListenerAdapter() {
                     @Override
                     public void onAnimationStart(View view) {
                         dispatchAddStarting(holder);
