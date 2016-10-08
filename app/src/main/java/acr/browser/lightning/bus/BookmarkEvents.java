@@ -26,14 +26,6 @@ public final class BookmarkEvents {
     }
 
     /**
-     * Sended by the {@link acr.browser.lightning.fragment.BookmarksFragment} when it wants to close
-     * itself (generally in reply to a {@link acr.browser.lightning.bus.BrowserEvents.UserPressedBack}
-     * event.
-     */
-    public static class CloseBookmarks {
-    }
-
-    /**
      * Sended when a bookmark is edited
      */
     public static class BookmarkChanged {

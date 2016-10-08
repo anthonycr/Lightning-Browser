@@ -39,7 +39,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.fragment.anim.HorizontalItemAnimator;
@@ -215,16 +214,16 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 mUiController.showCloseDialog(mTabsManager.indexOfCurrentTab());
                 break;
             case R.id.new_tab_button:
-                mBus.post(new TabEvents.NewTab());
+                mUiController.newTabClicked();
                 break;
             case R.id.action_back:
-                mBus.post(new NavigationEvents.GoBack());
+                mUiController.onBackButtonPressed();
                 break;
             case R.id.action_forward:
-                mBus.post(new NavigationEvents.GoForward());
+                mUiController.onForwardButtonPressed();
                 break;
             case R.id.action_home:
-                mBus.post(new NavigationEvents.GoHome());
+                mUiController.onHomeButtonPressed();
             default:
                 break;
         }
@@ -416,8 +415,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             @Override
             public boolean onLongClick(View v) {
-                // Show close dialog
-                mBus.post(new TabEvents.ShowCloseDialog(getAdapterPosition()));
+                mUiController.showCloseDialog(getAdapterPosition());
                 return true;
             }
         }

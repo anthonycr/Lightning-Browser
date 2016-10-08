@@ -341,4 +341,22 @@ public class BrowserPresenter {
         return true;
     }
 
+    public void onAutoCompleteItemPressed() {
+        final LightningView currentTab = mTabsModel.getCurrentTab();
+        if (currentTab != null) {
+            currentTab.requestFocus();
+        }
+    }
+
+    public void findInPage(@NonNull String query) {
+        final LightningView currentView = mTabsModel.getCurrentTab();
+        if (currentView != null) {
+            currentView.find(query);
+        }
+    }
+
+    public void onAppLowMemory() {
+        mTabsModel.freeMemory();
+    }
+
 }

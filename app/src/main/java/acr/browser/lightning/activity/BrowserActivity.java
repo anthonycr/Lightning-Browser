@@ -61,7 +61,6 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -95,12 +94,12 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
-import acr.browser.lightning.bus.NavigationEvents;
 import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
@@ -208,6 +207,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private BrowserPresenter mPresenter;
     private TabsView mTabsView;
+    private BookmarksView mBookmarksView;
 
     // Proxy
     @Inject ProxyUtils mProxyUtils;
@@ -301,6 +301,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         tabsFragment.setArguments(tabsFragmentArguments);
 
         final BookmarksFragment bookmarksFragment = new BookmarksFragment();
+        mBookmarksView = bookmarksFragment;
         final Bundle bookmarksFragmentArguments = new Bundle();
         bookmarksFragmentArguments.putBoolean(BookmarksFragment.INCOGNITO_MODE, isIncognito());
         bookmarksFragment.setArguments(bookmarksFragmentArguments);
@@ -338,7 +339,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
             updateTabNumber(0);
         } else {
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mSwapBookmarksAndTabs ? mDrawerRight : mDrawerLeft);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer());
             mArrowImage.setImageResource(R.drawable.ic_action_home);
             mArrowImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         }
@@ -719,8 +720,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Handle action buttons
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerRight)) {
-                    mDrawerLayout.closeDrawer(mDrawerRight);
+                if (mDrawerLayout.isDrawerOpen(getBookmarkDrawer())) {
+                    mDrawerLayout.closeDrawer(getBookmarkDrawer());
                 }
                 return true;
             case R.id.action_back:
@@ -858,17 +859,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 @Override
                 public void onClick(String text) {
                     if (!TextUtils.isEmpty(text)) {
-                        showSearchInterfaceBar(text);
+                        mPresenter.findInPage(text);
+                        showFindInPageControls(text);
                     }
                 }
             });
     }
 
-    private void showSearchInterfaceBar(String text) {
-        final LightningView currentView = mTabsManager.getCurrentTab();
-        if (currentView != null) {
-            currentView.find(text);
-        }
+    private void showFindInPageControls(@NonNull String text) {
         mSearchBar.setVisibility(View.VISIBLE);
 
         TextView tw = (TextView) findViewById(R.id.search_query);
@@ -898,7 +896,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             new BrowserDialog.Item(R.string.close_tab) {
                 @Override
                 public void onClick() {
-                    deleteTab(position);
+                    mPresenter.deleteTab(position);
                 }
             },
             new BrowserDialog.Item(R.string.close_other_tabs) {
@@ -1060,21 +1058,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void closeEmptyTab() {
-        final WebView currentWebView = mTabsManager.getCurrentWebView();
-        if (currentWebView != null && currentWebView.copyBackForwardList().getSize() == 0) {
-            closeCurrentTab();
-        }
-    }
-
-    private void closeCurrentTab() {
-        // don't delete the tab because the browser will close and mess stuff up
+        // Currently do nothing
+        // Possibly closing the current tab might close the browser
+        // and mess stuff up
     }
 
     @Override
     public void onTrimMemory(int level) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Log.d(TAG, "Low Memory, Free Memory");
-            mTabsManager.freeMemory();
+            mPresenter.onAppLowMemory();
         }
     }
 
@@ -1086,11 +1079,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void newTabClicked() {
         mPresenter.newTab(null, true);
-    }
-
-    // TODO move this to presenter
-    private synchronized void deleteTab(int position) {
-        mPresenter.deleteTab(position);
     }
 
     void performExitCleanUp() {
@@ -1178,7 +1166,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (mDrawerLayout.isDrawerOpen(getTabDrawer())) {
             mDrawerLayout.closeDrawer(getTabDrawer());
         } else if (mDrawerLayout.isDrawerOpen(getBookmarkDrawer())) {
-            mEventBus.post(new BrowserEvents.UserPressedBack());
+            mBookmarksView.navigateBack();
         } else {
             if (currentTab != null) {
                 Log.d(TAG, "onBackPressed");
@@ -1194,7 +1182,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     if (mCustomView != null || mCustomViewCallback != null) {
                         onHideCustomView();
                     } else {
-                        deleteTab(mTabsManager.positionOf(currentTab));
+                        mPresenter.deleteTab(mTabsManager.positionOf(currentTab));
                     }
                 }
             } else {
@@ -1491,10 +1479,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 searchTheWeb(url);
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getUrl.getWindowToken(), 0);
-                final LightningView currentTab = mTabsManager.getCurrentTab();
-                if (currentTab != null) {
-                    currentTab.requestFocus();
-                }
+                mPresenter.onAutoCompleteItemPressed();
             }
 
         });
@@ -1764,6 +1749,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public void closeBookmarksDrawer() {
+        mDrawerLayout.closeDrawer(getBookmarkDrawer());
+    }
+
+    @Override
     public void onHideCustomView() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mCustomView == null || mCustomViewCallback == null || currentTab == null) {
@@ -1834,6 +1824,37 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Log.d(TAG, "onWindowFocusChanged");
         if (hasFocus) {
             setFullscreen(mIsFullScreen, mIsImmersive);
+        }
+    }
+
+    @Override
+    public void onBackButtonPressed() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null) {
+            if (currentTab.canGoBack()) {
+                currentTab.goBack();
+            } else {
+                mPresenter.deleteTab(mTabsManager.positionOf(currentTab));
+            }
+        }
+    }
+
+    @Override
+    public void onForwardButtonPressed() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null) {
+            if (currentTab.canGoForward()) {
+                currentTab.goForward();
+            }
+        }
+    }
+
+    @Override
+    public void onHomeButtonPressed() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null) {
+            currentTab.loadHomepage();
+            closeDrawers(null);
         }
     }
 
@@ -1908,7 +1929,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public void onCloseWindow(LightningView view) {
-        deleteTab(mTabsManager.positionOf(view));
+        mPresenter.deleteTab(mTabsManager.positionOf(view));
     }
 
     /**
@@ -1956,10 +1977,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mToolbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 height = mToolbarLayout.getMeasuredHeight();
             }
-
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab == null)
-                return;
 
             final int totalHeight = height;
             if (mToolbarLayout.getTranslationY() < -(height - 0.01f)) {
@@ -2135,7 +2152,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mDrawerLayout.closeDrawer(mDrawerRight);
+                    closeDrawers(null);
                 }
             }, 150);
         }
@@ -2228,26 +2245,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         /**
-         * The {@link acr.browser.lightning.fragment.BookmarksFragment} send this message on reply
-         * to {@link acr.browser.lightning.bus.BrowserEvents.UserPressedBack} message if the
-         * fragement is showing the boomarks root folder.
-         *
-         * @param event an event notifying the browser that the bookmark drawer
-         *              should be closed.
-         */
-        @Subscribe
-        public void closeBookmarks(final BookmarkEvents.CloseBookmarks event) {
-            mDrawerLayout.closeDrawer(mDrawerRight);
-        }
-
-        /**
          * The user wants to close a tab
          *
          * @param event contains the position inside the tabs adapter
          */
         @Subscribe
         public void closeTab(final TabEvents.CloseTab event) {
-            deleteTab(event.position);
+            mPresenter.deleteTab(event.position);
         }
 
         /**
@@ -2258,67 +2262,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         @Subscribe
         public void showTab(final TabEvents.ShowTab event) {
             BrowserActivity.this.showTab(event.position);
-        }
-
-        /**
-         * The user long pressed on a tab, ask him if he want to close the tab
-         *
-         * @param event contains the tab position in the tabs adapter
-         */
-        @Subscribe
-        public void showCloseDialog(final TabEvents.ShowCloseDialog event) {
-            BrowserActivity.this.showCloseDialog(event.position);
-        }
-
-        /**
-         * The user wants to create a new tab
-         *
-         * @param event a marker
-         */
-        @Subscribe
-        public void newTab(final TabEvents.NewTab event) {
-            BrowserActivity.this.newTab(null, true);
-        }
-
-        /**
-         * The user wants to go back on current tab
-         *
-         * @param event a marker
-         */
-        @Subscribe
-        public void goBack(final NavigationEvents.GoBack event) {
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab != null) {
-                if (currentTab.canGoBack()) {
-                    currentTab.goBack();
-                } else {
-                    deleteTab(mTabsManager.positionOf(currentTab));
-                }
-            }
-        }
-
-        /**
-         * The user wants to go forward on current tab
-         *
-         * @param event a marker
-         */
-        @Subscribe
-        public void goForward(final NavigationEvents.GoForward event) {
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab != null) {
-                if (currentTab.canGoForward()) {
-                    currentTab.goForward();
-                }
-            }
-        }
-
-        @Subscribe
-        public void goHome(final NavigationEvents.GoHome event) {
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab != null) {
-                currentTab.loadHomepage();
-                closeDrawers(null);
-            }
         }
 
         /**

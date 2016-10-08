@@ -38,25 +38,6 @@ public final class TabEvents {
     }
 
     /**
-     * Sended by {@link acr.browser.lightning.fragment.TabsFragment} when the user long press on the
-     * tab itself.
-     */
-    public static class ShowCloseDialog {
-        public final int position;
-
-        public ShowCloseDialog(int position) {
-            this.position = position;
-        }
-    }
-
-    /**
-     * Sended by {@link acr.browser.lightning.fragment.TabsFragment} when the user want to create a
-     * new tab.
-     */
-    public static class NewTab {
-    }
-
-    /**
      * Sended by {@link acr.browser.lightning.fragment.TabsFragment} when the user long presses on
      * new tab button.
      */

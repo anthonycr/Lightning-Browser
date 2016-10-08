@@ -56,6 +56,8 @@ public interface UIController {
 
     void newTabClicked();
 
+    void closeBookmarksDrawer();
+
     void setForwardButtonEnabled(boolean enabled);
 
     void setBackButtonEnabled(boolean enabled);
@@ -63,5 +65,11 @@ public interface UIController {
     void tabChanged(LightningView tab);
 
     TabsManager getTabModel();
+
+    void onBackButtonPressed();
+
+    void onForwardButtonPressed();
+
+    void onHomeButtonPressed();
 
 }

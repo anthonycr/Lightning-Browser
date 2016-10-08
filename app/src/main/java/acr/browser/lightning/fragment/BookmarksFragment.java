@@ -27,6 +27,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscriber;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -40,6 +45,8 @@ import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.async.AsyncExecutor;
+import acr.browser.lightning.async.ImageDownloadTask;
+import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
@@ -48,18 +55,10 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.async.ImageDownloadTask;
-
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
-
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
 
-public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, BookmarksView {
 
     private final static String TAG = BookmarksFragment.class.getSimpleName();
 
@@ -77,6 +76,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Inject PreferenceManager mPreferenceManager;
 
     private TabsManager mTabsManager;
+
+    private UIController mUiController;
 
     // Adapter
     private BookmarkViewAdapter mBookmarkAdapter;
@@ -117,7 +118,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         BrowserApp.getAppComponent().inject(this);
         final Bundle arguments = getArguments();
         final Context context = getContext();
-        mTabsManager = ((UIController) context).getTabModel();
+        mUiController = (UIController) context;
+        mTabsManager = mUiController.getTabModel();
         mIsIncognito = arguments.getBoolean(INCOGNITO_MODE, false);
         boolean darkTheme = mPreferenceManager.getUseTheme() != 0 || mIsIncognito;
         mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
@@ -248,16 +250,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Subscribe
-    public void userPressedBack(final BrowserEvents.UserPressedBack event) {
-        if (mBookmarkManager.isRootFolder()) {
-            mEventBus.post(new BookmarkEvents.CloseBookmarks());
-        } else {
-            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
-            mBookmarksListView.setSelection(mScrollIndex);
-        }
-    }
-
-    @Subscribe
     public void bookmarkDeleted(@NonNull final BookmarkEvents.Deleted event) {
         mBookmarks.remove(event.item);
         if (event.item.isFolder()) {
@@ -363,6 +355,16 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public boolean onLongClick(View v) {
         return false;
+    }
+
+    @Override
+    public void navigateBack() {
+        if (mBookmarkManager.isRootFolder()) {
+            mUiController.closeBookmarksDrawer();
+        } else {
+            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+            mBookmarksListView.setSelection(mScrollIndex);
+        }
     }
 
     private class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {

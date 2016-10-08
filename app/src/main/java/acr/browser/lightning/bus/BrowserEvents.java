@@ -35,12 +35,6 @@ public final class BrowserEvents {
     }
 
     /**
-     * Notify the BookmarksFragment and TabsFragment that the user pressed the back button
-     */
-    public static class UserPressedBack {
-    }
-
-    /**
      *
      */
 
