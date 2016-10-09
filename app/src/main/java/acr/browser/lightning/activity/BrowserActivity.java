@@ -100,7 +100,6 @@ import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
-import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
@@ -398,7 +397,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
             mPresenter.setupTabs(intent);
             setIntent(null);
-            mProxyUtils.checkForProxy(BrowserActivity.this);
+            mProxyUtils.checkForProxy(this);
         }
     }
 
@@ -801,7 +800,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             : null;
         if (item != null && mBookmarkManager.addBookmark(item)) {
             mSuggestionsAdapter.refreshBookmarks();
-            mEventBus.post(new BrowserEvents.BookmarkAdded(title, url));
+            mBookmarksView.handleUpdatedUrl(url);
         }
     }
 
@@ -811,7 +810,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             : null;
         if (item != null && mBookmarkManager.deleteBookmark(item)) {
             mSuggestionsAdapter.refreshBookmarks();
-            mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
+            mBookmarksView.handleUpdatedUrl(url);
         }
     }
 
@@ -1031,6 +1030,63 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Utils.showSnackbar(this, resource);
     }
 
+    @Override
+    public void tabCloseClicked(int position) {
+        mPresenter.deleteTab(position);
+    }
+
+    @Override
+    public void tabClicked(int position) {
+        showTab(position);
+    }
+
+    @Override
+    public void newTabButtonClicked() {
+        mPresenter.newTab(null, true);
+    }
+
+    @Override
+    public void newTabButtonLongClicked() {
+        String url = mPreferences.getSavedUrl();
+        if (url != null) {
+            newTab(url, true);
+
+            Utils.showSnackbar(this, R.string.deleted_tab);
+        }
+        mPreferences.setSavedUrl(null);
+    }
+
+    @Override
+    public void bookmarkButtonClicked() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        final String url = currentTab != null ? currentTab.getUrl() : null;
+        final String title = currentTab != null ? currentTab.getTitle() : null;
+        if (url == null) {
+            return;
+        }
+
+        if (!UrlUtils.isSpecialUrl(url)) {
+            if (!mBookmarkManager.isBookmark(url)) {
+                addBookmark(title, url);
+            } else {
+                deleteBookmark(title, url);
+            }
+        }
+    }
+
+    @Override
+    public void bookmarkItemClicked(@NonNull HistoryItem item) {
+        mPresenter.loadUrlInCurrentView(item.getUrl());
+        // keep any jank from happening when the drawer is closed after the
+        // URL starts to load
+        mDrawerHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                closeDrawers(null);
+            }
+        }, 150);
+    }
+
     /**
      * displays the WebView contained in the LightningView Also handles the
      * removal of previous views
@@ -1074,11 +1130,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // TODO move to presenter
     private synchronized boolean newTab(String url, boolean show) {
         return mPresenter.newTab(url, show);
-    }
-
-    @Override
-    public void newTabClicked() {
-        mPresenter.newTab(null, true);
     }
 
     void performExitCleanUp() {
@@ -1385,7 +1436,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return;
         }
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        mEventBus.post(new BrowserEvents.CurrentPageUrl(url));
+        mBookmarksView.handleUpdatedUrl(url);
         if (shortUrl && !UrlUtils.isSpecialUrl(url)) {
             switch (mPreferences.getUrlBoxContentChoice()) {
                 case 0: // Default, show only the domain
@@ -1466,7 +1517,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 if (urlString != null) {
                     url = urlString.toString();
                 }
-                if (url == null || url.startsWith(BrowserActivity.this.getString(R.string.suggestion))) {
+                if (url == null || url.startsWith(getString(R.string.suggestion))) {
                     CharSequence searchString = ((TextView) view.findViewById(R.id.title)).getText();
                     if (searchString != null) {
                         url = searchString.toString();
@@ -2137,26 +2188,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private final Object mBusEventListener = new Object() {
 
-        /**
-         * Load the given url in the current tab, used by the the
-         * {@link acr.browser.lightning.fragment.BookmarksFragment} and by the
-         * {@link LightningDialogBuilder}
-         *
-         * @param event   Bus event indicating that the user has clicked a bookmark
-         */
-        @Subscribe
-        public void loadUrlInCurrentTab(final BrowserEvents.OpenUrlInCurrentTab event) {
-            mPresenter.loadUrlInCurrentView(event.url);
-            // keep any jank from happening when the drawer is closed after the
-            // URL starts to load
-            mDrawerHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    closeDrawers(null);
-                }
-            }, 150);
-        }
-
         @Subscribe
         public void loadHistory(final BrowserEvents.OpenHistoryInCurrentTab event) {
             new HistoryPage(mTabsManager.getCurrentTab(), getApplication(), mHistoryDatabase).load();
@@ -2174,39 +2205,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         public void loadUrlInNewTab(final BrowserEvents.OpenUrlInNewTab event) {
             mDrawerLayout.closeDrawers();
             if (event.location == BrowserEvents.OpenUrlInNewTab.Location.NEW_TAB) {
-                BrowserActivity.this.newTab(event.url, true);
+                newTab(event.url, true);
             } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND) {
-                BrowserActivity.this.newTab(event.url, false);
+                newTab(event.url, false);
             } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO) {
                 Intent intent = new Intent(BrowserActivity.this, IncognitoActivity.class);
                 intent.setData(Uri.parse(event.url));
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
-            }
-        }
-
-        /**
-         * When receive a {@link BookmarkEvents.ToggleBookmarkForCurrentPage}
-         * message this receiver answer firing the
-         * {@link BrowserEvents.BookmarkAdded} message
-         *
-         * @param event an event that the user wishes to bookmark the current page
-         */
-        @Subscribe
-        public void bookmarkCurrentPage(final BookmarkEvents.ToggleBookmarkForCurrentPage event) {
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            final String url = currentTab != null ? currentTab.getUrl() : null;
-            final String title = currentTab != null ? currentTab.getTitle() : null;
-            if (url == null) {
-                return;
-            }
-
-            if (!UrlUtils.isSpecialUrl(url)) {
-                if (!mBookmarkManager.isBookmark(url)) {
-                    addBookmark(title, url);
-                } else {
-                    deleteBookmark(title, url);
-                }
             }
         }
 
@@ -2223,7 +2229,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 currentTab.loadBookmarkpage();
             }
             if (currentTab != null) {
-                mEventBus.post(new BrowserEvents.CurrentPageUrl(currentTab.getUrl()));
+                mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
             }
         }
 
@@ -2240,44 +2246,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 currentTab.loadBookmarkpage();
             }
             if (currentTab != null) {
-                mEventBus.post(new BrowserEvents.CurrentPageUrl(currentTab.getUrl()));
+                mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
             }
-        }
-
-        /**
-         * The user wants to close a tab
-         *
-         * @param event contains the position inside the tabs adapter
-         */
-        @Subscribe
-        public void closeTab(final TabEvents.CloseTab event) {
-            mPresenter.deleteTab(event.position);
-        }
-
-        /**
-         * The user clicked on a tab, let's show it
-         *
-         * @param event contains the tab position in the tabs adapter
-         */
-        @Subscribe
-        public void showTab(final TabEvents.ShowTab event) {
-            BrowserActivity.this.showTab(event.position);
-        }
-
-        /**
-         * The user long pressed the new tab button
-         *
-         * @param event a marker
-         */
-        @Subscribe
-        public void newTabLongPress(final TabEvents.NewTabLongPress event) {
-            String url = mPreferences.getSavedUrl();
-            if (url != null) {
-                BrowserActivity.this.newTab(url, true);
-
-                Utils.showSnackbar(BrowserActivity.this, R.string.deleted_tab);
-            }
-            mPreferences.setSavedUrl(null);
         }
 
         @Subscribe

@@ -20,12 +20,6 @@ public final class BookmarkEvents {
     }
 
     /**
-     * The user ask to add/del a bookmark to the currently displayed page
-     */
-    public static class ToggleBookmarkForCurrentPage {
-    }
-
-    /**
      * Sended when a bookmark is edited
      */
     public static class BookmarkChanged {

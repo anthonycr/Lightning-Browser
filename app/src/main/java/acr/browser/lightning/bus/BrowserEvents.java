@@ -10,35 +10,6 @@ public final class BrowserEvents {
     }
 
     /**
-     * The {@link acr.browser.lightning.activity.BrowserActivity} signal a new bookmark was added
-     * (mainly to the {@link acr.browser.lightning.fragment.BookmarksFragment}).
-     */
-    public static class BookmarkAdded {
-        public final String title, url;
-
-        public BookmarkAdded(final String title, final String url) {
-            this.title = title;
-            this.url = url;
-        }
-    }
-
-    /**
-     * Notify the current page has a new url. This is generally used to update the
-     * {@link acr.browser.lightning.fragment.BookmarksFragment} interface.
-     */
-    public static class CurrentPageUrl {
-        public final String url;
-
-        public CurrentPageUrl(final String url) {
-            this.url = url;
-        }
-    }
-
-    /**
-     *
-     */
-
-    /**
      * Notify the Browser to display a SnackBar in the main activity
      */
     public static class ShowSnackBarMessage {
@@ -58,17 +29,6 @@ public final class BrowserEvents {
     }
 
     public final static class OpenHistoryInCurrentTab {
-    }
-
-    /**
-     * The user want to open the given url in the current tab
-     */
-    public final static class OpenUrlInCurrentTab {
-        public final String url;
-
-        public OpenUrlInCurrentTab(final String url) {
-            this.url = url;
-        }
     }
 
     /**
