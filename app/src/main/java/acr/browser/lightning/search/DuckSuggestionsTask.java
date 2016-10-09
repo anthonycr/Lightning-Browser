@@ -13,7 +13,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.FileUtils;
 
-public final class DuckSuggestionsTask extends BaseSuggestionsTask {
+final class DuckSuggestionsTask extends BaseSuggestionsTask {
 
     private static final String ENCODING = "UTF-8";
     @NonNull private final String mSearchSubtitle;
@@ -41,7 +41,7 @@ public final class DuckSuggestionsTask extends BaseSuggestionsTask {
             results.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
                 suggestion, R.drawable.ic_search));
             counter++;
-            if (counter >= 5) {
+            if (counter >= MAX_RESULTS) {
                 break;
             }
         }

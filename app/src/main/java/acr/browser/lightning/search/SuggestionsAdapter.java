@@ -43,11 +43,11 @@ import com.anthonycr.bonsai.Subscriber;
 
 import acr.browser.lightning.utils.ThemeUtils;
 
-public class Suggestions extends BaseAdapter implements Filterable {
+public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
     private static final Scheduler FILTER_SCHEDULER = Schedulers.newSingleThreadedScheduler();
 
-    public static final String CACHE_FILE_TYPE = ".sgg";
+    static final String CACHE_FILE_TYPE = ".sgg";
 
     private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
 
@@ -74,7 +74,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
     @NonNull private final Context mContext;
     private PreferenceManager.Suggestion mSuggestionChoice;
 
-    public Suggestions(@NonNull Context context, boolean dark, boolean incognito) {
+    public SuggestionsAdapter(@NonNull Context context, boolean dark, boolean incognito) {
         super();
         BrowserApp.getAppComponent().inject(this);
         mContext = context;
@@ -123,7 +123,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     private static class SuggestionHolder {
 
-        public SuggestionHolder(@NonNull View view) {
+        SuggestionHolder(@NonNull View view) {
             mTitle = (TextView) view.findViewById(R.id.title);
             mUrl = (TextView) view.findViewById(R.id.url);
             mImage = (ImageView) view.findViewById(R.id.suggestionIcon);
@@ -319,50 +319,50 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
     private static class SearchFilter extends Filter {
 
-        @NonNull private final Suggestions mSuggestions;
+        @NonNull private final SuggestionsAdapter mSuggestionsAdapter;
 
-        public SearchFilter(@NonNull Suggestions suggestions) {
-            mSuggestions = suggestions;
+        SearchFilter(@NonNull SuggestionsAdapter suggestionsAdapter) {
+            mSuggestionsAdapter = suggestionsAdapter;
         }
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                mSuggestions.clearSuggestions();
+                mSuggestionsAdapter.clearSuggestions();
                 return results;
             }
             String query = constraint.toString().toLowerCase(Locale.getDefault()).trim();
 
-            if (mSuggestions.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress()) {
-                mSuggestions.getSuggestionsForQuery(query)
+            if (mSuggestionsAdapter.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress()) {
+                mSuggestionsAdapter.getSuggestionsForQuery(query)
                     .subscribeOn(Schedulers.worker())
                     .observeOn(Schedulers.main())
                     .subscribe(new OnSubscribe<List<HistoryItem>>() {
                         @Override
                         public void onNext(@Nullable List<HistoryItem> item) {
-                            mSuggestions.combineResults(null, null, item);
+                            mSuggestionsAdapter.combineResults(null, null, item);
                         }
                     });
             }
 
-            mSuggestions.getBookmarksForQuery(query)
+            mSuggestionsAdapter.getBookmarksForQuery(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<List<HistoryItem>>() {
                     @Override
                     public void onNext(@Nullable List<HistoryItem> item) {
-                        mSuggestions.combineResults(item, null, null);
+                        mSuggestionsAdapter.combineResults(item, null, null);
                     }
                 });
 
-            mSuggestions.getHistoryForQuery(query)
+            mSuggestionsAdapter.getHistoryForQuery(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new OnSubscribe<List<HistoryItem>>() {
                     @Override
                     public void onNext(@Nullable List<HistoryItem> item) {
-                        mSuggestions.combineResults(null, item, null);
+                        mSuggestionsAdapter.combineResults(null, item, null);
                     }
                 });
             results.count = 1;
@@ -376,7 +376,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mSuggestions.combineResults(null, null, null);
+            mSuggestionsAdapter.combineResults(null, null, null);
         }
     }
 
@@ -385,7 +385,7 @@ public class Suggestions extends BaseAdapter implements Filterable {
         @NonNull
         private final Application app;
 
-        public ClearCacheRunnable(@NonNull Application app) {
+        ClearCacheRunnable(@NonNull Application app) {
             this.app = app;
         }
 

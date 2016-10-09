@@ -113,7 +113,7 @@ import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.receiver.NetworkReceiver;
-import acr.browser.lightning.search.Suggestions;
+import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -161,7 +161,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private View mCustomView;
 
     // Adapter
-    private Suggestions mSuggestionsAdapter;
+    private SuggestionsAdapter mSuggestionsAdapter;
 
     // Callback
     private CustomViewCallback mCustomViewCallback;
@@ -1503,7 +1503,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     private void initializeSearchSuggestions(final AutoCompleteTextView getUrl) {
 
-        mSuggestionsAdapter = new Suggestions(this, mDarkTheme, isIncognito());
+        mSuggestionsAdapter = new SuggestionsAdapter(this, mDarkTheme, isIncognito());
 
         getUrl.setThreshold(1);
         getUrl.setDropDownWidth(-1);
