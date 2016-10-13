@@ -38,6 +38,7 @@
     <string name="stock_browser_available">Desteklenen stock tarayıcı bulundu</string>
     <string name="fullScreenOption">Gezinirken durum çubuğunu gizle</string>
     <string name="clear_cookies">Tarayıcı çerezlerini temizle</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Bu resimle ne yapmak istersin?</string>
     <string name="action_download">İndir</string>
     <string name="action_open">Aç</string>
@@ -107,7 +108,6 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Ara</string>
     <string name="block_ads">Reklamları Engelle</string>
-    <string name="message_untrusted_certificate">Sitenin sertifikası güvenilir değil. Yine de devam edilsin mi?</string>
     <string name="title_form_resubmission">Formu yeniden gönder</string>
     <string name="message_form_resubmission">Veriyi yeniden göndermek istiyor musun?</string>
     <string name="message_location">\nKonum bilgisi isteniyor</string>

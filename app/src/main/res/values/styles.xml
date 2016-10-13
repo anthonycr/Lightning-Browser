@@ -123,11 +123,6 @@
 
     <style name="normalText">
         <item name="android:textStyle">normal</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-    </style>
-
-    <style name="TwoWayView">
-        <item name="android:orientation">horizontal</item>
     </style>
 
 </resources>

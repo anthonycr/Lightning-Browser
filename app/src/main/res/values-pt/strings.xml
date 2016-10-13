@@ -53,6 +53,7 @@
     <string name="stock_browser_available">Navegador detetado</string>
     <string name="fullScreenOption">Ocultar barra de estado ao navegar</string>
     <string name="clear_cookies">Limpar cookies</string>
+    <string name="clear_history">Limpar histórico</string>
     <string name="dialog_image">O que gostaria de fazer com esta imagem?</string>
     <string name="action_download">Transferir</string>
     <string name="action_open">Abrir</string>
@@ -122,7 +123,6 @@
     <string name="licenses">Licenças Open Source</string>
     <string name="suggestion">Pesquisar por</string>
     <string name="block_ads">Bloquear anúncios</string>
-    <string name="message_untrusted_certificate">O certificado deste sítio web não é fiável. Continuar?</string>
     <string name="title_form_resubmission">Submissão de formulário</string>
     <string name="message_form_resubmission">Gostaria de reenviar os dados?</string>
     <string name="message_location">\nGostaria de utilizar a sua localização</string>

@@ -38,6 +38,7 @@
     <string name="stock_browser_available">Βρέθηκε υποστηριζόμενος browser</string>
     <string name="fullScreenOption">Απόκρυψη της γραμμής κατάστασης κατα την χρήση</string>
     <string name="clear_cookies">Καθαρισμός των cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Τι θα θέλατε να κάνετε με την εικόνα;</string>
     <string name="action_download">Κατέβασμα</string>
     <string name="action_open">Άνοιγμα</string>
@@ -107,7 +108,6 @@
     <string name="licenses">Άδειες ανοιχτού κώδικα</string>
     <string name="suggestion">Αναζήτηση για</string>
     <string name="block_ads">Μπλοκάρισμα διαφημίσεων</string>
-    <string name="message_untrusted_certificate">Το πιστοποιητικό δεν είναι αξιόπιστο. Συνέχεια παρ\'όλα αυτά;</string>
     <string name="title_form_resubmission">Επαναυποβολή φόρμας</string>
     <string name="message_form_resubmission">Θα θέλατε να ξαναστείλετε τα στοιχεία;</string>
     <string name="message_location">\nΘα θέλατε να χρησιμοποιήσετε την τοποθεσία σας;</string>

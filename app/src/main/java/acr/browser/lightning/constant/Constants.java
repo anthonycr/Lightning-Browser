@@ -3,8 +3,6 @@
  */
 package acr.browser.lightning.constant;
 
-import android.os.Environment;
-
 import acr.browser.lightning.BuildConfig;
 
 public final class Constants {
@@ -27,10 +25,24 @@ public final class Constants {
     public static final String HOMEPAGE = "about:home";
     public static final String BAIDU_SEARCH = "https://www.baidu.com/s?wd=";
     public static final String YANDEX_SEARCH = "https://yandex.ru/yandsearch?lr=21411&text=";
-    public static final String EXTERNAL_STORAGE = Environment.getExternalStorageDirectory()
-            .toString();
     public static final String JAVASCRIPT_INVERT_PAGE = "javascript:(function(){var e='img {-webkit-filter: invert(100%);'+'-moz-filter: invert(100%);'+'-o-filter: invert(100%);'+'-ms-filter: invert(100%); }',t=document.getElementsByTagName('head')[0],n=document.createElement('style');if(!window.counter){window.counter=1}else{window.counter++;if(window.counter%2==0){var e='html {-webkit-filter: invert(0%); -moz-filter: invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'}}n.type='text/css';if(n.styleSheet){n.styleSheet.cssText=e}else{n.appendChild(document.createTextNode(e))}t.appendChild(n)})();";
     public static final String JAVASCRIPT_TEXT_REFLOW = "javascript:document.getElementsByTagName('body')[0].style.width=window.innerWidth+'px';";
+    public static final String JAVASCRIPT_THEME_COLOR = "(function () {\n" +
+            "   \"use strict\";\n" +
+            "    var metas, i, tag;\n" +
+            "    metas = document.getElementsByTagName('meta');\n" +
+            "    if (metas !== null) {\n" +
+            "        for (i = 0; i < metas.length; i++) {\n" +
+            "            tag = metas[i].getAttribute('name');\n" +
+            "            if (tag !== null && tag.toLowerCase() === 'theme-color') {\n" +
+            "                return metas[i].getAttribute('content');\n" +
+            "            }\n" +
+            "            console.log(tag);\n" +
+            "        }\n" +
+            "    }\n" +
+            '\n' +
+            "    return '';\n" +
+            "}());";
 
     public static final String LOAD_READING_URL = "ReadingUrl";
 
@@ -50,4 +62,6 @@ public final class Constants {
     public static final String DEFAULT_ENCODING = "UTF-8";
 
     public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", "UTF-8", "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
+
+    public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
 }

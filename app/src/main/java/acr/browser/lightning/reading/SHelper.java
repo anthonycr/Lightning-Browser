@@ -39,9 +39,9 @@ import javax.net.ssl.X509TrustManager;
 /**
  * @author Peter Karich
  */
-public class SHelper {
+class SHelper {
 
-    public static final String UTF8 = "UTF-8";
+    private static final String UTF8 = "UTF-8";
     private static final Pattern SPACE = Pattern.compile(" ");
 
     public static String replaceSpaces(String url) {
@@ -72,9 +72,9 @@ public class SHelper {
         if (str.isEmpty())
             return "";
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(str.length());
         boolean previousSpace = false;
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0, length = str.length(); i < length; i++) {
             char c = str.charAt(i);
             if (c == ' ' || (int) c == 9 || c == '\n') {
                 previousSpace = true;
@@ -95,7 +95,7 @@ public class SHelper {
      * invalid encoding character occurs.
      */
     public static String encodingCleanup(String str) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(str.length());
         boolean startedWithCorrectString = false;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -122,7 +122,7 @@ public class SHelper {
         return str1.substring(res[0], res[1]);
     }
 
-    public static int[] longestSubstring(String str1, String str2) {
+    private static int[] longestSubstring(String str1, String str2) {
         if (str1 == null || str1.isEmpty() || str2 == null || str2.isEmpty())
             return null;
 
@@ -193,7 +193,7 @@ public class SHelper {
                 url = url.substring("m.".length());
         }
 
-        int slashIndex = url.indexOf("/");
+        int slashIndex = url.indexOf('/');
         if (slashIndex > 0)
             url = url.substring(0, slashIndex);
 
@@ -251,9 +251,9 @@ public class SHelper {
     }
 
     public static String getUrlFromUglyGoogleRedirect(String url) {
-        if (url.startsWith("http://www.google.com/url?")) {
-            url = url.substring("http://www.google.com/url?".length());
-            String arr[] = urlDecode(url).split("\\&");
+        if (url.startsWith("https://www.google.com/url?")) {
+            url = url.substring("https://www.google.com/url?".length());
+            String arr[] = urlDecode(url).split("&");
             for (String str : arr) {
                 if (str.startsWith("q="))
                     return str.substring("q=".length());
@@ -264,8 +264,8 @@ public class SHelper {
     }
 
     public static String getUrlFromUglyFacebookRedirect(String url) {
-        if (url.startsWith("http://www.facebook.com/l.php?u=")) {
-            url = url.substring("http://www.facebook.com/l.php?u=".length());
+        if (url.startsWith("https://www.facebook.com/l.php?u=")) {
+            url = url.substring("https://www.facebook.com/l.php?u=".length());
             return urlDecode(url);
         }
 
@@ -280,7 +280,7 @@ public class SHelper {
         }
     }
 
-    public static String urlDecode(String str) {
+    private static String urlDecode(String str) {
         try {
             return URLDecoder.decode(str, UTF8);
         } catch (UnsupportedEncodingException ex) {
@@ -300,8 +300,8 @@ public class SHelper {
         return printNode(root, 0);
     }
 
-    public static String printNode(Element root, int indentation) {
-        StringBuilder sb = new StringBuilder();
+    private static String printNode(Element root, int indentation) {
+        StringBuilder sb = new StringBuilder(indentation);
         for (int i = 0; i < indentation; i++) {
             sb.append(' ');
         }

@@ -1,11 +1,17 @@
 package acr.browser.lightning.preference;
 
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import acr.browser.lightning.activity.BrowserApp;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.download.DownloadHandler;
 
+@Singleton
 public class PreferenceManager {
 
     private static class Name {
@@ -14,7 +20,7 @@ public class PreferenceManager {
         public static final String BLOCK_IMAGES = "blockimages";
         public static final String CLEAR_CACHE_EXIT = "cache";
         public static final String COOKIES = "cookies";
-        public static final String DOWNLOAD_DIRECTORY = "download";
+        public static final String DOWNLOAD_DIRECTORY = "downloadLocation";
         public static final String FULL_SCREEN = "fullscreen";
         public static final String HIDE_STATUS_BAR = "hidestatus";
         public static final String HOMEPAGE = "home";
@@ -29,7 +35,6 @@ public class PreferenceManager {
         public static final String SEARCH_URL = "searchurl";
         public static final String TEXT_REFLOW = "textreflow";
         public static final String TEXT_SIZE = "textsize";
-        public static final String URL_MEMORY = "memory";
         public static final String USE_WIDE_VIEWPORT = "wideviewport";
         public static final String USER_AGENT = "agentchoose";
         public static final String USER_AGENT_STRING = "userAgentString";
@@ -44,10 +49,11 @@ public class PreferenceManager {
         public static final String INVERT_COLORS = "invertColors";
         public static final String READING_TEXT_SIZE = "readingTextSize";
         public static final String THEME = "Theme";
-        public static final String DEFAULT_BOOKMARKS = "defaultBookmarks";
         public static final String TEXT_ENCODING = "textEncoding";
         public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
         public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
+        public static final String DO_NOT_TRACK = "doNotTrack";
+        public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
 
         public static final String USE_PROXY = "useProxy";
         public static final String PROXY_CHOICE = "proxyChoice";
@@ -57,20 +63,13 @@ public class PreferenceManager {
         public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
     }
 
-    private static PreferenceManager mInstance;
-    private SharedPreferences mPrefs;
+    @NonNull private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
 
-    public static PreferenceManager getInstance() {
-        if (mInstance == null) {
-            mInstance = new PreferenceManager();
-        }
-        return mInstance;
-    }
-
-    private PreferenceManager() {
-        mPrefs = BrowserApp.getAppContext().getSharedPreferences(PREFERENCES, 0);
+    @Inject
+    PreferenceManager(@NonNull final Context context) {
+        mPrefs = context.getSharedPreferences(PREFERENCES, 0);
     }
 
     public boolean getAdBlockEnabled() {
@@ -110,19 +109,16 @@ public class PreferenceManager {
     }
 
     public boolean getColorModeEnabled() {
-        return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, false);
+        return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, true);
     }
 
     public boolean getCookiesEnabled() {
         return mPrefs.getBoolean(Name.COOKIES, true);
     }
 
-    public boolean getDefaultBookmarks() {
-        return mPrefs.getBoolean(Name.DEFAULT_BOOKMARKS, true);
-    }
-
+    @NonNull
     public String getDownloadDirectory() {
-        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, Environment.DIRECTORY_DOWNLOADS);
+        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, DownloadHandler.DEFAULT_DOWNLOAD_PATH);
     }
 
     public int getFlashSupport() {
@@ -141,6 +137,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.HIDE_STATUS_BAR, false);
     }
 
+    @NonNull
     public String getHomepage() {
         return mPrefs.getString(Name.HOMEPAGE, Constants.HOMEPAGE);
     }
@@ -161,10 +158,6 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.LOCATION, false);
     }
 
-    public String getMemoryUrl() {
-        return mPrefs.getString(Name.URL_MEMORY, "");
-    }
-
     public boolean getOverviewModeEnabled() {
         return mPrefs.getBoolean(Name.OVERVIEW_MODE, true);
     }
@@ -173,6 +166,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.POPUPS, true);
     }
 
+    @NonNull
     public String getProxyHost() {
         return mPrefs.getString(Name.USE_PROXY_HOST, "localhost");
     }
@@ -193,6 +187,7 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.RESTORE_LOST_TABS, true);
     }
 
+    @Nullable
     public String getSavedUrl() {
         return mPrefs.getString(Name.SAVE_URL, null);
     }
@@ -205,6 +200,7 @@ public class PreferenceManager {
         return mPrefs.getInt(Name.SEARCH, 1);
     }
 
+    @NonNull
     public String getSearchUrl() {
         return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
     }
@@ -237,7 +233,8 @@ public class PreferenceManager {
         return mPrefs.getInt(Name.USER_AGENT, 1);
     }
 
-    public String getUserAgentString(String def) {
+    @Nullable
+    public String getUserAgentString(@Nullable String def) {
         return mPrefs.getString(Name.USER_AGENT_STRING, def);
     }
 
@@ -245,31 +242,48 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_WIDE_VIEWPORT, true);
     }
 
+    @NonNull
     public String getTextEncoding() {
         return mPrefs.getString(Name.TEXT_ENCODING, Constants.DEFAULT_ENCODING);
     }
 
-    public boolean getShowTabsInDrawer(boolean defaultValue){
+    public boolean getShowTabsInDrawer(boolean defaultValue) {
         return mPrefs.getBoolean(Name.SHOW_TABS_IN_DRAWER, defaultValue);
     }
 
-    private void putBoolean(String name, boolean value) {
+    public boolean getDoNotTrackEnabled() {
+        return mPrefs.getBoolean(Name.DO_NOT_TRACK, false);
+    }
+
+    public boolean getRemoveIdentifyingHeadersEnabled() {
+        return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
+    }
+
+    private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
 
-    private void putInt(String name, int value) {
+    private void putInt(@NonNull String name, int value) {
         mPrefs.edit().putInt(name, value).apply();
     }
 
-    private void putString(String name, String value) {
+    private void putString(@NonNull String name, @Nullable String value) {
         mPrefs.edit().putString(name, value).apply();
     }
 
-    public void setShowTabsInDrawer(boolean show){
+    public void setRemoveIdentifyingHeadersEnabled(boolean enabled) {
+        putBoolean(Name.IDENTIFYING_HEADERS, enabled);
+    }
+
+    public void setDoNotTrackEnabled(boolean doNotTrack) {
+        putBoolean(Name.DO_NOT_TRACK, doNotTrack);
+    }
+
+    public void setShowTabsInDrawer(boolean show) {
         putBoolean(Name.SHOW_TABS_IN_DRAWER, show);
     }
 
-    public void setTextEncoding(String encoding) {
+    public void setTextEncoding(@NonNull String encoding) {
         putString(Name.TEXT_ENCODING, encoding);
     }
 
@@ -317,11 +331,7 @@ public class PreferenceManager {
         putBoolean(Name.COOKIES, enable);
     }
 
-    public void setDefaultBookmarks(boolean show) {
-        putBoolean(Name.DEFAULT_BOOKMARKS, show);
-    }
-
-    public void setDownloadDirectory(String directory) {
+    public void setDownloadDirectory(@NonNull String directory) {
         putString(Name.DOWNLOAD_DIRECTORY, directory);
     }
 
@@ -341,7 +351,7 @@ public class PreferenceManager {
         putBoolean(Name.HIDE_STATUS_BAR, enable);
     }
 
-    public void setHomepage(String homepage) {
+    public void setHomepage(@NonNull String homepage) {
         putString(Name.HOMEPAGE, homepage);
     }
 
@@ -359,10 +369,6 @@ public class PreferenceManager {
 
     public void setLocationEnabled(boolean enable) {
         putBoolean(Name.LOCATION, enable);
-    }
-
-    public void setMemoryUrl(String url) {
-        putString(Name.URL_MEMORY, url);
     }
 
     public void setOverviewModeEnabled(boolean enable) {
@@ -385,7 +391,7 @@ public class PreferenceManager {
         putBoolean(Name.RESTORE_LOST_TABS, enable);
     }
 
-    public void setSavedUrl(String url) {
+    public void setSavedUrl(@Nullable String url) {
         putString(Name.SAVE_URL, url);
     }
 
@@ -397,7 +403,7 @@ public class PreferenceManager {
         putInt(Name.SEARCH, choice);
     }
 
-    public void setSearchUrl(String url) {
+    public void setSearchUrl(@NonNull String url) {
         putString(Name.SEARCH_URL, url);
     }
 
@@ -432,7 +438,7 @@ public class PreferenceManager {
         putInt(Name.PROXY_CHOICE, choice);
     }
 
-    public void setProxyHost(String proxyHost) {
+    public void setProxyHost(@NonNull String proxyHost) {
         putString(Name.USE_PROXY_HOST, proxyHost);
     }
 
@@ -444,7 +450,7 @@ public class PreferenceManager {
         putInt(Name.USER_AGENT, choice);
     }
 
-    public void setUserAgentString(String agent) {
+    public void setUserAgentString(@Nullable String agent) {
         putString(Name.USER_AGENT_STRING, agent);
     }
 

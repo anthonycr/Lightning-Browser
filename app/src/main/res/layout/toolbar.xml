@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
+<LinearLayout
     android:id="@+id/toolbar_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
     android:background="?attr/colorPrimary"
     android:elevation="2dp"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/twv_list"
+    <FrameLayout
+        android:id="@+id/tabs_toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@color/black"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
+        android:layout_height="30dp"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:paddingBottom="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:paddingTop="2dp"
-        android:paddingBottom="0dp"
         custom:contentInsetEnd="0dp"
-        custom:contentInsetStart="0dp" />
+        custom:contentInsetStart="0dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,7 +37,7 @@
             android:layout_height="2dp"
             custom:backgroundColor="#00000000"
             custom:bidirectionalAnimate="false"
-            custom:progressColor="?attr/colorAccent" />
+            custom:progressColor="?attr/colorAccent"/>
     </LinearLayout>
 
 </LinearLayout>

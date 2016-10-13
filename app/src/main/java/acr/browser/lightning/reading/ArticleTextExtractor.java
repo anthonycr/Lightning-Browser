@@ -385,16 +385,16 @@ public class ArticleTextExtractor {
             //            System.out.println("date modified element " + elem.toString());
         }
 
-        if ("".equals(dateStr)) {
+        if (dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[name=utime]").attr("content"));
         }
-        if ("".equals(dateStr)) {
+        if (dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[name=pdate]").attr("content"));
         }
-        if ("".equals(dateStr)) {
+        if (dateStr.isEmpty()) {
             dateStr = SHelper.innerTrim(doc.select("meta[property=article:published]").attr("content"));
         }
-        if ("".equals(dateStr)) {
+        if (dateStr.isEmpty()) {
             return parseDate(dateStr);
         }
 
@@ -491,10 +491,7 @@ public class ArticleTextExtractor {
             Element el = elems.get(0);
             if (el.hasAttr("content")) {
                 dateStr = el.attr("content");
-                Date parsedDate = parseDate(dateStr);
-                if (parsedDate != null) {
-                    return parsedDate;
-                }
+                return parseDate(dateStr);
             }
         }
 
@@ -686,14 +683,12 @@ public class ArticleTextExtractor {
     private static Collection<String> extractKeywords(Document doc) {
         String content = SHelper.innerTrim(doc.select("head meta[name=keywords]").attr("content"));
 
-        if (content != null) {
-            if (content.startsWith("[") && content.endsWith("]"))
-                content = content.substring(1, content.length() - 1);
+        if (content.startsWith("[") && content.endsWith("]"))
+            content = content.substring(1, content.length() - 1);
 
-            String[] split = content.split("\\s*,\\s*");
-            if (split.length > 1 || (split.length > 0 && split[0] != null && !split[0].isEmpty()))
-                return Arrays.asList(split);
-        }
+        String[] split = content.split("\\s*,\\s*");
+        if (split.length > 1 || (split.length > 0 && split[0] != null && !split[0].isEmpty()))
+            return Arrays.asList(split);
         return Collections.emptyList();
     }
 
@@ -736,8 +731,7 @@ public class ArticleTextExtractor {
     }
 
     private static String extractType(Document doc) {
-        String type = SHelper.innerTrim(doc.select("head meta[property=og:type]").attr("content"));
-        return type;
+        return SHelper.innerTrim(doc.select("head meta[property=og:type]").attr("content"));
     }
 
     private static String extractSitename(Document doc) {
@@ -969,7 +963,7 @@ public class ArticleTextExtractor {
         return weight;
     }
 
-    private Element determineImageSource(Element el, List<ImageResult> images) {
+    private static Element determineImageSource(Element el, List<ImageResult> images) {
         int maxWeight = 0;
         Element maxNode = null;
         Elements els = el.select("img");
@@ -1143,13 +1137,14 @@ public class ArticleTextExtractor {
     }
 
     private static String cleanTitle(String title) {
-        StringBuilder res = new StringBuilder();
+
 //        int index = title.lastIndexOf("|");
 //        if (index > 0 && title.length() / 2 < index)
 //            title = title.substring(0, index + 1);
 
         int counter = 0;
         String[] strs = title.split("\\|");
+        StringBuilder res = new StringBuilder(strs.length);
         for (String part : strs) {
             if (IGNORED_TITLE_PARTS.contains(part.toLowerCase().trim()))
                 continue;
@@ -1190,7 +1185,7 @@ public class ArticleTextExtractor {
                 charlen = 4;
             } else if (c <= 0xdfff) {
                 charlen = 0;
-            } else if (c <= 0xffff) {
+            } else {
                 charlen = 3;
             }
             if (resultlen + charlen > length) {
@@ -1208,7 +1203,7 @@ public class ArticleTextExtractor {
      *
      * @author Chris Alexander, chris@chris-alexander.co.uk
      */
-    private class ImageComparator implements Comparator<ImageResult> {
+    private static class ImageComparator implements Comparator<ImageResult> {
 
         @Override
         public int compare(ImageResult o1, ImageResult o2) {

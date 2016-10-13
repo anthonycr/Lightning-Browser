@@ -39,6 +39,7 @@
     <string name="stock_browser_available">(偵測到支援的內建瀏覽器)</string>
     <string name="fullScreenOption">與瀏覽時隱藏狀態列</string>
     <string name="clear_cookies">清除瀏覽器 cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">您想要對這張圖片執行什麼動作？</string>
     <string name="action_download">下載</string>
     <string name="action_open">開啟</string>

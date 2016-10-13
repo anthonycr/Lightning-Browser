@@ -105,7 +105,7 @@
     <style name="Theme.BlackTheme" parent="Theme.AppCompat">
 
         <!-- customize the color palette -->
-        <item name="searchBackground">@drawable/card_bg_elevate</item>
+        <item name="searchBackground">@drawable/card_bg</item>
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/accent_color</item>
