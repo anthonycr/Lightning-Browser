@@ -9,25 +9,6 @@ public final class BrowserEvents {
         // No instances
     }
 
-    /**
-     * Notify the Browser to display a SnackBar in the main activity
-     */
-    public static class ShowSnackBarMessage {
-        @Nullable public final String message;
-        @StringRes
-        public final int stringRes;
-
-        public ShowSnackBarMessage(@Nullable final String message) {
-            this.message = message;
-            this.stringRes = -1;
-        }
-
-        public ShowSnackBarMessage(@StringRes final int stringRes) {
-            this.message = null;
-            this.stringRes = stringRes;
-        }
-    }
-
     public final static class OpenHistoryInCurrentTab {
     }
 

@@ -292,7 +292,7 @@ public class LightningWebClient extends WebViewClient {
 
     private boolean shouldOverrideLoading(WebView view, String url) {
         // Check if configured proxy is available
-        if (!mProxyUtils.isProxyReady()) {
+        if (!mProxyUtils.isProxyReady(mActivity)) {
             // User has been notified
             return true;
         }

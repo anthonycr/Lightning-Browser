@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.download;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import java.net.URL;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.utils.Utils;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -34,13 +36,13 @@ class FetchUrlMimeType extends Thread {
 
     private static final String TAG = FetchUrlMimeType.class.getSimpleName();
 
-    private final Context mContext;
+    private final Activity mContext;
     private final DownloadManager.Request mRequest;
     private final String mUri;
     private final String mCookies;
     private final String mUserAgent;
 
-    public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
+    public FetchUrlMimeType(Activity context, DownloadManager.Request request, String uri,
                             String cookies, String userAgent) {
         mContext = context;
         mRequest = request;
@@ -115,7 +117,7 @@ class FetchUrlMimeType extends Thread {
             Schedulers.main().execute(new Runnable() {
                 @Override
                 public void run() {
-                    eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
+                    Utils.showSnackbar(mContext, R.string.cannot_download);
                 }
             });
         } catch (SecurityException e) {
@@ -124,7 +126,7 @@ class FetchUrlMimeType extends Thread {
             Schedulers.main().execute(new Runnable() {
                 @Override
                 public void run() {
-                    eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
+                    Utils.showSnackbar(mContext, R.string.problem_location_download);
                 }
             });
         }
@@ -133,7 +135,7 @@ class FetchUrlMimeType extends Thread {
         Schedulers.main().execute(new Runnable() {
             @Override
             public void run() {
-                eventBus.post(new BrowserEvents.ShowSnackBarMessage(mContext.getString(R.string.download_pending) + ' ' + file));
+                Utils.showSnackbar(mContext, mContext.getString(R.string.download_pending) + ' ' + file);
             }
         });
     }

@@ -146,13 +146,13 @@ public class ProxyUtils {
 
     }
 
-    public boolean isProxyReady() {
+    public boolean isProxyReady(@NonNull Activity activity) {
         if (mPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                mBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_not_running));
+                Utils.showSnackbar(activity, R.string.i2p_not_running);
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                mBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.i2p_tunnels_not_ready));
+                Utils.showSnackbar(activity, R.string.i2p_tunnels_not_ready);
                 return false;
             }
         }

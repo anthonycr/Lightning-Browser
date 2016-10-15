@@ -3,6 +3,7 @@
  */
 package acr.browser.lightning.download;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -35,6 +36,7 @@ import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.Utils;
 
 /**
  * Handle download requests
@@ -67,7 +69,7 @@ public class DownloadHandler {
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
      */
-    public static void onDownloadStart(@NonNull Context context, @NonNull PreferenceManager manager, String url, String userAgent,
+    public static void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, String url, String userAgent,
                                        @Nullable String contentDisposition, String mimetype) {
 
         Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
@@ -153,7 +155,7 @@ public class DownloadHandler {
      * @param mimetype           The mimetype of the content reported by the server
      */
     /* package */
-    private static void onDownloadStartNoStream(@NonNull final Context context, @NonNull PreferenceManager preferences,
+    private static void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
                                                 String url, String userAgent,
                                                 String contentDisposition, @Nullable String mimetype) {
         final Bus eventBus = BrowserApp.getBus(context);
@@ -191,7 +193,7 @@ public class DownloadHandler {
             // This only happens for very bad urls, we want to catch the
             // exception here
             Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
-            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_download));
+            Utils.showSnackbar(context, R.string.problem_download);
             return;
         }
 
@@ -201,7 +203,7 @@ public class DownloadHandler {
         try {
             request = new DownloadManager.Request(uri);
         } catch (IllegalArgumentException e) {
-            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
+            Utils.showSnackbar(context, R.string.cannot_download);
             return;
         }
 
@@ -216,12 +218,12 @@ public class DownloadHandler {
         File dir = new File(downloadFolder.getPath());
         if (!dir.isDirectory() && !dir.mkdirs()) {
             // Cannot make the directory
-            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
+            Utils.showSnackbar(context, R.string.problem_location_download);
             return;
         }
 
         if (!isWriteAccessAvailable(downloadFolder)) {
-            eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
+            Utils.showSnackbar(context, R.string.problem_location_download);
             return;
         }
         String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(guessFileExtension(filename));
@@ -257,14 +259,13 @@ public class DownloadHandler {
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
                 Log.e(TAG, "Unable to enqueue request", e);
-                eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.cannot_download));
+                Utils.showSnackbar(context, R.string.cannot_download);
             } catch (SecurityException e) {
                 // TODO write a download utility that downloads files rather than rely on the system
                 // because the system can only handle Environment.getExternal... as a path
-                eventBus.post(new BrowserEvents.ShowSnackBarMessage(R.string.problem_location_download));
+                Utils.showSnackbar(context, R.string.problem_location_download);
             }
-            eventBus.post(new BrowserEvents.ShowSnackBarMessage(
-                context.getString(R.string.download_pending) + ' ' + filename));
+            Utils.showSnackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
         }
     }
 
