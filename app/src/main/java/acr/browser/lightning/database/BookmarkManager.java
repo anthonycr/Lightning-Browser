@@ -82,7 +82,7 @@ public class BookmarkManager {
     private class BookmarkInitializer implements Runnable {
         private final Context mContext;
 
-        public BookmarkInitializer(Context context) {
+        BookmarkInitializer(Context context) {
             mContext = context;
         }
 
@@ -139,14 +139,14 @@ public class BookmarkManager {
 
         private final List<HistoryItem> mBookmarks;
 
-        public BookmarksWriter(List<HistoryItem> bookmarks) {
+        BookmarksWriter(List<HistoryItem> bookmarks) {
             mBookmarks = bookmarks;
         }
 
         @Override
         public void run() {
             final File tempFile = new File(mFilesDir,
-                    String.format(Locale.US, "bm_%d.dat", System.currentTimeMillis()));
+                String.format(Locale.US, "bm_%d.dat", System.currentTimeMillis()));
             final File bookmarksFile = new File(mFilesDir, FILE_BOOKMARKS);
             boolean success = false;
             BufferedWriter bookmarkWriter = null;
@@ -326,20 +326,20 @@ public class BookmarkManager {
     public synchronized void exportBookmarks(@NonNull Activity activity) {
         List<HistoryItem> bookmarkList = getAllBookmarks(true);
         File bookmarksExport = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                "BookmarksExport.txt");
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "BookmarksExport.txt");
         int counter = 0;
         while (bookmarksExport.exists()) {
             counter++;
             bookmarksExport = new File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    "BookmarksExport-" + counter + ".txt");
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "BookmarksExport-" + counter + ".txt");
         }
         BufferedWriter bookmarkWriter = null;
         try {
             //noinspection IOResourceOpenedButNotSafelyClosed
             bookmarkWriter = new BufferedWriter(new FileWriter(bookmarksExport,
-                    false));
+                false));
             JSONObject object = new JSONObject();
             for (HistoryItem item : bookmarkList) {
                 object.put(TITLE, item.getTitle());
@@ -350,7 +350,7 @@ public class BookmarkManager {
                 bookmarkWriter.newLine();
             }
             Utils.showSnackbar(activity, activity.getString(R.string.bookmark_export_path)
-                    + ' ' + bookmarksExport.getPath());
+                + ' ' + bookmarksExport.getPath());
         } catch (@NonNull IOException | JSONException e) {
             e.printStackTrace();
         } finally {
@@ -547,7 +547,7 @@ public class BookmarkManager {
             }
             if (o1.isFolder() == o2.isFolder()) {
                 return o1.getTitle().toLowerCase(Locale.getDefault())
-                        .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
+                    .compareTo(o2.getTitle().toLowerCase(Locale.getDefault()));
 
             } else {
                 return o1.isFolder() ? 1 : -1;
