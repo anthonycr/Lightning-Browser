@@ -92,4 +92,5 @@
     <string name="download_sdcard_busy_dlg_msg" >儲存裝置忙碌中。若是要下載檔案，請停止掛載 USB 儲存裝置。</string>
     <string name="folder_default">預設</string>
     <string name="folder_custom">自定</string>
+    <string name="action_delete_all_bookmarks">刪除所有書籤</string>
 </resources>
