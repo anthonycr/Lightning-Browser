@@ -22,7 +22,7 @@
     <string name="action_history">Cronologia</string>
     <string name="action_bookmarks">Segnalibri</string>
     <string name="action_add_bookmark">Aggiungi segnalibro</string>
-    <string name="action_copy">Copia link</string>
+    <string name="action_copy">Copia indirizzo link</string>
     <string name="action_forward">Avanti</string>
     <string name="settings">Impostazioni</string>
     <string name="location">Posizione</string>
@@ -222,9 +222,23 @@
     <string name="message_added_to_homescreen">Scorciatoia aggiunta</string>
     <string name="action_delete_all_bookmarks">Cancella tutti i segnalibri</string>
     <string name="swap_bookmarks_and_tabs">Inverti pannello segnalibri con schede</string>
-    <string name="dialog_title_close_browser">Chiudi browser</string>
     <string name="flash_not_supported">Flash Player non è supportato dal tuo sistema!</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Domande più frequenti</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Apri in un\'altra scheda</string>
+    <string name="dialog_open_background_tab">Apri in una scheda in background</string>
+    <string name="dialog_open_incognito_tab">Apri in scheda in incognito</string>
+    <string name="dialog_remove_bookmark">Rimuovi segnalibro</string>
+    <string name="dialog_edit_bookmark">Modifica segnalibro</string>
+    <string name="dialog_remove_from_history">Rimuovi dalla cronologia</string>
+    <string name="dialog_image_new_tab">Apri immagine in nuova scheda</string>
+    <string name="dialog_image_background_tab">Apri immagine in background</string>
+    <string name="dialog_download_image">Scarica immagine</string>
+    <string name="dialog_copy_link">Copia indirizzo link</string>
+    <string name="dialog_rename_folder">Rinomina cartella</string>
+    <string name="dialog_remove_folder">Rimuovi cartella</string>
+    <string name="dialog_title_close_browser">Chiudi browser</string>
 </resources>

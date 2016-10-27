@@ -246,34 +246,28 @@ public class LightningDialogBuilder {
     public void showLongPressImageDialog(@NonNull final Activity activity, @NonNull final String url,
                                          @NonNull final String userAgent) {
         BrowserDialog.show(activity, url.replace(Constants.HTTP, ""),
-            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
+            new BrowserDialog.Item(R.string.dialog_download_image) {
+                @Override
+                public void onClick() {
+                    Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_image_new_tab) {
                 @Override
                 public void onClick() {
                     mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+            new BrowserDialog.Item(R.string.dialog_image_background_tab) {
                 @Override
                 public void onClick() {
                     mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
-                }
-            },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
-                @Override
-                public void onClick() {
-                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
                 }
             },
             new BrowserDialog.Item(R.string.dialog_copy_link) {
                 @Override
                 public void onClick() {
                     BrowserApp.copyToClipboard(activity, url);
-                }
-            },
-            new BrowserDialog.Item(R.string.dialog_download_image) {
-                @Override
-                public void onClick() {
-                    Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
                 }
             });
     }
