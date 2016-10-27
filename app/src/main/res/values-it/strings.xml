@@ -220,6 +220,7 @@
     <string name="action_add_to_homescreen">Aggiungi a schermata Home</string>
     <string name="message_added_to_homescreen">Scorciatoia aggiunta</string>
     <string name="action_delete_all_bookmarks">Cancella tutti i segnalibri</string>
+    <string name="swap_bookmarks_and_tabs">Inverti pannello segnalibri con schede</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Domande più frequenti</string>

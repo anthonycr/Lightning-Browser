@@ -1884,6 +1884,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (currentTab != null) {
             if (currentTab.canGoBack()) {
                 currentTab.goBack();
+                closeDrawers(null);
             } else {
                 mPresenter.deleteTab(mTabsManager.positionOf(currentTab));
             }
@@ -1896,6 +1897,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (currentTab != null) {
             if (currentTab.canGoForward()) {
                 currentTab.goForward();
+                closeDrawers(null);
             }
         }
     }
