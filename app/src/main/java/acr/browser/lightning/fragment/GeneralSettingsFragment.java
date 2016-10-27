@@ -152,7 +152,13 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
 
         cbAds.setEnabled(Constants.FULL_VERSION);
-        cbFlash.setEnabled(API < Build.VERSION_CODES.KITKAT);
+
+        if (API < Build.VERSION_CODES.KITKAT) {
+            cbFlash.setEnabled(true);
+        } else {
+            cbFlash.setEnabled(false);
+            cbFlash.setSummary(getResources().getString(R.string.flash_not_supported));
+        }
 
         cbImages.setChecked(imagesBool);
         cbJsScript.setChecked(enableJSBool);

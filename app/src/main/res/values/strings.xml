@@ -237,6 +237,7 @@
     <string name="action_add_to_homescreen">Add to Homescreen</string>
     <string name="message_added_to_homescreen">Shortcut Added to Homescreen</string>
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
+    <string name="flash_not_supported">Flash Player is not supported by your system!</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Frequently Asked Questions</string>
