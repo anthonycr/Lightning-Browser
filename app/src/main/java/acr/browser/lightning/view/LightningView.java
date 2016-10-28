@@ -1091,6 +1091,10 @@ public class LightningView {
         }
     }
 
+    public void setFavicon(Bitmap favicon) {
+        mTitle.setFavicon(favicon);
+    }
+
     /**
      * The OnTouchListener used by the WebView so we can
      * get scroll events and show/hide the action bar when
