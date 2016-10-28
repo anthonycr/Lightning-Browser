@@ -32,6 +32,7 @@ abstract class BaseSuggestionsTask {
 
     private static final String TAG = BaseSuggestionsTask.class.getSimpleName();
 
+    static final int MAX_RESULTS = 5;
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toMillis(1);
     private static final String DEFAULT_LANGUAGE = "en";
     @Nullable private static String sLanguage;
@@ -104,7 +105,7 @@ abstract class BaseSuggestionsTask {
     @NonNull
     private File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
         String queryUrl = getQueryUrl(query, language);
-        File cacheFile = new File(app.getCacheDir(), queryUrl.hashCode() + Suggestions.CACHE_FILE_TYPE);
+        File cacheFile = new File(app.getCacheDir(), queryUrl.hashCode() + SuggestionsAdapter.CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }

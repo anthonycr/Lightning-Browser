@@ -54,7 +54,7 @@ public class BrowserDialog {
 
     public static abstract class Item {
 
-        private int mTitle;
+        private final int mTitle;
         private boolean mCondition = true;
 
         public Item(@StringRes int title, boolean condition) {

@@ -138,33 +138,39 @@ public final class Utils {
 
     /**
      * Displays a snackbar to the user with a String resource.
+     * <p>
+     * NOTE: If there is an accessibility manager enabled on
+     * the device, such as LastPass, then the snackbar animations
+     * will not work.
      *
      * @param activity the activity needed to create a snackbar.
      * @param resource the string resource to show to the user.
      */
     public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
-        View view = activity.findViewById(R.id.coordinator_layout);
+        View view = activity.findViewById(android.R.id.content);
         if (view == null) {
-            Log.d(TAG, "Unable to find coordinator layout, using content view");
-            view = activity.findViewById(android.R.id.content);
+            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
+            return;
         }
-        if (view == null) return;
         Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
     }
 
     /**
      * Displays a snackbar to the user with a string message.
+     * <p>
+     * NOTE: If there is an accessibility manager enabled on
+     * the device, such as LastPass, then the snackbar animations
+     * will not work.
      *
      * @param activity the activity needed to create a snackbar.
      * @param message  the string message to show to the user.
      */
     public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
-        View view = activity.findViewById(R.id.coordinator_layout);
+        View view = activity.findViewById(android.R.id.content);
         if (view == null) {
-            Log.d(TAG, "Unable to find coordinator layout, using content view");
-            view = activity.findViewById(android.R.id.content);
+            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
+            return;
         }
-        if (view == null) return;
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 

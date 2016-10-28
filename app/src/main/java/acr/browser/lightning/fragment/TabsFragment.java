@@ -39,8 +39,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.bus.NavigationEvents;
-import acr.browser.lightning.bus.TabEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.fragment.anim.HorizontalItemAnimator;
@@ -125,7 +123,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             newTab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mUiController.newTabClicked();
+                    mUiController.newTabButtonClicked();
                 }
             });
         }
@@ -216,16 +214,16 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 mUiController.showCloseDialog(mTabsManager.indexOfCurrentTab());
                 break;
             case R.id.new_tab_button:
-                mBus.post(new TabEvents.NewTab());
+                mUiController.newTabButtonClicked();
                 break;
             case R.id.action_back:
-                mBus.post(new NavigationEvents.GoBack());
+                mUiController.onBackButtonPressed();
                 break;
             case R.id.action_forward:
-                mBus.post(new NavigationEvents.GoForward());
+                mUiController.onForwardButtonPressed();
                 break;
             case R.id.action_home:
-                mBus.post(new NavigationEvents.GoHome());
+                mUiController.onHomeButtonPressed();
             default:
                 break;
         }
@@ -235,7 +233,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public boolean onLongClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.action_new_tab:
-                mBus.post(new TabEvents.NewTabLongPress());
+                mUiController.newTabButtonLongClicked();
                 break;
             default:
                 break;
@@ -425,17 +423,16 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             @Override
             public void onClick(View v) {
                 if (v == exitButton) {
-                    mBus.post(new TabEvents.CloseTab(getAdapterPosition()));
+                    mUiController.tabCloseClicked(getAdapterPosition());
                 }
                 if (v == layout) {
-                    mBus.post(new TabEvents.ShowTab(getAdapterPosition()));
+                    mUiController.tabClicked(getAdapterPosition());
                 }
             }
 
             @Override
             public boolean onLongClick(View v) {
-                // Show close dialog
-                mBus.post(new TabEvents.ShowCloseDialog(getAdapterPosition()));
+                mUiController.showCloseDialog(getAdapterPosition());
                 return true;
             }
         }

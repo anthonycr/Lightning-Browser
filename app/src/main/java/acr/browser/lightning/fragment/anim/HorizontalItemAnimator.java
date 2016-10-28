@@ -24,10 +24,11 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 
 /**
  * This implementation of {@link RecyclerView.ItemAnimator} provides basic
@@ -39,23 +40,26 @@ import java.util.List;
 public class HorizontalItemAnimator extends SimpleItemAnimator {
     private static final boolean DEBUG = false;
 
-    private ArrayList<ViewHolder> mPendingRemovals = new ArrayList<>();
-    private ArrayList<ViewHolder> mPendingAdditions = new ArrayList<>();
-    private ArrayList<MoveInfo> mPendingMoves = new ArrayList<>();
-    private ArrayList<ChangeInfo> mPendingChanges = new ArrayList<>();
+    private final ArrayList<ViewHolder> mPendingRemovals = new ArrayList<>();
+    private final ArrayList<ViewHolder> mPendingAdditions = new ArrayList<>();
+    private final ArrayList<MoveInfo> mPendingMoves = new ArrayList<>();
+    private final ArrayList<ChangeInfo> mPendingChanges = new ArrayList<>();
 
-    private ArrayList<ArrayList<ViewHolder>> mAdditionsList = new ArrayList<>();
-    private ArrayList<ArrayList<MoveInfo>> mMovesList = new ArrayList<>();
-    private ArrayList<ArrayList<ChangeInfo>> mChangesList = new ArrayList<>();
+    private final ArrayList<ArrayList<ViewHolder>> mAdditionsList = new ArrayList<>();
+    private final ArrayList<ArrayList<MoveInfo>> mMovesList = new ArrayList<>();
+    private final ArrayList<ArrayList<ChangeInfo>> mChangesList = new ArrayList<>();
 
-    private ArrayList<ViewHolder> mAddAnimations = new ArrayList<>();
-    private ArrayList<ViewHolder> mMoveAnimations = new ArrayList<>();
-    private ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
-    private ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
+    private final ArrayList<ViewHolder> mAddAnimations = new ArrayList<>();
+    private final ArrayList<ViewHolder> mMoveAnimations = new ArrayList<>();
+    private final ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
+    private final ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
 
     private static class MoveInfo {
-        public ViewHolder holder;
-        public int fromX, fromY, toX, toY;
+        public final ViewHolder holder;
+        public final int fromX;
+        public final int fromY;
+        public final int toX;
+        public final int toY;
 
         private MoveInfo(ViewHolder holder, int fromX, int fromY, int toX, int toY) {
             this.holder = holder;
@@ -232,7 +236,7 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         mAddAnimations.add(holder);
         animation.alpha(1).translationY(0)
-                .setInterpolator(new DecelerateInterpolator()).setDuration(getAddDuration())
+                .setInterpolator(new BezierDecelerateInterpolator()).setDuration(getAddDuration())
                 .setListener(new VpaListenerAdapter() {
                     @Override
                     public void onAnimationStart(View view) {
@@ -656,7 +660,7 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
         dispatchAnimationsFinished();
     }
 
-    static void cancelAll(List<ViewHolder> viewHolders) {
+    private static void cancelAll(List<ViewHolder> viewHolders) {
         for (int i = viewHolders.size() - 1; i >= 0; i--) {
             ViewCompat.animate(viewHolders.get(i).itemView).cancel();
         }

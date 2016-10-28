@@ -15,6 +15,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 
 import acr.browser.lightning.activity.TabsManager;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.view.LightningView;
 
 public interface UIController {
@@ -54,7 +55,19 @@ public interface UIController {
 
     void showCloseDialog(int position);
 
-    void newTabClicked();
+    void newTabButtonClicked();
+
+    void tabCloseClicked(int position);
+
+    void tabClicked(int position);
+
+    void newTabButtonLongClicked();
+
+    void bookmarkButtonClicked();
+
+    void bookmarkItemClicked(@NonNull HistoryItem item);
+
+    void closeBookmarksDrawer();
 
     void setForwardButtonEnabled(boolean enabled);
 
@@ -63,5 +76,11 @@ public interface UIController {
     void tabChanged(LightningView tab);
 
     TabsManager getTabModel();
+
+    void onBackButtonPressed();
+
+    void onForwardButtonPressed();
+
+    void onHomeButtonPressed();
 
 }

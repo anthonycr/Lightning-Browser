@@ -12,7 +12,7 @@ import java.util.List;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
 
-public class SuggestionsManager {
+class SuggestionsManager {
 
     public enum Source {
         GOOGLE,
@@ -21,11 +21,11 @@ public class SuggestionsManager {
 
     private static volatile boolean sIsTaskExecuting;
 
-    public static boolean isRequestInProgress() {
+    static boolean isRequestInProgress() {
         return sIsTaskExecuting;
     }
 
-    public static Observable<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context, @NonNull final Source source) {
+    static Observable<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context, @NonNull final Source source) {
         return Observable.create(new Action<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull final Subscriber<List<HistoryItem>> subscriber) {

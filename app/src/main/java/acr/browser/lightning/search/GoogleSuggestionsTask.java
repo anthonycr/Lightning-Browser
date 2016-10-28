@@ -15,7 +15,7 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 
-public class GoogleSuggestionsTask extends BaseSuggestionsTask {
+class GoogleSuggestionsTask extends BaseSuggestionsTask {
 
     private static final String ENCODING = "ISO-8859-1";
     @Nullable private static XmlPullParser sXpp;
@@ -47,7 +47,7 @@ public class GoogleSuggestionsTask extends BaseSuggestionsTask {
                 results.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
                     suggestion, R.drawable.ic_search));
                 counter++;
-                if (counter >= 5) {
+                if (counter >= MAX_RESULTS) {
                     break;
                 }
             }

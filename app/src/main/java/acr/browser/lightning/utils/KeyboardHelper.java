@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-public class KeyboardHelper {
+class KeyboardHelper {
 
-    public interface KeyboardListener {
+    interface KeyboardListener {
         /**
          * Called when the visibility of the keyboard changes.
          * Parameter tells whether the keyboard has been shown

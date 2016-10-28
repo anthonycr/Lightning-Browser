@@ -3,7 +3,7 @@
     <translate
         android:duration="@integer/animation_time_medium"
         android:fromXDelta="0%p"
-        android:interpolator="@android:interpolator/decelerate_cubic"
+        android:interpolator="@anim/bezier_decelerate"
         android:toXDelta="100%p" />
     <!--<alpha-->
     <!--android:duration="@android:integer/config_mediumAnimTime"-->
