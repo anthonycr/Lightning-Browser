@@ -21,7 +21,6 @@ import java.net.URL;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.utils.Utils;
 
 /**

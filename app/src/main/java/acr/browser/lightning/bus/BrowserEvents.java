@@ -1,8 +1,5 @@
 package acr.browser.lightning.bus;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-
 public final class BrowserEvents {
 
     private BrowserEvents() {

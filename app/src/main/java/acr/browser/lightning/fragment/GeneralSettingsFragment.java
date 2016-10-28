@@ -241,6 +241,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case Constants.PROXY_MANUAL:
                 manualProxyPicker();
                 break;
+            case Constants.NO_PROXY:
+                break;
         }
 
         mPreferenceManager.setProxyChoice(choice);
