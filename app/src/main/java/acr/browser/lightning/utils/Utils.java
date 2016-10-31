@@ -49,10 +49,13 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
+
+    private static final String TAG = Utils.class.getSimpleName();
 
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -71,12 +74,12 @@ public final class Utils {
     public static void downloadFile(final Activity activity, final PreferenceManager manager, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
             @Override
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);
                 DownloadHandler.onDownloadStart(activity, manager, url, userAgent, contentDisposition, null);
-                Log.i(Constants.TAG, "Downloading" + fileName);
+                Log.i(Constants.TAG, "Downloading: " + fileName);
             }
 
             @Override
@@ -121,38 +124,53 @@ public final class Utils {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         builder.setMessage(message)
-                .setCancelable(true)
-                .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
+            .setCancelable(true)
+            .setPositiveButton(activity.getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
+        BrowserDialog.setDialogSize(activity, alert);
     }
 
     /**
      * Displays a snackbar to the user with a String resource.
+     * <p>
+     * NOTE: If there is an accessibility manager enabled on
+     * the device, such as LastPass, then the snackbar animations
+     * will not work.
      *
      * @param activity the activity needed to create a snackbar.
      * @param resource the string resource to show to the user.
      */
     public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
         View view = activity.findViewById(android.R.id.content);
-        if (view == null) return;
+        if (view == null) {
+            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
+            return;
+        }
         Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
     }
 
     /**
      * Displays a snackbar to the user with a string message.
+     * <p>
+     * NOTE: If there is an accessibility manager enabled on
+     * the device, such as LastPass, then the snackbar animations
+     * will not work.
      *
      * @param activity the activity needed to create a snackbar.
      * @param message  the string message to show to the user.
      */
     public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
         View view = activity.findViewById(android.R.id.content);
-        if (view == null) return;
+        if (view == null) {
+            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
+            return;
+        }
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 
@@ -204,10 +222,6 @@ public final class Utils {
             return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
-    public static String[] getArray(@NonNull String input) {
-        return input.split(Constants.SEPARATOR);
-    }
-
     public static void trimCache(@NonNull Context context) {
         try {
             File dir = context.getCacheDir();
@@ -245,7 +259,7 @@ public final class Utils {
         int padding = Utils.dpToPx(4);
 
         Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
-                + padding, Bitmap.Config.ARGB_8888);
+            + padding, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(paddedBitmap);
         canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
@@ -289,10 +303,10 @@ public final class Utils {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + '_';
         File storageDir = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
+            ".jpg", /* suffix */
+            storageDir /* directory */
         );
     }
 
@@ -366,9 +380,9 @@ public final class Utils {
         paint.setDither(true);
         if (withShader) {
             paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                    0, canvas.getHeight(),
-                    color, mixTwoColors(Color.BLACK, color, 0.5f),
-                    Shader.TileMode.CLAMP));
+                0, canvas.getHeight(),
+                color, mixTwoColors(Color.BLACK, color, 0.5f),
+                Shader.TileMode.CLAMP));
         } else {
             paint.setShader(null);
         }

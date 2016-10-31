@@ -12,10 +12,4 @@
     <attr name="dividerColor" format="reference|color" />
     <attr name="selectedBackground" format="reference|color" />
 
-    <declare-styleable name="AnimatedProgressBar">
-        <attr name="progressColor" format="color" />
-        <attr name="backgroundColor" format="color" />
-        <attr name="bidirectionalAnimate" format="boolean" />
-    </declare-styleable>
-
 </resources>

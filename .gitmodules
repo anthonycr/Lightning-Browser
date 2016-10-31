@@ -2,3 +2,9 @@
 	path = external/netcipher
 	url = https://github.com/guardianproject/NetCipher.git
 	branch = master
+[submodule "Bonsai"]
+	path = Bonsai
+	url = https://github.com/anthonycr/Bonsai.git
+[submodule "AnimatedProgressBar"]
+	path = AnimatedProgressBar
+	url = https://github.com/anthonycr/AnimatedProgressBar.git

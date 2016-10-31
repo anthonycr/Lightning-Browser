@@ -3,18 +3,14 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
-        versionName "4.3.3"
-        generatedDensities = []
-    }
-
-    aaptOptions {
-        additionalParameters "--no-version-vectors"
+        targetSdkVersion 24
+        versionName "4.4.0"
+        vectorDrawables.useSupportLibrary = true
     }
 
     sourceSets {
@@ -40,13 +36,13 @@ android {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
             applicationId "acr.browser.lightning"
-            versionCode 88
+            versionCode 89
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
             applicationId "acr.browser.barebones"
-            versionCode 90
+            versionCode 91
         }
     }
 
@@ -70,14 +66,14 @@ dexcount {
 dependencies {
 
     // support libraries
-    compile 'com.android.support:palette-v7:23.3.0'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:palette-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
 
-    // html parsing fo reading mode
-    compile 'org.jsoup:jsoup:1.9.1'
+    // html parsing for reading mode
+    compile 'org.jsoup:jsoup:1.9.2'
 
     // event bus
     compile 'com.squareup:otto:1.3.8'
@@ -85,6 +81,7 @@ dependencies {
     // dependency injection
     compile 'com.google.dagger:dagger:2.0.2'
     apt 'com.google.dagger:dagger-compiler:2.0.2'
+    provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -100,8 +97,11 @@ dependencies {
     // git submodule update --remote
     compile project(':libnetcipher')
 
+    compile project(':bonsai')
+
+    compile project(':animated-progress-bar')
+
     // memory leak analysis
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    provided 'javax.annotation:jsr250-api:1.0'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
 }

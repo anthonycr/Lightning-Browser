@@ -125,7 +125,7 @@
     <string name="title_sign_in">Zaloguj się</string>
     <string name="hint_username">Nazwa użytkownika</string>
     <string name="hint_password">Hasło</string>
-    <string name="google_suggestions">Podpowiedzi wyszukiwania</string>
+    <string name="search_suggestions">Podpowiedzi wyszukiwania</string>
     <string name="powered_by_google">Dostarczane przez Google</string>
     <string name="http_proxy">Konfiguracja serwera proxy</string>
     <string-array name="proxy_choices_array">

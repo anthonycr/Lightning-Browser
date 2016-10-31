@@ -5,9 +5,9 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fitsSystemWindows="true"
     android:background="?attr/colorPrimary"
     android:elevation="2dp"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <FrameLayout
@@ -31,11 +31,11 @@
         android:layout_height="wrap_content"
         android:background="?attr/progressBackgroundColor">
 
-        <acr.browser.lightning.view.AnimatedProgressBar
+        <com.anthonycr.progress.AnimatedProgressBar
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            custom:backgroundColor="#00000000"
+            android:background="@android:color/transparent"
             custom:bidirectionalAnimate="false"
             custom:progressColor="?attr/colorAccent"/>
     </LinearLayout>

@@ -1,15 +1,15 @@
 package acr.browser.lightning.async;
 
-import android.app.Activity;
-import android.content.Context;
+import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.anthonycr.bonsai.Schedulers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,7 +26,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
     private static final String TAG = ImageDownloadTask.class.getSimpleName();
     @NonNull private final WeakReference<ImageView> mFaviconImage;
-    @NonNull private final WeakReference<Context> mContextReference;
+    @NonNull private final Application mContext;
     @NonNull private final HistoryItem mWeb;
     private final String mUrl;
     @NonNull private final Bitmap mDefaultBitmap;
@@ -34,7 +34,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
     public ImageDownloadTask(@NonNull ImageView bmImage,
                              @NonNull HistoryItem web,
                              @NonNull Bitmap defaultBitmap,
-                             @NonNull Context context) {
+                             @NonNull Application context) {
         // Set a tag on the ImageView so we know if the view
         // has gone out of scope and should not be used
         bmImage.setTag(web.getUrl().hashCode());
@@ -42,10 +42,10 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         this.mWeb = web;
         this.mUrl = web.getUrl();
         this.mDefaultBitmap = defaultBitmap;
-        this.mContextReference = new WeakReference<>(context.getApplicationContext());
+        this.mContext = context;
     }
 
-    @Nullable
+    @NonNull
     @Override
     protected Bitmap doInBackground(Void... params) {
         Bitmap mIcon = null;
@@ -53,11 +53,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         if (mUrl == null) {
             return mDefaultBitmap;
         }
-        Context context = mContextReference.get();
-        if (context == null) {
-            return mDefaultBitmap;
-        }
-        File cache = context.getCacheDir();
+        File cache = mContext.getCacheDir();
         final Uri uri = Uri.parse(mUrl);
         if (uri.getHost() == null || uri.getScheme() == null) {
             return mDefaultBitmap;
@@ -65,6 +61,9 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         final String hash = String.valueOf(uri.getHost().hashCode());
         final File image = new File(cache, hash + ".png");
         final String urlDisplay = uri.getScheme() + "://" + uri.getHost() + "/favicon.ico";
+        if (Constants.FILE.startsWith(uri.getScheme())) {
+            return mDefaultBitmap;
+        }
         // checks to see if the image exists
         if (!image.exists()) {
             FileOutputStream fos = null;
@@ -144,17 +143,12 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         final Bitmap fav = Utils.padFavicon(bitmap);
         final ImageView view = mFaviconImage.get();
         if (view != null && view.getTag().equals(mWeb.getUrl().hashCode())) {
-            Context context = view.getContext();
-            if (context instanceof Activity) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.setImageBitmap(fav);
-                    }
-                });
-            } else {
-                view.setImageBitmap(fav);
-            }
+            Schedulers.main().execute(new Runnable() {
+                @Override
+                public void run() {
+                    view.setImageBitmap(fav);
+                }
+            });
         }
         mWeb.setBitmap(fav);
     }

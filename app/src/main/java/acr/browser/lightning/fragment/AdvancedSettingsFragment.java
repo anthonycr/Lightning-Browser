@@ -4,6 +4,7 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
 
 public class AdvancedSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -167,8 +169,9 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void textEncodingPicker() {
@@ -184,8 +187,9 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                 textEncoding.setSummary(Constants.TEXT_ENCODINGS[which]);
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void urlBoxPicker() {
@@ -203,7 +207,8 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok), null);
-        picker.show();
+        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 }

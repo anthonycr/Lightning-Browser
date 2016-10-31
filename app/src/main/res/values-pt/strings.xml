@@ -131,7 +131,7 @@
     <string name="title_sign_in">Iniciar sessão</string>
     <string name="hint_username">Utilizador</string>
     <string name="hint_password">Palavra-passe</string>
-    <string name="google_suggestions">Sugestões de pesquisa</string>
+    <string name="search_suggestions">Sugestões de pesquisa</string>
     <string name="powered_by_google">Disponibilizado por Google</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">

@@ -1,6 +1,7 @@
 package acr.browser.lightning.activity;
 
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -27,13 +28,14 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.react.Action;
-import acr.browser.lightning.react.Observable;
-import acr.browser.lightning.react.OnSubscribe;
-import acr.browser.lightning.react.Subscriber;
-import acr.browser.lightning.react.Schedulers;
-import acr.browser.lightning.react.Subscription;
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Subscriber;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscription;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -159,6 +161,7 @@ public class ReadingActivity extends AppCompatActivity {
                         mProgressDialog.setIndeterminate(true);
                         mProgressDialog.setMessage(getString(R.string.loading));
                         mProgressDialog.show();
+                        BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
                     }
 
                     @Override
@@ -321,7 +324,8 @@ public class ReadingActivity extends AppCompatActivity {
                     }
 
                 });
-                builder.show();
+                Dialog dialog = builder.show();
+                BrowserDialog.setDialogSize(this, dialog);
                 break;
             default:
                 finish();

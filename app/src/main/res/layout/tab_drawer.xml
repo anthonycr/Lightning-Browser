@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/drawerBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:orientation="vertical">
 
@@ -27,14 +27,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_new_tab"
-                android:src="@drawable/ic_action_tabs"/>
+                app:srcCompat="@drawable/ic_action_tabs"/>
         </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeight"
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_back"
-                android:src="@drawable/ic_action_back"/>
+                app:srcCompat="@drawable/ic_action_back"/>
         </FrameLayout>
 
         <FrameLayout
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_homepage"
-                android:src="@drawable/ic_action_home"/>
+                app:srcCompat="@drawable/ic_action_home"/>
         </FrameLayout>
 
         <FrameLayout
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_forward"
-                android:src="@drawable/ic_action_forward"/>
+                app:srcCompat="@drawable/ic_action_forward"/>
         </FrameLayout>
 
         <FrameLayout
@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_new_tab"
-                android:src="@drawable/ic_action_plus"/>
+                app:srcCompat="@drawable/ic_action_plus"/>
         </FrameLayout>
     </LinearLayout>
 

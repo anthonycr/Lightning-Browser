@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/drawerBackground"
     android:clickable="true"
     android:orientation="vertical">
 
@@ -28,14 +28,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="Favicon"
-                android:src="@drawable/ic_action_star"/>
+                app:srcCompat="@drawable/ic_action_star"/>
         </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeight"
@@ -78,7 +78,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_action_desktop"/>
+                app:srcCompat="@drawable/ic_action_desktop"/>
         </FrameLayout>
 
         <FrameLayout
@@ -99,7 +99,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_action_star"/>
+                app:srcCompat="@drawable/ic_action_star"/>
         </FrameLayout>
 
         <FrameLayout
@@ -120,7 +120,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                android:src="@drawable/ic_action_reading"/>
+                app:srcCompat="@drawable/ic_action_reading"/>
         </FrameLayout>
     </LinearLayout>
 </LinearLayout>

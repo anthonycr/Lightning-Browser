@@ -3,15 +3,16 @@
  */
 package acr.browser.lightning.download;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.net.URL;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.bus.BrowserEvents;
+import acr.browser.lightning.utils.Utils;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -32,17 +33,15 @@ import acr.browser.lightning.bus.BrowserEvents;
  */
 class FetchUrlMimeType extends Thread {
 
-    private final Context mContext;
+    private static final String TAG = FetchUrlMimeType.class.getSimpleName();
 
+    private final Activity mContext;
     private final DownloadManager.Request mRequest;
-
     private final String mUri;
-
     private final String mCookies;
-
     private final String mUserAgent;
 
-    public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
+    public FetchUrlMimeType(Activity context, DownloadManager.Request request, String uri,
                             String cookies, String userAgent) {
         mContext = context;
         mRequest = request;
@@ -95,9 +94,9 @@ class FetchUrlMimeType extends Thread {
         String filename = "";
         if (mimeType != null) {
             if (mimeType.equalsIgnoreCase("text/plain")
-                    || mimeType.equalsIgnoreCase("application/octet-stream")) {
+                || mimeType.equalsIgnoreCase("application/octet-stream")) {
                 String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                        MimeTypeMap.getFileExtensionFromUrl(mUri));
+                    DownloadHandler.guessFileExtension(mUri));
                 if (newMimeType != null) {
                     mRequest.setMimeType(newMimeType);
                 }
@@ -108,14 +107,34 @@ class FetchUrlMimeType extends Thread {
 
         // Start the download
         DownloadManager manager = (DownloadManager) mContext
-                .getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(mRequest);
-        Handler handler = new Handler(Looper.getMainLooper());
+            .getSystemService(Context.DOWNLOAD_SERVICE);
+        try {
+            manager.enqueue(mRequest);
+        } catch (IllegalArgumentException e) {
+            // Probably got a bad URL or something
+            Log.e(TAG, "Unable to enqueue request", e);
+            Schedulers.main().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.showSnackbar(mContext, R.string.cannot_download);
+                }
+            });
+        } catch (SecurityException e) {
+            // TODO write a download utility that downloads files rather than rely on the system
+            // because the system can only handle Environment.getExternal... as a path
+            Schedulers.main().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.showSnackbar(mContext, R.string.problem_location_download);
+                }
+            });
+        }
+
         final String file = filename;
-        handler.post(new Runnable() {
+        Schedulers.main().execute(new Runnable() {
             @Override
             public void run() {
-                eventBus.post(new BrowserEvents.ShowSnackBarMessage(mContext.getString(R.string.download_pending) + ' ' + file));
+                Utils.showSnackbar(mContext, mContext.getString(R.string.download_pending) + ' ' + file);
             }
         });
     }

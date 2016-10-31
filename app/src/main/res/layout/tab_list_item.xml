@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/tab_item_background"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="56dp"
-              android:background="?attr/listBackground"
-              android:clickable="true"
-              android:gravity="center_vertical"
-              android:orientation="horizontal"
-              android:weightSum="1">
+<LinearLayout
+    android:id="@+id/tab_item_background"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/faviconTab"
@@ -26,7 +27,7 @@
         android:layout_marginRight="16dp"
         android:layout_weight="1"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="sans-serif"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
@@ -48,6 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="Delete Tab"
-            android:src="@drawable/ic_action_delete"/>
+            app:srcCompat="@drawable/ic_action_delete"/>
     </FrameLayout>
 </LinearLayout>

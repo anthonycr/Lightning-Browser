@@ -15,13 +15,15 @@ import android.widget.LinearLayout;
 import com.anthonycr.grant.PermissionsManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
-    private static final List<String> mFragments = new ArrayList<>(6);
+    private static final List<String> mFragments = new ArrayList<>(7);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +47,23 @@ public class SettingsActivity extends ThemableSettingsActivity {
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.preferences_headers, target);
         mFragments.clear();
-        for (Header header : target) {
+        Iterator<Header> headerIterator = target.iterator();
+        while (headerIterator.hasNext()) {
+            Header header = headerIterator.next();
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 // Workaround for bug in the AppCompat support library
                 header.iconRes = R.drawable.empty;
             }
-            mFragments.add(header.fragment);
+
+            if (header.titleRes == R.string.debug_title) {
+                if (BrowserApp.isRelease()) {
+                    headerIterator.remove();
+                } else {
+                    mFragments.add(header.fragment);
+                }
+            } else {
+                mFragments.add(header.fragment);
+            }
         }
     }
 

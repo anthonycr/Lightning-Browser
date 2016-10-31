@@ -7,12 +7,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 
-public class NetworkReceiver extends BroadcastReceiver {
+public abstract class NetworkReceiver extends BroadcastReceiver {
+
+    public abstract void onConnectivityChange(boolean isConnected);
 
     @Override
-    public void onReceive(Context context, Intent intent) {}
+    public void onReceive(Context context, Intent intent) {
+        onConnectivityChange(isConnected(context));
+    }
 
-    public static boolean isConnected(@NonNull Context context) {
+    private static boolean isConnected(@NonNull Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null)
             return false;

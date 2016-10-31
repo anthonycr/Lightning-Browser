@@ -15,52 +15,61 @@ import acr.browser.lightning.download.DownloadHandler;
 public class PreferenceManager {
 
     private static class Name {
-        public static final String ADOBE_FLASH_SUPPORT = "enableflash";
-        public static final String BLOCK_ADS = "AdBlock";
-        public static final String BLOCK_IMAGES = "blockimages";
-        public static final String CLEAR_CACHE_EXIT = "cache";
-        public static final String COOKIES = "cookies";
-        public static final String DOWNLOAD_DIRECTORY = "downloadLocation";
-        public static final String FULL_SCREEN = "fullscreen";
-        public static final String HIDE_STATUS_BAR = "hidestatus";
-        public static final String HOMEPAGE = "home";
-        public static final String INCOGNITO_COOKIES = "incognitocookies";
-        public static final String JAVASCRIPT = "java";
-        public static final String LOCATION = "location";
-        public static final String OVERVIEW_MODE = "overviewmode";
-        public static final String POPUPS = "newwindows";
-        public static final String RESTORE_LOST_TABS = "restoreclosed";
-        public static final String SAVE_PASSWORDS = "passwords";
-        public static final String SEARCH = "search";
-        public static final String SEARCH_URL = "searchurl";
-        public static final String TEXT_REFLOW = "textreflow";
-        public static final String TEXT_SIZE = "textsize";
-        public static final String USE_WIDE_VIEWPORT = "wideviewport";
-        public static final String USER_AGENT = "agentchoose";
-        public static final String USER_AGENT_STRING = "userAgentString";
-        public static final String GOOGLE_SEARCH_SUGGESTIONS = "GoogleSearchSuggestions";
-        public static final String CLEAR_HISTORY_EXIT = "clearHistoryExit";
-        public static final String CLEAR_COOKIES_EXIT = "clearCookiesExit";
-        public static final String SAVE_URL = "saveUrl";
-        public static final String RENDERING_MODE = "renderMode";
-        public static final String BLOCK_THIRD_PARTY = "thirdParty";
-        public static final String ENABLE_COLOR_MODE = "colorMode";
-        public static final String URL_BOX_CONTENTS = "urlContent";
-        public static final String INVERT_COLORS = "invertColors";
-        public static final String READING_TEXT_SIZE = "readingTextSize";
-        public static final String THEME = "Theme";
-        public static final String TEXT_ENCODING = "textEncoding";
-        public static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
-        public static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
-        public static final String DO_NOT_TRACK = "doNotTrack";
-        public static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
+        static final String ADOBE_FLASH_SUPPORT = "enableflash";
+        static final String BLOCK_ADS = "AdBlock";
+        static final String BLOCK_IMAGES = "blockimages";
+        static final String CLEAR_CACHE_EXIT = "cache";
+        static final String COOKIES = "cookies";
+        static final String DOWNLOAD_DIRECTORY = "downloadLocation";
+        static final String FULL_SCREEN = "fullscreen";
+        static final String HIDE_STATUS_BAR = "hidestatus";
+        static final String HOMEPAGE = "home";
+        static final String INCOGNITO_COOKIES = "incognitocookies";
+        static final String JAVASCRIPT = "java";
+        static final String LOCATION = "location";
+        static final String OVERVIEW_MODE = "overviewmode";
+        static final String POPUPS = "newwindows";
+        static final String RESTORE_LOST_TABS = "restoreclosed";
+        static final String SAVE_PASSWORDS = "passwords";
+        static final String SEARCH = "search";
+        static final String SEARCH_URL = "searchurl";
+        static final String TEXT_REFLOW = "textreflow";
+        static final String TEXT_SIZE = "textsize";
+        static final String USE_WIDE_VIEWPORT = "wideviewport";
+        static final String USER_AGENT = "agentchoose";
+        static final String USER_AGENT_STRING = "userAgentString";
+        static final String CLEAR_HISTORY_EXIT = "clearHistoryExit";
+        static final String CLEAR_COOKIES_EXIT = "clearCookiesExit";
+        static final String SAVE_URL = "saveUrl";
+        static final String RENDERING_MODE = "renderMode";
+        static final String BLOCK_THIRD_PARTY = "thirdParty";
+        static final String ENABLE_COLOR_MODE = "colorMode";
+        static final String URL_BOX_CONTENTS = "urlContent";
+        static final String INVERT_COLORS = "invertColors";
+        static final String READING_TEXT_SIZE = "readingTextSize";
+        static final String THEME = "Theme";
+        static final String TEXT_ENCODING = "textEncoding";
+        static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
+        static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
+        static final String DO_NOT_TRACK = "doNotTrack";
+        static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
+        static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
+        static final String SEARCH_SUGGESTIONS = "searchSuggestions";
 
-        public static final String USE_PROXY = "useProxy";
-        public static final String PROXY_CHOICE = "proxyChoice";
-        public static final String USE_PROXY_HOST = "useProxyHost";
-        public static final String USE_PROXY_PORT = "useProxyPort";
-        public static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
-        public static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
+        static final String USE_PROXY = "useProxy";
+        static final String PROXY_CHOICE = "proxyChoice";
+        static final String USE_PROXY_HOST = "useProxyHost";
+        static final String USE_PROXY_PORT = "useProxyPort";
+        static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
+        static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
+
+        static final String LEAK_CANARY = "leakCanary";
+    }
+
+    public enum Suggestion {
+        SUGGESTION_GOOGLE,
+        SUGGESTION_DUCK,
+        SUGGESTION_NONE
     }
 
     @NonNull private final SharedPreferences mPrefs;
@@ -70,6 +79,27 @@ public class PreferenceManager {
     @Inject
     PreferenceManager(@NonNull final Context context) {
         mPrefs = context.getSharedPreferences(PREFERENCES, 0);
+    }
+
+    @NonNull
+    public Suggestion getSearchSuggestionChoice() {
+        try {
+            return Suggestion.valueOf(mPrefs.getString(Name.SEARCH_SUGGESTIONS, Suggestion.SUGGESTION_GOOGLE.name()));
+        } catch (IllegalArgumentException ignored) {
+            return Suggestion.SUGGESTION_NONE;
+        }
+    }
+
+    public void setSearchSuggestionChoice(@NonNull Suggestion suggestion) {
+        putString(Name.SEARCH_SUGGESTIONS, suggestion.name());
+    }
+
+    public boolean getBookmarksAndTabsSwapped() {
+        return mPrefs.getBoolean(Name.SWAP_BOOKMARKS_AND_TABS, false);
+    }
+
+    public void setBookmarkAndTabsSwapped(boolean swap) {
+        putBoolean(Name.SWAP_BOOKMARKS_AND_TABS, swap);
     }
 
     public boolean getAdBlockEnabled() {
@@ -129,17 +159,13 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.FULL_SCREEN, false);
     }
 
-    public boolean getGoogleSearchSuggestionsEnabled() {
-        return mPrefs.getBoolean(Name.GOOGLE_SEARCH_SUGGESTIONS, true);
-    }
-
     public boolean getHideStatusBarEnabled() {
         return mPrefs.getBoolean(Name.HIDE_STATUS_BAR, false);
     }
 
     @NonNull
     public String getHomepage() {
-        return mPrefs.getString(Name.HOMEPAGE, Constants.HOMEPAGE);
+        return mPrefs.getString(Name.HOMEPAGE, Constants.SCHEME_HOMEPAGE);
     }
 
     public boolean getIncognitoCookiesEnabled() {
@@ -225,8 +251,18 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_PROXY, false);
     }
 
+    @Constants.PROXY
     public int getProxyChoice() {
-        return mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
+        @Constants.PROXY int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
+        switch (proxy) {
+            case Constants.NO_PROXY:
+            case Constants.PROXY_ORBOT:
+            case Constants.PROXY_I2P:
+            case Constants.PROXY_MANUAL:
+                return proxy;
+            default:
+                return Constants.NO_PROXY;
+        }
     }
 
     public int getUserAgentChoice() {
@@ -343,10 +379,6 @@ public class PreferenceManager {
         putBoolean(Name.FULL_SCREEN, enable);
     }
 
-    public void setGoogleSearchSuggestionsEnabled(boolean enabled) {
-        putBoolean(Name.GOOGLE_SEARCH_SUGGESTIONS, enabled);
-    }
-
     public void setHideStatusBarEnabled(boolean enable) {
         putBoolean(Name.HIDE_STATUS_BAR, enable);
     }
@@ -423,6 +455,14 @@ public class PreferenceManager {
         putInt(Name.THEME, theme);
     }
 
+    public void setUseLeakCanary(boolean useLeakCanary) {
+        putBoolean(Name.LEAK_CANARY, useLeakCanary);
+    }
+
+    public boolean getUseLeakCanary() {
+        return mPrefs.getBoolean(Name.LEAK_CANARY, false);
+    }
+
     /**
      * Valid choices:
      * <ul>
@@ -433,7 +473,7 @@ public class PreferenceManager {
      *
      * @param choice the proxy to use.
      */
-    public void setProxyChoice(int choice) {
+    public void setProxyChoice(@Constants.PROXY int choice) {
         putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
         putInt(Name.PROXY_CHOICE, choice);
     }

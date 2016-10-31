@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright 2014 A.C.R. Development -->
-<manifest package="acr.browser.lightning"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="acr.browser.lightning"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

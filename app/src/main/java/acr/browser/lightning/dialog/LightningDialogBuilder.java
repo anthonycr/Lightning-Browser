@@ -1,19 +1,18 @@
 package acr.browser.lightning.dialog;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.bus.BrowserEvents;
@@ -56,7 +56,7 @@ public class LightningDialogBuilder {
      * @param context used to show the dialog
      * @param url     the long pressed url
      */
-    public void showLongPressedDialogForBookmarkUrl(@NonNull final Context context, @NonNull final String url) {
+    public void showLongPressedDialogForBookmarkUrl(@NonNull final Activity context, @NonNull final String url) {
         final HistoryItem item;
         if (url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME)) {
             // TODO hacky, make a better bookmark mechanism in the future
@@ -80,226 +80,230 @@ public class LightningDialogBuilder {
         }
     }
 
-    public void showLongPressedDialogForBookmarkUrl(@NonNull final Context context, @NonNull final HistoryItem item) {
-        final DialogInterface.OnClickListener dialogClickListener =
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl()));
-                                break;
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                if (mBookmarkManager.deleteBookmark(item)) {
-                                    mEventBus.post(new BookmarkEvents.Deleted(item));
-                                }
-                                break;
-                            case DialogInterface.BUTTON_NEUTRAL:
-                                showEditBookmarkDialog(context, item);
-                                break;
-                        }
+    public void showLongPressedDialogForBookmarkUrl(@NonNull final Activity activity, @NonNull final HistoryItem item) {
+        BrowserDialog.show(activity, R.string.action_bookmarks,
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl(), BrowserEvents.OpenUrlInNewTab.Location.NEW_TAB));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl(), BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(item.getUrl(), BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, item.getUrl());
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_remove_bookmark) {
+                @Override
+                public void onClick() {
+                    if (mBookmarkManager.deleteBookmark(item)) {
+                        mEventBus.post(new BookmarkEvents.Deleted(item));
                     }
-                };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.action_bookmarks)
-                .setMessage(R.string.dialog_bookmark)
-                .setCancelable(true)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_delete, dialogClickListener)
-                .setNeutralButton(R.string.action_edit, dialogClickListener)
-                .show();
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_edit_bookmark) {
+                @Override
+                public void onClick() {
+                    showEditBookmarkDialog(activity, item);
+                }
+            });
     }
 
-    private void showEditBookmarkDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
-        final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(context);
+    private void showEditBookmarkDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {
+        final AlertDialog.Builder editBookmarkDialog = new AlertDialog.Builder(activity);
         editBookmarkDialog.setTitle(R.string.title_edit_bookmark);
-        final View dialogLayout = View.inflate(context, R.layout.dialog_edit_bookmark, null);
+        final View dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null);
         final EditText getTitle = (EditText) dialogLayout.findViewById(R.id.bookmark_title);
         getTitle.setText(item.getTitle());
         final EditText getUrl = (EditText) dialogLayout.findViewById(R.id.bookmark_url);
         getUrl.setText(item.getUrl());
         final AutoCompleteTextView getFolder =
-                (AutoCompleteTextView) dialogLayout.findViewById(R.id.bookmark_folder);
+            (AutoCompleteTextView) dialogLayout.findViewById(R.id.bookmark_folder);
         getFolder.setHint(R.string.folder);
         getFolder.setText(item.getFolder());
         final List<String> folders = mBookmarkManager.getFolderTitles();
-        final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_dropdown_item_1line, folders);
+        final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(activity,
+            android.R.layout.simple_dropdown_item_1line, folders);
         getFolder.setThreshold(1);
         getFolder.setAdapter(suggestionsAdapter);
         editBookmarkDialog.setView(dialogLayout);
-        editBookmarkDialog.setPositiveButton(context.getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
+        editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok),
+            new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        HistoryItem editedItem = new HistoryItem();
-                        editedItem.setTitle(getTitle.getText().toString());
-                        editedItem.setUrl(getUrl.getText().toString());
-                        editedItem.setUrl(getUrl.getText().toString());
-                        editedItem.setFolder(getFolder.getText().toString());
-                        mBookmarkManager.editBookmark(item, editedItem);
-                        mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
-                    }
-                });
-        editBookmarkDialog.show();
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    HistoryItem editedItem = new HistoryItem();
+                    editedItem.setTitle(getTitle.getText().toString());
+                    editedItem.setUrl(getUrl.getText().toString());
+                    editedItem.setUrl(getUrl.getText().toString());
+                    editedItem.setFolder(getFolder.getText().toString());
+                    mBookmarkManager.editBookmark(item, editedItem);
+                    mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
+                }
+            });
+        Dialog dialog = editBookmarkDialog.show();
+        BrowserDialog.setDialogSize(activity, dialog);
     }
 
-    public void showBookmarkFolderLongPressedDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
-        // assert item.isFolder();
-        final DialogInterface.OnClickListener dialogClickListener =
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                showRenameFolderDialog(context, item);
-                                break;
+    public void showBookmarkFolderLongPressedDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {
 
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                mBookmarkManager.deleteFolder(item.getTitle());
-                                // setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                                mEventBus.post(new BookmarkEvents.Deleted(item));
-                                break;
-                        }
-                    }
-                };
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.action_folder)
-                .setMessage(R.string.dialog_folder)
-                .setCancelable(true)
-                .setPositiveButton(R.string.action_rename, dialogClickListener)
-                .setNegativeButton(R.string.action_delete, dialogClickListener)
-                .show();
+        BrowserDialog.show(activity, R.string.action_folder,
+            new BrowserDialog.Item(R.string.dialog_rename_folder) {
+                @Override
+                public void onClick() {
+                    showRenameFolderDialog(activity, item);
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_remove_folder) {
+                @Override
+                public void onClick() {
+                    mBookmarkManager.deleteFolder(item.getTitle());
+                    mEventBus.post(new BookmarkEvents.Deleted(item));
+                }
+            });
     }
 
-    private void showRenameFolderDialog(@NonNull final Context context, @NonNull final HistoryItem item) {
-        // assert item.isFolder();
-        final AlertDialog.Builder editFolderDialog = new AlertDialog.Builder(context);
-        editFolderDialog.setTitle(R.string.title_rename_folder);
-        final EditText getTitle = new EditText(context);
-        getTitle.setHint(R.string.hint_title);
-        getTitle.setText(item.getTitle());
-        getTitle.setSingleLine();
-        LinearLayout layout = new LinearLayout(context);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.dpToPx(10);
-        layout.setPadding(padding, padding, padding, padding);
-        layout.addView(getTitle);
-        editFolderDialog.setView(layout);
-        editFolderDialog.setPositiveButton(context.getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+    private void showRenameFolderDialog(@NonNull final Activity activity, @NonNull final HistoryItem item) {
+        BrowserDialog.showEditText(activity, R.string.title_rename_folder,
+            R.string.hint_title, item.getTitle(),
+            R.string.action_ok, new BrowserDialog.EditorListener() {
+                @Override
+                public void onClick(String text) {
+                    if (!TextUtils.isEmpty(text)) {
                         final String oldTitle = item.getTitle();
-                        final String newTitle = getTitle.getText().toString();
                         final HistoryItem editedItem = new HistoryItem();
-                        editedItem.setTitle(newTitle);
-                        editedItem.setUrl(Constants.FOLDER + newTitle);
+                        editedItem.setTitle(text);
+                        editedItem.setUrl(Constants.FOLDER + text);
                         editedItem.setFolder(item.getFolder());
                         editedItem.setIsFolder(true);
-                        mBookmarkManager.renameFolder(oldTitle, newTitle);
+                        mBookmarkManager.renameFolder(oldTitle, text);
                         mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
                     }
-                });
-        editFolderDialog.show();
+                }
+            });
     }
 
-    public void showLongPressedHistoryLinkDialog(final Context context, @NonNull final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        mHistoryDatabase.deleteHistoryItem(url);
-                        // openHistory();
-                        mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
-                        break;
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                        break;
-                    default:
-                        break;
+    public void showLongPressedHistoryLinkDialog(@NonNull final Activity activity, @NonNull final String url) {
+        BrowserDialog.show(activity, R.string.action_history,
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.action_history)
-                .setMessage(R.string.dialog_history_long_press)
-                .setCancelable(true)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_delete, dialogClickListener)
-                .setNeutralButton(R.string.action_open, dialogClickListener)
-                .show();
+            },
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, url);
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_remove_from_history) {
+                @Override
+                public void onClick() {
+                    BrowserApp.getIOThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mHistoryDatabase.deleteHistoryItem(url);
+                            // openHistory();
+                            Schedulers.main().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mEventBus.post(new BrowserEvents.OpenHistoryInCurrentTab());
+                                }
+                            });
+                        }
+                    });
+                }
+            });
     }
 
     // TODO There should be a way in which we do not need an activity reference to dowload a file
     public void showLongPressImageDialog(@NonNull final Activity activity, @NonNull final String url,
                                          @NonNull final String userAgent) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                        break;
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
-                        break;
+        BrowserDialog.show(activity, url.replace(Constants.HTTP, ""),
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(url.replace(Constants.HTTP, ""))
-                .setCancelable(true)
-                .setMessage(R.string.dialog_image)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_open, dialogClickListener)
-                .setNeutralButton(R.string.action_download, dialogClickListener)
-                .show();
+            },
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, url);
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_download_image) {
+                @Override
+                public void onClick() {
+                    Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
+                }
+            });
     }
 
-    public void showLongPressLinkDialog(@NonNull final Context context, final String url) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        mEventBus.post(new BrowserEvents.OpenUrlInCurrentTab(url));
-                        break;
-
-                    case DialogInterface.BUTTON_NEUTRAL:
-                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("label", url);
-                        clipboard.setPrimaryClip(clip);
-                        break;
+    public void showLongPressLinkDialog(@NonNull final Activity activity, final String url) {
+        BrowserDialog.show(activity, url,
+            new BrowserDialog.Item(R.string.dialog_open_new_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url));
                 }
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context); // dialog
-        builder.setTitle(url)
-                .setCancelable(true)
-                .setMessage(R.string.dialog_link)
-                .setPositiveButton(R.string.action_new_tab, dialogClickListener)
-                .setNegativeButton(R.string.action_open, dialogClickListener)
-                .setNeutralButton(R.string.action_copy, dialogClickListener)
-                .show();
+            },
+            new BrowserDialog.Item(R.string.dialog_open_background_tab) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+                @Override
+                public void onClick() {
+                    mEventBus.post(new BrowserEvents.OpenUrlInNewTab(url, BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO));
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_copy_link) {
+                @Override
+                public void onClick() {
+                    BrowserApp.copyToClipboard(activity, url);
+                }
+            });
     }
 
 }

@@ -2,6 +2,7 @@ package acr.browser.lightning.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -37,6 +39,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -101,7 +104,7 @@ public class LightningWebClient extends WebViewClient {
             mLightningView.getTitleInfo().setTitle(view.getTitle());
         }
         if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT &&
-                mLightningView.getInvertePage()) {
+            mLightningView.getInvertePage()) {
             view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
         }
         mUIController.tabChanged(mLightningView);
@@ -139,49 +142,52 @@ public class LightningWebClient extends WebViewClient {
         builder.setTitle(mActivity.getString(R.string.title_sign_in));
         builder.setView(passLayout);
         builder.setCancelable(true)
-                .setPositiveButton(mActivity.getString(R.string.title_sign_in),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                String user = name.getText().toString();
-                                String pass = password.getText().toString();
-                                handler.proceed(user.trim(), pass.trim());
-                                Log.d(Constants.TAG, "Request Login");
+            .setPositiveButton(mActivity.getString(R.string.title_sign_in),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String user = name.getText().toString();
+                        String pass = password.getText().toString();
+                        handler.proceed(user.trim(), pass.trim());
+                        Log.d(Constants.TAG, "Request Login");
 
-                            }
-                        })
-                .setNegativeButton(mActivity.getString(R.string.action_cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.cancel();
-                            }
-                        });
+                    }
+                })
+            .setNegativeButton(mActivity.getString(R.string.action_cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        handler.cancel();
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
-
+        BrowserDialog.setDialogSize(mActivity, alert);
     }
 
-    private boolean mIsRunning = false;
+    private volatile boolean mIsRunning = false;
     private float mZoomScale = 0.0f;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onScaleChanged(@NonNull final WebView view, final float oldScale, final float newScale) {
         if (view.isShown() && mLightningView.mPreferences.getTextReflowEnabled() &&
-                Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (mIsRunning)
                 return;
-            if (Math.abs(mZoomScale - newScale) > 0.01f) {
+            float changeInPercent = Math.abs(100 - 100 / mZoomScale * newScale);
+            if (changeInPercent > 2.5f && !mIsRunning) {
                 mIsRunning = view.postDelayed(new Runnable() {
-
                     @Override
                     public void run() {
                         mZoomScale = newScale;
-                        view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
-                        mIsRunning = false;
+                        view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                                mIsRunning = false;
+                            }
+                        });
                     }
-
                 }, 100);
             }
 
@@ -223,27 +229,28 @@ public class LightningWebClient extends WebViewClient {
             stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
         }
         String alertMessage =
-                mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+            mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(mActivity.getString(R.string.title_warning));
         builder.setMessage(alertMessage)
-                .setCancelable(true)
-                .setPositiveButton(mActivity.getString(R.string.action_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.proceed();
-                            }
-                        })
-                .setNegativeButton(mActivity.getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.cancel();
-                            }
-                        });
-        builder.create().show();
+            .setCancelable(true)
+            .setPositiveButton(mActivity.getString(R.string.action_yes),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        handler.proceed();
+                    }
+                })
+            .setNegativeButton(mActivity.getString(R.string.action_no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        handler.cancel();
+                    }
+                });
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     @Override
@@ -251,47 +258,93 @@ public class LightningWebClient extends WebViewClient {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(mActivity.getString(R.string.title_form_resubmission));
         builder.setMessage(mActivity.getString(R.string.message_form_resubmission))
-                .setCancelable(true)
-                .setPositiveButton(mActivity.getString(R.string.action_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                resend.sendToTarget();
-                            }
-                        })
-                .setNegativeButton(mActivity.getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dontResend.sendToTarget();
-                            }
-                        });
+            .setCancelable(true)
+            .setPositiveButton(mActivity.getString(R.string.action_yes),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        resend.sendToTarget();
+                    }
+                })
+            .setNegativeButton(mActivity.getString(R.string.action_no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dontResend.sendToTarget();
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
+        BrowserDialog.setDialogSize(mActivity, alert);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
+    }
+
+    @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
+        return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
+    }
+
+    private boolean shouldOverrideLoading(WebView view, String url) {
         // Check if configured proxy is available
-        if (!mProxyUtils.isProxyReady()) {
+        if (!mProxyUtils.isProxyReady(mActivity)) {
             // User has been notified
             return true;
         }
 
         Map<String, String> headers = mLightningView.getRequestHeaders();
 
-        if (mLightningView.isIncognito() && Utils.doesSupportHeaders()) {
-            view.loadUrl(url, headers);
-            return true;
+        // If the headers are empty, the user has not expressed the desire
+        // to use them and therefore we can revert back to the old way of loading
+        if (headers.isEmpty()) {
+            if (mLightningView.isIncognito()) {
+                // If we are in incognito, immediately load, we don't want the url to leave the app
+                return false;
+            }
+            if (url.startsWith(Constants.ABOUT)) {
+                // If this is an about page, immediately load, we don't need to leave the app
+                return false;
+            }
+
+            if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
+                // If it was a mailto: link, or an intent, or could be launched elsewhere, do that
+                return true;
+            }
+        } else {
+            if (mLightningView.isIncognito() && Utils.doesSupportHeaders()) {
+                // If we are in incognito, immediately load, we don't want the url to leave the app
+                view.loadUrl(url, headers);
+                return true;
+            }
+            if (url.startsWith(Constants.ABOUT) && Utils.doesSupportHeaders()) {
+                // If this is an about page, immediately load, we don't need to leave the app
+                view.loadUrl(url, headers);
+                return true;
+            }
+
+            if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
+                // If it was a mailto: link, or an intent, or could be launched elsewhere, do that
+                return true;
+            } else if (Utils.doesSupportHeaders()) {
+                // Otherwise, load the headers.
+                view.loadUrl(url, headers);
+                return true;
+            }
         }
-        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
-            view.loadUrl(url, headers);
-            return true;
-        }
+        // If none of those instances was true, revert back to the old way of loading
+        return false;
+    }
+
+    private boolean isMailOrIntent(@NonNull String url, @NonNull WebView view) {
         if (url.startsWith("mailto:")) {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
-                    mailTo.getBody(), mailTo.getCc());
+                mailTo.getBody(), mailTo.getCc());
             mActivity.startActivity(i);
             view.reload();
             return true;
@@ -316,10 +369,6 @@ public class LightningWebClient extends WebViewClient {
                 return true;
             }
         }
-
-        if (!mIntentUtils.startActivityForUrl(view, url) && Utils.doesSupportHeaders()) {
-            view.loadUrl(url, headers);
-        }
-        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
+        return false;
     }
 }

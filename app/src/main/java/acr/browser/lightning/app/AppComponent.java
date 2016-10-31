@@ -13,6 +13,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
+import acr.browser.lightning.fragment.DebugSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
@@ -32,8 +33,6 @@ public interface AppComponent {
     void inject(BookmarksFragment fragment);
 
     void inject(BookmarkSettingsFragment fragment);
-
-    void inject(SuggestionsAdapter adapter);
 
     void inject(LightningDialogBuilder builder);
 
@@ -66,5 +65,9 @@ public interface AppComponent {
     void inject(BrowserPresenter presenter);
 
     void inject(TabsManager manager);
+
+    void inject(DebugSettingsFragment fragment);
+
+    void inject(SuggestionsAdapter suggestionsAdapter);
 
 }

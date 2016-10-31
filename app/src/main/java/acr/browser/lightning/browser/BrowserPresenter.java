@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
@@ -17,7 +18,9 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.react.OnSubscribe;
+
+import com.anthonycr.bonsai.OnSubscribe;
+
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
@@ -61,14 +64,16 @@ public class BrowserPresenter {
      */
     public void setupTabs(@Nullable Intent intent) {
         mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
-                .subscribe(new OnSubscribe<Void>() {
-                    @Override
-                    public void onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        tabChanged(mTabsModel.last());
-                        mView.updateTabNumber(mTabsModel.size());
-                    }
-                });
+            .subscribeOn(Schedulers.main())
+            .subscribe(new OnSubscribe<Void>() {
+                @Override
+                public void onComplete() {
+                    // At this point we always have at least a tab in the tab manager
+                    mView.notifyTabViewInitialized();
+                    mView.updateTabNumber(mTabsModel.size());
+                    tabChanged(mTabsModel.last());
+                }
+            });
     }
 
     /**
@@ -162,8 +167,8 @@ public class BrowserPresenter {
         boolean shouldClose = mShouldClose && isShown && Boolean.TRUE.equals(tabToDelete.getTag());
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
-                (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
-                        currentTab.getUrl().equals(mPreferences.getHomepage()))) {
+            (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
+                currentTab.getUrl().equals(mPreferences.getHomepage()))) {
             mView.closeActivity();
             return;
         } else {
@@ -231,15 +236,20 @@ public class BrowserPresenter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 newTab(url, true);
+                                mShouldClose = true;
+                                LightningView tab = mTabsModel.lastTab();
+                                if (tab != null) {
+                                    tab.setTag(true);
+                                }
                             }
                         });
                     } else {
                         newTab(url, true);
-                    }
-                    mShouldClose = true;
-                    LightningView tab = mTabsModel.lastTab();
-                    if (tab != null) {
-                        tab.setTag(true);
+                        mShouldClose = true;
+                        LightningView tab = mTabsModel.lastTab();
+                        if (tab != null) {
+                            tab.setTag(true);
+                        }
                     }
                 }
             }
@@ -329,6 +339,24 @@ public class BrowserPresenter {
         mView.updateTabNumber(mTabsModel.size());
 
         return true;
+    }
+
+    public void onAutoCompleteItemPressed() {
+        final LightningView currentTab = mTabsModel.getCurrentTab();
+        if (currentTab != null) {
+            currentTab.requestFocus();
+        }
+    }
+
+    public void findInPage(@NonNull String query) {
+        final LightningView currentView = mTabsModel.getCurrentTab();
+        if (currentView != null) {
+            currentView.find(query);
+        }
+    }
+
+    public void onAppLowMemory() {
+        mTabsModel.freeMemory();
     }
 
 }

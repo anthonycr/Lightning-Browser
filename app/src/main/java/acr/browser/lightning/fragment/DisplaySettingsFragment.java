@@ -4,6 +4,7 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -19,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.dialog.BrowserDialog;
 
 public class DisplaySettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -29,6 +31,9 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_REFLOW = "text_reflow";
     private static final String SETTINGS_THEME = "app_theme";
     private static final String SETTINGS_TEXTSIZE = "text_size";
+    private static final String SETTINGS_DRAWERTABS = "cb_drawertabs";
+    private static final String SETTINGS_SWAPTABS = "cb_swapdrawers";
+
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
     private static final float LARGE = 22.0f;
@@ -65,6 +70,8 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         cbviewport = (CheckBoxPreference) findPreference(SETTINGS_VIEWPORT);
         cboverview = (CheckBoxPreference) findPreference(SETTINGS_OVERVIEWMODE);
         cbreflow = (CheckBoxPreference) findPreference(SETTINGS_REFLOW);
+        CheckBoxPreference cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
+        CheckBoxPreference cbSwapTabs = (CheckBoxPreference) findPreference(SETTINGS_SWAPTABS);
 
         theme.setOnPreferenceClickListener(this);
         textsize.setOnPreferenceClickListener(this);
@@ -73,12 +80,16 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         cbviewport.setOnPreferenceChangeListener(this);
         cboverview.setOnPreferenceChangeListener(this);
         cbreflow.setOnPreferenceChangeListener(this);
+        cbDrawerTabs.setOnPreferenceChangeListener(this);
+        cbSwapTabs.setOnPreferenceChangeListener(this);
 
         cbstatus.setChecked(mPreferenceManager.getHideStatusBarEnabled());
         cbfullscreen.setChecked(mPreferenceManager.getFullScreenEnabled());
         cbviewport.setChecked(mPreferenceManager.getUseWideViewportEnabled());
         cboverview.setChecked(mPreferenceManager.getOverviewModeEnabled());
         cbreflow.setChecked(mPreferenceManager.getTextReflowEnabled());
+        cbDrawerTabs.setChecked(mPreferenceManager.getShowTabsInDrawer(true));
+        cbSwapTabs.setChecked(mPreferenceManager.getBookmarksAndTabsSwapped());
 
         theme.setSummary(mThemeOptions[mPreferenceManager.getUseTheme()]);
     }
@@ -99,27 +110,37 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
 
     @Override
     public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+        boolean checked = false;
+        if (newValue instanceof Boolean) {
+            checked = Boolean.TRUE.equals(newValue);
+        }
         // switch preferences
         switch (preference.getKey()) {
             case SETTINGS_HIDESTATUSBAR:
-                mPreferenceManager.setHideStatusBarEnabled((Boolean) newValue);
-                cbstatus.setChecked((Boolean) newValue);
+                mPreferenceManager.setHideStatusBarEnabled(checked);
+                cbstatus.setChecked(checked);
                 return true;
             case SETTINGS_FULLSCREEN:
-                mPreferenceManager.setFullScreenEnabled((Boolean) newValue);
-                cbfullscreen.setChecked((Boolean) newValue);
+                mPreferenceManager.setFullScreenEnabled(checked);
+                cbfullscreen.setChecked(checked);
                 return true;
             case SETTINGS_VIEWPORT:
-                mPreferenceManager.setUseWideViewportEnabled((Boolean) newValue);
-                cbviewport.setChecked((Boolean) newValue);
+                mPreferenceManager.setUseWideViewportEnabled(checked);
+                cbviewport.setChecked(checked);
                 return true;
             case SETTINGS_OVERVIEWMODE:
-                mPreferenceManager.setOverviewModeEnabled((Boolean) newValue);
-                cboverview.setChecked((Boolean) newValue);
+                mPreferenceManager.setOverviewModeEnabled(checked);
+                cboverview.setChecked(checked);
                 return true;
             case SETTINGS_REFLOW:
-                mPreferenceManager.setTextReflowEnabled((Boolean) newValue);
-                cbreflow.setChecked((Boolean) newValue);
+                mPreferenceManager.setTextReflowEnabled(checked);
+                cbreflow.setChecked(checked);
+                return true;
+            case SETTINGS_DRAWERTABS:
+                mPreferenceManager.setShowTabsInDrawer(checked);
+                return true;
+            case SETTINGS_SWAPTABS:
+                mPreferenceManager.setBookmarkAndTabsSwapped(checked);
                 return true;
             default:
                 return false;
@@ -150,7 +171,8 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
             }
 
         });
-        builder.show();
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private static float getTextSize(int size) {
@@ -187,16 +209,16 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
                 }
             }
         });
-        picker.setNeutralButton(getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
+        picker.setPositiveButton(getResources().getString(R.string.action_ok),
+            new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mCurrentTheme != mPreferenceManager.getUseTheme()) {
-                            getActivity().onBackPressed();
-                        }
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (mCurrentTheme != mPreferenceManager.getUseTheme()) {
+                        getActivity().onBackPressed();
                     }
-                });
+                }
+            });
         picker.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -205,7 +227,8 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
                 }
             }
         });
-        picker.show();
+        Dialog dialog = picker.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private static class TextSeekBarListener implements SeekBar.OnSeekBarChangeListener {

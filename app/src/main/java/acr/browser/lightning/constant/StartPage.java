@@ -34,7 +34,7 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
 
     private static final String HEAD_2 = "</title>"
             + "</head>"
-            + "<style>body{background:#f2f2f2;text-align:center;margin:0px;}#search_input{height:35px; "
+            + "<style>body{background:#f5f5f5;text-align:center;margin:0px;}#search_input{height:35px; "
             + "width:100%;outline:none;border:none;font-size: 16px;background-color:transparent;}"
             + "span { display: block; overflow: hidden; padding-left:5px;vertical-align:middle;}"
             + ".search_bar{display:table;vertical-align:middle;width:90%;height:35px;max-width:500px;margin:0 auto;background-color:#fff;box-shadow: 0px 2px 3px rgba( 0, 0, 0, 0.25 );"

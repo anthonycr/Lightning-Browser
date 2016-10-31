@@ -6,6 +6,7 @@ package acr.browser.lightning.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
@@ -62,8 +63,8 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(@NonNull SQLiteDatabase db) {
         String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + '(' + KEY_ID
-                + " INTEGER PRIMARY KEY," + KEY_URL + " TEXT," + KEY_TITLE + " TEXT,"
-                + KEY_TIME_VISITED + " INTEGER" + ')';
+            + " INTEGER PRIMARY KEY," + KEY_URL + " TEXT," + KEY_TITLE + " TEXT,"
+            + KEY_TIME_VISITED + " INTEGER" + ')';
         db.execSQL(CREATE_HISTORY_TABLE);
     }
 
@@ -111,7 +112,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         values.put(KEY_TITLE, title == null ? "" : title);
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
         Cursor q = mDatabase.query(false, TABLE_HISTORY, new String[]{KEY_URL},
-                KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
+            KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
         if (q.getCount() > 0) {
             mDatabase.update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
         } else {
@@ -133,7 +134,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     synchronized String getHistoryItem(@NonNull String url) {
         mDatabase = openIfNecessary();
         Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
-                KEY_URL + " = ?", new String[]{url}, null, null, null, null);
+            KEY_URL + " = ?", new String[]{url}, null, null, null, null);
         String m = null;
         if (cursor != null) {
             cursor.moveToFirst();
@@ -151,9 +152,11 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         if (search == null) {
             return itemList;
         }
-        String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE '%"
-                + search + "%' OR " + KEY_URL + " LIKE '%" + search + "%' " + "ORDER BY "
-                + KEY_TIME_VISITED + " DESC LIMIT 5";
+        search = DatabaseUtils.sqlEscapeString('%' + search + '%');
+
+        String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " WHERE " + KEY_TITLE + " LIKE "
+            + search + " OR " + KEY_URL + " LIKE " + search + " ORDER BY "
+            + KEY_TIME_VISITED + " DESC LIMIT 5";
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 
         int n = 0;
@@ -176,7 +179,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(100);
         String selectQuery = "SELECT * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
-                + " DESC";
+            + " DESC";
 
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
         int counter = 0;
@@ -199,7 +202,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + TABLE_HISTORY + " ORDER BY " + KEY_TIME_VISITED
-                + " DESC";
+            + " DESC";
 
         Cursor cursor = mDatabase.rawQuery(selectQuery, null);
 

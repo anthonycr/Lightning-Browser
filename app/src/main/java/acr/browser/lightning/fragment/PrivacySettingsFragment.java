@@ -4,6 +4,7 @@
 package acr.browser.lightning.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.LightningView;
@@ -154,7 +156,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private void clearHistoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(getResources().getString(R.string.title_clear_history));
-        builder.setMessage(getResources().getString(R.string.dialog_history))
+        Dialog dialog = builder.setMessage(getResources().getString(R.string.dialog_history))
                 .setPositiveButton(getResources().getString(R.string.action_yes),
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -168,6 +170,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                             }
                         })
                 .setNegativeButton(getResources().getString(R.string.action_no), null).show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void clearCookiesDialog() {
