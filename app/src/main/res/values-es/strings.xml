@@ -84,10 +84,10 @@
     <string name="action_find">Buscar en la página</string>
     <string name="download_pending">Iniciando descarga\u2026</string>
     <string name="cannot_download">Sólo se puede descargar de URLs \"http\" o \"https\".</string>
-    <string name="download_no_sdcard_dlg_title" >No hay tarjeta SD</string>
-    <string name="download_no_sdcard_dlg_msg" >Se requiere de almacenamiento USB para descargar el archivo.</string>
+    <string name="download_no_sdcard_dlg_title">No hay tarjeta SD</string>
+    <string name="download_no_sdcard_dlg_msg">Se requiere de almacenamiento USB para descargar el archivo.</string>
     <string name="download_sdcard_busy_dlg_title">Almacenamiento USB no disponible</string>
-    <string name="download_sdcard_busy_dlg_msg" >El almacenamiento está ocupado. Para permitir las descargar, desactiva el almacenamiento USB desde el área de notificación.</string>
+    <string name="download_sdcard_busy_dlg_msg">El almacenamiento está ocupado. Para permitir las descargar, desactiva el almacenamiento USB desde el área de notificación.</string>
     <string name="incognito_cookies">Habilitar cookies en el modo incógnito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -117,6 +117,18 @@
     <string name="hint_password">Contraseña</string>
     <string name="search_suggestions">Sugerencias de búsqueda</string>
     <string name="powered_by_google">Proporcionadas por Google</string>
+    <string name="powered_by_duck">Proporcionadas por DuckDuckGo</string>
+    <string name="search_suggestions_off">Sin sugerencias de búsqueda</string>
+    <string name="http_proxy">Proxy HTTP</string>
+    <string-array name="proxy_choices_array">
+        <item>Ninguno</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manual</item>
+    </string-array>
+    <string name="manual_proxy">Proxy manual</string>
+    <string name="host">Host:</string>
+    <string name="port">Puerto:</string>
     <string name="use_tor_prompt">Parece que tienes Orbot instalado. ¿Quieres usar Tor?</string>
     <string name="install_orbot">Por favor, instala Orbot para usar Tor.</string>
     <string name="yes">Sí</string>
@@ -135,6 +147,7 @@
     <string name="name_inverted">Invertido</string>
     <string name="name_grayscale">Escala de grises</string>
     <string name="name_inverted_grayscale">Escala de grises invertida</string>
+    <string name="name_increase_contrast">Aumentar contraste</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sincronizar historial con Google</string>
     <string name="title_file_chooser">Selector de archivo</string>
@@ -162,6 +175,7 @@
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
     <string name="url_contents">Contenido de la caja de la URL</string>
+    <string name="text_encoding">Codificación de texto</string>
     <string-array name="url_content_array">
         <item >Dominio (por defecto)</item>
         <item >URL</item>
@@ -170,4 +184,45 @@
     <string name="invert_color">Invertir color</string>
     <string name="dark_theme">Usar tema oscuro</string>
     <string name="tabs">Pestañas</string>
+    <string name="theme">Tema de la app</string>
+    <string name="light_theme">Tema claro</string>
+    <string name="black_theme">Tema oscuro (AMOLED)</string>
+    <string name="folder">Nombre de la carpeta</string>
+    <string name="action_folder">Carpeta</string>
+    <string name="action_rename">Renombrar</string>
+    <string name="title_rename_folder">Renombrar carpeta</string>
+    <string name="dialog_folder">¿Qué te gustaría hacer con esta carpeta?</string>
+    <string name="clear_web_storage">Borrar almacenamiento web</string>
+    <string name="clear_web_storage_exit">Borrar almacenamiento web al salir</string>
+    <string name="message_web_storage_cleared">Almacenamiento web borrado</string>
+    <string name="hosts_source">Fuente de bloqueo de anuncios del archivo hosts</string>
+    <string name="settings_adblock">Ajustes de bloqueo de anuncios</string>
+    <string name="tabs_in_drawer">Mostrar pestañas en el cajón de navegación</string>
+    <string name="swap_bookmarks_and_tabs">Cambiar marcador y tabuladores</string>
+    <string name="do_not_track">Solicitar \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Remover encabezados de identificación</string>
+    <string name="action_add_to_homescreen">Añadir a pantalla de inicio</string>
+    <string name="message_added_to_homescreen">Acceso directo añadido a la pantalla de inicio</string>
+    <string name="action_delete_all_bookmarks">Borrar todos los marcadores</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Preguntas frecuentes</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Ajustes de depuración</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Reinicia la aplicación para que el cambio tenga efecto.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Abrir en nueva pestaña</string>
+    <string name="dialog_open_background_tab">Abrir en pestaña de fondo</string>
+    <string name="dialog_open_incognito_tab">Abrir en pestaña incógnito</string>
+    <string name="dialog_remove_bookmark">Remover marcador</string>
+    <string name="dialog_edit_bookmark">Editar marcador</string>
+    <string name="dialog_remove_from_history">Remover del historial</string>
+    <string name="dialog_download_image">Descargar imagen</string>
+    <string name="dialog_copy_link">Copiar enlace</string>
+    <string name="dialog_rename_folder">Renombrar carpeta</string>
+    <string name="dialog_remove_folder">Remover carpeta</string>
+    <string name="dialog_title_close_browser">Cerrar navegador</string>
 </resources>
