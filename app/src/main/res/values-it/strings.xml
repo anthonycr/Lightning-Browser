@@ -48,7 +48,7 @@
     <string name="search_hint">Cerca</string>
     <string name="wideViewPort">Utilizza ampia finestra</string>
     <string name="overViewMode">Carica le pagine in modalità panoramica</string>
-    <string name="restore">Restore lost tabs on start</string>
+    <string name="restore">Ripristina le schede perse alla riapertura</string>
     <string name="stock_browser_unavailable">Nessun browser stock trovato</string>
     <string name="stock_browser_available">Browser stock supportato trovato</string>
     <string name="fullScreenOption">Nascondi la barra di stato mentre navighi</string>
@@ -120,7 +120,7 @@
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
     <string name="custom_url">URL Personalizzato</string>
-    <string name="message_blocked_local">Local file has been blocked from loading</string>
+    <string name="message_blocked_local">Il caricamento del file locale è stato bloccato</string>
     <string name="licenses">Licenze Open Source</string>
     <string name="suggestion">Cerca</string>
     <string name="block_ads">Blocca Annunci</string>
