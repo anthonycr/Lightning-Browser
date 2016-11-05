@@ -127,6 +127,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             ThemeUtils.getIconLightThemeColor(context);
     }
 
+    private TabsManager getTabsManager() {
+        if (mTabsManager == null) {
+            mTabsManager = mUiController.getTabModel();
+        }
+        return mTabsManager;
+    }
+
     // Handle bookmark click
     private final OnItemClickListener mItemClickListener = new OnItemClickListener() {
         @Override
@@ -311,7 +318,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 mUiController.bookmarkButtonClicked();
                 break;
             case R.id.action_reading:
-                LightningView currentTab = mTabsManager.getCurrentTab();
+                LightningView currentTab = getTabsManager().getCurrentTab();
                 if (currentTab != null) {
                     Intent read = new Intent(getActivity(), ReadingActivity.class);
                     read.putExtra(Constants.LOAD_READING_URL, currentTab.getUrl());
@@ -319,7 +326,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 }
                 break;
             case R.id.action_toggle_desktop:
-                LightningView current = mTabsManager.getCurrentTab();
+                LightningView current = getTabsManager().getCurrentTab();
                 if (current != null) {
                     current.toggleDesktopUA(getActivity());
                     current.reload();

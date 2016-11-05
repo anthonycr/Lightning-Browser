@@ -15,6 +15,13 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Scheduler;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscriber;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -33,14 +40,6 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
-import com.anthonycr.bonsai.Scheduler;
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
-
 import acr.browser.lightning.utils.ThemeUtils;
 
 public class SuggestionsAdapter extends BaseAdapter implements Filterable {
@@ -99,8 +98,16 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     }
 
     public void refreshBookmarks() {
-        mAllBookmarks.clear();
-        mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
+        Observable.create(new Action<Void>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
+                mAllBookmarks.clear();
+                mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
+
+                subscriber.onComplete();
+            }
+        }).subscribeOn(Schedulers.io())
+            .subscribe();
     }
 
     @Override

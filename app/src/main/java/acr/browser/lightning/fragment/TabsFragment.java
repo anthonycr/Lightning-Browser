@@ -147,6 +147,13 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         return view;
     }
 
+    private TabsManager getTabsManager() {
+        if (mTabsManager == null) {
+            mTabsManager = mUiController.getTabModel();
+        }
+        return mTabsManager;
+    }
+
     private void setupFrameLayoutButton(@NonNull final View root, @IdRes final int buttonId,
                                         @IdRes final int imageId) {
         final View frameButton = root.findViewById(buttonId);
@@ -210,7 +217,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     public void onClick(@NonNull View v) {
         switch (v.getId()) {
             case R.id.tab_header_button:
-                mUiController.showCloseDialog(mTabsManager.indexOfCurrentTab());
+                mUiController.showCloseDialog(getTabsManager().indexOfCurrentTab());
                 break;
             case R.id.new_tab_button:
                 mUiController.newTabButtonClicked();
@@ -243,7 +250,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void tabAdded() {
         if (mTabsAdapter != null) {
-            mTabsAdapter.notifyItemInserted(mTabsManager.last());
+            mTabsAdapter.notifyItemInserted(getTabsManager().last());
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -315,7 +322,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
 
-            LightningView web = mTabsManager.getTabAtPosition(position);
+            LightningView web = getTabsManager().getTabAtPosition(position);
             if (web == null) {
                 return;
             }
@@ -360,7 +367,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
         @Override
         public int getItemCount() {
-            return mTabsManager.size();
+            return getTabsManager().size();
         }
 
         public Bitmap getDesaturatedBitmap(@NonNull Bitmap favicon) {
