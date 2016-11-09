@@ -135,7 +135,11 @@ public class TabsManager {
                 if (mPreferenceManager.getRestoreLostTabsEnabled()) {
                     restoreLostTabs(url, activity, subscriber);
                 } else {
-                    newTab(activity, null, false);
+                    if (!TextUtils.isEmpty(url)) {
+                        newTab(activity, url, false);
+                    } else {
+                        newTab(activity, null, false);
+                    }
                     finishInitialization();
                     subscriber.onComplete();
                 }
