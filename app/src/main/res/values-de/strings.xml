@@ -169,6 +169,7 @@
     <string name="settings_about">Über</string>
     <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
     <string name="close_tab">Tab schließen</string>
+    <string name="close_other_tabs">Andere Tabs schließen</string>
     <string name="close_all_tabs">Alle Tabs schließen</string>
     <string name="third_party">Drittanbieter Cookies blockieren</string>
     <string name="color_mode">Farbmodus aktivieren</string>
@@ -202,6 +203,8 @@
     <string name="tabs">Tabs</string>
     <string name="theme">App-Design</string>
     <string name="title_rename_folder">Ordner umbenennen</string>
+    <string name="action_add_to_homescreen">Auf Startbildschirm legen</string>
+    <string name="message_added_to_homescreen">Verknüpfung auf dem Startbildschirm abgelegt</string>
     <string name="http_proxy">HTTP-Proxy</string>
     <string name="i2p_not_running">I2P läuft nicht.</string>
     <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
@@ -216,4 +219,20 @@
     <string name="use_i2p_prompt">Es sieht aus, als ob I2P installiert wäre. Möchten Sie es verwenden?</string>
     <string name="text_encoding">Textcodierung</string>
     <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
+    <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
+    <string name="swap_bookmarks_and_tabs">Lesezeichen und Tab Drawer umschalten</string>
+    <string name="do_not_track">\'Nicht Verfolgen\' anfordern</string>
+    <string name="remove_identifying_headers">\'Identifying Headers\' entfernen</string>
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">In neuem Tab öffnen</string>
+    <string name="dialog_open_background_tab">In Hintergrund Tab öffnen</string>
+    <string name="dialog_open_incognito_tab">In Inkognito Tab öffnen</string>
+    <string name="dialog_remove_bookmark">Lesezeichen entfernen</string>
+    <string name="dialog_edit_bookmark">Lesezeichen bearbeiten</string>
+    <string name="dialog_remove_from_history">Aus dem Verlauf löschen</string>
+    <string name="dialog_download_image">Bilder herunterladen</string>
+    <string name="dialog_copy_link">Link kopieren</string>
+    <string name="dialog_rename_folder">Ordner umbenennen</string>
+    <string name="dialog_remove_folder">Ordner löschen</string>
+    <string name="dialog_title_close_browser">Browser schließen</string>
 </resources>
