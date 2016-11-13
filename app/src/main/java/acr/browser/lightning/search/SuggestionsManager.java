@@ -1,5 +1,6 @@
 package acr.browser.lightning.search;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -26,13 +27,14 @@ class SuggestionsManager {
     }
 
     static Observable<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context, @NonNull final Source source) {
+        final Application application = BrowserApp.get(context);
         return Observable.create(new Action<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull final Subscriber<List<HistoryItem>> subscriber) {
                 sIsTaskExecuting = true;
                 switch (source) {
                     case GOOGLE:
-                        new GoogleSuggestionsTask(query, BrowserApp.get(context), new SuggestionsResult() {
+                        new GoogleSuggestionsTask(query, application, new SuggestionsResult() {
                             @Override
                             public void resultReceived(@NonNull List<HistoryItem> searchResults) {
                                 subscriber.onNext(searchResults);
@@ -41,7 +43,7 @@ class SuggestionsManager {
                         }).run();
                         break;
                     case DUCK:
-                        new DuckSuggestionsTask(query, BrowserApp.get(context), new SuggestionsResult() {
+                        new DuckSuggestionsTask(query, application, new SuggestionsResult() {
                             @Override
                             public void resultReceived(@NonNull List<HistoryItem> searchResults) {
                                 subscriber.onNext(searchResults);
