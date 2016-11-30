@@ -127,13 +127,13 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
                 break;
             case 5:
                 // STARTPAGE_SEARCH;
-                icon = "file:///android_asset/png";
+                icon = "file:///android_asset/startpage.png";
                 // "https://com/graphics/startp_logo.gif";
                 searchUrl = Constants.STARTPAGE_SEARCH;
                 break;
             case 6:
                 // STARTPAGE_MOBILE
-                icon = "file:///android_asset/png";
+                icon = "file:///android_asset/startpage.png";
                 // "https://com/graphics/startp_logo.gif";
                 searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
                 break;
