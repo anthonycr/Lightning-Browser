@@ -38,20 +38,20 @@
     <string name="apache">Apache License 2.0</string>
     <string name="version">Programmversion</string>
     <string name="cache">Cache beim Beenden leeren</string>
-    <string name="reflow">Textfluß anpassen</string>
+    <string name="reflow">Textfluss anpassen</string>
     <string name="block">Bilder blockieren</string>
     <string name="window">Seiten erlauben ein neues Fenster zu öffnen</string>
     <string name="cookies">Cookies erlauben</string>
     <string name="importbookmarks">Lesezeichen vom Standardbrowser importieren</string>
     <string name="size">Textgröße</string>
-    <string name="recommended">(Empfohlen)</string>
+    <string name="recommended">(empfohlen)</string>
     <string name="search">Suchdienst</string>
     <string name="search_hint">Suche</string>
     <string name="wideViewPort">Breiten Anzeigebereich verwenden</string>
     <string name="overViewMode">Seiten in der Übersicht öffnen</string>
     <string name="restore">Tab beim Start wiederherstellen</string>
-    <string name="stock_browser_unavailable">(Kein unterstützter Standardbrowser gefunden)</string>
-    <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
+    <string name="stock_browser_unavailable">(kein unterstützter Standardbrowser gefunden)</string>
+    <string name="stock_browser_available">(unterstützter Standardbrowser gefunden)</string>
     <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
     <string name="clear_cookies">Cookies löschen</string>
     <string name="clear_history">Verlauf löschen</string>
@@ -68,7 +68,7 @@
     <string name="agent_mobile">Mobile</string>
     <string name="agent_custom">Andere</string>
     <string name="title_search_engine">Suchmaschine</string>
-    <string name="action_ok">Ok</string>
+    <string name="action_ok">OK</string>
     <string name="dialog_download">Möchten Sie diese Datei herunterladen?</string>
     <string name="action_cancel">Abbrechen</string>
     <string name="title_warning">Warnung</string>
@@ -79,8 +79,8 @@
     <string name="action_webpage">Webseite</string>
     <string name="title_clear_history">Verlauf löschen</string>
     <string name="title_clear_cookies">Cookies löschen</string>
-    <string name="dialog_history">Möchten Sie den gesamten Verlauf sicher löschen?</string>
-    <string name="dialog_cookies">Möchten Sie alle Cookies sicher löschen?</string>
+    <string name="dialog_history">Möchten Sie den gesamten Verlauf wirklich löschen?</string>
+    <string name="dialog_cookies">Möchten Sie alle Cookies wirklich löschen?</string>
     <string name="action_yes">Ja</string>
     <string name="action_no">Nein</string>
     <string name="title_text_size">Textgröße</string>
@@ -101,10 +101,10 @@
     <string name="action_find">Auf Seite suchen</string>
     <string name="download_pending">Herunterladen läuft\u2026</string>
     <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
-    <string name="download_no_sdcard_dlg_title" >Keine SD-Karte</string>
-    <string name="download_no_sdcard_dlg_msg" >USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
+    <string name="download_no_sdcard_dlg_title">Keine SD-Karte</string>
+    <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar!</string>
-    <string name="download_sdcard_busy_dlg_msg" >Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
+    <string name="download_sdcard_busy_dlg_msg">Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuell</string>
@@ -146,9 +146,9 @@
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
-    <string name="hphosts_ad_server_list">hpHosts Ad Server Liste</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server-Liste</string>
     <string name="deleted_tab">Alten Tab geöffnet</string>
-    <string name="rendering_mode">Rendering Modus</string>
+    <string name="rendering_mode">Rendering-Modus</string>
     <string name="name_inverted">Invertiert</string>
     <string name="name_grayscale">Graustufen</string>
     <string name="name_inverted_grayscale">Invertierte Graustufen</string>
@@ -158,10 +158,10 @@
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
     <string name="export_bookmarks">Exportiere Backup</string>
-    <string name="import_backup">Importiere Backup</string>
+    <string name="import_backup">Importiere Lesezeichen aus Backup</string>
     <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
     <string name="bookmark_settings">Lesezeichen</string>
-    <string name="import_bookmark_error">Lesezeichen konnten nicht imprortiert werden</string>
+    <string name="import_bookmark_error">Lesezeichen konnten nicht importiert werden</string>
     <string name="title_chooser">Wähle Datei aus</string>
     <string name="settings_general">Allgemein</string>
     <string name="settings_display">Display</string>
@@ -170,19 +170,19 @@
     <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
     <string name="close_tab">Tab schließen</string>
     <string name="close_all_tabs">Alle Tabs schließen</string>
-    <string name="third_party">Drittanbieter Cookies blockieren</string>
+    <string name="third_party">Drittanbieter-Cookies blockieren</string>
     <string name="color_mode">Farbmodus aktivieren</string>
     <string name="reading_mode">Lesemodus</string>
     <string name="loading">Lade&#8230;</string>
     <string name="loading_failed">Es konnte nichts von der Seite geladen werden.</string>
     <string name="snacktory">Snacktory</string>
-    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="jsoup">jsoup: Java HTML-Parser</string>
     <string name="mit_license">MIT Lizenz</string>
-    <string name="url_contents">URL-Box Inhalt</string>
+    <string name="url_contents">Inhalt der URL-Leiste</string>
     <string-array name="url_content_array">
-        <item >Domain (Standard)</item>
-        <item >URL</item>
-        <item >Titel</item>
+        <item>Domain (Standard)</item>
+        <item>URL</item>
+        <item>Titel</item>
     </string-array>
     <string name="action_folder">Ordner</string>
     <string name="action_rename">Umbenennen</string>
@@ -204,7 +204,7 @@
     <string name="title_rename_folder">Ordner umbenennen</string>
     <string name="http_proxy">HTTP-Proxy</string>
     <string name="i2p_not_running">I2P läuft nicht.</string>
-    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
+    <string name="i2p_tunnels_not_ready">I2P-Tunnel sind noch nicht bereit.</string>
     <string name="message_certificate_date_invalid">Zertifikats-Datum ungültig</string>
     <string name="message_certificate_domain_mismatch">Domain in Zertifikat stimmt nicht mit aktueller Domain überein</string>
     <string name="message_certificate_expired">Zertifikat abgelaufen</string>
@@ -213,7 +213,7 @@
     <string name="message_certificate_untrusted">Zertifikat wird nicht vertraut</string>
     <string name="problem_download">Ungültige Adresse gefunden. Kann nicht herunterladen</string>
     <string name="problem_location_download">Kann nicht an den eingestellten Ort herunterladen</string>
-    <string name="use_i2p_prompt">Es sieht aus, als ob I2P installiert wäre. Möchten Sie es verwenden?</string>
+    <string name="use_i2p_prompt">I2P scheint installiert zu sein. Möchten Sie es verwenden?</string>
     <string name="text_encoding">Textcodierung</string>
     <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
 </resources>
