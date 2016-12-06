@@ -16,7 +16,8 @@
 -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-  
+
+
     <string name="app_name">Lightning</string>
     <string name="action_new_tab">Nouvel onglet</string>
     <string name="action_share">Partager</string>
@@ -28,7 +29,7 @@
     <string name="settings">Paramètres</string>
     <string name="location">Accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
-    <string name="agent">User Agent</string>
+    <string name="agent">Agent utilisateur</string>
     <string name="flash">Activer Adobe Flash</string>
     <string name="home">Page d\'accueil</string>
     <string name="fullscreen">Mode plein écran</string>
@@ -50,6 +51,8 @@
     <string name="wideViewPort">Utiliser large fenêtre d\'affichage</string>
     <string name="overViewMode">Charger les pages en mode aperçu</string>
     <string name="restore">Restaurer les onglets perdus au démarrage</string>
+    <string name="supported_browsers_title">Navigateurs pris en charge</string>
+    <string name="stock_browser">Navigateur par défaut</string>
     <string name="stock_browser_unavailable">Aucun navigateur détecté</string>
     <string name="stock_browser_available">Navigateur compatible détecté</string>
     <string name="fullScreenOption">Masquer la barre d\'état lors de la navigation</string>
@@ -74,7 +77,7 @@
     <string name="action_cancel">Annuler</string>
     <string name="title_warning">Avertissement</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player n\'a pas été détecté.\nVeuillez installer Flash Player.</string>
-    <string name="title_user_agent">User Agent</string>
+    <string name="title_user_agent">Agent utilisateur</string>
     <string name="title_download_location">Téléchargement</string>
     <string name="title_custom_homepage">Page d\'accueil personnalisée</string>
     <string name="action_webpage">Page internet</string>
@@ -144,6 +147,8 @@
     <string name="hint_password">Mot de passe</string>
     <string name="search_suggestions">Suggestions de recherche</string>
     <string name="powered_by_google">Proposé par Google</string>
+    <string name="powered_by_duck">Propulsé par DuckDuckGo</string>
+    <string name="search_suggestions_off">Pas de suggestions de recherche</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">
         <item>Aucun</item>
@@ -175,6 +180,7 @@
     <string name="name_inverted">Inversé</string>
     <string name="name_grayscale">Niveaux de gris</string>
     <string name="name_inverted_grayscale">Niveaux de gris inversés</string>
+    <string name="name_increase_contrast">Augmenter le contraste</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Synchroniser l\'historique avec Google</string>
     <string name="title_file_chooser">Explorateur de fichiers</string>
@@ -193,6 +199,7 @@
     <string name="settings_about_explain">En savoir plus sur la version, l\'auteur et la licence.</string>
     <string name="close_tab">Fermer l\'onglet</string>
     <string name="close_all_tabs">Fermer tous les onglets</string>
+    <string name="close_other_tabs">Fermer les autres onglets</string>
     <string name="third_party">Bloquer les cookies tiers</string>    
     <string name="color_mode">Activer le mode couleur</string>
     <string name="reading_mode">Mode lecteur</string>    
@@ -208,9 +215,9 @@
         <item >Adresse</item>
         <item >Titre</item>
     </string-array>
-        <string name="invert_color">Inverser la couleur</string>
-        <string name="dark_theme">Thème sombre</string>
-        <string name="tabs">Onglets</string>
+    <string name="invert_color">Inverser les couleurs</string>
+    <string name="dark_theme">Thème sombre</string>
+    <string name="tabs">Onglets</string>
     <string name="theme">Thème</string>
     <string name="light_theme">Thème clair</string>
     <string name="black_theme">Thème noir (AMOLED)</string>
@@ -225,6 +232,31 @@
     <string name="hosts_source">Fichier Hosts source de blocage des publicités</string>
     <string name="settings_adblock">Blocage des publicités</string>
     <string name="tabs_in_drawer">Afficher les onglets dans le volet de navigation</string>
+    <string name="swap_bookmarks_and_tabs">Échanger les favoris et les onglets</string>
     <string name="do_not_track">Demander de \'Ne pas pister\'</string>
     <string name="remove_identifying_headers">Supprimer les en-têtes d\'dentification</string>
+    <string name="action_add_to_homescreen">Ajouter à l\'écran d\'accueil</string>
+    <string name="message_added_to_homescreen">Ajouté à l\'écran d\'accueil</string>
+    <string name="action_delete_all_bookmarks">Supprimer tous les favoris</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Questions fréquemment posées</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Paramètres de déboggage</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Veuillez redémarrer l\'application pour prendre en compte les changements.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Ouvrir dans un nouvel onglet</string>
+    <string name="dialog_open_background_tab">Ouvrir en arrière plan</string>
+    <string name="dialog_open_incognito_tab">Ouvrir dans un onglet incognito</string>
+    <string name="dialog_remove_bookmark">Supprimer le favori</string>
+    <string name="dialog_edit_bookmark">Éditer le favori</string>
+    <string name="dialog_remove_from_history">Supprimer de l\'historique</string>
+    <string name="dialog_download_image">Télécharger l\'image</string>
+    <string name="dialog_copy_link">Copier le lien</string>
+    <string name="dialog_rename_folder">Renommer de dossier</string>
+    <string name="dialog_remove_folder">Supprimer le dossier</string>
+    <string name="dialog_title_close_browser">Fermer le navigateur</string>
 </resources>
