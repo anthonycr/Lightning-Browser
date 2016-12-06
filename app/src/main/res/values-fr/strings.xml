@@ -253,7 +253,7 @@
     <string name="dialog_open_incognito_tab">Ouvrir dans un onglet incognito</string>
     <string name="dialog_remove_bookmark">Supprimer le favori</string>
     <string name="dialog_edit_bookmark">Éditer le favori</string>
-    <string name="dialog_remove_from_history">Supprimer de l'historique</string>
+    <string name="dialog_remove_from_history">Supprimer de l\'historique</string>
     <string name="dialog_download_image">Télécharger l\'image</string>
     <string name="dialog_copy_link">Copier le lien</string>
     <string name="dialog_rename_folder">Renommer de dossier</string>
