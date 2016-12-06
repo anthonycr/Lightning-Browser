@@ -245,7 +245,7 @@
     <!-- debug strings -->
     <string name="debug_title">Paramètres de déboggage</string>
     <string name="debug_leak_canary">LeakCanary</string>
-    <string name="app_restart">Veuillez redémarrer l'application pour prendre en compte les changements.</string>
+    <string name="app_restart">Veuillez redémarrer l\'application pour prendre en compte les changements.</string>
 
     <!-- Dialogs -->
     <string name="dialog_open_new_tab">Ouvrir dans un nouvel onglet</string>
