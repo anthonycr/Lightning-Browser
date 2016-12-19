@@ -713,6 +713,50 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        // Keyboard shortcuts
+        if (event.isCtrlPressed() && event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch(event.getKeyCode()) {
+                case KeyEvent.KEYCODE_T:
+                    // Open new tab
+                    newTab(null, true);
+                    return true;
+                case KeyEvent.KEYCODE_W:
+                    // Close current tab
+                    mPresenter.deleteTab(mTabsManager.indexOfCurrentTab());
+                    return true;
+                case KeyEvent.KEYCODE_Q:
+                    // Close browser
+                    closeBrowser();
+                    return true;
+                case KeyEvent.KEYCODE_R:
+                    // Refresh current tab
+                    mTabsManager.getCurrentTab().reload();
+                    return true;
+                case KeyEvent.KEYCODE_TAB:
+                    int nextIndex = 0;
+                    if(event.isShiftPressed()) {
+                        // Go back one tab
+                        if(mTabsManager.indexOfCurrentTab() > 0) nextIndex = mTabsManager.indexOfCurrentTab() - 1;
+                        else nextIndex = mTabsManager.last();
+                    } else {
+                        // Go forward one tab
+                        if(mTabsManager.indexOfCurrentTab() < mTabsManager.last()) nextIndex = mTabsManager.indexOfCurrentTab() + 1;
+                        else nextIndex = 0;
+                    }
+                    mPresenter.tabChanged(nextIndex);
+                    return true;
+            }
+        } else if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
+            // Highlight search field
+            mSearch.requestFocus();
+            mSearch.selectAll();
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final LightningView currentView = mTabsManager.getCurrentTab();
         final String currentUrl = currentView != null ? currentView.getUrl() : null;
