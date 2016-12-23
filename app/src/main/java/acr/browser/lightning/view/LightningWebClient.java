@@ -26,6 +26,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
@@ -125,11 +126,14 @@ public class LightningWebClient extends WebViewClient {
                                           final String host, final String realm) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        final TextView realmLabel = new TextView(mActivity);
         final EditText name = new EditText(mActivity);
         final EditText password = new EditText(mActivity);
         LinearLayout passLayout = new LinearLayout(mActivity);
         passLayout.setOrientation(LinearLayout.VERTICAL);
+        realmLabel.setText(mActivity.getString(R.string.label_realm, realm));
 
+        passLayout.addView(realmLabel);
         passLayout.addView(name);
         passLayout.addView(password);
 

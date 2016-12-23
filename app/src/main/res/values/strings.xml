@@ -142,6 +142,7 @@
     <string name="action_allow">Allow</string>
     <string name="action_dont_allow">Don\'t Allow</string>
     <string name="title_sign_in">Sign In</string>
+    <string name="label_realm">Server message: %s</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="search_suggestions">Search Suggestions</string>
