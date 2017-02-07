@@ -17,7 +17,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
   
-    <string name="app_name">Lightning</string>
+    <string name="app_name">Search</string>
     <string name="action_new_tab">Nouvel onglet</string>
     <string name="action_share">Partager</string>
     <string name="action_history">Historique</string>

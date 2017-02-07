@@ -32,6 +32,11 @@ import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscriber;
 import com.squareup.otto.Bus;
 
 import java.io.File;
@@ -50,13 +55,6 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
-import com.anthonycr.bonsai.OnSubscribe;
-
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
@@ -213,7 +211,8 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        new StartPage(this, BrowserApp.get(mActivity)).load();
+        mWebView.loadUrl(Constants.STARTPAGE_MOBITECH_SEARCH, mRequestHeaders);
+        //new StartPage(this, BrowserApp.get(mActivity)).load();
     }
 
     /**

@@ -37,4 +37,24 @@
 
     <color name="error_red">#F44336</color>
 
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="mobitech_full_transparent">#00FFFFFF</color>
+    <color name="mobitech_black">#FF000000</color>
+
+    <!-- Browser activity -->
+    <color name="bing_ad_mark">#999999</color>
+    <color name="bing_share_blue">#0a0cd9</color>
+    <color name="bing_display_url">#008030</color>
+    <color name="bing_star">#e7711b</color>
+    <color name="bing_search_btn_background">#737373</color>
+    <color name="bing_search_bar_background">#e5e5e5</color>
+
+    <!-- saerch default -->
+    <color name="search_default_history_background">#BDBDBD</color>
+    <color name="search_default_opt_off">#636363</color>
+    <color name="search_default_opt_on">#029300</color>
 </resources>

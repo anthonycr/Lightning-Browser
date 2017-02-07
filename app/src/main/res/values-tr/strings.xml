@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">Search</string>
     <string name="action_new_tab">Yeni Sekme</string>
     <string name="action_share">Paylaş</string>
     <string name="action_history">Geçmiş</string>

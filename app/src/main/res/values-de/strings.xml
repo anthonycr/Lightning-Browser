@@ -17,7 +17,7 @@
 
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">Search</string>
     <string name="action_new_tab">Neuer Tab</string>
     <string name="action_share">Teilen</string>
     <string name="action_history">Verlauf</string>

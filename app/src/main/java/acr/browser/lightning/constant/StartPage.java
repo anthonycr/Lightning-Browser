@@ -161,6 +161,18 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
                 searchUrl = Constants.YANDEX_SEARCH;
                 break;
+            case 11:
+                // MOBITECH_SEARCH;
+                icon = "file:///android_asset/yandex.png";
+                // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
+                searchUrl = Constants.MOBITECH_SEARCH;
+                break;
+            case 12:
+                // MOBITECH_START_PAGE;
+                icon = "file:///android_asset/yandex.png";
+                // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
+                searchUrl = Constants.STARTPAGE_MOBITECH_SEARCH;
+                break;
             default:
                 // DEFAULT GOOGLE_SEARCH;
                 icon = "file:///android_asset/google.png";

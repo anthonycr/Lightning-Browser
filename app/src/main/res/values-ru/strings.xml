@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Молния</string>
+    <string name="app_name">Поиск</string>
     <string name="action_new_tab">Создать вкладку</string>
     <string name="action_share">Отправить ссылку</string>
     <string name="action_history">История</string>

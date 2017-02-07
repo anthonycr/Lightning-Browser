@@ -35,13 +35,15 @@ android {
     productFlavors {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
-            applicationId "acr.browser.lightning"
+//            applicationId "acr.browser.lightning"
+            applicationId "io.mobitech.browser"
             versionCode 91
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
-            applicationId "acr.browser.barebones"
+//            applicationId "acr.browser.barebones"
+            applicationId "io.mobitech.browser"
             versionCode 93
         }
     }
@@ -104,4 +106,7 @@ dependencies {
     // memory leak analysis
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+
+    //User's Goggle Advertiser ID
+    compile 'com.google.android.gms:play-services-ads:9.4.0'
 }

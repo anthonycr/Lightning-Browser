@@ -223,7 +223,7 @@ public class PreferenceManager {
     }
 
     public int getSearchChoice() {
-        return mPrefs.getInt(Name.SEARCH, 1);
+        return mPrefs.getInt(Name.SEARCH, 12);
     }
 
     @NonNull

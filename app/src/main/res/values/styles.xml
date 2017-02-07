@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
     <!-- Settings themes -->
     <style name="Theme.SettingsTheme" parent="Theme.LightTheme">
         <item name="android:windowBackground">@null</item>
