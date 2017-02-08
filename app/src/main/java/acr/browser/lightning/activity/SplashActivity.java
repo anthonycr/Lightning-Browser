@@ -10,13 +10,22 @@ import android.util.Log;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 
+import javax.inject.Inject;
+
+import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.preference.PreferenceManager;
+
 public class SplashActivity extends AppCompatActivity {
 
     public static final String TAG = SplashActivity.class.getPackage() + "." + SplashActivity.class.getSimpleName();
 
+    @Inject
+    PreferenceManager mPreferenceManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BrowserApp.getAppComponent().inject(this);
 
         new Handler(Looper.myLooper()).post(
                 new Runnable() {
@@ -49,6 +58,7 @@ public class SplashActivity extends AppCompatActivity {
 
                             @Override
                             protected void onPostExecute(String userAdvId) {
+                                mPreferenceManager.setUserId(userAdvId);
                                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                                 SplashActivity.this.startActivity(intent);
                                 finish();

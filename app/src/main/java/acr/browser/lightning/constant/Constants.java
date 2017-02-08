@@ -32,8 +32,8 @@ public final class Constants {
     public static final String ASK_SEARCH = "http://www.ask.com/web?qsrc=0&o=0&l=dir&qo=LightningBrowser&q=";
     public static final String BAIDU_SEARCH = "https://www.baidu.com/s?wd=";
     public static final String YANDEX_SEARCH = "https://yandex.ru/yandsearch?lr=21411&text=";
-    public static final String MOBITECH_SEARCH = "https://api-client.mobitech-search.xyz/?p_key=TESTC36B5A&user_id=&showSearchBar=true&q=";
-    public static final String STARTPAGE_MOBITECH_SEARCH = "https://browser.mobitech-search.xyz/start?p_key=MOBC36B5A";
+    public static final String MOBITECH_SEARCH = "https://api-client.mobitech-search.xyz/?p_key=%s&user_id=%s&showSearchBar=true&q=";
+    public static final String STARTPAGE_MOBITECH_SEARCH = "https://browser.mobitech-search.xyz/start?p_key=%s&user_id=%s";
 
 
 
@@ -91,4 +91,5 @@ public final class Constants {
     public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", "UTF-8", "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
 
     public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
+
 }

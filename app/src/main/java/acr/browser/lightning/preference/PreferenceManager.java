@@ -37,6 +37,7 @@ public class PreferenceManager {
         static final String TEXT_SIZE = "textsize";
         static final String USE_WIDE_VIEWPORT = "wideviewport";
         static final String USER_AGENT = "agentchoose";
+        static final String USER_ID = "userId";
         static final String USER_AGENT_STRING = "userAgentString";
         static final String CLEAR_HISTORY_EXIT = "clearHistoryExit";
         static final String CLEAR_COOKIES_EXIT = "clearCookiesExit";
@@ -461,6 +462,14 @@ public class PreferenceManager {
 
     public boolean getUseLeakCanary() {
         return mPrefs.getBoolean(Name.LEAK_CANARY, false);
+    }
+
+    public void setUserId(@Nullable String userId) {
+        putString(Name.USER_ID, userId);
+    }
+
+    public String getUserId() {
+        return mPrefs.getString(Name.USER_ID, "");
     }
 
     /**
