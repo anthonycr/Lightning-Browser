@@ -82,7 +82,7 @@ public class SplashActivity extends AppCompatActivity {
      */
     private void trackFirstInstalledApp() {
         final String referrer = mPreferenceManager.getReferrer();
-        if (TextUtils.isEmpty(referrer)) return;
+        //if (TextUtils.isEmpty(referrer)) return;
         new TrackFirstInstalledAppTask() {
             @Override
             protected void onPostExecute(Boolean result) {

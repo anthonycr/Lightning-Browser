@@ -122,6 +122,14 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".receiver.InstallReferrerReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".activity.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
