@@ -211,7 +211,7 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        mWebView.loadUrl(Constants.STARTPAGE_MOBITECH_SEARCH, mRequestHeaders);
+        mWebView.loadUrl(UrlUtils.makeMobitechSearchStartPage(mPreferences.getUserId(), null), mRequestHeaders);
         //new StartPage(this, BrowserApp.get(mActivity)).load();
     }
 

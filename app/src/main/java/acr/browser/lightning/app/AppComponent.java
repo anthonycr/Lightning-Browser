@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.ReadingActivity;
+import acr.browser.lightning.activity.SplashActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
@@ -29,6 +30,8 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject(BrowserActivity activity);
+
+    void inject(SplashActivity activity);
 
     void inject(BookmarksFragment fragment);
 

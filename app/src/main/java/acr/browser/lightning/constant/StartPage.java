@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
@@ -165,13 +166,13 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
                 // MOBITECH_SEARCH;
                 icon = "file:///android_asset/yandex.png";
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = Constants.MOBITECH_SEARCH;
+                searchUrl = UrlUtils.makeMobitechSearchUrl(mPreferenceManager.getUserId(), null);
                 break;
             case 12:
                 // MOBITECH_START_PAGE;
                 icon = "file:///android_asset/yandex.png";
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = Constants.STARTPAGE_MOBITECH_SEARCH;
+                searchUrl = UrlUtils.makeMobitechSearchStartPage(mPreferenceManager.getUserId(), null);
                 break;
             default:
                 // DEFAULT GOOGLE_SEARCH;

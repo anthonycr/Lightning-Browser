@@ -642,7 +642,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mSearchText = Constants.STARTPAGE_SEARCH;
                 break;
             case 6:
-                mSearchText = Constants.STARTPAGE_MOBILE_SEARCH;
+                mSearchText = UrlUtils.makeMobitechSearchStartPage(mPreferences.getUserId(), null);
                 break;
             case 7:
                 mSearchText = Constants.DUCK_SEARCH;
