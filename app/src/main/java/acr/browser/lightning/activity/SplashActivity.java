@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
@@ -13,6 +14,7 @@ import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import javax.inject.Inject;
 
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.async.TrackFirstInstalledAppTask;
 import acr.browser.lightning.preference.PreferenceManager;
 
 public class SplashActivity extends AppCompatActivity {
@@ -66,10 +68,27 @@ public class SplashActivity extends AppCompatActivity {
 
                         };
                         task.execute();
+
+                        if (!mPreferenceManager.isInstalled()) {
+                            trackFirstInstalledApp();
+                        }
                     }
                 }
         );
+    }
 
-
+    /**
+     * Tracks app when it first installed
+     */
+    private void trackFirstInstalledApp() {
+        final String referrer = mPreferenceManager.getReferrer();
+        if (TextUtils.isEmpty(referrer)) return;
+        new TrackFirstInstalledAppTask() {
+            @Override
+            protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
+                mPreferenceManager.setInstalled(result);
+            }
+        }.execute(referrer);
     }
 }
