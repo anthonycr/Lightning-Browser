@@ -207,7 +207,7 @@ public class UrlUtils {
 
     public static String makeMobitechSearchStartPage(String userId, String publicKey) {
         if(BuildConfig.DEBUG) {
-            publicKey = "MOBC36B5A";
+            publicKey = "TESTC36B5A";
         }
         return String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId);
     }
