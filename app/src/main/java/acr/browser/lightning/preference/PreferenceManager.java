@@ -65,6 +65,8 @@ public class PreferenceManager {
         static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
 
         static final String LEAK_CANARY = "leakCanary";
+        static final String IS_INSTALLED = "isInstalled";
+        static final String REFERRER = "referrer";
     }
 
     public enum Suggestion {
@@ -73,7 +75,8 @@ public class PreferenceManager {
         SUGGESTION_NONE
     }
 
-    @NonNull private final SharedPreferences mPrefs;
+    @NonNull
+    private final SharedPreferences mPrefs;
 
     private static final String PREFERENCES = "settings";
 
@@ -505,5 +508,31 @@ public class PreferenceManager {
 
     public void setUseWideViewportEnabled(boolean enable) {
         putBoolean(Name.USE_WIDE_VIEWPORT, enable);
+    }
+
+    /**
+     * Checks if app was installed
+     *
+     * @return true if app already installed.
+     */
+    public boolean isInstalled() {
+        return mPrefs.getBoolean(Name.IS_INSTALLED, false);
+    }
+
+    /**
+     * Writes installed flag. Writes true only when app first installing. But always calls {@link PreferenceManager#isInstalled()} before.
+     *
+     * @param installed
+     */
+    public void setInstalled(boolean installed) {
+        putBoolean(Name.IS_INSTALLED, installed);
+    }
+
+    public void setReferrer(@NonNull String referrer) {
+        putString(Name.REFERRER, referrer);
+    }
+
+    public String getReferrer() {
+        return mPrefs.getString(Name.REFERRER, "");
     }
 }

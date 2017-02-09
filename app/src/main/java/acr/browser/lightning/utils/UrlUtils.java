@@ -20,6 +20,8 @@ import android.support.annotation.Nullable;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -199,16 +201,32 @@ public class UrlUtils {
     }
 
     public static String makeMobitechSearchUrl(String userId, String publicKey) {
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             publicKey = "TESTC36B5A";
         }
         return String.format(Constants.MOBITECH_SEARCH, publicKey, userId);
     }
 
     public static String makeMobitechSearchStartPage(String userId, String publicKey) {
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             publicKey = "TESTC36B5A";
         }
         return String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId);
+    }
+
+    public static String makeTrackInstalledAppUrl(String referrer, String referrerField) {
+        if (referrerField != null && !referrerField.isEmpty() && referrer.indexOf(referrerField) != -1) {
+            referrer = referrer.substring(referrer.indexOf(referrerField) + referrerField.length());
+            int startIndex = referrer.indexOf("=") + 1;
+            int endIndex = referrer.indexOf("&") != -1 ? referrer.indexOf("&") : referrer.length();
+            referrer = referrer.substring(startIndex, endIndex);
+            try {
+                referrer = URLDecoder.decode(referrer, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return Constants.TRECKING_MOBITECH_INSTALLED_APP + referrer;
     }
 }

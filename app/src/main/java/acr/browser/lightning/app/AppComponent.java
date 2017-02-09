@@ -18,6 +18,7 @@ import acr.browser.lightning.fragment.DebugSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
+import acr.browser.lightning.receiver.InstallReferrerReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -32,6 +33,8 @@ public interface AppComponent {
     void inject(BrowserActivity activity);
 
     void inject(SplashActivity activity);
+
+    void inject(InstallReferrerReceiver receiver);
 
     void inject(BookmarksFragment fragment);
 
