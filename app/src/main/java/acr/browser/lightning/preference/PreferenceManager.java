@@ -224,7 +224,7 @@ public class PreferenceManager {
     }
 
     public int getSearchChoice() {
-        return mPrefs.getInt(Name.SEARCH, 12);
+        return mPrefs.getInt(Name.SEARCH, 6);
     }
 
     @NonNull
@@ -432,6 +432,10 @@ public class PreferenceManager {
         putBoolean(Name.SAVE_PASSWORDS, enable);
     }
 
+    /**
+     * Seta default search engine
+     * @param choice
+     */
     public void setSearchChoice(int choice) {
         putInt(Name.SEARCH, choice);
     }
