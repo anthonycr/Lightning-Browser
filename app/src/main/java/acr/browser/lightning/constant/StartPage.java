@@ -166,13 +166,13 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
                 // MOBITECH_SEARCH;
                 icon = "file:///android_asset/yandex.png";
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = UrlUtils.makeMobitechSearchUrl(mPreferenceManager.getUserId(), null);
+                searchUrl = UrlUtils.makeMobitechSearchUrl(mPreferenceManager.getUserId(), "TESTYHOC36B5A");
                 break;
             case 12:
                 // MOBITECH_START_PAGE;
                 icon = "file:///android_asset/yandex.png";
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = UrlUtils.makeMobitechSearchStartPage(mPreferenceManager.getUserId(), null);
+                searchUrl = UrlUtils.makeMobitechSearchStartPage(mPreferenceManager.getUserId(), "TESTYHOC36B5A");
                 break;
             default:
                 // DEFAULT GOOGLE_SEARCH;

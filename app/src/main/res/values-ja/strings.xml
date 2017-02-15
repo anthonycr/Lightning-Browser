@@ -14,7 +14,7 @@
 
 <resources>
 
-    <string name="app_name">Search</string>
+    <string name="app_name">Internet</string>
     <string name="action_new_tab">新しいタブ</string>
     <string name="action_share">共有</string>
     <string name="action_history">履歴</string>

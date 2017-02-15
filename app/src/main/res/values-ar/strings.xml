@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Search</string>
+    <string name="app_name">Internet</string>
     <string name="settings">إعدادات المتصفح</string>
     <string name="location">الوصول إلى موقعك</string>
     <string name="password">حفظ كلمات السر</string>
