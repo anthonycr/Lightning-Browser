@@ -67,6 +67,7 @@ public class PreferenceManager {
         static final String LEAK_CANARY = "leakCanary";
         static final String IS_INSTALLED = "isInstalled";
         static final String REFERRER = "referrer";
+        static final String REFERRER_APP_ID = "referrer_app_id";
     }
 
     public enum Suggestion {
@@ -538,5 +539,13 @@ public class PreferenceManager {
 
     public String getReferrer() {
         return mPrefs.getString(Name.REFERRER, "");
+    }
+
+    public void setReferrerAppId(@NonNull String appId) {
+        putString(Name.REFERRER_APP_ID, appId);
+    }
+
+    public String getReferrerAppId() {
+        return mPrefs.getString(Name.REFERRER_APP_ID, "");
     }
 }
