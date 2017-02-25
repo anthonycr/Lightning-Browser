@@ -207,18 +207,22 @@ public class UrlUtils {
         return url != null && url.startsWith(Constants.FILE) && url.endsWith(StartPage.FILENAME);
     }
 
-    public static String makeMobitechSearchUrl(String userId, String publicKey) {
+    public static String makeMobitechSearchUrl(String userId, String publicKey, boolean needUseUserId) {
         if (BuildConfig.DEBUG) {
             publicKey = "TESTC36B5A";
         }
-        return String.format(Constants.MOBITECH_SEARCH, publicKey, userId);
+        return needUseUserId ?
+                String.format(Constants.MOBITECH_SEARCH, publicKey, userId)
+                : String.format(Constants.MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
     }
 
-    public static String makeMobitechSearchStartPage(String userId, String publicKey) {
+    public static String makeMobitechSearchStartPage(String userId, String publicKey, boolean needUseUserId) {
         if (BuildConfig.DEBUG) {
             publicKey = "TESTC36B5A";
         }
-        return String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId);
+        return needUseUserId ?
+                String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId)
+                : String.format(Constants.STARTPAGE_MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
     }
 
     public static String getReferrerIdForInstalledApp(String referrer, String referrerField) {

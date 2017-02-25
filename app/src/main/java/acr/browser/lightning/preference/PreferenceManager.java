@@ -56,6 +56,7 @@ public class PreferenceManager {
         static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
         static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
+        static final String USE_USER_ID = "useUserId";
 
         static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
@@ -541,11 +542,19 @@ public class PreferenceManager {
         return mPrefs.getString(Name.REFERRER, "");
     }
 
+
     public void setReferrerAppId(@NonNull String appId) {
         putString(Name.REFERRER_APP_ID, appId);
     }
 
     public String getReferrerAppId() {
         return mPrefs.getString(Name.REFERRER_APP_ID, "");
+
+    public void useUserId(boolean use) {
+        putBoolean(Name.USE_USER_ID, use);
+    }
+
+    public boolean needUseUserId() {
+        return mPrefs.getBoolean(Name.USE_USER_ID, true);
     }
 }

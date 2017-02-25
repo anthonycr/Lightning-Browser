@@ -4,19 +4,23 @@
 
     <PreferenceCategory android:title="@string/settings_about">
         <Preference
-            android:summary="@string/url_twitter"
-            android:title="@string/action_follow_me">
+            android:summary="@string/action_contact_us"
+            android:title="@string/contact_email">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://twitter.com/RestainoAnthony">
-                <extra
-                    android:name="SOURCE"
-                    android:value="SELF" />
+                android:data="mailto:info@mobitech.io">
             </intent>
         </Preference>
         <Preference
             android:key="pref_version"
             android:title="@string/version" />
+        <Preference
+            android:title="@string/privacy_policy">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://mobitech.io/pp">
+            </intent>
+        </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/licenses">
         <Preference
