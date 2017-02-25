@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 24
-        versionName "4.4.3"
+        versionName "4.4.4"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -37,7 +37,7 @@ android {
             buildConfigField "boolean", "FULL_VERSION", "true"
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
-            versionCode 92
+            versionCode 93
         }
 
         lightningLite {

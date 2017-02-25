@@ -549,6 +549,7 @@ public class PreferenceManager {
 
     public String getReferrerAppId() {
         return mPrefs.getString(Name.REFERRER_APP_ID, "");
+    }
 
     public void useUserId(boolean use) {
         putBoolean(Name.USE_USER_ID, use);

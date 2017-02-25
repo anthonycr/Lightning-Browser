@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
@@ -196,7 +197,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private String mUntitledTitle;
     private String mCameraPhotoPath;
 
-    private final Handler mDrawerHandler = new Handler();
+    private final Handler mDrawerHandler = new Handler(Looper.getMainLooper());
 
     // The singleton BookmarkManager
     @Inject

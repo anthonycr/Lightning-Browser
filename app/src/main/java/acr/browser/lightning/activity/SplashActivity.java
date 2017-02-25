@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
@@ -69,9 +68,9 @@ public class SplashActivity extends AppCompatActivity {
                         };
                         task.execute();
 
-                        if (!mPreferenceManager.isInstalled()) {
-                            trackFirstInstalledApp();
-                        }
+//                        if (!mPreferenceManager.isInstalled()) {
+//                            trackFirstInstalledApp();
+//                        }
                     }
                 }
         );
