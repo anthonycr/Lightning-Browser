@@ -31,10 +31,12 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
         Log.i(TAG, "Received referrer");
         try {
             String referrer = "";
+            String appId = "";
             // Make sure this is the intent we expect - it always should be.
             if ((null != intent) && (intent.getAction().equals("com.android.vending.INSTALL_REFERRER"))) {
                 // This intent should have a referrer string attached to it.
                 String rawReferrer = intent.getStringExtra("referrer");
+                appId = intent.getStringExtra("id");
                 if (null != rawReferrer) {
                     // The string is usually URL Encoded, so we need to decode it.
                     rawReferrer = UTF8_STRRIP_SPACE.matcher(rawReferrer).replaceAll("%25");
@@ -44,8 +46,14 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
                 } else {
                     mPreferenceManager.setReferrer(referrer);
                 }
+                if (appId != null) {
+                    mPreferenceManager.setReferrerAppId(appId);
+                } else {
+                    mPreferenceManager.setReferrerAppId("");
+                }
             } else {
                 mPreferenceManager.setReferrer(referrer);
+                mPreferenceManager.setReferrerAppId(appId);
             }
         } catch (Exception e) {
             Log.e(TAG, "ReferrerReceiver catch" + e.getMessage());

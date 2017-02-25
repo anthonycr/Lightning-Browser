@@ -35,8 +35,10 @@ public final class Constants {
     public static final String MOBITECH_SEARCH = "https://api-client.mobitech-search.xyz/?p_key=%1$s&user_id=%2$s&showSearchBar=true&q=";
     public static final String MOBITECH_SEARCH_WITHOUT_USER_ID = "https://api-client.mobitech-search.xyz/?p_key=%1$s&showSearchBar=true&q=";
     public static final String STARTPAGE_MOBITECH_SEARCH = "https://browser.mobitech-search.xyz/start?p_key=%1$s&user_id=%2$s";
+
+    public static final String TRECKING_MOBITECH_INSTALLED_APP = "http://installs.mobitech.io/v1/tracking/install"; //POST
     public static final String STARTPAGE_MOBITECH_SEARCH_WITHOUT_USER_ID = "https://browser.mobitech-search.xyz/start?p_key=%1$s";
-    public static final String TRECKING_MOBITECH_INSTALLED_APP = "http://tracking.mobitemedia.com/aff_lsr?transaction_id=";
+
 
     // Custom local page schemes
     public static final String SCHEME_HOMEPAGE = "about:home";
