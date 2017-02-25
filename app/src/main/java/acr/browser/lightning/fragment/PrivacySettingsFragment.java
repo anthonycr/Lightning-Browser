@@ -41,11 +41,13 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit";
     private static final String SETTINGS_DONOTTRACK = "do_not_track";
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
+    private static final String SETTINGS_TRENDING_KEYWORDS_PERS = "trending_keywords_personalization";
 
     private Activity mActivity;
     private Handler mMessageHandler;
 
-    @Inject HistoryDatabase mHistoryDatabase;
+    @Inject
+    HistoryDatabase mHistoryDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         CheckBoxPreference cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
         CheckBoxPreference cbDoNotTrack = (CheckBoxPreference) findPreference(SETTINGS_DONOTTRACK);
         CheckBoxPreference cbIdentifyingHeaders = (CheckBoxPreference) findPreference(SETTINGS_IDENTIFYINGHEADERS);
+        CheckBoxPreference cbTrendingKeywordsPers = (CheckBoxPreference) findPreference(SETTINGS_TRENDING_KEYWORDS_PERS);
 
         clearcache.setOnPreferenceClickListener(this);
         clearhistory.setOnPreferenceClickListener(this);
@@ -89,7 +92,9 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbwebstorageexit.setOnPreferenceChangeListener(this);
         cbDoNotTrack.setOnPreferenceChangeListener(this);
         cbIdentifyingHeaders.setOnPreferenceChangeListener(this);
+        cbTrendingKeywordsPers.setOnPreferenceChangeListener(this);
 
+        cbTrendingKeywordsPers.setChecked(mPreferenceManager.needUseUserId());
         cblocation.setChecked(mPreferenceManager.getLocationEnabled());
         cbsavepasswords.setChecked(mPreferenceManager.getSavePasswordsEnabled());
         cbcacheexit.setChecked(mPreferenceManager.getClearCacheExit());
@@ -243,6 +248,9 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                 return true;
             case SETTINGS_IDENTIFYINGHEADERS:
                 mPreferenceManager.setRemoveIdentifyingHeadersEnabled((Boolean) newValue);
+                return true;
+            case SETTINGS_TRENDING_KEYWORDS_PERS:
+                mPreferenceManager.useUserId((Boolean) newValue);
                 return true;
             default:
                 return false;
