@@ -82,6 +82,7 @@ public class SplashActivity extends AppCompatActivity {
      */
     private void trackFirstInstalledApp() {
         final String referrer = mPreferenceManager.getReferrer();
+        final String appId = mPreferenceManager.getReferrerAppId();
         //if (TextUtils.isEmpty(referrer)) return;
         new TrackFirstInstalledAppTask() {
             @Override
@@ -89,6 +90,6 @@ public class SplashActivity extends AppCompatActivity {
                 super.onPostExecute(result);
                 mPreferenceManager.setInstalled(result);
             }
-        }.execute(referrer);
+        }.execute(referrer, appId, "TESTYHOC36B5A");
     }
 }

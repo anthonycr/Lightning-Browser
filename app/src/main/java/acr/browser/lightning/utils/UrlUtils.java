@@ -15,13 +15,20 @@
  */
 package acr.browser.lightning.utils;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLDecoder;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -200,21 +207,25 @@ public class UrlUtils {
         return url != null && url.startsWith(Constants.FILE) && url.endsWith(StartPage.FILENAME);
     }
 
-    public static String makeMobitechSearchUrl(String userId, String publicKey) {
+    public static String makeMobitechSearchUrl(String userId, String publicKey, boolean needUseUserId) {
         if (BuildConfig.DEBUG) {
             publicKey = "TESTC36B5A";
         }
-        return String.format(Constants.MOBITECH_SEARCH, publicKey, userId);
+        return needUseUserId ?
+                String.format(Constants.MOBITECH_SEARCH, publicKey, userId)
+                : String.format(Constants.MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
     }
 
-    public static String makeMobitechSearchStartPage(String userId, String publicKey) {
+    public static String makeMobitechSearchStartPage(String userId, String publicKey, boolean needUseUserId) {
         if (BuildConfig.DEBUG) {
             publicKey = "TESTC36B5A";
         }
-        return String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId);
+        return needUseUserId ?
+                String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId)
+                : String.format(Constants.STARTPAGE_MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
     }
 
-    public static String makeTrackInstalledAppUrl(String referrer, String referrerField) {
+    public static String getReferrerIdForInstalledApp(String referrer, String referrerField) {
         if (referrerField != null && !referrerField.isEmpty() && referrer.indexOf(referrerField) != -1) {
             referrer = referrer.substring(referrer.indexOf(referrerField) + referrerField.length());
             int startIndex = referrer.indexOf("=") + 1;
@@ -228,5 +239,39 @@ public class UrlUtils {
         }
 
         return Constants.TRECKING_MOBITECH_INSTALLED_APP + referrer;
+    }
+
+    public static void putHttpParameters(Map<String, String> params, HttpURLConnection connection) {
+        Uri.Builder builder = new Uri.Builder();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+        final String query = builder.build().getEncodedQuery();
+        OutputStream os = null;
+        BufferedWriter writer = null;
+        try {
+            os = connection.getOutputStream();
+            writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(query);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
