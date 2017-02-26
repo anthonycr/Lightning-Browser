@@ -293,7 +293,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.title_search_engine));
         CharSequence[] chars = {getResources().getString(R.string.custom_url), "Google",
-            "Ask", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
+            "Ask", "Bing", "Yahoo", "StartPage", "Mobitech Search",
             "DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
             "Yandex (Russian)"};
 
@@ -559,7 +559,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 searchengine.setSummary("StartPage");
                 break;
             case 6:
-                searchengine.setSummary("StartPage (Mobile)");
+                searchengine.setSummary("Mobitech Search");
                 break;
             case 7:
                 searchengine.setSummary("DuckDuckGo");
