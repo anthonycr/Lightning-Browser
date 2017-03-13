@@ -234,7 +234,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getSearchUrl() {
-        return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
+        return mPrefs.getString(Name.SEARCH_URL, Constants.MOBITECH_SEARCH);
     }
 
     public boolean getTextReflowEnabled() {

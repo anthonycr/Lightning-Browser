@@ -18,6 +18,7 @@ package acr.browser.lightning.utils;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
@@ -208,7 +209,7 @@ public class UrlUtils {
     }
 
     public static String makeMobitechSearchUrl(String userId, String publicKey, boolean needUseUserId) {
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && TextUtils.isEmpty(publicKey)) {
             publicKey = "TESTC36B5A";
         }
         return needUseUserId ?
@@ -216,13 +217,13 @@ public class UrlUtils {
                 : String.format(Constants.MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
     }
 
-    public static String makeMobitechSearchStartPage(String userId, String publicKey, boolean needUseUserId) {
-        if (BuildConfig.DEBUG) {
+    public static String makeMobitechStartPage(String userId, String publicKey, boolean needUseUserId) {
+        if (BuildConfig.DEBUG && TextUtils.isEmpty(publicKey)) {
             publicKey = "TESTC36B5A";
         }
         return needUseUserId ?
-                String.format(Constants.STARTPAGE_MOBITECH_SEARCH, publicKey, userId)
-                : String.format(Constants.STARTPAGE_MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
+                String.format(Constants.MOBITECH_STARTPAGE, publicKey, userId)
+                : String.format(Constants.MOBITECH_STARTPAGE_WITHOUT_USER_ID, publicKey);
     }
 
     public static String getReferrerIdForInstalledApp(String referrer, String referrerField) {

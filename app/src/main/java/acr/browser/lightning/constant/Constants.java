@@ -32,12 +32,12 @@ public final class Constants {
     public static final String ASK_SEARCH = "http://www.ask.com/web?qsrc=0&o=0&l=dir&qo=LightningBrowser&q=";
     public static final String BAIDU_SEARCH = "https://www.baidu.com/s?wd=";
     public static final String YANDEX_SEARCH = "https://yandex.ru/yandsearch?lr=21411&text=";
-    public static final String MOBITECH_SEARCH = "https://api-client.mobitech-search.xyz/?p_key=%1$s&user_id=%2$s&showSearchBar=true&q=";
-    public static final String MOBITECH_SEARCH_WITHOUT_USER_ID = "https://api-client.mobitech-search.xyz/?p_key=%1$s&showSearchBar=true&q=";
-    public static final String STARTPAGE_MOBITECH_SEARCH = "https://browser.mobitech-search.xyz/start?p_key=%1$s&user_id=%2$s&q=";
+    public static final String MOBITECH_SEARCH = "https://api-client.mobitech-search.xyz?p_key=%1$s&user_id=%2$s&showSearchBar=true&q=";
+    public static final String MOBITECH_SEARCH_WITHOUT_USER_ID = "https://api-client.mobitech-search.xyz?p_key=%1$s&showSearchBar=true&q=";
+    public static final String MOBITECH_STARTPAGE = "https://browser.mobitech-search.xyz/start?p_key=%1$s&user_id=%2$s&q=";
+    public static final String MOBITECH_STARTPAGE_WITHOUT_USER_ID = "https://browser.mobitech-search.xyz/start?p_key=%1$s&q=";
 
     public static final String TRECKING_MOBITECH_INSTALLED_APP = "http://installs.mobitech.io/v1/tracking/install"; //POST
-    public static final String STARTPAGE_MOBITECH_SEARCH_WITHOUT_USER_ID = "https://browser.mobitech-search.xyz/start?p_key=%1$s&q=";
 
 
     // Custom local page schemes
