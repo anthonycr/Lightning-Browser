@@ -11,6 +11,10 @@ android {
         targetSdkVersion 24
         versionName "4.4.6"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+        configurations {
+            all*.exclude group: 'org.apache.httpcomponents', module: 'httpcore'
+        }
     }
 
     sourceSets {
@@ -22,12 +26,14 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+            multiDexEnabled true
             proguardFiles 'proguard-project.txt'
         }
 
         release {
             minifyEnabled true
             shrinkResources true
+            multiDexEnabled true
             proguardFiles 'proguard-project.txt'
         }
     }
