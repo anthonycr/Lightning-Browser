@@ -3,13 +3,13 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 24
-        versionName "4.4.4"
+        versionName "4.4.6"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -37,14 +37,14 @@ android {
             buildConfigField "boolean", "FULL_VERSION", "true"
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
-            versionCode 93
+            versionCode 94
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
 //            applicationId "acr.browser.barebones"
             applicationId "io.mobitech.browser"
-            versionCode 93
+            versionCode 94
         }
     }
 
@@ -60,7 +60,6 @@ android {
 dexcount {
     includeClasses = false
     includeFieldCount = false
-    printAsTree = true
     orderByMethodCount = true
     verbose = false
 }
