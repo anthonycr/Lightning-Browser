@@ -80,6 +80,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
+import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
@@ -225,7 +226,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
-    abstract Observable<Void> updateCookiePreference();
+    abstract Completable updateCookiePreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

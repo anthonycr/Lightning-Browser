@@ -21,6 +21,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
@@ -40,7 +41,6 @@ import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
 
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -213,14 +213,14 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                 return true;
             case SETTINGS_IMPORT_BROWSER:
                 getSync().getSupportedBrowsers().subscribeOn(Schedulers.worker())
-                        .observeOn(Schedulers.main()).subscribe(new OnSubscribe<List<Source>>() {
+                        .observeOn(Schedulers.main()).subscribe(new SingleOnSubscribe<List<Source>>() {
                     @Override
-                    public void onNext(@Nullable List<Source> items) {
+                    public void onItem(@Nullable List<Source> item) {
                         Activity activity = getActivity();
-                        if (items == null || activity == null) {
+                        if (item == null || activity == null) {
                             return;
                         }
-                        List<String> titles = buildTitleList(activity, items);
+                        List<String> titles = buildTitleList(activity, item);
                         showChooserDialog(activity, titles);
                     }
                 });

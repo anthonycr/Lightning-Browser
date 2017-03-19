@@ -8,19 +8,20 @@ import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+
 import acr.browser.lightning.R;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
 
 @SuppressWarnings("deprecation")
 public class IncognitoActivity extends BrowserActivity {
 
     @Override
-    public Observable<Void> updateCookiePreference() {
-        return Observable.create(new Action<Void>() {
+    public Completable updateCookiePreference() {
+        return Completable.create(new CompletableAction() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
                 CookieManager cookieManager = CookieManager.getInstance();
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     CookieSyncManager.createInstance(IncognitoActivity.this);

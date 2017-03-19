@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
@@ -18,8 +19,6 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.OnSubscribe;
 
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
@@ -64,16 +63,16 @@ public class BrowserPresenter {
      */
     public void setupTabs(@Nullable Intent intent) {
         mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
-            .subscribeOn(Schedulers.main())
-            .subscribe(new OnSubscribe<Void>() {
-                @Override
-                public void onComplete() {
-                    // At this point we always have at least a tab in the tab manager
-                    mView.notifyTabViewInitialized();
-                    mView.updateTabNumber(mTabsModel.size());
-                    tabChanged(mTabsModel.last());
-                }
-            });
+                .subscribeOn(Schedulers.main())
+                .subscribe(new CompletableOnSubscribe() {
+                    @Override
+                    public void onComplete() {
+                        // At this point we always have at least a tab in the tab manager
+                        mView.notifyTabViewInitialized();
+                        mView.updateTabNumber(mTabsModel.size());
+                        tabChanged(mTabsModel.last());
+                    }
+                });
     }
 
     /**

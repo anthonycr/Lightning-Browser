@@ -15,12 +15,15 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Scheduler;
 import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -98,16 +101,15 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     }
 
     public void refreshBookmarks() {
-        Observable.create(new Action<Void>() {
+        Completable.create(new CompletableAction() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
                 mAllBookmarks.clear();
                 mAllBookmarks.addAll(mBookmarkManager.getAllBookmarks(true));
 
                 subscriber.onComplete();
             }
-        }).subscribeOn(Schedulers.io())
-            .subscribe();
+        }).subscribeOn(Schedulers.io()).subscribe();
     }
 
     @Override
@@ -200,25 +202,25 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     }
 
     private void clearSuggestions() {
-        Observable.create(new Action<Void>() {
+        Completable.create(new CompletableAction() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
                 mBookmarks.clear();
                 mHistory.clear();
                 mSuggestions.clear();
                 subscriber.onComplete();
             }
         }).subscribeOn(FILTER_SCHEDULER)
-            .observeOn(Schedulers.main())
-            .subscribe();
+                .observeOn(Schedulers.main())
+                .subscribe();
     }
 
     private void combineResults(final @Nullable List<HistoryItem> bookmarkList,
                                 final @Nullable List<HistoryItem> historyList,
                                 final @Nullable List<HistoryItem> suggestionList) {
-        Observable.create(new Action<List<HistoryItem>>() {
+        Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<List<HistoryItem>> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
                 List<HistoryItem> list = new ArrayList<>(5);
                 if (bookmarkList != null) {
                     mBookmarks.clear();
@@ -251,25 +253,24 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                 }
 
                 Collections.sort(list, mFilterComparator);
-                subscriber.onNext(list);
+                subscriber.onItem(list);
                 subscriber.onComplete();
             }
         }).subscribeOn(FILTER_SCHEDULER)
             .observeOn(Schedulers.main())
-            .subscribe(new OnSubscribe<List<HistoryItem>>() {
-                @Override
-                public void onNext(@Nullable List<HistoryItem> item) {
-                    publishResults(item);
-                }
-            });
-
+                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                    @Override
+                    public void onItem(@Nullable List<HistoryItem> item) {
+                        publishResults(item);
+                    }
+                });
     }
 
     @NonNull
-    private Observable<List<HistoryItem>> getBookmarksForQuery(@NonNull final String query) {
-        return Observable.create(new Action<List<HistoryItem>>() {
+    private Single<List<HistoryItem>> getBookmarksForQuery(@NonNull final String query) {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<List<HistoryItem>> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
                 List<HistoryItem> bookmarks = new ArrayList<>(5);
                 int counter = 0;
                 for (int n = 0; n < mAllBookmarks.size(); n++) {
@@ -285,36 +286,30 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                         counter++;
                     }
                 }
-                subscriber.onNext(bookmarks);
+                subscriber.onItem(bookmarks);
                 subscriber.onComplete();
             }
         });
     }
 
     @NonNull
-    private Observable<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
+    private Single<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
         if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_GOOGLE) {
             return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.GOOGLE);
         } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
             return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.DUCK);
         } else {
-            return Observable.create(new Action<List<HistoryItem>>() {
-                @Override
-                public void onSubscribe(@NonNull Subscriber<List<HistoryItem>> subscriber) {
-                    //TODO add an Observable.empty() method to generate an empty Observable
-                    subscriber.onComplete();
-                }
-            });
+            return Single.empty();
         }
     }
 
     @NonNull
-    private Observable<List<HistoryItem>> getHistoryForQuery(@NonNull final String query) {
-        return Observable.create(new Action<List<HistoryItem>>() {
+    private Single<List<HistoryItem>> getHistoryForQuery(@NonNull final String query) {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<List<HistoryItem>> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
                 List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(query);
-                subscriber.onNext(historyList);
+                subscriber.onItem(historyList);
                 subscriber.onComplete();
             }
         });
@@ -345,9 +340,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                 mSuggestionsAdapter.getSuggestionsForQuery(query)
                     .subscribeOn(Schedulers.worker())
                     .observeOn(Schedulers.main())
-                    .subscribe(new OnSubscribe<List<HistoryItem>>() {
+                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                         @Override
-                        public void onNext(@Nullable List<HistoryItem> item) {
+                        public void onItem(@Nullable List<HistoryItem> item) {
                             mSuggestionsAdapter.combineResults(null, null, item);
                         }
                     });
@@ -356,9 +351,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             mSuggestionsAdapter.getBookmarksForQuery(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<List<HistoryItem>>() {
+                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                     @Override
-                    public void onNext(@Nullable List<HistoryItem> item) {
+                    public void onItem(@Nullable List<HistoryItem> item) {
                         mSuggestionsAdapter.combineResults(item, null, null);
                     }
                 });
@@ -366,9 +361,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             mSuggestionsAdapter.getHistoryForQuery(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<List<HistoryItem>>() {
+                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                     @Override
-                    public void onNext(@Nullable List<HistoryItem> item) {
+                    public void onItem(@Nullable List<HistoryItem> item) {
                         mSuggestionsAdapter.combineResults(null, item, null);
                     }
                 });

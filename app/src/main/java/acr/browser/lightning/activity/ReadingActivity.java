@@ -30,11 +30,11 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
-import com.anthonycr.bonsai.Subscriber;
 import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 import com.anthonycr.bonsai.Subscription;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
@@ -152,7 +152,7 @@ public class ReadingActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
         mPageLoaderSubscription = loadPage(mUrl).subscribeOn(Schedulers.worker())
                 .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<ReaderInfo>() {
+                .subscribe(new SingleOnSubscribe<ReaderInfo>() {
                     @Override
                     public void onStart() {
                         mProgressDialog = new ProgressDialog(ReadingActivity.this);
@@ -165,7 +165,7 @@ public class ReadingActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(@Nullable ReaderInfo item) {
+                    public void onItem(@Nullable ReaderInfo item) {
                         if (item == null || item.getTitle().isEmpty() || item.getBody().isEmpty()) {
                             setText(getString(R.string.untitled), getString(R.string.loading_failed));
                         } else {
@@ -193,14 +193,14 @@ public class ReadingActivity extends AppCompatActivity {
         return true;
     }
 
-    private static Observable<ReaderInfo> loadPage(@NonNull final String url) {
-        return Observable.create(new Action<ReaderInfo>() {
+    private static Single<ReaderInfo> loadPage(@NonNull final String url) {
+        return Single.create(new SingleAction<ReaderInfo>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<ReaderInfo> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<ReaderInfo> subscriber) {
                 HtmlFetcher fetcher = new HtmlFetcher();
                 try {
                     JResult result = fetcher.fetchAndExtract(url, 2500, true);
-                    subscriber.onNext(new ReaderInfo(result.getTitle(), result.getText()));
+                    subscriber.onItem(new ReaderInfo(result.getTitle(), result.getText()));
                 } catch (Exception e) {
                     subscriber.onError(new Throwable("Encountered exception"));
                     Log.e(TAG, "Error parsing page", e);

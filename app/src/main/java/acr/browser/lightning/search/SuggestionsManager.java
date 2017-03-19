@@ -4,9 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.util.List;
 
@@ -26,18 +26,18 @@ class SuggestionsManager {
         return sIsTaskExecuting;
     }
 
-    static Observable<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context, @NonNull final Source source) {
+    static Single<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context, @NonNull final Source source) {
         final Application application = BrowserApp.get(context);
-        return Observable.create(new Action<List<HistoryItem>>() {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
-            public void onSubscribe(@NonNull final Subscriber<List<HistoryItem>> subscriber) {
+            public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
                 sIsTaskExecuting = true;
                 switch (source) {
                     case GOOGLE:
                         new GoogleSuggestionsTask(query, application, new SuggestionsResult() {
                             @Override
                             public void resultReceived(@NonNull List<HistoryItem> searchResults) {
-                                subscriber.onNext(searchResults);
+                                subscriber.onItem(searchResults);
                                 subscriber.onComplete();
                             }
                         }).run();
@@ -46,7 +46,7 @@ class SuggestionsManager {
                         new DuckSuggestionsTask(query, application, new SuggestionsResult() {
                             @Override
                             public void resultReceived(@NonNull List<HistoryItem> searchResults) {
-                                subscriber.onNext(searchResults);
+                                subscriber.onItem(searchResults);
                                 subscriber.onComplete();
                             }
                         }).run();

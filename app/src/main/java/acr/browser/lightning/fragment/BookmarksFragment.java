@@ -27,11 +27,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -96,15 +96,15 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private boolean mIsIncognito;
 
-    private Observable<BookmarkViewAdapter> initBookmarkManager() {
-        return Observable.create(new Action<BookmarkViewAdapter>() {
+    private Single<BookmarkViewAdapter> initBookmarkManager() {
+        return Single.create(new SingleAction<BookmarkViewAdapter>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<BookmarkViewAdapter> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<BookmarkViewAdapter> subscriber) {
                 Context context = getContext();
                 if (context != null) {
                     mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
                     setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                    subscriber.onNext(mBookmarkAdapter);
+                    subscriber.onItem(mBookmarkAdapter);
                 }
                 subscriber.onComplete();
             }
@@ -191,13 +191,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
         initBookmarkManager().subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.main())
-            .subscribe(new OnSubscribe<BookmarkViewAdapter>() {
-                @Override
-                public void onNext(@Nullable BookmarkViewAdapter item) {
-                    mBookmarksListView.setAdapter(mBookmarkAdapter);
-                }
-            });
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<BookmarkViewAdapter>() {
+                    @Override
+                    public void onItem(@Nullable BookmarkViewAdapter item) {
+                        mBookmarksListView.setAdapter(mBookmarkAdapter);
+                    }
+                });
         return view;
     }
 

@@ -8,12 +8,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleSubscriber;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkLocalSync {
@@ -89,10 +90,10 @@ public class BookmarkLocalSync {
     }
 
     @NonNull
-    public Observable<List<Source>> getSupportedBrowsers() {
-        return Observable.create(new Action<List<Source>>() {
+    public Single<List<Source>> getSupportedBrowsers() {
+        return Single.create(new SingleAction<List<Source>>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<List<Source>> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<List<Source>> subscriber) {
                 List<Source> sources = new ArrayList<>(1);
                 if (isBrowserSupported(STOCK_BOOKMARKS_CONTENT)) {
                     sources.add(Source.STOCK);
@@ -106,7 +107,7 @@ public class BookmarkLocalSync {
                 if (isBrowserSupported(CHROME_DEV_BOOKMARKS_CONTENT)) {
                     sources.add(Source.CHROME_DEV);
                 }
-                subscriber.onNext(sources);
+                subscriber.onItem(sources);
                 subscriber.onComplete();
             }
         });

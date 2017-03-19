@@ -14,6 +14,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+import com.anthonycr.bonsai.ObservableSubscriber;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
@@ -32,11 +40,7 @@ import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
 
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -108,13 +112,12 @@ public class TabsManager {
      * @param intent    the intent that started the browser activity.
      * @param incognito whether or not we are in incognito mode.
      */
-    public synchronized Observable<Void> initializeTabs(@NonNull final Activity activity,
-                                                        @Nullable final Intent intent,
-                                                        final boolean incognito) {
-        return Observable.create(new Action<Void>() {
+    public synchronized Completable initializeTabs(@NonNull final Activity activity,
+                                                         @Nullable final Intent intent,
+                                                         final boolean incognito) {
+        return Completable.create(new CompletableAction() {
             @Override
-            public void onSubscribe(@NonNull final Subscriber<Void> subscriber) {
-
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
                 // Make sure we start with a clean tab list
                 shutdown();
 
@@ -150,12 +153,12 @@ public class TabsManager {
     }
 
     private void restoreLostTabs(@Nullable final String url, @NonNull final Activity activity,
-                                 @NonNull final Subscriber subscriber) {
+                                 @NonNull final CompletableSubscriber subscriber) {
 
         restoreState().subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
+            .observeOn(Schedulers.main()).subscribe(new SingleOnSubscribe<Bundle>() {
             @Override
-            public void onNext(Bundle item) {
+            public void onItem(@Nullable Bundle item) {
                 LightningView tab = newTab(activity, "", false);
                 String url = item.getString(URL_KEY);
                 if (url != null && tab.getWebView() != null) {
@@ -477,16 +480,16 @@ public class TabsManager {
      * and will delete the saved instance file when
      * restoration is complete.
      */
-    private Observable<Bundle> restoreState() {
-        return Observable.create(new Action<Bundle>() {
+    private Single<Bundle> restoreState() {
+        return Single.create(new SingleAction<Bundle>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<Bundle> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<Bundle> subscriber) {
                 Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
                 if (savedState != null) {
                     Log.d(Constants.TAG, "Restoring previous WebView state now");
                     for (String key : savedState.keySet()) {
                         if (key.startsWith(BUNDLE_KEY)) {
-                            subscriber.onNext(savedState.getBundle(key));
+                            subscriber.onItem(savedState.getBundle(key));
                         }
                     }
                 }
