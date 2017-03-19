@@ -225,7 +225,7 @@
     <string name="action_rename">Rename</string>
     <string name="title_rename_folder">Rename Folder</string>
     <string name="dialog_folder">What would you like to do with this folder?</string>
-    <string name="clear_web_storage">Clear Web Storage</string>
+    <string name="clear_web_storage">Clear web storage</string>
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
     <string name="message_web_storage_cleared">Web storage cleared</string>
     <string name="hosts_source">Hosts File Ad Blocking Source</string>
