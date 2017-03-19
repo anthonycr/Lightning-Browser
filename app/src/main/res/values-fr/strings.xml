@@ -26,7 +26,7 @@
     <string name="action_copy">Copier l\'adresse</string>
     <string name="action_forward">Transférer</string>
     <string name="settings">Paramètres</string>
-    <string name="location">Accéder à ma position</string>
+    <string name="location">Accéder à la localisation</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">User Agent</string>
     <string name="flash">Activer Adobe Flash</string>
@@ -35,7 +35,7 @@
     <string name="java">Activer JavaScript</string>
     <string name="download">Téléchargement</string>
     <string name="settings_advanced">Paramètres avancés</string>
-    <string name="apache">Apache License 2.0</string>
+    <string name="apache">Licence Apache 2.0</string>
     <string name="version">Version application</string>
     <string name="cache">Effacer le cache en quittant</string>
     <string name="reflow">Activer repositionnement du texte</string>
@@ -44,12 +44,14 @@
     <string name="cookies">Activer les cookies</string>
     <string name="importbookmarks">Importer les favoris depuis un navigateur</string>
     <string name="size">Taille du texte</string>
-    <string name="recommended">Recommendé</string>
+    <string name="recommended">Recommandé</string>
     <string name="search">Moteur de recherche</string>
     <string name="search_hint">Rechercher</string>
     <string name="wideViewPort">Utiliser large fenêtre d\'affichage</string>
     <string name="overViewMode">Charger les pages en mode aperçu</string>
     <string name="restore">Restaurer les onglets perdus au démarrage</string>
+    <string name="supported_browsers_title">Navigateurs compatibles</string>
+    <string name="stock_browser">Navigateur d\'origine</string>    
     <string name="stock_browser_unavailable">Aucun navigateur détecté</string>
     <string name="stock_browser_available">Navigateur compatible détecté</string>
     <string name="fullScreenOption">Masquer la barre d\'état lors de la navigation</string>
@@ -94,8 +96,8 @@
     <string name="dialog_import_error">Aucun navigateur n\'a été détecté pour importer les favoris.</string>
     <string name="hint_title">Titre</string>
     <string name="hint_url">Adresse</string>
-    <string name="title_edit_bookmark">Éditer le favori</string>
-    <string name="action_edit">Éditer</string>
+    <string name="title_edit_bookmark">Modifier le favori</string>
+    <string name="action_edit">Modifier</string>
     <string name="action_incognito">Onglet incognito</string>
     <string name="action_homepage">Par défaut</string>
     <string name="action_back">Retour</string>
@@ -136,7 +138,7 @@
     <string name="message_certificate_untrusted">le certificat n\'est pas approuvé</string>
     <string name="title_form_resubmission">Nouvel envoi du formulaire</string>
     <string name="message_form_resubmission">Voulez-vous renvoyer les données ?</string>
-    <string name="message_location">\nSouhaiterait utiliser votre position</string>
+    <string name="message_location">\nSouhaiterait utiliser votre localisation</string>
     <string name="action_allow">Autoriser</string>
     <string name="action_dont_allow">Refuser</string>
     <string name="title_sign_in">Connexion</string>
@@ -165,7 +167,7 @@
     <string name="clear_history_exit">Effacer l\'historique en quittant</string>
     <string name="folder_default">Par défaut</string>
     <string name="folder_custom">Personnalisé</string>
-    <string name="untitled">Exemple</string>
+    <string name="untitled">Sans titre</string>
     <string name="mpl_license">Licence Mozilla Public v. 2.0</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
@@ -175,6 +177,7 @@
     <string name="name_inverted">Inversé</string>
     <string name="name_grayscale">Niveaux de gris</string>
     <string name="name_inverted_grayscale">Niveaux de gris inversés</string>
+    <string name="name_increase_contrast">Augmenter le contraste</string>    
     <string name="name_normal">Normal</string>
     <string name="sync_history">Synchroniser l\'historique avec Google</string>
     <string name="title_file_chooser">Explorateur de fichiers</string>
@@ -193,6 +196,7 @@
     <string name="settings_about_explain">En savoir plus sur la version, l\'auteur et la licence.</string>
     <string name="close_tab">Fermer l\'onglet</string>
     <string name="close_all_tabs">Fermer tous les onglets</string>
+    <string name="close_other_tabs">Fermer les autres onglets</string>    
     <string name="third_party">Bloquer les cookies tiers</string>    
     <string name="color_mode">Activer le mode couleur</string>
     <string name="reading_mode">Mode lecteur</string>    
@@ -201,7 +205,7 @@
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">Licence MIT</string>
-    <string name="url_contents">Contenu du champs adresse</string>
+    <string name="url_contents">Contenu du champs Adresse</string>
     <string name="text_encoding">Encodage du texte</string>
     <string-array name="url_content_array">
         <item >Domaine (par défaut)</item>
@@ -225,6 +229,12 @@
     <string name="hosts_source">Fichier Hosts source de blocage des publicités</string>
     <string name="settings_adblock">Blocage des publicités</string>
     <string name="tabs_in_drawer">Afficher les onglets dans le volet de navigation</string>
-    <string name="do_not_track">Demander de \'Ne pas pister\'</string>
+    <string name="do_not_track">Demander de \"Ne pas pister\"</string>
     <string name="remove_identifying_headers">Supprimer les en-têtes d\'dentification</string>
+    <string name="action_add_to_homescreen">Ajouter un raccourci</string>
+    <string name="message_added_to_homescreen">Raccourci ajouté à l\'écran d\'accueil</string>
+    <string name="action_delete_all_bookmarks">Supprimer tous les favoris</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Foire Aux Questions</string>    
 </resources>
