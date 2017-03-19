@@ -1,7 +1,3 @@
-[submodule "external/netcipher"]
-	path = external/netcipher
-	url = https://github.com/guardianproject/NetCipher.git
-	branch = master
 [submodule "Bonsai"]
 	path = Bonsai
 	url = https://github.com/anthonycr/Bonsai.git

@@ -20,7 +20,7 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
-import info.guardianproject.netcipher.web.WebkitProxy;
+import info.guardianproject.netcipher.webkit.WebkitProxy;
 
 @Singleton
 public class ProxyUtils {

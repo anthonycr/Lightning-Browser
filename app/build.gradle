@@ -92,10 +92,9 @@ dependencies {
     // proxy support
     compile 'net.i2p.android:client:0.8'
 
-    // Use the following code to update the libnetcipher submodule
-    // git submodule foreach git reset --hard
-    // git submodule update --remote
-    compile project(':libnetcipher')
+    // tor proxy
+    compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
+    compile 'info.guardianproject.netcipher:netcipher-webkit:2.0.0-alpha1'
 
     compile project(':bonsai')
 
