@@ -28,6 +28,7 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,9 +40,9 @@ import javax.net.ssl.X509TrustManager;
 /**
  * @author Peter Karich
  */
-public class SHelper {
+class SHelper {
 
-    public static final String UTF8 = "UTF-8";
+    private static final String UTF8 = "UTF-8";
     private static final Pattern SPACE = Pattern.compile(" ");
 
     public static String replaceSpaces(String url) {
@@ -72,9 +73,9 @@ public class SHelper {
         if (str.isEmpty())
             return "";
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(str.length());
         boolean previousSpace = false;
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0, length = str.length(); i < length; i++) {
             char c = str.charAt(i);
             if (c == ' ' || (int) c == 9 || c == '\n') {
                 previousSpace = true;
@@ -95,7 +96,7 @@ public class SHelper {
      * invalid encoding character occurs.
      */
     public static String encodingCleanup(String str) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(str.length());
         boolean startedWithCorrectString = false;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -122,7 +123,7 @@ public class SHelper {
         return str1.substring(res[0], res[1]);
     }
 
-    public static int[] longestSubstring(String str1, String str2) {
+    private static int[] longestSubstring(String str1, String str2) {
         if (str1 == null || str1.isEmpty() || str2 == null || str2.isEmpty())
             return null;
 
@@ -193,7 +194,7 @@ public class SHelper {
                 url = url.substring("m.".length());
         }
 
-        int slashIndex = url.indexOf("/");
+        int slashIndex = url.indexOf('/');
         if (slashIndex > 0)
             url = url.substring(0, slashIndex);
 
@@ -203,12 +204,12 @@ public class SHelper {
     public static boolean isVideoLink(String url) {
         url = extractDomain(url, true);
         return url.startsWith("youtube.com") || url.startsWith("video.yahoo.com")
-                || url.startsWith("vimeo.com") || url.startsWith("blip.tv");
+            || url.startsWith("vimeo.com") || url.startsWith("blip.tv");
     }
 
     public static boolean isVideo(String url) {
         return url.endsWith(".mpeg") || url.endsWith(".mpg") || url.endsWith(".avi") || url.endsWith(".mov")
-                || url.endsWith(".mpg4") || url.endsWith(".mp4") || url.endsWith(".flv") || url.endsWith(".wmv");
+            || url.endsWith(".mpg4") || url.endsWith(".mp4") || url.endsWith(".flv") || url.endsWith(".wmv");
     }
 
     public static boolean isAudio(String url) {
@@ -217,12 +218,12 @@ public class SHelper {
 
     public static boolean isDoc(String url) {
         return url.endsWith(".pdf") || url.endsWith(".ppt") || url.endsWith(".doc")
-                || url.endsWith(".swf") || url.endsWith(".rtf") || url.endsWith(".xls");
+            || url.endsWith(".swf") || url.endsWith(".rtf") || url.endsWith(".xls");
     }
 
     public static boolean isPackage(String url) {
         return url.endsWith(".gz") || url.endsWith(".tgz") || url.endsWith(".zip")
-                || url.endsWith(".rar") || url.endsWith(".deb") || url.endsWith(".rpm") || url.endsWith(".7z");
+            || url.endsWith(".rar") || url.endsWith(".deb") || url.endsWith(".rpm") || url.endsWith(".7z");
     }
 
     public static boolean isApp(String url) {
@@ -231,7 +232,7 @@ public class SHelper {
 
     public static boolean isImage(String url) {
         return url.endsWith(".png") || url.endsWith(".jpeg") || url.endsWith(".gif")
-                || url.endsWith(".jpg") || url.endsWith(".bmp") || url.endsWith(".ico") || url.endsWith(".eps");
+            || url.endsWith(".jpg") || url.endsWith(".bmp") || url.endsWith(".ico") || url.endsWith(".eps");
     }
 
     /**
@@ -251,9 +252,9 @@ public class SHelper {
     }
 
     public static String getUrlFromUglyGoogleRedirect(String url) {
-        if (url.startsWith("http://www.google.com/url?")) {
-            url = url.substring("http://www.google.com/url?".length());
-            String arr[] = urlDecode(url).split("\\&");
+        if (url.startsWith("https://www.google.com/url?")) {
+            url = url.substring("https://www.google.com/url?".length());
+            String arr[] = urlDecode(url).split("&");
             for (String str : arr) {
                 if (str.startsWith("q="))
                     return str.substring("q=".length());
@@ -264,8 +265,8 @@ public class SHelper {
     }
 
     public static String getUrlFromUglyFacebookRedirect(String url) {
-        if (url.startsWith("http://www.facebook.com/l.php?u=")) {
-            url = url.substring("http://www.facebook.com/l.php?u=".length());
+        if (url.startsWith("https://www.facebook.com/l.php?u=")) {
+            url = url.substring("https://www.facebook.com/l.php?u=".length());
             return urlDecode(url);
         }
 
@@ -280,7 +281,7 @@ public class SHelper {
         }
     }
 
-    public static String urlDecode(String str) {
+    private static String urlDecode(String str) {
         try {
             return URLDecoder.decode(str, UTF8);
         } catch (UnsupportedEncodingException ex) {
@@ -300,8 +301,8 @@ public class SHelper {
         return printNode(root, 0);
     }
 
-    public static String printNode(Element root, int indentation) {
-        StringBuilder sb = new StringBuilder();
+    private static String printNode(Element root, int indentation) {
+        StringBuilder sb = new StringBuilder(indentation);
         for (int i = 0; i < indentation; i++) {
             sb.append(' ');
         }
@@ -417,11 +418,19 @@ public class SHelper {
     private static class DefaultTrustManager implements X509TrustManager {
 
         @Override
-        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        public void checkClientTrusted(X509Certificate[] certs, String arg1) throws CertificateException {
+            Date today = new Date();
+            for (X509Certificate certificate : certs) {
+                certificate.checkValidity(today);
+            }
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        public void checkServerTrusted(X509Certificate[] certs, String arg1) throws CertificateException {
+            Date today = new Date();
+            for (X509Certificate certificate : certs) {
+                certificate.checkValidity(today);
+            }
         }
 
         @Override

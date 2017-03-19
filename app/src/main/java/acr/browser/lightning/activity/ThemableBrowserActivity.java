@@ -5,18 +5,25 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 
 public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
+    @Inject PreferenceManager mPreferences;
+
     private int mTheme;
     private boolean mShowTabsInDrawer;
+    private boolean mShouldRunOnResumeActions = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mTheme = PreferenceManager.getInstance().getUseTheme();
-        mShowTabsInDrawer = PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
+        BrowserApp.getAppComponent().inject(this);
+        mTheme = mPreferences.getUseTheme();
+        mShowTabsInDrawer = mPreferences.getShowTabsInDrawer(!isTablet());
 
         // set the theme
         if (mTheme == 1) {
@@ -28,22 +35,41 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && mShouldRunOnResumeActions) {
+            mShouldRunOnResumeActions = false;
+            onWindowVisibleToUserAfterResume();
+        }
+    }
+
+    /**
+     * Called after the activity is resumed
+     * and the UI becomes visible to the user.
+     * Called by onWindowFocusChanged only if
+     * onResume has been called.
+     */
+    void onWindowVisibleToUserAfterResume() {
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        int theme = PreferenceManager.getInstance().getUseTheme();
-        boolean drawerTabs = PreferenceManager.getInstance().getShowTabsInDrawer(!isTablet());
+        mShouldRunOnResumeActions = true;
+        int theme = mPreferences.getUseTheme();
+        boolean drawerTabs = mPreferences.getShowTabsInDrawer(!isTablet());
         if (theme != mTheme || mShowTabsInDrawer != drawerTabs) {
             restart();
         }
     }
 
-    public boolean isTablet() {
+    boolean isTablet() {
         return (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
-    private void restart() {
-        Intent intent = getIntent();
+    void restart() {
         finish();
-        startActivity(intent);
+        startActivity(new Intent(this, getClass()));
     }
 }

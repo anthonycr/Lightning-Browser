@@ -2,28 +2,34 @@ package acr.browser.lightning.activity;
 
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+
 import acr.browser.lightning.R;
-import acr.browser.lightning.preference.PreferenceManager;
 
 @SuppressWarnings("deprecation")
 public class IncognitoActivity extends BrowserActivity {
 
     @Override
-    public void updateCookiePreference() {
-        CookieManager cookieManager = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CookieSyncManager.createInstance(this);
-        }
-        cookieManager.setAcceptCookie(PreferenceManager.getInstance().getIncognitoCookiesEnabled());
-    }
-
-    @Override
-    public synchronized void initializeTabs() {
-        newTab(null, true);
+    public Completable updateCookiePreference() {
+        return Completable.create(new CompletableAction() {
+            @Override
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                CookieManager cookieManager = CookieManager.getInstance();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    CookieSyncManager.createInstance(IncognitoActivity.this);
+                }
+                cookieManager.setAcceptCookie(mPreferences.getIncognitoCookiesEnabled());
+                subscriber.onComplete();
+            }
+        });
     }
 
     @Override
@@ -45,7 +51,7 @@ public class IncognitoActivity extends BrowserActivity {
     }
 
     @Override
-    public void updateHistory(String title, String url) {
+    public void updateHistory(@Nullable String title, @NonNull String url) {
         // addItemToHistory(title, url);
     }
 
@@ -56,7 +62,11 @@ public class IncognitoActivity extends BrowserActivity {
 
     @Override
     public void closeActivity() {
-        closeDrawers();
-        finish();
+        closeDrawers(new Runnable() {
+            @Override
+            public void run() {
+                closeBrowser();
+            }
+        });
     }
 }

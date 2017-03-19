@@ -16,7 +16,7 @@
     android:focusableInTouchMode="true"
     android:gravity="center">
 
-    <AutoCompleteTextView
+    <acr.browser.lightning.view.SearchView
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,7 +29,6 @@
         android:paddingLeft="8dp"
         android:paddingRight="5dp"
         android:paddingTop="1dp"
-        android:selectAllOnFocus="true"
         android:singleLine="true"
         android:textColor="@color/gray_dark"
         android:textColorHint="@color/hint_text"

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search_bar"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/search_bar_height"
-    android:background="@color/white"
-    android:visibility="gone">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/search_bar_height"
+                android:background="@color/white"
+                android:visibility="gone">
 
     <View
         android:layout_width="match_parent"
@@ -30,11 +31,11 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/button_next"
+            android:id="@+id/button_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:src="@drawable/ic_action_collapse"
+            app:srcCompat="@drawable/ic_action_collapse"
             style="?android:attr/buttonBarButtonStyle" />
 
         <View
@@ -44,11 +45,11 @@
             android:background="?android:attr/dividerVertical" />
 
         <ImageButton
-            android:id="@+id/button_back"
+            android:id="@+id/button_next"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:src="@drawable/ic_action_expand"
+            app:srcCompat="@drawable/ic_action_expand"
             style="?android:attr/buttonBarButtonStyle" />
 
         <View
@@ -62,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:src="@drawable/ic_action_delete"
+            app:srcCompat="@drawable/ic_action_delete"
             style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 </RelativeLayout>

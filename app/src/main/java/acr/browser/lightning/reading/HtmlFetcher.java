@@ -28,9 +28,12 @@ import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+
+import acr.browser.lightning.utils.Utils;
 
 /**
  * Class to fetch articles. This class is thread safe.
@@ -39,6 +42,8 @@ import java.util.zip.InflaterInputStream;
  */
 public class HtmlFetcher {
 
+    private static final Pattern SPACE = Pattern.compile(" ");
+
     static {
         SHelper.enableCookieMgmt();
         SHelper.enableUserAgentOverwrite();
@@ -46,28 +51,36 @@ public class HtmlFetcher {
     }
 
     public static void main(String[] args) throws Exception {
-        BufferedReader reader = new BufferedReader(new FileReader("urls.txt"));
-        String line;
-        Set<String> existing = new LinkedHashSet<>();
-        while ((line = reader.readLine()) != null) {
-            int index1 = line.indexOf("\"");
-            int index2 = line.indexOf("\"", index1 + 1);
-            String url = line.substring(index1 + 1, index2);
-            String domainStr = SHelper.extractDomain(url, true);
-            String counterStr = "";
-            // TODO more similarities
-            if (existing.contains(domainStr))
-                counterStr = "2";
-            else
-                existing.add(domainStr);
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try {
 
-            String html = new HtmlFetcher().fetchAsString(url, 2000);
-            String outFile = domainStr + counterStr + ".html";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-            writer.write(html);
-            writer.close();
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            reader = new BufferedReader(new FileReader("urls.txt"));
+            String line;
+            Set<String> existing = new LinkedHashSet<>();
+            while ((line = reader.readLine()) != null) {
+                int index1 = line.indexOf('\"');
+                int index2 = line.indexOf('\"', index1 + 1);
+                String url = line.substring(index1 + 1, index2);
+                String domainStr = SHelper.extractDomain(url, true);
+                String counterStr = "";
+                // TODO more similarities
+                if (existing.contains(domainStr))
+                    counterStr = "2";
+                else
+                    existing.add(domainStr);
+
+                String html = new HtmlFetcher().fetchAsString(url, 2000);
+                String outFile = domainStr + counterStr + ".html";
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                writer = new BufferedWriter(new FileWriter(outFile));
+                writer.write(html);
+            }
+        } finally {
+            Utils.close(reader);
+            Utils.close(writer);
         }
-        reader.close();
     }
 
     private String referrer = "http://jetsli.de/crawler";
@@ -203,8 +216,9 @@ public class HtmlFetcher {
     }
 
     // main workhorse to call externally
-    public JResult fetchAndExtract(String url, int timeout, boolean resolve,
-                                   int maxContentSize, boolean forceReload) throws Exception {
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
+    private JResult fetchAndExtract(String url, int timeout, boolean resolve,
+                                    int maxContentSize, boolean forceReload) throws Exception {
         String originalUrl = url;
         url = SHelper.removeHashbang(url);
         String gUrl = SHelper.getUrlFromUglyGoogleRedirect(url);
@@ -297,7 +311,7 @@ public class HtmlFetcher {
     }
 
     // Ugly hack to break free from any cached versions, a few URLs required this.
-    public static String getURLtoBreakCache(String url) {
+    private static String getURLtoBreakCache(String url) {
         try {
             URL aURL = new URL(url);
             if (aURL.getQuery() != null && aURL.getQuery().isEmpty()) {
@@ -310,7 +324,7 @@ public class HtmlFetcher {
         }
     }
 
-    public String lessText(String text) {
+    private String lessText(String text) {
         if (text == null)
             return "";
 
@@ -324,14 +338,14 @@ public class HtmlFetcher {
         return SHelper.useDomainOfFirstArg4Second(url, urlOrPath);
     }
 
-    public String fetchAsString(String urlAsString, int timeout)
-            throws MalformedURLException, IOException {
+    private String fetchAsString(String urlAsString, int timeout)
+            throws IOException {
         return fetchAsString(urlAsString, timeout, true);
     }
 
     // main routine to get raw webpage content
-    public String fetchAsString(String urlAsString, int timeout, boolean includeSomeGooseOptions)
-            throws MalformedURLException, IOException {
+    private String fetchAsString(String urlAsString, int timeout, boolean includeSomeGooseOptions)
+            throws IOException {
         HttpURLConnection hConn = createUrlConnection(urlAsString, timeout, includeSomeGooseOptions);
         hConn.setInstanceFollowRedirects(true);
         String encoding = hConn.getContentEncoding();
@@ -348,7 +362,7 @@ public class HtmlFetcher {
         return createConverter(urlAsString).streamToString(is, enc);
     }
 
-    public static Converter createConverter(String url) {
+    private static Converter createConverter(String url) {
         return new Converter(url);
     }
 
@@ -360,8 +374,8 @@ public class HtmlFetcher {
      * @return the resolved url if any. Or null if it couldn't resolve the url
      * (within the specified time) or the same url if response code is OK
      */
-    public String getResolvedUrl(String urlAsString, int timeout,
-                                 int num_redirects) {
+    private String getResolvedUrl(String urlAsString, int timeout,
+                                  int num_redirects) {
         String newUrl = null;
         int responseCode = -1;
         try {
@@ -380,10 +394,10 @@ public class HtmlFetcher {
             newUrl = hConn.getHeaderField("Location");
             // Note that the max recursion level is 5.
             if (responseCode / 100 == 3 && newUrl != null && num_redirects < 5) {
-                newUrl = newUrl.replaceAll(" ", "+");
+                newUrl = SPACE.matcher(newUrl).replaceAll("+");
                 // some services use (none-standard) utf8 in their location header
-                if (urlAsString.startsWith("http://bit.ly")
-                        || urlAsString.startsWith("http://is.gd"))
+                if (urlAsString.contains("://bit.ly")
+                        || urlAsString.contains("://is.gd"))
                     newUrl = encodeUriFromHeader(newUrl);
 
                 // AP: This code is not longer need, instead we always follow
@@ -412,8 +426,8 @@ public class HtmlFetcher {
      * to non-ASCII characters. Workaround for broken origin servers that send
      * UTF-8 in the Location: header.
      */
-    static String encodeUriFromHeader(String badLocation) {
-        StringBuilder sb = new StringBuilder();
+    private static String encodeUriFromHeader(String badLocation) {
+        StringBuilder sb = new StringBuilder(badLocation.length());
 
         for (char ch : badLocation.toCharArray()) {
             if (ch < (char) 128) {
@@ -427,8 +441,8 @@ public class HtmlFetcher {
         return sb.toString();
     }
 
-    protected HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
-                                                    boolean includeSomeGooseOptions) throws MalformedURLException, IOException {
+    private HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
+                                                  boolean includeSomeGooseOptions) throws IOException {
         URL url = new URL(urlAsStr);
         //using proxy may increase latency
         HttpURLConnection hConn = (HttpURLConnection) url.openConnection(Proxy.NO_PROXY);

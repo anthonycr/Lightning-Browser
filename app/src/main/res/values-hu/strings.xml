@@ -54,6 +54,7 @@
     <string name="stock_browser_available">Támogatott gyári böngésző észlelve</string>
     <string name="fullScreenOption">Állapotsáv elrejtése böngészés közben</string>
     <string name="clear_cookies">Cookie-k törlése</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">Mit szeretnél csinálni ezzel a képpel?</string>
     <string name="action_download">Letöltés</string>
     <string name="action_open">Megnyitás</string>
@@ -123,7 +124,6 @@
     <string name="licenses">Nyílt forráskódú licencek</string>
     <string name="suggestion">Keresés</string>
     <string name="block_ads">Reklámok blokkolása</string>
-    <string name="message_untrusted_certificate">Az oldal tanusítványa nem megfelelő.Folytatja mindenképpen?</string>
     <string name="title_form_resubmission">Űrlap újraküldése</string>
     <string name="message_form_resubmission">Szeretnél újból elküldi az adatokat?</string>
     <string name="message_location">\nSzeretné használni a saját helyét?</string>
@@ -132,7 +132,7 @@
     <string name="title_sign_in">Bejelentkezés</string>
     <string name="hint_username">Felhasználónév</string>
     <string name="hint_password">Jelszó</string>
-    <string name="google_suggestions">Keresési javaslatok</string>
+    <string name="search_suggestions">Keresési javaslatok</string>
     <string name="powered_by_google">A Google támogatásával</string>
     <string name="use_tor_prompt">Úgy tűnik, hogy önnek telepítve van az Orbot.Szeretné használni Tor-t?</string>
     <string name="install_orbot">Kérjük telepítse az Orbot-ot annak érdekében, hogy működjön a proxy a Tor-ral.</string>

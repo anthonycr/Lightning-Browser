@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate
-        android:duration="@android:integer/config_mediumAnimTime"
+        android:duration="@integer/animation_time_medium"
         android:fromXDelta="100%p"
-        android:interpolator="@android:interpolator/decelerate_cubic"
+        android:interpolator="@anim/bezier_decelerate"
         android:toXDelta="0%p" />
     <!--<alpha-->
     <!--android:duration="@android:integer/config_mediumAnimTime"-->

@@ -37,6 +37,7 @@
     <string name="stock_browser_available">Встроенный браузер обнаружен</string>
     <string name="fullScreenOption">Без строки состояния</string>
     <string name="clear_cookies">Очистить cookies</string>
+    <string name="clear_history">Очистить историю</string>
     <string name="dialog_image">Выберите действие для изображения</string>
     <string name="action_download">Загрузить</string>
     <string name="action_open">Открыть</string>
@@ -106,7 +107,6 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Искать</string>
     <string name="block_ads">Блокировать рекламу</string>
-    <string name="message_untrusted_certificate">Сертификат сайта не является доверенным. Все равно продолжить?</string>
     <string name="title_form_resubmission">Повторная форма</string>
     <string name="message_form_resubmission">Вы действительно хотите отправить данные?</string>
     <string name="message_location">\Хотите использовать своё местоположение?</string>
@@ -115,7 +115,7 @@
     <string name="title_sign_in">Вход</string>
     <string name="hint_username">Имя пользователя</string>
     <string name="hint_password">Пароль</string>
-    <string name="google_suggestions">Подсказки поиска</string>
+    <string name="search_suggestions">Подсказки поиска</string>
     <string name="powered_by_google">Используя Google</string>
     <string name="use_tor_prompt">Похоже, установлен Orbot. Вы хотите использовать Tor?</string>
     <string name="install_orbot">Пожалуйста, установите Orbot для проксирования через Tor.</string>

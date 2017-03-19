@@ -42,7 +42,7 @@
     <string name="block">Block Images</string>
     <string name="window">Allow sites to open new windows</string>
     <string name="cookies">Enable Cookies</string>
-    <string name="importbookmarks">Import bookmarks from Browser</string>
+    <string name="importbookmarks">Import bookmarks from browser</string>
     <string name="size">Text size</string>
     <string name="recommended">Recommended</string>
     <string name="search">Search Engine</string>
@@ -50,10 +50,13 @@
     <string name="wideViewPort">Use wide viewport</string>
     <string name="overViewMode">Load pages in overview mode</string>
     <string name="restore">Restore lost tabs on start</string>
+    <string name="supported_browsers_title">Supported Browsers</string>
+    <string name="stock_browser">Stock Browser</string>
     <string name="stock_browser_unavailable">No stock browser detected</string>
     <string name="stock_browser_available">Supported stock browser detected</string>
     <string name="fullScreenOption">Hide status bar while browsing</string>
     <string name="clear_cookies">Clear Browser Cookies</string>
+    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">What would you like to do with this image?</string>
     <string name="action_download">Download</string>
     <string name="action_open">Open</string>
@@ -101,10 +104,12 @@
     <string name="action_find">Find in Page</string>
     <string name="download_pending">Starting download\u2026</string>
     <string name="cannot_download">Can only download \"http\" or \"https\" URLs.</string>
-    <string name="download_no_sdcard_dlg_title" >No SD card</string>
-    <string name="download_no_sdcard_dlg_msg" >USB storage is required to download the file.</string>
+    <string name="problem_download">Invalid URL encountered, cannot download</string>
+    <string name="problem_location_download">Cannot download to the specified location</string>
+    <string name="download_no_sdcard_dlg_title">No SD card</string>
+    <string name="download_no_sdcard_dlg_msg">USB storage is required to download the file.</string>
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
-    <string name="download_sdcard_busy_dlg_msg" >The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
+    <string name="download_sdcard_busy_dlg_msg">The storage is busy. To allow downloads, touch Turn Off USB Storage in the notification.</string>
     <string name="incognito_cookies">Enable Cookies in Incognito Mode</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -124,7 +129,13 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
     <string name="block_ads">Block Ads</string>
-    <string name="message_untrusted_certificate">The certificate of the site is not trusted. Proceed anyway?</string>
+    <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
+    <string name="message_certificate_date_invalid">date of certificate is invalid</string>
+    <string name="message_certificate_expired">certificate is expired</string>
+    <string name="message_certificate_domain_mismatch">domain in certificate does not match the site domain</string>
+    <string name="message_certificate_invalid">certificate is invalid</string>
+    <string name="message_certificate_not_yet_valid">certificate is not yet valid</string>
+    <string name="message_certificate_untrusted">certificate is not trusted</string>
     <string name="title_form_resubmission">Form Resubmission</string>
     <string name="message_form_resubmission">Would you like to resend the data?</string>
     <string name="message_location">\nWould like to use your location</string>
@@ -133,8 +144,10 @@
     <string name="title_sign_in">Sign In</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
-    <string name="google_suggestions">Search Suggestions</string>
+    <string name="search_suggestions">Search Suggestions</string>
     <string name="powered_by_google">Powered by Google</string>
+    <string name="powered_by_duck">Powered by DuckDuckGo</string>
+    <string name="search_suggestions_off">No search suggestions</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
         <item>None</item>
@@ -166,6 +179,7 @@
     <string name="name_inverted">Inverted</string>
     <string name="name_grayscale">Grayscale</string>
     <string name="name_inverted_grayscale">Inverted Grayscale</string>
+    <string name="name_increase_contrast">Increase Contrast</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sync history with Google</string>
     <string name="title_file_chooser">File Chooser</string>
@@ -182,8 +196,9 @@
     <string name="settings_privacy">Privacy Settings</string>
     <string name="settings_about">About</string>
     <string name="settings_about_explain">Details about version, author and license.</string>
-    <string name="close_tab">Close tab</string>
+    <string name="close_tab">Close current tab</string>
     <string name="close_all_tabs">Close all tabs</string>
+    <string name="close_other_tabs">Close other tabs</string>
     <string name="third_party">Block 3rd Party Cookies</string>
     <string name="color_mode">Enable Color Mode</string>
     <string name="reading_mode">Reader Mode</string>
@@ -195,13 +210,13 @@
     <string name="url_contents">URL Box Contents</string>
     <string name="text_encoding">Text Encoding</string>
     <string-array name="url_content_array">
-        <item >Domain (default)</item>
-        <item >URL</item>
-        <item >Title</item>
+        <item>Domain (default)</item>
+        <item>URL</item>
+        <item>Title</item>
     </string-array>
-        <string name="invert_color">Invert color</string>
-        <string name="dark_theme">Dark Theme</string>
-        <string name="tabs">Tabs</string>
+    <string name="invert_color">Invert color</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="tabs">Tabs</string>
     <string name="theme">App Theme</string>
     <string name="light_theme">Light Theme</string>
     <string name="black_theme">Black Theme (AMOLED)</string>
@@ -210,10 +225,37 @@
     <string name="action_rename">Rename</string>
     <string name="title_rename_folder">Rename Folder</string>
     <string name="dialog_folder">What would you like to do with this folder?</string>
-    <string name="clear_web_storage">Clear Web Storage</string>
+    <string name="clear_web_storage">Clear web storage</string>
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
-    <string name="message_web_storage_cleared">Web Storage Cleared</string>
+    <string name="message_web_storage_cleared">Web storage cleared</string>
     <string name="hosts_source">Hosts File Ad Blocking Source</string>
     <string name="settings_adblock">Ad Block Settings</string>
-    <string name="tabs_in_drawer">Show tabs in Navigation Drawer</string>
+    <string name="tabs_in_drawer">Show tabs in navigation drawer</string>
+    <string name="swap_bookmarks_and_tabs">Swap bookmark and tab drawers</string>
+    <string name="do_not_track">Request \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Remove Identifying Headers</string>
+    <string name="action_add_to_homescreen">Add to Homescreen</string>
+    <string name="message_added_to_homescreen">Shortcut Added to Homescreen</string>
+    <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Frequently Asked Questions</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Debug Settings</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Please restart the app for the change to take effect.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Open in new tab</string>
+    <string name="dialog_open_background_tab">Open in background tab</string>
+    <string name="dialog_open_incognito_tab">Open in incognito tab</string>
+    <string name="dialog_remove_bookmark">Remove bookmark</string>
+    <string name="dialog_edit_bookmark">Edit bookmark</string>
+    <string name="dialog_remove_from_history">Remove from history</string>
+    <string name="dialog_download_image">Download image</string>
+    <string name="dialog_copy_link">Copy link</string>
+    <string name="dialog_rename_folder">Rename folder</string>
+    <string name="dialog_remove_folder">Remove folder</string>
+    <string name="dialog_title_close_browser">Close browser</string>
 </resources>

@@ -1,9 +1,14 @@
 language: android
 sudo: false
+jdk:
+  - oraclejdk8
 android:
   components:
+    - tools
+    - build-tools-24.0.3
+    - build-tools-23.0.3
     - build-tools-22.0.1
-    - build-tools-23.0.0
+    - android-24
     - android-23
     - android-22
     - extra-android-support
@@ -17,3 +22,4 @@ before_install:
 install:
   - ./gradlew
 script:
+  - ./gradlew assembleDebug --stacktrace
