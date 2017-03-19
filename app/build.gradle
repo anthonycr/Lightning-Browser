@@ -66,21 +66,23 @@ dexcount {
 dependencies {
 
     // support libraries
-    compile 'com.android.support:palette-v7:25.2.0'
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:design:25.2.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.android.support:support-v4:25.2.0'
+    def supportLibVersion = '25.2.0'
+    compile "com.android.support:palette-v7:$supportLibVersion"
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:design:$supportLibVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibVersion"
+    compile "com.android.support:support-v4:$supportLibVersion"
 
     // html parsing for reading mode
-    compile 'org.jsoup:jsoup:1.9.2'
+    compile 'org.jsoup:jsoup:1.10.2'
 
     // event bus
     compile 'com.squareup:otto:1.3.8'
 
     // dependency injection
-    compile 'com.google.dagger:dagger:2.0.2'
-    apt 'com.google.dagger:dagger-compiler:2.0.2'
+    def daggerVersion = '2.0.2'
+    compile "com.google.dagger:dagger:$daggerVersion"
+    apt "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
@@ -93,14 +95,16 @@ dependencies {
     compile 'net.i2p.android:client:0.8'
 
     // tor proxy
-    compile 'info.guardianproject.netcipher:netcipher:2.0.0-alpha1'
-    compile 'info.guardianproject.netcipher:netcipher-webkit:2.0.0-alpha1'
+    def netcipherVersion = '2.0.0-alpha1'
+    compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
+    compile "info.guardianproject.netcipher:netcipher-webkit:$netcipherVersion"
 
     compile project(':bonsai')
 
     compile project(':animated-progress-bar')
 
     // memory leak analysis
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    def leakCanaryVersion = '1.5'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 }
