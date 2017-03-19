@@ -5,12 +5,8 @@ jdk:
 android:
   components:
     - tools
-    - build-tools-24.0.3
-    - build-tools-23.0.3
-    - build-tools-22.0.1
-    - android-24
-    - android-23
-    - android-22
+    - build-tools-25.0.2
+    - android-25
     - extra-android-support
     - extra-android-m2repository
   licenses:
