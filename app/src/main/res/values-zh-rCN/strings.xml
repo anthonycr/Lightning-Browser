@@ -11,8 +11,15 @@
     <string name="settings">浏览器设置</string>
     <string name="location">允许站点访问地理位置</string>
     <string name="password">保存密码</string>
+	<!--Fix some Chinese-->
+    <string name="tabs_in_drawer">侧边栏显示标签</string>
+    <string name="http_proxy">HTTP 代理</string>
+    <string name="delete_bookmarks">删除所有书签</string>
+    <string name="do_not_track">发送"禁止跟踪"</string>
+    <string name="remove_identifying_headers">移除身份验证报文</string>
+    <string name="clear_history">清除浏览历史</string>
     <!-- <string name="keep_last_tab">不关闭最后一个标签</string> -->
-    <string name="agent">User Agent</string>
+    <string name="agent">浏览器UA</string>
     <string name="flash">启用 Adobe Flash</string>
     <string name="home">设置首页</string>
     <string name="fullscreen">启用全屏模式</string>
@@ -38,7 +45,6 @@
     <string name="stock_browser_available">（已检测到受支持的原生浏览器）</string>
     <string name="fullScreenOption">浏览时隐藏状态栏</string>
     <string name="clear_cookies">清除浏览器 Cookies</string>
-    <string name="clear_history">Clear Browser History</string>
     <string name="dialog_image">您希望对此图片进行什么操作？</string>
     <string name="action_download">下载</string>
     <string name="action_open">打开</string>
@@ -148,9 +154,20 @@
     <string name="import_bookmark_error">无法从文件导入书签</string>
     <string name="title_chooser">选择一个文件</string>
     <string name="close_all_tabs">关闭所有标签</string>
+    <!--Fix some Chinese-->
+    <string name="close_other_tabs">关闭其他标签</string>
     <string name="close_tab">关闭标签</string>
     <string name="color_mode">启用色彩模式</string>
+    <string name="action_delete_all_bookmarks">删除所有书签</string>
+	<!--Fix some Chinese-->
+    <string name="action_add_to_homescreen">添加到桌面</string>
+    <string name="clear_web_storage_exit">退出时清除网页本地存储</string>
+    <string name="clear_web_storage">清除网页本地存储</string>
+    <string name="text_encoding">文字编码</string>
+    <string name="theme">应用主题</string>
+    <string name="light_theme">使用亮色主题</string>
     <string name="dark_theme">使用深色主题</string>
+    <string name="black_theme">使用黑色主题(AMOLED)</string>
     <string name="invert_color">反转颜色</string>
     <string name="jsoup">jsoup: Java HTML 解析器</string>
     <string name="loading">正在加载&#8230;</string>
@@ -162,8 +179,8 @@
     <string name="settings_display">显示设置</string>
     <string name="settings_general">常规设置</string>
     <string-array name="url_content_array">
-        <item >域 (默认)</item>
-        <item >URL</item>
+        <item >域名</item>
+        <item >链接</item>
         <item >标题</item>
     </string-array>
     <string name="settings_privacy">隐私设置</string>
