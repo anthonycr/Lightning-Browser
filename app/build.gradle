@@ -101,7 +101,7 @@ dependencies {
 
     compile project(':bonsai')
 
-    compile project(':animated-progress-bar')
+    compile 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
     def leakCanaryVersion = '1.5'
