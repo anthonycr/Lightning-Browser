@@ -99,7 +99,7 @@ dependencies {
     compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
     compile "info.guardianproject.netcipher:netcipher-webkit:$netcipherVersion"
 
-    compile project(':bonsai')
+    compile 'com.anthonycr.bonsai:bonsai:1.0'
 
     compile 'com.anthonycr.progress:animated-progress:1.0'
 
