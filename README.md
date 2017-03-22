@@ -62,13 +62,6 @@
          * Prefix static member variables with 's'
     * Use 4 spaces instead of a tab (\t)
 
-#### Setting Up the Project
-Due to the inclusion of the netcipher library for Orbot proxy support, importing the project will show you some errors. To fix this, first run the following git command in your project folder (NOTE: You need the git command installed to use this):
-```
-git submodule update --init --recursive
-```
-Once you run that command, the IDE should automatically import netcipher and a couple submodules in as separate projects. Than you need to set the netcipher library project as a libary of the browser project however your IDE makes you do that. Once those steps are done, the project should be all set up and ready to go. [Please read this tutorial for more information on git submodules](http://www.vogella.com/tutorials/Git/article.html#submodules)
-
 #### License
 ```
 Copyright 2014 Anthony Restaino
