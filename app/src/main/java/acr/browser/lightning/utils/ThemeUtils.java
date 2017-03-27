@@ -12,13 +12,14 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.TypedValue;
 import android.widget.ImageView;
 
@@ -69,7 +70,15 @@ public class ThemeUtils {
 
     @NonNull
     private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
-        Drawable drawable = AppCompatDrawableManager.get().getDrawable(context, drawableId);
+        Drawable drawable;
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            drawable = context.getDrawable(drawableId);
+        } else {
+            drawable = context.getResources().getDrawable(drawableId);
+        }
+
+        Preconditions.checkNonNull(drawable);
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             drawable = (DrawableCompat.wrap(drawable)).mutate();
         }
@@ -81,8 +90,8 @@ public class ThemeUtils {
     private static Bitmap getBitmapFromVectorDrawable(@NonNull Context context, int drawableId) {
         Drawable drawable = getVectorDrawable(context, drawableId);
 
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-            drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                                            Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
@@ -94,7 +103,8 @@ public class ThemeUtils {
     public static Bitmap getThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         Bitmap sourceBitmap = getBitmapFromVectorDrawable(context, res);
-        Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(),
+                                                  Bitmap.Config.ARGB_8888);
         Paint p = new Paint();
         ColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
         p.setColorFilter(filter);
@@ -115,8 +125,9 @@ public class ThemeUtils {
 
     @NonNull
     public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
-        @ColorInt final int color = (dark) ? ContextCompat.getColor(context, R.color.selected_dark) :
-            ContextCompat.getColor(context, R.color.selected_light);
+        @ColorInt final int color =
+                (dark) ? ContextCompat.getColor(context, R.color.selected_dark) : ContextCompat.getColor(
+                        context, R.color.selected_light);
         return new ColorDrawable(color);
     }
 

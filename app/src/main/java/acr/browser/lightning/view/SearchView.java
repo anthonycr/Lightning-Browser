@@ -2,12 +2,12 @@ package acr.browser.lightning.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.widget.AutoCompleteTextView;
 
-public class SearchView extends AutoCompleteTextView {
+public class SearchView extends AppCompatAutoCompleteTextView {
 
     public interface PreFocusListener {
         void onPreFocus();

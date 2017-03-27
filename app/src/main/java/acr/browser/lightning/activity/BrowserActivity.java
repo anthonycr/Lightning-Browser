@@ -81,7 +81,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
 import com.anthonycr.bonsai.Completable;
-import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;

@@ -15,7 +15,8 @@
  */
 package acr.browser.lightning.fragment.anim;
 
-import android.support.v4.animation.AnimatorCompatHelper;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
@@ -53,6 +54,8 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
     private final ArrayList<ViewHolder> mMoveAnimations = new ArrayList<>();
     private final ArrayList<ViewHolder> mRemoveAnimations = new ArrayList<>();
     private final ArrayList<ViewHolder> mChangeAnimations = new ArrayList<>();
+
+    private TimeInterpolator mDefaultInterpolator;
 
     private static class MoveInfo {
         public final ViewHolder holder;
@@ -543,8 +546,15 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
     }
 
     private void resetAnimation(ViewHolder holder) {
-        AnimatorCompatHelper.clearInterpolator(holder.itemView);
+        clearInterpolator(holder.itemView);
         endAnimation(holder);
+    }
+
+    private void clearInterpolator(View view) {
+        if (mDefaultInterpolator == null) {
+            mDefaultInterpolator = new ValueAnimator().getInterpolator();
+        }
+        view.animate().setInterpolator(mDefaultInterpolator);
     }
 
     @Override
