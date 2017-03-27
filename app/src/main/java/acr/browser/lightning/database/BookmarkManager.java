@@ -447,7 +447,7 @@ public class BookmarkManager {
      *
      * @return the current folder
      */
-    @Nullable
+    @NonNull
     public String getCurrentFolder() {
         return mCurrentFolder;
     }

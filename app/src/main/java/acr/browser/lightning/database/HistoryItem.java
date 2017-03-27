@@ -63,7 +63,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
         this.mImageId = id;
     }
 
-    public void setBitmap(Bitmap image) {
+    public void setBitmap(@Nullable Bitmap image) {
         mBitmap = image;
     }
 
