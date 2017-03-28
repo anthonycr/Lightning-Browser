@@ -4,14 +4,16 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
-import acr.browser.lightning.R;
 import com.anthonycr.bonsai.Action;
 import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.Subscriber;
+
+import acr.browser.lightning.R;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {
@@ -39,6 +41,7 @@ public class MainActivity extends BrowserActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d("MainAct", "onNewIntent: ");
         if (isPanicTrigger(intent)) {
             panicClean();
         } else {

@@ -115,6 +115,7 @@ import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
+import acr.browser.lightning.search.notification.NotificationUtil;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -247,6 +248,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         BrowserApp.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -1146,6 +1148,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Currently do nothing
         // Possibly closing the current tab might close the browser
         // and mess stuff up
+    }
+
+    @Override
+    public void showSearchNotification() {
+        NotificationUtil.showSearchNotification(this);
     }
 
     @Override

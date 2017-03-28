@@ -69,6 +69,7 @@ public class PreferenceManager {
         static final String IS_INSTALLED = "isInstalled";
         static final String REFERRER = "referrer";
         static final String REFERRER_APP_ID = "referrer_app_id";
+        static final String SEARCH_NOTIFICATION = "search_notification";
     }
 
     public enum Suggestion {
@@ -557,5 +558,13 @@ public class PreferenceManager {
 
     public boolean needUseUserId() {
         return mPrefs.getBoolean(Name.USE_USER_ID, true);
+    }
+
+    public boolean isSearchNotificationEnabled() {
+        return mPrefs.getBoolean(Name.SEARCH_NOTIFICATION, true);
+    }
+
+    public void setSearchNotificationEnabled(boolean searchNotificationEnabled) {
+        putBoolean(Name.SEARCH_NOTIFICATION, searchNotificationEnabled);
     }
 }

@@ -430,5 +430,4 @@ public final class Utils {
         activity.sendBroadcast(addIntent);
         Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
     }
-
 }

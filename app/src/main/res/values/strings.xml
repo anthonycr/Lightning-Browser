@@ -262,4 +262,11 @@
     <string name="dialog_rename_folder">Rename folder</string>
     <string name="dialog_remove_folder">Remove folder</string>
     <string name="dialog_title_close_browser">Close browser</string>
+
+    <!--search notification-->
+    <string name="search_notification_title">Enter keyword</string>
+    <string name="search_notification_dialog_title">Easy pull down notification, one-tap search</string>
+    <string name="disable">Disable</string>
+    <string name="keep">Keep it</string>
+
 </resources>

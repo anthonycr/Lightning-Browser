@@ -57,4 +57,19 @@
     <color name="search_default_history_background">#BDBDBD</color>
     <color name="search_default_opt_off">#636363</color>
     <color name="search_default_opt_on">#029300</color>
+
+    <!--search notification-->
+    <color name="divider_search_notification_dialog">#ffbebebe</color>
+    <color name="divider_search_notification_dialog_btn">#ffc6c6c6</color>
+    <color name="divider_search_notification_dialog_title">#ff808080</color>
+    <color name="ci">#ff606060</color>
+    <color name="cj">#ff40484f</color>
+    <color name="ck">#ff333333</color>
+    <color name="cm">#ff3a83d9</color>
+    <color name="cn">#503a83d9</color>
+    <color name="co">#ff3a83d9</color>
+    <color name="ib">#00000000</color>
+    <color name="ic">#4dababab</color>
+    <color name="ripple">@color/ic</color>
+
 </resources>

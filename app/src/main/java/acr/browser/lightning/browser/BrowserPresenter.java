@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
 import com.squareup.otto.Bus;
 
@@ -18,9 +19,6 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.OnSubscribe;
-
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
@@ -54,6 +52,9 @@ public class BrowserPresenter {
                 mView.updateTabNumber(newNumber);
             }
         });
+        if(mPreferences.isSearchNotificationEnabled()) {
+            mView.showSearchNotification();
+        }
     }
 
     /**
@@ -214,6 +215,7 @@ public class BrowserPresenter {
      *               may be null.
      */
     public void onNewIntent(@Nullable final Intent intent) {
+        Log.d(TAG, "onNewIntent: ");
         mTabsModel.doAfterInitialization(new Runnable() {
             @Override
             public void run() {

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notify_container"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/search_notification_ripple"
+    android:layout_centerVertical="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="36.0dip"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="14.0dip"
+        android:layout_marginRight="14.0dip"
+        android:layout_marginTop="14.0dip"
+        android:background="@drawable/bg_search_notification">
+
+        <ImageView
+            android:id="@+id/notify_search_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="0.0dip"
+            android:src="@drawable/ic_search_notification_image" />
+
+        <TextView
+            android:id="@+id/notify_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="0.0dip"
+            android:layout_marginRight="35.0dip"
+            android:layout_toRightOf="@id/notify_search_icon"
+            android:paddingBottom="0.5dip"
+            android:text="@string/search_notification_title"
+            android:textColor="#ff808080"
+            android:textSize="14.0sp" />
+
+        <ImageView
+            android:id="@+id/notify_setting"
+            android:layout_width="43.0dip"
+            android:layout_height="32.0dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="1.0dip"
+            android:layout_marginRight="0.0dip"
+            android:layout_marginTop="1.0dip"
+            android:background="@drawable/dm"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_settings" />
+    </RelativeLayout>
+</LinearLayout>
