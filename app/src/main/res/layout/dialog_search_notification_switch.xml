@@ -46,7 +46,13 @@
                     android:layout_width="199.0dip"
                     android:layout_height="218.0dip"
                     android:layout_gravity="center_horizontal"
-                    android:orientation="vertical" />
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/search_wireframe"
+                        />
+                    </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

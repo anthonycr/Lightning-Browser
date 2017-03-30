@@ -130,7 +130,7 @@ public class PreferenceManager {
     }
 
     public boolean getClearCacheExit() {
-        return mPrefs.getBoolean(Name.CLEAR_CACHE_EXIT, false);
+        return mPrefs.getBoolean(Name.CLEAR_CACHE_EXIT, true);
     }
 
     public boolean getClearCookiesExitEnabled() {

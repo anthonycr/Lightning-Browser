@@ -1,6 +1,5 @@
 package acr.browser.lightning.search.notification;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -26,7 +25,7 @@ public class CommonPersistentService extends Service {
     }
 
     public int onStartCommand(Intent intent, int i, int i2) {
-        startForeground(99999, new Notification());
+//        startForeground(99999, new Notification());
         return START_STICKY;
     }
 }
