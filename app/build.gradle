@@ -73,11 +73,12 @@ dexcount {
 dependencies {
 
     // support libraries
-    compile 'com.android.support:palette-v7:25.1.0'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:palette-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'ch.acra:acra:4.6.2'
 
     // html parsing for reading mode
     compile 'org.jsoup:jsoup:1.9.2'
