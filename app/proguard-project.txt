@@ -99,6 +99,19 @@
   public static final android.os.Parcelable$Creator *;
 }
 
+-keep class io.mobitech.**
+-keep class com.bluelinelabs.logansquare.** { *; }
+-keep @com.bluelinelabs.logansquare.annotation.JsonObject class *
+-keep class **$$JsonObjectMapper { *; }
+-keepclassmembers class * implements java.io.Serializable {
+static final long serialVersionUID;
+private static final java.io.ObjectStreamField[] serialPersistentFields;
+private void writeObject(java.io.ObjectOutputStream);
+private void readObject(java.io.ObjectInputStream);
+java.lang.Object writeReplace();
+java.lang.Object readResolve();
+}
+
 # The support library contains references to newer platform versions.
 # Don't warn about those in case this app is linking against an older
 # platform version.  We know about them, and they are safe.

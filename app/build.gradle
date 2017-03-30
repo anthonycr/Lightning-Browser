@@ -7,9 +7,9 @@ android {
     buildToolsVersion "25.0.0"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 24
-        versionName "4.4.6"
+        versionName "4.5.0 - play"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         configurations {
@@ -43,14 +43,14 @@ android {
             buildConfigField "boolean", "FULL_VERSION", "true"
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
-            versionCode 94
+            versionCode 95
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
 //            applicationId "acr.browser.barebones"
             applicationId "io.mobitech.browser"
-            versionCode 94
+            versionCode 95
         }
     }
 
@@ -79,6 +79,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.android.support:support-v4:25.0.0'
     compile 'ch.acra:acra:4.6.2'
+    compile 'io.mobitech:reporting:1.0.4'
+
 
     // html parsing for reading mode
     compile 'org.jsoup:jsoup:1.9.2'

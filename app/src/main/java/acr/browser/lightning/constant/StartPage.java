@@ -22,6 +22,8 @@ import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 
+import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
+
 public class StartPage extends AsyncTask<Void, Void, Void> {
 
     public static final String FILENAME = "homepage.html";
@@ -166,13 +168,13 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
                 // MOBITECH_SEARCH;
                 icon = "file:///android_asset/yandex.png";
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = UrlUtils.makeMobitechSearchUrl(mPreferenceManager.getUserId(), "TESTYHOC36B5A", mPreferenceManager.needUseUserId());
+                searchUrl = UrlUtils.makeMobitechSearchUrl(mPreferenceManager.getUserId(), MOBITECH_APP_KEY, mPreferenceManager.needUseUserId());
                 break;
             case 12:
                 // MOBITECH_START_PAGE;
                 icon = "file:///android_asset/yandex.png";
                 // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = UrlUtils.makeMobitechStartPage(mPreferenceManager.getUserId(), "TESTYHOC36B5A", mPreferenceManager.needUseUserId());
+                searchUrl = UrlUtils.makeMobitechStartPage(mPreferenceManager.getUserId(),MOBITECH_APP_KEY, mPreferenceManager.needUseUserId());
                 break;
             default:
                 // DEFAULT GOOGLE_SEARCH;

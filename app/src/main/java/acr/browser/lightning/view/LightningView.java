@@ -59,6 +59,8 @@ import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
+import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
+
 /**
  * {@link LightningView} acts as a tab for the browser,
  * handling WebView creation and handling logic, as well
@@ -211,7 +213,7 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        mWebView.loadUrl(UrlUtils.makeMobitechStartPage(mPreferences.getUserId(), "TESTYHOC36B5A", mPreferences.needUseUserId()), mRequestHeaders);
+        mWebView.loadUrl(UrlUtils.makeMobitechStartPage(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId()), mRequestHeaders);
         //new StartPage(this, BrowserApp.get(mActivity)).load();
     }
 
