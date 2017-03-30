@@ -18,7 +18,7 @@
             android:title="@string/privacy_policy">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://mobitech.io/pp">
+                android:data="http://mobitech.io/pp.html">
             </intent>
         </Preference>
     </PreferenceCategory>
