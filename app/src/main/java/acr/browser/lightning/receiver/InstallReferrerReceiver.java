@@ -27,6 +27,9 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
     PreferenceManager mPreferenceManager;
 
     public void onReceive(Context context, Intent intent) {
+        if (this==null || intent==null || context==null){
+            return;
+        }
         BrowserApp.getAppComponent().inject(this);
         Log.i(TAG, "Received referrer");
         try {

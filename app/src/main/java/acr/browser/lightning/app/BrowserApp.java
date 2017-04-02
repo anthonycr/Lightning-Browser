@@ -18,6 +18,7 @@ import com.squareup.otto.Bus;
 
 import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
+import org.acra.annotation.ReportsCrashes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -41,6 +42,7 @@ import io.mobitech.reporting.HockeySender;
 
 import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
 
+@ReportsCrashes
 public class BrowserApp extends Application {
 
     private static final String TAG = BrowserApp.class.getSimpleName();
