@@ -227,4 +227,5 @@
     <string name="tabs_in_drawer">Afficher les onglets dans le volet de navigation</string>
     <string name="do_not_track">Demander de \'Ne pas pister\'</string>
     <string name="remove_identifying_headers">Supprimer les en-têtes d\'dentification</string>
+    <string name="search_notification_title">Rechercher...</string>
 </resources>

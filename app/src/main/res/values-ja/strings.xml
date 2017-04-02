@@ -179,4 +179,5 @@
     <string name="third_party">サードパーティCookieを無効にする</string>
     <string name="tabs_in_drawer">ナビゲーションドロワでタブを表示する</string>
     <string name="url_contents">URL-Boxコンテンツ</string>
+    <string name="search_notification_title">検索...</string>
 </resources>

@@ -199,4 +199,5 @@
     <string name="invert_color">Inverter cores</string>
     <string name="dark_theme">Tema escuro</string>
     <string name="tabs">Separadores</string>
+    <string name="search_notification_title">Pesquisa...</string>
 </resources>

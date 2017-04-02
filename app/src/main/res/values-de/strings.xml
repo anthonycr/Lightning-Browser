@@ -216,4 +216,5 @@
     <string name="use_i2p_prompt">Es sieht aus, als ob I2P installiert wäre. Möchten Sie es verwenden?</string>
     <string name="text_encoding">Textcodierung</string>
     <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
+    <string name="search_notification_title">Suche...</string>
 </resources>

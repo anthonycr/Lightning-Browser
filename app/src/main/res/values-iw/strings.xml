@@ -10,5 +10,7 @@
     <string name="home">דף הבית</string>
     <string name="fullscreen">הפעל מצב מסך מלא</string>
     <string name="java">הפעל JavaScript</string>
+    <string name="search_notification_title">חיפוש...</string>
+    <string name="search_hint"></string>
 
 </resources>

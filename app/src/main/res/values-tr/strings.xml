@@ -147,4 +147,5 @@
     <string name="bookmark_settings">Yer işaretleri ayarları</string>
     <string name="import_bookmark_error">Yer işaretleri dosyadan yüklenemedi</string>
     <string name="title_chooser">Dosya seç</string>
+    <string name="search_notification_title">Ara...</string>
 </resources>

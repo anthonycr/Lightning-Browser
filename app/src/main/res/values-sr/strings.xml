@@ -225,4 +225,5 @@
     <string name="hosts_source">Извор hosts фајла за блокирање реклама</string>
     <string name="settings_adblock">Поставке Адблока</string>
     <string name="tabs_in_drawer">Језичци у фиоци навигације</string>
+    <string name="search_notification_title">Тражи...</string>
 </resources>

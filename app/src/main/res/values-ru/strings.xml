@@ -151,4 +151,5 @@
     <string name="settings_privacy">Настройки приватности</string>
     <string name="settings_about">О программе</string>
     <string name="settings_about_explain">Информация о версии, авторах и лицензиях</string>
+    <string name="search_notification_title">Поиск...</string>
 </resources>

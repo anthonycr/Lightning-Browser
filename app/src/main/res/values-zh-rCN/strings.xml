@@ -170,5 +170,6 @@
     <string name="tabs">标签</string>
     <string name="third_party">阻止第三方 Cookies</string>
     <string name="url_contents">URL 框内容</string>
+    <string name="search_notification_title">搜索...</string>
     <!-- <string name="exit">退出</string> -->
 </resources>
