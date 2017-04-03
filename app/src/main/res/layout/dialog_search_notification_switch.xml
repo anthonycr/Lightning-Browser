@@ -16,6 +16,15 @@
         android:gravity="center_horizontal"
         android:minHeight="160.0dip"
         android:orientation="vertical">
+        <TextView
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/persist_notification_close_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@android:drawable/ic_notification_clear_all"/>
 
         <ScrollView
             android:id="@+id/scrollview"
@@ -28,7 +37,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20.0dip">
+                android:paddingTop="10.0dip"
+                android:paddingRight="10dip"
+                android:paddingLeft="10dip"
+                android:paddingBottom="0dp"
+                android:layout_marginBottom="0dp"
+                >
 
                 <TextView
                     android:id="@id/title"

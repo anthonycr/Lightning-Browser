@@ -42,7 +42,7 @@ import io.mobitech.reporting.HockeySender;
 
 import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
 
-@ReportsCrashes
+@ReportsCrashes(formUri = "")
 public class BrowserApp extends Application {
 
     private static final String TAG = BrowserApp.class.getSimpleName();
@@ -180,7 +180,7 @@ public class BrowserApp extends Application {
 //            });
 
 
-                if (!mPreferenceManager.isInstalled()) {
+                if (mPreferenceManager!=null && !mPreferenceManager.isInstalled()) {
                     String referrer = mPreferenceManager.getReferrer();
                     String appId = mPreferenceManager.getReferrerAppId();
                     if(TextUtils.isEmpty(appId)){
@@ -191,7 +191,7 @@ public class BrowserApp extends Application {
                     }
 
                     try {
-                        String url = "http://dashboard.mobitech.io/v1/tracking/install?p_key=" + MOBITECH_APP_KEY+"&referrer_id=" + referrer + "&app_id=" + URLEncoder.encode(appId,"UTF-8");
+                        String url = "http://dashboard.mobitech.io/v1/tracking/install?p_key=" + MOBITECH_APP_KEY+"&referrer_id=" + URLEncoder.encode(referrer,"UTF-8") + "&app_id=" + URLEncoder.encode(appId,"UTF-8");
                         HttpResponse response = NetworkUtil.getContentFromURL(url, new StringParser(String.class), BrowserApp.this);
                         mPreferenceManager.setInstalled(response.responseCode<400);
                     } catch (UnsupportedEncodingException e) {

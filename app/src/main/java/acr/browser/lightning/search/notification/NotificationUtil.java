@@ -20,7 +20,7 @@ public final class NotificationUtil {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.search_notification);
             Intent intent = new Intent(context, MainActivity.class);
             intent.setAction("action.notify.searchbar");
-            PendingIntent activity = PendingIntent.getActivity(context, 0, intent, 134217728);
+            PendingIntent activity = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             NotificationUtil.setPendingIntent(context, remoteViews);
             Notification build = priority.setContent(remoteViews).setContentIntent(activity).build();
             if (VERSION.SDK_INT >= 16) {
@@ -32,8 +32,8 @@ public final class NotificationUtil {
                 intent = new Intent(context, MainActivity.class);
                 intent.setAction("action.notify.searchbar");
                 intent.putExtra("show_keyword", true);
-                remoteViews.setOnClickPendingIntent(R.id.notify_container, PendingIntent.getActivity(context, 1, intent, 268435456));
-                remoteViews.setOnClickPendingIntent(R.id.notify_container, PendingIntent.getActivity(context, 1, intent, 268435456));
+                remoteViews.setOnClickPendingIntent(R.id.notify_container, PendingIntent.getActivity(context, 1, intent,  PendingIntent.FLAG_UPDATE_CURRENT));
+//                remoteViews.setOnClickPendingIntent(R.id.notify_container, PendingIntent.getActivity(context, 1, intent, 268435456));
                 //}
                 setPendingIntent(context, remoteViews);
                 build.bigContentView = remoteViews;
@@ -58,7 +58,7 @@ public final class NotificationUtil {
     private static void setPendingIntent(Context context, RemoteViews remoteViews) {
         Intent intent = new Intent(context, BdSearchNotifySettingActivity.class);
         intent.putExtra("from", "1");
-        remoteViews.setOnClickPendingIntent(R.id.notify_setting, PendingIntent.getActivity(context, 0, intent, 134217728));
+        remoteViews.setOnClickPendingIntent(R.id.notify_setting, PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
     public static void cancelNotification(Context context) {

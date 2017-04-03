@@ -3,9 +3,10 @@
     android:id="@+id/notify_container"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/search_notification_ripple"
     android:layout_centerVertical="true"
-    android:orientation="vertical">
+    android:background="@drawable/search_notification_ripple"
+    android:orientation="vertical"
+    android:paddingBottom="15dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
