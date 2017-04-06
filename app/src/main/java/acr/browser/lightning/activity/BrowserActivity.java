@@ -117,6 +117,7 @@ import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.notification.NotificationUtil;
 import acr.browser.lightning.utils.DrawableUtils;
+import acr.browser.lightning.utils.KeyboardHelper;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -128,6 +129,7 @@ import acr.browser.lightning.view.SearchView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
 import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
@@ -250,7 +252,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
         BrowserApp.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -396,6 +397,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSearch.setOnEditorActionListener(search);
         mSearch.setOnTouchListener(search);
         mSearch.setOnPreFocusListener(search);
+        if(getIntent() != null && INTENT_ACTION_SEARCH.equals(getIntent().getStringExtra(INTENT_ACTION_SEARCH))) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    selectSearch();
+                }
+            }, 500);
+        }
 
         initializeSearchSuggestions(mSearch);
 
@@ -423,6 +432,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             setIntent(null);
             mProxyUtils.checkForProxy(this);
         }
+    }
+
+    @Override
+    public void selectSearch() {
+        Log.d(TAG, "selectSearch: ");
+        mSearch.requestFocusFromTouch();
+        KeyboardHelper.showKeyboard(this);
     }
 
     @IdRes
