@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
-        versionName "4.5.4 - play"
+        versionName "4.5.6 - play"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         configurations {
@@ -43,14 +43,14 @@ android {
             buildConfigField "boolean", "FULL_VERSION", "true"
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
-            versionCode 98
+            versionCode 99
         }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "false"
 //            applicationId "acr.browser.barebones"
             applicationId "io.mobitech.browser"
-            versionCode 98
+            versionCode 99
         }
     }
 
