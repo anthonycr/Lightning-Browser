@@ -2,6 +2,7 @@ package acr.browser.lightning.activity;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,6 +19,8 @@ import acr.browser.lightning.R;
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     @Override
     public Observable<Void> updateCookiePreference() {
         return Observable.create(new Action<Void>() {
@@ -31,6 +34,12 @@ public class MainActivity extends BrowserActivity {
                 subscriber.onComplete();
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: " + (getIntent() == null));
     }
 
     @Override

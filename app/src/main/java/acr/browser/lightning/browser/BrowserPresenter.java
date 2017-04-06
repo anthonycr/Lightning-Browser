@@ -22,6 +22,8 @@ import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
+import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
+
 /**
  * Presenter in charge of keeping track of
  * the current tab and setting the current tab
@@ -215,12 +217,14 @@ public class BrowserPresenter {
      *               may be null.
      */
     public void onNewIntent(@Nullable final Intent intent) {
-        Log.d(TAG, "onNewIntent: ");
         mTabsModel.doAfterInitialization(new Runnable() {
             @Override
             public void run() {
                 final String url;
                 if (intent != null) {
+                    if(INTENT_ACTION_SEARCH.equals(intent.getStringExtra(INTENT_ACTION_SEARCH))) {
+                        mView.selectSearch();
+                    }
                     url = intent.getDataString();
                 } else {
                     url = null;

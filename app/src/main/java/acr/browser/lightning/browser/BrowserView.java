@@ -29,6 +29,8 @@ public interface BrowserView {
 
     void setBackButtonEnabled(boolean enabled);
 
+    void selectSearch();
+
     void notifyTabViewRemoved(int position);
 
     void notifyTabViewAdded();

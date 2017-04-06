@@ -12,30 +12,35 @@ import android.widget.RemoteViews;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
 
+import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
+
 /* renamed from: com.baidu.browser.inter.a.c */
 public final class NotificationUtil {
+    private static final int REQUEST_CODE_SEARCH_NOTIFICATION = 9999;
+
     private static Notification getNotification(Context context) {
         try {
             Builder priority = new Builder(context).setSmallIcon(R.drawable.ic_search_notification_small_icon).setAutoCancel(false).setOngoing(true).setPriority(2);
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.search_notification);
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.setAction("action.notify.searchbar");
-            PendingIntent activity = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             NotificationUtil.setPendingIntent(context, remoteViews);
-            Notification build = priority.setContent(remoteViews).setContentIntent(activity).build();
+
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.putExtra(INTENT_ACTION_SEARCH, INTENT_ACTION_SEARCH);
+            intent.setAction(INTENT_ACTION_SEARCH);
+            PendingIntent activity = PendingIntent.getActivity(context, REQUEST_CODE_SEARCH_NOTIFICATION, intent, 0);
+            Notification build = priority
+                    .setContent(remoteViews)
+                    .setContentIntent(activity)
+                    .build();
             if (VERSION.SDK_INT >= 16) {
                 remoteViews = new RemoteViews(context.getPackageName(), R.layout.search_notification);
                 remoteViews.setTextViewText(R.id.notify_title, context.getResources().getString(R.string.search_notification_title));
-                /*if (d == null || d.size() <= 0) {
-                    remoteViews.setViewVisibility(R.id.notify_layout_hotword, 8);
-                } else {*/
-                intent = new Intent(context, MainActivity.class);
-                intent.setAction("action.notify.searchbar");
-                intent.putExtra("show_keyword", true);
-                remoteViews.setOnClickPendingIntent(R.id.notify_container, PendingIntent.getActivity(context, 1, intent,  PendingIntent.FLAG_UPDATE_CURRENT));
-//                remoteViews.setOnClickPendingIntent(R.id.notify_container, PendingIntent.getActivity(context, 1, intent, 268435456));
-                //}
                 setPendingIntent(context, remoteViews);
+                intent = new Intent(context, MainActivity.class);
+                intent.putExtra(INTENT_ACTION_SEARCH, INTENT_ACTION_SEARCH);
+                intent.setAction(INTENT_ACTION_SEARCH);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE_SEARCH_NOTIFICATION, intent, 0);
+                remoteViews.setOnClickPendingIntent(R.id.notify_container, pendingIntent);
                 build.bigContentView = remoteViews;
             }
             return build;
@@ -49,7 +54,7 @@ public final class NotificationUtil {
         try {
             context.startService(new Intent(context, CommonPersistentService.class));
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(9999, getNotification(context));
+            notificationManager.notify(REQUEST_CODE_SEARCH_NOTIFICATION, getNotification(context));
         } catch (Throwable th) {
             th.printStackTrace();
         }
