@@ -11,7 +11,6 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.WebView;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
@@ -22,6 +21,8 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -99,9 +100,9 @@ public class BrowserApp extends Application {
         if (mPreferenceManager.getUseLeakCanary() && !isRelease()) {
             LeakCanary.install(this);
         }
-        if (!isRelease() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
+//        if (!isRelease() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            WebView.setWebContentsDebuggingEnabled(true);
+//        }
 
         registerActivityLifecycleCallbacks(new MemoryLeakUtils.LifecycleAdapter() {
             @Override
@@ -191,7 +192,9 @@ public class BrowserApp extends Application {
                     }
 
                     try {
-                        String url = "http://dashboard.mobitech.io/v1/tracking/install?p_key=" + MOBITECH_APP_KEY+"&referrer_id=" + URLEncoder.encode(referrer,"UTF-8") + "&app_id=" + URLEncoder.encode(appId,"UTF-8");
+                        Date cDate = new Date();
+                        String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+                        String url = "http://dashboard.mobitech.io/v1/tracking/install?p_key=" + MOBITECH_APP_KEY+"&referrer_id=" + URLEncoder.encode(referrer,"UTF-8") + "&app_id=" + URLEncoder.encode(appId,"UTF-8") +"&date="+fDate;
                         HttpResponse response = NetworkUtil.getContentFromURL(url, new StringParser(String.class), BrowserApp.this);
                         mPreferenceManager.setInstalled(response.responseCode<400);
                     } catch (UnsupportedEncodingException e) {
