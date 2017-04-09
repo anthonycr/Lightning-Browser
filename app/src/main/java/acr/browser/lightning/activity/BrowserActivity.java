@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -113,6 +114,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.notification.NotificationUtil;
@@ -208,6 +210,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject
     BookmarkManager mBookmarkManager;
 
+    @Inject
+    PreferenceManager mPreferenceManager;
+
     // Event bus
     @Inject
     Bus mEventBus;
@@ -260,6 +265,26 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mPresenter = new BrowserPresenter(this, isIncognito());
 
         initialize(savedInstanceState);
+    }
+
+    private void addHomePageToBookmark() {
+        if (!mPreferenceManager.getIsStartSetOnBookmark()){
+            HistoryItem historyItem = new HistoryItem();
+            historyItem.setTitle("Search");
+            historyItem.setUrl(this.mSearchUrl);
+            historyItem.setImageId(R.drawable.ic_search);
+            historyItem.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_search));
+            mBookmarkManager.addBookmark(historyItem);
+
+            historyItem = new HistoryItem();
+            historyItem.setTitle("Home and News");
+            historyItem.setUrl(UrlUtils.makeMobitechStartPage(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId()));
+            historyItem.setImageId( R.drawable.ic_action_home);
+            historyItem.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_action_home));
+            mBookmarkManager.addBookmark(historyItem);
+
+            mPreferenceManager.setIsStartSetOnBookmark(true);
+        }
     }
 
     private synchronized void initialize(Bundle savedInstanceState) {
@@ -1382,6 +1407,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         } else {
             putToolbarInRoot();
         }
+
+        addHomePageToBookmark();
     }
 
     /**

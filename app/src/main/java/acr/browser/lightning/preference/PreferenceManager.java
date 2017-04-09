@@ -70,6 +70,7 @@ public class PreferenceManager {
         static final String REFERRER = "referrer";
         static final String REFERRER_APP_ID = "referrer_app_id";
         static final String SEARCH_NOTIFICATION = "search_notification";
+        static final String IS_STARTPAGE_SET_TO_BOOKMARK = "is_startpage_set_to_bookmark ";
     }
 
     public enum Suggestion {
@@ -97,16 +98,24 @@ public class PreferenceManager {
         }
     }
 
-    public void setSearchSuggestionChoice(@NonNull Suggestion suggestion) {
-        putString(Name.SEARCH_SUGGESTIONS, suggestion.name());
-    }
-
     public boolean getBookmarksAndTabsSwapped() {
         return mPrefs.getBoolean(Name.SWAP_BOOKMARKS_AND_TABS, false);
     }
 
     public void setBookmarkAndTabsSwapped(boolean swap) {
         putBoolean(Name.SWAP_BOOKMARKS_AND_TABS, swap);
+    }
+
+    public void setSearchSuggestionChoice(@NonNull Suggestion suggestion) {
+        putString(Name.SEARCH_SUGGESTIONS, suggestion.name());
+    }
+
+    public boolean getIsStartSetOnBookmark() {
+        return mPrefs.getBoolean(Name.IS_STARTPAGE_SET_TO_BOOKMARK, false);
+    }
+
+    public void setIsStartSetOnBookmark(boolean isStartSetOnBookmark) {
+        putBoolean(Name.IS_STARTPAGE_SET_TO_BOOKMARK, isStartSetOnBookmark);
     }
 
     public boolean getAdBlockEnabled() {

@@ -22,7 +22,6 @@ import org.acra.annotation.ReportsCrashes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -192,12 +191,8 @@ public class BrowserApp extends Application {
                     }
 
                     try {
-                        String url = "http://dashboard.mobitech.io/v1/tracking/install";
-                        Map<String, String> contentValue   = new HashMap<>();
-                        contentValue.put("p_key", MOBITECH_APP_KEY);
-                        contentValue.put("referrer_id", URLEncoder.encode(referrer,"UTF-8"));
-                        contentValue.put("app_id",  URLEncoder.encode(appId,"UTF-8"));
-                        HttpResponse response = NetworkUtil.getContentFromURLPOST(url, new StringParser(String.class),new HashMap<String, String>(), contentValue, false);
+                        String url = "http://dashboard.mobitech.io/v1/tracking/install?p_key=" + MOBITECH_APP_KEY+"&referrer_id=" + URLEncoder.encode(referrer,"UTF-8") + "&app_id=" + URLEncoder.encode(appId,"UTF-8");
+                        HttpResponse response = NetworkUtil.getContentFromURL(url, new StringParser(String.class), BrowserApp.this);
                         mPreferenceManager.setInstalled(response.responseCode<400);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
