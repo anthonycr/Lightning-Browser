@@ -4,26 +4,29 @@
 package acr.browser.lightning.constant;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.HistoryModel;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.view.LightningView;
 
-public class HistoryPage extends AsyncTask<Void, Void, Void> {
+public class HistoryPage {
 
     private static final String TAG = HistoryPage.class.getSimpleName();
 
@@ -43,70 +46,54 @@ public class HistoryPage extends AsyncTask<Void, Void, Void> {
 
     private static final String END = "</div></body></html>";
 
-    @NonNull private final WeakReference<LightningView> mTabReference;
-    @NonNull private final Application mApp;
-    @NonNull private final String mTitle;
-    private final HistoryDatabase mHistoryDatabase;
-
-    @Nullable private String mHistoryUrl = null;
-
-    public HistoryPage(LightningView tab, @NonNull Application app, HistoryDatabase database) {
-        mTabReference = new WeakReference<>(tab);
-        mApp = app;
-        mTitle = app.getString(R.string.action_history);
-        mHistoryDatabase = database;
-    }
-
-    @Nullable
-    @Override
-    protected Void doInBackground(Void... params) {
-        mHistoryUrl = getHistoryPage();
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        LightningView tab = mTabReference.get();
-        if (tab != null && mHistoryUrl != null) {
-            tab.loadUrl(mHistoryUrl);
-        }
-    }
+    private HistoryPage() {}
 
     @NonNull
-    private String getHistoryPage() {
-        StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
-        List<HistoryItem> historyList = mHistoryDatabase.getLastHundredItems();
-        Iterator<HistoryItem> it = historyList.iterator();
-        HistoryItem helper;
-        while (it.hasNext()) {
-            helper = it.next();
-            historyBuilder.append(PART1);
-            historyBuilder.append(helper.getUrl());
-            historyBuilder.append(PART2);
-            historyBuilder.append(helper.getTitle());
-            historyBuilder.append(PART3);
-            historyBuilder.append(helper.getUrl());
-            historyBuilder.append(PART4);
-        }
+    public static Single<String> getHistoryPage() {
+        return Single.create(new SingleAction<String>() {
+            @Override
+            public void onSubscribe(@NonNull final SingleSubscriber<String> subscriber) {
+                final String title = BrowserApp.getApplication().getString(R.string.action_history);
+                final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + title + HEADING_2);
 
-        historyBuilder.append(END);
-        File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
-        FileWriter historyWriter = null;
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            historyWriter = new FileWriter(historyWebPage, false);
-            historyWriter.write(historyBuilder.toString());
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to write history page to disk", e);
-        } finally {
-            Utils.close(historyWriter);
-        }
-        return Constants.FILE + historyWebPage;
-    }
+                HistoryModel.lastHundredVisitedHistoryItems()
+                        .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                            @Override
+                            public void onItem(@Nullable List<HistoryItem> item) {
 
-    public void load() {
-        executeOnExecutor(BrowserApp.getIOThread());
+                                Preconditions.checkNonNull(item);
+                                Iterator<HistoryItem> it = item.iterator();
+                                HistoryItem helper;
+                                while (it.hasNext()) {
+                                    helper = it.next();
+                                    historyBuilder.append(PART1);
+                                    historyBuilder.append(helper.getUrl());
+                                    historyBuilder.append(PART2);
+                                    historyBuilder.append(helper.getTitle());
+                                    historyBuilder.append(PART3);
+                                    historyBuilder.append(helper.getUrl());
+                                    historyBuilder.append(PART4);
+                                }
+
+                                historyBuilder.append(END);
+                                File historyWebPage = new File(BrowserApp.getApplication().getFilesDir(), FILENAME);
+                                FileWriter historyWriter = null;
+                                try {
+                                    //noinspection IOResourceOpenedButNotSafelyClosed
+                                    historyWriter = new FileWriter(historyWebPage, false);
+                                    historyWriter.write(historyBuilder.toString());
+                                } catch (IOException e) {
+                                    Log.e(TAG, "Unable to write history page to disk", e);
+                                } finally {
+                                    Utils.close(historyWriter);
+                                }
+
+                                subscriber.onItem(Constants.FILE + historyWebPage);
+                                subscriber.onComplete();
+                            }
+                        });
+            }
+        });
     }
 
     /**

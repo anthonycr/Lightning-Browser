@@ -4,7 +4,6 @@
 package acr.browser.lightning.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,15 +15,11 @@ import android.support.annotation.WorkerThread;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 
-@SuppressWarnings("unused")
 @WorkerThread
-@Singleton
-public class HistoryDatabase extends SQLiteOpenHelper {
+class HistoryDatabase extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
@@ -42,13 +37,22 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     private static final String KEY_TITLE = "title";
     private static final String KEY_TIME_VISITED = "time";
 
-    @Nullable
-    private SQLiteDatabase mDatabase;
+    @Nullable private SQLiteDatabase mDatabase;
 
-    @Inject
-    public HistoryDatabase(@NonNull Context context) {
-        super(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
+    @Nullable private static HistoryDatabase sInstance;
+
+    private HistoryDatabase() {
+        super(BrowserApp.getApplication(), DATABASE_NAME, null, DATABASE_VERSION);
         mDatabase = HistoryDatabase.this.getWritableDatabase();
+    }
+
+    @NonNull
+    public synchronized static HistoryDatabase getInstance() {
+        if (sInstance == null) {
+            sInstance = new HistoryDatabase();
+        }
+
+        return sInstance;
     }
 
     // Creating Tables
@@ -78,6 +82,16 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         super.close();
     }
 
+    @NonNull
+    private static HistoryItem fromCursor(@NonNull Cursor cursor) {
+        HistoryItem historyItem = new HistoryItem();
+        historyItem.setUrl(cursor.getString(1));
+        historyItem.setTitle(cursor.getString(2));
+        historyItem.setImageId(R.drawable.ic_history);
+
+        return historyItem;
+    }
+
     @WorkerThread
     @NonNull
     private SQLiteDatabase openIfNecessary() {
@@ -88,7 +102,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     @WorkerThread
-    public synchronized void deleteHistory() {
+    synchronized void deleteHistory() {
         mDatabase = openIfNecessary();
         mDatabase.delete(TABLE_HISTORY, null, null);
         mDatabase.close();
@@ -96,13 +110,13 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     @WorkerThread
-    public synchronized void deleteHistoryItem(@NonNull String url) {
+    synchronized void deleteHistoryItem(@NonNull String url) {
         mDatabase = openIfNecessary();
         mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
     }
 
     @WorkerThread
-    public synchronized void visitHistoryItem(@NonNull String url, @Nullable String title) {
+    synchronized void visitHistoryItem(@NonNull String url, @Nullable String title) {
         mDatabase = openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, title == null ? "" : title);
@@ -148,7 +162,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     @NonNull
-    public synchronized List<HistoryItem> findItemsContaining(@Nullable String search) {
+    synchronized List<HistoryItem> findItemsContaining(@Nullable String search) {
         mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(5);
         if (search == null) {
@@ -161,11 +175,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
                 new String[]{search, search}, null, null, KEY_TIME_VISITED + " DESC", "5");
 
         while (cursor.moveToNext()) {
-            HistoryItem item = new HistoryItem();
-            item.setUrl(cursor.getString(1));
-            item.setTitle(cursor.getString(2));
-            item.setImageId(R.drawable.ic_history);
-            itemList.add(item);
+            itemList.add(fromCursor(cursor));
         }
 
         cursor.close();
@@ -175,17 +185,13 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     @NonNull
-    public synchronized List<HistoryItem> getLastHundredItems() {
+    synchronized List<HistoryItem> getLastHundredItems() {
         mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(100);
         Cursor cursor = mDatabase.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100");
 
         while (cursor.moveToNext()) {
-            HistoryItem item = new HistoryItem();
-            item.setUrl(cursor.getString(1));
-            item.setTitle(cursor.getString(2));
-            item.setImageId(R.drawable.ic_history);
-            itemList.add(item);
+            itemList.add(fromCursor(cursor));
         }
 
         cursor.close();
@@ -195,18 +201,14 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     @NonNull
-    public synchronized List<HistoryItem> getAllHistoryItems() {
+    synchronized List<HistoryItem> getAllHistoryItems() {
         mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();
 
         Cursor cursor = mDatabase.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC");
 
         while (cursor.moveToNext()) {
-            HistoryItem item = new HistoryItem();
-            item.setUrl(cursor.getString(1));
-            item.setTitle(cursor.getString(2));
-            item.setImageId(R.drawable.ic_history);
-            itemList.add(item);
+            itemList.add(fromCursor(cursor));
         }
 
         cursor.close();
@@ -215,7 +217,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
 
     @WorkerThread
-    public synchronized long getHistoryItemsCount() {
+    synchronized long getHistoryItemsCount() {
         return DatabaseUtils.queryNumEntries(mDatabase, TABLE_HISTORY);
     }
 }

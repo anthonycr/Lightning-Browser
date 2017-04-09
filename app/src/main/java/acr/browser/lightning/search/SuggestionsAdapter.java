@@ -40,8 +40,8 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.BookmarkManager;
-import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.HistoryModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 
@@ -65,7 +65,6 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
     private final Comparator<HistoryItem> mFilterComparator = new SuggestionsComparator();
 
-    @Inject HistoryDatabase mDatabaseHandler;
     @Inject BookmarkManager mBookmarkManager;
     @Inject PreferenceManager mPreferenceManager;
 
@@ -257,7 +256,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                 subscriber.onComplete();
             }
         }).subscribeOn(FILTER_SCHEDULER)
-            .observeOn(Schedulers.main())
+                .observeOn(Schedulers.main())
                 .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                     @Override
                     public void onItem(@Nullable List<HistoryItem> item) {
@@ -278,7 +277,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                         break;
                     }
                     if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
-                        .startsWith(query)) {
+                            .startsWith(query)) {
                         bookmarks.add(mAllBookmarks.get(n));
                         counter++;
                     } else if (mAllBookmarks.get(n).getUrl().contains(query)) {
@@ -301,18 +300,6 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
         } else {
             return Single.empty();
         }
-    }
-
-    @NonNull
-    private Single<List<HistoryItem>> getHistoryForQuery(@NonNull final String query) {
-        return Single.create(new SingleAction<List<HistoryItem>>() {
-            @Override
-            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
-                List<HistoryItem> historyList = mDatabaseHandler.findItemsContaining(query);
-                subscriber.onItem(historyList);
-                subscriber.onComplete();
-            }
-        });
     }
 
     private boolean shouldRequestNetwork() {
@@ -338,35 +325,35 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
             if (mSuggestionsAdapter.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress()) {
                 mSuggestionsAdapter.getSuggestionsForQuery(query)
-                    .subscribeOn(Schedulers.worker())
+                        .subscribeOn(Schedulers.worker())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                            @Override
+                            public void onItem(@Nullable List<HistoryItem> item) {
+                                mSuggestionsAdapter.combineResults(null, null, item);
+                            }
+                        });
+            }
+
+            mSuggestionsAdapter.getBookmarksForQuery(query)
+                    .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.main())
                     .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                         @Override
                         public void onItem(@Nullable List<HistoryItem> item) {
-                            mSuggestionsAdapter.combineResults(null, null, item);
+                            mSuggestionsAdapter.combineResults(item, null, null);
                         }
                     });
-            }
 
-            mSuggestionsAdapter.getBookmarksForQuery(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                    @Override
-                    public void onItem(@Nullable List<HistoryItem> item) {
-                        mSuggestionsAdapter.combineResults(item, null, null);
-                    }
-                });
-
-            mSuggestionsAdapter.getHistoryForQuery(query)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                    @Override
-                    public void onItem(@Nullable List<HistoryItem> item) {
-                        mSuggestionsAdapter.combineResults(null, item, null);
-                    }
-                });
+            HistoryModel.findHistoryItemsContaining(query)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.main())
+                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                        @Override
+                        public void onItem(@Nullable List<HistoryItem> item) {
+                            mSuggestionsAdapter.combineResults(null, item, null);
+                        }
+                    });
             results.count = 1;
             return results;
         }

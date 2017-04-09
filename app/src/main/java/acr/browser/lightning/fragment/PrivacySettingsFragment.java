@@ -16,11 +16,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.webkit.WebView;
 
-import javax.inject.Inject;
-
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
@@ -44,8 +41,6 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
 
     private Activity mActivity;
     private Handler mMessageHandler;
-
-    @Inject HistoryDatabase mHistoryDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -200,7 +195,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private void clearHistory() {
-        WebUtils.clearHistory(getActivity(), mHistoryDatabase);
+        WebUtils.clearHistory(getActivity());
         mMessageHandler.sendEmptyMessage(1);
     }
 

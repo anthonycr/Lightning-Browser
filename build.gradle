@@ -17,10 +17,6 @@ allprojects {
 }
 
 ext {
-    // Necessary for Bonsai submodule
-    versionCode = 1
-    versionName = '1.0'
-
     minSdkVersion = 14
     targetSdkVersion = 25
     buildToolsVersion = '25.0.2'

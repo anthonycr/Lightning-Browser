@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -23,12 +24,14 @@ import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.MemoryLeakUtils;
+import acr.browser.lightning.utils.Preconditions;
 
 public class BrowserApp extends Application {
 
     private static final String TAG = BrowserApp.class.getSimpleName();
 
-    private static AppComponent mAppComponent;
+    @Nullable private static Application sApplication;
+    @Nullable private static AppComponent sAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
     private static final Executor mTaskThread = Executors.newCachedThreadPool();
 
@@ -36,17 +39,23 @@ public class BrowserApp extends Application {
     @Inject PreferenceManager mPreferenceManager;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        sApplication = this;
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
         }
 
         final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -67,8 +76,8 @@ public class BrowserApp extends Application {
             }
         });
 
-        mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
-        mAppComponent.inject(this);
+        sAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
+        sAppComponent.inject(this);
 
         if (mPreferenceManager.getUseLeakCanary() && !isRelease()) {
             LeakCanary.install(this);
@@ -87,12 +96,20 @@ public class BrowserApp extends Application {
     }
 
     @NonNull
+    public static Application getApplication() {
+        Preconditions.checkNonNull(sApplication);
+        return sApplication;
+    }
+
+    @NonNull
     public static BrowserApp get(@NonNull Context context) {
         return (BrowserApp) context.getApplicationContext();
     }
 
+    @NonNull
     public static AppComponent getAppComponent() {
-        return mAppComponent;
+        Preconditions.checkNonNull(sAppComponent);
+        return sAppComponent;
     }
 
     @NonNull
@@ -105,6 +122,7 @@ public class BrowserApp extends Application {
         return mTaskThread;
     }
 
+    @NonNull
     public static Bus getBus(@NonNull Context context) {
         return get(context).mBus;
     }

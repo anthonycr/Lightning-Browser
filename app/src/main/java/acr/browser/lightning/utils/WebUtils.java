@@ -11,7 +11,9 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
-import acr.browser.lightning.database.HistoryDatabase;
+import com.anthonycr.bonsai.Schedulers;
+
+import acr.browser.lightning.database.HistoryModel;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino
@@ -34,8 +36,10 @@ public class WebUtils {
         WebStorage.getInstance().deleteAllData();
     }
 
-    public static void clearHistory(@NonNull Context context, @NonNull HistoryDatabase historyDatabase) {
-        historyDatabase.deleteHistory();
+    public static void clearHistory(@NonNull Context context) {
+        HistoryModel.deleteHistory()
+                .subscribeOn(Schedulers.io())
+                .subscribe();
         WebViewDatabase m = WebViewDatabase.getInstance(context);
         m.clearFormData();
         m.clearHttpAuthUsernamePassword();
