@@ -83,4 +83,6 @@ public interface UIController {
 
     void onHomeButtonPressed();
 
+    void peekDrawer();
+
 }

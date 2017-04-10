@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -93,6 +94,12 @@ public class LightningWebClient extends WebViewClient {
     @Override
     public void onPageFinished(@NonNull WebView view, String url) {
         if (view.isShown()) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mUIController.peekDrawer();
+                }
+            }, 500);
             mUIController.updateUrl(url, true);
             mUIController.setBackButtonEnabled(view.canGoBack());
             mUIController.setForwardButtonEnabled(view.canGoForward());

@@ -40,5 +40,4 @@ public interface BrowserView {
     void notifyTabViewInitialized();
 
     void showSearchNotification();
-
 }
