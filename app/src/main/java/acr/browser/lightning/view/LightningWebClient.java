@@ -41,6 +41,7 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -56,6 +57,8 @@ public class LightningWebClient extends WebViewClient {
 
     @Inject ProxyUtils mProxyUtils;
     @Inject AdBlock mAdBlock;
+    @Inject
+    PreferenceManager mPreferences;
 
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
@@ -102,6 +105,13 @@ public class LightningWebClient extends WebViewClient {
                         @Override
                         public void run() {
                             mUIController.peekDrawer();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mUIController.peekDrawer();
+                                    mPreferences.setFirstStart(false);
+                                }
+                            }, 1000);
                         }
                     }, 1000);
                 }

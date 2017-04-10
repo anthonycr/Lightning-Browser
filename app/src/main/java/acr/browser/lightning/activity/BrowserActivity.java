@@ -2149,7 +2149,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if(!mPreferences.isFirstStart()) {
             return;
         }
-        mPreferences.setFirstStart(false);
         final int width = DeviceUtils.getScreenWidth(this);
         long downTime = SystemClock.uptimeMillis();
         long eventTime = SystemClock.uptimeMillis() + 200;
