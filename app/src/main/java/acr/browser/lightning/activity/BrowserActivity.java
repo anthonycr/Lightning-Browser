@@ -2166,7 +2166,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mDrawerLayout.dispatchTouchEvent(motionEvent);
                 motionEvent.recycle();
             }
-        }, (long) (1.1 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
+        }, (long) (0.8 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
     }
 
     /**
