@@ -8,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
@@ -18,6 +21,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
@@ -46,15 +51,21 @@ public class HistoryPage {
 
     private static final String END = "</div></body></html>";
 
-    private HistoryPage() {}
+    @NonNull private final String mTitle;
+
+    @Inject Application mApp;
+
+    public HistoryPage() {
+        BrowserApp.getAppComponent().inject(this);
+        mTitle = mApp.getString(R.string.action_history);
+    }
 
     @NonNull
-    public static Single<String> getHistoryPage() {
+    public Single<String> getHistoryPage() {
         return Single.create(new SingleAction<String>() {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<String> subscriber) {
-                final String title = BrowserApp.getApplication().getString(R.string.action_history);
-                final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + title + HEADING_2);
+                final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
                 HistoryModel.lastHundredVisitedHistoryItems()
                         .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
@@ -76,7 +87,7 @@ public class HistoryPage {
                                 }
 
                                 historyBuilder.append(END);
-                                File historyWebPage = new File(BrowserApp.getApplication().getFilesDir(), FILENAME);
+                                File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
                                 FileWriter historyWriter = null;
                                 try {
                                     //noinspection IOResourceOpenedButNotSafelyClosed
@@ -97,17 +108,26 @@ public class HistoryPage {
     }
 
     /**
-     * Use this method to immediately delete the history
-     * page on the current thread. This will clear the
-     * cached history page that was stored on file.
+     * Use this observable to immediately delete the history
+     * page. This will clear the cached history page that was
+     * stored on file.
      *
-     * @param application the application object needed to get the file.
+     * @return a completable that deletes the history page
+     * when subscribed.
      */
-    public static void deleteHistoryPage(@NonNull Application application) {
-        File historyWebPage = new File(application.getFilesDir(), FILENAME);
-        if (historyWebPage.exists()) {
-            historyWebPage.delete();
-        }
+    @NonNull
+    public Completable deleteHistoryPage() {
+        return Completable.create(new CompletableAction() {
+            @Override
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
+                if (historyWebPage.exists()) {
+                    historyWebPage.delete();
+                }
+
+                subscriber.onComplete();
+            }
+        });
     }
 
 }

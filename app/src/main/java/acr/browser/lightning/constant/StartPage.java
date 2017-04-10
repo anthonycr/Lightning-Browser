@@ -4,14 +4,15 @@
 package acr.browser.lightning.constant;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -19,9 +20,8 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.view.LightningView;
 
-public class StartPage extends AsyncTask<Void, Void, Void> {
+public class StartPage {
 
     public static final String FILENAME = "homepage.html";
 
@@ -55,142 +55,118 @@ public class StartPage extends AsyncTask<Void, Void, Void> {
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
     @NonNull private final String mTitle;
-    @NonNull private final Application mApp;
-    @NonNull private final WeakReference<LightningView> mTabReference;
 
+    @Inject Application mApp;
     @Inject PreferenceManager mPreferenceManager;
 
-    private String mStartpageUrl;
-
-    public StartPage(LightningView tab, @NonNull Application app) {
+    public StartPage() {
         BrowserApp.getAppComponent().inject(this);
-        mTitle = app.getString(R.string.home);
-        mApp = app;
-        mTabReference = new WeakReference<>(tab);
+        mTitle = mApp.getString(R.string.home);
     }
 
-    @Nullable
-    @Override
-    protected Void doInBackground(Void... params) {
-        mStartpageUrl = getHomepage();
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        LightningView tab = mTabReference.get();
-        if (tab != null) {
-            tab.loadUrl(mStartpageUrl);
-        }
-    }
-
-    /**
-     * This method builds the homepage and returns the local URL to be loaded
-     * when it finishes building.
-     *
-     * @return the URL to load
-     */
     @NonNull
-    private String getHomepage() {
-        StringBuilder homepageBuilder = new StringBuilder(HEAD_1 + mTitle + HEAD_2);
-        String icon;
-        String searchUrl;
-        switch (mPreferenceManager.getSearchChoice()) {
-            case 0:
-                // CUSTOM SEARCH
-                icon = "file:///android_asset/lightning.png";
-                searchUrl = mPreferenceManager.getSearchUrl();
-                break;
-            case 1:
-                // GOOGLE_SEARCH;
-                icon = "file:///android_asset/google.png";
-                // "https://www.google.com/images/srpr/logo11w.png";
-                searchUrl = Constants.GOOGLE_SEARCH;
-                break;
-            case 2:
-                // ANDROID SEARCH;
-                icon = "file:///android_asset/ask.png";
-                searchUrl = Constants.ASK_SEARCH;
-                break;
-            case 3:
-                // BING_SEARCH;
-                icon = "file:///android_asset/bing.png";
-                // "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
-                searchUrl = Constants.BING_SEARCH;
-                break;
-            case 4:
-                // YAHOO_SEARCH;
-                icon = "file:///android_asset/yahoo.png";
-                // "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
-                searchUrl = Constants.YAHOO_SEARCH;
-                break;
-            case 5:
-                // STARTPAGE_SEARCH;
-                icon = "file:///android_asset/startpage.png";
-                // "https://com/graphics/startp_logo.gif";
-                searchUrl = Constants.STARTPAGE_SEARCH;
-                break;
-            case 6:
-                // STARTPAGE_MOBILE
-                icon = "file:///android_asset/startpage.png";
-                // "https://com/graphics/startp_logo.gif";
-                searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
-                break;
-            case 7:
-                // DUCK_SEARCH;
-                icon = "file:///android_asset/duckduckgo.png";
-                // "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-                searchUrl = Constants.DUCK_SEARCH;
-                break;
-            case 8:
-                // DUCK_LITE_SEARCH;
-                icon = "file:///android_asset/duckduckgo.png";
-                // "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-                searchUrl = Constants.DUCK_LITE_SEARCH;
-                break;
-            case 9:
-                // BAIDU_SEARCH;
-                icon = "file:///android_asset/baidu.png";
-                // "http://www.baidu.com/img/bdlogo.gif";
-                searchUrl = Constants.BAIDU_SEARCH;
-                break;
-            case 10:
-                // YANDEX_SEARCH;
-                icon = "file:///android_asset/yandex.png";
-                // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-                searchUrl = Constants.YANDEX_SEARCH;
-                break;
-            default:
-                // DEFAULT GOOGLE_SEARCH;
-                icon = "file:///android_asset/google.png";
-                searchUrl = Constants.GOOGLE_SEARCH;
-                break;
+    public Single<String> getHomepage() {
+        return Single.create(new SingleAction<String>() {
+            @Override
+            public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
 
-        }
+                StringBuilder homepageBuilder = new StringBuilder(HEAD_1 + mTitle + HEAD_2);
+                String icon;
+                String searchUrl;
+                switch (mPreferenceManager.getSearchChoice()) {
+                    case 0:
+                        // CUSTOM SEARCH
+                        icon = "file:///android_asset/lightning.png";
+                        searchUrl = mPreferenceManager.getSearchUrl();
+                        break;
+                    case 1:
+                        // GOOGLE_SEARCH;
+                        icon = "file:///android_asset/google.png";
+                        // "https://www.google.com/images/srpr/logo11w.png";
+                        searchUrl = Constants.GOOGLE_SEARCH;
+                        break;
+                    case 2:
+                        // ANDROID SEARCH;
+                        icon = "file:///android_asset/ask.png";
+                        searchUrl = Constants.ASK_SEARCH;
+                        break;
+                    case 3:
+                        // BING_SEARCH;
+                        icon = "file:///android_asset/bing.png";
+                        // "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
+                        searchUrl = Constants.BING_SEARCH;
+                        break;
+                    case 4:
+                        // YAHOO_SEARCH;
+                        icon = "file:///android_asset/yahoo.png";
+                        // "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
+                        searchUrl = Constants.YAHOO_SEARCH;
+                        break;
+                    case 5:
+                        // STARTPAGE_SEARCH;
+                        icon = "file:///android_asset/startpage.png";
+                        // "https://com/graphics/startp_logo.gif";
+                        searchUrl = Constants.STARTPAGE_SEARCH;
+                        break;
+                    case 6:
+                        // STARTPAGE_MOBILE
+                        icon = "file:///android_asset/startpage.png";
+                        // "https://com/graphics/startp_logo.gif";
+                        searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
+                        break;
+                    case 7:
+                        // DUCK_SEARCH;
+                        icon = "file:///android_asset/duckduckgo.png";
+                        // "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
+                        searchUrl = Constants.DUCK_SEARCH;
+                        break;
+                    case 8:
+                        // DUCK_LITE_SEARCH;
+                        icon = "file:///android_asset/duckduckgo.png";
+                        // "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
+                        searchUrl = Constants.DUCK_LITE_SEARCH;
+                        break;
+                    case 9:
+                        // BAIDU_SEARCH;
+                        icon = "file:///android_asset/baidu.png";
+                        // "http://www.baidu.com/img/bdlogo.gif";
+                        searchUrl = Constants.BAIDU_SEARCH;
+                        break;
+                    case 10:
+                        // YANDEX_SEARCH;
+                        icon = "file:///android_asset/yandex.png";
+                        // "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
+                        searchUrl = Constants.YANDEX_SEARCH;
+                        break;
+                    default:
+                        // DEFAULT GOOGLE_SEARCH;
+                        icon = "file:///android_asset/google.png";
+                        searchUrl = Constants.GOOGLE_SEARCH;
+                        break;
 
-        homepageBuilder.append(icon);
-        homepageBuilder.append(MIDDLE);
-        homepageBuilder.append(searchUrl);
-        homepageBuilder.append(END);
+                }
 
-        File homepage = new File(mApp.getFilesDir(), FILENAME);
-        FileWriter hWriter = null;
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            hWriter = new FileWriter(homepage, false);
-            hWriter.write(homepageBuilder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(hWriter);
-        }
+                homepageBuilder.append(icon);
+                homepageBuilder.append(MIDDLE);
+                homepageBuilder.append(searchUrl);
+                homepageBuilder.append(END);
 
-        return Constants.FILE + homepage;
-    }
+                File homepage = new File(mApp.getFilesDir(), FILENAME);
+                FileWriter hWriter = null;
+                try {
+                    //noinspection IOResourceOpenedButNotSafelyClosed
+                    hWriter = new FileWriter(homepage, false);
+                    hWriter.write(homepageBuilder.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    Utils.close(hWriter);
+                }
 
-    public void load() {
-        executeOnExecutor(BrowserApp.getIOThread());
+                subscriber.onItem(Constants.FILE + homepage);
+
+            }
+        });
     }
 
 }

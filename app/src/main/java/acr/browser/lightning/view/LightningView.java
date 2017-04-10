@@ -57,6 +57,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 
 import com.anthonycr.bonsai.Schedulers;
 
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
@@ -81,16 +82,16 @@ public class LightningView {
     private static String sDefaultUserAgent;
     private static float sMaxFling;
     private static final float[] sNegativeColorArray = {
-        -1.0f, 0, 0, 0, 255, // red
-        0, -1.0f, 0, 0, 255, // green
-        0, 0, -1.0f, 0, 255, // blue
-        0, 0, 0, 1.0f, 0 // alpha
+            -1.0f, 0, 0, 0, 255, // red
+            0, -1.0f, 0, 0, 255, // green
+            0, 0, -1.0f, 0, 255, // blue
+            0, 0, 0, 1.0f, 0 // alpha
     };
     private static final float[] sIncreaseContrastColorArray = {
-        2.0f, 0, 0, 0, -160.f, // red
-        0, 2.0f, 0, 0, -160.f, // green
-        0, 0, 2.0f, 0, -160.f, // blue
-        0, 0, 0, 1.0f, 0 // alpha
+            2.0f, 0, 0, 0, -160.f, // red
+            0, 2.0f, 0, 0, -160.f, // green
+            0, 0, 2.0f, 0, -160.f, // blue
+            0, 0, 0, 1.0f, 0 // alpha
     };
 
     @NonNull private final LightningViewTitle mTitle;
@@ -213,7 +214,16 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        new StartPage(this, BrowserApp.get(mActivity)).load();
+        new StartPage().getHomepage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<String>() {
+                    @Override
+                    public void onItem(@Nullable String item) {
+                        Preconditions.checkNonNull(item);
+                        loadUrl(item);
+                    }
+                });
     }
 
     /**
@@ -222,9 +232,16 @@ public class LightningView {
      * UI thread. It also caches the default folder icon locally.
      */
     public void loadBookmarkpage() {
-        if (mWebView == null)
-            return;
-        new BookmarkPage(this, mActivity, mBookmarkManager).load();
+        new BookmarkPage(mActivity).getBookmarkPage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<String>() {
+                    @Override
+                    public void onItem(@Nullable String item) {
+                        Preconditions.checkNonNull(item);
+                        loadUrl(item);
+                    }
+                });
     }
 
     /**
@@ -353,7 +370,7 @@ public class LightningView {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
-                !mPreferences.getBlockThirdPartyCookiesEnabled());
+                    !mPreferences.getBlockThirdPartyCookiesEnabled());
         }
     }
 
@@ -695,7 +712,7 @@ public class LightningView {
                 break;
             case 1:
                 ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
-                    sNegativeColorArray);
+                        sNegativeColorArray);
                 mPaint.setColorFilter(filterInvert);
                 setHardwareRendering();
 
@@ -724,7 +741,7 @@ public class LightningView {
 
             case 4:
                 ColorMatrixColorFilter IncreaseHighContrast = new ColorMatrixColorFilter(
-                    sIncreaseContrastColorArray);
+                        sIncreaseContrastColorArray);
                 mPaint.setColorFilter(IncreaseHighContrast);
                 setHardwareRendering();
                 break;

@@ -164,11 +164,29 @@ public class TabsManager {
                         String url = item.getString(URL_KEY);
                         if (url != null && tab.getWebView() != null) {
                             if (UrlUtils.isBookmarkUrl(url)) {
-                                new BookmarkPage(tab, activity, mBookmarkManager).load();
+                                new BookmarkPage(activity).getBookmarkPage()
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(Schedulers.main())
+                                        .subscribe(new SingleOnSubscribe<String>() {
+                                            @Override
+                                            public void onItem(@Nullable String item) {
+                                                Preconditions.checkNonNull(item);
+                                                tab.loadUrl(item);
+                                            }
+                                        });
                             } else if (UrlUtils.isStartPageUrl(url)) {
-                                new StartPage(tab, mApp).load();
+                                new StartPage().getHomepage()
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(Schedulers.main())
+                                        .subscribe(new SingleOnSubscribe<String>() {
+                                            @Override
+                                            public void onItem(@Nullable String item) {
+                                                Preconditions.checkNonNull(item);
+                                                tab.loadUrl(item);
+                                            }
+                                        });
                             } else if (UrlUtils.isHistoryUrl(url)) {
-                                HistoryPage.getHistoryPage()
+                                new HistoryPage().getHistoryPage()
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(Schedulers.main())
                                         .subscribe(new SingleOnSubscribe<String>() {

@@ -8,6 +8,8 @@ import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
 import acr.browser.lightning.browser.BrowserPresenter;
+import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
@@ -61,6 +63,10 @@ public interface AppComponent {
     void inject(PrivacySettingsFragment fragment);
 
     void inject(StartPage startPage);
+
+    void inject(HistoryPage historyPage);
+
+    void inject(BookmarkPage bookmarkPage);
 
     void inject(BrowserPresenter presenter);
 

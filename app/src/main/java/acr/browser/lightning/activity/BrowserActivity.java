@@ -423,7 +423,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mTabsManager.newTab(this, "", false);
         mTabsManager.switchToTab(0);
         mTabsManager.clearSavedState();
-        HistoryPage.deleteHistoryPage(getApplication());
+        new HistoryPage().deleteHistoryPage().subscribe();
         closeBrowser();
         // System exit needed in the case of receiving
         // the panic intent since finish() isn't completely
@@ -1533,7 +1533,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * function that opens the HTML history page in the browser
      */
     private void openHistory() {
-        HistoryPage.getHistoryPage()
+        new HistoryPage().getHistoryPage()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new SingleOnSubscribe<String>() {
