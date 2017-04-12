@@ -35,6 +35,7 @@ import com.anthonycr.bonsai.SingleSubscriber;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +45,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.async.AsyncExecutor;
-import acr.browser.lightning.async.ImageDownloadTask;
+import acr.browser.lightning.view.ImageDownloader;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.constant.Constants;
@@ -73,6 +73,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
     @Inject PreferenceManager mPreferenceManager;
+
+    private ImageDownloader mImageDownloader;
 
     private TabsManager mTabsManager;
 
@@ -124,7 +126,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
-            ThemeUtils.getIconLightThemeColor(context);
+                ThemeUtils.getIconLightThemeColor(context);
+
+        mImageDownloader = new ImageDownloader(mWebpageBitmap);
     }
 
     private TabsManager getTabsManager() {
@@ -222,7 +226,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
-            ThemeUtils.getIconLightThemeColor(activity);
+                ThemeUtils.getIconLightThemeColor(activity);
+
+        mImageDownloader = new ImageDownloader(mWebpageBitmap);
     }
 
     private void updateBookmarkIndicator(final String url) {
@@ -389,14 +395,31 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
             ViewCompat.jumpDrawablesToCurrentState(row);
 
-            HistoryItem web = mBookmarks.get(position);
+            final HistoryItem web = mBookmarks.get(position);
             holder.txtTitle.setText(web.getTitle());
             if (web.isFolder()) {
                 holder.favicon.setImageBitmap(mFolderBitmap);
             } else if (web.getBitmap() == null) {
                 holder.favicon.setImageBitmap(mWebpageBitmap);
-                new ImageDownloadTask(holder.favicon, web, mWebpageBitmap, BrowserApp.get(context))
-                    .executeOnExecutor(AsyncExecutor.getInstance());
+                holder.favicon.setTag(web.getUrl().hashCode());
+
+                final String url = web.getUrl();
+                final WeakReference<ImageView> imageViewReference = new WeakReference<>(holder.favicon);
+                mImageDownloader.newImageRequest(url)
+                        .subscribeOn(Schedulers.worker())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new SingleOnSubscribe<Bitmap>() {
+                            @Override
+                            public void onItem(@Nullable Bitmap item) {
+                                ImageView imageView = imageViewReference.get();
+                                Object tag = imageView != null ? imageView.getTag() : null;
+                                if (tag != null && tag.equals(url.hashCode())) {
+                                    imageView.setImageBitmap(item);
+                                }
+
+                                web.setBitmap(item);
+                            }
+                        });
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }
