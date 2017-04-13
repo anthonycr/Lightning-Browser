@@ -14,6 +14,7 @@ import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -34,11 +35,12 @@ public class ImageDownloader {
 
     @Inject Application mApp;
 
-    @NonNull private Bitmap mDefaultBitmap;
+    @NonNull private final Bitmap mDefaultBitmap;
+    @NonNull private final BitmapFactory.Options mLoaderOptions = new BitmapFactory.Options();
 
     public ImageDownloader(@NonNull Bitmap defaultBitmap) {
-        mDefaultBitmap = defaultBitmap;
         BrowserApp.getAppComponent().inject(this);
+        mDefaultBitmap = defaultBitmap;
     }
 
     /**
@@ -54,7 +56,7 @@ public class ImageDownloader {
         return Single.create(new SingleAction<Bitmap>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<Bitmap> subscriber) {
-                Bitmap favicon = retrieveBitmap(mApp, mDefaultBitmap, url);
+                Bitmap favicon = retrieveFaviconForUrl(url);
 
                 Bitmap paddedFavicon = Utils.padFavicon(favicon);
 
@@ -65,98 +67,86 @@ public class ImageDownloader {
     }
 
     @NonNull
-    private static Bitmap retrieveBitmap(@NonNull Application app,
-                                         @NonNull Bitmap defaultBitmap,
-                                         @Nullable String url) {
+    private Bitmap retrieveFaviconForUrl(@Nullable String url) {
 
         // unique path for each url that is bookmarked.
         if (url == null) {
-            return defaultBitmap;
+            return mDefaultBitmap;
         }
 
-        Bitmap icon = null;
-        File cache = app.getCacheDir();
-        final Uri uri = Uri.parse(url);
+        Bitmap icon;
+        File cache = mApp.getCacheDir();
+        Uri uri = Uri.parse(url);
 
         if (uri.getHost() == null || uri.getScheme() == null || Constants.FILE.startsWith(uri.getScheme())) {
-            return defaultBitmap;
+            return mDefaultBitmap;
         }
 
-        final String hash = String.valueOf(uri.getHost().hashCode());
-        final File image = new File(cache, hash + ".png");
-        final String urlDisplay = uri.getScheme() + "://" + uri.getHost() + "/favicon.ico";
+        String hash = String.valueOf(uri.getHost().hashCode());
+        File image = new File(cache, hash + ".png");
+        String urlDisplay = uri.getScheme() + "://" + uri.getHost() + "/favicon.ico";
 
-        // checks to see if the image exists
-        if (!image.exists()) {
-            FileOutputStream fos = null;
-            InputStream in = null;
-            try {
-                // if not, download it...
-                final URL urlDownload = new URL(urlDisplay);
-                final HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
-                connection.setDoInput(true);
-                connection.setConnectTimeout(1000);
-                connection.setReadTimeout(1000);
-                connection.connect();
-                in = connection.getInputStream();
-
-                if (in != null) {
-                    icon = BitmapFactory.decodeStream(in);
-                }
-                // ...and cache it
-                if (icon != null) {
-                    fos = new FileOutputStream(image);
-                    icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.flush();
-                    Log.d(Constants.TAG, "Downloaded: " + urlDisplay);
-                }
-
-            } catch (Exception ignored) {
-                Log.d(TAG, "Could not download: " + urlDisplay);
-            } finally {
-                Utils.close(in);
-                Utils.close(fos);
-            }
-        } else {
-            // if it exists, retrieve it from the cache
+        if (image.exists()) {
+            // If image exists, pull it from the cache
             icon = BitmapFactory.decodeFile(image.getPath());
-        }
-
-        if (icon == null) {
-            InputStream in = null;
-            FileOutputStream fos = null;
-            try {
-                // if not, download it...
-                final URL urlDownload = new URL("https://www.google.com/s2/favicons?domain_url=" + uri.toString());
-                final HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
-                connection.setDoInput(true);
-                connection.setConnectTimeout(1000);
-                connection.setReadTimeout(1000);
-                connection.connect();
-                in = connection.getInputStream();
-
-                if (in != null) {
-                    icon = BitmapFactory.decodeStream(in);
-                }
-                // ...and cache it
-                if (icon != null) {
-                    fos = new FileOutputStream(image);
-                    icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.flush();
-                }
-
-            } catch (Exception e) {
-                Log.d(TAG, "Could not download Google favicon");
-            } finally {
-                Utils.close(in);
-                Utils.close(fos);
-            }
-        }
-
-        if (icon == null) {
-            return defaultBitmap;
         } else {
+            // Otherwise, load it from network
+            icon = retrieveBitmapFromUrl(urlDisplay);
+        }
+
+        if (icon == null) {
+            String googleFaviconUrl = "https://www.google.com/s2/favicons?domain_url=" + uri.toString();
+            icon = retrieveBitmapFromUrl(googleFaviconUrl);
+        }
+
+        if (icon == null) {
+            return mDefaultBitmap;
+        } else {
+            cacheBitmap(image, icon);
+
             return icon;
         }
     }
+
+    private void cacheBitmap(@NonNull File cacheFile, @NonNull Bitmap imageToCache) {
+        FileOutputStream fos = null;
+
+        try {
+            fos = new FileOutputStream(cacheFile);
+            imageToCache.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+        } catch (IOException e) {
+            Log.e(TAG, "Could not cache icon");
+        } finally {
+            Utils.close(fos);
+        }
+    }
+
+    @Nullable
+    private Bitmap retrieveBitmapFromUrl(@NonNull String url) {
+        InputStream in = null;
+        Bitmap icon = null;
+
+        try {
+            final URL urlDownload = new URL(url);
+            final HttpURLConnection connection = (HttpURLConnection) urlDownload.openConnection();
+            connection.setDoInput(true);
+            connection.setConnectTimeout(1000);
+            connection.setReadTimeout(1000);
+            connection.connect();
+            in = connection.getInputStream();
+
+            if (in != null) {
+                icon = BitmapFactory.decodeStream(in, null, mLoaderOptions);
+            }
+        } catch (Exception ignored) {
+            Log.d(TAG, "Could not download icon from: " + url);
+        } finally {
+            Utils.close(in);
+        }
+
+        return icon;
+    }
+
+
 }
