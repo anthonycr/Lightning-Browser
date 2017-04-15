@@ -8,7 +8,7 @@
     <string name="action_copy">Copiar enlace</string>
     <string name="action_forward">Adelante</string>
     <string name="settings">Ajustes</string>
-    <string name="location">Acceso a tu ubicación</string>
+    <string name="location">Permitir acceso a tu ubicación</string>
     <string name="password">Almacenar tus contraseñas</string>
     <string name="agent">Agente de usuario</string>
     <string name="flash">Habilitar Adobe Flash</string>
@@ -29,9 +29,11 @@
     <string name="recommended">(Recomendado)</string>
     <string name="search">Motor de búsqueda</string>
     <string name="search_hint">Buscar</string>
-    <string name="wideViewPort">Utilizar ventana de visualización normal</string>
+    <string name="wideViewPort">Utilizar viewport normal</string>
     <string name="overViewMode">Visualizar la página de lejos al cargar</string>
     <string name="restore">Restaurar pestañas cerradas al iniciar</string>
+    <string name="supported_browsers_title">Navegadores compatibles</string>
+    <string name="stock_browser">Navegador de sistema</string>
     <string name="stock_browser_unavailable">Navegador de sistema no detectado</string>
     <string name="stock_browser_available">Detectado navegador de sistema soportado</string>
     <string name="fullScreenOption">Ocultar barra de estado al navegar</string>
@@ -94,12 +96,12 @@
     <string name="action_follow_me">Contáctame</string>
     <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Limpiar caché</string>
-    <string name="message_cache_cleared">La caché ha sido borrada</string>
-    <string name="message_import">Se han importado los marcadores</string>
-    <string name="message_clear_history">El historial ha sido borrado</string>
-    <string name="message_cookies_cleared">Las cookies han sido borradas</string>
+    <string name="message_cache_cleared">La caché se ha borrado</string>
+    <string name="message_import">Los marcadores se han importado</string>
+    <string name="message_clear_history">El historial se ha borrado</string>
+    <string name="message_cookies_cleared">Las cookies se han borrado</string>
     <string name="max_tabs">Se ha alcanzado el máximo de pestañas</string>
-    <string name="message_text_copied">El texto ha sido copiado al portapapeles</string>
+    <string name="message_text_copied">El texto se ha copiado al portapapeles</string>
     <string name="message_link_copied">El enlace se ha copiado al portapapeles</string>
     <string name="custom_url">Dirección personalizada</string>
     <string name="message_blocked_local">Se ha bloqueado la carga del archivo local</string>
@@ -116,6 +118,14 @@
     <string name="hint_password">Contraseña</string>
     <string name="search_suggestions">Sugerencias de búsqueda</string>
     <string name="powered_by_google">Proporcionadas por Google</string>
+    <string name="powered_by_duck">Proporcionadas por DuckDuckGo</string>
+    <string name="search_suggestions_off">Sin sugerencias de búsqueda</string>
+    <string-array name="proxy_choices_array">
+        <item>Ninguno</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manual</item>
+    </string-array>
     <string name="use_tor_prompt">Parece que tienes Orbot instalado. ¿Quieres usar Tor?</string>
     <string name="install_orbot">Por favor, instala Orbot para usar Tor.</string>
     <string name="yes">Sí</string>
@@ -134,6 +144,7 @@
     <string name="name_inverted">Invertido</string>
     <string name="name_grayscale">Escala de grises</string>
     <string name="name_inverted_grayscale">Escala de grises invertida</string>
+    <string name="name_increase_contrast">Aumentar contraste</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sincronizar historial con Google</string>
     <string name="title_file_chooser">Selector de archivos</string>
@@ -152,11 +163,12 @@
     <string name="settings_about_explain">Detalles sobre la versión, autor y licencias.</string>
     <string name="close_tab">Cerrar pestaña</string>
     <string name="close_all_tabs">Cerrar todas las pestañas</string>
+    <string name="close_other_tabs">Cerrar las demás pestañas</string>
     <string name="third_party">Bloquear cookies de terceras partes</string>
     <string name="color_mode">Habilitar modo de color</string>
     <string name="reading_mode">Modo de lectura</string>
     <string name="loading">Cargando&#8230;</string>
-    <string name="loading_failed">No se pudo cargar de la página.</string>
+    <string name="loading_failed">No se pudo cargar la página.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">Licencia MIT</string>
@@ -172,33 +184,61 @@
     <string name="action_folder">Carpeta</string>
     <string name="action_rename">Renombrar</string>
     <string name="black_theme">Tema negro (AMOLED)</string>
-    <string name="clear_web_storage">Vaciar almacenamiento web</string>
+    <string name="clear_web_storage">Limpiar el almacenamiento web</string>
     <string name="clear_web_storage_exit">Vaciar almacenamiento web al salir</string>
     <string name="dialog_folder">¿Qué quieres hacer con esta carpeta?</string>
-    <string name="dialog_history_long_press">¿Qué quieres hacer con este elemento del historial?</string>
+    <string name="dialog_history_long_press">¿Qué quieres hacer con esta entrada del historial?</string>
     <string name="folder">Nombre de la carpeta</string>
-    <string name="hosts_source">Fichero hosts para filtrado de anuncios</string>
+    <string name="hosts_source">Fuente del fichero hosts para bloqueo de anuncios</string>
     <string name="http_proxy">Proxy HTTP</string>
-    <string name="i2p_not_running">I2P no está corriendo.</string>
+    <string name="i2p_not_running">I2P no está en funcionamiento.</string>
     <string name="i2p_tunnels_not_ready">Los túneles I2P no están preparados aún.</string>
     <string name="light_theme">Tema claro</string>
     <string name="manual_proxy">Proxy manual</string>
     <string name="message_certificate_date_invalid">la fecha del certificado no es válida</string>
-    <string name="message_certificate_domain_mismatch">el dominio en el certificado no corresponde al dominio del sitio</string>
-    <string name="message_certificate_expired">el certificado expiró</string>
+    <string name="message_certificate_domain_mismatch">el dominio del certificado no coincide con el dominio del sitio web</string>
+    <string name="message_certificate_expired">el certificado está caducado</string>
     <string name="message_certificate_invalid">el certificado no es válido</string>
     <string name="message_certificate_not_yet_valid">el certificado no es válido todavía</string>
-    <string name="message_certificate_untrusted">el certificado no es confiable</string>
-    <string name="message_insecure_connection">La conexión a este sitio no es segura:\n%1$s\n¿Continuar en cualquier caso?</string>
-    <string name="message_web_storage_cleared">El almacenamiento web ha sido borrado</string>
+    <string name="message_certificate_untrusted">el certificado no es de confianza</string>
+    <string name="message_insecure_connection">La conexión a este sitio no es segura:\n%1$s\n¿Continuar de todas formas?</string>
+    <string name="message_web_storage_cleared">Se limpió el almacenamiento web</string>
     <string name="port">Puerto:</string>
-    <string name="problem_download">La dirección no es válida, no se pudo descargar</string>
-    <string name="problem_location_download">No se pudo descargar en la localización específica</string>
-    <string name="settings_adblock">Ajustes del bloqueo de anuncios</string>
-    <string name="tabs_in_drawer">Mostrar pestañas en el menú lateral</string>
+    <string name="problem_download">No se pudo iniciar la descarga: la dirección no es válida</string>
+    <string name="problem_location_download">No se pudo descargar en la ubicación de destino</string>
+    <string name="settings_adblock">Preferencias del bloqueo de anuncios</string>
+    <string name="tabs_in_drawer">Mostrar las pestañas en el menú lateral</string>
     <string name="text_encoding">Codificación del texto</string>
     <string name="theme">Tema gráfico de la aplicación</string>
     <string name="title_rename_folder">Renombrar carpeta</string>
     <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
     <string name="host">Servidor:</string>
+
+    <string name="swap_bookmarks_and_tabs">Intercambiar los paneles de marcadores y de pestañas</string>
+    <string name="do_not_track">Petición «No rastrear» («Do Not Track»)</string>
+    <string name="remove_identifying_headers">Eliminar cabeceras identificativas</string>
+    <string name="action_add_to_homescreen">Añadir a la pantalla de inicio</string>
+    <string name="message_added_to_homescreen">Se añadió el atajo a la pantalla de inicio</string>
+    <string name="action_delete_all_bookmarks">Borrar todos los marcadores</string>
+
+    <string name="faq">PP. FF.</string>
+    <string name="faq_description">Preguntas frecuentes</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Preferencias de depuración</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Por favor, reinicie la aplicación para que se apliquen los cambios.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Abrir en una pestaña nueva</string>
+    <string name="dialog_open_background_tab">Abrir en una pestaña en segundo plano</string>
+    <string name="dialog_open_incognito_tab">Abrir en una pestaña de incógnito</string>
+    <string name="dialog_remove_bookmark">Eliminar marcador</string>
+    <string name="dialog_edit_bookmark">Editar marcador</string>
+    <string name="dialog_remove_from_history">Eliminar del historial</string>
+    <string name="dialog_download_image">Descargar imagen</string>
+    <string name="dialog_copy_link">Copiar enlace</string>
+    <string name="dialog_rename_folder">Renombrar carpeta</string>
+    <string name="dialog_remove_folder">Eliminar carpeta</string>
+    <string name="dialog_title_close_browser">Cerrar el navegador</string>
 </resources>
