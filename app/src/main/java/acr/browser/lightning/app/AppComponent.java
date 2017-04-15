@@ -7,7 +7,6 @@ import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
-import acr.browser.lightning.view.ImageDownloader;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.HistoryPage;
@@ -76,7 +75,5 @@ public interface AppComponent {
     void inject(DebugSettingsFragment fragment);
 
     void inject(SuggestionsAdapter suggestionsAdapter);
-
-    void inject(ImageDownloader imageDownloader);
 
 }

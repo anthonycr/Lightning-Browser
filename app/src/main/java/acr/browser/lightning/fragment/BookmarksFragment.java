@@ -45,7 +45,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.view.ImageDownloader;
+import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.constant.Constants;
@@ -74,7 +74,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Inject PreferenceManager mPreferenceManager;
 
-    private ImageDownloader mImageDownloader;
+    private FaviconModel mFaviconModel;
 
     private TabsManager mTabsManager;
 
@@ -128,7 +128,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
                 ThemeUtils.getIconLightThemeColor(context);
 
-        mImageDownloader = new ImageDownloader(mWebpageBitmap);
+        mFaviconModel = new FaviconModel();
     }
 
     private TabsManager getTabsManager() {
@@ -228,7 +228,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
                 ThemeUtils.getIconLightThemeColor(activity);
 
-        mImageDownloader = new ImageDownloader(mWebpageBitmap);
+        mFaviconModel = new FaviconModel();
     }
 
     private void updateBookmarkIndicator(final String url) {
@@ -405,7 +405,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
                 final String url = web.getUrl();
                 final WeakReference<ImageView> imageViewReference = new WeakReference<>(holder.favicon);
-                mImageDownloader.newImageRequest(url)
+
+                mFaviconModel.faviconForUrl(url, mWebpageBitmap, true)
                         .subscribeOn(Schedulers.worker())
                         .observeOn(Schedulers.main())
                         .subscribe(new SingleOnSubscribe<Bitmap>() {
