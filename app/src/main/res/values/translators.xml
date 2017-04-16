@@ -11,7 +11,7 @@
     <string name="translators_fr" translatable="false"></string>
     <string name="translators_gr" translatable="false"></string>
     <string name="translators_hu" translatable="false"></string>
-    <string name="translators_it" translatable="false"></string>
+    <string name="translators_it" translatable="false">MarkThat</string>
     <string name="translators_iw" translatable="false"></string>
     <string name="translators_ja" translatable="false"></string>
     <string name="translators_ko" translatable="false"></string>
