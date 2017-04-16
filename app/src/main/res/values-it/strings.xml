@@ -47,14 +47,14 @@
     <string name="recommended">Consigliato</string>
     <string name="search">Motore di ricerca</string>
     <string name="search_hint">Cerca</string>
-    <string name="wideViewPort">Ottimizza le pagine allo schermo</string>
+    <string name="wideViewPort">Adatta le pagine allo schermo</string>
     <string name="overViewMode">Visualizza le pagine alla massima larghezza</string>
     <string name="restore">Ripristina le schede precedentemente attive alla riapertura</string>
     <string name="supported_browsers_title">Browser supportati</string>
     <string name="stock_browser">Browser di sistema</string>
     <string name="stock_browser_unavailable">Nessun browser di sistema rilevato</string>
     <string name="stock_browser_available">Rilevato browser di sistema supportato</string>
-    <string name="fullScreenOption">Nascondi la barra di stato mentre navighi</string>
+    <string name="fullScreenOption">Nascondi la barra di stato durante la navigazione</string>
     <string name="clear_cookies">Cancella i cookie</string>
     <string name="clear_history">Cancella la cronologia</string>
     <string name="dialog_image">Cosa vuoi fare con questa immagine?</string>
@@ -120,8 +120,8 @@
     <string name="message_cache_cleared">Cache cancellata</string>
     <string name="message_import">Segnalibri importati</string>
     <string name="message_clear_history">Cronologia cancellata</string>
-    <string name="message_cookies_cleared">Cookie cancellati</string>
-    <string name="max_tabs">Raggiunto il numero massimo di schede</string>
+    <string name="message_cookies_cleared">Cookies cancellati</string>
+    <string name="max_tabs">Hai raggiunto il numero massimo di schede apribili</string>
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
     <string name="custom_url">URL personalizzato</string>
@@ -244,18 +244,18 @@
     <!-- debug strings -->
     <string name="debug_title">Impostazioni di debug</string>
     <string name="debug_leak_canary">LeakCanary</string>
-    <string name="app_restart">Prego, riavvia la app per applicare le modifiche.</string>
+    <string name="app_restart">Riavvia l'applicazione per applicare le modifiche.</string>
 
     <!-- Dialogs -->
-    <string name="dialog_open_new_tab">Apri in nuova scheda</string>
-    <string name="dialog_open_background_tab">Apri in secondo piano</string>
-    <string name="dialog_open_incognito_tab">Apri in scheda in incognito</string>
+    <string name="dialog_open_new_tab">Apri in una nuova scheda</string>
+    <string name="dialog_open_background_tab">Apri in background</string>
+    <string name="dialog_open_incognito_tab">Apri in incognito</string>
     <string name="dialog_remove_bookmark">Elimina segnalibro</string>
     <string name="dialog_edit_bookmark">Modifica segnalibro</string>
-    <string name="dialog_remove_from_history">Elimina dalla cronologia</string>
-    <string name="dialog_download_image">Scarica immagine</string>
+    <string name="dialog_remove_from_history">Rimuovi dalla cronologia</string>
+    <string name="dialog_download_image">Salva immagine</string>
     <string name="dialog_copy_link">Copia link</string>
     <string name="dialog_rename_folder">Rinomina cartella</string>
     <string name="dialog_remove_folder">Elimina cartella</string>
-    <string name="dialog_title_close_browser">Chiudi browser</string>
+    <string name="dialog_title_close_browser">Esci</string>
 </resources>
