@@ -258,4 +258,25 @@
     <string name="dialog_rename_folder">Rinomina cartella</string>
     <string name="dialog_remove_folder">Elimina cartella</string>
     <string name="dialog_title_close_browser">Esci</string>
+  
+  <!-- Languages -->
+    <string name="translators">Traduttori</string>
+    <string name="language_ar">Arabo</string>
+    <string name="language_de">Tedesco</string>
+    <string name="language_es">Spagnolo</string>
+    <string name="language_fr">Francese</string>
+    <string name="language_gr">Greco</string>
+    <string name="language_hu">Ungherese</string>
+    <string name="language_it">Italiano</string>
+    <string name="language_iw">Ebraico</string>
+    <string name="language_ja">Giapponese</string>
+    <string name="language_ko">Coreano</string>
+    <string name="language_lt">Lituano</string>
+    <string name="language_pl">Polacco</string>
+    <string name="language_pt">Portoghese</string>
+    <string name="language_ru">Russo</string>
+    <string name="language_sr">Serbo</string>
+    <string name="language_tr">Turco</string>
+    <string name="language_zh_rCN">Cinese Semplificato</string>
+    <string name="language_zh_rTW">Cinese Tradizionale</string>
 </resources>
