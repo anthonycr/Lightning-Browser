@@ -23,10 +23,12 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
+import okhttp3.CacheControl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 abstract class BaseSuggestionsTask {
 
@@ -38,6 +40,8 @@ abstract class BaseSuggestionsTask {
     @Nullable private static String sLanguage;
     @NonNull private final SuggestionsResult mResultCallback;
     @NonNull private final Application mApplication;
+    @NonNull private final OkHttpClient mHttpClient = new OkHttpClient();
+    @NonNull private final CacheControl mCacheControl;
     @NonNull private String mQuery;
 
     protected abstract String getQueryUrl(@NonNull String query, @NonNull String language);
@@ -52,6 +56,7 @@ abstract class BaseSuggestionsTask {
         mQuery = query;
         mResultCallback = callback;
         mApplication = application;
+        mCacheControl = new CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build();
     }
 
     @NonNull
@@ -116,19 +121,22 @@ abstract class BaseSuggestionsTask {
         FileOutputStream fos = null;
         try {
             URL url = new URL(queryUrl);
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.setRequestProperty("Accept-Encoding", "gzip");
-            connection.setRequestProperty("Accept-Charset", getEncoding());
-            connection.connect();
-            if (connection.getResponseCode() >= HttpURLConnection.HTTP_MULT_CHOICE ||
-                connection.getResponseCode() < HttpURLConnection.HTTP_OK) {
-                Log.e(TAG, "Search API Responded with code: " + connection.getResponseCode());
-                connection.disconnect();
+            Request suggestionsRequest = new Request.Builder().url(url)
+                    .addHeader("Accept-Encoding", "gzip")
+                    .addHeader("Accept-Charset", getEncoding())
+                    .cacheControl(mCacheControl)
+                    .build();
+
+            Response suggestionsResponse = mHttpClient.newCall(suggestionsRequest).execute();
+
+            if (suggestionsResponse.code() >= HttpURLConnection.HTTP_MULT_CHOICE ||
+                    suggestionsResponse.code() < HttpURLConnection.HTTP_OK) {
+                Log.e(TAG, "Search API Responded with code: " + suggestionsResponse.code());
+                suggestionsResponse.body().close();
                 return cacheFile;
             }
 
-            in = connection.getInputStream();
+            in = suggestionsResponse.body().byteStream();
 
             if (in != null) {
                 in = new GZIPInputStream(in);
@@ -140,7 +148,7 @@ abstract class BaseSuggestionsTask {
                 }
                 fos.flush();
             }
-            connection.disconnect();
+            suggestionsResponse.body().close();
             cacheFile.setLastModified(System.currentTimeMillis());
         } catch (Exception e) {
             Log.w(TAG, "Problem getting search suggestions", e);
@@ -159,8 +167,8 @@ abstract class BaseSuggestionsTask {
     @Nullable
     private static NetworkInfo getActiveNetworkInfo(@NonNull Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
-            .getApplicationContext()
-            .getSystemService(Context.CONNECTIVITY_SERVICE);
+                .getApplicationContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
             return null;
         }
