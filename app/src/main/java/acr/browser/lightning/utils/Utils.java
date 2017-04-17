@@ -256,6 +256,7 @@ public final class Utils {
      * @param bitmap is the bitmap to pad.
      * @return the padded bitmap.
      */
+    @NonNull
     public static Bitmap padFavicon(@NonNull Bitmap bitmap) {
         int padding = Utils.dpToPx(4);
 

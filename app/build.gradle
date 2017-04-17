@@ -94,6 +94,8 @@ dependencies {
     // proxy support
     compile 'net.i2p.android:client:0.8'
 
+    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+
     // tor proxy
     def netcipherVersion = '2.0.0-alpha1'
     compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
