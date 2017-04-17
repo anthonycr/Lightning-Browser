@@ -17,7 +17,7 @@
     <string name="translators_ko" translatable="false"></string>
     <string name="translators_lt" translatable="false"></string>
     <string name="translators_pl" translatable="false"></string>
-    <string name="translators_pt" translatable="false"></string>
+    <string name="translators_pt" translatable="false">Sérgio Marques</string>
     <string name="translators_ru" translatable="false"></string>
     <string name="translators_sr" translatable="false"></string>
     <string name="translators_tr" translatable="false"></string>
