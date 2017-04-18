@@ -10,11 +10,11 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="36.0dip"
+        android:layout_height="30.0dip"
         android:layout_centerVertical="true"
         android:layout_marginLeft="14.0dip"
         android:layout_marginRight="14.0dip"
-        android:layout_marginTop="14.0dip"
+        android:layout_marginTop="13.0dip"
         android:background="@drawable/bg_search_notification">
 
         <ImageView
