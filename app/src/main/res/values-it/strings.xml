@@ -244,7 +244,7 @@
     <!-- debug strings -->
     <string name="debug_title">Impostazioni di debug</string>
     <string name="debug_leak_canary">LeakCanary</string>
-    <string name="app_restart">Riavvia l'applicazione per applicare le modifiche.</string>
+    <string name="app_restart">Riavvia l\'applicazione per applicare le modifiche.</string>
 
     <!-- Dialogs -->
     <string name="dialog_open_new_tab">Apri in una nuova scheda</string>
