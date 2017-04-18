@@ -15,11 +15,13 @@ android {
         configurations {
             all*.exclude group: 'org.apache.httpcomponents', module: 'httpcore'
         }
+        buildConfigField "String", "appKey", "\"TESTYHOC36B5A\""
     }
 
     sourceSets {
         lightningPlus.setRoot('src/LightningPlus')
         lightningLite.setRoot('src/LightningLite')
+        dt.setRoot('src/dt')
     }
 
     buildTypes {
@@ -41,17 +43,26 @@ android {
     productFlavors {
         lightningPlus {
             buildConfigField "boolean", "FULL_VERSION", "true"
+            buildConfigField "String", "appKey", "\"TESTYHOC36B5A\""
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
             versionCode 102
         }
 
-        lightningLite {
-            buildConfigField "boolean", "FULL_VERSION", "false"
-//            applicationId "acr.browser.barebones"
-            applicationId "io.mobitech.browser"
+        dt {
+            buildConfigField "boolean", "FULL_VERSION", "true"
+            buildConfigField "String", "appKey", "\"DTFP21573D\""
+//            applicationId "acr.browser.lightning"
+            applicationId "io.mobitech.browser.dt"
             versionCode 102
         }
+
+//        lightningLite {
+//            buildConfigField "boolean", "FULL_VERSION", "false"
+////            applicationId "acr.browser.barebones"
+//            applicationId "io.mobitech.browser"
+//            versionCode 102
+//        }
     }
 
     lintOptions {

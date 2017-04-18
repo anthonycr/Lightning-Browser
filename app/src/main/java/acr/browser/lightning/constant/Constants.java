@@ -16,7 +16,7 @@ public final class Constants {
     }
 
     public static final boolean FULL_VERSION = BuildConfig.FULL_VERSION;
-    public static final String MOBITECH_APP_KEY = "TESTYHOC36B5A";
+    public static final String MOBITECH_APP_KEY = BuildConfig.appKey;
 
     // Hardcoded user agents
     public static final String DESKTOP_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36";
