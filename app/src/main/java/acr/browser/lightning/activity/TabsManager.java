@@ -14,6 +14,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscriber;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
@@ -31,13 +36,6 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
-
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
@@ -55,17 +53,24 @@ public class TabsManager {
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
     private final List<LightningView> mTabList = new ArrayList<>(1);
-    @Nullable private LightningView mCurrentTab;
-    @Nullable private TabNumberChangedListener mTabNumberListener;
+    @Nullable
+    private LightningView mCurrentTab;
+    @Nullable
+    private TabNumberChangedListener mTabNumberListener;
 
     private boolean mIsInitialized = false;
     private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
 
-    @Inject PreferenceManager mPreferenceManager;
-    @Inject BookmarkManager mBookmarkManager;
-    @Inject HistoryDatabase mHistoryManager;
-    @Inject Bus mEventBus;
-    @Inject Application mApp;
+    @Inject
+    PreferenceManager mPreferenceManager;
+    @Inject
+    BookmarkManager mBookmarkManager;
+    @Inject
+    HistoryDatabase mHistoryManager;
+    @Inject
+    Bus mEventBus;
+    @Inject
+    Application mApp;
 
     public TabsManager() {
         BrowserApp.getAppComponent().inject(this);
@@ -138,24 +143,23 @@ public class TabsManager {
                     if (!TextUtils.isEmpty(url)) {
                         newTab(activity, url, false);
                     } else {
-                        newTab(activity, null, false);
+                        showNewTab(activity);
                     }
                     finishInitialization();
                     subscriber.onComplete();
                 }
-
             }
         });
-
     }
 
     private void restoreLostTabs(@Nullable final String url, @NonNull final Activity activity,
                                  @NonNull final Subscriber subscriber) {
 
         restoreState().subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
+                .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
             @Override
             public void onNext(Bundle item) {
+                Log.d(TAG, "onNext: " + item);
                 LightningView tab = newTab(activity, "", false);
                 String url = item.getString(URL_KEY);
                 if (url != null && tab.getWebView() != null) {
@@ -177,25 +181,25 @@ public class TabsManager {
                     if (url.startsWith(Constants.FILE)) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                         Dialog dialog = builder.setCancelable(true)
-                            .setTitle(R.string.title_warning)
-                            .setMessage(R.string.message_blocked_local)
-                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    if (mTabList.isEmpty()) {
-                                        newTab(activity, null, false);
+                                .setTitle(R.string.title_warning)
+                                .setMessage(R.string.message_blocked_local)
+                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        if (mTabList.isEmpty()) {
+                                            showNewTab(activity);
+                                        }
+                                        finishInitialization();
+                                        subscriber.onComplete();
                                     }
-                                    finishInitialization();
-                                    subscriber.onComplete();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    newTab(activity, url, false);
-                                }
-                            }).show();
+                                })
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        newTab(activity, url, false);
+                                    }
+                                }).show();
                         BrowserDialog.setDialogSize(activity, dialog);
                     } else {
                         newTab(activity, url, false);
@@ -206,8 +210,8 @@ public class TabsManager {
                         subscriber.onComplete();
                     }
                 } else {
-                    if (mTabList.isEmpty()) {
-                        newTab(activity, null, false);
+                    if (mTabList.isEmpty() || !mTabList.get(mTabList.size() - 1).isStartPage()) {
+                        showNewTab(activity);
                     }
                     finishInitialization();
                     subscriber.onComplete();
@@ -350,6 +354,13 @@ public class TabsManager {
             return null;
         }
         return mTabList.get(last());
+    }
+
+    /**
+     * Shows new tab - Start Page
+     */
+    private void showNewTab(Activity activity) {
+        new StartPage(newTab(activity, null, false), mApp).load();
     }
 
     /**

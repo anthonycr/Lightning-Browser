@@ -18,6 +18,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -1087,6 +1088,10 @@ public class LightningView {
         } else {
             return "";
         }
+    }
+
+    public boolean isStartPage() {
+        return TextUtils.isEmpty(getUrl());
     }
 
     /**
