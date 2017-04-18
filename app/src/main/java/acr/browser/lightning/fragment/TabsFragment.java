@@ -254,7 +254,11 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mRecyclerView.smoothScrollToPosition(mTabsAdapter.getItemCount() - 1);
+                    try {
+                        mRecyclerView.smoothScrollToPosition(mTabsAdapter.getItemCount() - 1);
+                    }catch (IllegalArgumentException e){
+                        mRecyclerView.smoothScrollToPosition(0);
+                    }
                 }
             }, 500);
         }
