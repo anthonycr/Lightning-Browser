@@ -44,10 +44,12 @@ abstract class BaseSuggestionsTask {
     @NonNull private final CacheControl mCacheControl;
     @NonNull private String mQuery;
 
+    @NonNull
     protected abstract String getQueryUrl(@NonNull String query, @NonNull String language);
 
-    protected abstract void parseResults(FileInputStream inputStream, List<HistoryItem> results) throws Exception;
+    protected abstract void parseResults(@NonNull FileInputStream inputStream, @NonNull List<HistoryItem> results) throws Exception;
 
+    @NonNull
     protected abstract String getEncoding();
 
     BaseSuggestionsTask(@NonNull String query,

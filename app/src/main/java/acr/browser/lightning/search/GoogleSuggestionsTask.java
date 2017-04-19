@@ -35,7 +35,7 @@ class GoogleSuggestionsTask extends BaseSuggestionsTask {
     }
 
     @Override
-    protected void parseResults(FileInputStream inputStream, List<HistoryItem> results) throws Exception {
+    protected void parseResults(@NonNull FileInputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
         BufferedInputStream fileInput = new BufferedInputStream(inputStream);
         XmlPullParser parser = getParser();
         parser.setInput(fileInput, ENCODING);
@@ -55,6 +55,7 @@ class GoogleSuggestionsTask extends BaseSuggestionsTask {
         }
     }
 
+    @NonNull
     @Override
     protected String getEncoding() {
         return ENCODING;

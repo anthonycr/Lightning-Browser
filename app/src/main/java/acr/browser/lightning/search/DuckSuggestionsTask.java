@@ -25,13 +25,14 @@ final class DuckSuggestionsTask extends BaseSuggestionsTask {
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 
+    @NonNull
     @Override
     protected String getQueryUrl(@NonNull String query, @NonNull String language) {
         return "https://duckduckgo.com/ac/?q=" + query;
     }
 
     @Override
-    protected void parseResults(FileInputStream inputStream, List<HistoryItem> results) throws Exception {
+    protected void parseResults(@NonNull FileInputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
         String content = FileUtils.readStringFromFile(inputStream, ENCODING);
         JSONArray jsonArray = new JSONArray(content);
         int counter = 0;
@@ -47,6 +48,7 @@ final class DuckSuggestionsTask extends BaseSuggestionsTask {
         }
     }
 
+    @NonNull
     @Override
     protected String getEncoding() {
         return ENCODING;
