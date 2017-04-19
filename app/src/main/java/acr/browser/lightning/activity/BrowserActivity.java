@@ -260,6 +260,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         BrowserApp.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -666,6 +667,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     private void initializePreferences() {
+        Log.d(TAG, "initializePreferences: " + mPreferenceManager.getUserId());
         final LightningView currentView = mTabsManager.getCurrentTab();
         mFullScreen = mPreferences.getFullScreenEnabled();
         boolean colorMode = mPreferences.getColorModeEnabled();
