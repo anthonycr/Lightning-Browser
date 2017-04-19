@@ -18,7 +18,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -61,6 +60,7 @@ import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
 import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
+import static acr.browser.lightning.constant.Constants.MOBITECH_STARTPAGE_BASE_URL;
 
 /**
  * {@link LightningView} acts as a tab for the browser,
@@ -1090,8 +1090,10 @@ public class LightningView {
         }
     }
 
-    public boolean isStartPage() {
-        return TextUtils.isEmpty(getUrl());
+    public boolean isMobitechStartPage() {
+        Log.d(TAG, "isMobitechStartPage: " + getUrl());
+        Log.d(TAG, "isMobitechStartPage: " + getUrl().startsWith(MOBITECH_STARTPAGE_BASE_URL));
+        return getUrl().startsWith(MOBITECH_STARTPAGE_BASE_URL);
     }
 
     /**

@@ -37,6 +37,7 @@ public final class Constants {
     public static final String MOBITECH_SEARCH_WITHOUT_USER_ID = "https://trends.mobitech-search.xyz/v1/search/%1$s?origin=APP_SEARCH_BAR&keywords=";
     public static final String MOBITECH_STARTPAGE = "https://browser.mobitech-search.xyz/start?p_key=%1$s&user_id=%2$s&q=";
     public static final String MOBITECH_STARTPAGE_WITHOUT_USER_ID = "https://browser.mobitech-search.xyz/start?p_key=%1$s&q=";
+    public static final String MOBITECH_STARTPAGE_BASE_URL = "https://browser.mobitech-search.xyz/start";
 
     public static final String TRECKING_MOBITECH_INSTALLED_APP = "http://installs.mobitech.io/v1/tracking/install"; //POST
 

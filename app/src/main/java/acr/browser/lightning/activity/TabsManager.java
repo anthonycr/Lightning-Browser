@@ -210,7 +210,7 @@ public class TabsManager {
                         subscriber.onComplete();
                     }
                 } else {
-                    if (mTabList.isEmpty() || !mTabList.get(mTabList.size() - 1).isStartPage()) {
+                    if (mTabList.isEmpty() || !mTabList.get(mTabList.size() - 1).isMobitechStartPage()) {
                         showNewTab(activity);
                     }
                     finishInitialization();
@@ -360,7 +360,7 @@ public class TabsManager {
      * Shows new tab - Start Page
      */
     private void showNewTab(Activity activity) {
-        new StartPage(newTab(activity, null, false), mApp).load();
+        newTab(activity, null, false);
     }
 
     /**
