@@ -867,7 +867,11 @@ public class LightningView {
      */
     public synchronized void goBack() {
         if (mWebView != null) {
-            mWebView.goBack();
+            if (mWebView.getUrl().contains("yahoo.com") || mWebView.getUrl().contains("bing.com")){
+                mWebView.goBackOrForward(-2);
+            }else{
+                mWebView.goBack();
+            }
         }
     }
 

@@ -172,7 +172,7 @@ public class TabsManager {
                     } else if (UrlUtils.isHistoryUrl(url)) {
                         new HistoryPage(tab, mApp, mHistoryManager).load();
                     }
-                } else if (tab.getWebView() != null) {
+                } else if (tab!= null && tab.getWebView() != null) {
                     tab.getWebView().restoreState(item);
                 }
             }
@@ -379,7 +379,6 @@ public class TabsManager {
     public synchronized LightningView newTab(@NonNull final Activity activity,
                                              @Nullable final String url,
                                              final boolean isIncognito) {
-        Log.d(TAG, "New tab");
         final LightningView tab = new LightningView(activity, url, isIncognito);
         mTabList.add(tab);
         if (mTabNumberListener != null) {

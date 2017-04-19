@@ -508,6 +508,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
             switch (keyCode) {
                 case KeyEvent.KEYCODE_ENTER:
+                    Log.i(TAG,"search KEYCODE_ENTER" +mSearch.getText().toString() );
+
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
                     searchTheWeb(mSearch.getText().toString());
@@ -533,6 +535,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     || (arg2.getAction() == KeyEvent.KEYCODE_ENTER)) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+                Log.i(TAG,"search onEditorAction" +mSearch.getText().toString() );
                 searchTheWeb(mSearch.getText().toString());
                 final LightningView currentView = mTabsManager.getCurrentTab();
                 if (currentView != null) {
@@ -590,7 +593,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             }
             final int searchEngine = mPreferences.getSearchChoice();
             //if search engine is Mobitech display search text instead url
-            if (searchEngine == 5 || searchEngine == 6) {
+            if (searchEngine == 6) {
                 mSearch.setText(mSearchText);
                 return;
             }
@@ -733,6 +736,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 break;
             case 10:
                 mSearchUrl = Constants.YANDEX_SEARCH;
+                break;
+            default:
+                mSearchUrl = UrlUtils.makeMobitechSearchUrl(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId());
                 break;
         }
         mSearchText = "";
@@ -1430,6 +1436,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         query = query.trim();
         if (currentTab != null) {
             currentTab.stopLoading();
+            Log.i(TAG, "search : " + UrlUtils.smartUrlFilter(query, true, searchUrl));
             mPresenter.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, true, searchUrl));
         }
     }
@@ -2158,7 +2165,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 closeBookmarksDrawer();
                 Intent intent = new Intent(BrowserActivity.this, BdBookmarkNotifyActivity.class);
                 BrowserActivity.this.startActivity(intent);
-                mPreferences.setFirstStart(true);
+                mPreferences.setFirstStart(false);
             }
         }, (long) (2 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
     }

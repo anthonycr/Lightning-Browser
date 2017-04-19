@@ -207,4 +207,5 @@ class LightningChromeClient extends WebChromeClient {
                                  CustomViewCallback callback) {
         mUIController.onShowCustomView(view, callback, requestedOrientation);
     }
+
 }

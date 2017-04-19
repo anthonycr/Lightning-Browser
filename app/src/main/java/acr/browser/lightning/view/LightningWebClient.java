@@ -2,7 +2,6 @@ package acr.browser.lightning.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -118,6 +117,7 @@ public class LightningWebClient extends WebViewClient {
             view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
         }
         mUIController.tabChanged(mLightningView);
+
     }
 
     @Override
@@ -129,6 +129,8 @@ public class LightningWebClient extends WebViewClient {
         }
         mUIController.tabChanged(mLightningView);
     }
+
+
 
     @Override
     public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
@@ -232,35 +234,36 @@ public class LightningWebClient extends WebViewClient {
 
     @Override
     public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
-        List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Integer messageCode : errorCodeMessageCodes) {
-            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
-        }
-        String alertMessage =
-            mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(mActivity.getString(R.string.title_warning));
-        builder.setMessage(alertMessage)
-            .setCancelable(true)
-            .setPositiveButton(mActivity.getString(R.string.action_yes),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        handler.proceed();
-                    }
-                })
-            .setNegativeButton(mActivity.getString(R.string.action_no),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        handler.cancel();
-                    }
-                });
-        Dialog dialog = builder.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
+//        List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
+//
+//        StringBuilder stringBuilder = new StringBuilder();
+//        for (Integer messageCode : errorCodeMessageCodes) {
+//            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
+//        }
+//        String alertMessage =
+//            mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+//        builder.setTitle(mActivity.getString(R.string.title_warning));
+//        builder.setMessage(alertMessage)
+//            .setCancelable(true)
+//            .setPositiveButton(mActivity.getString(R.string.action_yes),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        handler.proceed();
+//                    }
+//                })
+//            .setNegativeButton(mActivity.getString(R.string.action_no),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        handler.cancel();
+//                    }
+//                });
+//        Dialog dialog = builder.show();
+//        BrowserDialog.setDialogSize(mActivity, dialog);
+        handler.proceed();
     }
 
     @Override
