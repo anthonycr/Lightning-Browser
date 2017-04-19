@@ -268,5 +268,6 @@
     <string name="search_notification_dialog_title">Easy pull down notification,\n one-tap search</string>
     <string name="disable">Disable</string>
     <string name="keep">Keep it</string>
+    <string name="bookmark_callout_dialog_text">Easy bookmark access</string>
 
 </resources>

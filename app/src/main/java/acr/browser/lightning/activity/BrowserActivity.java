@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
@@ -119,8 +118,8 @@ import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
+import acr.browser.lightning.search.notification.BdBookmarkNotifyActivity;
 import acr.browser.lightning.search.notification.NotificationUtil;
-import acr.browser.lightning.utils.DeviceUtils;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.KeyboardHelper;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -2151,23 +2150,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if(!mPreferences.isFirstStart()) {
             return;
         }
-        final int width = DeviceUtils.getScreenWidth(this);
-        long downTime = SystemClock.uptimeMillis();
-        long eventTime = SystemClock.uptimeMillis() + 200;
-        MotionEvent motionEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_DOWN, width, width - 300, 0);
-        mDrawerLayout.dispatchTouchEvent(motionEvent);
-        motionEvent.recycle();
-
+        openBookmarks();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                long downTime = SystemClock.uptimeMillis();
-                long eventTime = SystemClock.uptimeMillis() + 200;
-                MotionEvent motionEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, width, width - 300, 0);
-                mDrawerLayout.dispatchTouchEvent(motionEvent);
-                motionEvent.recycle();
+                closeBookmarksDrawer();
+                Intent intent = new Intent(BrowserActivity.this, BdBookmarkNotifyActivity.class);
+                BrowserActivity.this.startActivity(intent);
             }
-        }, (long) (0.8 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
+        }, (long) (2 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
     }
 
     /**

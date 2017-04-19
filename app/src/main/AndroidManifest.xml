@@ -14,6 +14,7 @@
     <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS"/>
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-feature
         android:name="android.hardware.location.gps"
@@ -179,6 +180,13 @@
         <service android:name=".search.notification.CommonPersistentService" android:exported="false" android:process=":common" />
         <activity android:theme="@style/DialogActivity"
             android:name=".search.notification.BdSearchNotifySettingActivity"
+            android:taskAffinity="" android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize" />
+
+        <activity android:theme="@style/DialogActivity"
+            android:name=".search.notification.BdBookmarkNotifyActivity"
             android:taskAffinity="" android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"

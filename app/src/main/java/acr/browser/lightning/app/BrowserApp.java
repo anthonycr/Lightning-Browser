@@ -30,7 +30,6 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
-import acr.browser.lightning.R;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.MemoryLeakUtils;
@@ -183,10 +182,7 @@ public class BrowserApp extends Application {
 
                 if (mPreferenceManager!=null && !mPreferenceManager.isInstalled()) {
                     String referrer = mPreferenceManager.getReferrer();
-                    String appId = mPreferenceManager.getReferrerAppId();
-                    if(TextUtils.isEmpty(appId)){
-                        appId = getString(R.string.app_name);
-                    }
+                    String appId = BuildConfig.APPLICATION_ID;
                     if(TextUtils.isEmpty(referrer)){
                         referrer = BuildConfig.VERSION_NAME;
                     }

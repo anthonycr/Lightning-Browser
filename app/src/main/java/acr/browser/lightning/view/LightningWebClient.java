@@ -101,19 +101,6 @@ public class LightningWebClient extends WebViewClient {
                 @Override
                 public void run() {
                     mUIController.peekDrawer();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mUIController.peekDrawer();
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mUIController.peekDrawer();
-                                    mPreferences.setFirstStart(false);
-                                }
-                            }, 1000);
-                        }
-                    }, 1000);
                 }
             }, 500);
             mUIController.updateUrl(url, true);

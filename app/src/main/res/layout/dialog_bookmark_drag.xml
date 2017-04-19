@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/dlg_container"
+        android:layout_width="296.0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10.0dip"
+        android:layout_marginTop="10.0dip"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:minHeight="160.0dip"
+        android:orientation="vertical">
+        <TextView
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/persist_notification_close_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@android:drawable/ic_notification_clear_all"/>
+
+        <ScrollView
+            android:id="@+id/scrollview"
+            android:layout_width="fill_parent"
+            android:layout_height="0.0dip"
+            android:layout_weight="1.0"
+            android:gravity="top">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10.0dip"
+                android:paddingRight="10dip"
+                android:paddingLeft="10dip"
+                android:paddingBottom="0dp"
+                android:layout_marginBottom="0dp"
+                >
+
+                <TextView
+                    android:id="@id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="12.0dip"
+                    android:gravity="center"
+                    android:text="@string/bookmark_callout_dialog_text"
+                    android:textColor="@color/divider_search_notification_dialog_title"
+                    android:textSize="17.0sp" />
+
+                <LinearLayout
+                    android:id="@+id/content_panel"
+                    android:layout_width="199.0dip"
+                    android:layout_height="218.0dip"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/bookmark_swipe"
+                        />
+                    </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <View
+            android:id="@+id/dlg_bottom_divider"
+            android:layout_width="fill_parent"
+            android:layout_height="1.0px"
+            android:background="@color/divider_search_notification_dialog"
+            android:paddingBottom="48.0dip" />
+
+        <LinearLayout
+            android:id="@+id/btn_panel"
+            android:layout_width="fill_parent"
+            android:layout_height="46.0dip"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+
+            <View
+                android:id="@+id/btn_divider"
+                android:layout_width="1.0px"
+                android:layout_height="wrap_content"
+                android:background="@color/divider_search_notification_dialog_btn" />
+
+            <Button
+                android:id="@+id/dialog_ok"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0"
+                android:background="@drawable/dialog_ok_bg"
+                android:maxLines="1"
+                android:text="@string/action_ok"
+                android:textColor="@drawable/dialog_text_color"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
