@@ -9,7 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
-        versionName "4.7.0"
+        versionName "4.7.2"
+        versionCode 104
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         configurations {
@@ -41,12 +42,11 @@ android {
     }
 
     productFlavors {
-        lightningPlus {
+        mobitech {
             buildConfigField "boolean", "FULL_VERSION", "true"
             buildConfigField "String", "appKey", "\"TESTYHOC36B5A\""
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
-            versionCode 102
         }
 
         dt {
@@ -54,7 +54,6 @@ android {
             buildConfigField "String", "appKey", "\"DTFP21573D\""
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser.dt"
-            versionCode 102
         }
 
 //        lightningLite {
