@@ -40,6 +40,8 @@ import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.view.LightningView;
 
+import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
+
 /**
  * A manager singleton that holds all the {@link LightningView}
  * and tracks the current tab. It handles creation, deletion,
@@ -360,7 +362,7 @@ public class TabsManager {
      * Shows new tab - Start Page
      */
     private void showNewTab(Activity activity) {
-        new StartPage(newTab(activity, null, false), mApp).load();
+        newTab(activity, UrlUtils.makeMobitechStartPage(mPreferenceManager.getUserId(), MOBITECH_APP_KEY, mPreferenceManager.needUseUserId()), false);
     }
 
     /**

@@ -466,6 +466,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void selectSearch() {
         Log.d(TAG, "selectSearch: ");
         mSearch.requestFocusFromTouch();
+        mSearch.setText("");
         KeyboardHelper.showKeyboard(this);
     }
 
@@ -2157,6 +2158,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 closeBookmarksDrawer();
                 Intent intent = new Intent(BrowserActivity.this, BdBookmarkNotifyActivity.class);
                 BrowserActivity.this.startActivity(intent);
+                mPreferences.setFirstStart(true);
             }
         }, (long) (2 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
     }
