@@ -20,6 +20,7 @@ import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.utils.VisibilityManager;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
@@ -41,6 +42,18 @@ public class SettingsActivity extends ThemableSettingsActivity {
         Toolbar toolbar = (Toolbar) toolbarContainer.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        VisibilityManager.stopActivityTransitionTimer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        VisibilityManager.startActivityTransitionTimer();
     }
 
     @Override

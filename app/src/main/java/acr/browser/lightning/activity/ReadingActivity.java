@@ -23,6 +23,13 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.anthonycr.bonsai.Action;
+import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.OnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Subscriber;
+import com.anthonycr.bonsai.Subscription;
+
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
@@ -30,16 +37,11 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
-import com.anthonycr.bonsai.Subscriber;
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscription;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.utils.VisibilityManager;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -269,6 +271,18 @@ public class ReadingActivity extends AppCompatActivity {
             mProgressDialog = null;
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        VisibilityManager.stopActivityTransitionTimer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        VisibilityManager.startActivityTransitionTimer();
     }
 
     @Override
