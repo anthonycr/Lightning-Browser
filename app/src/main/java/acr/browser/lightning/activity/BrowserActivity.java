@@ -126,6 +126,7 @@ import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.utils.VisibilityManager;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.Handlers;
 import acr.browser.lightning.view.LightningView;
@@ -1360,6 +1361,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onStop() {
         super.onStop();
         mProxyUtils.onStop();
+        VisibilityManager.startActivityTransitionTimer();
     }
 
     @Override
@@ -1382,6 +1384,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onStart() {
         super.onStart();
         mProxyUtils.onStart(this);
+        VisibilityManager.stopActivityTransitionTimer();
     }
 
     @Override
@@ -1402,7 +1405,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mSuggestionsAdapter.refreshPreferences();
             mSuggestionsAdapter.refreshBookmarks();
         }
-        mTabsManager.resumeAll(this);
+        mPresenter.resumeAll(this);
         initializePreferences();
 
         supportInvalidateOptionsMenu();

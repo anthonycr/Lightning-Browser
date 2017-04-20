@@ -38,6 +38,7 @@ import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.UrlUtils;
+import acr.browser.lightning.utils.VisibilityManager;
 import acr.browser.lightning.view.LightningView;
 
 import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
@@ -156,7 +157,8 @@ public class TabsManager {
 
     private void restoreLostTabs(@Nullable final String url, @NonNull final Activity activity,
                                  @NonNull final Subscriber subscriber) {
-
+        Log.d(TAG, "restoreLostTabs: ");
+        VisibilityManager.resetShowNewTab();
         restoreState().subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main()).subscribe(new OnSubscribe<Bundle>() {
             @Override
@@ -212,9 +214,7 @@ public class TabsManager {
                         subscriber.onComplete();
                     }
                 } else {
-                    if (mTabList.isEmpty() || !mTabList.get(mTabList.size() - 1).isStartPage()) {
-                        showNewTab(activity);
-                    }
+                    showNewTabIfNeed(activity);
                     finishInitialization();
                     subscriber.onComplete();
                 }
@@ -229,8 +229,9 @@ public class TabsManager {
      * bug in the WebView, where calling onResume doesn't
      * consistently resume it.
      *
-     * @param context the context needed to initialize
-     *                the LightningView preferences.
+     * @param context the Activity needed to initialize
+     *                 the LightningView preferences and show
+     *                 a new tab if need.
      */
     public void resumeAll(@NonNull Context context) {
         LightningView current = getCurrentTab();
@@ -362,7 +363,28 @@ public class TabsManager {
      * Shows new tab - Start Page
      */
     private void showNewTab(Activity activity) {
-        newTab(activity, UrlUtils.makeMobitechStartPage(mPreferenceManager.getUserId(), MOBITECH_APP_KEY, mPreferenceManager.needUseUserId()), false);
+        newTab(activity, null, false);
+        switchToTab(mTabList.size() - 1);
+    }
+
+    /**
+     * Checks if need to show a new tab
+     * and calls a method to show it if need
+     */
+    public boolean showNewTabIfNeed(Activity activity) {
+        Log.d(TAG, "showNewTabIfNeed: ");
+        if (checkIfShowNewTab()) {
+            showNewTab(activity);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if need to show a new tab
+     */
+    public boolean checkIfShowNewTab() {
+        return mTabList.isEmpty() || !mTabList.get(mTabList.size() - 1).isMobitechStartPage();
     }
 
     /**

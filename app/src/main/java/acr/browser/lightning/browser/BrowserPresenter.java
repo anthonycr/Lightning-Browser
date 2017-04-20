@@ -14,12 +14,14 @@ import com.squareup.otto.Bus;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.UrlUtils;
+import acr.browser.lightning.utils.VisibilityManager;
 import acr.browser.lightning.view.LightningView;
 
 import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
@@ -89,6 +91,19 @@ public class BrowserPresenter {
      */
     public void tabChangeOccurred(@Nullable LightningView tab) {
         mView.notifyTabViewChanged(mTabsModel.indexOfTab(tab));
+    }
+
+    /**
+     * Called on activity onResume
+     */
+    public void resumeAll(BrowserActivity activity) {
+        mTabsModel.resumeAll(activity);
+        if (VisibilityManager.showNewTab) {
+            VisibilityManager.resetShowNewTab();
+            if(mTabsModel.checkIfShowNewTab()) {
+                newTab(null, true);
+            }
+        }
     }
 
     private void onTabChanged(@Nullable LightningView newTab) {
