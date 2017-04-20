@@ -2,6 +2,7 @@ package acr.browser.lightning.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.widget.LinearLayout;
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +60,8 @@ public class LightningWebClient extends WebViewClient {
     @Inject AdBlock mAdBlock;
     @Inject
     PreferenceManager mPreferences;
+
+    private static Map<String,List<Integer>> urlsErrorCode = new HashMap<>();
 
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
@@ -234,36 +238,35 @@ public class LightningWebClient extends WebViewClient {
 
     @Override
     public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
-//        List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
-//
-//        StringBuilder stringBuilder = new StringBuilder();
-//        for (Integer messageCode : errorCodeMessageCodes) {
-//            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
-//        }
-//        String alertMessage =
-//            mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-//        builder.setTitle(mActivity.getString(R.string.title_warning));
-//        builder.setMessage(alertMessage)
-//            .setCancelable(true)
-//            .setPositiveButton(mActivity.getString(R.string.action_yes),
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        handler.proceed();
-//                    }
-//                })
-//            .setNegativeButton(mActivity.getString(R.string.action_no),
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        handler.cancel();
-//                    }
-//                });
-//        Dialog dialog = builder.show();
-//        BrowserDialog.setDialogSize(mActivity, dialog);
-        handler.proceed();
+        List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Integer messageCode : errorCodeMessageCodes) {
+            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
+        }
+        String alertMessage =
+                mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(mActivity.getString(R.string.title_warning));
+        builder.setMessage(alertMessage)
+                .setCancelable(true)
+                .setPositiveButton(mActivity.getString(R.string.action_yes),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                handler.proceed();
+                            }
+                        })
+                .setNegativeButton(mActivity.getString(R.string.action_no),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                handler.cancel();
+                            }
+                        });
+        Dialog dialog = builder.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     @Override
