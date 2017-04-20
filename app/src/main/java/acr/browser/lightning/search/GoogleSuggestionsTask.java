@@ -17,7 +17,7 @@ import acr.browser.lightning.database.HistoryItem;
 
 class GoogleSuggestionsTask extends BaseSuggestionsTask {
 
-    private static final String ENCODING = "ISO-8859-1";
+    @NonNull private static final String ENCODING = "ISO-8859-1";
     @Nullable private static XmlPullParser sXpp;
     @NonNull private final String mSearchSubtitle;
 
@@ -29,7 +29,7 @@ class GoogleSuggestionsTask extends BaseSuggestionsTask {
     }
 
     @NonNull
-    protected String getQueryUrl(@NonNull String query, @NonNull String language) {
+    protected String createQueryUrl(@NonNull String query, @NonNull String language) {
         return "https://suggestqueries.google.com/complete/search?output=toolbar&hl="
             + language + "&q=" + query;
     }

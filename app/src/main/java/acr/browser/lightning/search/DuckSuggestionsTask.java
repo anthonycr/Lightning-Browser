@@ -15,7 +15,7 @@ import acr.browser.lightning.utils.FileUtils;
 
 final class DuckSuggestionsTask extends BaseSuggestionsTask {
 
-    private static final String ENCODING = "UTF-8";
+    @NonNull private static final String ENCODING = "UTF-8";
     @NonNull private final String mSearchSubtitle;
 
     DuckSuggestionsTask(@NonNull String query,
@@ -27,7 +27,7 @@ final class DuckSuggestionsTask extends BaseSuggestionsTask {
 
     @NonNull
     @Override
-    protected String getQueryUrl(@NonNull String query, @NonNull String language) {
+    protected String createQueryUrl(@NonNull String query, @NonNull String language) {
         return "https://duckduckgo.com/ac/?q=" + query;
     }
 

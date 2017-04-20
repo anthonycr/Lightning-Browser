@@ -36,7 +36,7 @@ abstract class BaseSuggestionsTask {
 
     static final int MAX_RESULTS = 5;
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toMillis(1);
-    private static final String DEFAULT_LANGUAGE = "en";
+    @NonNull private static final String DEFAULT_LANGUAGE = "en";
     @Nullable private static String sLanguage;
     @NonNull private final SuggestionsResult mResultCallback;
     @NonNull private final Application mApplication;
@@ -46,7 +46,7 @@ abstract class BaseSuggestionsTask {
     @NonNull private String mQuery;
 
     @NonNull
-    protected abstract String getQueryUrl(@NonNull String query, @NonNull String language);
+    protected abstract String createQueryUrl(@NonNull String query, @NonNull String language);
 
     protected abstract void parseResults(@NonNull FileInputStream inputStream, @NonNull List<HistoryItem> results) throws Exception;
 
@@ -113,7 +113,7 @@ abstract class BaseSuggestionsTask {
      */
     @NonNull
     private File downloadSuggestionsForQuery(@NonNull String query, String language, @NonNull Application app) {
-        String queryUrl = getQueryUrl(query, language);
+        String queryUrl = createQueryUrl(query, language);
         File cacheFile = new File(app.getCacheDir(), queryUrl.hashCode() + SuggestionsAdapter.CACHE_FILE_TYPE);
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
@@ -126,15 +126,15 @@ abstract class BaseSuggestionsTask {
         try {
             URL url = new URL(queryUrl);
             Request suggestionsRequest = new Request.Builder().url(url)
-                    .addHeader("Accept-Encoding", "gzip")
-                    .addHeader("Accept-Charset", getEncoding())
-                    .cacheControl(mCacheControl)
-                    .build();
+                .addHeader("Accept-Encoding", "gzip")
+                .addHeader("Accept-Charset", getEncoding())
+                .cacheControl(mCacheControl)
+                .build();
 
             Response suggestionsResponse = mHttpClient.newCall(suggestionsRequest).execute();
 
             if (suggestionsResponse.code() >= HttpURLConnection.HTTP_MULT_CHOICE ||
-                    suggestionsResponse.code() < HttpURLConnection.HTTP_OK) {
+                suggestionsResponse.code() < HttpURLConnection.HTTP_OK) {
                 Log.e(TAG, "Search API Responded with code: " + suggestionsResponse.code());
                 suggestionsResponse.body().close();
                 return cacheFile;
@@ -171,8 +171,8 @@ abstract class BaseSuggestionsTask {
     @NonNull
     private static ConnectivityManager getConnectivityManager(@NonNull Context context) {
         return (ConnectivityManager) context
-                .getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+            .getApplicationContext()
+            .getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
 }
