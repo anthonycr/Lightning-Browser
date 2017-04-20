@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.AutoCompleteTextView;
 
-public class SearchView extends AutoCompleteTextView {
+public class SearchView extends android.support.v7.widget.AppCompatAutoCompleteTextView {
 
     public interface PreFocusListener {
         void onPreFocus();

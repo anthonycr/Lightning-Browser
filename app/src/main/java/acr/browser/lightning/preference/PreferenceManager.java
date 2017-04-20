@@ -100,7 +100,7 @@ public class PreferenceManager {
     }
 
     public boolean getBookmarksAndTabsSwapped() {
-        return mPrefs.getBoolean(Name.SWAP_BOOKMARKS_AND_TABS, false);
+        return mPrefs.getBoolean(Name.SWAP_BOOKMARKS_AND_TABS, true);
     }
 
     public void setBookmarkAndTabsSwapped(boolean swap) {

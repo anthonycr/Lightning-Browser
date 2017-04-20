@@ -41,8 +41,6 @@ import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.VisibilityManager;
 import acr.browser.lightning.view.LightningView;
 
-import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
-
 /**
  * A manager singleton that holds all the {@link LightningView}
  * and tracks the current tab. It handles creation, deletion,
