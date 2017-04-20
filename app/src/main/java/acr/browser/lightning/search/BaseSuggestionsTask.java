@@ -42,6 +42,7 @@ abstract class BaseSuggestionsTask {
     @NonNull private final Application mApplication;
     @NonNull private final OkHttpClient mHttpClient = new OkHttpClient();
     @NonNull private final CacheControl mCacheControl;
+    @NonNull private final ConnectivityManager mConnectivityManager;
     @NonNull private String mQuery;
 
     @NonNull
@@ -59,6 +60,7 @@ abstract class BaseSuggestionsTask {
         mResultCallback = callback;
         mApplication = application;
         mCacheControl = new CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build();
+        mConnectivityManager = getConnectivityManager(mApplication);
     }
 
     @NonNull
@@ -116,7 +118,7 @@ abstract class BaseSuggestionsTask {
         if (System.currentTimeMillis() - INTERVAL_DAY < cacheFile.lastModified()) {
             return cacheFile;
         }
-        if (!isNetworkConnected(app)) {
+        if (!isNetworkConnected()) {
             return cacheFile;
         }
         InputStream in = null;
@@ -161,20 +163,16 @@ abstract class BaseSuggestionsTask {
         return cacheFile;
     }
 
-    private static boolean isNetworkConnected(@NonNull Context context) {
-        NetworkInfo networkInfo = getActiveNetworkInfo(context);
+    private boolean isNetworkConnected() {
+        NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    @Nullable
-    private static NetworkInfo getActiveNetworkInfo(@NonNull Context context) {
-        ConnectivityManager connectivity = (ConnectivityManager) context
+    @NonNull
+    private static ConnectivityManager getConnectivityManager(@NonNull Context context) {
+        return (ConnectivityManager) context
                 .getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity == null) {
-            return null;
-        }
-        return connectivity.getActiveNetworkInfo();
     }
 
 }
