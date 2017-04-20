@@ -430,7 +430,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    selectSearch();
+                    showSearch();
                 }
             }, 500);
         }
@@ -464,10 +464,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void selectSearch() {
-        Log.d(TAG, "selectSearch: ");
-        mSearch.requestFocusFromTouch();
-        mSearch.setText("");
+    public void showSearch() {
         KeyboardHelper.showKeyboard(this);
     }
 

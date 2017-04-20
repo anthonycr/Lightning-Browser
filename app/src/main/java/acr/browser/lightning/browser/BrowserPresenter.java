@@ -238,7 +238,7 @@ public class BrowserPresenter {
                 final String url;
                 if (intent != null) {
                     if(INTENT_ACTION_SEARCH.equals(intent.getStringExtra(INTENT_ACTION_SEARCH))) {
-                        mView.selectSearch();
+                        mView.showSearch();  //  from search notification
                     }
                     url = intent.getDataString();
                 } else {
