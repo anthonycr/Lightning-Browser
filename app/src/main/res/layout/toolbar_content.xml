@@ -4,13 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
+
+    <include layout="@layout/search" />
+
     <FrameLayout
         android:id="@+id/arrow_button"
         android:layout_width="?attr/actionBarSize"
         android:layout_height="match_parent"
         android:background="?attr/actionBarItemBackground"
         android:clickable="true"
-        android:gravity="center" >
+        android:gravity="right|center_vertical" >
 
         <ImageView
             android:id="@+id/arrow"
@@ -19,6 +22,6 @@
             android:layout_height="wrap_content" />
     </FrameLayout>
 
-    <include layout="@layout/search" />
+
 
 </LinearLayout>

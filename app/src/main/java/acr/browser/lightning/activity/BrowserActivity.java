@@ -400,6 +400,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         // create the search EditText in the ToolBar
         mSearch = (SearchView) customView.findViewById(R.id.search);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mSearch.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        }
         mSearchBackground = customView.findViewById(R.id.search_container);
 
         // initialize search background color
@@ -461,10 +464,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             setIntent(null);
             mProxyUtils.checkForProxy(this);
         }
+
+        if (!TextUtils.isEmpty(mSearch.getText().toString())){
+            if (mSearch.getText().toString().contains("mobitech-search")){
+                mSearch.setText("");
+            }
+        }
     }
 
     @Override
     public void showSearch() {
+        mSearch.requestFocusFromTouch();
+        mSearch.setText("");
         KeyboardHelper.showKeyboard(this);
     }
 
