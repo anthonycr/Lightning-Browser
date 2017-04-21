@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.utils.Utils;
 
@@ -54,12 +56,12 @@ public class BookmarkManager {
 
     private Map<String, HistoryItem> mBookmarksMap;
     @NonNull private String mCurrentFolder = "";
-    @NonNull private final ExecutorService mExecutor;
+    @NonNull private final Executor mExecutor;
     private File mFilesDir;
 
     @Inject
     public BookmarkManager(@NonNull Context context) {
-        mExecutor = Executors.newSingleThreadExecutor();
+        mExecutor = BrowserApp.getIOThread();
         DEFAULT_BOOKMARK_TITLE = context.getString(R.string.untitled);
         mExecutor.execute(new BookmarkInitializer(context));
     }
@@ -175,12 +177,6 @@ public class BookmarkManager {
                 tempFile.renameTo(bookmarksFile);
             }
         }
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        mExecutor.shutdownNow();
-        super.finalize();
     }
 
     public boolean isBookmark(String url) {
