@@ -175,13 +175,26 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".receiver.ArticleAlarmReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <service android:name=".search.notification.CommonPersistentService" android:exported="false" android:process=":common" />
+        <service android:name=".search.notification.ArticleNotificationService" android:exported="false" />
         <activity android:theme="@style/DialogActivity"
-            android:name=".search.notification.BdSearchNotifySettingActivity"
+            android:name=".search.notification.SearchNotifySettingActivity"
             android:taskAffinity="" android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:configChanges="locale|keyboardHidden|orientation|screenSize" />
+        <activity android:theme="@style/DialogActivity"
+            android:name=".search.notification.ArticleNotifySettingActivity"
+            android:taskAffinity="" android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:configChanges="locale|keyboardHidden|orientation|screenSize" />
+
 
         <activity android:theme="@style/DialogActivity"
             android:name=".search.notification.BdBookmarkNotifyActivity"

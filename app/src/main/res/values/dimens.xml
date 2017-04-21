@@ -15,5 +15,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="notif_text_margin_left">12dp</dimen>
 
 </resources>

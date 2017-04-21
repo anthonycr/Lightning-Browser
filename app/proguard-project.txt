@@ -197,3 +197,19 @@ java.lang.Object readResolve();
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
 
 -dontwarn org.apache.http.HttpHost
+
+# OkHttp
+-dontwarn okio.**
+-dontwarn com.squareup.okhttp.**
+
+# Gson
+-keep public class com.google.gson
+-keep class sun.misc.Unsafe { *; }
+-dontwarn sun.misc.Unsafe
+-keepclassmembers enum acr.browser.lightning.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class acr.browser.lightning.model.** { *; }
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*

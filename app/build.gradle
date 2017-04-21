@@ -121,6 +121,15 @@ dependencies {
 
     compile project(':animated-progress-bar')
 
+    // OkHttp
+    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+
+    // Gson
+    compile 'com.google.code.gson:gson:2.7'
+
+    // Picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     // memory leak analysis
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'

@@ -20,6 +20,8 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -74,7 +76,7 @@ public final class Utils {
     public static void downloadFile(final Activity activity, final PreferenceManager manager, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
             @Override
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);
@@ -124,13 +126,13 @@ public final class Utils {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         builder.setMessage(message)
-            .setCancelable(true)
-            .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
+                .setCancelable(true)
+                .setPositiveButton(activity.getResources().getString(R.string.action_ok),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
         AlertDialog alert = builder.create();
         alert.show();
         BrowserDialog.setDialogSize(activity, alert);
@@ -259,7 +261,7 @@ public final class Utils {
         int padding = Utils.dpToPx(4);
 
         Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
-            + padding, Bitmap.Config.ARGB_8888);
+                + padding, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(paddedBitmap);
         canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
@@ -303,10 +305,10 @@ public final class Utils {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + '_';
         File storageDir = Environment
-            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         );
     }
 
@@ -380,9 +382,9 @@ public final class Utils {
         paint.setDither(true);
         if (withShader) {
             paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                0, canvas.getHeight(),
-                color, mixTwoColors(Color.BLACK, color, 0.5f),
-                Shader.TileMode.CLAMP));
+                    0, canvas.getHeight(),
+                    color, mixTwoColors(Color.BLACK, color, 0.5f),
+                    Shader.TileMode.CLAMP));
         } else {
             paint.setShader(null);
         }
@@ -429,5 +431,17 @@ public final class Utils {
         addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
         activity.sendBroadcast(addIntent);
         Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+    }
+
+    /**
+     * Checks if network is connected
+     */
+    public static boolean isNetworkConnected(@NonNull Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
+            return false;
+        }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
     }
 }

@@ -1,7 +1,6 @@
 package acr.browser.lightning.search.notification;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,11 +23,6 @@ public class BdBookmarkNotifyActivity extends Activity implements View.OnClickLi
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.dialog_cancel:
-                mPreferenceManager.setSearchNotificationEnabled(false);
-                NotificationUtil.cancelNotification(this);
-                startService(new Intent(this, CommonPersistentService.class));
-                finish();
             case R.id.dialog_ok:
                 finish();
             case R.id.persist_notification_close_id:
@@ -55,3 +49,4 @@ public class BdBookmarkNotifyActivity extends Activity implements View.OnClickLi
         super.onDestroy();
     }
 }
+
