@@ -6,12 +6,12 @@
         <item>@string/agent_mobile</item>
         <item>@string/agent_custom</item>
     </string-array>
-    
+
     <string-array name="download_folder">
         <item>@string/folder_default</item>
         <item>@string/folder_custom</item>
     </string-array>
-    
+
     <string-array name="homepage">
         <item>@string/action_homepage</item>
         <item>@string/action_blank</item>
@@ -23,14 +23,6 @@
         <item>@string/powered_by_google</item>
         <item>@string/powered_by_duck</item>
         <item>@string/search_suggestions_off</item>
-    </string-array>
-    
-    <string-array name="text_size">
-        <item>@string/size_largest</item>
-        <item>@string/size_large</item>
-        <item>@string/size_normal</item>
-        <item>@string/size_small</item>
-        <item>@string/size_smallest</item>
     </string-array>
 
     <string-array name="themes">
