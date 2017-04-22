@@ -96,6 +96,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     }
 
     public void clearCache() {
+        // We don't need these cache files anymore
         Schedulers.io().execute(new ClearCacheRunnable(BrowserApp.get(mContext)));
     }
 
@@ -382,12 +383,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
         public void run() {
             File dir = new File(app.getCacheDir().toString());
             String[] fileList = dir.list(new NameFilter());
-            long earliestTimeAllowed = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1);
             for (String fileName : fileList) {
                 File file = new File(dir.getPath() + fileName);
-                if (earliestTimeAllowed > file.lastModified()) {
-                    file.delete();
-                }
+                file.delete();
             }
         }
 

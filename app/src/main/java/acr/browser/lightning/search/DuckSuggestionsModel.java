@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import acr.browser.lightning.R;
@@ -30,8 +31,8 @@ final class DuckSuggestionsModel extends BaseSuggestionsModel {
     }
 
     @Override
-    protected void parseResults(@NonNull FileInputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
-        String content = FileUtils.readStringFromFile(inputStream, ENCODING);
+    protected void parseResults(@NonNull InputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
+        String content = FileUtils.readStringFromStream(inputStream, ENCODING);
         JSONArray jsonArray = new JSONArray(content);
         int counter = 0;
         for (int n = 0, size = jsonArray.length(); n < size; n++) {

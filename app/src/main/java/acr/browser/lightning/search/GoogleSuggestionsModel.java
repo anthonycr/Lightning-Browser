@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import acr.browser.lightning.R;
@@ -33,10 +34,10 @@ class GoogleSuggestionsModel extends BaseSuggestionsModel {
     }
 
     @Override
-    protected void parseResults(@NonNull FileInputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
-        BufferedInputStream fileInput = new BufferedInputStream(inputStream);
+    protected void parseResults(@NonNull InputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
+        BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);
         XmlPullParser parser = getParser();
-        parser.setInput(fileInput, ENCODING);
+        parser.setInput(bufferedInput, ENCODING);
         int eventType = parser.getEventType();
         int counter = 0;
         while (eventType != XmlPullParser.END_DOCUMENT) {

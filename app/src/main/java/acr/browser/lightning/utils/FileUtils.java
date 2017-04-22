@@ -138,7 +138,8 @@ public class FileUtils {
     }
 
     @NonNull
-    public static String readStringFromFile(@NonNull InputStream inputStream, @NonNull String encoding) throws IOException {
+    public static String readStringFromStream(@NonNull InputStream inputStream,
+                                              @NonNull String encoding) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, encoding));
         StringBuilder result = new StringBuilder();
         String line;
@@ -146,6 +147,16 @@ public class FileUtils {
             result.append(line);
         }
         return result.toString();
+    }
+
+    /**
+     * Converts megabytes to bytes.
+     *
+     * @param megaBytes the number of megabytes.
+     * @return the converted bytes.
+     */
+    public static long megabytesToBytes(long megaBytes) {
+        return megaBytes * 1024 * 1024;
     }
 
 }
