@@ -34,10 +34,11 @@ abstract class BaseSuggestionsModel {
     static final int MAX_RESULTS = 5;
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toSeconds(1);
     @NonNull private static final String DEFAULT_LANGUAGE = "en";
-    @Nullable private static String sLanguage;
+
     @NonNull private final OkHttpClient mHttpClient;
     @NonNull private final CacheControl mCacheControl;
     @NonNull private final String mEncoding;
+    @NonNull private final String mLanguage;
 
     @NonNull
     protected abstract String createQueryUrl(@NonNull String query, @NonNull String language);
@@ -46,6 +47,7 @@ abstract class BaseSuggestionsModel {
 
     BaseSuggestionsModel(@NonNull Application application, @NonNull String encoding) {
         mEncoding = encoding;
+        mLanguage = getLanguage();
         File suggestionsCache = new File(application.getCacheDir(), "suggestion_responses");
         mHttpClient = new OkHttpClient.Builder()
             .cache(new Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
@@ -55,14 +57,12 @@ abstract class BaseSuggestionsModel {
     }
 
     @NonNull
-    private static synchronized String getLanguage() {
-        if (sLanguage == null) {
-            sLanguage = Locale.getDefault().getLanguage();
+    private static String getLanguage() {
+        String language = Locale.getDefault().getLanguage();
+        if (TextUtils.isEmpty(language)) {
+            language = DEFAULT_LANGUAGE;
         }
-        if (TextUtils.isEmpty(sLanguage)) {
-            sLanguage = DEFAULT_LANGUAGE;
-        }
-        return sLanguage;
+        return language;
     }
 
     @NonNull
@@ -73,7 +73,7 @@ abstract class BaseSuggestionsModel {
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Unable to encode the URL", e);
         }
-        InputStream inputStream = downloadSuggestionsForQuery(query, getLanguage());
+        InputStream inputStream = downloadSuggestionsForQuery(query, mLanguage);
         if (inputStream == null) {
             // There are no suggestions for this query, return an empty list.
             return filter;

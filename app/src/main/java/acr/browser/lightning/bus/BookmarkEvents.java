@@ -24,12 +24,7 @@ public final class BookmarkEvents {
      */
     public static class BookmarkChanged {
 
-        public final HistoryItem oldBookmark;
-        public final HistoryItem newBookmark;
-
-        public BookmarkChanged(final HistoryItem oldItem, final HistoryItem newItem) {
-            oldBookmark = oldItem;
-            newBookmark = newItem;
+        public BookmarkChanged() {
         }
     }
 }

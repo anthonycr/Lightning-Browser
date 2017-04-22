@@ -427,6 +427,7 @@ public class LightningView {
                 .subscribe(new SingleOnSubscribe<File>() {
                     @Override
                     public void onItem(@Nullable File item) {
+                        Preconditions.checkNonNull(item);
                         settings.setAppCachePath(item.getPath());
                     }
                 });
@@ -437,6 +438,7 @@ public class LightningView {
                     .subscribe(new SingleOnSubscribe<File>() {
                         @Override
                         public void onItem(@Nullable File item) {
+                            Preconditions.checkNonNull(item);
                             //noinspection deprecation
                             settings.setGeolocationDatabasePath(item.getPath());
                         }
@@ -449,6 +451,7 @@ public class LightningView {
                     @Override
                     public void onItem(@Nullable File item) {
                         if (API < Build.VERSION_CODES.KITKAT) {
+                            Preconditions.checkNonNull(item);
                             //noinspection deprecation
                             settings.setDatabasePath(item.getPath());
                         }

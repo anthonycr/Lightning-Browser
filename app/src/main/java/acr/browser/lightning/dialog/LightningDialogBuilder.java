@@ -151,7 +151,7 @@ public class LightningDialogBuilder {
                         editedItem.setUrl(getUrl.getText().toString());
                         editedItem.setFolder(getFolder.getText().toString());
                         mBookmarkManager.editBookmark(item, editedItem);
-                        mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
+                        mEventBus.post(new BookmarkEvents.BookmarkChanged());
                     }
                 });
         Dialog dialog = editBookmarkDialog.show();
@@ -190,7 +190,7 @@ public class LightningDialogBuilder {
                             editedItem.setFolder(item.getFolder());
                             editedItem.setIsFolder(true);
                             mBookmarkManager.renameFolder(oldTitle, text);
-                            mEventBus.post(new BookmarkEvents.BookmarkChanged(item, editedItem));
+                            mEventBus.post(new BookmarkEvents.BookmarkChanged());
                         }
                     }
                 });

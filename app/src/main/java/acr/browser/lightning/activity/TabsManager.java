@@ -161,6 +161,7 @@ public class TabsManager {
                     @Override
                     public void onNext(@Nullable Bundle item) {
                         final LightningView tab = newTab(activity, "", false);
+                        Preconditions.checkNonNull(item);
                         String url = item.getString(URL_KEY);
                         if (url != null && tab.getWebView() != null) {
                             if (UrlUtils.isBookmarkUrl(url)) {

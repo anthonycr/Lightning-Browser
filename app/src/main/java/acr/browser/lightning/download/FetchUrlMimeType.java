@@ -13,14 +13,12 @@ import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
 import com.anthonycr.bonsai.Schedulers;
-import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.utils.Utils;
 
 /**

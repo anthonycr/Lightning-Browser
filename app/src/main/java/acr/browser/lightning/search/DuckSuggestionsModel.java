@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 

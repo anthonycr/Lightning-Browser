@@ -70,12 +70,7 @@ public class ThemeUtils {
 
     @NonNull
     private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
-        Drawable drawable;
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            drawable = context.getDrawable(drawableId);
-        } else {
-            drawable = context.getResources().getDrawable(drawableId);
-        }
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
 
         Preconditions.checkNonNull(drawable);
 
@@ -91,7 +86,7 @@ public class ThemeUtils {
         Drawable drawable = getVectorDrawable(context, drawableId);
 
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
-                                            Bitmap.Config.ARGB_8888);
+            Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
@@ -104,7 +99,7 @@ public class ThemeUtils {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
         Bitmap sourceBitmap = getBitmapFromVectorDrawable(context, res);
         Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(),
-                                                  Bitmap.Config.ARGB_8888);
+            Bitmap.Config.ARGB_8888);
         Paint p = new Paint();
         ColorFilter filter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
         p.setColorFilter(filter);
@@ -126,8 +121,8 @@ public class ThemeUtils {
     @NonNull
     public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
         @ColorInt final int color =
-                (dark) ? ContextCompat.getColor(context, R.color.selected_dark) : ContextCompat.getColor(
-                        context, R.color.selected_light);
+            (dark) ? ContextCompat.getColor(context, R.color.selected_dark) : ContextCompat.getColor(
+                context, R.color.selected_light);
         return new ColorDrawable(color);
     }
 

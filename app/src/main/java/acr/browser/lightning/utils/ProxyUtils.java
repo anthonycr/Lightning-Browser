@@ -114,8 +114,9 @@ public class ProxyUtils {
                 // We shouldn't be here
                 return;
             case Constants.PROXY_ORBOT:
-                if (!OrbotHelper.isOrbotRunning(activity))
+                if (!OrbotHelper.isOrbotRunning(activity)) {
                     OrbotHelper.requestStartTor(activity);
+                }
                 host = "localhost";
                 port = 8118;
                 break;

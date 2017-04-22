@@ -299,6 +299,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String title = adapter.getItem(which);
+                Preconditions.checkNonNull(title);
                 Source source = null;
                 if (title.equals(getString(R.string.stock_browser))) {
                     source = Source.STOCK;

@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -179,7 +180,10 @@ public class BrowserDialog {
         if (maxWidth > screenSize - 2 * padding) {
             maxWidth = screenSize - 2 * padding;
         }
-        dialog.getWindow().setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 
 }
