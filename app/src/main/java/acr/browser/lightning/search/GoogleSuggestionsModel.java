@@ -15,16 +15,14 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 
-class GoogleSuggestionsTask extends BaseSuggestionsTask {
+class GoogleSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "ISO-8859-1";
     @Nullable private static XmlPullParser sXpp;
     @NonNull private final String mSearchSubtitle;
 
-    GoogleSuggestionsTask(@NonNull String query,
-                          @NonNull Application application,
-                          @NonNull SuggestionsResult callback) {
-        super(query, application, callback);
+    GoogleSuggestionsModel(@NonNull Application application) {
+        super(application);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 

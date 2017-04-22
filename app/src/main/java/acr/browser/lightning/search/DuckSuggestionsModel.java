@@ -13,15 +13,13 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.FileUtils;
 
-final class DuckSuggestionsTask extends BaseSuggestionsTask {
+final class DuckSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "UTF-8";
     @NonNull private final String mSearchSubtitle;
 
-    DuckSuggestionsTask(@NonNull String query,
-                        @NonNull Application application,
-                        @NonNull SuggestionsResult callback) {
-        super(query, application, callback);
+    DuckSuggestionsModel(@NonNull Application application) {
+        super(application);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 

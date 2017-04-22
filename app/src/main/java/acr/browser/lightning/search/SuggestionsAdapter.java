@@ -210,8 +210,8 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                 subscriber.onComplete();
             }
         }).subscribeOn(FILTER_SCHEDULER)
-                .observeOn(Schedulers.main())
-                .subscribe();
+            .observeOn(Schedulers.main())
+            .subscribe();
     }
 
     private void combineResults(final @Nullable List<HistoryItem> bookmarkList,
@@ -256,13 +256,13 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                 subscriber.onComplete();
             }
         }).subscribeOn(FILTER_SCHEDULER)
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                    @Override
-                    public void onItem(@Nullable List<HistoryItem> item) {
-                        publishResults(item);
-                    }
-                });
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                @Override
+                public void onItem(@Nullable List<HistoryItem> item) {
+                    publishResults(item);
+                }
+            });
     }
 
     @NonNull
@@ -277,7 +277,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                         break;
                     }
                     if (mAllBookmarks.get(n).getTitle().toLowerCase(Locale.getDefault())
-                            .startsWith(query)) {
+                        .startsWith(query)) {
                         bookmarks.add(mAllBookmarks.get(n));
                         counter++;
                     } else if (mAllBookmarks.get(n).getUrl().contains(query)) {
@@ -294,9 +294,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     @NonNull
     private Single<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
         if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_GOOGLE) {
-            return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.GOOGLE);
+            return SuggestionsManager.createGoogleQueryObservable(query, mContext);
         } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
-            return SuggestionsManager.getObservable(query, mContext, SuggestionsManager.Source.DUCK);
+            return SuggestionsManager.createDuckQueryObservable(query, mContext);
         } else {
             return Single.empty();
         }
@@ -325,35 +325,35 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
             if (mSuggestionsAdapter.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress()) {
                 mSuggestionsAdapter.getSuggestionsForQuery(query)
-                        .subscribeOn(Schedulers.worker())
-                        .observeOn(Schedulers.main())
-                        .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                            @Override
-                            public void onItem(@Nullable List<HistoryItem> item) {
-                                mSuggestionsAdapter.combineResults(null, null, item);
-                            }
-                        });
+                    .subscribeOn(Schedulers.worker())
+                    .observeOn(Schedulers.main())
+                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                        @Override
+                        public void onItem(@Nullable List<HistoryItem> item) {
+                            mSuggestionsAdapter.combineResults(null, null, item);
+                        }
+                    });
             }
 
             mSuggestionsAdapter.getBookmarksForQuery(query)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                        @Override
-                        public void onItem(@Nullable List<HistoryItem> item) {
-                            mSuggestionsAdapter.combineResults(item, null, null);
-                        }
-                    });
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                    @Override
+                    public void onItem(@Nullable List<HistoryItem> item) {
+                        mSuggestionsAdapter.combineResults(item, null, null);
+                    }
+                });
 
             HistoryModel.findHistoryItemsContaining(query)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                        @Override
-                        public void onItem(@Nullable List<HistoryItem> item) {
-                            mSuggestionsAdapter.combineResults(null, item, null);
-                        }
-                    });
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                    @Override
+                    public void onItem(@Nullable List<HistoryItem> item) {
+                        mSuggestionsAdapter.combineResults(null, item, null);
+                    }
+                });
             results.count = 1;
             return results;
         }

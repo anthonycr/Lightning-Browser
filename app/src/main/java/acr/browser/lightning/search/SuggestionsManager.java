@@ -15,42 +15,39 @@ import acr.browser.lightning.database.HistoryItem;
 
 class SuggestionsManager {
 
-    public enum Source {
-        GOOGLE,
-        DUCK
-    }
-
     private static volatile boolean sIsTaskExecuting;
 
     static boolean isRequestInProgress() {
         return sIsTaskExecuting;
     }
 
-    static Single<List<HistoryItem>> getObservable(@NonNull final String query, @NonNull final Context context, @NonNull final Source source) {
+    @NonNull
+    static Single<List<HistoryItem>> createGoogleQueryObservable(@NonNull final String query,
+                                                                 @NonNull final Context context) {
         final Application application = BrowserApp.get(context);
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
                 sIsTaskExecuting = true;
-                switch (source) {
-                    case GOOGLE:
-                        new GoogleSuggestionsTask(query, application, new SuggestionsResult() {
-                            @Override
-                            public void resultReceived(@NonNull List<HistoryItem> searchResults) {
-                                subscriber.onItem(searchResults);
-                                subscriber.onComplete();
-                            }
-                        }).run();
-                        break;
-                    case DUCK:
-                        new DuckSuggestionsTask(query, application, new SuggestionsResult() {
-                            @Override
-                            public void resultReceived(@NonNull List<HistoryItem> searchResults) {
-                                subscriber.onItem(searchResults);
-                                subscriber.onComplete();
-                            }
-                        }).run();
-                }
+                List<HistoryItem> results = new GoogleSuggestionsModel(application).getResults(query);
+                subscriber.onItem(results);
+                subscriber.onComplete();
+                sIsTaskExecuting = false;
+            }
+        });
+    }
+
+    @NonNull
+    static Single<List<HistoryItem>> createDuckQueryObservable(@NonNull final String query,
+                                                               @NonNull final Context context) {
+        final Application application = BrowserApp.get(context);
+        return Single.create(new SingleAction<List<HistoryItem>>() {
+            @Override
+            public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
+                sIsTaskExecuting = true;
+                List<HistoryItem> results = new DuckSuggestionsModel(application).getResults(query);
+                subscriber.onItem(results);
+                subscriber.onComplete();
                 sIsTaskExecuting = false;
             }
         });

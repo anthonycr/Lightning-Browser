@@ -30,20 +30,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-abstract class BaseSuggestionsTask {
+abstract class BaseSuggestionsModel {
 
-    private static final String TAG = BaseSuggestionsTask.class.getSimpleName();
+    private static final String TAG = BaseSuggestionsModel.class.getSimpleName();
 
     static final int MAX_RESULTS = 5;
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toMillis(1);
     @NonNull private static final String DEFAULT_LANGUAGE = "en";
     @Nullable private static String sLanguage;
-    @NonNull private final SuggestionsResult mResultCallback;
     @NonNull private final Application mApplication;
     @NonNull private final OkHttpClient mHttpClient = new OkHttpClient();
     @NonNull private final CacheControl mCacheControl;
     @NonNull private final ConnectivityManager mConnectivityManager;
-    @NonNull private String mQuery;
 
     @NonNull
     protected abstract String createQueryUrl(@NonNull String query, @NonNull String language);
@@ -53,11 +51,7 @@ abstract class BaseSuggestionsTask {
     @NonNull
     protected abstract String getEncoding();
 
-    BaseSuggestionsTask(@NonNull String query,
-                        @NonNull Application application,
-                        @NonNull SuggestionsResult callback) {
-        mQuery = query;
-        mResultCallback = callback;
+    BaseSuggestionsModel(@NonNull Application application) {
         mApplication = application;
         mCacheControl = new CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build();
         mConnectivityManager = getConnectivityManager(mApplication);
@@ -74,39 +68,36 @@ abstract class BaseSuggestionsTask {
         return sLanguage;
     }
 
-    void run() {
+    @NonNull
+    List<HistoryItem> getResults(@NonNull String query) {
         List<HistoryItem> filter = new ArrayList<>(5);
         try {
-            mQuery = URLEncoder.encode(mQuery, getEncoding());
+            query = URLEncoder.encode(query, getEncoding());
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Unable to encode the URL", e);
         }
-        File cache = downloadSuggestionsForQuery(mQuery, getLanguage(), mApplication);
+        File cache = downloadSuggestionsForQuery(query, getLanguage(), mApplication);
         if (!cache.exists()) {
-            post(filter);
-            return;
+            // There are no suggestions for this query, return an empty list.
+            return filter;
         }
         FileInputStream fileInput = null;
         try {
             fileInput = new FileInputStream(cache);
             parseResults(fileInput, filter);
         } catch (Exception e) {
-            post(filter);
             Log.e(TAG, "Unable to parse results", e);
-            return;
+            return filter;
         } finally {
             Utils.close(fileInput);
         }
-        post(filter);
-    }
 
-    private void post(@NonNull List<HistoryItem> result) {
-        mResultCallback.resultReceived(result);
+        return filter;
     }
 
     /**
      * This method downloads the search suggestions for the specific query.
-     * NOTE: This is a blocking operation, do not run on the UI thread.
+     * NOTE: This is a blocking operation, do not getResults on the UI thread.
      *
      * @param query the query to get suggestions for
      * @return the cache file containing the suggestions
