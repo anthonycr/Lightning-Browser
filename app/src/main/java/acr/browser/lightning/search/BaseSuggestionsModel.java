@@ -37,16 +37,15 @@ abstract class BaseSuggestionsModel {
     @Nullable private static String sLanguage;
     @NonNull private final OkHttpClient mHttpClient;
     @NonNull private final CacheControl mCacheControl;
+    @NonNull private final String mEncoding;
 
     @NonNull
     protected abstract String createQueryUrl(@NonNull String query, @NonNull String language);
 
     protected abstract void parseResults(@NonNull InputStream inputStream, @NonNull List<HistoryItem> results) throws Exception;
 
-    @NonNull
-    protected abstract String getEncoding();
-
-    BaseSuggestionsModel(@NonNull Application application) {
+    BaseSuggestionsModel(@NonNull Application application, @NonNull String encoding) {
+        mEncoding = encoding;
         File suggestionsCache = new File(application.getCacheDir(), "suggestion_responses");
         mHttpClient = new OkHttpClient.Builder()
             .cache(new Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
@@ -70,7 +69,7 @@ abstract class BaseSuggestionsModel {
     List<HistoryItem> getResults(@NonNull String query) {
         List<HistoryItem> filter = new ArrayList<>(5);
         try {
-            query = URLEncoder.encode(query, getEncoding());
+            query = URLEncoder.encode(query, mEncoding);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Unable to encode the URL", e);
         }
@@ -107,7 +106,7 @@ abstract class BaseSuggestionsModel {
 
             // OkHttp automatically gzips requests
             Request suggestionsRequest = new Request.Builder().url(url)
-                .addHeader("Accept-Charset", getEncoding())
+                .addHeader("Accept-Charset", mEncoding)
                 .cacheControl(mCacheControl)
                 .build();
 

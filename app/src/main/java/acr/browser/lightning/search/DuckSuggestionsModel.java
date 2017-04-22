@@ -20,7 +20,7 @@ final class DuckSuggestionsModel extends BaseSuggestionsModel {
     @NonNull private final String mSearchSubtitle;
 
     DuckSuggestionsModel(@NonNull Application application) {
-        super(application);
+        super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 
@@ -45,12 +45,6 @@ final class DuckSuggestionsModel extends BaseSuggestionsModel {
                 break;
             }
         }
-    }
-
-    @NonNull
-    @Override
-    protected String getEncoding() {
-        return ENCODING;
     }
 
 }

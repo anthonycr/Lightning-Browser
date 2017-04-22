@@ -23,7 +23,7 @@ class GoogleSuggestionsModel extends BaseSuggestionsModel {
     @NonNull private final String mSearchSubtitle;
 
     GoogleSuggestionsModel(@NonNull Application application) {
-        super(application);
+        super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 
@@ -52,12 +52,6 @@ class GoogleSuggestionsModel extends BaseSuggestionsModel {
             }
             eventType = parser.next();
         }
-    }
-
-    @NonNull
-    @Override
-    protected String getEncoding() {
-        return ENCODING;
     }
 
     @NonNull
