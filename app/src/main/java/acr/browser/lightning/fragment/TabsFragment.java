@@ -48,8 +48,9 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.BackgroundDrawable;
 import acr.browser.lightning.view.LightningView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A fragment that holds and manages the tabs and interaction with the tabs.
@@ -77,7 +78,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Nullable private LightningViewAdapter mTabsAdapter;
     private UIController mUiController;
 
-    @Bind(R.id.tabs_list) RecyclerView mRecyclerView;
+    @BindView(R.id.tabs_list) RecyclerView mRecyclerView;
+    private Unbinder mUnbinder;
 
     private TabsManager mTabsManager;
     @Inject Bus mBus;
@@ -130,7 +132,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             });
         }
 
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
 
         SimpleItemAnimator animator;
         if (mShowInNavigationDrawer) {
@@ -156,7 +158,10 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            mUnbinder = null;
+        }
         mTabsAdapter = null;
     }
 

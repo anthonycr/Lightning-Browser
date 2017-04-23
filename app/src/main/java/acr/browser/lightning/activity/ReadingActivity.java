@@ -40,18 +40,15 @@ import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReadingActivity extends AppCompatActivity {
 
     private static final String TAG = ReadingActivity.class.getSimpleName();
 
-    @Bind(R.id.textViewTitle)
-    TextView mTitle;
-
-    @Bind(R.id.textViewBody)
-    TextView mBody;
+    @BindView(R.id.textViewTitle) TextView mTitle;
+    @BindView(R.id.textViewBody) TextView mBody;
 
     @Inject PreferenceManager mPreferences;
 

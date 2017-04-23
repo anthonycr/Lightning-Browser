@@ -56,8 +56,9 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, BookmarksView {
 
@@ -92,9 +93,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private final List<HistoryItem> mBookmarks = new ArrayList<>();
 
     // Views
-    @Bind(R.id.right_drawer_list) ListView mBookmarksListView;
-    @Bind(R.id.starIcon) ImageView mBookmarkTitleImage;
-    @Bind(R.id.icon_star) ImageView mBookmarkImage;
+    @BindView(R.id.right_drawer_list) ListView mBookmarksListView;
+    @BindView(R.id.starIcon) ImageView mBookmarkTitleImage;
+    @BindView(R.id.icon_star) ImageView mBookmarkImage;
+    private Unbinder mUnbinder;
 
     // Colors
     private int mIconColor, mScrollIndex;
@@ -176,7 +178,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         mBookmarksListView.setOnItemClickListener(mItemClickListener);
         mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
@@ -209,7 +211,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            mUnbinder = null;
+        }
     }
 
     @Override

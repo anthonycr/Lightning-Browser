@@ -125,7 +125,7 @@ import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.Handlers;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.SearchView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
@@ -138,18 +138,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final String TAG_TABS_FRAGMENT = "TAG_TABS_FRAGMENT";
 
     // Static Layout
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.content_frame) FrameLayout mBrowserFrame;
-    @Bind(R.id.left_drawer) ViewGroup mDrawerLeft;
-    @Bind(R.id.right_drawer) ViewGroup mDrawerRight;
-    @Bind(R.id.ui_layout) ViewGroup mUiLayout;
-    @Bind(R.id.toolbar_layout) ViewGroup mToolbarLayout;
-    @Bind(R.id.progress_view) AnimatedProgressBar mProgressBar;
-    @Bind(R.id.search_bar) RelativeLayout mSearchBar;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.content_frame) FrameLayout mBrowserFrame;
+    @BindView(R.id.left_drawer) ViewGroup mDrawerLeft;
+    @BindView(R.id.right_drawer) ViewGroup mDrawerRight;
+    @BindView(R.id.ui_layout) ViewGroup mUiLayout;
+    @BindView(R.id.toolbar_layout) ViewGroup mToolbarLayout;
+    @BindView(R.id.progress_view) AnimatedProgressBar mProgressBar;
+    @BindView(R.id.search_bar) RelativeLayout mSearchBar;
 
 
     // Toolbar Views
-    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
     private View mSearchBackground;
     private SearchView mSearch;
     private ImageView mArrowImage;
