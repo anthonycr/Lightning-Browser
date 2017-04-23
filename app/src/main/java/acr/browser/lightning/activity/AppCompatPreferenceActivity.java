@@ -31,7 +31,11 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
-        super.onCreate(savedInstanceState);
+        try{
+            super.onCreate(savedInstanceState);
+        }catch (IllegalArgumentException e){
+            super.onCreate(null);
+        }
     }
 
     @Override

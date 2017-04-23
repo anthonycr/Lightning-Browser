@@ -71,7 +71,7 @@ public class ArticleNotificationService extends Service {
                         checkArticle();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG,e.getMessage());
                 }
             }
         }).start();
@@ -81,43 +81,51 @@ public class ArticleNotificationService extends Service {
     private void checkArticle() throws IOException {
         mUriBuilder.appendQueryParameter("user_id", mPreferenceManager.getUserId());
         String url = mUriBuilder.build().toString();
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        if (url.contains(BASE_ARTICLE_URL)){//This check due to a bug where the url failed to initialize successfully.
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
 
-        Response response = client.newCall(request).execute();
-        if (!response.isSuccessful()) {
-            return;
-        }
-        final Article article = new Gson().fromJson(response.body().charStream(), Article.class);
-        if (article == null || article.documents == null || article.documents.isEmpty()) {
-            return;
-        }
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                prepareNotification(article);
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful()) {
+                return;
             }
-        });
+            final Article article = new Gson().fromJson(response.body().charStream(), Article.class);
+            if (article == null || article.documents == null || article.documents.isEmpty()) {
+                return;
+            }
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    prepareNotification(article);
+                }
+            });
+        }
+
     }
 
     private void prepareNotification(final Article article) {
-        Picasso.with(context).load(article.getImageUrl()).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                showNotification(article, bitmap);
-            }
+        try{
+            Picasso.with(context).load(article.getImageUrl()).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    showNotification(article, bitmap);
+                }
 
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                showNotification(article, null);
-            }
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    showNotification(article, null);
+                }
 
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-            }
-        });
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            });
+        }catch (Exception e){
+            Log.w(TAG,"can't loading notfication image");
+        }
+
     }
 
     private void showNotification(Article article, Bitmap bitmap) {
