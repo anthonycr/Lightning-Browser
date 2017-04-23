@@ -97,5 +97,7 @@ public final class Constants {
 
     public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
     public static final String INTENT_ACTION_SEARCH = "intent_action_search";
+    public static final String INTENT_ACTION_WEB_SEARCH = "android.intent.action.WEB_SEARCH";
+
 
 }

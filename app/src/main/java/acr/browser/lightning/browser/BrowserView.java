@@ -40,4 +40,6 @@ public interface BrowserView {
     void showSearchNotification();
 
     void showSearch();
+
+    void showSearch(String searchText);
 }

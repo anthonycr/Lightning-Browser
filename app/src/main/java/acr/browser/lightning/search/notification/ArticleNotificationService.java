@@ -66,12 +66,12 @@ public class ArticleNotificationService extends Service {
         }
         new Thread(new Runnable() {
             public void run() {
-                if (Utils.isNetworkConnected(context)) {
-                    try {
+                try {
+                    if (Utils.isNetworkConnected(context)) {
                         checkArticle();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }).start();

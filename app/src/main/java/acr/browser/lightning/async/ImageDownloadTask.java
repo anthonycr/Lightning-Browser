@@ -92,6 +92,7 @@ public class ImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
             } catch (Exception ignored) {
                 Log.d(TAG, "Could not download: " + urlDisplay);
             } finally {
+
                 Utils.close(in);
                 Utils.close(fos);
             }

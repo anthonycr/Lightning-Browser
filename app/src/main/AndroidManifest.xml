@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright 2014 A.C.R. Development -->
-<manifest
+<manifest xmlns:tools="http://schemas.android.com/tools"
     package="acr.browser.lightning"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto">
@@ -77,6 +77,8 @@
                 <data android:scheme="about"/>
                 <data android:scheme="javascript"/>
             </intent-filter>
+
+
             <!--
                   For these schemes where any of these particular MIME types
                   have been supplied, we are a good candidate.
@@ -112,9 +114,18 @@
 
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-
+                <data android:scheme=""
+                    tools:ignore="GoogleAppIndexingUrlError" />
                 <data android:scheme="http"/>
                 <data android:scheme="https"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST"/>
+                <action android:name="android.intent.action.SEARCH"/>
+                <action android:name="android.intent.action.SEARCH_LONG_PRESS"/>
+                <action android:name="android.intent.action.WEB_SEARCH"/>
+                <action android:name="com.google.android.gms.actions.SEARCH_ACTION"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER"/>

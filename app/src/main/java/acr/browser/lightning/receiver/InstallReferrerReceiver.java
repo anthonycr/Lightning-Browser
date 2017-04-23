@@ -30,7 +30,12 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
         if (this==null || intent==null || context==null){
             return;
         }
-        BrowserApp.getAppComponent().inject(this);
+
+        if (BrowserApp.getAppComponent()!=null){
+            BrowserApp.getAppComponent().inject(this);
+        }
+
+
         Log.i(TAG, "Received referrer");
         try {
             String referrer = "";
@@ -45,21 +50,32 @@ public class InstallReferrerReceiver extends BroadcastReceiver {
                     rawReferrer = UTF8_STRRIP_SPACE.matcher(rawReferrer).replaceAll("%25");
                     rawReferrer = UTF8_STRRIP_PLUS.matcher(rawReferrer).replaceAll("%2B");
                     referrer = URLDecoder.decode(rawReferrer, "UTF-8");
-                    mPreferenceManager.setReferrer(referrer);
+                    if (mPreferenceManager!=null){
+                        mPreferenceManager.setReferrer(referrer);
+                    }
                 } else {
-                    mPreferenceManager.setReferrer(referrer);
+                    if (mPreferenceManager!=null) {
+                        mPreferenceManager.setReferrer(referrer);
+                    }
                 }
-                if (appId != null) {
-                    mPreferenceManager.setReferrerAppId(appId);
-                } else {
-                    mPreferenceManager.setReferrerAppId("");
+                if (mPreferenceManager!=null) {
+                    if (appId != null) {
+                        mPreferenceManager.setReferrerAppId(appId);
+                    } else {
+                        mPreferenceManager.setReferrerAppId("");
+                    }
                 }
+
             } else {
-                mPreferenceManager.setReferrer(referrer);
-                mPreferenceManager.setReferrerAppId(appId);
+                if (mPreferenceManager!=null) {
+                    mPreferenceManager.setReferrer(referrer);
+                    mPreferenceManager.setReferrerAppId(appId);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "ReferrerReceiver catch" + e.getMessage());
         }
+
+
     }
 }

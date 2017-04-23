@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -242,6 +243,10 @@ public class BrowserPresenter {
                         mView.showSearch();  //  from search notification
                     }
                     url = intent.getDataString();
+
+                    if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                        mView.showSearch(intent.getStringExtra(SearchManager.QUERY));
+                    }
                 } else {
                     url = null;
                 }

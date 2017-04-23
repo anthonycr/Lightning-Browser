@@ -3,9 +3,16 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'browser'
+            keyPassword 'Z6v34BLezngBG4oM'
+            storeFile file('D:/Dropbox/Mobitech/development/apk/keystore/keystore_browser_search.jks')
+            storePassword 'Z6v34BLezngBG4oM'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
-
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
@@ -18,13 +25,11 @@ android {
         }
         buildConfigField "String", "appKey", "\"TESTYHOC36B5A\""
     }
-
     sourceSets {
         lightningPlus.setRoot('src/LightningPlus')
         lightningLite.setRoot('src/LightningLite')
         dt.setRoot('src/dt')
     }
-
     buildTypes {
         debug {
             minifyEnabled false
@@ -32,15 +37,14 @@ android {
             multiDexEnabled true
             proguardFiles 'proguard-project.txt'
         }
-
         release {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
             proguardFiles 'proguard-project.txt'
+            signingConfig signingConfigs.config
         }
     }
-
     productFlavors {
         mobitech {
             buildConfigField "boolean", "FULL_VERSION", "true"
@@ -63,11 +67,9 @@ android {
 //            versionCode 102
 //        }
     }
-
     lintOptions {
         abortOnError true
     }
-
     packagingOptions {
         exclude '.readme'
     }
@@ -81,7 +83,6 @@ dexcount {
 }
 
 dependencies {
-
     // support libraries
     compile 'com.android.support:palette-v7:25.0.0'
     compile 'com.android.support:appcompat-v7:25.0.0'
@@ -90,50 +91,35 @@ dependencies {
     compile 'com.android.support:support-v4:25.0.0'
     compile 'ch.acra:acra:4.6.2'
     compile 'io.mobitech:reporting:1.0.4'
-
-
     // html parsing for reading mode
     compile 'org.jsoup:jsoup:1.9.2'
-
     // event bus
     compile 'com.squareup:otto:1.3.8'
-
     // dependency injection
     compile 'com.google.dagger:dagger:2.0.2'
     apt 'com.google.dagger:dagger-compiler:2.0.2'
     provided 'javax.annotation:jsr250-api:1.0'
-
     // view binding
     compile 'com.jakewharton:butterknife:7.0.1'
-
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
-
     // proxy support
     compile 'net.i2p.android:client:0.8'
-
     // Use the following code to update the libnetcipher submodule
     // git submodule foreach git reset --hard
     // git submodule update --remote
     compile project(':libnetcipher')
-
     compile project(':bonsai')
-
     compile project(':animated-progress-bar')
-
     // OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
-
     // Gson
     compile 'com.google.code.gson:gson:2.7'
-
     // Picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
-
     // memory leak analysis
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
-
     //User's Goggle Advertiser ID
-    compile 'com.google.android.gms:play-services-ads:8.1.0'
+    compile 'com.google.android.gms:play-services-ads:9.4.0'
 }

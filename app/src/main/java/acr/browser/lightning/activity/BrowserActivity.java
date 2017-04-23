@@ -6,6 +6,7 @@ package acr.browser.lightning.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -136,6 +137,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
+import static acr.browser.lightning.constant.Constants.INTENT_ACTION_WEB_SEARCH;
 import static acr.browser.lightning.constant.Constants.MOBITECH_APP_KEY;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
@@ -430,11 +432,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSearch.setOnEditorActionListener(search);
         mSearch.setOnTouchListener(search);
         mSearch.setOnPreFocusListener(search);
-        if(getIntent() != null && INTENT_ACTION_SEARCH.equals(getIntent().getStringExtra(INTENT_ACTION_SEARCH))) {
-            new Handler().postDelayed(new Runnable() {
+        //if got serch intent from Notification
+        Intent intent = getIntent();
+        if(intent != null && ((intent.getStringExtra(INTENT_ACTION_SEARCH)!=null && INTENT_ACTION_SEARCH.equalsIgnoreCase(intent.getStringExtra(INTENT_ACTION_SEARCH))) ||  INTENT_ACTION_WEB_SEARCH.equalsIgnoreCase(intent.getAction()))) {
+
+            mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    showSearch();
+                    showSearch(getIntent().getStringExtra(SearchManager.QUERY));
                 }
             }, 500);
         }
@@ -449,8 +454,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             WebIconDatabase.getInstance().open(getDir("icons", MODE_PRIVATE).getPath());
         }
 
-        @SuppressWarnings("VariableNotUsedInsideIf")
-        Intent intent = savedInstanceState == null ? getIntent() : null;
+        intent = savedInstanceState == null ? getIntent() : null;
 
         boolean launchedFromHistory = intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
 
@@ -476,10 +480,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void showSearch() {
+        showSearch("");
+    }
+
+    @Override
+    public void showSearch(String searchText){
         mSearch.requestFocusFromTouch();
-        mSearch.setText("");
+        mSearch.setText(searchText == null ? "" : searchText);
         KeyboardHelper.showKeyboard(this);
     }
+
 
     @IdRes
     private int getBookmarksFragmentViewId() {
@@ -1204,8 +1214,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    void handleNewIntent(Intent intent) {
+    void handleNewIntent(final Intent intent) {
         mPresenter.onNewIntent(intent);
+        if(intent != null && ((intent.getStringExtra(INTENT_ACTION_SEARCH)!=null && INTENT_ACTION_SEARCH.equalsIgnoreCase(intent.getStringExtra(INTENT_ACTION_SEARCH))) ||  INTENT_ACTION_WEB_SEARCH.equalsIgnoreCase(intent.getAction()))) {
+            final String query = intent.getExtras().getString(SearchManager.QUERY);
+            mDrawerHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showSearch(query);
+                }
+            }, 500);
+        }
     }
 
     @Override
@@ -2181,7 +2200,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         //show bookmark hint
         if(mPreferences.isFirstStart()) {
             openBookmarks();
-            new Handler().postDelayed(new Runnable() {
+            mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     closeBookmarksDrawer();
@@ -2199,7 +2218,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         //show tabs hint
         if (!mPreferences.isTabsHintShown() && mTabsManager.last()>1){
             openTabsDrawer();
-            new Handler().postDelayed(new Runnable() {
+            mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     closeTabsDrawer();

@@ -437,11 +437,16 @@ public final class Utils {
      * Checks if network is connected
      */
     public static boolean isNetworkConnected(@NonNull Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null) {
+                return false;
+            }
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnected();
+        }catch (Exception e){
             return false;
         }
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnected();
+
     }
 }
