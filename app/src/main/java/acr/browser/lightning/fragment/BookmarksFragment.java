@@ -56,6 +56,8 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, BookmarksView {
 
@@ -90,8 +92,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private final List<HistoryItem> mBookmarks = new ArrayList<>();
 
     // Views
-    private ListView mBookmarksListView;
-    private ImageView mBookmarkTitleImage, mBookmarkImage;
+    @Bind(R.id.right_drawer_list) ListView mBookmarksListView;
+    @Bind(R.id.starIcon) ImageView mBookmarkTitleImage;
+    @Bind(R.id.icon_star) ImageView mBookmarkImage;
 
     // Colors
     private int mIconColor, mScrollIndex;
@@ -126,7 +129,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mWebpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
-                ThemeUtils.getIconLightThemeColor(context);
+            ThemeUtils.getIconLightThemeColor(context);
 
         mFaviconModel = new FaviconModel();
     }
@@ -173,12 +176,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
-        mBookmarksListView = (ListView) view.findViewById(R.id.right_drawer_list);
+        ButterKnife.bind(this, view);
         mBookmarksListView.setOnItemClickListener(mItemClickListener);
         mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
-        mBookmarkTitleImage = (ImageView) view.findViewById(R.id.starIcon);
         mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
-        mBookmarkImage = (ImageView) view.findViewById(R.id.icon_star);
         final View backView = view.findViewById(R.id.bookmark_back_button);
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,14 +196,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
         initBookmarkManager().subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<BookmarkViewAdapter>() {
-                    @Override
-                    public void onItem(@Nullable BookmarkViewAdapter item) {
-                        mBookmarksListView.setAdapter(mBookmarkAdapter);
-                    }
-                });
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<BookmarkViewAdapter>() {
+                @Override
+                public void onItem(@Nullable BookmarkViewAdapter item) {
+                    mBookmarksListView.setAdapter(mBookmarkAdapter);
+                }
+            });
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     @Override
@@ -226,7 +233,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mWebpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme);
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
-                ThemeUtils.getIconLightThemeColor(activity);
+            ThemeUtils.getIconLightThemeColor(activity);
 
         mFaviconModel = new FaviconModel();
     }
@@ -407,20 +414,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 final WeakReference<ImageView> imageViewReference = new WeakReference<>(holder.favicon);
 
                 mFaviconModel.faviconForUrl(url, mWebpageBitmap, true)
-                        .subscribeOn(Schedulers.worker())
-                        .observeOn(Schedulers.main())
-                        .subscribe(new SingleOnSubscribe<Bitmap>() {
-                            @Override
-                            public void onItem(@Nullable Bitmap item) {
-                                ImageView imageView = imageViewReference.get();
-                                Object tag = imageView != null ? imageView.getTag() : null;
-                                if (tag != null && tag.equals(url.hashCode())) {
-                                    imageView.setImageBitmap(item);
-                                }
-
-                                web.setBitmap(item);
+                    .subscribeOn(Schedulers.worker())
+                    .observeOn(Schedulers.main())
+                    .subscribe(new SingleOnSubscribe<Bitmap>() {
+                        @Override
+                        public void onItem(@Nullable Bitmap item) {
+                            ImageView imageView = imageViewReference.get();
+                            Object tag = imageView != null ? imageView.getTag() : null;
+                            if (tag != null && tag.equals(url.hashCode())) {
+                                imageView.setImageBitmap(item);
                             }
-                        });
+
+                            web.setBitmap(item);
+                        }
+                    });
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }

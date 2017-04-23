@@ -45,10 +45,6 @@ import acr.browser.lightning.utils.Utils;
  */
 public class BrowserDialog {
 
-    public interface Listener {
-        void onClick();
-    }
-
     public interface EditorListener {
         void onClick(String text);
     }
@@ -58,12 +54,12 @@ public class BrowserDialog {
         private final int mTitle;
         private boolean mCondition = true;
 
-        public Item(@StringRes int title, boolean condition) {
+        Item(@StringRes int title, boolean condition) {
             this(title);
             mCondition = condition;
         }
 
-        public Item(@StringRes int title) {
+        protected Item(@StringRes int title) {
             mTitle = title;
         }
 
