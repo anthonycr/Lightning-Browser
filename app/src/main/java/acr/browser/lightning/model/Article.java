@@ -16,7 +16,7 @@ public class Article {
     }
 
     public String getText() {
-        return getDocument().author + (getDocument().promoted ? getDocument().promotedText : "");
+        return getDocument().author + (getDocument().promoted ? (" " + getDocument().promotedText) : "");
     }
 
     public Document getDocument() {

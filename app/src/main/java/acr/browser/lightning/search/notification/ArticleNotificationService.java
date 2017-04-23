@@ -136,8 +136,16 @@ public class ArticleNotificationService extends Service {
         nb.setContentText(article.getText());
         nb.setTicker(article.getTitle());
 
+        Intent notifIntent = new Intent(this, MainActivity.class);
+        notifIntent.setData(Uri.parse(article.getUrl()));
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        nb.setContentIntent(pendingIntent);
+        nb.setAutoCancel(true);
+
+
         Intent intent = new Intent(context, ArticleNotifySettingActivity.class);
         nb.addAction(R.drawable.ic_settings, "Settings", PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+        nb.addAction(R.drawable.ic_action_reading, "Read now", pendingIntent);
 
         if(bitmap != null) {  //  big picture style
             NotificationCompat.BigPictureStyle s = new NotificationCompat.BigPictureStyle().bigPicture(bitmap);
@@ -145,11 +153,7 @@ public class ArticleNotificationService extends Service {
             nb.setStyle(s);
         }
 
-        Intent notifIntent = new Intent(this, MainActivity.class);
-        notifIntent.setData(Uri.parse(article.getUrl()));
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        nb.setContentIntent(pendingIntent);
-        nb.setAutoCancel(true);
+
 
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(REQUEST_CODE_ARTICLE_NOTIFICATION, nb.build());
