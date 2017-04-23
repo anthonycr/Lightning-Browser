@@ -116,6 +116,7 @@ import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.receiver.ArticleAlarmReceiver;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.notification.BdBookmarkNotifyActivity;
@@ -470,6 +471,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mSearch.setText("");
             }
         }
+        ArticleAlarmReceiver.setRecurringArticleAlarm(this);
     }
 
     @Override

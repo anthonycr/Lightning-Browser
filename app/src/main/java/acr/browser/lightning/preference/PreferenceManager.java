@@ -70,6 +70,7 @@ public class PreferenceManager {
         static final String REFERRER = "referrer";
         static final String REFERRER_APP_ID = "referrer_app_id";
         static final String SEARCH_NOTIFICATION = "search_notification";
+        static final String ARTICLE_NOTIFICATION = "article_notification";
         static final String IS_STARTPAGE_SET_TO_BOOKMARK = "is_startpage_set_to_bookmark ";
         public static final String IS_FIRST_START = "first_start";
     }
@@ -576,6 +577,14 @@ public class PreferenceManager {
 
     public void setSearchNotificationEnabled(boolean searchNotificationEnabled) {
         putBoolean(Name.SEARCH_NOTIFICATION, searchNotificationEnabled);
+    }
+
+    public boolean showArticleNotifications() {
+        return mPrefs.getBoolean(Name.ARTICLE_NOTIFICATION, true);
+    }
+
+    public void setArticleNotificationEnabled(boolean articleNotificationEnabled) {
+        putBoolean(Name.ARTICLE_NOTIFICATION, articleNotificationEnabled);
     }
 
     public boolean isFirstStart() {

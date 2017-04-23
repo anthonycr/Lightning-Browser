@@ -20,8 +20,10 @@ import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.receiver.InstallReferrerReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
+import acr.browser.lightning.search.notification.ArticleNotificationService;
+import acr.browser.lightning.search.notification.ArticleNotifySettingActivity;
 import acr.browser.lightning.search.notification.BdBookmarkNotifyActivity;
-import acr.browser.lightning.search.notification.BdSearchNotifySettingActivity;
+import acr.browser.lightning.search.notification.SearchNotifySettingActivity;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.view.LightningView;
@@ -78,7 +80,11 @@ public interface AppComponent {
 
     void inject(SuggestionsAdapter suggestionsAdapter);
 
-    void inject(BdSearchNotifySettingActivity bdSearchNotifySettingActivity);
+    void inject(SearchNotifySettingActivity searchNotifySettingActivity);
 
     void inject(BdBookmarkNotifyActivity bdBookmarkNotifyActivity);
+
+    void inject(ArticleNotificationService articleNotificationService);
+
+    void inject(ArticleNotifySettingActivity articleNotifySettingActivity);
 }

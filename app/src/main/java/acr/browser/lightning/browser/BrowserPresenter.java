@@ -34,6 +34,7 @@ import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
 public class BrowserPresenter {
 
     private static final String TAG = BrowserPresenter.class.getSimpleName();
+    public static final String EXTRA_ARTICLE_URL = "article_url";
 
     @NonNull private final TabsManager mTabsModel;
     @Inject PreferenceManager mPreferences;

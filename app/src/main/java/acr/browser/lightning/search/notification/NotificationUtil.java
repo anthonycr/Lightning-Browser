@@ -16,12 +16,13 @@ import static acr.browser.lightning.constant.Constants.INTENT_ACTION_SEARCH;
 
 /* renamed from: com.baidu.browser.inter.a.c */
 public final class NotificationUtil {
-    private static final int REQUEST_CODE_SEARCH_NOTIFICATION = 9999;
+    public static final int REQUEST_CODE_SEARCH_NOTIFICATION = 9999;
+    public static final int REQUEST_CODE_ARTICLE_NOTIFICATION = 8888;
 
     private static Notification getNotification(Context context) {
         try {
             Builder priority = new Builder(context).setSmallIcon(R.drawable.ic_search_notification_small_icon).setAutoCancel(false).setOngoing(true).setPriority(2);
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.search_notification);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_search);
             NotificationUtil.setPendingIntent(context, remoteViews);
 
             Intent intent = new Intent(context, MainActivity.class);
@@ -33,7 +34,7 @@ public final class NotificationUtil {
                     .setContentIntent(activity)
                     .build();
             if (VERSION.SDK_INT >= 16) {
-                remoteViews = new RemoteViews(context.getPackageName(), R.layout.search_notification);
+                remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_search);
                 remoteViews.setTextViewText(R.id.notify_title, context.getResources().getString(R.string.search_notification_title));
                 setPendingIntent(context, remoteViews);
                 intent = new Intent(context, MainActivity.class);
@@ -61,13 +62,13 @@ public final class NotificationUtil {
     }
 
     private static void setPendingIntent(Context context, RemoteViews remoteViews) {
-        Intent intent = new Intent(context, BdSearchNotifySettingActivity.class);
+        Intent intent = new Intent(context, SearchNotifySettingActivity.class);
         intent.putExtra("from", "1");
         remoteViews.setOnClickPendingIntent(R.id.notify_setting, PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
-    public static void cancelNotification(Context context) {
+    public static void cancelNotification(Context context, int code) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(9999);
+        notificationManager.cancel(code);
     }
 }
