@@ -61,6 +61,17 @@ import butterknife.Unbinder;
  */
 public class TabsFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, TabsView {
 
+    @NonNull
+    public static TabsFragment createTabsFragment(boolean isIncognito, boolean showTabsInDrawer) {
+        TabsFragment tabsFragment = new TabsFragment();
+        final Bundle tabsFragmentArguments = new Bundle();
+        tabsFragmentArguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito);
+        tabsFragmentArguments.putBoolean(TabsFragment.VERTICAL_MODE, showTabsInDrawer);
+        tabsFragment.setArguments(tabsFragmentArguments);
+
+        return tabsFragment;
+    }
+
     private static final String TAG = TabsFragment.class.getSimpleName();
 
     /**

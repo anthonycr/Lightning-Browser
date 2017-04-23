@@ -32,6 +32,7 @@ import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.SingleSubscriber;
+import com.anthonycr.bonsai.Subscription;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -45,7 +46,6 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.constant.Constants;
@@ -53,6 +53,7 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
+import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
@@ -61,6 +62,16 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class BookmarksFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, BookmarksView {
+
+    @NonNull
+    public static BookmarksFragment createFragment(boolean isIncognito) {
+        BookmarksFragment bookmarksFragment = new BookmarksFragment();
+        final Bundle bookmarksFragmentArguments = new Bundle();
+        bookmarksFragmentArguments.putBoolean(BookmarksFragment.INCOGNITO_MODE, isIncognito);
+        bookmarksFragment.setArguments(bookmarksFragmentArguments);
+
+        return bookmarksFragment;
+    }
 
     private final static String TAG = BookmarksFragment.class.getSimpleName();
 
@@ -96,12 +107,17 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @BindView(R.id.right_drawer_list) ListView mBookmarksListView;
     @BindView(R.id.starIcon) ImageView mBookmarkTitleImage;
     @BindView(R.id.icon_star) ImageView mBookmarkImage;
+
+    @Nullable
     private Unbinder mUnbinder;
 
     // Colors
     private int mIconColor, mScrollIndex;
 
     private boolean mIsIncognito;
+
+    @Nullable
+    private Subscription mBookmarksSubscription;
 
     private Single<BookmarkViewAdapter> initBookmarkManager() {
         return Single.create(new SingleAction<BookmarkViewAdapter>() {
@@ -197,11 +213,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
-        initBookmarkManager().subscribeOn(Schedulers.io())
+        mBookmarksSubscription = initBookmarkManager().subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
             .subscribe(new SingleOnSubscribe<BookmarkViewAdapter>() {
                 @Override
                 public void onItem(@Nullable BookmarkViewAdapter item) {
+                    mBookmarksSubscription = null;
                     mBookmarksListView.setAdapter(mBookmarkAdapter);
                 }
             });
@@ -211,9 +228,22 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mBookmarksSubscription != null) {
+            mBookmarksSubscription.unsubscribe();
+            mBookmarksSubscription = null;
+        }
         if (mUnbinder != null) {
             mUnbinder.unbind();
             mUnbinder = null;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mBookmarksSubscription != null) {
+            mBookmarksSubscription.unsubscribe();
+            mBookmarksSubscription = null;
         }
     }
 
@@ -382,7 +412,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
         final Context context;
 
-        public BookmarkViewAdapter(Context context, @NonNull List<HistoryItem> data) {
+        BookmarkViewAdapter(Context context, @NonNull List<HistoryItem> data) {
             super(context, R.layout.bookmark_list_item, data);
             this.context = context;
         }
