@@ -1,6 +1,7 @@
 package acr.browser.lightning.search.notification;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,12 @@ public class BdBookmarkNotifyActivity extends Activity implements View.OnClickLi
         super.onCreate(bundle);
         requestWindowFeature(1);
         setContentView(R.layout.dialog_bookmark_drag);
+        Intent intent = getIntent();
+        if (null != intent) { //Null Checking
+            String title= intent.getStringExtra("title");
+            ((TextView) findViewById(R.id.title)).setText(title);
+
+        }
         //((LinearLayout) findViewById(R.id.content_panel)).addView(new C1556r(getApplicationContext()));   //  gif
         ((Button) findViewById(R.id.dialog_ok)).setOnClickListener(this);
         ((TextView) findViewById(R.id.persist_notification_close_id)).setOnClickListener(this);

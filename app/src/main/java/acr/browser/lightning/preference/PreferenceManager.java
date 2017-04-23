@@ -73,6 +73,7 @@ public class PreferenceManager {
         static final String ARTICLE_NOTIFICATION = "article_notification";
         static final String IS_STARTPAGE_SET_TO_BOOKMARK = "is_startpage_set_to_bookmark ";
         public static final String IS_FIRST_START = "first_start";
+        public static final String IS_TABS_HINT_SHOWN = "is_tabs_hint_shown";
     }
 
     public enum Suggestion {
@@ -593,5 +594,13 @@ public class PreferenceManager {
 
     public void setFirstStart(boolean firstStart) {
         putBoolean(Name.IS_FIRST_START, firstStart);
+    }
+
+    public boolean isTabsHintShown() {
+        return mPrefs.getBoolean(Name.IS_TABS_HINT_SHOWN, false);
+    }
+
+    public void setIsTabsHintShown(boolean isTabsHintShown) {
+        putBoolean(Name.IS_TABS_HINT_SHOWN, isTabsHintShown);
     }
 }

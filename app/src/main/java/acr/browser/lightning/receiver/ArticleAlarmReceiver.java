@@ -18,7 +18,7 @@ public class ArticleAlarmReceiver extends BroadcastReceiver {
 
     public static void setRecurringArticleAlarm(Context context) {
         Calendar updateTime = Calendar.getInstance();
-        updateTime.set(Calendar.HOUR_OF_DAY, 14);
+        updateTime.set(Calendar.HOUR_OF_DAY, 15);
 
         Intent downloader = new Intent(context, ArticleAlarmReceiver.class);
         PendingIntent recurringIntent = PendingIntent.getBroadcast(context, 0, downloader,

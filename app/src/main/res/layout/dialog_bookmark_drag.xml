@@ -51,7 +51,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="12.0dip"
                     android:gravity="center"
-                    android:text="@string/bookmark_callout_dialog_text"
+                    android:text=""
                     android:textColor="@color/divider_search_notification_dialog_title"
                     android:textSize="17.0sp" />
 
@@ -64,8 +64,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_bookmark"
-                        />
+                        android:src="@drawable/bookmark_swipe" />
                     </LinearLayout>
             </LinearLayout>
         </ScrollView>

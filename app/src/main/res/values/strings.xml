@@ -269,5 +269,6 @@
     <string name="disable">Disable</string>
     <string name="keep">Keep it</string>
     <string name="bookmark_callout_dialog_text">Easy bookmark access</string>
+    <string name="tabs_callout_dialog_text">Easy tabs access</string>
 
 </resources>

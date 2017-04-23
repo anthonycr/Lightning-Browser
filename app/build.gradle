@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
-        versionName "4.8.2"
-        versionCode 108
+        versionName "4.9.1"
+        versionCode 110
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         configurations {
@@ -135,5 +135,5 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
 
     //User's Goggle Advertiser ID
-    compile 'com.google.android.gms:play-services-ads:9.4.0'
+    compile 'com.google.android.gms:play-services-ads:8.1.0'
 }

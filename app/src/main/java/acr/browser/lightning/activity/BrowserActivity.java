@@ -1920,6 +1920,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mDrawerLayout.closeDrawer(getBookmarkDrawer());
     }
 
+    public void closeTabsDrawer(){
+        mDrawerLayout.closeDrawer(getTabDrawer());
+    }
+
+    public void openTabsDrawer(){
+        mDrawerLayout.openDrawer(getTabDrawer());
+    }
+
+
+
     @Override
     public void onHideCustomView() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
@@ -2168,20 +2178,40 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      */
     @Override
     public void peekDrawer() {
-        if(!mPreferences.isFirstStart()) {
-            return;
+        //show bookmark hint
+        if(mPreferences.isFirstStart()) {
+            openBookmarks();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    closeBookmarksDrawer();
+                    Intent intent = new Intent(BrowserActivity.this, BdBookmarkNotifyActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title","" + getText(R.string.bookmark_callout_dialog_text));
+                    intent.putExtras(bundle);
+
+                    BrowserActivity.this.startActivity(intent);
+                    mPreferences.setFirstStart(false);
+                }
+            }, (long) (2 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
         }
-        openBookmarks();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                closeBookmarksDrawer();
-                Intent intent = new Intent(BrowserActivity.this, BdBookmarkNotifyActivity.class);
-                BrowserActivity.this.startActivity(intent);
-                mPreferences.setFirstStart(false);
-            }
-        }, (long) (2 * DateUtils.SECOND_IN_MILLIS)); //   change to however many seconds you wish to display the hint for
+
+        //show tabs hint
+        if (!mPreferences.isTabsHintShown() && mTabsManager.last()>1){
+            openTabsDrawer();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    closeTabsDrawer();
+                    Intent intent = new Intent(BrowserActivity.this, BdBookmarkNotifyActivity.class);
+                    intent.putExtra("title","" + getText(R.string.tabs_callout_dialog_text));
+                    BrowserActivity.this.startActivity(intent);
+                    mPreferences.setIsTabsHintShown(true);
+                }
+            }, (long) (2 * DateUtils.SECOND_IN_MILLIS));
+        }
     }
+
 
     /**
      * Performs an action when the provided view is laid out.
