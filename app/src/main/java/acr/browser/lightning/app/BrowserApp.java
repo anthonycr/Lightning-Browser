@@ -33,6 +33,7 @@ import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.MemoryLeakUtils;
+import acr.browser.lightning.utils.Utils;
 import io.mobitech.commonlibrary.analytics.AnalyticsService;
 import io.mobitech.commonlibrary.analytics.IEventCallback;
 import io.mobitech.commonlibrary.model.HttpResponse;
@@ -159,7 +160,7 @@ public class BrowserApp extends Application {
 
         @Override
         protected String doInBackground(String... args) {
-
+            Utils.createAppShortcut(BrowserApp.this);
             //init bug and error reporting
             ACRA.init(BrowserApp.this);
             ACRAConfiguration conf = new ACRAConfiguration();

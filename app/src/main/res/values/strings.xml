@@ -271,4 +271,9 @@
     <string name="bookmark_callout_dialog_text">Easy bookmark access</string>
     <string name="tabs_callout_dialog_text">Easy tabs access</string>
 
+    <!-- search everywhere -->
+    <string name="accessibility_service_label">*Search from screen*</string>
+    <string name="accessibility_service_description">Enable to search directly from any app. Just click the word.</string>
+    <string name="accessibility_service_msg">You will redirected to enable the *Search from screen* feature.  Make sure you enable the *Search from screen* item</string>
+
 </resources>

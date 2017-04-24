@@ -49,6 +49,7 @@ import java.util.Date;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
+import acr.browser.lightning.activity.SplashActivity;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -447,6 +448,22 @@ public final class Utils {
         }catch (Exception e){
             return false;
         }
+
+    }
+
+    public static void createAppShortcut(Context context) {
+
+        Intent shortcutIntent = new Intent(context, SplashActivity.class);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.app_name));
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher));
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        addIntent.putExtra("duplicate", false);
+        context.sendBroadcast(addIntent);
 
     }
 }
