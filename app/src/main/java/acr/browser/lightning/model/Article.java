@@ -16,7 +16,11 @@ public class Article {
     }
 
     public String getText() {
-        return getDocument().author + (getDocument().promoted ? (" " + getDocument().promotedText) : "");
+        String author = "" + getDocument().author;
+        if ("null".equalsIgnoreCase(author)){
+            author = "";
+        }
+        return author + (getDocument().promoted ? (" " + getDocument().promotedText) : "");
     }
 
     public Document getDocument() {

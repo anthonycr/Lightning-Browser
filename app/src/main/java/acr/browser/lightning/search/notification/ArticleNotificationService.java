@@ -72,6 +72,8 @@ public class ArticleNotificationService extends Service {
                     }
                 } catch (Exception e) {
                     Log.e(TAG,e.getMessage());
+                }catch (ExceptionInInitializerError e){
+                    Log.w(TAG,"can't loading notfication image");
                 }
             }
         }).start();
@@ -98,7 +100,14 @@ public class ArticleNotificationService extends Service {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    prepareNotification(article);
+                    try{
+                        prepareNotification(article);
+                    }catch (Exception e){
+                        Log.w(TAG,"can't loading notfication image");
+                    }catch (ExceptionInInitializerError e){
+                        Log.w(TAG,"can't loading notfication image");
+                    }
+
                 }
             });
         }
@@ -110,12 +119,24 @@ public class ArticleNotificationService extends Service {
             Picasso.with(context).load(article.getImageUrl()).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    showNotification(article, bitmap);
+                    try{
+                        showNotification(article, bitmap);
+                    }catch (Exception e){
+                        Log.w(TAG,"can't loading notfication image");
+                    }catch (ExceptionInInitializerError e){
+                        Log.w(TAG,"can't loading notfication image");
+                    }
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    showNotification(article, null);
+                    try{
+                        showNotification(article, null);
+                    }catch (Exception e){
+                        Log.w(TAG,"can't loading notfication image");
+                    }catch (ExceptionInInitializerError e){
+                        Log.w(TAG,"can't loading notfication image");
+                    }
                 }
 
                 @Override
@@ -123,6 +144,8 @@ public class ArticleNotificationService extends Service {
                 }
             });
         }catch (Exception e){
+            Log.w(TAG,"can't loading notfication image");
+        }catch (ExceptionInInitializerError e){
             Log.w(TAG,"can't loading notfication image");
         }
 
