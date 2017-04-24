@@ -147,29 +147,41 @@ public class AdBlock {
                     //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
                         asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
+                    StringBuilder lineBuilder = new StringBuilder();
                     String line;
+                    long time = System.currentTimeMillis();
+                    // TODO: 4/23/17 Improve performance by reading in on IO thread and then processing on worker thread
                     while ((line = reader.readLine()) != null) {
-                        if (!line.isEmpty() && !line.startsWith(COMMENT)) {
-                            line = line.replace(LOCAL_IP_V4, EMPTY)
-                                .replace(LOCAL_IP_V4_ALT, EMPTY)
-                                .replace(LOCAL_IP_V6, EMPTY)
-                                .replace(TAB, EMPTY);
-                            int comment = line.indexOf(COMMENT);
+                        lineBuilder.append(line);
+
+                        if (!isEmpty(lineBuilder) && !startsWith(lineBuilder, COMMENT)) {
+                            replace(lineBuilder, LOCAL_IP_V4, EMPTY);
+                            replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY);
+                            replace(lineBuilder, LOCAL_IP_V6, EMPTY);
+                            replace(lineBuilder, TAB, EMPTY);
+
+                            int comment = lineBuilder.indexOf(COMMENT);
                             if (comment >= 0) {
-                                line = line.substring(0, comment);
+                                lineBuilder.replace(comment, lineBuilder.length(), EMPTY);
                             }
-                            line = line.trim();
-                            if (!line.isEmpty() && !line.equals(LOCALHOST)) {
-                                while (line.contains(SPACE)) {
-                                    int space = line.indexOf(SPACE);
-                                    String host = line.substring(0, space);
+
+                            trim(lineBuilder);
+
+                            if (!isEmpty(lineBuilder) && !AdBlock.equals(lineBuilder, LOCALHOST)) {
+                                while (contains(lineBuilder, SPACE)) {
+                                    int space = lineBuilder.indexOf(SPACE);
+                                    String host = lineBuilder.substring(0, space);
+                                    replace(lineBuilder, host, EMPTY);
                                     mBlockedDomainsList.add(host.trim());
-                                    line = line.substring(space, line.length()).trim();
                                 }
-                                mBlockedDomainsList.add(line.trim());
+                                if (lineBuilder.length() > 0) {
+                                    mBlockedDomainsList.add(lineBuilder.toString());
+                                }
                             }
                         }
+                        lineBuilder.setLength(0);
                     }
+                    Log.d(TAG, "Loaded ad list in: " + (System.currentTimeMillis() - time) + " ms");
                 } catch (IOException e) {
                     Log.wtf(TAG, "Reading blocked domains list from file '"
                         + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
@@ -178,5 +190,42 @@ public class AdBlock {
                 }
             }
         });
+    }
+
+    // TODO: 4/23/17 Move all these methods to a StringUtils class
+    private static void replace(@NonNull StringBuilder stringBuilder,
+                                @NonNull String toReplace,
+                                @NonNull String replacement) {
+        int index = stringBuilder.indexOf(toReplace);
+        if (index >= 0) {
+            stringBuilder.replace(index, index + toReplace.length(), replacement);
+        }
+    }
+
+    private static void trim(@NonNull StringBuilder stringBuilder) {
+        while (stringBuilder.indexOf(SPACE) == 0) {
+            stringBuilder.replace(0, 1, EMPTY);
+        }
+
+        while (stringBuilder.lastIndexOf(SPACE) == (stringBuilder.length() - 1)) {
+            stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), EMPTY);
+        }
+    }
+
+    private static boolean isEmpty(@NonNull StringBuilder stringBuilder) {
+        return stringBuilder.length() == 0;
+    }
+
+    private static boolean startsWith(@NonNull StringBuilder stringBuilder, @NonNull String start) {
+        return stringBuilder.indexOf(start) == 0;
+    }
+
+    private static boolean contains(@NonNull StringBuilder stringBuilder, @NonNull String contains) {
+        return stringBuilder.indexOf(contains) >= 0;
+    }
+
+    private static boolean equals(@NonNull StringBuilder stringBuilder, @NonNull String equal) {
+        int index = stringBuilder.indexOf(equal);
+        return index >= 0 && stringBuilder.length() == equal.length();
     }
 }
