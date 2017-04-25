@@ -154,24 +154,26 @@ public class AdBlock {
                     while ((line = reader.readLine()) != null) {
                         lineBuilder.append(line);
 
-                        if (!isEmpty(lineBuilder) && !startsWith(lineBuilder, COMMENT)) {
-                            replace(lineBuilder, LOCAL_IP_V4, EMPTY);
-                            replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY);
-                            replace(lineBuilder, LOCAL_IP_V6, EMPTY);
-                            replace(lineBuilder, TAB, EMPTY);
+                        if (!StringBuilderUtils.isEmpty(lineBuilder) &&
+                            !StringBuilderUtils.startsWith(lineBuilder, COMMENT)) {
+                            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4, EMPTY);
+                            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY);
+                            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V6, EMPTY);
+                            StringBuilderUtils.replace(lineBuilder, TAB, EMPTY);
 
                             int comment = lineBuilder.indexOf(COMMENT);
                             if (comment >= 0) {
                                 lineBuilder.replace(comment, lineBuilder.length(), EMPTY);
                             }
 
-                            trim(lineBuilder);
+                            StringBuilderUtils.trim(lineBuilder);
 
-                            if (!isEmpty(lineBuilder) && !AdBlock.equals(lineBuilder, LOCALHOST)) {
-                                while (contains(lineBuilder, SPACE)) {
+                            if (!StringBuilderUtils.isEmpty(lineBuilder) &&
+                                !StringBuilderUtils.equals(lineBuilder, LOCALHOST)) {
+                                while (StringBuilderUtils.contains(lineBuilder, SPACE)) {
                                     int space = lineBuilder.indexOf(SPACE);
                                     String host = lineBuilder.substring(0, space);
-                                    replace(lineBuilder, host, EMPTY);
+                                    StringBuilderUtils.replace(lineBuilder, host, EMPTY);
                                     mBlockedDomainsList.add(host.trim());
                                 }
                                 if (lineBuilder.length() > 0) {
@@ -192,40 +194,4 @@ public class AdBlock {
         });
     }
 
-    // TODO: 4/23/17 Move all these methods to a StringUtils class
-    private static void replace(@NonNull StringBuilder stringBuilder,
-                                @NonNull String toReplace,
-                                @NonNull String replacement) {
-        int index = stringBuilder.indexOf(toReplace);
-        if (index >= 0) {
-            stringBuilder.replace(index, index + toReplace.length(), replacement);
-        }
-    }
-
-    private static void trim(@NonNull StringBuilder stringBuilder) {
-        while (stringBuilder.indexOf(SPACE) == 0) {
-            stringBuilder.replace(0, 1, EMPTY);
-        }
-
-        while (stringBuilder.lastIndexOf(SPACE) == (stringBuilder.length() - 1)) {
-            stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), EMPTY);
-        }
-    }
-
-    private static boolean isEmpty(@NonNull StringBuilder stringBuilder) {
-        return stringBuilder.length() == 0;
-    }
-
-    private static boolean startsWith(@NonNull StringBuilder stringBuilder, @NonNull String start) {
-        return stringBuilder.indexOf(start) == 0;
-    }
-
-    private static boolean contains(@NonNull StringBuilder stringBuilder, @NonNull String contains) {
-        return stringBuilder.indexOf(contains) >= 0;
-    }
-
-    private static boolean equals(@NonNull StringBuilder stringBuilder, @NonNull String equal) {
-        int index = stringBuilder.indexOf(equal);
-        return index >= 0 && stringBuilder.length() == equal.length();
-    }
 }
