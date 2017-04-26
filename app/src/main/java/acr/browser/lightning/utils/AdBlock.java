@@ -1,10 +1,14 @@
 package acr.browser.lightning.utils;
 
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+import com.anthonycr.bonsai.Schedulers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,41 +44,16 @@ public class AdBlock {
     @Inject PreferenceManager mPreferenceManager;
 
     @Inject
-    public AdBlock(@NonNull Context context) {
+    public AdBlock() {
         BrowserApp.getAppComponent().inject(this);
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
-            loadHostsFile(context);
+            loadHostsFile().subscribeOn(Schedulers.io()).subscribe();
         }
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
     }
 
     public void updatePreference() {
         mBlockAds = mPreferenceManager.getAdBlockEnabled();
-    }
-
-    private void loadBlockedDomainsList(@NonNull final Context context) {
-        BrowserApp.getIOThread().execute(new Runnable() {
-
-            @Override
-            public void run() {
-                AssetManager asset = context.getAssets();
-                BufferedReader reader = null;
-                try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
-                    reader = new BufferedReader(new InputStreamReader(
-                        asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        mBlockedDomainsList.add(line.trim());
-                    }
-                } catch (IOException e) {
-                    Log.wtf(TAG, "Reading blocked domains list from file '"
-                        + BLOCKED_DOMAINS_LIST_FILE_NAME + "' failed.", e);
-                } finally {
-                    Utils.close(reader);
-                }
-            }
-        });
     }
 
     /**
@@ -128,20 +107,20 @@ public class AdBlock {
     }
 
     /**
-     * This method reads through a hosts file and extracts the domains that should
+     * This Completable reads through a hosts file and extracts the domains that should
      * be redirected to localhost (a.k.a. IP address 127.0.0.1). It can handle files that
-     * simply have a list of hostnames to block, or it can handle a full blown hosts file.
+     * simply have a list of host names to block, or it can handle a full blown hosts file.
      * It will strip out comments, references to the base IP address and just extract the
-     * domains to be used
+     * domains to be used.
      *
-     * @param context the context needed to read the file
+     * @return a Completable that will load the hosts file into memory.
      */
-    private void loadHostsFile(@NonNull final Context context) {
-        BrowserApp.getIOThread().execute(new Runnable() {
-
+    @NonNull
+    private Completable loadHostsFile() {
+        return Completable.create(new CompletableAction() {
             @Override
-            public void run() {
-                AssetManager asset = context.getAssets();
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                AssetManager asset = BrowserApp.getApplication().getAssets();
                 BufferedReader reader = null;
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed
@@ -150,7 +129,7 @@ public class AdBlock {
                     StringBuilder lineBuilder = new StringBuilder();
                     String line;
                     long time = System.currentTimeMillis();
-                    // TODO: 4/23/17 Improve performance by reading in on IO thread and then processing on worker thread
+
                     while ((line = reader.readLine()) != null) {
                         lineBuilder.append(line);
 
@@ -172,9 +151,13 @@ public class AdBlock {
                                 !StringBuilderUtils.equals(lineBuilder, LOCALHOST)) {
                                 while (StringBuilderUtils.contains(lineBuilder, SPACE)) {
                                     int space = lineBuilder.indexOf(SPACE);
-                                    String host = lineBuilder.substring(0, space);
-                                    StringBuilderUtils.replace(lineBuilder, host, EMPTY);
-                                    mBlockedDomainsList.add(host.trim());
+                                    StringBuilder partial = StringBuilderUtils.substring(lineBuilder, 0, space);
+                                    StringBuilderUtils.trim(partial);
+
+                                    String partialLine = partial.toString();
+                                    mBlockedDomainsList.add(partialLine);
+                                    StringBuilderUtils.replace(lineBuilder, partialLine, EMPTY);
+                                    StringBuilderUtils.trim(lineBuilder);
                                 }
                                 if (lineBuilder.length() > 0) {
                                     mBlockedDomainsList.add(lineBuilder.toString());

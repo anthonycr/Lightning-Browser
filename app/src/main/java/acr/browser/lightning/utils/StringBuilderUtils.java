@@ -96,4 +96,23 @@ public class StringBuilderUtils {
         int index = stringBuilder.indexOf(equal);
         return index >= 0 && stringBuilder.length() == equal.length();
     }
+
+    /**
+     * Creates a sub-string builder from the
+     * current string builder.
+     *
+     * @param stringBuilder the string builder.
+     * @param start         the starting index.
+     * @param end           the ending index.
+     * @return a string builder that contains the
+     * characters between the indices.
+     */
+    @NonNull
+    public static StringBuilder substring(@NonNull StringBuilder stringBuilder, int start, int end) {
+        StringBuilder newStringBuilder = new StringBuilder(stringBuilder);
+        newStringBuilder.replace(end, stringBuilder.length(), EMPTY);
+        newStringBuilder.replace(0, start, EMPTY);
+
+        return newStringBuilder;
+    }
 }
