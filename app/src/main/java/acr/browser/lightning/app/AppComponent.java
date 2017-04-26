@@ -56,8 +56,6 @@ public interface AppComponent {
 
     void inject(ThemableSettingsActivity activity);
 
-    void inject(AdBlock adBlock);
-
     void inject(LightningDownloadListener listener);
 
     void inject(PrivacySettingsFragment fragment);

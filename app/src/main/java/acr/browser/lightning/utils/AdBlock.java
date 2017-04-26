@@ -1,5 +1,6 @@
 package acr.browser.lightning.utils;
 
+import android.app.Application;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +22,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 
@@ -38,14 +38,16 @@ public class AdBlock {
     private static final String TAB = "\t";
     private static final String SPACE = " ";
     private static final String EMPTY = "";
-    private final Set<String> mBlockedDomainsList = new HashSet<>();
+
+    @NonNull private final Set<String> mBlockedDomainsList = new HashSet<>();
+    @NonNull private final PreferenceManager mPreferenceManager;
+    @NonNull private final Application mApplication;
     private boolean mBlockAds;
 
-    @Inject PreferenceManager mPreferenceManager;
-
     @Inject
-    public AdBlock() {
-        BrowserApp.getAppComponent().inject(this);
+    AdBlock(@NonNull Application application, @NonNull PreferenceManager preferenceManager) {
+        mApplication = application;
+        mPreferenceManager = preferenceManager;
         if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
             loadHostsFile().subscribeOn(Schedulers.io()).subscribe();
         }
@@ -120,10 +122,10 @@ public class AdBlock {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                AssetManager asset = BrowserApp.getApplication().getAssets();
+                AssetManager asset = mApplication.getAssets();
                 BufferedReader reader = null;
+                //noinspection TryFinallyCanBeTryWithResources
                 try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
                     reader = new BufferedReader(new InputStreamReader(
                         asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)));
                     StringBuilder lineBuilder = new StringBuilder();
