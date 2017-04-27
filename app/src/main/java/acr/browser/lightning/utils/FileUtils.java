@@ -27,6 +27,8 @@ import acr.browser.lightning.constant.Constants;
  */
 public class FileUtils {
 
+    private static final String TAG = "FileUtils";
+
     /**
      * Writes a bundle to persistent storage in the files directory
      * using the specified file name. This method is a blocking
@@ -51,7 +53,7 @@ public class FileUtils {
                     outputStream.flush();
                     parcel.recycle();
                 } catch (IOException e) {
-                    Log.e(Constants.TAG, "Unable to write bundle to storage");
+                    Log.e(TAG, "Unable to write bundle to storage");
                 } finally {
                     Utils.close(outputStream);
                 }
@@ -103,7 +105,7 @@ public class FileUtils {
             parcel.recycle();
             return out;
         } catch (FileNotFoundException e) {
-            Log.e(Constants.TAG, "Unable to read bundle from storage");
+            Log.e(TAG, "Unable to read bundle from storage");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -131,7 +133,7 @@ public class FileUtils {
             throwable.printStackTrace(new PrintStream(outputStream));
             outputStream.flush();
         } catch (IOException e) {
-            Log.e(Constants.TAG, "Unable to write bundle to storage");
+            Log.e(TAG, "Unable to write bundle to storage");
         } finally {
             Utils.close(outputStream);
         }

@@ -48,6 +48,8 @@ import acr.browser.lightning.utils.Utils;
 
 public class LightningWebClient extends WebViewClient {
 
+    private static final String TAG = "LightningWebClient";
+
     @NonNull private final Activity mActivity;
     @NonNull private final LightningView mLightningView;
     @NonNull private final UIController mUIController;
@@ -149,7 +151,7 @@ public class LightningWebClient extends WebViewClient {
                         String user = name.getText().toString();
                         String pass = password.getText().toString();
                         handler.proceed(user.trim(), pass.trim());
-                        Log.d(Constants.TAG, "Request Login");
+                        Log.d(TAG, "Request Login");
 
                     }
                 })
@@ -364,7 +366,7 @@ public class LightningWebClient extends WebViewClient {
                 try {
                     mActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
-                    Log.e(Constants.TAG, "ActivityNotFoundException");
+                    Log.e(TAG, "ActivityNotFoundException");
                 }
                 return true;
             }

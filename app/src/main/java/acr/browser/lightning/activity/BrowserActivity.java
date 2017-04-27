@@ -187,8 +187,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private String mUntitledTitle;
     private String mCameraPhotoPath;
 
-    private final Handler mDrawerHandler = new Handler();
-
     // The singleton BookmarkManager
     @Inject BookmarkManager mBookmarkManager;
 
@@ -991,7 +989,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        mDrawerHandler.postDelayed(new Runnable() {
+        Handlers.MAIN.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
@@ -1030,14 +1028,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        mDrawerHandler.postDelayed(new Runnable() {
+        Handlers.MAIN.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
             }
         }, 200);
 
-        // mDrawerHandler.postDelayed(new Runnable() {
+        // Handlers.MAIN.postDelayed(new Runnable() {
         //     @Override
         //     public void run() {
         // Remove browser frame background to reduce overdraw
@@ -1114,7 +1112,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mPresenter.loadUrlInCurrentView(item.getUrl());
         // keep any jank from happening when the drawer is closed after the
         // URL starts to load
-        mDrawerHandler.postDelayed(new Runnable() {
+        Handlers.MAIN.postDelayed(new Runnable() {
             @Override
             public void run() {
                 closeDrawers(null);
@@ -1311,7 +1309,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
 
-        mDrawerHandler.removeCallbacksAndMessages(null);
+        Handlers.MAIN.removeCallbacksAndMessages(null);
 
         mPresenter.shutdown();
 

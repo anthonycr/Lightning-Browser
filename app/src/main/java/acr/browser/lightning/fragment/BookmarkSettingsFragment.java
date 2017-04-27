@@ -41,6 +41,7 @@ import acr.browser.lightning.database.BookmarkLocalSync;
 import acr.browser.lightning.database.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
+
 import com.anthonycr.bonsai.Schedulers;
 
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -48,6 +49,8 @@ import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+
+    private static final String TAG = "BookmarkSettingsFrag";
 
     private static final String SETTINGS_EXPORT = "export_bookmark";
     private static final String SETTINGS_IMPORT = "import_bookmark";
@@ -62,8 +65,8 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     @Nullable private BookmarkLocalSync mSync;
 
     private static final String[] REQUIRED_PERMISSIONS = new String[]{
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
 
@@ -80,7 +83,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         @Override
         protected Integer doInBackground(Void... params) {
             List<HistoryItem> list;
-            Log.d(Constants.TAG, "Loading bookmarks from: " + mSource.name());
+            Log.d(TAG, "Loading bookmarks from: " + mSource.name());
             switch (mSource) {
                 case STOCK:
                     list = getSync().getBookmarksFromStockBrowser();
@@ -184,36 +187,36 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         switch (preference.getKey()) {
             case SETTINGS_EXPORT:
                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
-                        new PermissionsResultAction() {
-                            @Override
-                            public void onGranted() {
-                                mBookmarkManager.exportBookmarks(getActivity());
-                            }
+                    new PermissionsResultAction() {
+                        @Override
+                        public void onGranted() {
+                            mBookmarkManager.exportBookmarks(getActivity());
+                        }
 
-                            @Override
-                            public void onDenied(String permission) {
-                                //TODO Show message
-                            }
-                        });
+                        @Override
+                        public void onDenied(String permission) {
+                            //TODO Show message
+                        }
+                    });
                 return true;
             case SETTINGS_IMPORT:
                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), REQUIRED_PERMISSIONS,
-                        new PermissionsResultAction() {
-                            @Override
-                            public void onGranted() {
-                                loadFileList(null);
-                                createDialog();
-                            }
+                    new PermissionsResultAction() {
+                        @Override
+                        public void onGranted() {
+                            loadFileList(null);
+                            createDialog();
+                        }
 
-                            @Override
-                            public void onDenied(String permission) {
-                                //TODO Show message
-                            }
-                        });
+                        @Override
+                        public void onDenied(String permission) {
+                            //TODO Show message
+                        }
+                    });
                 return true;
             case SETTINGS_IMPORT_BROWSER:
                 getSync().getSupportedBrowsers().subscribeOn(Schedulers.worker())
-                        .observeOn(Schedulers.main()).subscribe(new SingleOnSubscribe<List<Source>>() {
+                    .observeOn(Schedulers.main()).subscribe(new SingleOnSubscribe<List<Source>>() {
                     @Override
                     public void onItem(@Nullable List<Source> item) {
                         Activity activity = getActivity();
@@ -289,7 +292,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private void showChooserDialog(final Activity activity, List<String> list) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-                android.R.layout.simple_list_item_1);
+            android.R.layout.simple_list_item_1);
         for (String title : list) {
             adapter.add(title);
         }
@@ -385,7 +388,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     }
 
     private void createDialog() {
-        if(mActivity == null){
+        if (mActivity == null) {
             return;
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);

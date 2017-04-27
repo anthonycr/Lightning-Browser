@@ -155,97 +155,97 @@ public class TabsManager {
                                  @NonNull final CompletableSubscriber subscriber) {
 
         restoreState()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new StreamOnSubscribe<Bundle>() {
-                    @Override
-                    public void onNext(@Nullable Bundle item) {
-                        final LightningView tab = newTab(activity, "", false);
-                        Preconditions.checkNonNull(item);
-                        String url = item.getString(URL_KEY);
-                        if (url != null && tab.getWebView() != null) {
-                            if (UrlUtils.isBookmarkUrl(url)) {
-                                new BookmarkPage(activity).getBookmarkPage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(new SingleOnSubscribe<String>() {
-                                            @Override
-                                            public void onItem(@Nullable String item) {
-                                                Preconditions.checkNonNull(item);
-                                                tab.loadUrl(item);
-                                            }
-                                        });
-                            } else if (UrlUtils.isStartPageUrl(url)) {
-                                new StartPage().getHomepage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(new SingleOnSubscribe<String>() {
-                                            @Override
-                                            public void onItem(@Nullable String item) {
-                                                Preconditions.checkNonNull(item);
-                                                tab.loadUrl(item);
-                                            }
-                                        });
-                            } else if (UrlUtils.isHistoryUrl(url)) {
-                                new HistoryPage().getHistoryPage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(new SingleOnSubscribe<String>() {
-                                            @Override
-                                            public void onItem(@Nullable String item) {
-                                                Preconditions.checkNonNull(item);
-                                                tab.loadUrl(item);
-                                            }
-                                        });
-                            }
-                        } else if (tab.getWebView() != null) {
-                            tab.getWebView().restoreState(item);
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new StreamOnSubscribe<Bundle>() {
+                @Override
+                public void onNext(@Nullable Bundle item) {
+                    final LightningView tab = newTab(activity, "", false);
+                    Preconditions.checkNonNull(item);
+                    String url = item.getString(URL_KEY);
+                    if (url != null && tab.getWebView() != null) {
+                        if (UrlUtils.isBookmarkUrl(url)) {
+                            new BookmarkPage(activity).getBookmarkPage()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.main())
+                                .subscribe(new SingleOnSubscribe<String>() {
+                                    @Override
+                                    public void onItem(@Nullable String item) {
+                                        Preconditions.checkNonNull(item);
+                                        tab.loadUrl(item);
+                                    }
+                                });
+                        } else if (UrlUtils.isStartPageUrl(url)) {
+                            new StartPage().getHomepage()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.main())
+                                .subscribe(new SingleOnSubscribe<String>() {
+                                    @Override
+                                    public void onItem(@Nullable String item) {
+                                        Preconditions.checkNonNull(item);
+                                        tab.loadUrl(item);
+                                    }
+                                });
+                        } else if (UrlUtils.isHistoryUrl(url)) {
+                            new HistoryPage().getHistoryPage()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.main())
+                                .subscribe(new SingleOnSubscribe<String>() {
+                                    @Override
+                                    public void onItem(@Nullable String item) {
+                                        Preconditions.checkNonNull(item);
+                                        tab.loadUrl(item);
+                                    }
+                                });
                         }
+                    } else if (tab.getWebView() != null) {
+                        tab.getWebView().restoreState(item);
                     }
+                }
 
-                    @Override
-                    public void onComplete() {
-                        if (url != null) {
-                            if (url.startsWith(Constants.FILE)) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                Dialog dialog = builder.setCancelable(true)
-                                        .setTitle(R.string.title_warning)
-                                        .setMessage(R.string.message_blocked_local)
-                                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss(DialogInterface dialog) {
-                                                if (mTabList.isEmpty()) {
-                                                    newTab(activity, null, false);
-                                                }
-                                                finishInitialization();
-                                                subscriber.onComplete();
-                                            }
-                                        })
-                                        .setNegativeButton(android.R.string.cancel, null)
-                                        .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                newTab(activity, url, false);
-                                            }
-                                        }).show();
-                                BrowserDialog.setDialogSize(activity, dialog);
-                            } else {
-                                newTab(activity, url, false);
-                                if (mTabList.isEmpty()) {
-                                    newTab(activity, null, false);
-                                }
-                                finishInitialization();
-                                subscriber.onComplete();
-                            }
+                @Override
+                public void onComplete() {
+                    if (url != null) {
+                        if (url.startsWith(Constants.FILE)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            Dialog dialog = builder.setCancelable(true)
+                                .setTitle(R.string.title_warning)
+                                .setMessage(R.string.message_blocked_local)
+                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        if (mTabList.isEmpty()) {
+                                            newTab(activity, null, false);
+                                        }
+                                        finishInitialization();
+                                        subscriber.onComplete();
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        newTab(activity, url, false);
+                                    }
+                                }).show();
+                            BrowserDialog.setDialogSize(activity, dialog);
                         } else {
+                            newTab(activity, url, false);
                             if (mTabList.isEmpty()) {
                                 newTab(activity, null, false);
                             }
                             finishInitialization();
                             subscriber.onComplete();
                         }
+                    } else {
+                        if (mTabList.isEmpty()) {
+                            newTab(activity, null, false);
+                        }
+                        finishInitialization();
+                        subscriber.onComplete();
                     }
-                });
+                }
+            });
     }
 
     /**
@@ -475,7 +475,7 @@ public class TabsManager {
      */
     public void saveState() {
         Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
-        Log.d(Constants.TAG, "Saving tab state");
+        Log.d(TAG, "Saving tab state");
         for (int n = 0; n < mTabList.size(); n++) {
             LightningView tab = mTabList.get(n);
             if (TextUtils.isEmpty(tab.getUrl())) {
@@ -515,7 +515,7 @@ public class TabsManager {
             public void onSubscribe(@NonNull StreamSubscriber<Bundle> subscriber) {
                 Bundle savedState = FileUtils.readBundleFromStorage(mApp, BUNDLE_STORAGE);
                 if (savedState != null) {
-                    Log.d(Constants.TAG, "Restoring previous WebView state now");
+                    Log.d(TAG, "Restoring previous WebView state now");
                     for (String key : savedState.keySet()) {
                         if (key.startsWith(BUNDLE_KEY)) {
                             subscriber.onNext(savedState.getBundle(key));

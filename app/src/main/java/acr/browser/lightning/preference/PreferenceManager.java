@@ -251,9 +251,9 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_PROXY, false);
     }
 
-    @Constants.PROXY
+    @Constants.Proxy
     public int getProxyChoice() {
-        @Constants.PROXY int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
+        @Constants.Proxy int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
         switch (proxy) {
             case Constants.NO_PROXY:
             case Constants.PROXY_ORBOT:
@@ -473,7 +473,7 @@ public class PreferenceManager {
      *
      * @param choice the proxy to use.
      */
-    public void setProxyChoice(@Constants.PROXY int choice) {
+    public void setProxyChoice(@Constants.Proxy int choice) {
         putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
         putInt(Name.PROXY_CHOICE, choice);
     }

@@ -24,6 +24,9 @@ import info.guardianproject.netcipher.webkit.WebkitProxy;
 
 @Singleton
 public class ProxyUtils {
+
+    private static final String TAG = "ProxyUtils";
+
     // Helper
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
@@ -141,7 +144,7 @@ public class ProxyUtils {
         try {
             WebkitProxy.setProxy(BrowserApp.class.getName(), activity.getApplicationContext(), null, host, port);
         } catch (Exception e) {
-            Log.d(Constants.TAG, "error enabling web proxying", e);
+            Log.d(TAG, "error enabling web proxying", e);
         }
 
     }
@@ -193,7 +196,7 @@ public class ProxyUtils {
         }
     }
 
-    @Constants.PROXY
+    @Constants.Proxy
     public static int setProxyChoice(int choice, @NonNull Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:

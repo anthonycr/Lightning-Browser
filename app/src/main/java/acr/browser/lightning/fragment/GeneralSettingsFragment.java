@@ -230,7 +230,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void setProxyChoice(@Constants.PROXY int choice) {
+    private void setProxyChoice(@Constants.Proxy int choice) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 choice = ProxyUtils.setProxyChoice(choice, mActivity);

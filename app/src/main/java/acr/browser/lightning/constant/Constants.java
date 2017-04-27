@@ -67,13 +67,10 @@ public final class Constants {
     public static final String ABOUT = "about:";
     public static final String FOLDER = "folder://";
 
-    // Application log tag
-    public static final String TAG = "Lightning";
-
     // These should match the order of @array/proxy_choices_array
     @IntDef({NO_PROXY, PROXY_ORBOT, PROXY_I2P, PROXY_MANUAL})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface PROXY {}
+    public @interface Proxy {}
 
     public static final int NO_PROXY = 0;
     public static final int PROXY_ORBOT = 1;

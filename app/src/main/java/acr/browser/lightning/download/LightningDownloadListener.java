@@ -25,6 +25,8 @@ import javax.inject.Inject;
 
 public class LightningDownloadListener implements DownloadListener {
 
+    private static final String TAG = "LightningDownloader";
+
     private final Activity mActivity;
 
     @Inject PreferenceManager mPreferenceManager;
@@ -65,7 +67,7 @@ public class LightningDownloadListener implements DownloadListener {
                         .setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),
                             dialogClickListener).show();
                     BrowserDialog.setDialogSize(mActivity, dialog);
-                    Log.i(Constants.TAG, "Downloading: " + fileName);
+                    Log.i(TAG, "Downloading: " + fileName);
                 }
 
                 @Override

@@ -80,7 +80,7 @@ public final class Utils {
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);
                 DownloadHandler.onDownloadStart(activity, manager, url, userAgent, contentDisposition, null);
-                Log.i(Constants.TAG, "Downloading: " + fileName);
+                Log.i(TAG, "Downloading: " + fileName);
             }
 
             @Override
@@ -418,7 +418,7 @@ public final class Utils {
         if (TextUtils.isEmpty(item.getUrl())) {
             return;
         }
-        Log.d(Constants.TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
+        Log.d(TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
         Intent shortcutIntent = new Intent(activity, MainActivity.class);
         shortcutIntent.setData(Uri.parse(item.getUrl()));
 
