@@ -202,9 +202,8 @@ public class ProxyUtils {
                     Utils.showSnackbar(activity, R.string.install_orbot);
                 }
                 break;
-
             case Constants.PROXY_I2P:
-                I2PAndroidHelper ih = new I2PAndroidHelper(BrowserApp.get(activity));
+                I2PAndroidHelper ih = new I2PAndroidHelper(activity.getApplication());
                 if (!ih.isI2PAndroidInstalled()) {
                     choice = Constants.NO_PROXY;
                     ih.promptToInstall(activity);

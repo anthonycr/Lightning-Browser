@@ -1284,7 +1284,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Log.d(TAG, "onPause");
         mTabsManager.pauseAll();
         try {
-            BrowserApp.get(this).unregisterReceiver(mNetworkReceiver);
+            getApplication().unregisterReceiver(mNetworkReceiver);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "Receiver was not registered", e);
         }
@@ -1349,7 +1349,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(NETWORK_BROADCAST_ACTION);
-        BrowserApp.get(this).registerReceiver(mNetworkReceiver, filter);
+        getApplication().registerReceiver(mNetworkReceiver, filter);
 
         mEventBus.register(mBusEventListener);
 

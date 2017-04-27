@@ -94,11 +94,6 @@ public class BrowserApp extends Application {
     }
 
     @NonNull
-    public static BrowserApp get(@NonNull Context context) {
-        return (BrowserApp) context.getApplicationContext();
-    }
-
-    @NonNull
     public static AppComponent getAppComponent() {
         Preconditions.checkNonNull(sAppComponent);
         return sAppComponent;
