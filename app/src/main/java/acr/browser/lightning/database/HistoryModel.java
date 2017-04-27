@@ -12,6 +12,8 @@ import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.util.List;
 
+import acr.browser.lightning.app.BrowserApp;
+
 /**
  * A model class providing reactive bindings
  * with the underlying history database.
@@ -25,7 +27,9 @@ public final class HistoryModel {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                HistoryDatabase.getInstance().deleteHistory();
+                BrowserApp.getAppComponent()
+                    .historyDatabase()
+                    .deleteHistory();
 
                 subscriber.onComplete();
             }
@@ -37,7 +41,9 @@ public final class HistoryModel {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                HistoryDatabase.getInstance().deleteHistoryItem(url);
+                BrowserApp.getAppComponent()
+                    .historyDatabase()
+                    .deleteHistoryItem(url);
 
                 subscriber.onComplete();
             }
@@ -49,7 +55,12 @@ public final class HistoryModel {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                HistoryDatabase.getInstance().visitHistoryItem(url, title);
+                BrowserApp.getAppComponent()
+                    .historyDatabase()
+                    .visitHistoryItem(url, title);
+
+                System.out.println("SHIT: " + BrowserApp.getAppComponent().historyDatabase().toString());
+                System.out.println("SHIT: " + BrowserApp.getAppComponent().historyDatabase().toString());
 
                 subscriber.onComplete();
             }
@@ -61,7 +72,8 @@ public final class HistoryModel {
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
-                List<HistoryItem> result = HistoryDatabase.getInstance().findItemsContaining(query);
+                List<HistoryItem> result = BrowserApp.getAppComponent()
+                    .historyDatabase().findItemsContaining(query);
 
                 subscriber.onItem(result);
                 subscriber.onComplete();
@@ -74,7 +86,8 @@ public final class HistoryModel {
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
-                List<HistoryItem> result = HistoryDatabase.getInstance().getLastHundredItems();
+                List<HistoryItem> result = BrowserApp.getAppComponent()
+                    .historyDatabase().getLastHundredItems();
 
                 subscriber.onItem(result);
                 subscriber.onComplete();

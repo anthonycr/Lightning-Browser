@@ -1,5 +1,7 @@
 package acr.browser.lightning.app;
 
+import android.support.annotation.NonNull;
+
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
@@ -11,6 +13,7 @@ import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
@@ -73,5 +76,7 @@ public interface AppComponent {
     void inject(DebugSettingsFragment fragment);
 
     void inject(SuggestionsAdapter suggestionsAdapter);
+
+    @NonNull HistoryDatabase historyDatabase();
 
 }
