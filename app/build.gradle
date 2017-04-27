@@ -16,8 +16,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
-        versionName "4.9.2"
-        versionCode 113
+        versionName "4.5.0"
+        versionCode 121
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         configurations {
@@ -51,6 +51,7 @@ android {
             buildConfigField "String", "appKey", "\"TESTYHOC36B5A\""
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser"
+            versionName android.defaultConfig.versionName + "mobitech"
         }
 
         dt {
@@ -58,6 +59,7 @@ android {
             buildConfigField "String", "appKey", "\"DTFP21573D\""
 //            applicationId "acr.browser.lightning"
             applicationId "io.mobitech.browser.dt"
+            versionName android.defaultConfig.versionName + "dt"
         }
 
 //        lightningLite {
@@ -122,4 +124,7 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
     //User's Goggle Advertiser ID
     compile 'com.google.android.gms:play-services-ads:9.4.0'
+
+    compile 'com.segment.analytics.android:analytics:4.+'
+    compile 'com.segment.analytics.android.integrations:mixpanel:+'
 }

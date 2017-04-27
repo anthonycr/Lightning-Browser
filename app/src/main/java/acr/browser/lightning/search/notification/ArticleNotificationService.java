@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.segment.analytics.Analytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -39,7 +40,7 @@ public class ArticleNotificationService extends Service {
 
     private static final String TAG = ArticleNotificationService.class.getSimpleName();
     private static final String BASE_ARTICLE_URL = "http://api.mobitech-content.xyz/v1/" + Constants.MOBITECH_APP_KEY +
-            "/document/get?&limit=1&p_id=daily_notification";
+            "/document/get?&limit=10&p_id=daily_notification";
     private Uri.Builder mUriBuilder = Uri.parse(BASE_ARTICLE_URL).buildUpon();
     private Context context;
 
@@ -161,6 +162,7 @@ public class ArticleNotificationService extends Service {
 
         Intent notifIntent = new Intent(this, MainActivity.class);
         notifIntent.setData(Uri.parse(article.getUrl()));
+        notifIntent.putExtra("from","daily_news_notification");
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         nb.setContentIntent(pendingIntent);
         nb.setAutoCancel(true);
@@ -180,5 +182,7 @@ public class ArticleNotificationService extends Service {
 
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(REQUEST_CODE_ARTICLE_NOTIFICATION, nb.build());
+
+        Analytics.with(this).track("daily_news_notification_show");
     }
 }

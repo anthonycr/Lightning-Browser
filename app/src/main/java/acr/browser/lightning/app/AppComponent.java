@@ -18,6 +18,7 @@ import acr.browser.lightning.fragment.DebugSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
+import acr.browser.lightning.receiver.ArticleAlarmReceiver;
 import acr.browser.lightning.receiver.InstallReferrerReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.notification.ArticleNotificationService;
@@ -87,4 +88,6 @@ public interface AppComponent {
     void inject(ArticleNotificationService articleNotificationService);
 
     void inject(ArticleNotifySettingActivity articleNotifySettingActivity);
+
+    void inject(ArticleAlarmReceiver articleAlarmReceiver);
 }

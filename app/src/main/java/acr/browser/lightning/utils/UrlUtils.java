@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
@@ -38,6 +39,9 @@ import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.preference.PreferenceManager;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Utility methods for Url manipulation
@@ -208,22 +212,33 @@ public class UrlUtils {
         return url != null && url.startsWith(Constants.FILE) && url.endsWith(StartPage.FILENAME);
     }
 
-    public static String makeMobitechSearchUrl(String userId, String publicKey, boolean needUseUserId) {
+    public static String makeMobitechSearchUrl(String userId, String publicKey, boolean needUseUserId, PreferenceManager preferenceManager) {
         if (BuildConfig.DEBUG && TextUtils.isEmpty(publicKey)) {
             publicKey = "TESTC36B5A";
         }
-        return needUseUserId ?
-                String.format(Constants.MOBITECH_SEARCH, publicKey, userId)
-                : String.format(Constants.MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey);
+        String country = "";
+        if (preferenceManager!=null && !TextUtils.isEmpty(preferenceManager.getCountry())){
+            country = preferenceManager.getCountry();
+        }
+        String searchUrl = needUseUserId ?
+                String.format(Constants.MOBITECH_SEARCH, publicKey, userId, country)
+                : String.format(Constants.MOBITECH_SEARCH_WITHOUT_USER_ID, publicKey, country);
+
+        Log.w(TAG,"search url: " + searchUrl);
+        return  searchUrl;
     }
 
-    public static String makeMobitechStartPage(String userId, String publicKey, boolean needUseUserId) {
+    public static String makeMobitechStartPage(String userId, String publicKey, boolean needUseUserId, PreferenceManager preferenceManager) {
         if (BuildConfig.DEBUG && TextUtils.isEmpty(publicKey)) {
             publicKey = "TESTC36B5A";
         }
+        String country = "";
+        if (preferenceManager!=null && !TextUtils.isEmpty(preferenceManager.getCountry())){
+            country = preferenceManager.getCountry();
+        }
         return needUseUserId ?
-                String.format(Constants.MOBITECH_STARTPAGE, publicKey, userId)
-                : String.format(Constants.MOBITECH_STARTPAGE_WITHOUT_USER_ID, publicKey);
+                String.format(Constants.MOBITECH_STARTPAGE, publicKey, userId, country)
+                : String.format(Constants.MOBITECH_STARTPAGE_WITHOUT_USER_ID, publicKey, country);
     }
 
     public static String getReferrerIdForInstalledApp(String referrer, String referrerField) {

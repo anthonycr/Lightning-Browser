@@ -32,6 +32,7 @@ import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.OnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Subscriber;
+import com.segment.analytics.Analytics;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -144,6 +145,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
                 mUiController.bookmarkItemClicked(item);
+
+                Analytics.with(getContext()).track("bookmark_click");
+
             }
         }
     };

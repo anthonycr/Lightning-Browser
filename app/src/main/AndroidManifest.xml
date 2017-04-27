@@ -4,10 +4,7 @@
     package="acr.browser.lightning"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto">
-<!--
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
--->
-
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -17,6 +14,7 @@
     <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS"/>
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false"/>
@@ -192,6 +190,7 @@
         <receiver android:name=".receiver.ArticleAlarmReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
         <service android:name=".search.notification.CommonPersistentService" android:exported="false" android:process=":common" />

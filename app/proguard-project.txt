@@ -201,6 +201,8 @@ java.lang.Object readResolve();
 # OkHttp
 -dontwarn okio.**
 -dontwarn com.squareup.okhttp.**
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.segment.analytics.** { *; }
 
 # Gson
 -keep public class com.google.gson

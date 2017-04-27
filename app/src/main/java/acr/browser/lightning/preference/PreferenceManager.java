@@ -14,6 +14,9 @@ import acr.browser.lightning.download.DownloadHandler;
 @Singleton
 public class PreferenceManager {
 
+
+
+
     private static class Name {
         static final String ADOBE_FLASH_SUPPORT = "enableflash";
         static final String BLOCK_ADS = "AdBlock";
@@ -74,6 +77,13 @@ public class PreferenceManager {
         static final String IS_STARTPAGE_SET_TO_BOOKMARK = "is_startpage_set_to_bookmark ";
         public static final String IS_FIRST_START = "first_start";
         public static final String IS_TABS_HINT_SHOWN = "is_tabs_hint_shown";
+        public static final String IS_CONTENT_ALARM_SET = "is_content_alarm_set";
+        public static final String IS_SHORTCUT_CREATED = "IS_SHORTCUT_CREATED";
+        public static final String SET_APP_NOTIF_TIME = "SET_APP_NOTIF_TIME" ;
+        public static final String COUNTRY = "COUNTRY" ;
+
+        public void setCountry(String userCountry) {
+        }
     }
 
     public enum Suggestion {
@@ -603,4 +613,30 @@ public class PreferenceManager {
     public void setIsTabsHintShown(boolean isTabsHintShown) {
         putBoolean(Name.IS_TABS_HINT_SHOWN, isTabsHintShown);
     }
+
+    public boolean isShortcutCreated() {
+        return mPrefs.getBoolean(Name.IS_SHORTCUT_CREATED, false);
+    }
+
+    public void setIsShortcutCreated(boolean isShortcutCreated) {
+        putBoolean(Name.IS_SHORTCUT_CREATED, isShortcutCreated);
+    }
+
+    public void setNextAppNotification(long nextNotificationTime) {
+        putString(Name.SET_APP_NOTIF_TIME, String.valueOf(nextNotificationTime));
+    }
+
+    public long getNextAppNotification() {
+        String nextTimeNotifStr = mPrefs.getString(Name.SET_APP_NOTIF_TIME, "0");
+        return Long.parseLong(nextTimeNotifStr);
+    }
+
+    public void setCountry(String country) {
+        putString(Name.COUNTRY, country == null ? "" : country);
+    }
+
+    public String getCountry() {
+        return mPrefs.getString(Name.COUNTRY, "");
+    }
+
 }

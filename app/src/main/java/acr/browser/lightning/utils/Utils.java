@@ -451,19 +451,28 @@ public final class Utils {
 
     }
 
-    public static void createAppShortcut(Context context) {
+    public static void createAppShortcut(Context context, final PreferenceManager manager) {
 
-        Intent shortcutIntent = new Intent(context, SplashActivity.class);
-        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (!manager.isShortcutCreated()){
 
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.app_name));
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher));
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        addIntent.putExtra("duplicate", false);
-        context.sendBroadcast(addIntent);
+            manager.setIsShortcutCreated(true);
+
+            final Intent shortcutIntent = new Intent(context, SplashActivity.class);
+            shortcutIntent.setAction(Intent.ACTION_MAIN);
+            shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+            final Intent intent = new Intent();
+            intent.putExtra("duplicate", false);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.app_name));
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.mipmap.ic_launcher));
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            context.sendBroadcast(intent);
+        }
+
 
     }
 }

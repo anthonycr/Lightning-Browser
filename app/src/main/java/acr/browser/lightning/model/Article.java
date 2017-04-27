@@ -24,7 +24,16 @@ public class Article {
     }
 
     public Document getDocument() {
-        return documents.get(0);
+        Document document = null;
+        if (documents!= null ){
+            for (Document document1 : documents){
+                document = document1;
+                if (!document1.promoted){
+                    break;
+                }
+            }
+        }
+        return document == null ? new Document() : document;
     }
 
     public String getUrl() {

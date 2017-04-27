@@ -88,6 +88,7 @@ import com.anthonycr.bonsai.Observable;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;
+import com.segment.analytics.Analytics;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -272,6 +273,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mPresenter = new BrowserPresenter(this, isIncognito());
 
         initialize(savedInstanceState);
+
     }
 
     private void addHomePageToBookmark() {
@@ -285,12 +287,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
             historyItem = new HistoryItem();
             historyItem.setTitle("Home and News");
-            historyItem.setUrl(UrlUtils.makeMobitechStartPage(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId()));
+            historyItem.setUrl(UrlUtils.makeMobitechStartPage(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId(),mPreferences));
             historyItem.setImageId( R.drawable.ic_action_home);
             historyItem.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_action_home));
             mBookmarkManager.addBookmark(historyItem);
 
             mPreferenceManager.setIsStartSetOnBookmark(true);
+
+            if (mPreferenceManager!=null){
+                Utils.createAppShortcut(this, mPreferenceManager);
+            }
         }
     }
 
@@ -435,11 +441,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         //if got serch intent from Notification
         Intent intent = getIntent();
         if(intent != null && ((intent.getStringExtra(INTENT_ACTION_SEARCH)!=null && INTENT_ACTION_SEARCH.equalsIgnoreCase(intent.getStringExtra(INTENT_ACTION_SEARCH))) ||  INTENT_ACTION_WEB_SEARCH.equalsIgnoreCase(intent.getAction()))) {
-
+            final Intent finalIntent  = intent;
             mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    showSearch(getIntent().getStringExtra(SearchManager.QUERY));
+                    String text = "";
+                    if (finalIntent!=null){
+                        text = finalIntent.getStringExtra(SearchManager.QUERY);
+                    }
+                    showSearch(text==null? "" : text);
+                    String actionName = finalIntent.getStringExtra("from");
+                    if (!TextUtils.isEmpty(actionName)){
+                        Analytics.with(BrowserActivity.this).track(actionName + "_click");
+                    }
                 }
             }, 500);
         }
@@ -744,7 +758,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mSearchUrl = Constants.STARTPAGE_SEARCH;
                 break;
             case 6:
-                mSearchUrl = UrlUtils.makeMobitechSearchUrl(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId());
+                mSearchUrl = UrlUtils.makeMobitechSearchUrl(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId(), mPreferences);
                 break;
             case 7:
                 mSearchUrl = Constants.DUCK_SEARCH;
@@ -759,7 +773,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mSearchUrl = Constants.YANDEX_SEARCH;
                 break;
             default:
-                mSearchUrl = UrlUtils.makeMobitechSearchUrl(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId());
+                mSearchUrl = UrlUtils.makeMobitechSearchUrl(mPreferences.getUserId(), MOBITECH_APP_KEY, mPreferences.needUseUserId(), mPreferences);
                 break;
         }
         mSearchText = "";
@@ -1217,13 +1231,23 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     void handleNewIntent(final Intent intent) {
         mPresenter.onNewIntent(intent);
         if(intent != null && ((intent.getStringExtra(INTENT_ACTION_SEARCH)!=null && INTENT_ACTION_SEARCH.equalsIgnoreCase(intent.getStringExtra(INTENT_ACTION_SEARCH))) ||  INTENT_ACTION_WEB_SEARCH.equalsIgnoreCase(intent.getAction()))) {
-            final String query = intent.getExtras().getString(SearchManager.QUERY);
+            String text = "";
+            if (intent!=null){
+                text = intent.getStringExtra(SearchManager.QUERY);
+            }
+            final String query = text!=null ? text : "";
             mDrawerHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     showSearch(query);
                 }
             }, 500);
+        }
+        if (intent!=null){
+            String actionName = intent.getStringExtra("from");
+            if (!TextUtils.isEmpty(actionName)){
+                Analytics.with(BrowserActivity.this).track(actionName + "_click");
+            }
         }
     }
 
@@ -1425,6 +1449,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
         Log.d(TAG, "onResume");
         if (mSwapBookmarksAndTabs != mPreferences.getBookmarksAndTabsSwapped()) {
             restart();
@@ -2113,6 +2138,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 }
             }
         }
+
     }
 
     /**
@@ -2434,4 +2460,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
     };
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+    }
 }

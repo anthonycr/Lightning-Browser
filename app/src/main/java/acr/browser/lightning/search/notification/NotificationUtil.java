@@ -63,7 +63,7 @@ public final class NotificationUtil {
 
     private static void setPendingIntent(Context context, RemoteViews remoteViews) {
         Intent intent = new Intent(context, SearchNotifySettingActivity.class);
-        intent.putExtra("from", "1");
+        intent.putExtra("from", "search_notification");
         remoteViews.setOnClickPendingIntent(R.id.notify_setting, PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
