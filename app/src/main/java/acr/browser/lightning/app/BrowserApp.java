@@ -30,7 +30,6 @@ public class BrowserApp extends Application {
 
     private static final String TAG = BrowserApp.class.getSimpleName();
 
-    @Nullable private static Application sApplication;
     @Nullable private static AppComponent sAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
     private static final Executor mTaskThread = Executors.newCachedThreadPool();
@@ -41,7 +40,6 @@ public class BrowserApp extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        sApplication = this;
     }
 
     @Override
@@ -114,11 +112,6 @@ public class BrowserApp extends Application {
     @NonNull
     public static Executor getTaskThread() {
         return mTaskThread;
-    }
-
-    @NonNull
-    public static Bus getBus(@NonNull Context context) {
-        return get(context).mBus;
     }
 
     /**

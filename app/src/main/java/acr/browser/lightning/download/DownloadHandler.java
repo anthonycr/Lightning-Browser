@@ -23,15 +23,12 @@ import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
-import com.squareup.otto.Bus;
-
 import java.io.File;
 import java.io.IOException;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -50,7 +47,7 @@ public class DownloadHandler {
             .getPath();
 
     @Nullable
-    public static String guessFileExtension(@NonNull String filename) {
+    static String guessFileExtension(@NonNull String filename) {
         int lastIndex = filename.lastIndexOf('.') + 1;
         if (lastIndex > 0 && filename.length() > lastIndex) {
             return filename.substring(lastIndex, filename.length());
@@ -157,7 +154,6 @@ public class DownloadHandler {
     private static void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
                                                 String url, String userAgent,
                                                 String contentDisposition, @Nullable String mimetype) {
-        final Bus eventBus = BrowserApp.getBus(context);
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard

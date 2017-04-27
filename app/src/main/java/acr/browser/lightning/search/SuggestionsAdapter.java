@@ -66,6 +66,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
     @Inject BookmarkManager mBookmarkManager;
     @Inject PreferenceManager mPreferenceManager;
+    @Inject Application mApplication;
 
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
 
@@ -96,7 +97,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
     public void clearCache() {
         // We don't need these cache files anymore
-        Schedulers.io().execute(new ClearCacheRunnable(BrowserApp.get(mContext)));
+        Schedulers.io().execute(new ClearCacheRunnable(mApplication));
     }
 
     public void refreshBookmarks() {
@@ -294,9 +295,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     @NonNull
     private Single<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
         if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_GOOGLE) {
-            return SuggestionsManager.createGoogleQueryObservable(query, mContext);
+            return SuggestionsManager.createGoogleQueryObservable(query, mApplication);
         } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
-            return SuggestionsManager.createDuckQueryObservable(query, mContext);
+            return SuggestionsManager.createDuckQueryObservable(query, mApplication);
         } else {
             return Single.empty();
         }

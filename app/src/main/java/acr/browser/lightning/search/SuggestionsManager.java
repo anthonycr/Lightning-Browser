@@ -23,8 +23,7 @@ class SuggestionsManager {
 
     @NonNull
     static Single<List<HistoryItem>> createGoogleQueryObservable(@NonNull final String query,
-                                                                 @NonNull final Context context) {
-        final Application application = BrowserApp.get(context);
+                                                                 @NonNull final Application application) {
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
@@ -39,8 +38,7 @@ class SuggestionsManager {
 
     @NonNull
     static Single<List<HistoryItem>> createDuckQueryObservable(@NonNull final String query,
-                                                               @NonNull final Context context) {
-        final Application application = BrowserApp.get(context);
+                                                               @NonNull final Application application) {
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
