@@ -17,6 +17,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.utils.Utils;
 
@@ -24,14 +27,18 @@ import acr.browser.lightning.utils.Utils;
  * Reactive model that can fetch favicons
  * from URLs and also cache them.
  */
+@Singleton
 public class FaviconModel {
 
     private static final String TAG = "FaviconModel";
 
-    private final ImageFetcher mImageFetcher;
+    @NonNull private final ImageFetcher mImageFetcher;
+    @NonNull private final Application mApplication;
 
-    public FaviconModel() {
+    @Inject
+    public FaviconModel(@NonNull Application application) {
         mImageFetcher = new ImageFetcher();
+        mApplication = application;
     }
 
     @NonNull
@@ -63,9 +70,7 @@ public class FaviconModel {
                     return;
                 }
 
-                Application app = BrowserApp.getApplication();
-
-                File faviconCacheFile = createFaviconCacheFile(app, uri);
+                File faviconCacheFile = createFaviconCacheFile(mApplication, uri);
 
                 Bitmap favicon = null;
 
@@ -117,13 +122,11 @@ public class FaviconModel {
                     return;
                 }
 
-                Application app = BrowserApp.getApplication();
-
                 Log.d(TAG, "Caching icon for " + uri.getHost());
                 FileOutputStream fos = null;
 
                 try {
-                    File image = createFaviconCacheFile(app, uri);
+                    File image = createFaviconCacheFile(mApplication, uri);
                     fos = new FileOutputStream(image);
                     favicon.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.flush();

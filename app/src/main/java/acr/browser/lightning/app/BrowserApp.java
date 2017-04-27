@@ -49,13 +49,13 @@ public class BrowserApp extends Application {
         super.onCreate();
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build());
+                .detectAll()
+                .penaltyLog()
+                .build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build());
+                .detectAll()
+                .penaltyLog()
+                .build());
         }
 
         final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -93,12 +93,6 @@ public class BrowserApp extends Application {
                 MemoryLeakUtils.clearNextServedView(activity, BrowserApp.this);
             }
         });
-    }
-
-    @NonNull
-    public static Application getApplication() {
-        Preconditions.checkNonNull(sApplication);
-        return sApplication;
     }
 
     @NonNull

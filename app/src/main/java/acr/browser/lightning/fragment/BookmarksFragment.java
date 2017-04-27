@@ -88,7 +88,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Inject PreferenceManager mPreferenceManager;
 
-    private FaviconModel mFaviconModel;
+    @Inject FaviconModel mFaviconModel;
 
     private TabsManager mTabsManager;
 
@@ -148,8 +148,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mFolderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(context) :
             ThemeUtils.getIconLightThemeColor(context);
-
-        mFaviconModel = new FaviconModel();
     }
 
     private TabsManager getTabsManager() {
@@ -269,8 +267,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mFolderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme);
         mIconColor = darkTheme ? ThemeUtils.getIconDarkThemeColor(activity) :
             ThemeUtils.getIconLightThemeColor(activity);
-
-        mFaviconModel = new FaviconModel();
     }
 
     private void updateBookmarkIndicator(final String url) {

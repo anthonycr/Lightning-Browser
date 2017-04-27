@@ -25,6 +25,7 @@ import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.view.LightningChromeClient;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.LightningWebClient;
 import dagger.Component;
@@ -77,6 +78,8 @@ public interface AppComponent {
 
     void inject(SuggestionsAdapter suggestionsAdapter);
 
-    @NonNull HistoryDatabase historyDatabase();
+    void inject(LightningChromeClient chromeClient);
+
+    HistoryDatabase historyDatabase();
 
 }

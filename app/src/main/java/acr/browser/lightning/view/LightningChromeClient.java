@@ -22,13 +22,16 @@ import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.utils.Preconditions;
 
-class LightningChromeClient extends WebChromeClient {
+public class LightningChromeClient extends WebChromeClient {
 
     private static final String TAG = LightningChromeClient.class.getSimpleName();
 
@@ -37,15 +40,15 @@ class LightningChromeClient extends WebChromeClient {
     @NonNull private final Activity mActivity;
     @NonNull private final LightningView mLightningView;
     @NonNull private final UIController mUIController;
-    @NonNull private final FaviconModel mFaviconModel;
+    @Inject FaviconModel mFaviconModel;
 
     LightningChromeClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         Preconditions.checkNonNull(activity);
         Preconditions.checkNonNull(lightningView);
+        BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
-        mFaviconModel = new FaviconModel();
     }
 
     @Override
