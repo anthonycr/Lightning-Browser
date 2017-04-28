@@ -1,7 +1,5 @@
 package acr.browser.lightning.app;
 
-import android.support.annotation.NonNull;
-
 import javax.inject.Singleton;
 
 import acr.browser.lightning.activity.BrowserActivity;
@@ -23,7 +21,6 @@ import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.search.SuggestionsAdapter;
-import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.view.LightningChromeClient;
 import acr.browser.lightning.view.LightningView;

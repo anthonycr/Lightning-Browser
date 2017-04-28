@@ -93,8 +93,19 @@ public class StringBuilderUtils {
      * the string builder is equal to the string.
      */
     public static boolean equals(@NonNull StringBuilder stringBuilder, @NonNull String equal) {
-        int index = stringBuilder.indexOf(equal);
-        return index >= 0 && stringBuilder.length() == equal.length();
+
+        int builderLength = stringBuilder.length();
+        if (builderLength != equal.length()) {
+            return false;
+        }
+
+        for (int n = 0; n < builderLength; n++) {
+            if (stringBuilder.charAt(n) != equal.charAt(n)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
