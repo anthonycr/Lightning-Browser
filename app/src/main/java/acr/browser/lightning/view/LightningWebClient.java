@@ -282,7 +282,7 @@ public class LightningWebClient extends WebViewClient {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull WebResourceRequest request) {
         return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
     }
 
@@ -292,7 +292,7 @@ public class LightningWebClient extends WebViewClient {
         return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
     }
 
-    private boolean shouldOverrideLoading(WebView view, String url) {
+    private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
         // Check if configured proxy is available
         if (!mProxyUtils.isProxyReady(mActivity)) {
             // User has been notified

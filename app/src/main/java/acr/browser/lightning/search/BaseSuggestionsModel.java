@@ -98,7 +98,7 @@ abstract class BaseSuggestionsModel {
      * @return the cache file containing the suggestions
      */
     @Nullable
-    private InputStream downloadSuggestionsForQuery(@NonNull String query, String language) {
+    private InputStream downloadSuggestionsForQuery(@NonNull String query, @NonNull String language) {
         String queryUrl = createQueryUrl(query, language);
 
         try {
@@ -122,7 +122,7 @@ abstract class BaseSuggestionsModel {
 
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
-        public Response intercept(Chain chain) throws IOException {
+        public Response intercept(@NonNull Chain chain) throws IOException {
             Response originalResponse = chain.proceed(chain.request());
             return originalResponse.newBuilder()
                 .header("cache-control", "max-age=" + INTERVAL_DAY + ", max-stale=" + INTERVAL_DAY)

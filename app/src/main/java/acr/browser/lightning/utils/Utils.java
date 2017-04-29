@@ -72,7 +72,7 @@ public final class Utils {
      * @param userAgent          the user agent of the browser.
      * @param contentDisposition the content description of the file.
      */
-    public static void downloadFile(final Activity activity, final PreferenceManager manager, final String url,
+    public static void downloadFile(@NonNull final Activity activity, @NonNull final PreferenceManager manager, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {

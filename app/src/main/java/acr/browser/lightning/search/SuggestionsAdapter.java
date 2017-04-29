@@ -117,6 +117,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
         return mFilteredList.size();
     }
 
+    @Nullable
     @Override
     public Object getItem(int position) {
         if (position > mFilteredList.size() || position < 0) {
@@ -138,14 +139,15 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             mImage = (ImageView) view.findViewById(R.id.suggestionIcon);
         }
 
-        final ImageView mImage;
-        final TextView mTitle;
-        final TextView mUrl;
+        @NonNull final ImageView mImage;
+        @NonNull final TextView mTitle;
+        @NonNull final TextView mUrl;
 
     }
 
+    @Nullable
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, ViewGroup parent) {
         SuggestionHolder holder;
 
         if (convertView == null) {
@@ -190,12 +192,13 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
         return new SearchFilter(this);
     }
 
-    private synchronized void publishResults(List<HistoryItem> list) {
+    private synchronized void publishResults(@NonNull List<HistoryItem> list) {
         mFilteredList.clear();
         mFilteredList.addAll(list);
         notifyDataSetChanged();
@@ -315,8 +318,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             mSuggestionsAdapter = suggestionsAdapter;
         }
 
+        @NonNull
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
+        protected FilterResults performFiltering(@Nullable CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
                 mSuggestionsAdapter.clearSuggestions();
@@ -359,8 +363,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             return results;
         }
 
+        @NonNull
         @Override
-        public CharSequence convertResultToString(Object resultValue) {
+        public CharSequence convertResultToString(@NonNull Object resultValue) {
             return ((HistoryItem) resultValue).getUrl();
         }
 
