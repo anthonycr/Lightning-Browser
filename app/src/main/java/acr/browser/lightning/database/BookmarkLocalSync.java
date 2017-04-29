@@ -43,6 +43,7 @@ public class BookmarkLocalSync {
         mContext = context;
     }
 
+    @NonNull
     private List<HistoryItem> getBookmarksFromContentUri(String contentUri) {
         List<HistoryItem> list = new ArrayList<>();
         Cursor cursor = getBrowserCursor(contentUri);

@@ -73,7 +73,7 @@ public final class BookmarkPage {
     @Inject Application mApp;
     @Inject BookmarkManager mManager;
 
-    private final Bitmap mFolderIcon;
+    @NonNull private final Bitmap mFolderIcon;
     @NonNull private final String mTitle;
 
     public BookmarkPage(@NonNull Activity activity) {

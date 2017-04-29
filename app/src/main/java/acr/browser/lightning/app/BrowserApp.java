@@ -60,7 +60,7 @@ public class BrowserApp extends Application {
 
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
+            public void uncaughtException(Thread thread, @NonNull Throwable ex) {
 
                 if (BuildConfig.DEBUG) {
                     FileUtils.writeCrashToStorage(ex);

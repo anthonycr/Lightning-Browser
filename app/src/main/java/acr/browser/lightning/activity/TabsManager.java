@@ -111,6 +111,7 @@ public class TabsManager {
      * @param intent    the intent that started the browser activity.
      * @param incognito whether or not we are in incognito mode.
      */
+    @NonNull
     public synchronized Completable initializeTabs(@NonNull final Activity activity,
                                                    @Nullable final Intent intent,
                                                    final boolean incognito) {

@@ -181,7 +181,7 @@ public class LightningDialogBuilder {
                 R.string.hint_title, item.getTitle(),
                 R.string.action_ok, new BrowserDialog.EditorListener() {
                     @Override
-                    public void onClick(String text) {
+                    public void onClick(@NonNull String text) {
                         if (!TextUtils.isEmpty(text)) {
                             final String oldTitle = item.getTitle();
                             final HistoryItem editedItem = new HistoryItem();
@@ -274,7 +274,7 @@ public class LightningDialogBuilder {
                 });
     }
 
-    public void showLongPressLinkDialog(@NonNull final Activity activity, final String url) {
+    public void showLongPressLinkDialog(@NonNull final Activity activity, @NonNull final String url) {
         BrowserDialog.show(activity, url,
                 new BrowserDialog.Item(R.string.dialog_open_new_tab) {
                     @Override
