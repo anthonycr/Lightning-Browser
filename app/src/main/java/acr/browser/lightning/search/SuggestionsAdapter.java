@@ -42,6 +42,7 @@ import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.HistoryModel;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
 
 public class SuggestionsAdapter extends BaseAdapter implements Filterable {
@@ -264,6 +265,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                 @Override
                 public void onItem(@Nullable List<HistoryItem> item) {
+                    Preconditions.checkNonNull(item);
                     publishResults(item);
                 }
             });
