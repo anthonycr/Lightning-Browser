@@ -75,16 +75,11 @@ public class BrowserDialog {
         public abstract void onClick();
     }
 
-
-    public static void show(@NonNull Activity activity, @NonNull Item item, @Nullable Item... items) {
-        show(activity, null, item, items);
+    public static void show(@NonNull Activity activity, @StringRes int title, @NonNull Item... items) {
+        show(activity, activity.getString(title), items);
     }
 
-    public static void show(@NonNull Activity activity, @StringRes int title, @NonNull Item item, @Nullable Item... items) {
-        show(activity, activity.getString(title), item, items);
-    }
-
-    public static void show(@NonNull Activity activity, @Nullable String title, @NonNull Item item, @Nullable Item... items) {
+    public static void show(@NonNull Activity activity, @Nullable String title, @NonNull Item... items) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         View layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null);
@@ -96,14 +91,9 @@ public class BrowserDialog {
             android.R.layout.simple_list_item_1);
 
         final List<Item> itemList = new ArrayList<>(1);
-        if (item.isConditionMet()) {
-            itemList.add(item);
-        }
-        if (items != null) {
-            for (Item it : items) {
-                if (it.isConditionMet()) {
-                    itemList.add(it);
-                }
+        for (Item it : items) {
+            if (it.isConditionMet()) {
+                itemList.add(it);
             }
         }
 

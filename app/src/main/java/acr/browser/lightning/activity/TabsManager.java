@@ -529,17 +529,6 @@ public class TabsManager {
     }
 
     /**
-     * Return the {@link WebView} associated to the current tab,
-     * or null if there is no current tab.
-     *
-     * @return a {@link WebView} or null if there is no current tab.
-     */
-    @Nullable
-    public synchronized WebView getCurrentWebView() {
-        return mCurrentTab != null ? mCurrentTab.getWebView() : null;
-    }
-
-    /**
      * Returns the index of the current tab.
      *
      * @return Return the index of the current tab, or -1 if the

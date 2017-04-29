@@ -19,7 +19,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.constant.Constants;
 
 /**
  * A utility class containing helpful methods

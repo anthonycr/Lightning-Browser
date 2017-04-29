@@ -1,7 +1,6 @@
 package acr.browser.lightning.search;
 
 import android.app.Application;
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.anthonycr.bonsai.Single;
@@ -10,7 +9,6 @@ import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.util.List;
 
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
 
 class SuggestionsManager {

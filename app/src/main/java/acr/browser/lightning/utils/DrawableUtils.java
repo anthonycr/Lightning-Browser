@@ -78,16 +78,6 @@ public class DrawableUtils {
             (startB + (int) (fraction * (endB - startB)));
     }
 
-    public static Drawable resolveDrawableAttribute(@NonNull Context context, @AttrRes int res) {
-        int[] attribute = new int[]{res};
-        int indexOfAttrTextSize = 0;
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = context.obtainStyledAttributes(typedValue.data, attribute);
-        Drawable drawable = a.getDrawable(indexOfAttrTextSize);
-        a.recycle();
-        return drawable;
-    }
-
     public static void setBackground(@NonNull View view, @Nullable Drawable drawable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             view.setBackground(drawable);

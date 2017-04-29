@@ -20,7 +20,6 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.utils.Utils;
 
 /**
