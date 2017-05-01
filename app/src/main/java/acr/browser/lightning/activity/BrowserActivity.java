@@ -84,8 +84,6 @@ import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,8 +96,6 @@ import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.bus.BookmarkEvents;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
@@ -188,9 +184,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // The singleton BookmarkManager
     @Inject BookmarkManager mBookmarkManager;
-
-    // Event bus
-    @Inject Bus mEventBus;
 
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
@@ -1119,6 +1112,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }, 150);
     }
 
+    @Override
+    public void handleHistoryChange() {
+        openHistory();
+    }
+
     /**
      * displays the WebView contained in the LightningView Also handles the
      * removal of previous views
@@ -1288,8 +1286,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (isIncognito() && isFinishing()) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
-
-        mEventBus.unregister(mBusEventListener);
     }
 
     void saveOpenTabs() {
@@ -1347,8 +1343,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(NETWORK_BROADCAST_ACTION);
         getApplication().registerReceiver(mNetworkReceiver, filter);
-
-        mEventBus.register(mBusEventListener);
 
         if (mFullScreen) {
             overlayToolbarOnWebView();
@@ -2080,6 +2074,43 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    @Override
+    public void handleBookmarksChange() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
+            && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
+            currentTab.loadBookmarkpage();
+        }
+        if (currentTab != null) {
+            mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
+        }
+    }
+
+    @Override
+    public void handleBookmarkDeleted(@NonNull HistoryItem item) {
+        mBookmarksView.handleBookmarkDeleted(item);
+        handleBookmarksChange();
+    }
+
+    @Override
+    public void handleNewTab(@NonNull LightningDialogBuilder.NewTab newTabType, @NonNull String url) {
+        mDrawerLayout.closeDrawers();
+        switch (newTabType) {
+            case FOREGROUND:
+                newTab(url, true);
+                break;
+            case BACKGROUND:
+                newTab(url, false);
+                break;
+            case INCOGNITO:
+                Intent intent = new Intent(BrowserActivity.this, IncognitoActivity.class);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
+                break;
+        }
+    }
+
     /**
      * Performs an action when the provided view is laid out.
      *
@@ -2220,66 +2251,4 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private final Object mBusEventListener = new Object() {
-
-        @Subscribe
-        public void loadHistory(final BrowserEvents.OpenHistoryInCurrentTab event) {
-            openHistory();
-        }
-
-        /**
-         * Load the given url in a new tab, used by the the
-         * {@link acr.browser.lightning.fragment.BookmarksFragment} and by the
-         * {@link LightningDialogBuilder}
-         *
-         * @param event   Bus event indicating that the user wishes
-         *                to open a bookmark in a new tab
-         */
-        @Subscribe
-        public void loadUrlInNewTab(final BrowserEvents.OpenUrlInNewTab event) {
-            mDrawerLayout.closeDrawers();
-            if (event.location == BrowserEvents.OpenUrlInNewTab.Location.NEW_TAB) {
-                newTab(event.url, true);
-            } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND) {
-                newTab(event.url, false);
-            } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO) {
-                Intent intent = new Intent(BrowserActivity.this, IncognitoActivity.class);
-                intent.setData(Uri.parse(event.url));
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
-            }
-        }
-
-        /**
-         * This method is called when the user edits a bookmark.
-         *
-         * @param event the event that the bookmark has changed.
-         */
-        @Subscribe
-        public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
-            handleBookmarksChange();
-        }
-
-        /**
-         * Notify the browser that a bookmark was deleted.
-         *
-         * @param event the event that the bookmark has been deleted
-         */
-        @Subscribe
-        public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
-            handleBookmarksChange();
-        }
-
-        private void handleBookmarksChange() {
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-                && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
-                currentTab.loadBookmarkpage();
-            }
-            if (currentTab != null) {
-                mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
-            }
-        }
-
-    };
 }

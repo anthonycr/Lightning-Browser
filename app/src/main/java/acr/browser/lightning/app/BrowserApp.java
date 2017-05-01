@@ -13,7 +13,6 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import com.squareup.leakcanary.LeakCanary;
-import com.squareup.otto.Bus;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -34,7 +33,6 @@ public class BrowserApp extends Application {
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
     private static final Executor mTaskThread = Executors.newCachedThreadPool();
 
-    @Inject Bus mBus;
     @Inject PreferenceManager mPreferenceManager;
 
     @Override

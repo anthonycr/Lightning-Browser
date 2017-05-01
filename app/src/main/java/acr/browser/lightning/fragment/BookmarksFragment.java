@@ -33,8 +33,6 @@ import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.SingleSubscriber;
 import com.anthonycr.bonsai.Subscription;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -47,7 +45,6 @@ import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BookmarksView;
-import acr.browser.lightning.bus.BookmarkEvents;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.BookmarkManager;
@@ -79,9 +76,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     // Managers
     @Inject BookmarkManager mBookmarkManager;
-
-    // Event bus
-    @Inject Bus mEventBus;
 
     // Dialog builder
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
@@ -248,13 +242,11 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onStart() {
         super.onStart();
-        mEventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mEventBus.unregister(this);
     }
 
     public void reinitializePreferences() {
@@ -279,10 +271,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    @Subscribe
-    public void bookmarkDeleted(@NonNull final BookmarkEvents.Deleted event) {
-        mBookmarks.remove(event.item);
-        if (event.item.isFolder()) {
+    @Override
+    public void handleBookmarkDeleted(@NonNull HistoryItem item) {
+        mBookmarks.remove(item);
+        if (item.isFolder()) {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
         } else {
             mBookmarkAdapter.notifyDataSetChanged();
@@ -349,9 +341,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private void handleLongPress(@NonNull final HistoryItem item) {
         if (item.isFolder()) {
-            mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getActivity(), item);
+            mBookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(getActivity(), mUiController, item);
         } else {
-            mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(getActivity(), item);
+            mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(getActivity(), mUiController, item);
         }
     }
 

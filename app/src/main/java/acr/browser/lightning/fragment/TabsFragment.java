@@ -31,8 +31,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.otto.Bus;
-
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
@@ -93,7 +91,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     private Unbinder mUnbinder;
 
     private TabsManager mTabsManager;
-    @Inject Bus mBus;
     @Inject PreferenceManager mPreferences;
 
     public TabsFragment() {
@@ -193,24 +190,12 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mBus.register(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // Force adapter refresh
         if (mTabsAdapter != null) {
             mTabsAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mBus.unregister(this);
     }
 
     @Override

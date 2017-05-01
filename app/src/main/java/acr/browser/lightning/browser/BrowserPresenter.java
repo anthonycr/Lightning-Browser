@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
-import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
 
@@ -34,7 +33,6 @@ public class BrowserPresenter {
 
     @NonNull private final TabsManager mTabsModel;
     @Inject PreferenceManager mPreferences;
-    @Inject Bus mEventBus;
 
     @NonNull private final BrowserView mView;
     @Nullable private LightningView mCurrentTab;

@@ -17,12 +17,12 @@ import android.webkit.WebView;
 import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.CompletableAction;
 import com.anthonycr.bonsai.CompletableSubscriber;
+import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.Stream;
 import com.anthonycr.bonsai.StreamAction;
 import com.anthonycr.bonsai.StreamOnSubscribe;
 import com.anthonycr.bonsai.StreamSubscriber;
-import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +38,6 @@ import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Schedulers;
-
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.UrlUtils;
@@ -67,7 +64,6 @@ public class TabsManager {
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject BookmarkManager mBookmarkManager;
-    @Inject Bus mEventBus;
     @Inject Application mApp;
 
     public TabsManager() {

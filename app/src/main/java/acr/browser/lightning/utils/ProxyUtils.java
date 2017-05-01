@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import com.squareup.otto.Bus;
-
 import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Inject;
@@ -33,7 +31,6 @@ public class ProxyUtils {
 
     @Inject PreferenceManager mPreferences;
     @Inject I2PAndroidHelper mI2PHelper;
-    @Inject Bus mBus;
 
     @Inject
     public ProxyUtils() {
