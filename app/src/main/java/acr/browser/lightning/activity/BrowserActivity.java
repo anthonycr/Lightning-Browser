@@ -123,7 +123,7 @@ import acr.browser.lightning.view.SearchView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
+public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener {
 
     private static final String TAG = BrowserActivity.class.getSimpleName();
 
@@ -2205,21 +2205,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 closeDrawers(null);
                 break;
         }
-    }
-
-    /**
-     * Handle long presses on views that use this class
-     * as their OnLongClickListener. This method should
-     * distinguish between the IDs of the views that are
-     * getting clicked.
-     *
-     * @param view the view that has been long pressed
-     * @return returns true since the method handles the long press
-     * event
-     */
-    @Override
-    public boolean onLongClick(View view) {
-        return true;
     }
 
     /**
