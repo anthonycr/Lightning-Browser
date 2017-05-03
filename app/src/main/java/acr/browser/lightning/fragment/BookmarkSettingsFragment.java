@@ -164,20 +164,18 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         importPref.setOnPreferenceClickListener(this);
         deletePref.setOnPreferenceClickListener(this);
 
-        BrowserApp.getTaskThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                final boolean isBrowserImportSupported = getSync().isBrowserImportSupported();
-                Schedulers.main().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
-                        importStock.setEnabled(isBrowserImportSupported);
-                        importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
-                    }
-                });
-            }
-        });
+        getSync().isBrowserImportSupported()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<Boolean>() {
+                @Override
+                public void onItem(@Nullable Boolean supported) {
+                    Preconditions.checkNonNull(supported);
+                    Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
+                    importStock.setEnabled(supported);
+                    importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
+                }
+            });
 
     }
 

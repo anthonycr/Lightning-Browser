@@ -83,7 +83,7 @@ public class BookmarkLocalSync {
         Uri uri = Uri.parse(contentUri);
         try {
             cursor = mContext.getContentResolver().query(uri,
-                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
+                new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -145,16 +145,23 @@ public class BookmarkLocalSync {
         return getBookmarksFromContentUri(CHROME_DEV_BOOKMARKS_CONTENT);
     }
 
-    @WorkerThread
-    public boolean isBrowserImportSupported() {
-        Cursor chrome = getChromeCursor();
-        Utils.close(chrome);
-        Cursor dev = getChromeDevCursor();
-        Utils.close(dev);
-        Cursor beta = getChromeBetaCursor();
-        Cursor stock = getStockCursor();
-        Utils.close(stock);
-        return chrome != null || dev != null || beta != null || stock != null;
+    @NonNull
+    public Single<Boolean> isBrowserImportSupported() {
+        return Single.create(new SingleAction<Boolean>() {
+            @Override
+            public void onSubscribe(@NonNull SingleSubscriber<Boolean> subscriber) {
+                Cursor chrome = getChromeCursor();
+                Utils.close(chrome);
+                Cursor dev = getChromeDevCursor();
+                Utils.close(dev);
+                Cursor beta = getChromeBetaCursor();
+                Cursor stock = getStockCursor();
+                Utils.close(stock);
+
+                subscriber.onItem(chrome != null || dev != null || beta != null || stock != null);
+                subscriber.onComplete();
+            }
+        });
     }
 
     @Nullable

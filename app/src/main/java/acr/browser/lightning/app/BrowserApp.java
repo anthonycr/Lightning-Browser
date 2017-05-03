@@ -102,11 +102,6 @@ public class BrowserApp extends Application {
         return mIOThread;
     }
 
-    @NonNull
-    public static Executor getTaskThread() {
-        return mTaskThread;
-    }
-
     /**
      * Determines whether this is a release build.
      *
