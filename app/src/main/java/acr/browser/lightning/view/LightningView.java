@@ -77,20 +77,20 @@ public class LightningView {
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
 
-    private static String sHomepage;
-    private static String sDefaultUserAgent;
+    @Nullable private static String sHomepage;
+    @Nullable private static String sDefaultUserAgent;
     private static float sMaxFling;
     private static final float[] sNegativeColorArray = {
-            -1.0f, 0, 0, 0, 255, // red
-            0, -1.0f, 0, 0, 255, // green
-            0, 0, -1.0f, 0, 255, // blue
-            0, 0, 0, 1.0f, 0 // alpha
+        -1.0f, 0, 0, 0, 255, // red
+        0, -1.0f, 0, 0, 255, // green
+        0, 0, -1.0f, 0, 255, // blue
+        0, 0, 0, 1.0f, 0 // alpha
     };
     private static final float[] sIncreaseContrastColorArray = {
-            2.0f, 0, 0, 0, -160.f, // red
-            0, 2.0f, 0, 0, -160.f, // green
-            0, 0, 2.0f, 0, -160.f, // blue
-            0, 0, 0, 1.0f, 0 // alpha
+        2.0f, 0, 0, 0, -160.f, // red
+        0, 2.0f, 0, 0, -160.f, // green
+        0, 0, 2.0f, 0, -160.f, // blue
+        0, 0, 0, 1.0f, 0 // alpha
     };
 
     @NonNull private final LightningViewTitle mTitle;
@@ -193,6 +193,8 @@ public class LightningView {
         if (mWebView == null) {
             return;
         }
+
+        Preconditions.checkNonNull(sHomepage);
         switch (sHomepage) {
             case Constants.SCHEME_HOMEPAGE:
                 loadStartpage();
@@ -213,15 +215,15 @@ public class LightningView {
      */
     private void loadStartpage() {
         new StartPage().getHomepage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<String>() {
-                    @Override
-                    public void onItem(@Nullable String item) {
-                        Preconditions.checkNonNull(item);
-                        loadUrl(item);
-                    }
-                });
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    loadUrl(item);
+                }
+            });
     }
 
     /**
@@ -231,15 +233,15 @@ public class LightningView {
      */
     public void loadBookmarkpage() {
         new BookmarkPage(mActivity).getBookmarkPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<String>() {
-                    @Override
-                    public void onItem(@Nullable String item) {
-                        Preconditions.checkNonNull(item);
-                        loadUrl(item);
-                    }
-                });
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    loadUrl(item);
+                }
+            });
     }
 
     /**
@@ -368,7 +370,7 @@ public class LightningView {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
-                    !mPreferences.getBlockThirdPartyCookiesEnabled());
+                !mPreferences.getBlockThirdPartyCookiesEnabled());
         }
     }
 
@@ -421,44 +423,44 @@ public class LightningView {
         }
 
         getPathObservable("appcache").subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<File>() {
+                @Override
+                public void onItem(@Nullable File item) {
+                    Preconditions.checkNonNull(item);
+                    settings.setAppCachePath(item.getPath());
+                }
+            });
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            getPathObservable("geolocation").subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new SingleOnSubscribe<File>() {
                     @Override
                     public void onItem(@Nullable File item) {
                         Preconditions.checkNonNull(item);
-                        settings.setAppCachePath(item.getPath());
+                        //noinspection deprecation
+                        settings.setGeolocationDatabasePath(item.getPath());
                     }
                 });
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            getPathObservable("geolocation").subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(new SingleOnSubscribe<File>() {
-                        @Override
-                        public void onItem(@Nullable File item) {
-                            Preconditions.checkNonNull(item);
-                            //noinspection deprecation
-                            settings.setGeolocationDatabasePath(item.getPath());
-                        }
-                    });
         }
 
         getPathObservable("databases").subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<File>() {
-                    @Override
-                    public void onItem(@Nullable File item) {
-                        if (API < Build.VERSION_CODES.KITKAT) {
-                            Preconditions.checkNonNull(item);
-                            //noinspection deprecation
-                            settings.setDatabasePath(item.getPath());
-                        }
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<File>() {
+                @Override
+                public void onItem(@Nullable File item) {
+                    if (API < Build.VERSION_CODES.KITKAT) {
+                        Preconditions.checkNonNull(item);
+                        //noinspection deprecation
+                        settings.setDatabasePath(item.getPath());
                     }
+                }
 
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+                @Override
+                public void onComplete() {
+                }
+            });
 
     }
 
@@ -714,7 +716,7 @@ public class LightningView {
                 break;
             case 1:
                 ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
-                        sNegativeColorArray);
+                    sNegativeColorArray);
                 mPaint.setColorFilter(filterInvert);
                 setHardwareRendering();
 
@@ -743,7 +745,7 @@ public class LightningView {
 
             case 4:
                 ColorMatrixColorFilter IncreaseHighContrast = new ColorMatrixColorFilter(
-                        sIncreaseContrastColorArray);
+                    sIncreaseContrastColorArray);
                 mPaint.setColorFilter(IncreaseHighContrast);
                 setHardwareRendering();
                 break;
@@ -972,7 +974,7 @@ public class LightningView {
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
             if (currentUrl.endsWith(HistoryPage.FILENAME)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity,mUIController,  url);
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, newUrl);

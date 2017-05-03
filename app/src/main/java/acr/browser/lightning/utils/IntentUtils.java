@@ -31,7 +31,7 @@ public class IntentUtils {
         "(?:http|https|file)://" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
         + ')' + "(.*)");
 
-    public IntentUtils(Activity activity) {
+    public IntentUtils(@NonNull Activity activity) {
         mActivity = activity;
     }
 
@@ -63,7 +63,7 @@ public class IntentUtils {
             }
         }
         if (tab != null) {
-            intent.putExtra(Constants.INTENT_ORIGIN, 1);
+            intent.putExtra(Constants.INTENT_ORIGIN, tab.hashCode());
         }
 
         Matcher m = ACCEPTED_URI_SCHEMA.matcher(url);
@@ -84,7 +84,7 @@ public class IntentUtils {
      * Search for intent handlers that are specific to this URL aka, specialized
      * apps like google maps or youtube
      */
-    private boolean isSpecializedHandlerAvailable(Intent intent) {
+    private boolean isSpecializedHandlerAvailable(@NonNull Intent intent) {
         PackageManager pm = mActivity.getPackageManager();
         List<ResolveInfo> handlers = pm.queryIntentActivities(intent,
             PackageManager.GET_RESOLVED_FILTER);

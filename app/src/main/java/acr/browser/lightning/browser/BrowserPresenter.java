@@ -61,16 +61,16 @@ public class BrowserPresenter {
      */
     public void setupTabs(@Nullable Intent intent) {
         mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
-                .subscribeOn(Schedulers.main())
-                .subscribe(new CompletableOnSubscribe() {
-                    @Override
-                    public void onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        mView.notifyTabViewInitialized();
-                        mView.updateTabNumber(mTabsModel.size());
-                        tabChanged(mTabsModel.last());
-                    }
-                });
+            .subscribeOn(Schedulers.main())
+            .subscribe(new CompletableOnSubscribe() {
+                @Override
+                public void onComplete() {
+                    // At this point we always have at least a tab in the tab manager
+                    mView.notifyTabViewInitialized();
+                    mView.updateTabNumber(mTabsModel.size());
+                    tabChanged(mTabsModel.last());
+                }
+            });
     }
 
     /**
@@ -220,13 +220,16 @@ public class BrowserPresenter {
                 } else {
                     url = null;
                 }
-                int num = 0;
+                int tabHashCode = 0;
                 if (intent != null && intent.getExtras() != null) {
-                    num = intent.getExtras().getInt(Constants.INTENT_ORIGIN);
+                    tabHashCode = intent.getExtras().getInt(Constants.INTENT_ORIGIN);
                 }
 
-                if (num == 1) {
-                    loadUrlInCurrentView(url);
+                if (tabHashCode != 0) {
+                    LightningView tab = mTabsModel.getTabForHashCode(tabHashCode);
+                    if (tab != null) {
+                        tab.loadUrl(url);
+                    }
                 } else if (url != null) {
                     if (url.startsWith(Constants.FILE)) {
                         mView.showBlockedLocalFileDialog(new DialogInterface.OnClickListener() {

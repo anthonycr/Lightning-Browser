@@ -557,6 +557,26 @@ public class TabsManager {
     }
 
     /**
+     * Returns the {@link LightningView} with
+     * the provided hash, or null if there is
+     * no tab with the hash.
+     *
+     * @param hashCode the hashcode.
+     * @return the tab with an identical hash, or null.
+     */
+    @Nullable
+    public synchronized LightningView getTabForHashCode(int hashCode) {
+        for (LightningView tab : mTabList) {
+            if (tab.getWebView() != null) {
+                if (tab.getWebView().hashCode() == hashCode) {
+                    return tab;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Switch the current tab to the one at the given position.
      * It returns the selected tab that has been switced to.
      *
