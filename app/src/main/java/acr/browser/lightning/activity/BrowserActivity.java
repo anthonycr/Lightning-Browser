@@ -543,7 +543,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (UrlUtils.isSpecialUrl(url)) {
                 mSearch.setText("");
             } else {
-                mSearch.setText(url);
+                if(!mSearch.hasFocus()) {
+                    mSearch.setText(url);
+                }
             }
         }
     }
