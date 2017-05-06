@@ -16,10 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +37,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
+import acr.browser.lightning.animation.AnimationUtils;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.constant.Constants;
@@ -240,16 +238,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
     public void reinitializePreferences() {
         Activity activity = getActivity();
         if (activity == null) {
@@ -293,40 +281,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             resource = R.drawable.ic_action_back;
         }
 
-        final Animation startRotation = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                mBookmarkTitleImage.setRotationY(90 * interpolatedTime);
-            }
-        };
-        final Animation finishRotation = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                mBookmarkTitleImage.setRotationY((-90) + (90 * interpolatedTime));
-            }
-        };
-        startRotation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mBookmarkTitleImage.setImageResource(resource);
-                mBookmarkTitleImage.startAnimation(finishRotation);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        startRotation.setInterpolator(new AccelerateInterpolator());
-        finishRotation.setInterpolator(new DecelerateInterpolator());
-        startRotation.setDuration(250);
-        finishRotation.setDuration(250);
-
         if (animate) {
-            mBookmarkTitleImage.startAnimation(startRotation);
+            Animation transition = AnimationUtils.createRotationTransitionAnimation(mBookmarkTitleImage, resource);
+            mBookmarkTitleImage.startAnimation(transition);
         } else {
             mBookmarkTitleImage.setImageResource(resource);
         }
