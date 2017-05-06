@@ -31,7 +31,6 @@ public class BrowserApp extends Application {
 
     @Nullable private static AppComponent sAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
-    private static final Executor mTaskThread = Executors.newCachedThreadPool();
 
     @Inject PreferenceManager mPreferenceManager;
 

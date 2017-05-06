@@ -61,11 +61,6 @@ public class ThemeUtils {
         return (dark) ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
     }
 
-    public static void themeImageView(@NonNull ImageView icon, @NonNull Context context, boolean dark) {
-        int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
-        icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-    }
-
     @NonNull
     private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
@@ -114,14 +109,6 @@ public class ThemeUtils {
         drawable.mutate();
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
         return drawable;
-    }
-
-    @NonNull
-    public static ColorDrawable getSelectedBackground(@NonNull Context context, boolean dark) {
-        @ColorInt final int color =
-            (dark) ? ContextCompat.getColor(context, R.color.selected_dark) : ContextCompat.getColor(
-                context, R.color.selected_light);
-        return new ColorDrawable(color);
     }
 
     public static int getThemedTextHintColor(boolean dark) {

@@ -30,14 +30,6 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
     public HistoryItem() {}
 
-    public HistoryItem(@NonNull HistoryItem item) {
-        this.mUrl = item.mUrl;
-        this.mTitle = item.mTitle;
-        this.mFolder = item.mFolder;
-        this.mOrder = item.mOrder;
-        this.mIsFolder = item.mIsFolder;
-    }
-
     public HistoryItem(@NonNull String url, @NonNull String title) {
         Preconditions.checkNonNull(url);
         Preconditions.checkNonNull(title);

@@ -33,8 +33,6 @@ import acr.browser.lightning.utils.Preconditions;
 
 public class LightningChromeClient extends WebChromeClient {
 
-    private static final String TAG = LightningChromeClient.class.getSimpleName();
-
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @NonNull private final Activity mActivity;
