@@ -99,9 +99,9 @@ public class LightningView {
     @NonNull private final GestureDetector mGestureDetector;
     @NonNull private final Activity mActivity;
     @NonNull private final Paint mPaint = new Paint();
-    @Nullable private Object mTag;
+    private boolean mIsNewTab;
     private final boolean mIsIncognitoTab;
-    private boolean isForegroundTab;
+    private boolean mIsForegroundTab;
     private boolean mInvertPage = false;
     private boolean mToggleDesktop = false;
     @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
@@ -162,25 +162,27 @@ public class LightningView {
     }
 
     /**
-     * Sets the tag on the object,
-     * a reference to this object is held
-     * indefinitely.
+     * Sets whether this tab was the
+     * result of a new intent sent
+     * to the browser.
      *
-     * @param tag the tag to set, may be null.
+     * @param isNewTab true if it's from
+     *                 a new intent,
+     *                 false otherwise.
      */
-    public void setTag(@Nullable Object tag) {
-        mTag = tag;
+    public void setIsNewTab(boolean isNewTab) {
+        mIsNewTab = isNewTab;
     }
 
     /**
-     * The tag set on the object.
+     * Returns whether this tab was created
+     * as a result of a new intent.
      *
-     * @return the tag set on the object,
-     * may be null.
+     * @return true if it was a new intent,
+     * false otherwise.
      */
-    @Nullable
-    public Object getTag() {
-        return mTag;
+    public boolean isNewTab() {
+        return mIsNewTab;
     }
 
     /**
@@ -617,8 +619,8 @@ public class LightningView {
      * @param isForeground true if the tab should be set as
      *                     foreground, false otherwise.
      */
-    public void setForegroundTab(boolean isForeground) {
-        isForegroundTab = isForeground;
+    public void setIsForegroundTab(boolean isForeground) {
+        mIsForegroundTab = isForeground;
         mUIController.tabChanged(this);
     }
 
@@ -629,7 +631,7 @@ public class LightningView {
      * false otherwise.
      */
     public boolean isForegroundTab() {
-        return isForegroundTab;
+        return mIsForegroundTab;
     }
 
     /**

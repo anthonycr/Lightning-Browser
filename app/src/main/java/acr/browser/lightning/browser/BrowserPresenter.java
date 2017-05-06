@@ -105,12 +105,12 @@ public class BrowserPresenter {
                     // TODO: Restore this when Google fixes the bug where the WebView is
                     // blank after calling onPause followed by onResume.
                     // mCurrentTab.onPause();
-                    mCurrentTab.setForegroundTab(false);
+                    mCurrentTab.setIsForegroundTab(false);
                 }
 
                 newTab.resumeTimers();
                 newTab.onResume();
-                newTab.setForegroundTab(true);
+                newTab.setIsForegroundTab(true);
 
                 mView.updateProgress(newTab.getProgress());
                 mView.setBackButtonEnabled(newTab.canGoBack());
@@ -161,7 +161,7 @@ public class BrowserPresenter {
         }
 
         final boolean isShown = tabToDelete.isShown();
-        boolean shouldClose = mShouldClose && isShown && Boolean.TRUE.equals(tabToDelete.getTag());
+        boolean shouldClose = mShouldClose && isShown && tabToDelete.isNewTab();
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
             (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
@@ -239,7 +239,7 @@ public class BrowserPresenter {
                                 mShouldClose = true;
                                 LightningView tab = mTabsModel.lastTab();
                                 if (tab != null) {
-                                    tab.setTag(true);
+                                    tab.setIsNewTab(true);
                                 }
                             }
                         });
@@ -248,7 +248,7 @@ public class BrowserPresenter {
                         mShouldClose = true;
                         LightningView tab = mTabsModel.lastTab();
                         if (tab != null) {
-                            tab.setTag(true);
+                            tab.setIsNewTab(true);
                         }
                     }
                 }
