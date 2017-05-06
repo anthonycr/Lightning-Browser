@@ -69,7 +69,7 @@ import acr.browser.lightning.utils.Utils;
  */
 public class LightningView {
 
-    private static final String TAG = LightningView.class.getSimpleName();
+    private static final String TAG = "LightningView";
 
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";

@@ -50,7 +50,8 @@ import acr.browser.lightning.view.LightningView;
  */
 public class TabsManager {
 
-    private static final String TAG = TabsManager.class.getSimpleName();
+    private static final String TAG = "TabsManager";
+    
     private static final String BUNDLE_KEY = "WEBVIEW_";
     private static final String URL_KEY = "URL_KEY";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";

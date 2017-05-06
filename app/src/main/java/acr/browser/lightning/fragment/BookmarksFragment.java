@@ -68,7 +68,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         return bookmarksFragment;
     }
 
-    private final static String TAG = BookmarksFragment.class.getSimpleName();
+    private static final String TAG = "BookmarksFragment";
 
     public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
 

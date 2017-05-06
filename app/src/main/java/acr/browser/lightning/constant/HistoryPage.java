@@ -33,7 +33,7 @@ import acr.browser.lightning.utils.Utils;
 
 public class HistoryPage {
 
-    private static final String TAG = HistoryPage.class.getSimpleName();
+    private static final String TAG = "HistoryPage";
 
     public static final String FILENAME = "history.html";
 

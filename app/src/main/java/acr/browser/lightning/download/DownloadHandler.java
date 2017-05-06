@@ -39,7 +39,8 @@ import acr.browser.lightning.utils.Utils;
  */
 public class DownloadHandler {
 
-    private static final String TAG = DownloadHandler.class.getSimpleName();
+    private static final String TAG = "DownloadHandler";
+
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     public static final String DEFAULT_DOWNLOAD_PATH =

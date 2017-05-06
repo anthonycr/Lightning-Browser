@@ -31,7 +31,7 @@ import acr.browser.lightning.utils.Utils;
  */
 class FetchUrlMimeType extends Thread {
 
-    private static final String TAG = FetchUrlMimeType.class.getSimpleName();
+    private static final String TAG = "FetchUrlMimeType";
 
     private final Activity mContext;
     private final DownloadManager.Request mRequest;

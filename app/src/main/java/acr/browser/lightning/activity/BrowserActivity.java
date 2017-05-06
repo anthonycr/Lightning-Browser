@@ -124,7 +124,7 @@ import butterknife.ButterKnife;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener {
 
-    private static final String TAG = BrowserActivity.class.getSimpleName();
+    private static final String TAG = "BrowserActivity";
 
     private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
 

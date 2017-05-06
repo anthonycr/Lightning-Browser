@@ -70,7 +70,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         return tabsFragment;
     }
 
-    private static final String TAG = TabsFragment.class.getSimpleName();
+    private static final String TAG = "TabsFragment";
 
     /**
      * Arguments boolean to tell the fragment it is displayed in the drawner or on the tab strip

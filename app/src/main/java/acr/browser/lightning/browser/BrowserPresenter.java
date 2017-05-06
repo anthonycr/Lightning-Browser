@@ -29,7 +29,7 @@ import acr.browser.lightning.view.LightningView;
  */
 public class BrowserPresenter {
 
-    private static final String TAG = BrowserPresenter.class.getSimpleName();
+    private static final String TAG = "BrowserPresenter";
 
     @NonNull private final TabsManager mTabsModel;
     @Inject PreferenceManager mPreferences;

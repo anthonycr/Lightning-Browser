@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 
 public class MemoryLeakUtils {
 
-    private static final String TAG = MemoryLeakUtils.class.getSimpleName();
+    private static final String TAG = "MemoryLeakUtils";
 
     @Nullable private static Method sFinishInputLocked = null;
 

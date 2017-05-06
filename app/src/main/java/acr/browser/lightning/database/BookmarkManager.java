@@ -42,7 +42,7 @@ import acr.browser.lightning.utils.Utils;
 @Singleton
 public class BookmarkManager {
 
-    private static final String TAG = BookmarkManager.class.getSimpleName();
+    private static final String TAG = "BookmarkManager";
 
     private static final String TITLE = "title";
     private static final String URL = "url";

@@ -56,7 +56,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
 
-    private static final String TAG = Utils.class.getSimpleName();
+    private static final String TAG = "Utils";
 
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;

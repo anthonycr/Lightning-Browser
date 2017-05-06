@@ -27,7 +27,7 @@ import acr.browser.lightning.utils.Preconditions;
 
 public class BrowserApp extends Application {
 
-    private static final String TAG = BrowserApp.class.getSimpleName();
+    private static final String TAG = "BrowserApp";
 
     @Nullable private static AppComponent sAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();

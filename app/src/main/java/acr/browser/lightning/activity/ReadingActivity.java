@@ -45,7 +45,7 @@ import butterknife.ButterKnife;
 
 public class ReadingActivity extends AppCompatActivity {
 
-    private static final String TAG = ReadingActivity.class.getSimpleName();
+    private static final String TAG = "ReadingActivity";
 
     @BindView(R.id.textViewTitle) TextView mTitle;
     @BindView(R.id.textViewBody) TextView mBody;

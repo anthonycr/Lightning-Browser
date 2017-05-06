@@ -29,7 +29,7 @@ import okhttp3.Response;
 
 abstract class BaseSuggestionsModel {
 
-    private static final String TAG = BaseSuggestionsModel.class.getSimpleName();
+    private static final String TAG = "BaseSuggestionsModel";
 
     static final int MAX_RESULTS = 5;
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toSeconds(1);
