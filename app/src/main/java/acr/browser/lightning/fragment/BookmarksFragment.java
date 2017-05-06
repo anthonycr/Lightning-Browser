@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +20,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.anthonycr.bonsai.Schedulers;
@@ -52,6 +49,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
 import butterknife.BindView;
@@ -89,7 +87,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private UIController mUiController;
 
     // Adapter
-    private BookmarkViewAdapter mBookmarkAdapter;
+    private BookmarkListAdapter mBookmarkAdapter;
 
     // Preloaded images
     private Bitmap mWebpageBitmap, mFolderBitmap;
@@ -98,7 +96,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private final List<HistoryItem> mBookmarks = new ArrayList<>();
 
     // Views
-    @BindView(R.id.right_drawer_list) ListView mBookmarksListView;
+    @BindView(R.id.right_drawer_list) RecyclerView mBookmarksListView;
     @BindView(R.id.starIcon) ImageView mBookmarkTitleImage;
     @BindView(R.id.icon_star) ImageView mBookmarkImage;
 
@@ -113,17 +111,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Nullable
     private Subscription mBookmarksSubscription;
 
-    private Single<BookmarkViewAdapter> initBookmarkManager() {
-        return Single.create(new SingleAction<BookmarkViewAdapter>() {
+    private static Single<List<HistoryItem>> initBookmarks(@NonNull final BookmarkManager bookmarkManager) {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
-            public void onSubscribe(@NonNull SingleSubscriber<BookmarkViewAdapter> subscriber) {
-                Context context = getContext();
-                if (context != null) {
-                    mBookmarkAdapter = new BookmarkViewAdapter(context, mBookmarks);
-                    setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
-                    subscriber.onItem(mBookmarkAdapter);
-                }
+            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
+                subscriber.onItem(bookmarkManager.getBookmarksFromFolder(null, true));
                 subscriber.onComplete();
+
             }
         });
     }
@@ -154,10 +148,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Handle bookmark click
     private final OnItemClickListener mItemClickListener = new OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(int position) {
             final HistoryItem item = mBookmarks.get(position);
             if (item.isFolder()) {
-                mScrollIndex = mBookmarksListView.getFirstVisiblePosition();
+                mScrollIndex = ((LinearLayoutManager) mBookmarksListView.getLayoutManager()).findFirstVisibleItemPosition();
                 setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
             } else {
                 mUiController.bookmarkItemClicked(item);
@@ -167,7 +161,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private final OnItemLongClickListener mItemLongClickListener = new OnItemLongClickListener() {
         @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        public boolean onItemLongClick(int position) {
             final HistoryItem item = mBookmarks.get(position);
             handleLongPress(item);
             return true;
@@ -187,8 +181,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.bookmark_drawer, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        mBookmarksListView.setOnItemClickListener(mItemClickListener);
-        mBookmarksListView.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarkTitleImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         final View backView = view.findViewById(R.id.bookmark_back_button);
         backView.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +189,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 if (mBookmarkManager == null) return;
                 if (!mBookmarkManager.isRootFolder()) {
                     setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
-                    mBookmarksListView.setSelection(mScrollIndex);
+                    mBookmarksListView.getLayoutManager().scrollToPosition(mScrollIndex);
                 }
             }
         });
@@ -205,15 +197,24 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
-        mBookmarksSubscription = initBookmarkManager().subscribeOn(Schedulers.io())
+        mBookmarkAdapter = new BookmarkListAdapter(mBookmarks, mFaviconModel, mFolderBitmap, mWebpageBitmap);
+        mBookmarkAdapter.setOnItemClickListener(mItemClickListener);
+        mBookmarkAdapter.setOnItemLongClickListener(mItemLongClickListener);
+        mBookmarksListView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBookmarksListView.setAdapter(mBookmarkAdapter);
+
+        mBookmarksSubscription = initBookmarks(mBookmarkManager)
+            .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
-            .subscribe(new SingleOnSubscribe<BookmarkViewAdapter>() {
+            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                 @Override
-                public void onItem(@Nullable BookmarkViewAdapter item) {
+                public void onItem(@Nullable List<HistoryItem> item) {
                     mBookmarksSubscription = null;
-                    mBookmarksListView.setAdapter(mBookmarkAdapter);
+                    Preconditions.checkNonNull(item);
+                    setBookmarkDataSet(item, true);
                 }
             });
+
         return view;
     }
 
@@ -385,7 +386,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mUiController.closeBookmarksDrawer();
         } else {
             setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
-            mBookmarksListView.setSelection(mScrollIndex);
+            mBookmarksListView.getLayoutManager().scrollToPosition(mScrollIndex);
         }
     }
 
@@ -396,34 +397,87 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
     }
 
-    private class BookmarkViewAdapter extends ArrayAdapter<HistoryItem> {
+    static class BookmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        @BindView(R.id.textBookmark) TextView txtTitle;
+        @BindView(R.id.faviconBookmark) ImageView favicon;
 
-        final Context context;
+        @Nullable private final OnItemLongClickListener onItemLongClickListener;
+        @Nullable private final OnItemClickListener onItemClickListener;
 
-        BookmarkViewAdapter(Context context, @NonNull List<HistoryItem> data) {
-            super(context, R.layout.bookmark_list_item, data);
-            this.context = context;
+        BookmarkViewHolder(@NonNull View itemView,
+                           @Nullable OnItemLongClickListener onItemLongClickListener,
+                           @Nullable OnItemClickListener onItemClickListener) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            this.onItemClickListener = onItemClickListener;
+            this.onItemLongClickListener = onItemLongClickListener;
+
+            itemView.setOnLongClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
-        @NonNull
         @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            View row = convertView;
-            BookmarkViewHolder holder;
-
-            if (row == null) {
-                LayoutInflater inflater = LayoutInflater.from(context);
-                row = inflater.inflate(R.layout.bookmark_list_item, parent, false);
-
-                holder = new BookmarkViewHolder();
-                holder.txtTitle = (TextView) row.findViewById(R.id.textBookmark);
-                holder.favicon = (ImageView) row.findViewById(R.id.faviconBookmark);
-                row.setTag(holder);
-            } else {
-                holder = (BookmarkViewHolder) row.getTag();
+        public void onClick(View v) {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(getAdapterPosition());
             }
+        }
 
-            ViewCompat.jumpDrawablesToCurrentState(row);
+        @Override
+        public boolean onLongClick(View v) {
+            return onItemLongClickListener != null &&
+                onItemLongClickListener.onItemLongClick(getAdapterPosition());
+        }
+    }
+
+    interface OnItemLongClickListener {
+        boolean onItemLongClick(int position);
+    }
+
+    interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    private static class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkViewHolder> {
+
+        @NonNull private final List<HistoryItem> mBookmarks;
+        @NonNull private final FaviconModel mFaviconModel;
+        @NonNull private final Bitmap mFolderBitmap;
+        @NonNull private final Bitmap mWebpageBitmap;
+
+        @Nullable private OnItemLongClickListener mOnItemLongCLickListener;
+        @Nullable private OnItemClickListener mOnItemClickListener;
+
+        BookmarkListAdapter(@NonNull List<HistoryItem> bookmarks,
+                            @NonNull FaviconModel faviconModel,
+                            @NonNull Bitmap folderBitmap,
+                            @NonNull Bitmap webpageBitmap) {
+            mBookmarks = bookmarks;
+            mFaviconModel = faviconModel;
+            mFolderBitmap = folderBitmap;
+            mWebpageBitmap = webpageBitmap;
+        }
+
+        void setOnItemLongClickListener(@Nullable OnItemLongClickListener listener) {
+            mOnItemLongCLickListener = listener;
+        }
+
+        void setOnItemClickListener(@Nullable OnItemClickListener listener) {
+            mOnItemClickListener = listener;
+        }
+
+        @Override
+        public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View itemView = inflater.inflate(R.layout.bookmark_list_item, parent, false);
+
+            return new BookmarkViewHolder(itemView, mOnItemLongCLickListener, mOnItemClickListener);
+        }
+
+        @Override
+        public void onBindViewHolder(BookmarkViewHolder holder, int position) {
+            ViewCompat.jumpDrawablesToCurrentState(holder.itemView);
 
             final HistoryItem web = mBookmarks.get(position);
             holder.txtTitle.setText(web.getTitle());
@@ -454,12 +508,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }
-            return row;
+
         }
 
-        private class BookmarkViewHolder {
-            TextView txtTitle;
-            ImageView favicon;
+        @Override
+        public int getItemCount() {
+            return mBookmarks.size();
         }
     }
 
