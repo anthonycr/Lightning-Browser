@@ -59,9 +59,6 @@ public final class HistoryModel {
                     .historyDatabase()
                     .visitHistoryItem(url, title);
 
-                System.out.println("SHIT: " + BrowserApp.getAppComponent().historyDatabase().toString());
-                System.out.println("SHIT: " + BrowserApp.getAppComponent().historyDatabase().toString());
-
                 subscriber.onComplete();
             }
         });

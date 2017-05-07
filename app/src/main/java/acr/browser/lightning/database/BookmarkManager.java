@@ -65,17 +65,6 @@ public class BookmarkManager {
     }
 
     /**
-     * Look for bookmark using the url
-     *
-     * @param url the lookup url
-     * @return the bookmark as an {@link HistoryItem} or null
-     */
-    @Nullable
-    public HistoryItem findBookmarkForUrl(final String url) {
-        return mBookmarksMap.get(url);
-    }
-
-    /**
      * Initialize the BookmarkManager, it's a one-time operation and will be executed asynchronously.
      * When done, mReady flag will been set to true.
      */
@@ -175,6 +164,17 @@ public class BookmarkManager {
                 tempFile.renameTo(bookmarksFile);
             }
         }
+    }
+
+    /**
+     * Look for bookmark using the url
+     *
+     * @param url the lookup url
+     * @return the bookmark as an {@link HistoryItem} or null
+     */
+    @Nullable
+    public HistoryItem findBookmarkForUrl(final String url) {
+        return mBookmarksMap.get(url);
     }
 
     public boolean isBookmark(String url) {
