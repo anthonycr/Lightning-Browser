@@ -12,14 +12,19 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
+import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.bookmark.BookmarkManager;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.MemoryLeakUtils;
@@ -33,6 +38,8 @@ public class BrowserApp extends Application {
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Inject PreferenceManager mPreferenceManager;
+    @Inject BookmarkManager mOldBookmarkManager;
+    @Inject BookmarkModel mBookmarkModel;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -73,6 +80,20 @@ public class BrowserApp extends Application {
 
         sAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         sAppComponent.inject(this);
+
+        Schedulers.worker().execute(new Runnable() {
+            @Override
+            public void run() {
+                List<HistoryItem> oldBookmarks = mOldBookmarkManager.getAllBookmarks(true);
+                mOldBookmarkManager.deleteAllBookmarks();
+
+                if (!oldBookmarks.isEmpty()) {
+                    mBookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(Schedulers.io()).subscribe();
+                } else {
+                    // TODO: 5/7/17 Import bookmarks from assets if not empty
+                }
+            }
+        });
 
         if (mPreferenceManager.getUseLeakCanary() && !isRelease()) {
             LeakCanary.install(this);

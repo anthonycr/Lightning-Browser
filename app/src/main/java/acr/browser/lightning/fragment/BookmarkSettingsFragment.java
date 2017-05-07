@@ -21,6 +21,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
@@ -36,13 +37,14 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.BookmarkLocalSync;
-import acr.browser.lightning.database.BookmarkLocalSync.Source;
-import acr.browser.lightning.database.BookmarkManager;
+import acr.browser.lightning.database.bookmark.BookmarkExporter;
+import acr.browser.lightning.database.bookmark.BookmarkLocalSync;
+import acr.browser.lightning.database.bookmark.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.HistoryItem;
 
 import com.anthonycr.bonsai.Schedulers;
 
+import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
@@ -58,7 +60,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     @Nullable private Activity mActivity;
 
-    @Inject BookmarkManager mBookmarkManager;
+    @Inject BookmarkModel mBookmarkManager;
     private File[] mFileList;
     private String[] mFileNameList;
     @Nullable private BookmarkLocalSync mSync;
@@ -187,7 +189,28 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                     new PermissionsResultAction() {
                         @Override
                         public void onGranted() {
-                            mBookmarkManager.exportBookmarks(getActivity());
+                            mBookmarkManager.getAllBookmarks()
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                                    @Override
+                                    public void onItem(@Nullable List<HistoryItem> item) {
+                                        Preconditions.checkNonNull(item);
+                                        final File exportFile = BookmarkExporter.createNewExportFile();
+                                        BookmarkExporter.exportBookmarksToFile(item, exportFile)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(Schedulers.main())
+                                            .subscribe(new CompletableOnSubscribe() {
+                                                @Override
+                                                public void onComplete() {
+                                                    Activity activity = getActivity();
+                                                    if (activity != null) {
+                                                        Utils.showSnackbar(activity, activity.getString(R.string.bookmark_export_path)
+                                                            + ' ' + exportFile.getPath());
+                                                    }
+                                                }
+                                            });
+                                    }
+                                });
                         }
 
                         @Override
@@ -245,7 +268,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mBookmarkManager.deleteAllBookmarks();
+                mBookmarkManager.deleteAllBookmarks().subscribeOn(Schedulers.io()).subscribe();
             }
         });
         Dialog dialog = builder.show();
@@ -408,7 +431,32 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                     Dialog dialog1 = builder.show();
                     BrowserDialog.setDialogSize(mActivity, dialog1);
                 } else {
-                    mBookmarkManager.importBookmarksFromFile(mFileList[which], getActivity());
+                    BookmarkExporter.importBookmarksFromFile(mFileList[which])
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                            @Override
+                            public void onItem(@Nullable final List<HistoryItem> importList) {
+                                Preconditions.checkNonNull(importList);
+                                mBookmarkManager.addBookmarkList(importList)
+                                    .observeOn(Schedulers.main())
+                                    .subscribe(new CompletableOnSubscribe() {
+                                        @Override
+                                        public void onComplete() {
+                                            Activity activity = getActivity();
+                                            if (activity != null) {
+                                                String message = activity.getResources().getString(R.string.message_import);
+                                                Utils.showSnackbar(activity, importList.size() + " " + message);
+                                            }
+                                        }
+                                    });
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable throwable) {
+                                Log.e(TAG, "onError: importing bookmarks", throwable);
+                                Utils.createInformativeDialog(getActivity(), R.string.title_error, R.string.import_bookmark_error);
+                            }
+                        });
                 }
             }
 

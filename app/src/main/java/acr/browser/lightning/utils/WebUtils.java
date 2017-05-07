@@ -13,7 +13,7 @@ import android.webkit.WebViewDatabase;
 
 import com.anthonycr.bonsai.Schedulers;
 
-import acr.browser.lightning.database.HistoryModel;
+import acr.browser.lightning.database.history.HistoryModel;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino

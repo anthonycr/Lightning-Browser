@@ -1,4 +1,4 @@
-package acr.browser.lightning.database;
+package acr.browser.lightning.database.bookmark;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,8 +37,10 @@ import javax.inject.Singleton;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
+@Deprecated
 @Singleton
 public class BookmarkManager {
 
@@ -102,7 +104,7 @@ public class BookmarkManager {
                             final String url = object.getString(URL);
                             item.setUrl(url);
                             item.setFolder(object.getString(FOLDER));
-                            item.setOrder(object.getInt(ORDER));
+                            item.setPosition(object.getInt(ORDER));
                             item.setImageId(R.drawable.ic_bookmark);
                             bookmarks.put(url, item);
                         } catch (JSONException e) {
@@ -147,7 +149,7 @@ public class BookmarkManager {
                     object.put(TITLE, item.getTitle());
                     object.put(URL, item.getUrl());
                     object.put(FOLDER, item.getFolder());
-                    object.put(ORDER, item.getOrder());
+                    object.put(ORDER, item.getPosition());
                     bookmarkWriter.write(object.toString());
                     bookmarkWriter.newLine();
                 }
@@ -339,7 +341,7 @@ public class BookmarkManager {
                 object.put(TITLE, item.getTitle());
                 object.put(URL, item.getUrl());
                 object.put(FOLDER, item.getFolder());
-                object.put(ORDER, item.getOrder());
+                object.put(ORDER, item.getPosition());
                 bookmarkWriter.write(object.toString());
                 bookmarkWriter.newLine();
             }
@@ -515,7 +517,7 @@ public class BookmarkManager {
                 item.setTitle(object.getString(TITLE));
                 item.setUrl(object.getString(URL));
                 item.setFolder(object.getString(FOLDER));
-                item.setOrder(object.getInt(ORDER));
+                item.setPosition(object.getInt(ORDER));
                 list.add(item);
                 number++;
             }

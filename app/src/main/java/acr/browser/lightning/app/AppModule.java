@@ -8,6 +8,8 @@ import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Singleton;
 
+import acr.browser.lightning.database.bookmark.BookmarkDatabase;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
 import dagger.Module;
 import dagger.Provides;
 
@@ -27,6 +29,13 @@ public class AppModule {
     @Provides
     public Context provideContext() {
         return mApp.getApplicationContext();
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public BookmarkModel provideBookmarkMode() {
+        return new BookmarkDatabase(mApp);
     }
 
     @NonNull

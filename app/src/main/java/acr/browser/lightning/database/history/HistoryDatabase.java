@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.database;
+package acr.browser.lightning.database.history;
 
 import android.app.Application;
 import android.content.ContentValues;
@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.database.HistoryItem;
 
 @Singleton
 @WorkerThread

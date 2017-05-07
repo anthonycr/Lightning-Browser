@@ -11,7 +11,7 @@ import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.database.history.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
