@@ -141,7 +141,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @BindView(R.id.progress_view) AnimatedProgressBar mProgressBar;
     @BindView(R.id.search_bar) RelativeLayout mSearchBar;
 
-
     // Toolbar Views
     @BindView(R.id.toolbar) Toolbar mToolbar;
     private View mSearchBackground;
@@ -214,6 +213,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
+    @NonNull
     abstract Completable updateCookiePreference();
 
     @Override
@@ -433,6 +433,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /**
+     * Determines if an intent is originating
+     * from a panic trigger.
+     *
+     * @param intent the intent to check.
+     * @return true if the panic trigger sent
+     * the intent, false otherwise.
+     */
     static boolean isPanicTrigger(@Nullable Intent intent) {
         return intent != null && INTENT_PANIC_TRIGGER.equals(intent.getAction());
     }
@@ -442,7 +450,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mTabsManager.newTab(this, "", false);
         mTabsManager.switchToTab(0);
         mTabsManager.clearSavedState();
-        new HistoryPage().deleteHistoryPage().subscribe();
+        HistoryPage.deleteHistoryPage(getApplication()).subscribe();
         closeBrowser();
         // System exit needed in the case of receiving
         // the panic intent since finish() isn't completely

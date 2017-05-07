@@ -68,41 +68,41 @@ public class HistoryPage {
                 final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
                 HistoryModel.lastHundredVisitedHistoryItems()
-                        .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                            @Override
-                            public void onItem(@Nullable List<HistoryItem> item) {
+                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                        @Override
+                        public void onItem(@Nullable List<HistoryItem> item) {
 
-                                Preconditions.checkNonNull(item);
-                                Iterator<HistoryItem> it = item.iterator();
-                                HistoryItem helper;
-                                while (it.hasNext()) {
-                                    helper = it.next();
-                                    historyBuilder.append(PART1);
-                                    historyBuilder.append(helper.getUrl());
-                                    historyBuilder.append(PART2);
-                                    historyBuilder.append(helper.getTitle());
-                                    historyBuilder.append(PART3);
-                                    historyBuilder.append(helper.getUrl());
-                                    historyBuilder.append(PART4);
-                                }
-
-                                historyBuilder.append(END);
-                                File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
-                                FileWriter historyWriter = null;
-                                try {
-                                    //noinspection IOResourceOpenedButNotSafelyClosed
-                                    historyWriter = new FileWriter(historyWebPage, false);
-                                    historyWriter.write(historyBuilder.toString());
-                                } catch (IOException e) {
-                                    Log.e(TAG, "Unable to write history page to disk", e);
-                                } finally {
-                                    Utils.close(historyWriter);
-                                }
-
-                                subscriber.onItem(Constants.FILE + historyWebPage);
-                                subscriber.onComplete();
+                            Preconditions.checkNonNull(item);
+                            Iterator<HistoryItem> it = item.iterator();
+                            HistoryItem helper;
+                            while (it.hasNext()) {
+                                helper = it.next();
+                                historyBuilder.append(PART1);
+                                historyBuilder.append(helper.getUrl());
+                                historyBuilder.append(PART2);
+                                historyBuilder.append(helper.getTitle());
+                                historyBuilder.append(PART3);
+                                historyBuilder.append(helper.getUrl());
+                                historyBuilder.append(PART4);
                             }
-                        });
+
+                            historyBuilder.append(END);
+                            File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
+                            FileWriter historyWriter = null;
+                            try {
+                                //noinspection IOResourceOpenedButNotSafelyClosed
+                                historyWriter = new FileWriter(historyWebPage, false);
+                                historyWriter.write(historyBuilder.toString());
+                            } catch (IOException e) {
+                                Log.e(TAG, "Unable to write history page to disk", e);
+                            } finally {
+                                Utils.close(historyWriter);
+                            }
+
+                            subscriber.onItem(Constants.FILE + historyWebPage);
+                            subscriber.onComplete();
+                        }
+                    });
             }
         });
     }
@@ -116,11 +116,11 @@ public class HistoryPage {
      * when subscribed.
      */
     @NonNull
-    public Completable deleteHistoryPage() {
+    public static Completable deleteHistoryPage(@NonNull final Application application) {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
+                File historyWebPage = new File(application.getFilesDir(), FILENAME);
                 if (historyWebPage.exists()) {
                     historyWebPage.delete();
                 }
