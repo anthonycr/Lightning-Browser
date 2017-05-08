@@ -87,12 +87,12 @@ public class BrowserApp extends Application {
                 List<HistoryItem> oldBookmarks = LegacyBookmarkManager.destructiveGetBookmarks(BrowserApp.this);
 
                 if (!oldBookmarks.isEmpty()) {
+                    // If there are old bookmarks, import them
                     mBookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(Schedulers.io()).subscribe();
-                } else {
-                    if (mBookmarkModel.count() == 0) {
-                        List<HistoryItem> assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(BrowserApp.this);
-                        mBookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(Schedulers.io()).subscribe();
-                    }
+                } else if (mBookmarkModel.count() == 0) {
+                    // If the database is empty, fill it from the assets list
+                    List<HistoryItem> assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(BrowserApp.this);
+                    mBookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(Schedulers.io()).subscribe();
                 }
             }
         });
