@@ -29,6 +29,8 @@ import acr.browser.lightning.database.HistoryItem;
 
 /**
  * The disk backed bookmark database.
+ * See {@link BookmarkModel} for method
+ * documentation.
  * <p>
  * Created by anthonycr on 5/6/17.
  */
@@ -64,6 +66,12 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         DEFAULT_BOOKMARK_TITLE = application.getString(R.string.untitled);
     }
 
+    /**
+     * Lazily initializes the database
+     * field when called.
+     *
+     * @return a non null writable database.
+     */
     @NonNull
     private SQLiteDatabase lazyDatabase() {
         if (mDatabase == null) {
@@ -96,12 +104,12 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
     }
 
     @NonNull
-    private static ContentValues bindBookmarkToContentValues(@NonNull HistoryItem historyItem) {
+    private static ContentValues bindBookmarkToContentValues(@NonNull HistoryItem bookmarkItem) {
         ContentValues contentValues = new ContentValues(4);
-        contentValues.put(KEY_TITLE, historyItem.getTitle());
-        contentValues.put(KEY_URL, historyItem.getUrl());
-        contentValues.put(KEY_FOLDER, historyItem.getFolder());
-        contentValues.put(KEY_POSITION, historyItem.getPosition());
+        contentValues.put(KEY_TITLE, bookmarkItem.getTitle());
+        contentValues.put(KEY_URL, bookmarkItem.getUrl());
+        contentValues.put(KEY_FOLDER, bookmarkItem.getFolder());
+        contentValues.put(KEY_POSITION, bookmarkItem.getPosition());
 
         return contentValues;
     }

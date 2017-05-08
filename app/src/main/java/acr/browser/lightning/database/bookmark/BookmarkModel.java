@@ -7,7 +7,6 @@ import android.support.annotation.WorkerThread;
 import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.Single;
 
-import java.io.File;
 import java.util.List;
 
 import acr.browser.lightning.database.HistoryItem;

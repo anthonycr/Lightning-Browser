@@ -47,6 +47,13 @@ public class BookmarkExporter {
     private static final String KEY_FOLDER = "folder";
     private static final String KEY_ORDER = "order";
 
+    /**
+     * Retrieves all the default bookmarks stored
+     * in the raw file within assets.
+     *
+     * @param context the context necessary to open assets.
+     * @return a non null list of the bookmarks stored in assets.
+     */
     @NonNull
     public static List<HistoryItem> importBookmarksFromAssets(@NonNull Context context) {
         List<HistoryItem> bookmarks = new ArrayList<>();
@@ -82,6 +89,15 @@ public class BookmarkExporter {
         return bookmarks;
     }
 
+    /**
+     * Exports the list of bookmarks to a file.
+     *
+     * @param bookmarkList the bookmarks to export.
+     * @param file         the file to export to.
+     * @return an observable that emits a completion
+     * event when the export is complete, or an error
+     * event if there is a problem.
+     */
     @NonNull
     public static Completable exportBookmarksToFile(@NonNull final List<HistoryItem> bookmarkList,
                                                     @NonNull final File file) {
@@ -113,6 +129,16 @@ public class BookmarkExporter {
         });
     }
 
+    /**
+     * Attempts to import bookmarks from the
+     * given file. If the file is not in a
+     * supported format, it will fail.
+     *
+     * @param file the file to import from.
+     * @return an observable that emits the
+     * imported bookmarks, or an error if the
+     * file cannot be imported.
+     */
     @NonNull
     public static Single<List<HistoryItem>> importBookmarksFromFile(@NonNull final File file) {
         return Single.create(new SingleAction<List<HistoryItem>>() {
@@ -146,6 +172,15 @@ public class BookmarkExporter {
         });
     }
 
+    /**
+     * A blocking call that creates a new export file with
+     * the name "BookmarkExport.txt" and an appropriate
+     * numerical appendage if a file already exists with
+     * that name.
+     *
+     * @return a non null empty file that can be used
+     * to export bookmarks to.
+     */
     @WorkerThread
     @NonNull
     public static File createNewExportFile() {

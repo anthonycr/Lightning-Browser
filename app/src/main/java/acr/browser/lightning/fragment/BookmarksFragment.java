@@ -22,10 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Single;
-import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
-import com.anthonycr.bonsai.SingleSubscriber;
 import com.anthonycr.bonsai.Subscription;
 
 import java.lang.ref.WeakReference;
