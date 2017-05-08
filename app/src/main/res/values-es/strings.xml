@@ -201,4 +201,25 @@
     <string name="title_rename_folder">Renombrar carpeta</string>
     <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
     <string name="host">Servidor:</string>
+
+    <!-- Languages -->
+    <string name="translators">Traductores de la aplicación</string>
+    <string name="language_ar">Árabe</string>
+    <string name="language_de">Alemán</string>
+    <string name="language_es">Español</string>
+    <string name="language_fr">Francés</string>
+    <string name="language_gr">Griego</string>
+    <string name="language_hu">Húngaro</string>
+    <string name="language_it">Italiano</string>
+    <string name="language_iw">Hebreo</string>
+    <string name="language_ja">Japonés</string>
+    <string name="language_ko">Coreano</string>
+    <string name="language_lt">Lituano</string>
+    <string name="language_pl">Polaco</string>
+    <string name="language_pt">Portugués</string>
+    <string name="language_ru">Ruso</string>
+    <string name="language_sr">Serbio</string>
+    <string name="language_tr">Turco</string>
+    <string name="language_zh_rCN">Chino simplificado</string>
+    <string name="language_zh_rTW">Chino tradicional</string>
 </resources>

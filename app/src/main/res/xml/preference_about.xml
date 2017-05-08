@@ -86,4 +86,60 @@
             </intent>
         </Preference>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/translators">
+      <Preference
+          android:title="@string/language_ar"
+          android:summary="@string/translators_ar" />
+      <Preference
+          android:title="@string/language_de"
+          android:summary="@string/translators_de" />
+      <Preference
+          android:title="@string/language_es"
+          android:summary="@string/translators_es" />
+      <Preference
+          android:title="@string/language_fr"
+          android:summary="@string/translators_fr" />
+      <Preference
+          android:title="@string/language_gr"
+          android:summary="@string/translators_gr" />
+      <Preference
+          android:title="@string/language_hu"
+          android:summary="@string/translators_hu" />
+      <Preference
+          android:title="@string/language_it"
+          android:summary="@string/translators_it" />
+      <Preference
+          android:title="@string/language_iw"
+          android:summary="@string/translators_iw" />
+      <Preference
+          android:title="@string/language_ja"
+          android:summary="@string/translators_ja" />
+      <Preference
+          android:title="@string/language_ko"
+          android:summary="@string/translators_ko" />
+      <Preference
+          android:title="@string/language_lt"
+          android:summary="@string/translators_lt" />
+      <Preference
+          android:title="@string/language_pl"
+          android:summary="@string/translators_pl" />
+      <Preference
+          android:title="@string/language_pt"
+          android:summary="@string/translators_pt" />
+      <Preference
+          android:title="@string/language_ru"
+          android:summary="@string/translators_ru" />
+      <Preference
+          android:title="@string/language_sr"
+          android:summary="@string/translators_sr" />
+      <Preference
+          android:title="@string/language_tr"
+          android:summary="@string/translators_tr" />
+      <Preference
+          android:title="@string/language_zh_rCN"
+          android:summary="@string/translators_zh_rCN" />
+      <Preference
+          android:title="@string/language_zh_rTW"
+          android:summary="@string/translators_zh_rTW" />
+    </PreferenceCategory>
 </PreferenceScreen>

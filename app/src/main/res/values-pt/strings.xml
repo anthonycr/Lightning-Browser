@@ -257,4 +257,25 @@
     <string name="dialog_rename_folder">Renomear pasta</string>
     <string name="dialog_remove_folder">Remover pasta</string>
     <string name="dialog_title_close_browser">Fechar navegador</string>
+
+    <!-- Languages -->
+    <string name="translators">Tradutores</string>
+    <string name="language_ar">Árabe</string>
+    <string name="language_de">Alemão</string>
+    <string name="language_es">Espanhol</string>
+    <string name="language_fr">Francês</string>
+    <string name="language_gr">Grego</string>
+    <string name="language_hu">Húngaro</string>
+    <string name="language_it">Italiano</string>
+    <string name="language_iw">Hebraico</string>
+    <string name="language_ja">Japonês</string>
+    <string name="language_ko">Coreano</string>
+    <string name="language_lt">Lituaniano</string>
+    <string name="language_pl">Polaco</string>
+    <string name="language_pt">Português</string>
+    <string name="language_ru">Russo</string>
+    <string name="language_sr">Sérvio</string>
+    <string name="language_tr">Turco</string>
+    <string name="language_zh_rCN">Chinês simplificado</string>
+    <string name="language_zh_rTW">Chinês tradicional</string>
 </resources>
