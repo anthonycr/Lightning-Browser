@@ -142,6 +142,8 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
 
                 if (cursor.moveToFirst()) {
                     subscriber.onItem(bindCursorToHistoryItem(cursor));
+                } else {
+                    subscriber.onItem(null);
                 }
 
                 cursor.close();
