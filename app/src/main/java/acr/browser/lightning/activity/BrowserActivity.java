@@ -280,7 +280,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (!mPreferenceManager.getIsStartSetOnBookmark()){
             HistoryItem historyItem = new HistoryItem();
             historyItem.setTitle("Search");
-            historyItem.setUrl(this.mSearchUrl);
+            historyItem.setUrl(this.mSearchUrl + "%20");
             historyItem.setImageId(R.drawable.ic_search);
             historyItem.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_search));
             mBookmarkManager.addBookmark(historyItem);
