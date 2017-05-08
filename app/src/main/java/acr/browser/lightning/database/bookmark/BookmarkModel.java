@@ -2,6 +2,7 @@ package acr.browser.lightning.database.bookmark;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.Single;
@@ -151,4 +152,14 @@ public interface BookmarkModel {
      */
     @NonNull
     Single<List<String>> getFolderNames();
+
+    /**
+     * A synchronous call to the model
+     * that returns the number of bookmarks.
+     * Should be called from a background thread.
+     *
+     * @return the number of bookmarks in the database.
+     */
+    @WorkerThread
+    long count();
 }

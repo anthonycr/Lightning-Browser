@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.bookmark.BookmarkExporter;
 import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -88,7 +89,10 @@ public class BrowserApp extends Application {
                 if (!oldBookmarks.isEmpty()) {
                     mBookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(Schedulers.io()).subscribe();
                 } else {
-                    // TODO: 5/7/17 Import bookmarks from assets if not empty
+                    if (mBookmarkModel.count() == 0) {
+                        List<HistoryItem> assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(BrowserApp.this);
+                        mBookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(Schedulers.io()).subscribe();
+                    }
                 }
             }
         });

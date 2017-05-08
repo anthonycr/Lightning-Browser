@@ -374,4 +374,9 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         });
     }
 
+    @Override
+    public long count() {
+        return DatabaseUtils.queryNumEntries(lazyDatabase(), TABLE_BOOKMARK);
+    }
+
 }

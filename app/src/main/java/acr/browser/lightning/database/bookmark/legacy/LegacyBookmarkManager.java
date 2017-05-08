@@ -27,7 +27,7 @@ import acr.browser.lightning.utils.Utils;
 @Deprecated
 public class LegacyBookmarkManager {
 
-    private static final String TAG = "BookmarkManager";
+    private static final String TAG = "LegacyBookmarkManager";
 
     private static final String TITLE = "title";
     private static final String URL = "url";
