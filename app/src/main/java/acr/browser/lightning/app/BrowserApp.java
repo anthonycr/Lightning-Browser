@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.database.bookmark.BookmarkManager;
+import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
@@ -38,7 +38,6 @@ public class BrowserApp extends Application {
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Inject PreferenceManager mPreferenceManager;
-    @Inject BookmarkManager mOldBookmarkManager;
     @Inject BookmarkModel mBookmarkModel;
 
     @Override
@@ -84,8 +83,7 @@ public class BrowserApp extends Application {
         Schedulers.worker().execute(new Runnable() {
             @Override
             public void run() {
-                List<HistoryItem> oldBookmarks = mOldBookmarkManager.getAllBookmarks(true);
-                mOldBookmarkManager.deleteAllBookmarks();
+                List<HistoryItem> oldBookmarks = LegacyBookmarkManager.destructiveGetBookmarks(BrowserApp.this);
 
                 if (!oldBookmarks.isEmpty()) {
                     mBookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(Schedulers.io()).subscribe();
