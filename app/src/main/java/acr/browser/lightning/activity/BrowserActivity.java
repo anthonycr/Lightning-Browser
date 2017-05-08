@@ -547,10 +547,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return;
             }
             String url = currentView.getUrl();
-            if (UrlUtils.isSpecialUrl(url)) {
-                mSearch.setText("");
-            } else {
-                mSearch.setText(url);
+            if (!UrlUtils.isSpecialUrl(url)) {
+                if (!mSearch.hasFocus()) {
+                    mSearch.setText(url);
+                }
             }
         }
     }
