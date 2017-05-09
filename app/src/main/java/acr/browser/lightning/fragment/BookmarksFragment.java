@@ -22,10 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Single;
-import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
-import com.anthonycr.bonsai.SingleSubscriber;
 import com.anthonycr.bonsai.Subscription;
 
 import java.lang.ref.WeakReference;
@@ -35,6 +32,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.BookmarkUiModel;
 import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.animation.AnimationUtils;
@@ -42,8 +40,8 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -71,7 +69,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
 
     // Managers
-    @Inject BookmarkManager mBookmarkManager;
+    @Inject BookmarkModel mBookmarkManager;
 
     // Dialog builder
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
@@ -109,16 +107,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Nullable
     private Subscription mBookmarksSubscription;
 
-    private static Single<List<HistoryItem>> initBookmarks(@NonNull final BookmarkManager bookmarkManager) {
-        return Single.create(new SingleAction<List<HistoryItem>>() {
-            @Override
-            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
-                subscriber.onItem(bookmarkManager.getBookmarksFromFolder(null, true));
-                subscriber.onComplete();
-
-            }
-        });
-    }
+    @NonNull
+    private final BookmarkUiModel mUiModel = new BookmarkUiModel();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,7 +140,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             final HistoryItem item = mBookmarks.get(position);
             if (item.isFolder()) {
                 mScrollIndex = ((LinearLayoutManager) mBookmarksListView.getLayoutManager()).findFirstVisibleItemPosition();
-                setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(item.getTitle(), true), true);
+                setBookmarksShown(item.getTitle(), true);
             } else {
                 mUiController.bookmarkItemClicked(item);
             }
@@ -170,7 +160,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onResume() {
         super.onResume();
         if (mBookmarkAdapter != null) {
-            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+            setBookmarksShown(null, false);
         }
     }
 
@@ -184,9 +174,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         backView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBookmarkManager == null) return;
-                if (!mBookmarkManager.isRootFolder()) {
-                    setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+                if (!mUiModel.isRootFolder()) {
+                    setBookmarksShown(null, true);
                     mBookmarksListView.getLayoutManager().scrollToPosition(mScrollIndex);
                 }
             }
@@ -201,17 +190,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mBookmarksListView.setLayoutManager(new LinearLayoutManager(getContext()));
         mBookmarksListView.setAdapter(mBookmarkAdapter);
 
-        mBookmarksSubscription = initBookmarks(mBookmarkManager)
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.main())
-            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
-                @Override
-                public void onItem(@Nullable List<HistoryItem> item) {
-                    mBookmarksSubscription = null;
-                    Preconditions.checkNonNull(item);
-                    setBookmarkDataSet(item, true);
-                }
-            });
+        setBookmarksShown(null, true);
 
         return view;
     }
@@ -251,23 +230,62 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     private void updateBookmarkIndicator(final String url) {
-        if (!mBookmarkManager.isBookmark(url)) {
-            mBookmarkImage.setImageResource(R.drawable.ic_action_star);
-            mBookmarkImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
-        } else {
-            mBookmarkImage.setImageResource(R.drawable.ic_bookmark);
-            mBookmarkImage.setColorFilter(ThemeUtils.getAccentColor(getContext()), PorterDuff.Mode.SRC_IN);
-        }
+        mBookmarkManager.isBookmark(url)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<Boolean>() {
+                @Override
+                public void onItem(@Nullable Boolean item) {
+                    Preconditions.checkNonNull(item);
+                    if (!item) {
+                        mBookmarkImage.setImageResource(R.drawable.ic_action_star);
+                        mBookmarkImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
+                    } else {
+                        mBookmarkImage.setImageResource(R.drawable.ic_bookmark);
+                        mBookmarkImage.setColorFilter(ThemeUtils.getAccentColor(getContext()), PorterDuff.Mode.SRC_IN);
+                    }
+                }
+            });
     }
 
     @Override
     public void handleBookmarkDeleted(@NonNull HistoryItem item) {
         mBookmarks.remove(item);
         if (item.isFolder()) {
-            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), false);
+            setBookmarksShown(null, false);
         } else {
             mBookmarkAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void setBookmarksShown(@Nullable final String folder, final boolean animate) {
+        mBookmarksSubscription = mBookmarkManager.getBookmarksFromFolder(folder)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                @Override
+                public void onItem(@Nullable final List<HistoryItem> item) {
+                    mBookmarksSubscription = null;
+                    Preconditions.checkNonNull(item);
+
+                    mUiModel.setCurrentFolder(folder);
+                    if (folder == null) {
+                        mBookmarkManager.getFolders()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.main())
+                            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                                @Override
+                                public void onItem(@Nullable List<HistoryItem> folders) {
+                                    Preconditions.checkNonNull(folders);
+                                    item.addAll(folders);
+                                    setBookmarkDataSet(item, animate);
+                                }
+                            });
+                    } else {
+                        setBookmarkDataSet(item, animate);
+                    }
+                }
+            });
     }
 
     private void setBookmarkDataSet(@NonNull List<HistoryItem> items, boolean animate) {
@@ -275,7 +293,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         mBookmarks.addAll(items);
         mBookmarkAdapter.notifyDataSetChanged();
         final int resource;
-        if (mBookmarkManager.isRootFolder()) {
+        if (mUiModel.isRootFolder()) {
             resource = R.drawable.ic_action_star;
         } else {
             resource = R.drawable.ic_action_back;
@@ -339,10 +357,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void navigateBack() {
-        if (mBookmarkManager.isRootFolder()) {
+        if (mUiModel.isRootFolder()) {
             mUiController.closeBookmarksDrawer();
         } else {
-            setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(null, true), true);
+            setBookmarksShown(null, true);
             mBookmarksListView.getLayoutManager().scrollToPosition(mScrollIndex);
         }
     }
@@ -350,8 +368,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void handleUpdatedUrl(@NonNull String url) {
         updateBookmarkIndicator(url);
-        String folder = mBookmarkManager.getCurrentFolder();
-        setBookmarkDataSet(mBookmarkManager.getBookmarksFromFolder(folder, true), false);
+        String folder = mUiModel.getCurrentFolder();
+        setBookmarksShown(folder, false);
     }
 
     static class BookmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

@@ -1,4 +1,4 @@
-package acr.browser.lightning.database;
+package acr.browser.lightning.database.history;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +13,7 @@ import com.anthonycr.bonsai.SingleSubscriber;
 import java.util.List;
 
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.database.HistoryItem;
 
 /**
  * A model class providing reactive bindings

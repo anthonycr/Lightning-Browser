@@ -1,4 +1,4 @@
-package acr.browser.lightning.database;
+package acr.browser.lightning.database.bookmark;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +15,7 @@ import com.anthonycr.bonsai.SingleSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkLocalSync {

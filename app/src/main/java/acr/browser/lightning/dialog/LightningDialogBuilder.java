@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.SingleOnSubscribe;
 
 import java.util.List;
 
@@ -25,10 +27,11 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.database.HistoryModel;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -44,7 +47,7 @@ public class LightningDialogBuilder {
         INCOGNITO
     }
 
-    @Inject BookmarkManager mBookmarkManager;
+    @Inject BookmarkModel mBookmarkManager;
     @Inject PreferenceManager mPreferenceManager;
 
     @Inject
@@ -60,7 +63,7 @@ public class LightningDialogBuilder {
      * @param url      the long pressed url
      */
     public void showLongPressedDialogForBookmarkUrl(@NonNull final Activity activity,
-                                                    @NonNull UIController uiController,
+                                                    @NonNull final UIController uiController,
                                                     @NonNull final String url) {
         final HistoryItem item;
         if (url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME)) {
@@ -73,15 +76,19 @@ public class LightningDialogBuilder {
             item.setTitle(folderTitle);
             item.setImageId(R.drawable.ic_folder);
             item.setUrl(Constants.FOLDER + folderTitle);
+            showBookmarkFolderLongPressedDialog(activity, uiController, item);
         } else {
-            item = mBookmarkManager.findBookmarkForUrl(url);
-        }
-        if (item != null) {
-            if (item.isFolder()) {
-                showBookmarkFolderLongPressedDialog(activity, uiController, item);
-            } else {
-                showLongPressedDialogForBookmarkUrl(activity, uiController, item);
-            }
+            mBookmarkManager.findBookmarkForUrl(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<HistoryItem>() {
+                    @Override
+                    public void onItem(@Nullable HistoryItem historyItem) {
+                        if (historyItem != null) {
+                            showLongPressedDialogForBookmarkUrl(activity, uiController, historyItem);
+                        }
+                    }
+                });
         }
     }
 
@@ -116,9 +123,18 @@ public class LightningDialogBuilder {
             new BrowserDialog.Item(R.string.dialog_remove_bookmark) {
                 @Override
                 public void onClick() {
-                    if (mBookmarkManager.deleteBookmark(item)) {
-                        uiController.handleBookmarkDeleted(item);
-                    }
+                    mBookmarkManager.deleteBookmark(item)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new SingleOnSubscribe<Boolean>() {
+                            @Override
+                            public void onItem(@Nullable Boolean success) {
+                                Preconditions.checkNonNull(success);
+                                if (success) {
+                                    uiController.handleBookmarkDeleted(item);
+                                }
+                            }
+                        });
                 }
             },
             new BrowserDialog.Item(R.string.dialog_edit_bookmark) {
@@ -143,28 +159,44 @@ public class LightningDialogBuilder {
             (AutoCompleteTextView) dialogLayout.findViewById(R.id.bookmark_folder);
         getFolder.setHint(R.string.folder);
         getFolder.setText(item.getFolder());
-        final List<String> folders = mBookmarkManager.getFolderTitles();
-        final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(activity,
-            android.R.layout.simple_dropdown_item_1line, folders);
-        getFolder.setThreshold(1);
-        getFolder.setAdapter(suggestionsAdapter);
-        editBookmarkDialog.setView(dialogLayout);
-        editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok),
-            new DialogInterface.OnClickListener() {
 
+        mBookmarkManager.getFolderNames()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<List<String>>() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    HistoryItem editedItem = new HistoryItem();
-                    editedItem.setTitle(getTitle.getText().toString());
-                    editedItem.setUrl(getUrl.getText().toString());
-                    editedItem.setUrl(getUrl.getText().toString());
-                    editedItem.setFolder(getFolder.getText().toString());
-                    mBookmarkManager.editBookmark(item, editedItem);
-                    uiController.handleBookmarksChange();
+                public void onItem(@Nullable List<String> folders) {
+                    Preconditions.checkNonNull(folders);
+                    final ArrayAdapter<String> suggestionsAdapter = new ArrayAdapter<>(activity,
+                        android.R.layout.simple_dropdown_item_1line, folders);
+                    getFolder.setThreshold(1);
+                    getFolder.setAdapter(suggestionsAdapter);
+                    editBookmarkDialog.setView(dialogLayout);
+                    editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok),
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                HistoryItem editedItem = new HistoryItem();
+                                editedItem.setTitle(getTitle.getText().toString());
+                                editedItem.setUrl(getUrl.getText().toString());
+                                editedItem.setUrl(getUrl.getText().toString());
+                                editedItem.setFolder(getFolder.getText().toString());
+                                mBookmarkManager.editBookmark(item, editedItem)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(Schedulers.main())
+                                    .subscribe(new CompletableOnSubscribe() {
+                                        @Override
+                                        public void onComplete() {
+                                            uiController.handleBookmarksChange();
+                                        }
+                                    });
+                            }
+                        });
+                    Dialog dialog = editBookmarkDialog.show();
+                    BrowserDialog.setDialogSize(activity, dialog);
                 }
             });
-        Dialog dialog = editBookmarkDialog.show();
-        BrowserDialog.setDialogSize(activity, dialog);
     }
 
     public void showBookmarkFolderLongPressedDialog(@NonNull final Activity activity,
@@ -181,8 +213,15 @@ public class LightningDialogBuilder {
             new BrowserDialog.Item(R.string.dialog_remove_folder) {
                 @Override
                 public void onClick() {
-                    mBookmarkManager.deleteFolder(item.getTitle());
-                    uiController.handleBookmarkDeleted(item);
+                    mBookmarkManager.deleteFolder(item.getTitle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new CompletableOnSubscribe() {
+                            @Override
+                            public void onComplete() {
+                                uiController.handleBookmarkDeleted(item);
+                            }
+                        });
                 }
             });
     }
@@ -202,8 +241,15 @@ public class LightningDialogBuilder {
                         editedItem.setUrl(Constants.FOLDER + text);
                         editedItem.setFolder(item.getFolder());
                         editedItem.setIsFolder(true);
-                        mBookmarkManager.renameFolder(oldTitle, text);
-                        uiController.handleBookmarksChange();
+                        mBookmarkManager.renameFolder(oldTitle, text)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.main())
+                            .subscribe(new CompletableOnSubscribe() {
+                                @Override
+                                public void onComplete() {
+                                    uiController.handleBookmarksChange();
+                                }
+                            });
                     }
                 }
             });

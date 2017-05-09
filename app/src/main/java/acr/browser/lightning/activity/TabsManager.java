@@ -35,7 +35,6 @@ import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
@@ -51,7 +50,7 @@ import acr.browser.lightning.view.LightningView;
 public class TabsManager {
 
     private static final String TAG = "TabsManager";
-    
+
     private static final String BUNDLE_KEY = "WEBVIEW_";
     private static final String URL_KEY = "URL_KEY";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
@@ -64,7 +63,6 @@ public class TabsManager {
     private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
 
     @Inject PreferenceManager mPreferenceManager;
-    @Inject BookmarkManager mBookmarkManager;
     @Inject Application mApp;
 
     public TabsManager() {

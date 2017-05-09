@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.database.HistoryModel;
+import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 

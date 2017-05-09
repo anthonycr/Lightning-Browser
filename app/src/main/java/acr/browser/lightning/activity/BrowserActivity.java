@@ -99,9 +99,9 @@ import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
-import acr.browser.lightning.database.HistoryModel;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
@@ -181,7 +181,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private String mCameraPhotoPath;
 
     // The singleton BookmarkManager
-    @Inject BookmarkManager mBookmarkManager;
+    @Inject BookmarkModel mBookmarkManager;
 
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
@@ -827,23 +827,37 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // By using a manager, adds a bookmark and notifies third parties about that
     private void addBookmark(final String title, final String url) {
-        final HistoryItem item = !mBookmarkManager.isBookmark(url)
-            ? new HistoryItem(url, title)
-            : null;
-        if (item != null && mBookmarkManager.addBookmark(item)) {
-            mSuggestionsAdapter.refreshBookmarks();
-            mBookmarksView.handleUpdatedUrl(url);
-        }
+
+        final HistoryItem item = new HistoryItem(url, title);
+        mBookmarkManager.addBookmarkIfNotExists(item)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<Boolean>() {
+                @Override
+                public void onItem(@Nullable Boolean item) {
+                    if (Boolean.TRUE.equals(item)) {
+                        mSuggestionsAdapter.refreshBookmarks();
+                        mBookmarksView.handleUpdatedUrl(url);
+                    }
+                }
+            });
     }
 
     private void deleteBookmark(final String title, final String url) {
-        final HistoryItem item = mBookmarkManager.isBookmark(url)
-            ? new HistoryItem(url, title)
-            : null;
-        if (item != null && mBookmarkManager.deleteBookmark(item)) {
-            mSuggestionsAdapter.refreshBookmarks();
-            mBookmarksView.handleUpdatedUrl(url);
-        }
+        final HistoryItem item = new HistoryItem(url, title);
+
+        mBookmarkManager.deleteBookmark(item)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<Boolean>() {
+                @Override
+                public void onItem(@Nullable Boolean item) {
+                    if (Boolean.TRUE.equals(item)) {
+                        mSuggestionsAdapter.refreshBookmarks();
+                        mBookmarksView.handleUpdatedUrl(url);
+                    }
+                }
+            });
     }
 
     private void putToolbarInRoot() {
@@ -1098,11 +1112,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         if (!UrlUtils.isSpecialUrl(url)) {
-            if (!mBookmarkManager.isBookmark(url)) {
-                addBookmark(title, url);
-            } else {
-                deleteBookmark(title, url);
-            }
+            mBookmarkManager.isBookmark(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<Boolean>() {
+                    @Override
+                    public void onItem(@Nullable Boolean item) {
+                        if (Boolean.TRUE.equals(item)) {
+                            addBookmark(title, url);
+                        } else {
+                            deleteBookmark(title, url);
+                        }
+                    }
+                });
         }
     }
 

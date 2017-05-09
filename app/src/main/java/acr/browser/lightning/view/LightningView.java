@@ -32,6 +32,7 @@ import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
@@ -49,13 +50,9 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Schedulers;
-
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -110,7 +107,6 @@ public class LightningView {
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
-    @Inject BookmarkManager mBookmarkManager;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
