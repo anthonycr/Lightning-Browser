@@ -33,13 +33,13 @@ android {
 
     productFlavors {
         lightningPlus {
-            buildConfigField "boolean", "FULL_VERSION", "true"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
             versionCode 91
         }
 
         lightningLite {
-            buildConfigField "boolean", "FULL_VERSION", "false"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
             versionCode 93
         }

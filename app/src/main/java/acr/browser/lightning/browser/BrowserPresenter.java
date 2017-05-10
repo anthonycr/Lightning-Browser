@@ -12,6 +12,7 @@ import com.anthonycr.bonsai.Schedulers;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
@@ -317,7 +318,7 @@ public class BrowserPresenter {
      */
     public synchronized boolean newTab(@Nullable String url, boolean show) {
         // Limit number of tabs for limited version of app
-        if (!Constants.FULL_VERSION && mTabsModel.size() >= 10) {
+        if (!BuildConfig.FULL_VERSION && mTabsModel.size() >= 10) {
             mView.showSnackbar(R.string.max_tabs);
             return false;
         }

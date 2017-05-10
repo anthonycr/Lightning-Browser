@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.preference.PreferenceManager;
 
@@ -48,7 +49,7 @@ public class AdBlock {
     AdBlock(@NonNull Application application, @NonNull PreferenceManager preferenceManager) {
         mApplication = application;
         mPreferenceManager = preferenceManager;
-        if (mBlockedDomainsList.isEmpty() && Constants.FULL_VERSION) {
+        if (mBlockedDomainsList.isEmpty() && BuildConfig.FULL_VERSION) {
             loadHostsFile().subscribeOn(Schedulers.io()).subscribe();
         }
         mBlockAds = mPreferenceManager.getAdBlockEnabled();

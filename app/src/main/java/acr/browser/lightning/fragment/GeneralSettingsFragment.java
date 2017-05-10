@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -151,13 +152,13 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         boolean imagesBool = mPreferenceManager.getBlockImagesEnabled();
         boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
 
-        cbAds.setEnabled(Constants.FULL_VERSION);
+        cbAds.setEnabled(BuildConfig.FULL_VERSION);
         cbFlash.setEnabled(API < Build.VERSION_CODES.KITKAT);
 
         cbImages.setChecked(imagesBool);
         cbJsScript.setChecked(enableJSBool);
         cbFlash.setChecked(flashNum > 0);
-        cbAds.setChecked(Constants.FULL_VERSION && mPreferenceManager.getAdBlockEnabled());
+        cbAds.setChecked(BuildConfig.FULL_VERSION && mPreferenceManager.getAdBlockEnabled());
         cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
     }
 
