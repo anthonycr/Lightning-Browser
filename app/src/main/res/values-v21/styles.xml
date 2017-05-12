@@ -11,7 +11,7 @@
         <item name="android:windowBackground">@null</item>
         <item name="toolbarSettingsBackground">@color/primary_color_dark</item>
 
-        <!-- Dark settings has a special primary dark -->
+        <!-- Dark settings has a special primary dark color-->
         <item name="colorPrimaryDark">@color/secondary_color_settings_dark</item>
     </style>
 
