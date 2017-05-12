@@ -55,12 +55,12 @@ public class TabsManager {
     private static final String URL_KEY = "URL_KEY";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
-    private final List<LightningView> mTabList = new ArrayList<>(1);
+    @NonNull private final List<LightningView> mTabList = new ArrayList<>(1);
     @Nullable private LightningView mCurrentTab;
     @Nullable private TabNumberChangedListener mTabNumberListener;
 
     private boolean mIsInitialized = false;
-    private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
+    @NonNull private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject Application mApp;

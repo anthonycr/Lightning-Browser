@@ -1,5 +1,6 @@
 package acr.browser.lightning.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -35,6 +36,11 @@ public class ThemeUtils {
 
     public static int getAccentColor(@NonNull Context context) {
         return getColor(context, R.attr.colorAccent);
+    }
+
+    @TargetApi(21)
+    public static int getStatusBarColor(@NonNull Context context) {
+        return getColor(context, android.R.attr.statusBarColor);
     }
 
     public static int getColor(@NonNull Context context, @AttrRes int resource) {

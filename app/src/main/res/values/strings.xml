@@ -216,6 +216,7 @@
     </string-array>
     <string name="invert_color">Invert color</string>
     <string name="dark_theme">Dark Theme</string>
+    <string name="settings_black_status_bar">Black status bar</string>
     <string name="tabs">Tabs</string>
     <string name="theme">App Theme</string>
     <string name="light_theme">Light Theme</string>

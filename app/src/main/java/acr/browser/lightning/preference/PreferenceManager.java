@@ -55,6 +55,7 @@ public class PreferenceManager {
         static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
         static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
+        static final String BLACK_STATUS_BAR = "blackStatusBar";
 
         static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
@@ -295,6 +296,10 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
+    public boolean getUseBlackStatusBar() {
+        return mPrefs.getBoolean(Name.BLACK_STATUS_BAR, false);
+    }
+
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -305,6 +310,10 @@ public class PreferenceManager {
 
     private void putString(@NonNull String name, @Nullable String value) {
         mPrefs.edit().putString(name, value).apply();
+    }
+
+    public void setUseBlackStatusBar(boolean enabled) {
+        putBoolean(Name.BLACK_STATUS_BAR, enabled);
     }
 
     public void setRemoveIdentifyingHeadersEnabled(boolean enabled) {
