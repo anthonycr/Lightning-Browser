@@ -1209,7 +1209,7 @@ public class LightningView {
 
         @NonNull private final WeakReference<LightningView> mReference;
 
-        public WebViewHandler(LightningView view) {
+        WebViewHandler(@NonNull LightningView view) {
             mReference = new WeakReference<>(view);
         }
 
