@@ -157,7 +157,7 @@ public class PreferenceManager {
     }
 
     public boolean getFullScreenEnabled() {
-        return mPrefs.getBoolean(Name.FULL_SCREEN, false);
+        return mPrefs.getBoolean(Name.FULL_SCREEN, true);
     }
 
     public boolean getHideStatusBarEnabled() {
