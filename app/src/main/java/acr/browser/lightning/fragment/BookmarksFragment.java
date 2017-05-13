@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -88,9 +89,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Preloaded images
     private Bitmap mWebpageBitmap, mFolderBitmap;
 
-    // Bookmarks
-    private final List<HistoryItem> mBookmarks = new ArrayList<>();
-
     // Views
     @BindView(R.id.right_drawer_list) RecyclerView mBookmarksListView;
     @BindView(R.id.starIcon) ImageView mBookmarkTitleImage;
@@ -136,8 +134,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     // Handle bookmark click
     private final OnItemClickListener mItemClickListener = new OnItemClickListener() {
         @Override
-        public void onItemClick(int position) {
-            final HistoryItem item = mBookmarks.get(position);
+        public void onItemClick(@NonNull HistoryItem item) {
             if (item.isFolder()) {
                 mScrollIndex = ((LinearLayoutManager) mBookmarksListView.getLayoutManager()).findFirstVisibleItemPosition();
                 setBookmarksShown(item.getTitle(), true);
@@ -149,8 +146,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private final OnItemLongClickListener mItemLongClickListener = new OnItemLongClickListener() {
         @Override
-        public boolean onItemLongClick(int position) {
-            final HistoryItem item = mBookmarks.get(position);
+        public boolean onItemLongClick(@NonNull HistoryItem item) {
             handleLongPress(item);
             return true;
         }
@@ -184,7 +180,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
-        mBookmarkAdapter = new BookmarkListAdapter(mBookmarks, mFaviconModel, mFolderBitmap, mWebpageBitmap);
+        mBookmarkAdapter = new BookmarkListAdapter(mFaviconModel, mFolderBitmap, mWebpageBitmap);
         mBookmarkAdapter.setOnItemClickListener(mItemClickListener);
         mBookmarkAdapter.setOnItemLongClickListener(mItemLongClickListener);
         mBookmarksListView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -250,11 +246,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void handleBookmarkDeleted(@NonNull HistoryItem item) {
-        mBookmarks.remove(item);
         if (item.isFolder()) {
             setBookmarksShown(null, false);
         } else {
-            mBookmarkAdapter.notifyDataSetChanged();
+            mBookmarkAdapter.deleteItem(item);
         }
     }
 
@@ -289,9 +284,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     private void setBookmarkDataSet(@NonNull List<HistoryItem> items, boolean animate) {
-        mBookmarks.clear();
-        mBookmarks.addAll(items);
-        mBookmarkAdapter.notifyDataSetChanged();
+        mBookmarkAdapter.updateItems(items);
         final int resource;
         if (mUiModel.isRootFolder()) {
             resource = R.drawable.ic_action_star;
@@ -376,14 +369,19 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         @BindView(R.id.textBookmark) TextView txtTitle;
         @BindView(R.id.faviconBookmark) ImageView favicon;
 
+        @NonNull private final BookmarkListAdapter adapter;
+
         @Nullable private final OnItemLongClickListener onItemLongClickListener;
         @Nullable private final OnItemClickListener onItemClickListener;
 
         BookmarkViewHolder(@NonNull View itemView,
+                           @NonNull BookmarkListAdapter adapter,
                            @Nullable OnItemLongClickListener onItemLongClickListener,
                            @Nullable OnItemClickListener onItemClickListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            this.adapter = adapter;
 
             this.onItemClickListener = onItemClickListener;
             this.onItemLongClickListener = onItemLongClickListener;
@@ -394,29 +392,31 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
         @Override
         public void onClick(View v) {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(getAdapterPosition());
+            int index = getAdapterPosition();
+            if (onItemClickListener != null && index != RecyclerView.NO_ID) {
+                onItemClickListener.onItemClick(adapter.itemAt(index));
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return onItemLongClickListener != null &&
-                onItemLongClickListener.onItemLongClick(getAdapterPosition());
+            int index = getAdapterPosition();
+            return index != RecyclerView.NO_POSITION && onItemLongClickListener != null &&
+                onItemLongClickListener.onItemLongClick(adapter.itemAt(index));
         }
     }
 
     interface OnItemLongClickListener {
-        boolean onItemLongClick(int position);
+        boolean onItemLongClick(@NonNull HistoryItem item);
     }
 
     interface OnItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(@NonNull HistoryItem item);
     }
 
     private static class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkViewHolder> {
 
-        @NonNull private final List<HistoryItem> mBookmarks;
+        @NonNull private List<HistoryItem> mBookmarks = new ArrayList<>();
         @NonNull private final FaviconModel mFaviconModel;
         @NonNull private final Bitmap mFolderBitmap;
         @NonNull private final Bitmap mWebpageBitmap;
@@ -424,11 +424,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         @Nullable private OnItemLongClickListener mOnItemLongCLickListener;
         @Nullable private OnItemClickListener mOnItemClickListener;
 
-        BookmarkListAdapter(@NonNull List<HistoryItem> bookmarks,
-                            @NonNull FaviconModel faviconModel,
+        BookmarkListAdapter(@NonNull FaviconModel faviconModel,
                             @NonNull Bitmap folderBitmap,
                             @NonNull Bitmap webpageBitmap) {
-            mBookmarks = bookmarks;
             mFaviconModel = faviconModel;
             mFolderBitmap = folderBitmap;
             mWebpageBitmap = webpageBitmap;
@@ -442,12 +440,52 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mOnItemClickListener = listener;
         }
 
+        @NonNull
+        HistoryItem itemAt(int position) {
+            return mBookmarks.get(position);
+        }
+
+        void deleteItem(@NonNull HistoryItem item) {
+            List<HistoryItem> newList = new ArrayList<>(mBookmarks);
+            newList.remove(item);
+            updateItems(newList);
+        }
+
+        void updateItems(@NonNull List<HistoryItem> newList) {
+            final List<HistoryItem> oldList = mBookmarks;
+            mBookmarks = newList;
+
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return oldList.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return mBookmarks.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    return oldList.get(oldItemPosition).equals(mBookmarks.get(newItemPosition));
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    return oldList.get(oldItemPosition).equals(mBookmarks.get(newItemPosition));
+                }
+            });
+
+            diffResult.dispatchUpdatesTo(this);
+        }
+
         @Override
         public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View itemView = inflater.inflate(R.layout.bookmark_list_item, parent, false);
 
-            return new BookmarkViewHolder(itemView, mOnItemLongCLickListener, mOnItemClickListener);
+            return new BookmarkViewHolder(itemView, this, mOnItemLongCLickListener, mOnItemClickListener);
         }
 
         @Override
