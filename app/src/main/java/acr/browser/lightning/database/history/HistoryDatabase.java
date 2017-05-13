@@ -68,15 +68,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    @Override
-    public synchronized void close() {
-        if (mDatabase != null) {
-            mDatabase.close();
-            mDatabase = null;
-        }
-        super.close();
-    }
-
     @NonNull
     private static HistoryItem fromCursor(@NonNull Cursor cursor) {
         HistoryItem historyItem = new HistoryItem();
@@ -89,7 +80,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     @NonNull
-    private SQLiteDatabase openIfNecessary() {
+    private SQLiteDatabase lazyDatabase() {
         if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = this.getWritableDatabase();
         }
@@ -98,30 +89,26 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     synchronized void deleteHistory() {
-        mDatabase = openIfNecessary();
-        mDatabase.delete(TABLE_HISTORY, null, null);
-        mDatabase.close();
-        mDatabase = this.getWritableDatabase();
+        lazyDatabase().delete(TABLE_HISTORY, null, null);
+        lazyDatabase().close();
     }
 
     @WorkerThread
     synchronized void deleteHistoryItem(@NonNull String url) {
-        mDatabase = openIfNecessary();
-        mDatabase.delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
+        lazyDatabase().delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
     }
 
     @WorkerThread
     synchronized void visitHistoryItem(@NonNull String url, @Nullable String title) {
-        mDatabase = openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, title == null ? "" : title);
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
 
-        Cursor cursor = mDatabase.query(false, TABLE_HISTORY, new String[]{KEY_URL},
+        Cursor cursor = lazyDatabase().query(false, TABLE_HISTORY, new String[]{KEY_URL},
             KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
 
         if (cursor.getCount() > 0) {
-            mDatabase.update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
+            lazyDatabase().update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
         } else {
             addHistoryItem(new HistoryItem(url, title == null ? "" : title));
         }
@@ -131,19 +118,17 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     private synchronized void addHistoryItem(@NonNull HistoryItem item) {
-        mDatabase = openIfNecessary();
         ContentValues values = new ContentValues();
         values.put(KEY_URL, item.getUrl());
         values.put(KEY_TITLE, item.getTitle());
         values.put(KEY_TIME_VISITED, System.currentTimeMillis());
-        mDatabase.insert(TABLE_HISTORY, null, values);
+        lazyDatabase().insert(TABLE_HISTORY, null, values);
     }
 
     @WorkerThread
     @Nullable
     synchronized String getHistoryItem(@NonNull String url) {
-        mDatabase = openIfNecessary();
-        Cursor cursor = mDatabase.query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
+        Cursor cursor = lazyDatabase().query(TABLE_HISTORY, new String[]{KEY_ID, KEY_URL, KEY_TITLE},
             KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
         String m = null;
         if (cursor != null) {
@@ -158,7 +143,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @WorkerThread
     @NonNull
     synchronized List<HistoryItem> findItemsContaining(@Nullable String search) {
-        mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(5);
         if (search == null) {
             return itemList;
@@ -166,7 +150,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
         search = '%' + search + '%';
 
-        Cursor cursor = mDatabase.query(TABLE_HISTORY, null, KEY_TITLE + " LIKE ? OR " + KEY_URL + " LIKE ?",
+        Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, KEY_TITLE + " LIKE ? OR " + KEY_URL + " LIKE ?",
             new String[]{search, search}, null, null, KEY_TIME_VISITED + " DESC", "5");
 
         while (cursor.moveToNext()) {
@@ -181,9 +165,8 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @WorkerThread
     @NonNull
     synchronized List<HistoryItem> getLastHundredItems() {
-        mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>(100);
-        Cursor cursor = mDatabase.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100");
+        Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100");
 
         while (cursor.moveToNext()) {
             itemList.add(fromCursor(cursor));
@@ -197,10 +180,9 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @WorkerThread
     @NonNull
     synchronized List<HistoryItem> getAllHistoryItems() {
-        mDatabase = openIfNecessary();
         List<HistoryItem> itemList = new ArrayList<>();
 
-        Cursor cursor = mDatabase.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC");
+        Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC");
 
         while (cursor.moveToNext()) {
             itemList.add(fromCursor(cursor));

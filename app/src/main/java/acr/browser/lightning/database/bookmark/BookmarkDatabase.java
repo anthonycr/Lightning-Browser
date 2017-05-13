@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import com.anthonycr.bonsai.Completable;
@@ -56,7 +57,6 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
     private static final String KEY_FOLDER = "folder";
     private static final String KEY_POSITION = "position";
 
-
     @NonNull private final String DEFAULT_BOOKMARK_TITLE;
 
     @Nullable private SQLiteDatabase mDatabase;
@@ -73,9 +73,10 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
      *
      * @return a non null writable database.
      */
+    @WorkerThread
     @NonNull
     private SQLiteDatabase lazyDatabase() {
-        if (mDatabase == null) {
+        if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = getWritableDatabase();
         }
 
