@@ -1119,9 +1119,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     @Override
                     public void onItem(@Nullable Boolean item) {
                         if (Boolean.TRUE.equals(item)) {
-                            addBookmark(title, url);
-                        } else {
                             deleteBookmark(title, url);
+                        } else {
+                            addBookmark(title, url);
                         }
                     }
                 });
