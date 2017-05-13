@@ -117,7 +117,7 @@ public final class BookmarkPage {
     }
 
     private void buildBookmarkPage(@Nullable final String folder) {
-        mManager.getBookmarksFromFolder(folder)
+        mManager.getBookmarksFromFolderSorted(folder)
             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                 @Override
                 public void onItem(@Nullable List<HistoryItem> list) {

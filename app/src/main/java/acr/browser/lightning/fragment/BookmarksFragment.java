@@ -254,7 +254,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     private void setBookmarksShown(@Nullable final String folder, final boolean animate) {
-        mBookmarksSubscription = mBookmarkManager.getBookmarksFromFolder(folder)
+        mBookmarksSubscription = mBookmarkManager.getBookmarksFromFolderSorted(folder)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
@@ -265,7 +265,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
                     mUiModel.setCurrentFolder(folder);
                     if (folder == null) {
-                        mBookmarkManager.getFolders()
+                        mBookmarkManager.getFoldersSorted()
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.main())
                             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {

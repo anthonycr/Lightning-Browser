@@ -18,6 +18,7 @@ import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -311,14 +312,16 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
 
     @NonNull
     @Override
-    public Single<List<HistoryItem>> getBookmarksFromFolder(@Nullable final String folder) {
+    public Single<List<HistoryItem>> getBookmarksFromFolderSorted(@Nullable final String folder) {
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
                 String finalFolder = folder != null ? folder : "";
                 Cursor cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_FOLDER + "=?", new String[]{finalFolder}, null, null, null);
 
-                subscriber.onItem(bindCursorToHistoryItemList(cursor));
+                List<HistoryItem> list = bindCursorToHistoryItemList(cursor);
+                Collections.sort(list);
+                subscriber.onItem(list);
                 subscriber.onComplete();
             }
         });
@@ -326,7 +329,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
 
     @NonNull
     @Override
-    public Single<List<HistoryItem>> getFolders() {
+    public Single<List<HistoryItem>> getFoldersSorted() {
         return Single.create(new SingleAction<List<HistoryItem>>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
@@ -350,6 +353,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
 
                 cursor.close();
 
+                Collections.sort(folders);
                 subscriber.onItem(folders);
                 subscriber.onComplete();
             }

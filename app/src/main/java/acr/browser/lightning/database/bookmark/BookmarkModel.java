@@ -132,7 +132,7 @@ public interface BookmarkModel {
      * in the given folder.
      */
     @NonNull
-    Single<List<HistoryItem>> getBookmarksFromFolder(@Nullable String folder);
+    Single<List<HistoryItem>> getBookmarksFromFolderSorted(@Nullable String folder);
 
     /**
      * Returns all folders as {@link HistoryItem}.
@@ -141,7 +141,7 @@ public interface BookmarkModel {
      * @return an observable that emits a list of folders.
      */
     @NonNull
-    Single<List<HistoryItem>> getFolders();
+    Single<List<HistoryItem>> getFoldersSorted();
 
     /**
      * Returns the names of all folders.
