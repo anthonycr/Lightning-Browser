@@ -73,8 +73,8 @@ class ImageFetcher {
 
             int size = Utils.dpToPx(24);
 
-            mLoaderOptions.inJustDecodeBounds = false;
             mLoaderOptions.inSampleSize = Utils.calculateInSampleSize(mLoaderOptions, size, size);
+            mLoaderOptions.inJustDecodeBounds = false;
 
             Response imageResponse = mHttpClient.newCall(imageRequest).execute();
             iconStream = imageResponse.body().byteStream();

@@ -4,7 +4,9 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.CompletableAction;
@@ -20,6 +22,8 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import acr.browser.lightning.utils.FileUtils;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -33,11 +37,33 @@ public class FaviconModel {
 
     @NonNull private final ImageFetcher mImageFetcher;
     @NonNull private final Application mApplication;
+    @NonNull private final LruCache<String, Bitmap> mFaviconCache = new LruCache<String, Bitmap>((int) FileUtils.megabytesToBytes(1)) {
+        @Override
+        protected int sizeOf(String key, Bitmap value) {
+            return value.getByteCount();
+        }
+    };
 
     @Inject
     public FaviconModel(@NonNull Application application) {
         mImageFetcher = new ImageFetcher();
         mApplication = application;
+    }
+
+    @Nullable
+    private Bitmap getFaviconFromMemCache(@NonNull String url) {
+        Preconditions.checkNonNull(url);
+        synchronized (mFaviconCache) {
+            return mFaviconCache.get(url);
+        }
+    }
+
+    private void addFaviconToMemCache(@NonNull String url, @NonNull Bitmap bitmap) {
+        Preconditions.checkNonNull(url);
+        Preconditions.checkNonNull(bitmap);
+        synchronized (mFaviconCache) {
+            mFaviconCache.put(url, bitmap);
+        }
     }
 
     @NonNull
@@ -71,9 +97,9 @@ public class FaviconModel {
 
                 File faviconCacheFile = createFaviconCacheFile(mApplication, uri);
 
-                Bitmap favicon = null;
+                Bitmap favicon = getFaviconFromMemCache(url);
 
-                if (faviconCacheFile.exists()) {
+                if (faviconCacheFile.exists() && favicon != null) {
                     favicon = mImageFetcher.retrieveFaviconFromCache(faviconCacheFile);
                 }
 
@@ -93,6 +119,7 @@ public class FaviconModel {
                 }
 
                 if (favicon != null) {
+                    addFaviconToMemCache(url, favicon);
                     cacheFaviconForUrl(favicon, url).subscribe();
                 }
 
