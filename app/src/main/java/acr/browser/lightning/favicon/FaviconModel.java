@@ -45,11 +45,21 @@ public class FaviconModel {
     };
 
     @Inject
-    public FaviconModel(@NonNull Application application) {
+    FaviconModel(@NonNull Application application) {
         mImageFetcher = new ImageFetcher();
         mApplication = application;
     }
 
+    /**
+     * Retrieves a favicon from the memory cache.
+     * Bitmap may not be present if no bitmap has
+     * been added for the URL or if it has been
+     * evicted from the memory cache.
+     *
+     * @param url the URL to retrieve the bitmap for.
+     * @return the bitmap associated with the URL,
+     * may be null.
+     */
     @Nullable
     private Bitmap getFaviconFromMemCache(@NonNull String url) {
         Preconditions.checkNonNull(url);
@@ -58,6 +68,13 @@ public class FaviconModel {
         }
     }
 
+    /**
+     * Adds a bitmap to the memory cache
+     * for the given URL.
+     *
+     * @param url    the URL to map the bitmap to.
+     * @param bitmap the bitmap to store.
+     */
     private void addFaviconToMemCache(@NonNull String url, @NonNull Bitmap bitmap) {
         Preconditions.checkNonNull(url);
         Preconditions.checkNonNull(bitmap);
@@ -66,6 +83,16 @@ public class FaviconModel {
         }
     }
 
+    /**
+     * Creates the cache file for the favicon
+     * image. File name will be in the form of
+     * [hash of URI host].png
+     *
+     * @param app the context needed to retrieve the
+     *            cache directory.
+     * @param uri the URI to use as a unique identifier.
+     * @return a valid cache file.
+     */
     @NonNull
     private static File createFaviconCacheFile(@NonNull Application app, @NonNull Uri uri) {
         FaviconUtils.assertUriSafe(uri);
@@ -75,7 +102,19 @@ public class FaviconModel {
         return new File(app.getCacheDir(), hash + ".png");
     }
 
-
+    /**
+     * Retrieves the favicon for a URL,
+     * may be from network or cache.
+     *
+     * @param url                the URL that we should retrieve the
+     *                           favicon for.
+     * @param defaultFavicon     the default favicon if no
+     *                           favicon is found.
+     * @param allowGoogleService true to allow grabbing favicons
+     *                           from Google, false otherwise.
+     * @return an observable that emits a bitmap if one is found,
+     * or the default if none was found.
+     */
     @NonNull
     public Single<Bitmap> faviconForUrl(@NonNull final String url,
                                         @NonNull final Bitmap defaultFavicon,
@@ -135,6 +174,14 @@ public class FaviconModel {
         });
     }
 
+    /**
+     * Caches a favicon for a particular URL.
+     *
+     * @param favicon the favicon to cache.
+     * @param url     the URL to cache the favicon for.
+     * @return an observable that notifies the consumer
+     * when it is complete.
+     */
     @NonNull
     public Completable cacheFaviconForUrl(@NonNull final Bitmap favicon,
                                           @NonNull final String url) {
