@@ -45,7 +45,7 @@
     <string name="agent_custom">مخصص</string>
     <string name="title_search_engine">محرك البحث</string>
     <string name="action_ok">حسنا</string>
-    <string name="dialog_download">هل ترغب في تحميل هذا الملف؟ (%1$s)</string>
+    <string name="dialog_download">هل ترغب في تحميل هذا الملف؟ %1$s</string>
     <string name="action_cancel">إلغاء</string>
     <string name="title_warning">تحذير</string>
     <string name="dialog_adobe_not_installed">لم يتم العثور على مشغل الفلاش يرجى تثبيته من المتجر.</string>
