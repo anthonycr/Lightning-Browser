@@ -12,37 +12,40 @@
     <string name="location">Местоположение</string>
     <string name="password">Сохранять пароли</string>
     <string name="agent">User Agent</string>
-    <string name="flash">Adobe Flash</string>
+    <string name="flash">Включить Adobe Flash</string>
     <string name="home">Новая вкладка</string>
     <string name="fullscreen">Во весь экран</string>
-    <string name="java">JavaScript</string>
-    <string name="download">Папка загрузок</string>
+    <string name="java">Включить JavaScript</string>
+    <string name="download">Путь загрузки</string>
     <string name="settings_advanced">Дополнительно</string>
     <string name="apache">Apache License 2.0</string>
     <string name="version">Версия</string>
     <string name="cache">Очищать кэш при выходе</string>
     <string name="reflow">Перекомпоновка</string>
     <string name="block">Без изображений</string>
-    <string name="window">Всплывающие окна</string>
-    <string name="cookies">Cookies</string>
+    <string name="window">Разрешить всплывающие окна</string>
+    <string name="cookies">Включить куки</string>
     <string name="importbookmarks">Импорт закладок</string>
     <string name="size">Размер текста</string>
-    <string name="recommended">рекомендуется</string>
+    <string name="recommended">Рекомендуется</string>
     <string name="search">Поисковая система</string>
     <string name="search_hint">Поиск</string>
     <string name="wideViewPort">Широкий вид</string>
     <string name="overViewMode">Загружать обзор</string>
     <string name="restore">Восстановление предыдущей сессии</string>
+    <string name="supported_browsers_title">Поддерживаемые браузеры</string>
+    <string name="stock_browser">Встроенный браузер</string>
     <string name="stock_browser_unavailable">Встроенный браузер не обнаружен</string>
     <string name="stock_browser_available">Встроенный браузер обнаружен</string>
     <string name="fullScreenOption">Без строки состояния</string>
-    <string name="clear_cookies">Очистить cookies</string>
+    <string name="clear_cookies">Очистить куки</string>
     <string name="clear_history">Очистить историю</string>
     <string name="dialog_image">Выберите действие для изображения</string>
     <string name="action_download">Загрузить</string>
     <string name="action_open">Открыть</string>
     <string name="dialog_link">Выберите действие для адреса</string>
     <string name="dialog_title_share">Способ передачи</string>
+    <string name="dialog_history_long_press">Выберите действие для элемента истории</string>
     <string name="dialog_bookmark">Выберите действие для закладки</string>
     <string name="action_delete">Удалить</string>
     <string name="action_blank">Пустая страница</string>
@@ -57,13 +60,13 @@
     <string name="title_warning">Внимание</string>
     <string name="dialog_adobe_not_installed">"Adobe Flash Player не найден.\nУстановите Flash Player"</string>
     <string name="title_user_agent">User Agent</string>
-    <string name="title_download_location">Папка загрузок</string>
+    <string name="title_download_location">Путь загрузки</string>
     <string name="title_custom_homepage">Введите адрес</string>
     <string name="action_webpage">Открыть адрес</string>
-    <string name="title_clear_history">Очистка истории</string>
-    <string name="title_clear_cookies">Очистка Cookies</string>
+    <string name="title_clear_history">Очистить историю</string>
+    <string name="title_clear_cookies">Очистить куки</string>
     <string name="dialog_history">История будет удалена. Продолжить?</string>
-    <string name="dialog_cookies">Cookies будут удалены. Продолжить?</string>
+    <string name="dialog_cookies">Куки будут удалены. Продолжить?</string>
     <string name="action_yes">Да</string>
     <string name="action_no">Нет</string>
     <string name="title_text_size">Размер текста</string>
@@ -82,23 +85,25 @@
     <string name="action_homepage">Домой</string>
     <string name="action_back">Назад</string>
     <string name="action_find">Найти на странице</string>
-    <string name="download_pending">Загрузка…</string>
+    <string name="download_pending">Загрузка\u2026</string>
     <string name="cannot_download">Загрузка возможна только с \"http\" или \"https\" адресов</string>
+    <string name="problem_download">Некорректный URL, загрузка невозможна</string>
+    <string name="problem_location_download">Невозможно загрузить по указанному пути</string>
     <string name="download_no_sdcard_dlg_title">Нет карты памяти</string>
     <string name="download_no_sdcard_dlg_msg">Для загрузки файла необходима карта памяти</string>
     <string name="download_sdcard_busy_dlg_title">Карта памяти недоступна</string>
-    <string name="download_sdcard_busy_dlg_msg">Карта памяти подключена к ПК. Для начала загрузки отключите её от ПК, нажав на уведомление</string>
-    <string name="incognito_cookies">Включить Cookies в режиме Инкогнито</string>
+    <string name="download_sdcard_busy_dlg_msg">Карта памяти подключена к ПК. Для начала загрузки отключите её от ПК, нажав на уведомление.</string>
+    <string name="incognito_cookies">Включить куки в режиме инкогнито</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Вручную</string>
     <string name="action_auto">Автоматически</string>
     <string name="action_follow_me">Связаться с разработчиками</string>
-    <string name="url_twitter">twitter.com/ACRDevelopment</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Очистить кэш</string>
     <string name="message_cache_cleared">Кэш очищен</string>
     <string name="message_import">Закладки импортированы</string>
     <string name="message_clear_history">История очищена</string>
-    <string name="message_cookies_cleared">Cookies очищены</string>
+    <string name="message_cookies_cleared">Куки очищены</string>
     <string name="max_tabs">Достигнуто максимальное число вкладок</string>
     <string name="message_text_copied">Текст скопирован в буфер обмена</string>
     <string name="message_link_copied">Ссылка скопирована в буфер обмена</string>
@@ -107,9 +112,16 @@
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Искать</string>
     <string name="block_ads">Блокировать рекламу</string>
-    <string name="title_form_resubmission">Повторная форма</string>
-    <string name="message_form_resubmission">Вы действительно хотите отправить данные?</string>
-    <string name="message_location">\Хотите использовать своё местоположение?</string>
+    <string name="message_insecure_connection">Соединение не защищено:\n%1$s\nВсё равно продолжить?</string>
+    <string name="message_certificate_date_invalid">дата сертификата недействительна</string>
+    <string name="message_certificate_expired">истёк срок действия сертификата</string>
+    <string name="message_certificate_domain_mismatch">имя сертификата не соответствует имени сайта</string>
+    <string name="message_certificate_invalid">сертификат недействителен</string>
+    <string name="message_certificate_not_yet_valid">сертикат ещё не действителен</string>
+    <string name="message_certificate_untrusted">сертификат не является доверенным</string>
+    <string name="title_form_resubmission">Отправка формы</string>
+    <string name="message_form_resubmission">Вы действительно хотите повторно отправить данные?</string>
+    <string name="message_location">\nХотите использовать своё местоположение?</string>
     <string name="action_allow">Разрешить</string>
     <string name="action_dont_allow">Не разрешать</string>
     <string name="title_sign_in">Вход</string>
@@ -117,12 +129,25 @@
     <string name="hint_password">Пароль</string>
     <string name="search_suggestions">Подсказки поиска</string>
     <string name="powered_by_google">Используя Google</string>
+    <string name="http_proxy">HTTP прокси</string>
+    <string-array name="proxy_choices_array">
+        <item>Нет</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Вручную</item>
+    </string-array>
+    <string name="manual_proxy">Прокси</string>
+    <string name="host">Хост:</string>
+    <string name="port">Порт:</string>
     <string name="use_tor_prompt">Похоже, установлен Orbot. Вы хотите использовать Tor?</string>
+    <string name="use_i2p_prompt">Похоже, установлен I2P. Вы хотите использовать I2P?</string>
     <string name="install_orbot">Пожалуйста, установите Orbot для проксирования через Tor.</string>
+    <string name="i2p_not_running">I2P не запущен.</string>
+    <string name="i2p_tunnels_not_ready">I2P туннели ещё не готовы.</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="clear_cookies_exit">Очистить cookies при выходе</string>
-    <string name="clear_history_exit">Очистить историю при выходе</string>
+    <string name="clear_cookies_exit">Очищать куки при выходе</string>
+    <string name="clear_history_exit">Очищать историю при выходе</string>
     <string name="folder_default">По умолчанию</string>
     <string name="folder_custom">Выбрать</string>
     <string name="untitled">Без названия</string>
@@ -135,6 +160,7 @@
     <string name="name_inverted">Инвертированный</string>
     <string name="name_grayscale">Оттенки серого</string>
     <string name="name_inverted_grayscale">Инвертированные оттенки серого</string>
+    <string name="name_increase_contrast">Повышенный контраст</string>
     <string name="name_normal">Нормальный</string>
     <string name="sync_history">Синхронизировать историю с Google</string>
     <string name="title_file_chooser">Выбор файла</string>
@@ -151,4 +177,50 @@
     <string name="settings_privacy">Настройки приватности</string>
     <string name="settings_about">О программе</string>
     <string name="settings_about_explain">Информация о версии, авторах и лицензиях</string>
+    <string name="close_tab">Закрыть вкладку</string>
+    <string name="close_all_tabs">Закрыть все вкладки</string>
+    <string name="close_other_tabs">Закрыть остальные вкладки</string>
+    <string name="third_party">Блокировать куки со сторонних сайтов</string>
+    <string name="color_mode">Включить цветной режим</string>
+    <string name="reading_mode">Режим чтения</string>
+    <string name="loading">Загрузка&#8230;</string>
+    <string name="loading_failed">Не удалось загрузить страницу.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT License</string>
+    <string name="url_contents">Содержимое поля URL</string>
+    <string name="text_encoding">Кодировка текста</string>
+    <string-array name="url_content_array">
+        <item>Доменное имя (по умолчанию)</item>
+        <item>URL</item>
+        <item>Заголовок</item>
+    </string-array>
+    <string name="invert_color">Инвертировать цвета</string>
+    <string name="dark_theme">Тёмная тема</string>
+    <string name="tabs">Вкладки</string>
+    <string name="theme">Тема приложения</string>
+    <string name="light_theme">Светлая тема</string>
+    <string name="black_theme">Чёрная тема (AMOLED)</string>
+    <string name="folder">Имя директории</string>
+    <string name="action_folder">Директория</string>
+    <string name="action_rename">Переименовать</string>
+    <string name="title_rename_folder">Переименовать директорию</string>
+    <string name="dialog_folder">Выберите действите для директории</string>
+    <string name="clear_web_storage">Очистить интернет-хранилище</string>
+    <string name="clear_web_storage_exit">Очищать интернет-хранилище при выходе</string>
+    <string name="message_web_storage_cleared">Интернет-хранилище очищено</string>
+    <string name="tabs_in_drawer">Показывать владки в боковом меню</string>
+    <string name="do_not_track">Запрашивать \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Удалять идентифиц. заголовки</string>
+    <string name="action_add_to_homescreen">Добавить на дом. экран</string>
+    <string name="message_added_to_homescreen">Ярлык добавлен на домашний экран</string>
+    <string name="action_delete_all_bookmarks">Удалить все закладки</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Часто задаваемые вопросы</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Настройки отладки</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Чтобы изменения вступили в силу, необходимо перезапустить приложение.</string>
 </resources>
