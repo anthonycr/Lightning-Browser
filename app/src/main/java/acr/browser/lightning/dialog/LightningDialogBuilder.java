@@ -31,6 +31,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
@@ -112,6 +113,12 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, item.getUrl());
+                }
+            },
+            new BrowserDialog.Item(R.string.action_share) {
+                @Override
+                public void onClick() {
+                    new IntentUtils(activity).shareUrl(item.getUrl(), item.getTitle());
                 }
             },
             new BrowserDialog.Item(R.string.dialog_copy_link) {
@@ -277,6 +284,12 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);
                 }
             },
+            new BrowserDialog.Item(R.string.action_share) {
+                @Override
+                public void onClick() {
+                    new IntentUtils(activity).shareUrl(url, null);
+                }
+            },
             new BrowserDialog.Item(R.string.dialog_copy_link) {
                 @Override
                 public void onClick() {
@@ -323,6 +336,12 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);
                 }
             },
+            new BrowserDialog.Item(R.string.action_share) {
+                @Override
+                public void onClick() {
+                    new IntentUtils(activity).shareUrl(url, null);
+                }
+            },
             new BrowserDialog.Item(R.string.dialog_copy_link) {
                 @Override
                 public void onClick() {
@@ -357,6 +376,12 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);
+                }
+            },
+            new BrowserDialog.Item(R.string.action_share) {
+                @Override
+                public void onClick() {
+                    new IntentUtils(activity).shareUrl(url, null);
                 }
             },
             new BrowserDialog.Item(R.string.dialog_copy_link) {

@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 
 public class IntentUtils {
 
@@ -111,5 +113,25 @@ public class IntentUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Shares a URL to the system.
+     *
+     * @param url   the URL to share. If the URL is null
+     *              or a special URL, no sharing will occur.
+     * @param title the title of the URL to share. This
+     *              is optional.
+     */
+    public void shareUrl(@Nullable String url, @Nullable String title) {
+        if (url != null && !UrlUtils.isSpecialUrl(url)) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            if (title != null) {
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+            }
+            shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+            mActivity.startActivity(Intent.createChooser(shareIntent, mActivity.getString(R.string.dialog_title_share)));
+        }
     }
 }
