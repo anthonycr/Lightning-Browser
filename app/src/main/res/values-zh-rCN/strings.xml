@@ -52,7 +52,7 @@
     <string name="agent_custom">自定义 UA</string>
     <string name="title_search_engine">搜索引擎</string>
     <string name="action_ok">确认</string>
-    <string name="dialog_download">您是否需要下载此文件？</string>
+    <string name="dialog_download">您是否需要下载此文件？ (%1$s)</string>
     <string name="action_cancel">取消</string>
     <string name="title_warning">警告</string>
     <string name="dialog_adobe_not_installed">"未检测到您的设备中安装了 Adobe Flash Player，请先安装 Adobe  Flash Player 后再启用此选项。"</string>

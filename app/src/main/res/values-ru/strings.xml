@@ -55,7 +55,7 @@
     <string name="agent_custom">Выбрать</string>
     <string name="title_search_engine">Поисковая система</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Загрузить файл?</string>
+    <string name="dialog_download">Загрузить файл? (%1$s)</string>
     <string name="action_cancel">Отмена</string>
     <string name="title_warning">Внимание</string>
     <string name="dialog_adobe_not_installed">"Adobe Flash Player не найден.\nУстановите Flash Player"</string>

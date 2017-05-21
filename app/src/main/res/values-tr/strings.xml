@@ -53,7 +53,7 @@
     <string name="agent_custom">Kişisel</string>
     <string name="title_search_engine">Arama Motoru</string>
     <string name="action_ok">Tamam</string>
-    <string name="dialog_download">Bu dosyayı indirmek ister misin?</string>
+    <string name="dialog_download">Bu dosyayı indirmek ister misin? (%1$s)</string>
     <string name="action_cancel">İptal</string>
     <string name="title_warning">Uyarı</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player bulunamadı.\nLütfen Flash Player yükleyin.</string>

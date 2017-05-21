@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
@@ -37,7 +38,7 @@ public class LightningDownloadListener implements DownloadListener {
 
     @Override
     public void onDownloadStart(final String url, final String userAgent,
-                                final String contentDisposition, final String mimetype, long contentLength) {
+                                final String contentDisposition, final String mimetype, final long contentLength) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity,
             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
             new PermissionsResultAction() {
@@ -59,8 +60,15 @@ public class LightningDownloadListener implements DownloadListener {
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
+                    String downloadSize;
+                    if (contentLength > 0) {
+                        downloadSize = Formatter.formatFileSize(mActivity, contentLength);
+                    } else {
+                        downloadSize = mActivity.getString(R.string.unknown_size);
+                    }
+                    String message = mActivity.getString(R.string.dialog_download, downloadSize);
                     Dialog dialog = builder.setTitle(fileName)
-                        .setMessage(mActivity.getResources().getString(R.string.dialog_download))
+                        .setMessage(message)
                         .setPositiveButton(mActivity.getResources().getString(R.string.action_download),
                             dialogClickListener)
                         .setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),

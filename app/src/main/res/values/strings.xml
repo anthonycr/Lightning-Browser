@@ -72,7 +72,8 @@
     <string name="agent_custom">Custom</string>
     <string name="title_search_engine">Search Engine</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Do you want to download this file?</string>
+    <string name="dialog_download">Do you want to download this file? (%1$s)</string>
+    <string name="unknown_size">Unknown Size</string>
     <string name="action_cancel">Cancel</string>
     <string name="title_warning">Warning</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player was not detected.\nPlease install Flash Player.</string>

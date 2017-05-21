@@ -72,7 +72,7 @@
     <string name="agent_custom">Personalizzato</string>
     <string name="title_search_engine">Motore di ricerca</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Vuoi scaricarlo?</string>
+    <string name="dialog_download">Vuoi scaricarlo? (%1$s)</string>
     <string name="action_cancel">Annulla</string>
     <string name="title_warning">Attenzione</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player non è stato trovato.\nSi prega di installarlo.</string>

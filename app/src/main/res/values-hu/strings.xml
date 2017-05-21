@@ -69,7 +69,7 @@
     <string name="agent_custom">Egyéni</string>
     <string name="title_search_engine">Keresőmotor</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Le szeretnéd tölteni ezt a fájlt?</string>
+    <string name="dialog_download">Le szeretnéd tölteni ezt a fájlt? (%1$s)</string>
     <string name="action_cancel">Mégse</string>
     <string name="title_warning">Figyelmeztetés</string>
     <string name="dialog_adobe_not_installed">Az Adobe Flash Player nincs észlelve.\nKérjük telepítse a Flash Player-t.</string>
