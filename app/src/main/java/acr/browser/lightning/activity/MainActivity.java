@@ -2,77 +2,77 @@ package acr.browser.lightning.activity;
 
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.R;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.Subscriber;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {
 
-	private CookieManager mCookieManager;
+    @Override
+    public Observable<Void> updateCookiePreference() {
+        return Observable.create(new Action<Void>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
+                CookieManager cookieManager = CookieManager.getInstance();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    CookieSyncManager.createInstance(MainActivity.this);
+                }
+                cookieManager.setAcceptCookie(mPreferences.getCookiesEnabled());
+                subscriber.onComplete();
+            }
+        });
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-	@Override
-	public void updateCookiePreference() {
-		mCookieManager = CookieManager.getInstance();
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			CookieSyncManager.createInstance(this);
-		}
-		mCookieManager.setAcceptCookie(PreferenceManager.getInstance().getCookiesEnabled());
-		super.updateCookiePreference();
-	}
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (isPanicTrigger(intent)) {
+            panicClean();
+        } else {
+            handleNewIntent(intent);
+            super.onNewIntent(intent);
+        }
+    }
 
-	@Override
-	public synchronized void initializeTabs() {
-		restoreOrNewTab();
-		// if incognito mode use newTab(null, true); instead
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveOpenTabs();
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
+    @Override
+    public void updateHistory(@Nullable String title, @NonNull String url) {
+        addItemToHistory(title, url);
+    }
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		handleNewIntent(intent);
-		super.onNewIntent(intent);
-	}
+    @Override
+    public boolean isIncognito() {
+        return false;
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		saveOpenTabs();
-	}
+    @Override
+    public void closeActivity() {
+        closeDrawers(new Runnable() {
+            @Override
+            public void run() {
+                performExitCleanUp();
+                moveTaskToBack(true);
+            }
+        });
+    }
 
-	@Override
-	public void updateHistory(String title, String url) {
-		super.updateHistory(title, url);
-		addItemToHistory(title, url);
-	}
 
-	@Override
-	public boolean isIncognito() {
-		return false;
-	}
-
-	@Override
-	public int getMenu() {
-		return R.menu.main;
-	}
-
-	@Override
-	public void closeActivity() {
-		closeDrawers();
-		moveTaskToBack(true);
-	}
 }

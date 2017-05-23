@@ -30,7 +30,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/button_next"
+            android:id="@+id/button_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@null"
@@ -44,7 +44,7 @@
             android:background="?android:attr/dividerVertical" />
 
         <ImageButton
-            android:id="@+id/button_back"
+            android:id="@+id/button_next"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@null"

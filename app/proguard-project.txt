@@ -35,17 +35,43 @@
 -keep public class * extends android.preference.Preference
 -keep public class com.android.vending.licensing.ILicensingService
 -keep public class acr.browser.lightning.reading.*
+-keep class org.lucasr.twowayview.** { *; }
+
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
+}
+
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** w(...);
+    public static *** i(...);
+}
+
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
 
 # this will fix a force close in ReadingActivity
 -keep public class org.jsoup.** {
-	public *;
+    public *;
 }
 
 # Without this rule, openFileChooser does not get called on KitKat
 -keep class acr.browser.lightning.view.LightningView$LightningChromeClient {
-	void openFileChooser(android.webkit.ValueCallback);
-	void openFileChooser(android.webkit.ValueCallback, java.lang.String);
-	void openFileChooser(android.webkit.ValueCallback, java.lang.String, java.lang.String);
+    void openFileChooser(android.webkit.ValueCallback);
+    void openFileChooser(android.webkit.ValueCallback, java.lang.String);
+    void openFileChooser(android.webkit.ValueCallback, java.lang.String, java.lang.String);
 }
 
 -keepclasseswithmembernames class * {
@@ -83,3 +109,5 @@
 # classes are never used on Android, and it is safe to ignore the warnings.
 -dontwarn net.i2p.crypto.CertUtil
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
+
+-dontwarn org.apache.http.HttpHost

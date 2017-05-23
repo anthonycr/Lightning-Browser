@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_privacy">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="location"
+            android:title="@string/location"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="third_party"
+            android:title="@string/third_party"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="password"
+            android:summary="@string/recommended"
+            android:title="@string/password"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="do_not_track"
+            android:title="@string/do_not_track"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="remove_identifying_headers"
+            android:title="@string/remove_identifying_headers"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="clear_cache_exit"
+            android:title="@string/cache"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="clear_history_exit"
+            android:title="@string/clear_history_exit"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="clear_cookies_exit"
+            android:title="@string/clear_cookies_exit"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="clear_webstorage_exit"
+            android:title="@string/clear_web_storage_exit"/>
+        <Preference
+            android:key="clear_cache"
+            android:title="@string/clear_cache"/>
+        <Preference
+            android:key="clear_history"
+            android:title="@string/clear_history"/>
+        <Preference
+            android:key="clear_cookies"
+            android:title="@string/clear_cookies"/>
+        <Preference
+            android:key="clear_webstorage"
+            android:title="@string/clear_web_storage"/>
+    </PreferenceCategory>
+</PreferenceScreen>

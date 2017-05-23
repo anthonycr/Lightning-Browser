@@ -6,1140 +6,1205 @@ package acr.browser.lightning.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.net.MailTo;
-import android.net.Uri;
-import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
+import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
-import android.webkit.GeolocationPermissions;
-import android.webkit.HttpAuthHandler;
-import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
-import java.io.ByteArrayInputStream;
+import com.squareup.otto.Bus;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.lang.ref.WeakReference;
+import java.util.Map;
 
-import acr.browser.lightning.R;
+import javax.inject.Inject;
+
+import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.controller.BrowserController;
+import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.database.BookmarkManager;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.utils.AdBlock;
-import acr.browser.lightning.utils.IntentUtils;
+import acr.browser.lightning.react.Action;
+import acr.browser.lightning.react.Observable;
+import acr.browser.lightning.react.Schedulers;
+import acr.browser.lightning.react.Subscriber;
+import acr.browser.lightning.react.OnSubscribe;
+import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
+/**
+ * {@link LightningView} acts as a tab for the browser,
+ * handling WebView creation and handling logic, as well
+ * as properly initialing it. All interactions with the
+ * WebView should be made through this class.
+ */
 public class LightningView {
 
-	private final Title mTitle;
-	private WebView mWebView;
-	private BrowserController mBrowserController;
-	private GestureDetector mGestureDetector;
-	private final Activity mActivity;
-	private WebSettings mSettings;
-	private static String mHomepage;
-	private static String mDefaultUserAgent;
-	private static Bitmap mWebpageBitmap;
-	private static PreferenceManager mPreferences;
-	private final AdBlock mAdBlock;
-	private IntentUtils mIntentUtils;
-	private final Paint mPaint = new Paint();
-	private boolean isForegroundTab;
-	private boolean mTextReflow = false;
-	private boolean mInvertPage = false;
-	private static final int API = android.os.Build.VERSION.SDK_INT;
-	private static final int SCROLL_UP_THRESHOLD = Utils.convertDpToPixels(10);
-	private static final int SCROLL_DOWN_THRESHOLD = Utils.convertDpToPixels(100);
-	private static final float[] mNegativeColorArray = { -1.0f, 0, 0, 0, 255, // red
-			0, -1.0f, 0, 0, 255, // green
-			0, 0, -1.0f, 0, 255, // blue
-			0, 0, 0, 1.0f, 0 // alpha
-	};
-
-	@SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
-	public LightningView(Activity activity, String url, boolean darkTheme) {
-
-		mActivity = activity;
-		mWebView = new WebView(activity);
-		mTitle = new Title(activity, darkTheme);
-		mAdBlock = AdBlock.getInstance(activity.getApplicationContext());
-
-		mWebpageBitmap = Utils.getWebpageBitmap(activity.getResources(), darkTheme);
-
-		try {
-			mBrowserController = (BrowserController) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity + " must implement BrowserController");
-		}
-		mIntentUtils = new IntentUtils(mBrowserController);
-		mWebView.setDrawingCacheBackgroundColor(0x00000000);
-		mWebView.setFocusableInTouchMode(true);
-		mWebView.setFocusable(true);
-		mWebView.setAnimationCacheEnabled(false);
-		mWebView.setDrawingCacheEnabled(false);
-		mWebView.setWillNotCacheDrawing(true);
-		mWebView.setAlwaysDrawnWithCacheEnabled(false);
-		mWebView.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
-
-		if (API > 15) {
-			mWebView.setBackground(null);
-			mWebView.getRootView().setBackground(null);
-		} else if (mWebView.getRootView() != null) {
-			mWebView.getRootView().setBackgroundDrawable(null);
-		}
-		mWebView.setScrollbarFadingEnabled(true);
-		mWebView.setSaveEnabled(true);
-		mWebView.setWebChromeClient(new LightningChromeClient(activity));
-		mWebView.setWebViewClient(new LightningWebClient(activity));
-		mWebView.setDownloadListener(new LightningDownloadListener(activity));
-		mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
-		mWebView.setOnTouchListener(new TouchListener());
-		mDefaultUserAgent = mWebView.getSettings().getUserAgentString();
-		mSettings = mWebView.getSettings();
-		initializeSettings(mWebView.getSettings(), activity);
-		initializePreferences(activity);
-
-		if (url != null) {
-			if (!url.trim().isEmpty()) {
-				mWebView.loadUrl(url);
-			} else {
-				// don't load anything, the user is looking for a blank tab
-			}
-		} else {
-			if (mHomepage.startsWith("about:home")) {
-				mWebView.loadUrl(getHomepage());
-			} else if (mHomepage.startsWith("about:bookmarks")) {
-				mBrowserController.openBookmarkPage(mWebView);
-			} else {
-				mWebView.loadUrl(mHomepage);
-			}
-		}
-	}
-
-	private String getHomepage() {
-		StringBuilder homepageBuilder = new StringBuilder();
-		homepageBuilder.append(StartPage.HEAD);
-		String icon;
-		String searchUrl;
-		switch (mPreferences.getSearchChoice()) {
-			case 0:
-				// CUSTOM SEARCH
-				icon = "file:///android_asset/lightning.png";
-				searchUrl = mPreferences.getSearchUrl();
-				break;
-			case 1:
-				// GOOGLE_SEARCH;
-				icon = "file:///android_asset/google.png";
-				// "https://www.google.com/images/srpr/logo11w.png";
-				searchUrl = Constants.GOOGLE_SEARCH;
-				break;
-			case 2:
-				// ANDROID SEARCH;
-				icon = "file:///android_asset/ask.png";
-				searchUrl = Constants.ASK_SEARCH;
-				break;
-			case 3:
-				// BING_SEARCH;
-				icon = "file:///android_asset/bing.png";
-				// "http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Bing_logo_%282013%29.svg/500px-Bing_logo_%282013%29.svg.png";
-				searchUrl = Constants.BING_SEARCH;
-				break;
-			case 4:
-				// YAHOO_SEARCH;
-				icon = "file:///android_asset/yahoo.png";
-				// "http://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Yahoo%21_logo.svg/799px-Yahoo%21_logo.svg.png";
-				searchUrl = Constants.YAHOO_SEARCH;
-				break;
-			case 5:
-				// STARTPAGE_SEARCH;
-				icon = "file:///android_asset/startpage.png";
-				// "https://startpage.com/graphics/startp_logo.gif";
-				searchUrl = Constants.STARTPAGE_SEARCH;
-				break;
-			case 6:
-				// STARTPAGE_MOBILE
-				icon = "file:///android_asset/startpage.png";
-				// "https://startpage.com/graphics/startp_logo.gif";
-				searchUrl = Constants.STARTPAGE_MOBILE_SEARCH;
-				break;
-			case 7:
-				// DUCK_SEARCH;
-				icon = "file:///android_asset/duckduckgo.png";
-				// "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-				searchUrl = Constants.DUCK_SEARCH;
-				break;
-			case 8:
-				// DUCK_LITE_SEARCH;
-				icon = "file:///android_asset/duckduckgo.png";
-				// "https://duckduckgo.com/assets/logo_homepage.normal.v101.png";
-				searchUrl = Constants.DUCK_LITE_SEARCH;
-				break;
-			case 9:
-				// BAIDU_SEARCH;
-				icon = "file:///android_asset/baidu.png";
-				// "http://www.baidu.com/img/bdlogo.gif";
-				searchUrl = Constants.BAIDU_SEARCH;
-				break;
-			case 10:
-				// YANDEX_SEARCH;
-				icon = "file:///android_asset/yandex.png";
-				// "http://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yandex.svg/600px-Yandex.svg.png";
-				searchUrl = Constants.YANDEX_SEARCH;
-				break;
-			default:
-				// DEFAULT GOOGLE_SEARCH;
-				icon = "file:///android_asset/google.png";
-				searchUrl = Constants.GOOGLE_SEARCH;
-				break;
-
-		}
-
-		homepageBuilder.append(icon);
-		homepageBuilder.append(StartPage.MIDDLE);
-		homepageBuilder.append(searchUrl);
-		homepageBuilder.append(StartPage.END);
-
-		File homepage = new File(mActivity.getFilesDir(), "homepage.html");
-		try {
-			FileWriter hWriter = new FileWriter(homepage, false);
-			hWriter.write(homepageBuilder.toString());
-			hWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return Constants.FILE + homepage;
-	}
-
-	@SuppressWarnings("deprecation")
-	@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
-	public synchronized void initializePreferences(Context context) {
-		mPreferences = PreferenceManager.getInstance();
-		mHomepage = mPreferences.getHomepage();
-		mAdBlock.updatePreference();
-		if (mSettings == null && mWebView != null) {
-			mSettings = mWebView.getSettings();
-		} else if (mSettings == null) {
-			return;
-		}
-
-		setColorMode(mPreferences.getRenderingMode());
-
-		if (!mBrowserController.isIncognito()) {
-			mSettings.setGeolocationEnabled(mPreferences.getLocationEnabled());
-		} else {
-			mSettings.setGeolocationEnabled(false);
-		}
-		if (API < 19) {
-			switch (mPreferences.getFlashSupport()) {
-				case 0:
-					mSettings.setPluginState(PluginState.OFF);
-					break;
-				case 1:
-					mSettings.setPluginState(PluginState.ON_DEMAND);
-					break;
-				case 2:
-					mSettings.setPluginState(PluginState.ON);
-					break;
-				default:
-					break;
-			}
-		}
-
-		switch (mPreferences.getUserAgentChoice()) {
-			case 1:
-				if (API > 16) {
-					mSettings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
-				} else {
-					mSettings.setUserAgentString(mDefaultUserAgent);
-				}
-				break;
-			case 2:
-				mSettings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
-				break;
-			case 3:
-				mSettings.setUserAgentString(Constants.MOBILE_USER_AGENT);
-				break;
-			case 4:
-				mSettings.setUserAgentString(mPreferences.getUserAgentString(mDefaultUserAgent));
-				break;
-		}
-
-		if (mPreferences.getSavePasswordsEnabled() && !mBrowserController.isIncognito()) {
-			if (API < 18) {
-				mSettings.setSavePassword(true);
-			}
-			mSettings.setSaveFormData(true);
-		} else {
-			if (API < 18) {
-				mSettings.setSavePassword(false);
-			}
-			mSettings.setSaveFormData(false);
-		}
-
-		if (mPreferences.getJavaScriptEnabled()) {
-			mSettings.setJavaScriptEnabled(true);
-			mSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-		}
-
-		if (mPreferences.getTextReflowEnabled()) {
-			mTextReflow = true;
-			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
-			if (API >= android.os.Build.VERSION_CODES.KITKAT) {
-				try {
-					mSettings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
-				} catch (Exception e) {
-					// This shouldn't be necessary, but there are a number
-					// of KitKat devices that crash trying to set this
-					Log.e(Constants.TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING");
-				}
-			}
-		} else {
-			mTextReflow = false;
-			mSettings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
-		}
-
-		mSettings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
-		mSettings.setSupportMultipleWindows(mPreferences.getPopupsEnabled());
-		mSettings.setUseWideViewPort(mPreferences.getUseWideViewportEnabled());
-		mSettings.setLoadWithOverviewMode(mPreferences.getOverviewModeEnabled());
-		switch (mPreferences.getTextSize()) {
-			case 1:
-				mSettings.setTextZoom(200);
-				break;
-			case 2:
-				mSettings.setTextZoom(150);
-				break;
-			case 3:
-				mSettings.setTextZoom(100);
-				break;
-			case 4:
-				mSettings.setTextZoom(75);
-				break;
-			case 5:
-				mSettings.setTextZoom(50);
-				break;
-		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
-					!mPreferences.getBlockThirdPartyCookiesEnabled());
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	@SuppressLint({ "SetJavaScriptEnabled", "NewApi" })
-	private void initializeSettings(WebSettings settings, Context context) {
-		if (API < 18) {
-			settings.setAppCacheMaxSize(Long.MAX_VALUE);
-		}
-		if (API < 17) {
-			settings.setEnableSmoothTransition(true);
-		}
-		if (API > 16) {
-			settings.setMediaPlaybackRequiresUserGesture(true);
-		}
-		if (API >= Build.VERSION_CODES.LOLLIPOP && !mBrowserController.isIncognito()) {
-			settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-		} else if (API >= Build.VERSION_CODES.LOLLIPOP) {
-			// We're in Incognito mode, reject
-			settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-		}
-		settings.setDomStorageEnabled(true);
-		settings.setAppCacheEnabled(true);
-		settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-		settings.setDatabaseEnabled(true);
-		settings.setSupportZoom(true);
-		settings.setBuiltInZoomControls(true);
-		settings.setDisplayZoomControls(false);
-		settings.setAllowContentAccess(true);
-		settings.setAllowFileAccess(true);
-		settings.setDefaultTextEncodingName("utf-8");
-		if (API > 16) {
-			settings.setAllowFileAccessFromFileURLs(false);
-			settings.setAllowUniversalAccessFromFileURLs(false);
-		}
-
-		settings.setAppCachePath(context.getDir("appcache", 0).getPath());
-		settings.setGeolocationDatabasePath(context.getDir("geolocation", 0).getPath());
-		if (API < Build.VERSION_CODES.KITKAT) {
-			settings.setDatabasePath(context.getDir("databases", 0).getPath());
-		}
-	}
-
-	public boolean isShown() {
-		return mWebView != null && mWebView.isShown();
-	}
-
-	public synchronized void onPause() {
-		if (mWebView != null) {
-			mWebView.onPause();
-		}
-	}
-
-	public synchronized void onResume() {
-		if (mWebView != null) {
-			mWebView.onResume();
-		}
-	}
-
-	public void setForegroundTab(boolean isForeground) {
-		isForegroundTab = isForeground;
-		mBrowserController.update();
-	}
-
-	public boolean isForegroundTab() {
-		return isForegroundTab;
-	}
-
-	public int getProgress() {
-		if (mWebView != null) {
-			return mWebView.getProgress();
-		} else {
-			return 100;
-		}
-	}
-
-	public synchronized void stopLoading() {
-		if (mWebView != null) {
-			mWebView.stopLoading();
-		}
-	}
-
-	public void setHardwareRendering() {
-		mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, mPaint);
-	}
-
-	public void setNormalRendering() {
-		mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
-	}
-
-	public void setSoftwareRendering() {
-		mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-	}
-
-	public void setColorMode(int mode) {
-		mInvertPage = false;
-		switch (mode) {
-			case 0:
-				mPaint.setColorFilter(null);
-				// setSoftwareRendering(); // Some devices get segfaults
-				// in the WebView with Hardware Acceleration enabled,
-				// the only fix is to disable hardware rendering
-				setNormalRendering();
-				mInvertPage = false;
-				break;
-			case 1:
-				ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
-						mNegativeColorArray);
-				mPaint.setColorFilter(filterInvert);
-				setHardwareRendering();
-
-				mInvertPage = true;
-				break;
-			case 2:
-				ColorMatrix cm = new ColorMatrix();
-				cm.setSaturation(0);
-				ColorMatrixColorFilter filterGray = new ColorMatrixColorFilter(cm);
-				mPaint.setColorFilter(filterGray);
-				setHardwareRendering();
-				break;
-			case 3:
-				ColorMatrix matrix = new ColorMatrix();
-				matrix.set(mNegativeColorArray);
-				ColorMatrix matrixGray = new ColorMatrix();
-				matrixGray.setSaturation(0);
-				ColorMatrix concat = new ColorMatrix();
-				concat.setConcat(matrix, matrixGray);
-				ColorMatrixColorFilter filterInvertGray = new ColorMatrixColorFilter(concat);
-				mPaint.setColorFilter(filterInvertGray);
-				setHardwareRendering();
-
-				mInvertPage = true;
-				break;
-
-		}
-
-	}
-
-	public synchronized void pauseTimers() {
-		if (mWebView != null) {
-			mWebView.pauseTimers();
-		}
-	}
-
-	public synchronized void resumeTimers() {
-		if (mWebView != null) {
-			mWebView.resumeTimers();
-		}
-	}
-
-	public void requestFocus() {
-		if (mWebView != null && !mWebView.hasFocus()) {
-			mWebView.requestFocus();
-		}
-	}
-
-	public void setVisibility(int visible) {
-		if (mWebView != null) {
-			mWebView.setVisibility(visible);
-		}
-	}
-
-	public void clearCache(boolean disk) {
-		if (mWebView != null) {
-			mWebView.clearCache(disk);
-		}
-	}
-
-	public synchronized void reload() {
-		// Check if configured proxy is available
-		if (!mBrowserController.isProxyReady()) {
-			// User has been notified
-			return;
-		}
-
-		if (mWebView != null) {
-			mWebView.reload();
-		}
-	}
-
-	private void cacheFavicon(Bitmap icon) {
-		String hash = String.valueOf(Utils.getDomainName(getUrl()).hashCode());
-		Log.d(Constants.TAG, "Caching icon for " + Utils.getDomainName(getUrl()));
-		File image = new File(mActivity.getCacheDir(), hash + ".png");
-		try {
-			FileOutputStream fos = new FileOutputStream(image);
-			icon.compress(Bitmap.CompressFormat.PNG, 100, fos);
-			fos.flush();
-			fos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
-	public synchronized void find(String text) {
-		if (mWebView != null) {
-			if (API > 16) {
-				mWebView.findAllAsync(text);
-			} else {
-				mWebView.findAll(text);
-			}
-		}
-	}
-
-	public Activity getActivity() {
-		return mActivity;
-	}
-
-	public synchronized void onDestroy() {
-		if (mWebView != null) {
-			mWebView.stopLoading();
-			mWebView.onPause();
-			mWebView.clearHistory();
-			mWebView.setVisibility(View.GONE);
-			mWebView.removeAllViews();
-			mWebView.destroyDrawingCache();
-			// mWebView.destroy(); //this is causing the segfault
-			mWebView = null;
-		}
-	}
-
-	public synchronized void goBack() {
-		if (mWebView != null) {
-			mWebView.goBack();
-		}
-	}
-
-	public String getUserAgent() {
-		if (mWebView != null) {
-			return mWebView.getSettings().getUserAgentString();
-		} else {
-			return "";
-		}
-	}
-
-	public synchronized void goForward() {
-		if (mWebView != null) {
-			mWebView.goForward();
-		}
-	}
-
-	public boolean canGoBack() {
-		return mWebView != null && mWebView.canGoBack();
-	}
-
-	public boolean canGoForward() {
-		return mWebView != null && mWebView.canGoForward();
-	}
-
-	public WebView getWebView() {
-		return mWebView;
-	}
-
-	public Bitmap getFavicon() {
-		return mTitle.getFavicon();
-	}
-
-	public synchronized void loadUrl(String url) {
-		// Check if configured proxy is available
-		if (!mBrowserController.isProxyReady()) {
-			// User has been notified
-			return;
-		}
-
-		if (mWebView != null) {
-			mWebView.loadUrl(url);
-		}
-	}
-
-	public synchronized void invalidate() {
-		if (mWebView != null) {
-			mWebView.invalidate();
-		}
-	}
-
-	public String getTitle() {
-		return mTitle.getTitle();
-	}
-
-	public String getUrl() {
-		if (mWebView != null) {
-			return mWebView.getUrl();
-		} else {
-			return "";
-		}
-	}
-
-	public class LightningWebClient extends WebViewClient {
-
-		final Context mActivity;
-
-		LightningWebClient(Context context) {
-			mActivity = context;
-		}
-
-		@Override
-		public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-			if (mAdBlock.isAd(request.getUrl().getHost())) {
-				ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
-				return new WebResourceResponse("text/plain", "utf-8", EMPTY);
-			}
-
-			return super.shouldInterceptRequest(view, request);
-		}
-
-		@Override
-		public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-			if (mAdBlock.isAd(url)) {
-				ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
-				return new WebResourceResponse("text/plain", "utf-8", EMPTY);
-			}
-			return null;
-		}
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			if (view.isShown()) {
-				mBrowserController.updateUrl(url, true);
-				view.postInvalidate();
-			}
-			if (view.getTitle() == null || view.getTitle().isEmpty()) {
-				mTitle.setTitle(mActivity.getString(R.string.untitled));
-			} else {
-				mTitle.setTitle(view.getTitle());
-			}
-			if (API >= android.os.Build.VERSION_CODES.KITKAT && mInvertPage) {
-				view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
-			}
-			mBrowserController.update();
-		}
-
-		@Override
-		public void onPageStarted(WebView view, String url, Bitmap favicon) {
-			if (isShown()) {
-				mBrowserController.updateUrl(url, false);
-				mBrowserController.showActionBar();
-			}
-			mTitle.setFavicon(mWebpageBitmap);
-			mBrowserController.update();
-		}
-
-		@Override
-		public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
-				final String host, final String realm) {
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-			final EditText name = new EditText(mActivity);
-			final EditText password = new EditText(mActivity);
-			LinearLayout passLayout = new LinearLayout(mActivity);
-			passLayout.setOrientation(LinearLayout.VERTICAL);
-
-			passLayout.addView(name);
-			passLayout.addView(password);
-
-			name.setHint(mActivity.getString(R.string.hint_username));
-			name.setSingleLine();
-			password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-			password.setSingleLine();
-			password.setTransformationMethod(new PasswordTransformationMethod());
-			password.setHint(mActivity.getString(R.string.hint_password));
-			builder.setTitle(mActivity.getString(R.string.title_sign_in));
-			builder.setView(passLayout);
-			builder.setCancelable(true)
-					.setPositiveButton(mActivity.getString(R.string.title_sign_in),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									String user = name.getText().toString();
-									String pass = password.getText().toString();
-									handler.proceed(user.trim(), pass.trim());
-									Log.d(Constants.TAG, "Request Login");
-
-								}
-							})
-					.setNegativeButton(mActivity.getString(R.string.action_cancel),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									handler.cancel();
-
-								}
-							});
-			AlertDialog alert = builder.create();
-			alert.show();
-
-		}
-
-		private boolean mIsRunning = false;
-		private float mZoomScale = 0.0f;
-
-		@Override
-		public void onScaleChanged(final WebView view, final float oldScale, final float newScale) {
-			if (view.isShown() && mTextReflow && API >= android.os.Build.VERSION_CODES.KITKAT) {
-				if (mIsRunning)
-					return;
-				if (Math.abs(mZoomScale - newScale) > 0.01f) {
-					mIsRunning = view.postDelayed(new Runnable() {
-
-						@Override
-						public void run() {
-							mZoomScale = newScale;
-							view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, null);
-							mIsRunning = false;
-						}
-
-					}, 100);
-				}
-
-			}
-		}
-
-		@Override
-		public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, SslError error) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-			builder.setTitle(mActivity.getString(R.string.title_warning));
-			builder.setMessage(mActivity.getString(R.string.message_untrusted_certificate))
-					.setCancelable(true)
-					.setPositiveButton(mActivity.getString(R.string.action_yes),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									handler.proceed();
-								}
-							})
-					.setNegativeButton(mActivity.getString(R.string.action_no),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									handler.cancel();
-								}
-							});
-			AlertDialog alert = builder.create();
-			if (error.getPrimaryError() == SslError.SSL_UNTRUSTED) {
-				alert.show();
-			} else {
-				handler.proceed();
-			}
-
-		}
-
-		@Override
-		public void onFormResubmission(WebView view, @NonNull final Message dontResend, final Message resend) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-			builder.setTitle(mActivity.getString(R.string.title_form_resubmission));
-			builder.setMessage(mActivity.getString(R.string.message_form_resubmission))
-					.setCancelable(true)
-					.setPositiveButton(mActivity.getString(R.string.action_yes),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-
-									resend.sendToTarget();
-								}
-							})
-					.setNegativeButton(mActivity.getString(R.string.action_no),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-
-									dontResend.sendToTarget();
-								}
-							});
-			AlertDialog alert = builder.create();
-			alert.show();
-		}
-
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			// Check if configured proxy is available
-			if (!mBrowserController.isProxyReady()) {
-				// User has been notified
-				return true;
-			}
-
-			if (mBrowserController.isIncognito()) {
-				return super.shouldOverrideUrlLoading(view, url);
-			}
-			if (url.startsWith("about:")) {
-				return super.shouldOverrideUrlLoading(view, url);
-			}
-			if (url.contains("mailto:")) {
-				MailTo mailTo = MailTo.parse(url);
-				Intent i = Utils.newEmailIntent(mActivity, mailTo.getTo(), mailTo.getSubject(),
-						mailTo.getBody(), mailTo.getCc());
-				mActivity.startActivity(i);
-				view.reload();
-				return true;
-			} else if (url.startsWith("intent://")) {
-				Intent intent;
-				try {
-					intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-				} catch (URISyntaxException ex) {
-					return false;
-				}
-				if (intent != null) {
-					try {
-						mActivity.startActivity(intent);
-					} catch (ActivityNotFoundException e) {
-						Log.e(Constants.TAG, "ActivityNotFoundException");
-					}
-					return true;
-				}
-			}
-			return mIntentUtils.startActivityForUrl(mWebView, url);
-		}
-	}
-
-	public class LightningChromeClient extends WebChromeClient {
-
-		final Context mActivity;
-
-		LightningChromeClient(Context context) {
-			mActivity = context;
-		}
-
-		@Override
-		public void onProgressChanged(WebView view, int newProgress) {
-			if (isShown()) {
-				mBrowserController.updateProgress(newProgress);
-			}
-		}
-
-		@Override
-		public void onReceivedIcon(WebView view, Bitmap icon) {
-			mTitle.setFavicon(icon);
-			mBrowserController.update();
-			cacheFavicon(icon);
-		}
-
-		@Override
-		public void onReceivedTitle(WebView view, String title) {
-			if (!title.isEmpty()) {
-				mTitle.setTitle(title);
-			} else {
-				mTitle.setTitle(mActivity.getString(R.string.untitled));
-			}
-			mBrowserController.update();
-			mBrowserController.updateHistory(title, view.getUrl());
-		}
-
-		@Override
-		public void onGeolocationPermissionsShowPrompt(final String origin,
-				final GeolocationPermissions.Callback callback) {
-			final boolean remember = true;
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-			builder.setTitle(mActivity.getString(R.string.location));
-			String org;
-			if (origin.length() > 50) {
-				org = origin.subSequence(0, 50) + "...";
-			} else {
-				org = origin;
-			}
-			builder.setMessage(org + mActivity.getString(R.string.message_location))
-					.setCancelable(true)
-					.setPositiveButton(mActivity.getString(R.string.action_allow),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									callback.invoke(origin, true, remember);
-								}
-							})
-					.setNegativeButton(mActivity.getString(R.string.action_dont_allow),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									callback.invoke(origin, false, remember);
-								}
-							});
-			AlertDialog alert = builder.create();
-			alert.show();
-
-		}
-
-		@Override
-		public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
-				Message resultMsg) {
-			mBrowserController.onCreateWindow(isUserGesture, resultMsg);
-			return true;
-		}
-
-		@Override
-		public void onCloseWindow(WebView window) {
-			// TODO Auto-generated method stub
-			super.onCloseWindow(window);
-		}
-
-		public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-			mBrowserController.openFileChooser(uploadMsg);
-		}
-
-		public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
-			mBrowserController.openFileChooser(uploadMsg);
-		}
-
-		public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
-			mBrowserController.openFileChooser(uploadMsg);
-		}
-
-		public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
-				WebChromeClient.FileChooserParams fileChooserParams) {
-			mBrowserController.showFileChooser(filePathCallback);
-			return true;
-		}
-
-		@Override
-		public Bitmap getDefaultVideoPoster() {
-			return mBrowserController.getDefaultVideoPoster();
-		}
-
-		@Override
-		public View getVideoLoadingProgressView() {
-			return mBrowserController.getVideoLoadingProgressView();
-		}
-
-		@Override
-		public void onHideCustomView() {
-			mBrowserController.onHideCustomView();
-			super.onHideCustomView();
-		}
-
-		@Override
-		public void onShowCustomView(View view, CustomViewCallback callback) {
-			// While these lines might look like they work, in practice,
-			// Full-screen videos won't work correctly. I may test this out some
-			// more
-			// if (view instanceof FrameLayout) {
-			// FrameLayout frame = (FrameLayout) view;
-			// if (frame.getFocusedChild() instanceof VideoView) {
-			// VideoView video = (VideoView) frame.getFocusedChild();
-			// video.stopPlayback();
-			// frame.removeView(video);
-			// video.setVisibility(View.GONE);
-			// }
-			// } else {
-			Activity activity = mBrowserController.getActivity();
-			mBrowserController.onShowCustomView(view, activity.getRequestedOrientation(), callback);
-
-			// }
-
-			super.onShowCustomView(view, callback);
-		}
-
-		@Override
-		@Deprecated
-		public void onShowCustomView(View view, int requestedOrientation,
-				CustomViewCallback callback) {
-			// While these lines might look like they work, in practice,
-			// Full-screen videos won't work correctly. I may test this out some
-			// more
-			// if (view instanceof FrameLayout) {
-			// FrameLayout frame = (FrameLayout) view;
-			// if (frame.getFocusedChild() instanceof VideoView) {
-			// VideoView video = (VideoView) frame.getFocusedChild();
-			// video.stopPlayback();
-			// frame.removeView(video);
-			// video.setVisibility(View.GONE);
-			// }
-			// } else {
-			mBrowserController.onShowCustomView(view, requestedOrientation, callback);
-
-			// }
-
-			super.onShowCustomView(view, requestedOrientation, callback);
-		}
-	}
-
-	public class Title {
-
-		private Bitmap mFavicon;
-		private String mTitle;
-		private final Bitmap mDefaultIcon;
-
-		public Title(Context context, boolean darkTheme) {
-			mDefaultIcon = Utils.getWebpageBitmap(context.getResources(), darkTheme);
-			mFavicon = mDefaultIcon;
-			mTitle = mActivity.getString(R.string.action_new_tab);
-		}
-
-		public void setFavicon(Bitmap favicon) {
-			if (favicon == null) {
-				mFavicon = mDefaultIcon;
-			} else {
-				mFavicon = Utils.padFavicon(favicon);
-			}
-		}
-
-		public void setTitle(String title) {
-			if (title == null) {
-				mTitle = "";
-			} else {
-				mTitle = title;
-			}
-		}
-
-		public void setTitleAndFavicon(String title, Bitmap favicon) {
-			mTitle = title;
-
-			if (favicon == null) {
-				mFavicon = mDefaultIcon;
-			} else {
-				mFavicon = Utils.padFavicon(favicon);
-			}
-		}
-
-		public String getTitle() {
-			return mTitle;
-		}
-
-		public Bitmap getFavicon() {
-			return mFavicon;
-		}
-
-	}
-
-	private class TouchListener implements OnTouchListener {
-
-		float mLocation;
-		float mY;
-		int mAction;
-
-		@SuppressLint("ClickableViewAccessibility")
-		@Override
-		public boolean onTouch(View view, MotionEvent arg1) {
-			if (view != null && !view.hasFocus()) {
-				view.requestFocus();
-			}
-			mAction = arg1.getAction();
-			mY = arg1.getY();
-			if (mAction == MotionEvent.ACTION_DOWN) {
-				mLocation = mY;
-			} else if (mAction == MotionEvent.ACTION_UP) {
-				if ((mY - mLocation) > SCROLL_DOWN_THRESHOLD) {
-					if (mWebView.getScrollY() != 0) {
-						mBrowserController.showActionBar();
-					} else {
-						mBrowserController.toggleActionBar();
-					}
-				} else if ((mY - mLocation) < -SCROLL_UP_THRESHOLD) {
-					mBrowserController.hideActionBar();
-				}
-				mLocation = 0;
-			}
-			mGestureDetector.onTouchEvent(arg1);
-			return false;
-		}
-	}
-
-	private class CustomGestureListener extends SimpleOnGestureListener {
-
-		/**
-		 * Without this, onLongPress is not called when user is zooming using
-		 * two fingers, but is when using only one.
-		 * 
-		 * The required behaviour is to not trigger this when the user is
-		 * zooming, it shouldn't matter how much fingers the user's using.
-		 */
-		private boolean mCanTriggerLongPress = true;
-
-		@Override
-		public void onLongPress(MotionEvent e) {
-			if (mCanTriggerLongPress)
-				mBrowserController.onLongPress();
-		}
-
-		/**
-		 * Is called when the user is swiping after the doubletap, which in our
-		 * case means that he is zooming.
-		 */
-		@Override
-		public boolean onDoubleTapEvent(MotionEvent e) {
-			mCanTriggerLongPress = false;
-			return false;
-		}
-
-		/**
-		 * Is called when something is starting being pressed, always before
-		 * onLongPress.
-		 */
-		@Override
-		public void onShowPress(MotionEvent e) {
-			mCanTriggerLongPress = true;
-		}
-	}
+    private static final String TAG = LightningView.class.getSimpleName();
+
+    public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
+    public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
+    private static final String HEADER_DNT = "DNT";
+    private static final int API = android.os.Build.VERSION.SDK_INT;
+    private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
+
+    private static String sHomepage;
+    private static String sDefaultUserAgent;
+    private static float sMaxFling;
+    private static final float[] sNegativeColorArray = {
+            -1.0f, 0, 0, 0, 255, // red
+            0, -1.0f, 0, 0, 255, // green
+            0, 0, -1.0f, 0, 255, // blue
+            0, 0, 0, 1.0f, 0 // alpha
+    };
+    private static final float[] sIncreaseContrastColorArray = {
+            2.0f, 0, 0, 0, -160.f, // red
+            0, 2.0f, 0, 0, -160.f, // green
+            0, 0, 2.0f, 0, -160.f, // blue
+            0, 0, 0, 1.0f, 0 // alpha
+    };
+
+    @NonNull private final LightningViewTitle mTitle;
+    @Nullable private WebView mWebView;
+    @NonNull private final UIController mUIController;
+    @NonNull private final GestureDetector mGestureDetector;
+    @NonNull private final Activity mActivity;
+    @NonNull private final Paint mPaint = new Paint();
+    @Nullable private Object mTag;
+    private final boolean mIsIncognitoTab;
+    private boolean isForegroundTab;
+    private boolean mInvertPage = false;
+    private boolean mToggleDesktop = false;
+    @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
+    @NonNull private final Map<String, String> mRequestHeaders = new ArrayMap<>();
+
+    @Inject Bus mEventBus;
+    @Inject PreferenceManager mPreferences;
+    @Inject LightningDialogBuilder mBookmarksDialogBuilder;
+    @Inject ProxyUtils mProxyUtils;
+    @Inject BookmarkManager mBookmarkManager;
+
+    public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
+        BrowserApp.getAppComponent().inject(this);
+        mActivity = activity;
+        mUIController = (UIController) activity;
+        mWebView = new WebView(activity);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            mWebView.setId(View.generateViewId());
+        }
+        mIsIncognitoTab = isIncognito;
+        mTitle = new LightningViewTitle(activity);
+
+        sMaxFling = ViewConfiguration.get(activity).getScaledMaximumFlingVelocity();
+
+        mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
+        mWebView.setFocusableInTouchMode(true);
+        mWebView.setFocusable(true);
+        mWebView.setDrawingCacheEnabled(false);
+        mWebView.setWillNotCacheDrawing(true);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            //noinspection deprecation
+            mWebView.setAnimationCacheEnabled(false);
+            //noinspection deprecation
+            mWebView.setAlwaysDrawnWithCacheEnabled(false);
+        }
+        mWebView.setBackgroundColor(Color.WHITE);
+
+        mWebView.setScrollbarFadingEnabled(true);
+        mWebView.setSaveEnabled(true);
+        mWebView.setNetworkAvailable(true);
+        mWebView.setWebChromeClient(new LightningChromeClient(activity, this));
+        mWebView.setWebViewClient(new LightningWebClient(activity, this));
+        mWebView.setDownloadListener(new LightningDownloadListener(activity));
+        mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
+        mWebView.setOnTouchListener(new TouchListener());
+        sDefaultUserAgent = mWebView.getSettings().getUserAgentString();
+        initializeSettings();
+        initializePreferences(activity);
+
+        if (url != null) {
+            if (!url.trim().isEmpty()) {
+                mWebView.loadUrl(url, mRequestHeaders);
+            } else {
+                // don't load anything, the user is looking for a blank tab
+            }
+        } else {
+            loadHomepage();
+        }
+    }
+
+    /**
+     * Sets the tag on the object,
+     * a reference to this object is held
+     * indefinitely.
+     *
+     * @param tag the tag to set, may be null.
+     */
+    public void setTag(@Nullable Object tag) {
+        mTag = tag;
+    }
+
+    /**
+     * The tag set on the object.
+     *
+     * @return the tag set on the object,
+     * may be null.
+     */
+    @Nullable
+    public Object getTag() {
+        return mTag;
+    }
+
+    /**
+     * This method loads the homepage for the browser. Either
+     * it loads the URL stored as the homepage, or loads the
+     * startpage or bookmark page if either of those are set
+     * as the homepage.
+     */
+    public void loadHomepage() {
+        if (mWebView == null) {
+            return;
+        }
+        switch (sHomepage) {
+            case "about:home":
+                loadStartpage();
+                break;
+            case "about:bookmarks":
+                loadBookmarkpage();
+                break;
+            default:
+                mWebView.loadUrl(sHomepage, mRequestHeaders);
+                break;
+        }
+    }
+
+    /**
+     * This method gets the startpage URL from the {@link StartPage}
+     * class asynchronously and loads the URL in the WebView on the
+     * UI thread.
+     */
+    private void loadStartpage() {
+        new StartPage(this, BrowserApp.get(mActivity)).load();
+    }
+
+    /**
+     * This method gets the bookmark page URL from the {@link BookmarkPage}
+     * class asynchronously and loads the URL in the WebView on the
+     * UI thread. It also caches the default folder icon locally.
+     */
+    public void loadBookmarkpage() {
+        if (mWebView == null)
+            return;
+        new BookmarkPage(this, mActivity, mBookmarkManager).load();
+    }
+
+    /**
+     * Initialize the preference driven settings of the WebView. This method
+     * must be called whenever the preferences are changed within SharedPreferences.
+     *
+     * @param context the context in which the WebView was created, it is used
+     *                to get the default UserAgent for the WebView.
+     */
+    @SuppressLint({"NewApi", "SetJavaScriptEnabled"})
+    public synchronized void initializePreferences(Context context) {
+        if (mWebView == null) {
+            return;
+        }
+
+        WebSettings settings = mWebView.getSettings();
+
+        if (mPreferences.getDoNotTrackEnabled()) {
+            mRequestHeaders.put(HEADER_DNT, "1");
+        } else {
+            mRequestHeaders.remove(HEADER_DNT);
+        }
+
+        if (mPreferences.getRemoveIdentifyingHeadersEnabled()) {
+            mRequestHeaders.put(HEADER_REQUESTED_WITH, "");
+            mRequestHeaders.put(HEADER_WAP_PROFILE, "");
+        } else {
+            mRequestHeaders.remove(HEADER_REQUESTED_WITH);
+            mRequestHeaders.remove(HEADER_WAP_PROFILE);
+        }
+
+        settings.setDefaultTextEncodingName(mPreferences.getTextEncoding());
+        sHomepage = mPreferences.getHomepage();
+        setColorMode(mPreferences.getRenderingMode());
+
+        if (!mIsIncognitoTab) {
+            settings.setGeolocationEnabled(mPreferences.getLocationEnabled());
+        } else {
+            settings.setGeolocationEnabled(false);
+        }
+        if (API < Build.VERSION_CODES.KITKAT) {
+            switch (mPreferences.getFlashSupport()) {
+                case 0:
+                    //noinspection deprecation
+                    settings.setPluginState(PluginState.OFF);
+                    break;
+                case 1:
+                    //noinspection deprecation
+                    settings.setPluginState(PluginState.ON_DEMAND);
+                    break;
+                case 2:
+                    //noinspection deprecation
+                    settings.setPluginState(PluginState.ON);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        setUserAgent(context, mPreferences.getUserAgentChoice());
+
+        if (mPreferences.getSavePasswordsEnabled() && !mIsIncognitoTab) {
+            if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //noinspection deprecation
+                settings.setSavePassword(true);
+            }
+            settings.setSaveFormData(true);
+        } else {
+            if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //noinspection deprecation
+                settings.setSavePassword(false);
+            }
+            settings.setSaveFormData(false);
+        }
+
+        if (mPreferences.getJavaScriptEnabled()) {
+            settings.setJavaScriptEnabled(true);
+            settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        } else {
+            settings.setJavaScriptEnabled(false);
+            settings.setJavaScriptCanOpenWindowsAutomatically(false);
+        }
+
+        if (mPreferences.getTextReflowEnabled()) {
+            settings.setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
+            if (API >= android.os.Build.VERSION_CODES.KITKAT) {
+                try {
+                    settings.setLayoutAlgorithm(LayoutAlgorithm.TEXT_AUTOSIZING);
+                } catch (Exception e) {
+                    // This shouldn't be necessary, but there are a number
+                    // of KitKat devices that crash trying to set this
+                    Log.e(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING");
+                }
+            }
+        } else {
+            settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
+        }
+
+        settings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
+        if (!mIsIncognitoTab) {
+            settings.setSupportMultipleWindows(mPreferences.getPopupsEnabled());
+        } else {
+            settings.setSupportMultipleWindows(false);
+        }
+        settings.setUseWideViewPort(mPreferences.getUseWideViewportEnabled());
+        settings.setLoadWithOverviewMode(mPreferences.getOverviewModeEnabled());
+        switch (mPreferences.getTextSize()) {
+            case 0:
+                settings.setTextZoom(200);
+                break;
+            case 1:
+                settings.setTextZoom(150);
+                break;
+            case 2:
+                settings.setTextZoom(125);
+                break;
+            case 3:
+                settings.setTextZoom(100);
+                break;
+            case 4:
+                settings.setTextZoom(75);
+                break;
+            case 5:
+                settings.setTextZoom(50);
+                break;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView,
+                    !mPreferences.getBlockThirdPartyCookiesEnabled());
+        }
+    }
+
+    /**
+     * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
+     * be altered by the user. Distinguish between Incognito and Regular tabs here.
+     */
+    @SuppressLint("NewApi")
+    private void initializeSettings() {
+        if (mWebView == null) {
+            return;
+        }
+        final WebSettings settings = mWebView.getSettings();
+        if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //noinspection deprecation
+            settings.setAppCacheMaxSize(Long.MAX_VALUE);
+        }
+        if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //noinspection deprecation
+            settings.setEnableSmoothTransition(true);
+        }
+        if (API > Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setMediaPlaybackRequiresUserGesture(true);
+        }
+        if (API >= Build.VERSION_CODES.LOLLIPOP && !mIsIncognitoTab) {
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        } else if (API >= Build.VERSION_CODES.LOLLIPOP) {
+            // We're in Incognito mode, reject
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        }
+        if (!mIsIncognitoTab) {
+            settings.setDomStorageEnabled(true);
+            settings.setAppCacheEnabled(true);
+            settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+            settings.setDatabaseEnabled(true);
+        } else {
+            settings.setDomStorageEnabled(false);
+            settings.setAppCacheEnabled(false);
+            settings.setDatabaseEnabled(false);
+            settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        }
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccess(true);
+        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setAllowFileAccessFromFileURLs(false);
+            settings.setAllowUniversalAccessFromFileURLs(false);
+        }
+
+        getPathObservable("appcache")
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new OnSubscribe<File>() {
+                    @Override
+                    public void onNext(File item) {
+                        settings.setAppCachePath(item.getPath());
+                    }
+
+                    @Override
+                    public void onComplete() {}
+                });
+
+        getPathObservable("geolocation")
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new OnSubscribe<File>() {
+                    @Override
+                    public void onNext(File item) {
+                        settings.setGeolocationDatabasePath(item.getPath());
+                    }
+
+                    @Override
+                    public void onComplete() {}
+                });
+
+        getPathObservable("databases")
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new OnSubscribe<File>() {
+                    @Override
+                    public void onNext(File item) {
+                        if (API < Build.VERSION_CODES.KITKAT) {
+                            //noinspection deprecation
+                            settings.setDatabasePath(item.getPath());
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {}
+                });
+
+    }
+
+    private Observable<File> getPathObservable(final String subFolder) {
+        return Observable.create(new Action<File>() {
+            @Override
+            public void onSubscribe(@NonNull Subscriber<File> subscriber) {
+                File file = BrowserApp.get(mActivity).getDir(subFolder, 0);
+                subscriber.onNext(file);
+                subscriber.onComplete();
+            }
+        });
+    }
+
+    /**
+     * Getter for the {@link LightningViewTitle} of the
+     * current LightningView instance.
+     *
+     * @return a NonNull instance of LightningViewTitle
+     */
+    @NonNull
+    public LightningViewTitle getTitleInfo() {
+        return mTitle;
+    }
+
+    /**
+     * Returns whether or not the current tab is incognito or not.
+     *
+     * @return true if this tab is incognito, false otherwise
+     */
+    public boolean isIncognito() {
+        return mIsIncognitoTab;
+    }
+
+    /**
+     * This method is used to toggle the user agent between desktop
+     * and the current preference of the user.
+     *
+     * @param context the Context needed to set the user agent
+     */
+    public void toggleDesktopUA(@NonNull Context context) {
+        if (mWebView == null)
+            return;
+        if (!mToggleDesktop)
+            mWebView.getSettings().setUserAgentString(Constants.DESKTOP_USER_AGENT);
+        else
+            setUserAgent(context, mPreferences.getUserAgentChoice());
+        mToggleDesktop = !mToggleDesktop;
+    }
+
+    /**
+     * This method sets the user agent of the current tab.
+     * There are four options, 1, 2, 3, 4.
+     * <p/>
+     * 1. use the default user agent
+     * <p/>
+     * 2. use the desktop user agent
+     * <p/>
+     * 3. use the mobile user agent
+     * <p/>
+     * 4. use a custom user agent, or the default user agent
+     * if none was set.
+     *
+     * @param context the context needed to get the default user agent.
+     * @param choice  the choice of user agent to use, see above comments.
+     */
+    @SuppressLint("NewApi")
+    private void setUserAgent(Context context, int choice) {
+        if (mWebView == null) return;
+        WebSettings settings = mWebView.getSettings();
+        switch (choice) {
+            case 1:
+                if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    settings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
+                } else {
+                    settings.setUserAgentString(sDefaultUserAgent);
+                }
+                break;
+            case 2:
+                settings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
+                break;
+            case 3:
+                settings.setUserAgentString(Constants.MOBILE_USER_AGENT);
+                break;
+            case 4:
+                String ua = mPreferences.getUserAgentString(sDefaultUserAgent);
+                if (ua == null || ua.isEmpty()) {
+                    ua = " ";
+                }
+                settings.setUserAgentString(ua);
+                break;
+        }
+    }
+
+    /**
+     * This method gets the additional headers that should be
+     * added with each request the browser makes.
+     *
+     * @return a non null Map of Strings with the additional
+     * request headers.
+     */
+    @NonNull
+    Map<String, String> getRequestHeaders() {
+        return mRequestHeaders;
+    }
+
+    /**
+     * This method determines whether the current tab is visible or not.
+     *
+     * @return true if the WebView is non-null and visible, false otherwise.
+     */
+    public boolean isShown() {
+        return mWebView != null && mWebView.isShown();
+    }
+
+    /**
+     * Pause the current WebView instance.
+     */
+    public synchronized void onPause() {
+        if (mWebView != null) {
+            mWebView.onPause();
+            Log.d(TAG, "WebView onPause: " + mWebView.getId());
+        }
+    }
+
+    /**
+     * Resume the current WebView instance.
+     */
+    public synchronized void onResume() {
+        if (mWebView != null) {
+            mWebView.onResume();
+            Log.d(TAG, "WebView onResume: " + mWebView.getId());
+        }
+    }
+
+    /**
+     * Notify the LightningView that there is low memory and
+     * for the WebView to free memory. Only applicable on
+     * pre-Lollipop devices.
+     */
+    @Deprecated
+    public synchronized void freeMemory() {
+        if (mWebView != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            //noinspection deprecation
+            mWebView.freeMemory();
+        }
+    }
+
+    /**
+     * This method sets the tab as the foreground tab or
+     * the background tab.
+     *
+     * @param isForeground true if the tab should be set as
+     *                     foreground, false otherwise.
+     */
+    public void setForegroundTab(boolean isForeground) {
+        isForegroundTab = isForeground;
+        mUIController.tabChanged(this);
+    }
+
+    /**
+     * Determines if the tab is in the foreground or not.
+     *
+     * @return true if the tab is the foreground tab,
+     * false otherwise.
+     */
+    public boolean isForegroundTab() {
+        return isForegroundTab;
+    }
+
+    /**
+     * Gets the current progress of the WebView.
+     *
+     * @return returns a number between 0 and 100 with
+     * the current progress of the WebView. If the WebView
+     * is null, then the progress returned will be 100.
+     */
+    public int getProgress() {
+        if (mWebView != null) {
+            return mWebView.getProgress();
+        } else {
+            return 100;
+        }
+    }
+
+    /**
+     * Notify the WebView to stop the current load.
+     */
+    public synchronized void stopLoading() {
+        if (mWebView != null) {
+            mWebView.stopLoading();
+        }
+    }
+
+    /**
+     * This method forces the layer type to hardware, which
+     * enables hardware rendering on the WebView instance
+     * of the current LightningView.
+     */
+    private void setHardwareRendering() {
+        if (mWebView == null) {
+            return;
+        }
+        mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, mPaint);
+    }
+
+    /**
+     * This method sets the layer type to none, which
+     * means that either the GPU and CPU can both compose
+     * the layers when necessary.
+     */
+    private void setNormalRendering() {
+        if (mWebView == null) {
+            return;
+        }
+        mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
+    }
+
+    /**
+     * This method forces the layer type to software, which
+     * disables hardware rendering on the WebView instance
+     * of the current LightningView and makes the CPU render
+     * the view.
+     */
+    public void setSoftwareRendering() {
+        if (mWebView == null) {
+            return;
+        }
+        mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    }
+
+    /**
+     * Sets the current rendering color of the WebView instance
+     * of the current LightningView. The for modes are normal
+     * rendering (0), inverted rendering (1), grayscale rendering (2),
+     * and inverted grayscale rendering (3)
+     *
+     * @param mode the integer mode to set as the rendering mode.
+     *             see the numbers in documentation above for the
+     *             values this method accepts.
+     */
+    private void setColorMode(int mode) {
+        mInvertPage = false;
+        switch (mode) {
+            case 0:
+                mPaint.setColorFilter(null);
+                // setSoftwareRendering(); // Some devices get segfaults
+                // in the WebView with Hardware Acceleration enabled,
+                // the only fix is to disable hardware rendering
+                setNormalRendering();
+                mInvertPage = false;
+                break;
+            case 1:
+                ColorMatrixColorFilter filterInvert = new ColorMatrixColorFilter(
+                        sNegativeColorArray);
+                mPaint.setColorFilter(filterInvert);
+                setHardwareRendering();
+
+                mInvertPage = true;
+                break;
+            case 2:
+                ColorMatrix cm = new ColorMatrix();
+                cm.setSaturation(0);
+                ColorMatrixColorFilter filterGray = new ColorMatrixColorFilter(cm);
+                mPaint.setColorFilter(filterGray);
+                setHardwareRendering();
+                break;
+            case 3:
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.set(sNegativeColorArray);
+                ColorMatrix matrixGray = new ColorMatrix();
+                matrixGray.setSaturation(0);
+                ColorMatrix concat = new ColorMatrix();
+                concat.setConcat(matrix, matrixGray);
+                ColorMatrixColorFilter filterInvertGray = new ColorMatrixColorFilter(concat);
+                mPaint.setColorFilter(filterInvertGray);
+                setHardwareRendering();
+
+                mInvertPage = true;
+                break;
+
+            case 4:
+                ColorMatrixColorFilter IncreaseHighContrast = new ColorMatrixColorFilter(
+                        sIncreaseContrastColorArray);
+                mPaint.setColorFilter(IncreaseHighContrast);
+                setHardwareRendering();
+                break;
+
+        }
+
+    }
+
+    /**
+     * Pauses the JavaScript timers of the
+     * WebView instance, which will trigger a
+     * pause for all WebViews in the app.
+     */
+    public synchronized void pauseTimers() {
+        if (mWebView != null) {
+            mWebView.pauseTimers();
+            Log.d(TAG, "Pausing JS timers");
+        }
+    }
+
+    /**
+     * Resumes the JavaScript timers of the
+     * WebView instance, which will trigger a
+     * resume for all WebViews in the app.
+     */
+    public synchronized void resumeTimers() {
+        if (mWebView != null) {
+            mWebView.resumeTimers();
+            Log.d(TAG, "Resuming JS timers");
+        }
+    }
+
+    /**
+     * Requests focus down on the WebView instance
+     * if the view does not already have focus.
+     */
+    public void requestFocus() {
+        if (mWebView != null && !mWebView.hasFocus()) {
+            mWebView.requestFocus();
+        }
+    }
+
+    /**
+     * Sets the visibility of the WebView to either
+     * View.GONE, View.VISIBLE, or View.INVISIBLE.
+     * other values passed in will have no effect.
+     *
+     * @param visible the visibility to set on the WebView.
+     */
+    public void setVisibility(int visible) {
+        if (mWebView != null) {
+            mWebView.setVisibility(visible);
+        }
+    }
+
+    /**
+     * Tells the WebView to reload the current page.
+     * If the proxy settings are not ready then the
+     * this method will not have an affect as the
+     * proxy must start before the load occurs.
+     */
+    public synchronized void reload() {
+        // Check if configured proxy is available
+        if (!mProxyUtils.isProxyReady()) {
+            // User has been notified
+            return;
+        }
+
+        if (mWebView != null) {
+            mWebView.reload();
+        }
+    }
+
+    /**
+     * Finds all the instances of the text passed to this
+     * method and highlights the instances of that text
+     * in the WebView.
+     *
+     * @param text the text to search for.
+     */
+    @SuppressLint("NewApi")
+    public synchronized void find(String text) {
+        if (mWebView != null) {
+            if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                mWebView.findAllAsync(text);
+            } else {
+                //noinspection deprecation
+                mWebView.findAll(text);
+            }
+        }
+    }
+
+    /**
+     * Notify the tab to shutdown and destroy
+     * its WebView instance and to remove the reference
+     * to it. After this method is called, the current
+     * instance of the LightningView is useless as
+     * the WebView cannot be recreated using the public
+     * api.
+     */
+    // TODO fix bug where WebView.destroy is being called before the tab
+    // is removed and would cause a memory leak if the parent check
+    // was not in place.
+    public synchronized void onDestroy() {
+        if (mWebView != null) {
+            // Check to make sure the WebView has been removed
+            // before calling destroy() so that a memory leak is not created
+            ViewGroup parent = (ViewGroup) mWebView.getParent();
+            if (parent != null) {
+                Log.e(TAG, "WebView was not detached from window before onDestroy");
+                parent.removeView(mWebView);
+            }
+            mWebView.stopLoading();
+            mWebView.onPause();
+            mWebView.clearHistory();
+            mWebView.setVisibility(View.GONE);
+            mWebView.removeAllViews();
+            mWebView.destroyDrawingCache();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //this is causing the segfault occasionally below 4.2
+                mWebView.destroy();
+            }
+            mWebView = null;
+        }
+    }
+
+    /**
+     * Tell the WebView to navigate backwards
+     * in its history to the previous page.
+     */
+    public synchronized void goBack() {
+        if (mWebView != null) {
+            mWebView.goBack();
+        }
+    }
+
+    /**
+     * Tell the WebView to navigate forwards
+     * in its history to the next page.
+     */
+    public synchronized void goForward() {
+        if (mWebView != null) {
+            mWebView.goForward();
+        }
+    }
+
+    /**
+     * Get the current user agent used
+     * by the WebView.
+     *
+     * @return retuns the current user agent
+     * of the WebView instance, or an empty
+     * string if the WebView is null.
+     */
+    @NonNull
+    private String getUserAgent() {
+        if (mWebView != null) {
+            return mWebView.getSettings().getUserAgentString();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Move the highlighted text in the WebView
+     * to the next matched text. This method will
+     * only have an affect after {@link LightningView#find(String)}
+     * is called. Otherwise it will do nothing.
+     */
+    public synchronized void findNext() {
+        if (mWebView != null) {
+            mWebView.findNext(true);
+        }
+    }
+
+    /**
+     * Move the highlighted text in the WebView
+     * to the previous matched text. This method will
+     * only have an affect after {@link LightningView#find(String)}
+     * is called. Otherwise it will do nothing.
+     */
+    public synchronized void findPrevious() {
+        if (mWebView != null) {
+            mWebView.findNext(false);
+        }
+    }
+
+    /**
+     * Clear the highlighted text in the WebView after
+     * {@link LightningView#find(String)} has been called.
+     * Otherwise it will have no affect.
+     */
+    public synchronized void clearFindMatches() {
+        if (mWebView != null) {
+            mWebView.clearMatches();
+        }
+    }
+
+    /**
+     * Gets whether or not the page rendering is inverted or not.
+     * The main purpose of this is to indicate that JavaScript
+     * should be run at the end of a page load to invert only
+     * the images back to their uninverted states.
+     *
+     * @return true if the page is in inverted mode, false otherwise.
+     */
+    public boolean getInvertePage() {
+        return mInvertPage;
+    }
+
+    /**
+     * Handles a long click on the page and delegates the URL to the
+     * proper dialog if it is not null, otherwise, it tries to get the
+     * URL using HitTestResult.
+     *
+     * @param url the url that should have been obtained from the WebView touch node
+     *            thingy, if it is null, this method tries to deal with it and find
+     *            a workaround.
+     */
+    private void longClickPage(@Nullable final String url) {
+        if (mWebView == null) {
+            return;
+        }
+        final WebView.HitTestResult result = mWebView.getHitTestResult();
+        String currentUrl = mWebView.getUrl();
+        if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
+            if (currentUrl.endsWith(HistoryPage.FILENAME)) {
+                if (url != null) {
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
+                }
+            } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
+                if (url != null) {
+                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, newUrl);
+                }
+            }
+        } else {
+            if (url != null) {
+                if (result != null) {
+                    if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+                        mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, url, getUserAgent());
+                    } else {
+                        mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                    }
+                } else {
+                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                }
+            } else if (result != null && result.getExtra() != null) {
+                final String newUrl = result.getExtra();
+                if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+                    mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, newUrl, getUserAgent());
+                } else {
+                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                }
+            }
+        }
+    }
+
+    /**
+     * Determines whether or not the WebView can go
+     * backward or if it as the end of its history.
+     *
+     * @return true if the WebView can go back, false otherwise.
+     */
+    public boolean canGoBack() {
+        return mWebView != null && mWebView.canGoBack();
+    }
+
+    /**
+     * Determine whether or not the WebView can go
+     * forward or if it is at the front of its history.
+     *
+     * @return true if it can go forward, false otherwise.
+     */
+    public boolean canGoForward() {
+        return mWebView != null && mWebView.canGoForward();
+    }
+
+    /**
+     * Gets the current WebView instance of the tab.
+     *
+     * @return the WebView instance of the tab, which
+     * can be null.
+     */
+    @Nullable
+    public synchronized WebView getWebView() {
+        return mWebView;
+    }
+
+    /**
+     * Gets the favicon currently in use by
+     * the page. If the current page does not
+     * have a favicon, it returns a default
+     * icon.
+     *
+     * @return a non-null Bitmap with the
+     * current favicon.
+     */
+    @NonNull
+    public Bitmap getFavicon() {
+        return mTitle.getFavicon(mUIController.getUseDarkTheme());
+    }
+
+    /**
+     * Loads the URL in the WebView. If the proxy settings
+     * are still initializing, then the URL will not load
+     * as it is necessary to have the settings initialized
+     * before a load occurs.
+     *
+     * @param url the non-null URL to attempt to load in
+     *            the WebView.
+     */
+    public synchronized void loadUrl(@NonNull String url) {
+        // Check if configured proxy is available
+        if (!mProxyUtils.isProxyReady()) {
+            return;
+        }
+
+        if (mWebView != null) {
+            mWebView.loadUrl(url, mRequestHeaders);
+        }
+    }
+
+    /**
+     * Get the current title of the page, retrieved from
+     * the title object.
+     *
+     * @return the title of the page, or an empty string
+     * if there is no title.
+     */
+    @NonNull
+    public String getTitle() {
+        return mTitle.getTitle();
+    }
+
+    /**
+     * Get the current URL of the WebView, or an empty
+     * string if the WebView is null or the URL is null.
+     *
+     * @return the current URL or an empty string.
+     */
+    @NonNull
+    public String getUrl() {
+        if (mWebView != null && mWebView.getUrl() != null) {
+            return mWebView.getUrl();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * The OnTouchListener used by the WebView so we can
+     * get scroll events and show/hide the action bar when
+     * the page is scrolled up/down.
+     */
+    private class TouchListener implements OnTouchListener {
+
+        float mLocation;
+        float mY;
+        int mAction;
+
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(@Nullable View view, @NonNull MotionEvent arg1) {
+            if (view == null)
+                return false;
+
+            if (!view.hasFocus()) {
+                view.requestFocus();
+            }
+            mAction = arg1.getAction();
+            mY = arg1.getY();
+            if (mAction == MotionEvent.ACTION_DOWN) {
+                mLocation = mY;
+            } else if (mAction == MotionEvent.ACTION_UP) {
+                final float distance = (mY - mLocation);
+                if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
+                    mUIController.showActionBar();
+                } else if (distance < -SCROLL_UP_THRESHOLD) {
+                    mUIController.hideActionBar();
+                }
+                mLocation = 0;
+            }
+            mGestureDetector.onTouchEvent(arg1);
+            return false;
+        }
+    }
+
+    /**
+     * The SimpleOnGestureListener used by the {@link TouchListener}
+     * in order to delegate show/hide events to the action bar when
+     * the user flings the page. Also handles long press events so
+     * that we can capture them accurately.
+     */
+    private class CustomGestureListener extends SimpleOnGestureListener {
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            int power = (int) (velocityY * 100 / sMaxFling);
+            if (power < -10) {
+                mUIController.hideActionBar();
+            } else if (power > 15) {
+                mUIController.showActionBar();
+            }
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+        /**
+         * Without this, onLongPress is not called when user is zooming using
+         * two fingers, but is when using only one.
+         * <p/>
+         * The required behaviour is to not trigger this when the user is
+         * zooming, it shouldn't matter how much fingers the user's using.
+         */
+        private boolean mCanTriggerLongPress = true;
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (mCanTriggerLongPress) {
+                Message msg = mWebViewHandler.obtainMessage();
+                if (msg != null) {
+                    msg.setTarget(mWebViewHandler);
+                    if (mWebView == null) {
+                        return;
+                    }
+                    mWebView.requestFocusNodeHref(msg);
+                }
+            }
+        }
+
+        /**
+         * Is called when the user is swiping after the doubletap, which in our
+         * case means that he is zooming.
+         */
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            mCanTriggerLongPress = false;
+            return false;
+        }
+
+        /**
+         * Is called when something is starting being pressed, always before
+         * onLongPress.
+         */
+        @Override
+        public void onShowPress(MotionEvent e) {
+            mCanTriggerLongPress = true;
+        }
+    }
+
+    /**
+     * A Handler used to get the URL from a long click
+     * event on the WebView. It does not hold a hard
+     * reference to the WebView and therefore will not
+     * leak it if the WebView is garbage collected.
+     */
+    private static class WebViewHandler extends Handler {
+
+        @NonNull private final WeakReference<LightningView> mReference;
+
+        public WebViewHandler(LightningView view) {
+            mReference = new WeakReference<>(view);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            final String url = msg.getData().getString("url");
+            LightningView view = mReference.get();
+            if (view != null) {
+                view.longClickPage(url);
+            }
+        }
+    }
 }
