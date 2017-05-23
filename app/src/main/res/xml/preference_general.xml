@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_general">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="cb_drawertabs"
+            android:title="@string/tabs_in_drawer" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="cb_flash"
+            android:title="@string/flash" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="cb_ads"
+            android:title="@string/block_ads" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="cb_images"
+            android:title="@string/block" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="cb_javascript"
+            android:title="@string/java" />
+        <Preference
+            android:key="proxy"
+            android:title="@string/http_proxy" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="cb_colormode"
+            android:title="@string/color_mode" />
+        <Preference
+            android:key="agent"
+            android:title="@string/agent" />
+        <Preference
+            android:key="download"
+            android:title="@string/download" />
+        <Preference
+            android:key="home"
+            android:title="@string/home" />
+        <Preference
+            android:key="search"
+            android:title="@string/search" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="google_suggestions"
+            android:title="@string/google_suggestions"
+            android:summary="@string/powered_by_google" />
+    </PreferenceCategory>
+</PreferenceScreen>

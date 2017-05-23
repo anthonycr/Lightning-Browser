@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_display">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="fullScreenOption"
+            android:title="@string/fullScreenOption" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="fullscreen"
+            android:title="@string/fullscreen" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="wideViewPort"
+            android:title="@string/wideViewPort"
+            android:summary="@string/recommended" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="overViewMode"
+            android:title="@string/overViewMode"
+            android:summary="@string/recommended" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="text_reflow"
+            android:title="@string/reflow" />
+        <Preference
+            android:key="app_theme"
+            android:title="@string/theme" />
+        <Preference
+            android:key="text_size"
+            android:title="@string/title_text_size" />
+    </PreferenceCategory>
+</PreferenceScreen>
