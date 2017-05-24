@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Lightning</string>
     <string name="action_new_tab">Yeni Sekme</string>
     <string name="action_share">Paylaş</string>
@@ -18,10 +17,10 @@
     <string name="fullscreen">Tam ekran modu</string>
     <string name="java">Javascript\'i aç</string>
     <string name="download">İndirme Yeri</string>
-    <!-- <string name="advanced">Gelişmiş Ayarlar</string> -->
-    <string name="apache">Apache License 2.0</string>
+    <string name="settings_advanced">Gelişmiş Ayarlar</string>
+    <string name="apache">Apache Lisans 2.0</string>
     <string name="version">Uygulama Sürümü</string>
-    <string name="cache">Çıkarken geçici belleği temizle</string>
+    <string name="cache">Çıkışta önbelleği temizle</string>
     <string name="reflow">Yazıyı sayfaya göre ayarla</string>
     <string name="block">Resimleri Kapat</string>
     <string name="window">Sitelerin yeni sekme açmasına izin ver</string>
@@ -34,17 +33,20 @@
     <string name="wideViewPort">Geniş ekranda kullan</string>
     <string name="overViewMode">Sayfaları önizleme modunda göster</string>
     <string name="restore">Açılırken önceki sekmeleri geri yükle</string>
+    <string name="supported_browsers_title">Desteklenen Tarayıcılar</string>
+    <string name="stock_browser">Stock Tarayıcı</string>
     <string name="stock_browser_unavailable">Stock tarayıcı bulunamadı</string>
     <string name="stock_browser_available">Desteklenen stock tarayıcı bulundu</string>
     <string name="fullScreenOption">Gezinirken durum çubuğunu gizle</string>
     <string name="clear_cookies">Tarayıcı çerezlerini temizle</string>
-    <string name="clear_history">Clear Browser History</string>
+    <string name="clear_history">Tarayıcı Geçmişini Temizle</string>
     <string name="dialog_image">Bu resimle ne yapmak istersin?</string>
     <string name="action_download">İndir</string>
     <string name="action_open">Aç</string>
     <string name="dialog_link">Bu bağlantıyla ne yapmak istersin?</string>
     <string name="dialog_title_share">Bu sayfayı paylaş</string>
-    <string name="dialog_bookmark">Bu yer işaretiyle ne yapmak istersin?</string>
+    <string name="dialog_history_long_press">Geçmiş öğelerini ne yapmak istersin?</string>
+    <string name="dialog_bookmark">Bu yer işaretini ne yapmak istersin?</string>
     <string name="action_delete">Sil</string>
     <string name="action_blank">Boş Sayfa</string>
     <string name="agent_default">Varsayılan</string>
@@ -54,6 +56,7 @@
     <string name="title_search_engine">Arama Motoru</string>
     <string name="action_ok">Tamam</string>
     <string name="dialog_download">Bu dosyayı indirmek ister misin? (%1$s)</string>
+    <string name="unknown_size">Bilinmeyen Boyut</string>
     <string name="action_cancel">İptal</string>
     <string name="title_warning">Uyarı</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player bulunamadı.\nLütfen Flash Player yükleyin.</string>
@@ -85,16 +88,18 @@
     <string name="action_find">Sayfada Bul</string>
     <string name="download_pending">İndirme başlatılıyor\u2026</string>
     <string name="cannot_download">Yalnızca \"http\" veya \"https\" bağlantıları indirilebilir.</string>
-    <string name="download_no_sdcard_dlg_title" >Hafıza kartı bulunamadı</string>
-    <string name="download_no_sdcard_dlg_msg" >Bu dosyayı indirmek için USB depolama gereklidir.</string>
+    <string name="problem_download">Geçersiz URL, yükleme yapılamıyor</string>
+    <string name="problem_location_download">Belirtilen yere indirme yapılamıyor</string>
+    <string name="download_no_sdcard_dlg_title">Hafıza kartı bulunamadı</string>
+    <string name="download_no_sdcard_dlg_msg">Bu dosyayı indirmek için USB depolama gereklidir.</string>
     <string name="download_sdcard_busy_dlg_title">USB depolama erişilemez</string>
-    <string name="download_sdcard_busy_dlg_msg" >Depolama meşgul. İndirmeleri aktif etmek için bildirimler ekranından USB depolamayı kapatın.</string>
+    <string name="download_sdcard_busy_dlg_msg">Depolama meşgul. İndirmeleri aktif etmek için bildirimler ekranından USB depolamayı kapatın.</string>
     <string name="incognito_cookies">Gizli modda çerezleri aktif et</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">El ile</string>
     <string name="action_auto">Otomatik</string>
     <string name="action_follow_me">Benimle iletişim kur</string>
-    <string name="url_twitter">twitter.com/ACRDevelopment</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Önbelleği temizle</string>
     <string name="message_cache_cleared">Önbellek temizlendi</string>
     <string name="message_import">Yer işaretleri içe aktarıldı</string>
@@ -105,21 +110,44 @@
     <string name="message_link_copied">Bağlantı panoya kopyalandı</string>
     <string name="custom_url">Kişisel bağlantı</string>
     <string name="message_blocked_local">Yerel dosyanın yüklenmesi engellendi</string>
-    <string name="licenses">Open Source Licenses</string>
+    <string name="licenses">Açık Kaynak Lisansları</string>
     <string name="suggestion">Ara</string>
     <string name="block_ads">Reklamları Engelle</string>
+    <string name="message_insecure_connection">Bağlantı güvenli değil:\n%1$s\nDevam etmek istiyor musun?</string>
+    <string name="message_certificate_date_invalid">sertifika tarihi geçersiz</string>
+    <string name="message_certificate_expired">sertifika süresi doldu</string>
+    <string name="message_certificate_domain_mismatch">sertifika alan adı site etki alanıyla eşleşmiyor</string>
+    <string name="message_certificate_invalid">sertifika geçersiz</string>
+    <string name="message_certificate_not_yet_valid">sertifika henüz geçerli değil</string>
+    <string name="message_certificate_untrusted">sertifika güvenilir değil</string>
     <string name="title_form_resubmission">Formu yeniden gönder</string>
     <string name="message_form_resubmission">Veriyi yeniden göndermek istiyor musun?</string>
     <string name="message_location">\nKonum bilgisi isteniyor</string>
     <string name="action_allow">İzin ver</string>
     <string name="action_dont_allow">İzin verme</string>
     <string name="title_sign_in">Giriş Yap</string>
+    <string name="label_realm">Sunucu mesajı: %s</string>
     <string name="hint_username">Kullanıcı adı</string>
     <string name="hint_password">Parola</string>
     <string name="search_suggestions">Önerilenleri ara</string>
-    <string name="powered_by_google">Powered by Google</string>
+    <string name="powered_by_google">Google tarafından desteklenmektedir</string>
+    <string name="powered_by_duck">DuckDuckGo tarafından desteklenmektedir</string>
+    <string name="search_suggestions_off">Arama önerisi yok</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>Yok</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>El ile</item>
+    </string-array>
+    <string name="manual_proxy">El ile proxy</string>
+    <string name="host">Host:</string>
+    <string name="port">Port:</string>
     <string name="use_tor_prompt">Cihazında Orbot yüklü görünüyor. Tor kullanmak ister misin?</string>
+    <string name="use_i2p_prompt">Cihazında I2P yüklü görünüyor. I2P kullanmak ister misin?</string>
     <string name="install_orbot">Tor proxy ağı ile gezinmek için Orbot yüklemelisin.</string>
+    <string name="i2p_not_running">I2P çalışmıyor.</string>
+    <string name="i2p_tunnels_not_ready">I2P tünelleri hazır değil.</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="clear_cookies_exit">Çıkarken çerezleri temizle</string>
@@ -127,15 +155,16 @@
     <string name="folder_default">Varsayılan</string>
     <string name="folder_custom">Kişisel</string>
     <string name="untitled">Başlıksız</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">Mozilla Kamu Lisansı v. 2.0</string>
     <string name="freeware">Ücretsiz</string>
-    <string name="android_open_source_project">Android Open Source Project</string>
-    <string name="hphosts_ad_server_list">hpHosts Reklam Server Listesi</string>
+    <string name="android_open_source_project">Android Açık Kaynak Projesi</string>
+    <string name="hphosts_ad_server_list">hpHosts Reklam Sunucu Listesi</string>
     <string name="deleted_tab">Önceki sekmeler yeniden açıldı</string>
     <string name="rendering_mode">Render Modu</string>
     <string name="name_inverted">Ters-Düz</string>
     <string name="name_grayscale">Gri tonlamalı</string>
     <string name="name_inverted_grayscale">Ters-Düz ve Geri tonlamalı</string>
+    <string name="name_increase_contrast">Kontrastı arttırın</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Geçmişi Google ile eşitle</string>
     <string name="title_file_chooser">Dosya seçimi</string>
@@ -147,4 +176,66 @@
     <string name="bookmark_settings">Yer işaretleri ayarları</string>
     <string name="import_bookmark_error">Yer işaretleri dosyadan yüklenemedi</string>
     <string name="title_chooser">Dosya seç</string>
+    <string name="settings_general">Genel</string>
+    <string name="settings_display">Görüntü</string>
+    <string name="settings_privacy">Gizlilik</string>
+    <string name="settings_about">Hakkında</string>
+    <string name="settings_about_explain">Sürüm, yazar ve lisansla ilgili ayrıntılar.</string>
+    <string name="close_tab">Geçerli sekmeyi kapat</string>
+    <string name="close_all_tabs">Tüm sekmeleri kapat</string>
+    <string name="close_other_tabs">Diğer sekmeleri kapat</string>
+    <string name="third_party">3. Taraf Çerezlerini Engelleyin</string>
+    <string name="color_mode">Renk modunu etkinleştir</string>
+    <string name="reading_mode">Okuyucu Modu</string>
+    <string name="loading">Yükleniyor&#8230;</string>
+    <string name="loading_failed">Sayfadan bir şey yüklenemedi.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT License</string>
+    <string name="url_contents">URL Kutusu İçeriği</string>
+    <string name="text_encoding">Metin Kodlama</string>
+    <string-array name="url_content_array">
+        <item>Alan adı (varsayılan)</item>
+        <item>URL</item>
+        <item>Başlık</item>
+    </string-array>
+    <string name="invert_color">Rengi ters çevir</string>
+    <string name="dark_theme">Karanlık Tema</string>
+    <string name="settings_black_status_bar">Siyah durum çubuğu</string>
+    <string name="tabs">Sekmeler</string>
+    <string name="theme">Uygulama Teması</string>
+    <string name="light_theme">Hafif Tema</string>
+    <string name="black_theme">Siyah Tema (AMOLED)</string>
+    <string name="folder">Klasör Adı</string>
+    <string name="action_folder">Klasör</string>
+    <string name="action_rename">Yeniden Adlandır</string>
+    <string name="title_rename_folder">Klasörü Yeniden Adlandır</string>
+    <string name="dialog_folder">Bu klasörle ne yapmak istersiniz?</string>
+    <string name="clear_web_storage">Depolama alanını temizle</string>
+    <string name="clear_web_storage_exit">Çıkarken depolama alanını temizle</string>
+    <string name="message_web_storage_cleared">Depolama alanı temizlendi</string>
+    <string name="hosts_source">Dosya reklamını engelleyen kaynağı barındırır</string>
+    <string name="settings_adblock">Reklam Engelleme Ayarları</string>
+    <string name="tabs_in_drawer">Gezinme sekmelerini göster</string>
+    <string name="swap_bookmarks_and_tabs">Yer işaretini ve sekmeyi değiştir</string>
+    <string name="do_not_track">İstek \'Takip etmeyin\'</string>
+    <string name="remove_identifying_headers">Başlık belirtecini kaldır</string>    
+    <string name="message_added_to_homescreen">Ana ekrana kısayol eklendi</string>
+    <string name="action_delete_all_bookmarks">Tüm yer işaretlerini sil</string>
+    <string name="faq">S.S.S</string>
+    <string name="faq_description">Sık Sorulan Sorular</string>    
+    <string name="debug_title">Hata Ayıklama Ayarları</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Değişikliklerin etkili olması için lütfen uygulamayı yeniden başlatın.</string>   
+    <string name="dialog_open_new_tab">Yeni sekmede aç</string>
+    <string name="dialog_open_background_tab">Arka planda aç</string>
+    <string name="dialog_open_incognito_tab">Gizli sekmede aç</string>
+    <string name="dialog_remove_bookmark">Yer İşaretini Kaldır</string>
+    <string name="dialog_edit_bookmark">Yer İşaretini Düzenle</string>
+    <string name="dialog_remove_from_history">Geçmişi kaldır</string>
+    <string name="dialog_download_image">Resmi İndir</string>
+    <string name="dialog_copy_link">Linki kopyala</string>
+    <string name="dialog_rename_folder">Klasörü yeniden adlandır</string>
+    <string name="dialog_remove_folder">Klasörü kaldırın</string>
+    <string name="dialog_title_close_browser">Tarayıcıyı Kapat</string>
 </resources>
