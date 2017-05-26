@@ -37,6 +37,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -124,6 +125,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener {
+
+    static {
+        if(Build.VERSION.SDK_INT==19){
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        }
+    }
 
     private static final String TAG = "BrowserActivity";
 
