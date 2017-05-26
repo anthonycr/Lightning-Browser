@@ -40,9 +40,7 @@ public class BrowserApp extends Application {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT);
     }
 
-
     @Nullable private static AppComponent sAppComponent;
-    private static final Executor mIOThread = Executors.newSingleThreadExecutor();
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject BookmarkModel mBookmarkModel;
@@ -123,11 +121,6 @@ public class BrowserApp extends Application {
     public static AppComponent getAppComponent() {
         Preconditions.checkNonNull(sAppComponent);
         return sAppComponent;
-    }
-
-    @NonNull
-    public static Executor getIOThread() {
-        return mIOThread;
     }
 
     /**
