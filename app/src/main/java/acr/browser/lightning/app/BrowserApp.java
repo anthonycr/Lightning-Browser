@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -34,6 +35,11 @@ import acr.browser.lightning.utils.Preconditions;
 public class BrowserApp extends Application {
 
     private static final String TAG = "BrowserApp";
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT);
+    }
+
 
     @Nullable private static AppComponent sAppComponent;
     private static final Executor mIOThread = Executors.newSingleThreadExecutor();
