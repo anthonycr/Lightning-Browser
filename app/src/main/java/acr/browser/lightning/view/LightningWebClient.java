@@ -13,10 +13,13 @@ import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -128,26 +131,18 @@ public class LightningWebClient extends WebViewClient {
                                           final String host, final String realm) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        final TextView realmLabel = new TextView(mActivity);
-        final EditText name = new EditText(mActivity);
-        final EditText password = new EditText(mActivity);
-        LinearLayout passLayout = new LinearLayout(mActivity);
-        passLayout.setOrientation(LinearLayout.VERTICAL);
+
+        View dialogView = LayoutInflater.from(mActivity).inflate(R.layout.dialog_auth_request, null);
+
+        final TextView realmLabel = (TextView) dialogView.findViewById(R.id.auth_request_realm_textview);
+        final EditText name = (EditText) dialogView.findViewById(R.id.auth_request_username_edittext);
+        final EditText password = (EditText) dialogView.findViewById(R.id.auth_request_password_edittext);
+
         realmLabel.setText(mActivity.getString(R.string.label_realm, realm));
 
-        passLayout.addView(realmLabel);
-        passLayout.addView(name);
-        passLayout.addView(password);
-
-        name.setHint(mActivity.getString(R.string.hint_username));
-        name.setSingleLine();
-        password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        password.setSingleLine();
-        password.setTransformationMethod(new PasswordTransformationMethod());
-        password.setHint(mActivity.getString(R.string.hint_password));
-        builder.setTitle(mActivity.getString(R.string.title_sign_in));
-        builder.setView(passLayout);
-        builder.setCancelable(true)
+        builder.setView(dialogView)
+            .setTitle(mActivity.getString(R.string.title_sign_in))
+            .setCancelable(true)
             .setPositiveButton(mActivity.getString(R.string.title_sign_in),
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -155,8 +150,7 @@ public class LightningWebClient extends WebViewClient {
                         String user = name.getText().toString();
                         String pass = password.getText().toString();
                         handler.proceed(user.trim(), pass.trim());
-                        Log.d(TAG, "Request Login");
-
+                        Log.d(TAG, "Attempting HTTP Authentication");
                     }
                 })
             .setNegativeButton(mActivity.getString(R.string.action_cancel),
@@ -166,9 +160,9 @@ public class LightningWebClient extends WebViewClient {
                         handler.cancel();
                     }
                 });
-        AlertDialog alert = builder.create();
-        alert.show();
-        BrowserDialog.setDialogSize(mActivity, alert);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private volatile boolean mIsRunning = false;
