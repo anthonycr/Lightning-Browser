@@ -47974,4 +47974,7 @@
 127.0.0.1	zz.zeroredirect1.com
 127.0.0.1	zzz.clickbank.net
 127.0.0.1	_thums.ero-advertising.com
-# Hosts: 47966
+127.0.0.1	ldy.350.com
+127.0.0.1	wap.tanwan.com
+127.0.0.1	tui.xinkuai.com
+# Hosts: 47969

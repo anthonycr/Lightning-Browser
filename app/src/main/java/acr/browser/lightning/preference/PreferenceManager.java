@@ -104,7 +104,7 @@ public class PreferenceManager {
     }
 
     public boolean getAdBlockEnabled() {
-        return mPrefs.getBoolean(Name.BLOCK_ADS, false);
+        return mPrefs.getBoolean(Name.BLOCK_ADS, true);
     }
 
     public boolean getBlockImagesEnabled() {
@@ -224,12 +224,12 @@ public class PreferenceManager {
     }
 
     public int getSearchChoice() {
-        return mPrefs.getInt(Name.SEARCH, 1);
+        return mPrefs.getInt(Name.SEARCH, 0);
     }
 
     @NonNull
     public String getSearchUrl() {
-        return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
+        return mPrefs.getString(Name.SEARCH_URL, Constants.BAIDU_SEARCH);
     }
 
     public boolean getTextReflowEnabled() {
