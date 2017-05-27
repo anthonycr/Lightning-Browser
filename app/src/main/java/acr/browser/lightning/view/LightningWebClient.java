@@ -141,9 +141,9 @@ public class LightningWebClient extends WebViewClient {
         realmLabel.setText(mActivity.getString(R.string.label_realm, realm));
 
         builder.setView(dialogView)
-            .setTitle(mActivity.getString(R.string.title_sign_in))
+            .setTitle(R.string.title_sign_in)
             .setCancelable(true)
-            .setPositiveButton(mActivity.getString(R.string.title_sign_in),
+            .setPositiveButton(R.string.title_sign_in,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -153,7 +153,7 @@ public class LightningWebClient extends WebViewClient {
                         Log.d(TAG, "Attempting HTTP Authentication");
                     }
                 })
-            .setNegativeButton(mActivity.getString(R.string.action_cancel),
+            .setNegativeButton(R.string.action_cancel,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {

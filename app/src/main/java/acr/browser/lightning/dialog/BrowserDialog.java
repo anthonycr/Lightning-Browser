@@ -123,37 +123,39 @@ public class BrowserDialog {
         });
     }
 
-    public static void showEditText(@NonNull Activity activity, @StringRes int title,
-                                    @StringRes int hint, @StringRes int action,
+    public static void showEditText(@NonNull Activity activity,
+                                    @StringRes int title,
+                                    @StringRes int hint,
+                                    @StringRes int action,
                                     @NonNull final EditorListener listener) {
         showEditText(activity, title, hint, null, action, listener);
     }
 
-    public static void showEditText(@NonNull Activity activity, @StringRes int title,
-                                    @StringRes int hint, @Nullable String currentText,
-                                    @StringRes int action, @NonNull final EditorListener listener) {
-        final AlertDialog.Builder editorDialog = new AlertDialog.Builder(activity);
-        editorDialog.setTitle(title);
-        final EditText editText = new EditText(activity);
+    public static void showEditText(@NonNull Activity activity,
+                                    @StringRes int title,
+                                    @StringRes int hint,
+                                    @Nullable String currentText,
+                                    @StringRes int action,
+                                    @NonNull final EditorListener listener) {
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.dialog_edit_text);
+
         editText.setHint(hint);
         if (currentText != null) {
             editText.setText(currentText);
         }
-        editText.setSingleLine();
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.dpToPx(10);
-        layout.setPadding(padding, padding, padding, padding);
-        layout.addView(editText);
-        editorDialog.setView(layout);
-        editorDialog.setPositiveButton(action,
-            new DialogInterface.OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    listener.onClick(editText.getText().toString());
-                }
-            });
+        final AlertDialog.Builder editorDialog = new AlertDialog.Builder(activity)
+            .setTitle(title)
+            .setView(dialogView)
+            .setPositiveButton(action,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onClick(editText.getText().toString());
+                    }
+                });
 
         Dialog dialog = editorDialog.show();
         setDialogSize(activity, dialog);
