@@ -151,7 +151,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
     private void textSizePicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.seek_layout, null);
+        LinearLayout view = (LinearLayout) inflater.inflate(R.layout.dialog_seek_bar, null);
         final SeekBar bar = (SeekBar) view.findViewById(R.id.text_size_seekbar);
         final TextView sample = new TextView(getActivity());
         sample.setText(R.string.untitled);

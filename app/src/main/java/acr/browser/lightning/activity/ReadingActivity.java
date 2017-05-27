@@ -290,7 +290,7 @@ public class ReadingActivity extends AppCompatActivity {
                 break;
             case R.id.text_size_item:
 
-                View view = LayoutInflater.from(this).inflate(R.layout.seek_layout, null);
+                View view = LayoutInflater.from(this).inflate(R.layout.dialog_seek_bar, null);
                 final SeekBar bar = (SeekBar) view.findViewById(R.id.text_size_seekbar);
                 bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
