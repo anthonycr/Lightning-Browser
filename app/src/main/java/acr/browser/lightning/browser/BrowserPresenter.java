@@ -165,7 +165,7 @@ public class BrowserPresenter {
         boolean shouldClose = mShouldClose && isShown && tabToDelete.isNewTab();
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
-            (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
+            (UrlUtils.isStartPageUrl(currentTab.getUrl()) ||
                 currentTab.getUrl().equals(mPreferences.getHomepage()))) {
             mView.closeActivity();
             return;
