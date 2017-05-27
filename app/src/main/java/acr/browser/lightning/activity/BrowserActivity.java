@@ -1477,7 +1477,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void updateUrl(@Nullable String url, boolean shortUrl) {
-        if (url == null || mSearch == null || mSearch.hasFocus() || UrlUtils.isSpecialUrl(url)) {
+        if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
         final LightningView currentTab = mTabsManager.getCurrentTab();
