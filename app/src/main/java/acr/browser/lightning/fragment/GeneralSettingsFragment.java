@@ -303,14 +303,14 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 setSearchEngineSummary(which);
             }
         });
-        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        picker.setPositiveButton(R.string.action_ok, null);
         Dialog dialog = picker.show();
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private void homepageDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-        picker.setTitle(getResources().getString(R.string.home));
+        picker.setTitle(R.string.home);
         mHomepage = mPreferenceManager.getHomepage();
         int n;
         switch (mHomepage) {
@@ -332,20 +332,20 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    switch (which + 1) {
-                        case 1:
+                    switch (which) {
+                        case 0:
                             mPreferenceManager.setHomepage(Constants.SCHEME_HOMEPAGE);
                             home.setSummary(getResources().getString(R.string.action_homepage));
                             break;
-                        case 2:
+                        case 1:
                             mPreferenceManager.setHomepage(Constants.SCHEME_BLANK);
                             home.setSummary(getResources().getString(R.string.action_blank));
                             break;
-                        case 3:
+                        case 2:
                             mPreferenceManager.setHomepage(Constants.SCHEME_BOOKMARKS);
                             home.setSummary(getResources().getString(R.string.action_bookmarks));
                             break;
-                        case 4:
+                        case 3:
                             homePicker();
                             break;
                     }
@@ -462,17 +462,17 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mPreferenceManager.setUserAgentChoice(which + 1);
-                    switch (which + 1) {
-                        case 1:
+                    switch (which) {
+                        case 0:
                             useragent.setSummary(getResources().getString(R.string.agent_default));
                             break;
-                        case 2:
+                        case 1:
                             useragent.setSummary(getResources().getString(R.string.agent_desktop));
                             break;
-                        case 3:
+                        case 2:
                             useragent.setSummary(getResources().getString(R.string.agent_mobile));
                             break;
-                        case 4:
+                        case 3:
                             useragent.setSummary(getResources().getString(R.string.agent_custom));
                             agentPicker();
                             break;
