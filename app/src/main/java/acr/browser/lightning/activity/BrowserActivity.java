@@ -1477,7 +1477,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     @Override
     public void updateUrl(@Nullable String url, boolean shortUrl) {
-        if (url == null || mSearch == null || mSearch.hasFocus()) {
+        if (url == null || mSearch == null || mSearch.hasFocus() || UrlUtils.isSpecialUrl(url)) {
             return;
         }
         final LightningView currentTab = mTabsManager.getCurrentTab();
@@ -1563,7 +1563,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         url = searchString.toString();
                     }
                 }
-                if (url == null) {
+                if (url == null || UrlUtils.isSpecialUrl(url)) {
                     return;
                 }
                 getUrl.setText(url);
