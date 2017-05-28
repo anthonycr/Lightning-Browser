@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -15,9 +16,12 @@ import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.database.downloads.DownloadItem;
+import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 
+import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
@@ -30,6 +34,8 @@ public class LightningDownloadListener implements DownloadListener {
     private final Activity mActivity;
 
     @Inject PreferenceManager mPreferenceManager;
+
+    @Inject DownloadsModel downloadsModel;
 
     public LightningDownloadListener(Activity context) {
         BrowserApp.getAppComponent().inject(this);
@@ -75,6 +81,16 @@ public class LightningDownloadListener implements DownloadListener {
                             dialogClickListener).show();
                     BrowserDialog.setDialogSize(mActivity, dialog);
                     Log.i(TAG, "Downloading: " + fileName);
+
+                    downloadsModel.addDownloadIfNotExists(new DownloadItem(url, fileName, downloadSize)).subscribe(new SingleOnSubscribe<Boolean>() {
+                        @Override
+                        public void onItem(@Nullable Boolean item) {
+                            super.onItem(item);
+
+                            if (item != null && !item)
+                                Log.i(TAG, "error saving download to database");
+                        }
+                    });
                 }
 
                 @Override

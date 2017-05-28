@@ -97,6 +97,7 @@ import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.HistoryItem;
@@ -799,6 +800,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_history:
                 openHistory();
+                return true;
+            case R.id.action_downloads:
+                openDownloads();
                 return true;
             case R.id.action_add_bookmark:
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
@@ -1596,6 +1600,22 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     }
                 }
             });
+    }
+
+    private void openDownloads() {
+        new DownloadsPage().getDownloadsPage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<String>() {
+                    @Override
+                    public void onItem(@Nullable String item) {
+                        Preconditions.checkNonNull(item);
+                        LightningView view = mTabsManager.getCurrentTab();
+                        if (view != null) {
+                            view.loadUrl(item);
+                        }
+                    }
+                });
     }
 
     private View getBookmarkDrawer() {

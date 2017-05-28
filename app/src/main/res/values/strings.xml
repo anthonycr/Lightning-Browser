@@ -6,6 +6,7 @@
     <string name="action_share">Share</string>
     <string name="action_history">History</string>
     <string name="action_bookmarks">Bookmarks</string>
+    <string name="action_downloads">Downloads</string>
     <string name="action_add_bookmark">Add bookmark</string>
     <string name="action_copy">Copy link</string>
     <string name="action_forward">Forward</string>
