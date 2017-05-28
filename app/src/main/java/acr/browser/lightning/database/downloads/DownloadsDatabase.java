@@ -214,11 +214,11 @@ public class DownloadsDatabase extends SQLiteOpenHelper implements DownloadsMode
 
     @NonNull
     @Override
-    public Single<Boolean> deleteDownload(@NonNull final DownloadItem bookmark) {
+    public Single<Boolean> deleteDownload(@NonNull final String url) {
         return Single.create(new SingleAction<Boolean>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<Boolean> subscriber) {
-                int rows = lazyDatabase().delete(TABLE_DOWNLOADS, KEY_URL + "=?", new String[]{bookmark.getUrl()});
+                int rows = lazyDatabase().delete(TABLE_DOWNLOADS, KEY_URL + "=?", new String[]{url});
 
                 subscriber.onItem(rows > 0);
                 subscriber.onComplete();

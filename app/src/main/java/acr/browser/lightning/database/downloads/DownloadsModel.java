@@ -60,12 +60,12 @@ public interface DownloadsModel {
     /**
      * Deletes a download from the database.
      *
-     * @param download the download to delete.
+     * @param url the download url to delete.
      * @return an observable that emits true when
      * the download is deleted, false otherwise.
      */
     @NonNull
-    Single<Boolean> deleteDownload(@NonNull DownloadItem download);
+    Single<Boolean> deleteDownload(@NonNull String url);
 
     /**
      * Deletes all downloads in the database.

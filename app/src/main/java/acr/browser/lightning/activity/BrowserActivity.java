@@ -2131,6 +2131,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public void handleDownloadDeleted() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
+                && currentTab.getUrl().endsWith(DownloadsPage.FILENAME)) {
+            currentTab.loadDownloadspage();
+        }
+        if (currentTab != null) {
+            mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
+        }
+    }
+
+    @Override
     public void handleBookmarkDeleted(@NonNull HistoryItem item) {
         mBookmarksView.handleBookmarkDeleted(item);
         handleBookmarksChange();

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -26,14 +27,19 @@ import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.downloads.DownloadItem;
+import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * TODO Rename this class it doesn't build dialogs only for bookmarks
@@ -49,6 +55,7 @@ public class LightningDialogBuilder {
     }
 
     @Inject BookmarkModel mBookmarkManager;
+    @Inject DownloadsModel mDownloadsModel;
     @Inject PreferenceManager mPreferenceManager;
 
     @Inject
@@ -148,6 +155,40 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     showEditBookmarkDialog(activity, uiController, item);
+                }
+            });
+    }
+
+    /**
+     * Show the appropriated dialog for the long pressed link.
+     *
+     * @param activity used to show the dialog
+     * @param url      the long pressed url
+     */
+    public void showLongPressedDialogForDownloadUrl(@NonNull final Activity activity,
+                                                    @NonNull final UIController uiController,
+                                                    @NonNull final String url) {
+
+        BrowserDialog.show(activity, R.string.action_bookmarks,
+            new BrowserDialog.Item(R.string.dialog_delete_download) {
+                @Override
+                public void onClick() {
+                    mDownloadsModel.deleteDownload(url).subscribe(new SingleOnSubscribe<Boolean>() {
+                        @Override
+                        public void onItem(@Nullable Boolean item) {
+                            if (item != null && !item)
+                                Log.i(TAG, "error deleting download from database");
+                            else
+                                uiController.handleDownloadDeleted();
+                        }
+                    });
+                }
+            },
+            new BrowserDialog.Item(R.string.dialog_delete_all_downloads) {
+                @Override
+                public void onClick() {
+                    // TODO: fix refreshing downloads page
+                    mDownloadsModel.deleteAllDownloads().subscribeOn(Schedulers.io()).subscribe();
                 }
             });
     }
