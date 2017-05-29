@@ -187,8 +187,8 @@ public class LightningDialogBuilder {
             new BrowserDialog.Item(R.string.dialog_delete_all_downloads) {
                 @Override
                 public void onClick() {
-                    // TODO: fix refreshing downloads page
                     mDownloadsModel.deleteAllDownloads().subscribeOn(Schedulers.io()).subscribe();
+                    uiController.handleDownloadDeleted();
                 }
             });
     }
