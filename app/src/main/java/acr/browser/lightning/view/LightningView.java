@@ -103,6 +103,7 @@ public class LightningView {
     private boolean mToggleDesktop = false;
     @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
     @NonNull private final Map<String, String> mRequestHeaders = new ArrayMap<>();
+    private int mBackOrForward = 0; // 0, not back or forward, 1, back, 2, forward
 
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
@@ -180,6 +181,9 @@ public class LightningView {
     public boolean isNewTab() {
         return mIsNewTab;
     }
+
+    public void setBackOrForward(int backOrForward) { mBackOrForward = backOrForward; }
+    public int getBackOrForward() { return mBackOrForward; }
 
     /**
      * This method loads the homepage for the browser. Either
@@ -876,6 +880,7 @@ public class LightningView {
      */
     public synchronized void goBack() {
         if (mWebView != null) {
+            mBackOrForward = 1;
             mWebView.goBack();
         }
     }
@@ -886,6 +891,7 @@ public class LightningView {
      */
     public synchronized void goForward() {
         if (mWebView != null) {
+            mBackOrForward = 2;
             mWebView.goForward();
         }
     }

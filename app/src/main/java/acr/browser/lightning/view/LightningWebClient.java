@@ -23,6 +23,7 @@ import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -114,6 +115,7 @@ public class LightningWebClient extends WebViewClient {
             view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
         }
         mUIController.tabChanged(mLightningView);
+        mLightningView.setBackOrForward(0);
     }
 
     @Override
@@ -323,11 +325,38 @@ public class LightningWebClient extends WebViewClient {
         if (headers.isEmpty()) {
             return false;
         } else if (Utils.doesSupportHeaders()) {
-            webView.loadUrl(url, headers);
+            url = getUrlByCheckHistory(webView, url);
+            if( !url.isEmpty()){
+                webView.loadUrl(url, headers);
+            }
             return true;
         } else {
             return false;
         }
+    }
+
+    @NonNull
+    private String getUrlByCheckHistory(@NonNull WebView webView, @NonNull String url) {
+        WebBackForwardList list = webView.copyBackForwardList();
+        int index = list.getCurrentIndex();
+        int size = list.getSize();
+        String currentUrl = list.getCurrentItem().getUrl();
+        String nextUrl = "";
+        if( size > index + 1) {
+            nextUrl = list.getItemAtIndex(index + 1).getUrl();
+        }
+        if(!currentUrl.equals(url)){
+            if(mLightningView.getBackOrForward() == 1 && nextUrl.equals(url) ){
+                if( (index < size - 1) && index > 0) {
+                    webView.goBack();
+                    url = "";
+                }
+            } else if(mLightningView.getBackOrForward() == 2){
+                webView.goForward();
+                url = "";
+            }
+        }
+        return url;
     }
 
     private boolean isMailOrIntent(@NonNull String url, @NonNull WebView view) {
