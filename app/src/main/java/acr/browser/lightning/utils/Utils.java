@@ -456,4 +456,13 @@ public final class Utils {
         return inSampleSize;
     }
 
+    @Nullable
+    public static String guessFileExtension(@NonNull String filename) {
+        int lastIndex = filename.lastIndexOf('.') + 1;
+        if (lastIndex > 0 && filename.length() > lastIndex) {
+            return filename.substring(lastIndex, filename.length());
+        }
+        return null;
+    }
+
 }

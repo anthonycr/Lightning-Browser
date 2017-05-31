@@ -47,15 +47,6 @@ public class DownloadHandler {
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             .getPath();
 
-    @Nullable
-    static String guessFileExtension(@NonNull String filename) {
-        int lastIndex = filename.lastIndexOf('.') + 1;
-        if (lastIndex > 0 && filename.length() > lastIndex) {
-            return filename.substring(lastIndex, filename.length());
-        }
-        return null;
-    }
-
     /**
      * Notify the host application a download should be done, or that the data
      * should be streamed if a streaming viewer is available.
@@ -222,7 +213,7 @@ public class DownloadHandler {
             Utils.showSnackbar(context, R.string.problem_location_download);
             return;
         }
-        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(guessFileExtension(filename));
+        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
         Log.d(TAG, "New mimetype: " + newMimeType);
         request.setMimeType(newMimeType);
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));

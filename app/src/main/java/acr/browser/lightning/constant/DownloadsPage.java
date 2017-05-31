@@ -23,6 +23,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsModel;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
@@ -58,6 +59,7 @@ public final class DownloadsPage {
     private File mFilesDir;
 
     @Inject Application mApp;
+    @Inject PreferenceManager mPreferenceManager;
     @Inject DownloadsModel mManager;
 
     @NonNull private final String mTitle;
@@ -74,7 +76,7 @@ public final class DownloadsPage {
             public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
                 mFilesDir = mApp.getFilesDir();
 
-                buildDownloadsPage(null);
+                buildDownloadsPage();
 
                 File downloadsWebPage = new File(mFilesDir, FILENAME);
 
@@ -84,36 +86,41 @@ public final class DownloadsPage {
         });
     }
 
-    private void buildDownloadsPage(@Nullable final String folder) {
+    private void buildDownloadsPage() {
         mManager.getAllDownloads()
             .subscribe(new SingleOnSubscribe<List<DownloadItem>>() {
                 @Override
                 public void onItem(@Nullable List<DownloadItem> list) {
                     Preconditions.checkNonNull(list);
+                    String directory = mPreferenceManager.getDownloadDirectory();
 
-                    final File downloadsWebPage;
-                    if (folder == null || folder.isEmpty()) {
-                        downloadsWebPage = new File(mFilesDir, FILENAME);
-                    } else {
-                        downloadsWebPage = new File(mFilesDir, folder + '-' + FILENAME);
-                    }
                     final StringBuilder downloadsBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
                     for (int n = 0, size = list.size(); n < size; n++) {
                         final DownloadItem item = list.get(n);
                         downloadsBuilder.append(PART1);
-                        downloadsBuilder.append(item.getUrl());
+                        downloadsBuilder.append("file://");
+                        downloadsBuilder.append(directory);
+                        downloadsBuilder.append("/");
+                        downloadsBuilder.append(item.getTitle());
                         downloadsBuilder.append(PART2);
                         downloadsBuilder.append(item.getTitle());
+
+                        if (!item.getContentSize().isEmpty()) {
+                            downloadsBuilder.append(" [");
+                            downloadsBuilder.append(item.getContentSize());
+                            downloadsBuilder.append("]");
+                        }
+
                         downloadsBuilder.append(PART3);
-                        downloadsBuilder.append(item.getContentSize());
+                        downloadsBuilder.append(item.getUrl());
                         downloadsBuilder.append(PART4);
                     }
                     downloadsBuilder.append(END);
                     FileWriter bookWriter = null;
                     try {
                         //noinspection IOResourceOpenedButNotSafelyClosed
-                        bookWriter = new FileWriter(downloadsWebPage, false);
+                        bookWriter = new FileWriter(new File(mFilesDir, FILENAME), false);
                         bookWriter.write(downloadsBuilder.toString());
                     } catch (IOException e) {
                         e.printStackTrace();

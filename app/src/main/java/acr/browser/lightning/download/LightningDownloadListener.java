@@ -50,7 +50,15 @@ public class LightningDownloadListener implements DownloadListener {
             new PermissionsResultAction() {
                 @Override
                 public void onGranted() {
-                    String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
+                    final String fileName = URLUtil.guessFileName(url, contentDisposition, mimetype);
+                    final String downloadSize;
+
+                    if (contentLength > 0) {
+                        downloadSize = Formatter.formatFileSize(mActivity, contentLength);
+                    } else {
+                        downloadSize = mActivity.getString(R.string.unknown_size);
+                    }
+
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -58,6 +66,15 @@ public class LightningDownloadListener implements DownloadListener {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     DownloadHandler.onDownloadStart(mActivity, mPreferenceManager, url, userAgent,
                                         contentDisposition, mimetype);
+
+                                    downloadsModel.addDownloadIfNotExists(new DownloadItem(url, fileName, downloadSize))
+                                            .subscribe(new SingleOnSubscribe<Boolean>() {
+                                        @Override
+                                        public void onItem(@Nullable Boolean item) {
+                                            if (item != null && !item)
+                                                Log.i(TAG, "error saving download to database");
+                                        }
+                                    });
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     break;
@@ -66,12 +83,6 @@ public class LightningDownloadListener implements DownloadListener {
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity); // dialog
-                    String downloadSize;
-                    if (contentLength > 0) {
-                        downloadSize = Formatter.formatFileSize(mActivity, contentLength);
-                    } else {
-                        downloadSize = mActivity.getString(R.string.unknown_size);
-                    }
                     String message = mActivity.getString(R.string.dialog_download, downloadSize);
                     Dialog dialog = builder.setTitle(fileName)
                         .setMessage(message)
@@ -81,16 +92,6 @@ public class LightningDownloadListener implements DownloadListener {
                             dialogClickListener).show();
                     BrowserDialog.setDialogSize(mActivity, dialog);
                     Log.i(TAG, "Downloading: " + fileName);
-
-                    downloadsModel.addDownloadIfNotExists(new DownloadItem(url, fileName, downloadSize)).subscribe(new SingleOnSubscribe<Boolean>() {
-                        @Override
-                        public void onItem(@Nullable Boolean item) {
-                            super.onItem(item);
-
-                            if (item != null && !item)
-                                Log.i(TAG, "error saving download to database");
-                        }
-                    });
                 }
 
                 @Override

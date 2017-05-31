@@ -8,30 +8,31 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.MailTo;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
+import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
@@ -355,6 +357,26 @@ public class LightningWebClient extends WebViewClient {
                     mActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     Log.e(TAG, "ActivityNotFoundException");
+                }
+                return true;
+            }
+        } else if (url.startsWith("file://")) {
+            File file = new File(url.replace("file://", ""));
+
+            if (file.exists()) {
+                String newMimeType = MimeTypeMap.getSingleton()
+                        .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
+
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileprovider", file);
+                intent.setDataAndType(contentUri, newMimeType);
+
+                try {
+                    mActivity.startActivity(intent);
+                } catch (Exception e) {
+                    System.out.println("LightningWebClient: cannot open downloaded file");
                 }
                 return true;
             }

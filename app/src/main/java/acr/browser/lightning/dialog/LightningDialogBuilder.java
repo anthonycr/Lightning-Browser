@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -27,7 +28,6 @@ import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
@@ -169,21 +169,7 @@ public class LightningDialogBuilder {
                                                     @NonNull final UIController uiController,
                                                     @NonNull final String url) {
 
-        BrowserDialog.show(activity, R.string.action_bookmarks,
-            new BrowserDialog.Item(R.string.dialog_delete_download) {
-                @Override
-                public void onClick() {
-                    mDownloadsModel.deleteDownload(url).subscribe(new SingleOnSubscribe<Boolean>() {
-                        @Override
-                        public void onItem(@Nullable Boolean item) {
-                            if (item != null && !item)
-                                Log.i(TAG, "error deleting download from database");
-                            else
-                                uiController.handleDownloadDeleted();
-                        }
-                    });
-                }
-            },
+        BrowserDialog.show(activity, R.string.action_downloads,
             new BrowserDialog.Item(R.string.dialog_delete_all_downloads) {
                 @Override
                 public void onClick() {
@@ -393,6 +379,15 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
+
+                    mDownloadsModel.addDownloadIfNotExists(new DownloadItem(url, URLUtil.guessFileName(url, null, null), ""))
+                        .subscribe(new SingleOnSubscribe<Boolean>() {
+                            @Override
+                            public void onItem(@Nullable Boolean item) {
+                                if (item != null && !item)
+                                    Log.i(TAG, "error saving download to database");
+                            }
+                        });
                 }
             });
     }
