@@ -268,7 +268,7 @@ public class PreferenceManager {
     }
 
     public int getUserAgentChoice() {
-        return mPrefs.getInt(Name.USER_AGENT, 1);
+        return mPrefs.getInt(Name.USER_AGENT, 3);
     }
 
     @Nullable

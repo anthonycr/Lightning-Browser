@@ -3,3 +3,4 @@
 2. Update: remove UA, Search and HomePage pref
 3. Update: set home url and don't show it
 4. New: Baidu search suggestion
+5. FIX: use 3(Mobile) as default UA
