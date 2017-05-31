@@ -17,10 +17,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
@@ -31,7 +30,7 @@ import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 
-import static acr.browser.lightning.preference.PreferenceManager.*;
+import static acr.browser.lightning.preference.PreferenceManager.Suggestion;
 
 public class GeneralSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -163,24 +162,20 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     }
 
 //    private void searchUrlPicker() {
-//        final AlertDialog.Builder urlPicker = new AlertDialog.Builder(mActivity);
-//        urlPicker.setTitle(getResources().getString(R.string.custom_url));
-//        final EditText getSearchUrl = new EditText(mActivity);
-//        String mSearchUrl = mPreferenceManager.getSearchUrl();
-//        getSearchUrl.setText(mSearchUrl);
-//        urlPicker.setView(getSearchUrl);
-//        urlPicker.setPositiveButton(getResources().getString(R.string.action_ok),
-//            new DialogInterface.OnClickListener() {
+//
+//        BrowserDialog.showEditText(mActivity,
+//            R.string.custom_url,
+//            R.string.custom_url,
+//            mPreferenceManager.getSearchUrl(),
+//            R.string.action_ok,
+//            new BrowserDialog.EditorListener() {
 //                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    String text = getSearchUrl.getText().toString();
+//                public void onClick(String text) {
 //                    mPreferenceManager.setSearchUrl(text);
-//                    searchengine.setSummary(getResources().getString(R.string.custom_url) + ": "
-//                        + text);
+//                    searchengine.setSummary(mActivity.getString(R.string.custom_url) + ": " + text);
 //                }
 //            });
-//        Dialog dialog = urlPicker.show();
-//        BrowserDialog.setDialogSize(mActivity, dialog);
+//
 //    }
 
     private void getFlashChoice() {
@@ -217,7 +212,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
     private void proxyChoicePicker() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-        picker.setTitle(getResources().getString(R.string.http_proxy));
+        picker.setTitle(R.string.http_proxy);
         picker.setSingleChoiceItems(mProxyChoices, mPreferenceManager.getProxyChoice(),
             new DialogInterface.OnClickListener() {
 
@@ -226,7 +221,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                     setProxyChoice(which);
                 }
             });
-        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+        picker.setPositiveButton(R.string.action_ok, null);
         Dialog dialog = picker.show();
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
@@ -252,7 +247,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private void manualProxyPicker() {
-        View v = mActivity.getLayoutInflater().inflate(R.layout.picker_manual_proxy, null);
+        View v = mActivity.getLayoutInflater().inflate(R.layout.dialog_manual_proxy, null);
         final EditText eProxyHost = (EditText) v.findViewById(R.id.proxyHost);
         final EditText eProxyPort = (EditText) v.findViewById(R.id.proxyPort);
 
@@ -308,14 +303,14 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 //                setSearchEngineSummary(which);
 //            }
 //        });
-//        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+//        picker.setPositiveButton(R.string.action_ok, null);
 //        Dialog dialog = picker.show();
 //        BrowserDialog.setDialogSize(mActivity, dialog);
 //    }
 
 //    private void homepageDialog() {
 //        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-//        picker.setTitle(getResources().getString(R.string.home));
+//        picker.setTitle(R.string.home);
 //        mHomepage = mPreferenceManager.getHomepage();
 //        int n;
 //        switch (mHomepage) {
@@ -337,20 +332,20 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 //            new DialogInterface.OnClickListener() {
 //                @Override
 //                public void onClick(DialogInterface dialog, int which) {
-//                    switch (which + 1) {
-//                        case 1:
+//                    switch (which) {
+//                        case 0:
 //                            mPreferenceManager.setHomepage(Constants.SCHEME_HOMEPAGE);
 //                            home.setSummary(getResources().getString(R.string.action_homepage));
 //                            break;
-//                        case 2:
+//                        case 1:
 //                            mPreferenceManager.setHomepage(Constants.SCHEME_BLANK);
 //                            home.setSummary(getResources().getString(R.string.action_blank));
 //                            break;
-//                        case 3:
+//                        case 2:
 //                            mPreferenceManager.setHomepage(Constants.SCHEME_BOOKMARKS);
 //                            home.setSummary(getResources().getString(R.string.action_bookmarks));
 //                            break;
-//                        case 4:
+//                        case 3:
 //                            homePicker();
 //                            break;
 //                    }
@@ -405,28 +400,26 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     }
 
 //    private void homePicker() {
-//        final AlertDialog.Builder homePicker = new AlertDialog.Builder(mActivity);
-//        homePicker.setTitle(getResources().getString(R.string.title_custom_homepage));
-//        final EditText getHome = new EditText(mActivity);
+//        String currentHomepage;
 //        mHomepage = mPreferenceManager.getHomepage();
 //        if (!mHomepage.startsWith(Constants.ABOUT)) {
-//            getHome.setText(mHomepage);
+//            currentHomepage = mHomepage;
 //        } else {
-//            String defaultUrl = "https://www.google.com";
-//            getHome.setText(defaultUrl);
+//            currentHomepage = "https://www.google.com";
 //        }
-//        homePicker.setView(getHome);
-//        homePicker.setPositiveButton(getResources().getString(R.string.action_ok),
-//            new DialogInterface.OnClickListener() {
+//
+//        BrowserDialog.showEditText(mActivity,
+//            R.string.title_custom_homepage,
+//            R.string.title_custom_homepage,
+//            currentHomepage,
+//            R.string.action_ok,
+//            new BrowserDialog.EditorListener() {
 //                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    String text = getHome.getText().toString();
+//                public void onClick(String text) {
 //                    mPreferenceManager.setHomepage(text);
 //                    home.setSummary(text);
 //                }
 //            });
-//        Dialog dialog = homePicker.show();
-//        BrowserDialog.setDialogSize(mActivity, dialog);
 //    }
 
     private void downloadLocDialog() {
@@ -469,17 +462,17 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 //                @Override
 //                public void onClick(DialogInterface dialog, int which) {
 //                    mPreferenceManager.setUserAgentChoice(which + 1);
-//                    switch (which + 1) {
-//                        case 1:
+//                    switch (which) {
+//                        case 0:
 //                            useragent.setSummary(getResources().getString(R.string.agent_default));
 //                            break;
-//                        case 2:
+//                        case 1:
 //                            useragent.setSummary(getResources().getString(R.string.agent_desktop));
 //                            break;
-//                        case 3:
+//                        case 2:
 //                            useragent.setSummary(getResources().getString(R.string.agent_mobile));
 //                            break;
-//                        case 4:
+//                        case 3:
 //                            useragent.setSummary(getResources().getString(R.string.agent_custom));
 //                            agentPicker();
 //                            break;
@@ -490,51 +483,47 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 //        Dialog dialog = agentPicker.show();
 //        BrowserDialog.setDialogSize(mActivity, dialog);
 //    }
-
+//
 //    private void agentPicker() {
-//        final AlertDialog.Builder agentStringPicker = new AlertDialog.Builder(mActivity);
-//        agentStringPicker.setTitle(getResources().getString(R.string.title_user_agent));
-//        final EditText getAgent = new EditText(mActivity);
-//        agentStringPicker.setView(getAgent);
-//        agentStringPicker.setPositiveButton(getResources().getString(R.string.action_ok),
-//            new DialogInterface.OnClickListener() {
+//
+//        BrowserDialog.showEditText(mActivity,
+//            R.string.title_user_agent,
+//            R.string.title_user_agent,
+//            mPreferenceManager.getUserAgentString(""),
+//            R.string.action_ok,
+//            new BrowserDialog.EditorListener() {
 //                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    String text = getAgent.getText().toString();
+//                public void onClick(String text) {
 //                    mPreferenceManager.setUserAgentString(text);
-//                    useragent.setSummary(getResources().getString(R.string.agent_custom));
+//                    useragent.setSummary(mActivity.getString(R.string.agent_custom));
 //                }
 //            });
-//        Dialog dialog = agentStringPicker.show();
-//        BrowserDialog.setDialogSize(mActivity, dialog);
 //    }
 
     private void downPicker() {
-        final AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(mActivity);
-        LinearLayout layout = new LinearLayout(mActivity);
-        downLocationPicker.setTitle(getResources().getString(R.string.title_download_location));
-        final EditText getDownload = new EditText(mActivity);
-        getDownload.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT));
-        getDownload.setText(mPreferenceManager.getDownloadDirectory());
-        final int errorColor = ContextCompat.getColor(getActivity(), R.color.error_red);
-        final int regularColor = ThemeUtils.getTextColor(getActivity());
+
+        View dialogView = LayoutInflater.from(mActivity).inflate(R.layout.dialog_edit_text, null);
+        final EditText getDownload = (EditText) dialogView.findViewById(R.id.dialog_edit_text);
+
+        final int errorColor = ContextCompat.getColor(mActivity, R.color.error_red);
+        final int regularColor = ThemeUtils.getTextColor(mActivity);
         getDownload.setTextColor(regularColor);
         getDownload.addTextChangedListener(new DownloadLocationTextWatcher(getDownload, errorColor, regularColor));
         getDownload.setText(mPreferenceManager.getDownloadDirectory());
 
-        layout.addView(getDownload);
-        downLocationPicker.setView(layout);
-        downLocationPicker.setPositiveButton(getResources().getString(R.string.action_ok),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String text = getDownload.getText().toString();
-                    text = DownloadHandler.addNecessarySlashes(text);
-                    mPreferenceManager.setDownloadDirectory(text);
-                    downloadloc.setSummary(text);
-                }
-            });
+        AlertDialog.Builder downLocationPicker = new AlertDialog.Builder(mActivity)
+            .setTitle(R.string.title_download_location)
+            .setView(dialogView)
+            .setPositiveButton(R.string.action_ok,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = getDownload.getText().toString();
+                        text = DownloadHandler.addNecessarySlashes(text);
+                        mPreferenceManager.setDownloadDirectory(text);
+                        downloadloc.setSummary(text);
+                    }
+                });
         Dialog dialog = downLocationPicker.show();
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
@@ -640,11 +629,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private static class DownloadLocationTextWatcher implements TextWatcher {
-        private final EditText getDownload;
+        @NonNull private final EditText getDownload;
         private final int errorColor;
         private final int regularColor;
 
-        public DownloadLocationTextWatcher(EditText getDownload, int errorColor, int regularColor) {
+        public DownloadLocationTextWatcher(@NonNull EditText getDownload, int errorColor, int regularColor) {
             this.getDownload = getDownload;
             this.errorColor = errorColor;
             this.regularColor = regularColor;
