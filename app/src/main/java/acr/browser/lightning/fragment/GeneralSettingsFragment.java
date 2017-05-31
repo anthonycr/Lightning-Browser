@@ -117,6 +117,9 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SUGGESTION_DUCK:
                 searchsSuggestions.setSummary(R.string.powered_by_duck);
                 break;
+            case SUGGESTION_BAIDU:
+                searchsSuggestions.setSummary(R.string.powered_by_baidu);
+                break;
             case SUGGESTION_NONE:
                 searchsSuggestions.setSummary(R.string.search_suggestions_off);
                 break;
@@ -360,7 +363,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.search_suggestions));
 
-        int currentChoice = 2;
+        int currentChoice = 3;
 
         switch (mPreferenceManager.getSearchSuggestionChoice()) {
             case SUGGESTION_GOOGLE:
@@ -369,8 +372,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SUGGESTION_DUCK:
                 currentChoice = 1;
                 break;
-            case SUGGESTION_NONE:
+            case SUGGESTION_BAIDU:
                 currentChoice = 2;
+                break;
+            case SUGGESTION_NONE:
+                currentChoice = 3;
                 break;
         }
 
@@ -388,6 +394,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                             searchsSuggestions.setSummary(R.string.powered_by_duck);
                             break;
                         case 2:
+                            mPreferenceManager.setSearchSuggestionChoice(Suggestion.SUGGESTION_BAIDU);
+                            searchsSuggestions.setSummary(R.string.powered_by_baidu);
+                            break;
+                        case 3:
                             mPreferenceManager.setSearchSuggestionChoice(Suggestion.SUGGESTION_NONE);
                             searchsSuggestions.setSummary(R.string.search_suggestions_off);
                             break;

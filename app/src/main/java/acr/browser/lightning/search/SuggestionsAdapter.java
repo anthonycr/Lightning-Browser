@@ -304,6 +304,8 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
             return SuggestionsManager.createGoogleQueryObservable(query, mApplication);
         } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
             return SuggestionsManager.createDuckQueryObservable(query, mApplication);
+        } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_BAIDU) {
+            return SuggestionsManager.createBaiduQueryObservable(query, mApplication);
         } else {
             return Single.empty();
         }

@@ -70,6 +70,7 @@ public class PreferenceManager {
     public enum Suggestion {
         SUGGESTION_GOOGLE,
         SUGGESTION_DUCK,
+        SUGGESTION_BAIDU,
         SUGGESTION_NONE
     }
 
