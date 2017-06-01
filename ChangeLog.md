@@ -5,3 +5,5 @@
 4. New: Baidu search suggestion
 5. FIX: use 3(Mobile) as default UA
 6. FIX: back or forward with refresh/redirect
+7. Add: ad block host
+8. FIX: Back and Forward

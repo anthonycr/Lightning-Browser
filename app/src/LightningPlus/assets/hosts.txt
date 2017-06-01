@@ -47977,4 +47977,7 @@
 127.0.0.1	ldy.350.com
 127.0.0.1	wap.tanwan.com
 127.0.0.1	tui.xinkuai.com
-# Hosts: 47969
+127.0.0.1	yu.qxngg.com
+127.0.0.1	da.ddanq.com
+
+# Hosts: 47971

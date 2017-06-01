@@ -325,7 +325,7 @@ public class LightningWebClient extends WebViewClient {
         if (headers.isEmpty()) {
             return false;
         } else if (Utils.doesSupportHeaders()) {
-            url = getUrlByCheckHistory(webView, url);
+            url = backOrForfardByCheckHistory(webView, url);
             if( !url.isEmpty()){
                 webView.loadUrl(url, headers);
             }
@@ -336,7 +336,7 @@ public class LightningWebClient extends WebViewClient {
     }
 
     @NonNull
-    private String getUrlByCheckHistory(@NonNull WebView webView, @NonNull String url) {
+    private String backOrForfardByCheckHistory(@NonNull WebView webView, @NonNull String url) {
         WebBackForwardList list = webView.copyBackForwardList();
         int index = list.getCurrentIndex();
         int size = list.getSize();
@@ -346,12 +346,10 @@ public class LightningWebClient extends WebViewClient {
             nextUrl = list.getItemAtIndex(index + 1).getUrl();
         }
         if(!currentUrl.equals(url)){
-            if(mLightningView.getBackOrForward() == 1 && nextUrl.equals(url) ){
-                if( (index < size - 1) && index > 0) {
-                    webView.goBack();
-                    url = "";
-                }
-            } else if(mLightningView.getBackOrForward() == 2){
+            if(mLightningView.getBackOrForward() == 1 && webView.canGoBack() ){
+                webView.goBack();
+                url = "";
+            } else if(mLightningView.getBackOrForward() == 2 && webView.canGoForward()){
                 webView.goForward();
                 url = "";
             }
