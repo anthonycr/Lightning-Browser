@@ -341,10 +341,6 @@ public class LightningWebClient extends WebViewClient {
         int index = list.getCurrentIndex();
         int size = list.getSize();
         String currentUrl = list.getCurrentItem().getUrl();
-        String nextUrl = "";
-        if( size > index + 1) {
-            nextUrl = list.getItemAtIndex(index + 1).getUrl();
-        }
         if(!currentUrl.equals(url)){
             if(mLightningView.getBackOrForward() == 1 && webView.canGoBack() ){
                 webView.goBack();
