@@ -23,6 +23,7 @@ import com.anthonycr.bonsai.Schedulers;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.LightningView;
@@ -64,14 +65,40 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         Preference clearwebstorage = findPreference(SETTINGS_CLEARWEBSTORAGE);
 
         CheckBoxPreference cblocation = (CheckBoxPreference) findPreference(SETTINGS_LOCATION);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.LOCATION))
+            mPreferenceManager.setLocationEnabled(cblocation.isChecked());
+
         CheckBoxPreference cb3cookies = (CheckBoxPreference) findPreference(SETTINGS_THIRDPCOOKIES);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.BLOCK_THIRD_PARTY))
+            mPreferenceManager.setBlockThirdPartyCookiesEnabled(cb3cookies.isChecked());
+
         CheckBoxPreference cbsavepasswords = (CheckBoxPreference) findPreference(SETTINGS_SAVEPASSWORD);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.SAVE_PASSWORDS))
+            mPreferenceManager.setSavePasswordsEnabled(cbsavepasswords.isChecked());
+
         CheckBoxPreference cbcacheexit = (CheckBoxPreference) findPreference(SETTINGS_CACHEEXIT);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.CLEAR_CACHE_EXIT))
+            mPreferenceManager.setClearCacheExit(cbcacheexit.isChecked());
+
         CheckBoxPreference cbhistoryexit = (CheckBoxPreference) findPreference(SETTINGS_HISTORYEXIT);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.CLEAR_HISTORY_EXIT))
+            mPreferenceManager.setClearHistoryExitEnabled(cbhistoryexit.isChecked());
+
         CheckBoxPreference cbcookiesexit = (CheckBoxPreference) findPreference(SETTINGS_COOKIEEXIT);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.CLEAR_COOKIES_EXIT))
+            mPreferenceManager.setClearCookiesExitEnabled(cbcookiesexit.isChecked());
+
         CheckBoxPreference cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.CLEAR_WEBSTORAGE_EXIT))
+            mPreferenceManager.setClearWebStorageExitEnabled(cbwebstorageexit.isChecked());
+
         CheckBoxPreference cbDoNotTrack = (CheckBoxPreference) findPreference(SETTINGS_DONOTTRACK);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.DO_NOT_TRACK))
+            mPreferenceManager.setDoNotTrackEnabled(cbDoNotTrack.isChecked());
+
         CheckBoxPreference cbIdentifyingHeaders = (CheckBoxPreference) findPreference(SETTINGS_IDENTIFYINGHEADERS);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.IDENTIFYING_HEADERS))
+            mPreferenceManager.setRemoveIdentifyingHeadersEnabled(cbIdentifyingHeaders.isChecked());
 
         clearcache.setOnPreferenceClickListener(this);
         clearhistory.setOnPreferenceClickListener(this);

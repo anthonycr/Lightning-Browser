@@ -26,6 +26,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.download.DownloadHandler;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -73,10 +74,22 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         searchsSuggestions = findPreference(SETTINGS_SUGGESTIONS);
 
         CheckBoxPreference cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
+
         CheckBoxPreference cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.BLOCK_ADS))
+            mPreferenceManager.setAdBlockEnabled(cbAds.isChecked());
+
         CheckBoxPreference cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.BLOCK_IMAGES))
+            mPreferenceManager.setBlockImagesEnabled(cbImages.isChecked());
+
         CheckBoxPreference cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.JAVASCRIPT))
+            mPreferenceManager.setJavaScriptEnabled(cbJsScript.isChecked());
+
         CheckBoxPreference cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.ENABLE_COLOR_MODE))
+            mPreferenceManager.setLocationEnabled(cbColorMode.isChecked());
 
         proxy.setOnPreferenceClickListener(this);
 //        useragent.setOnPreferenceClickListener(this);
