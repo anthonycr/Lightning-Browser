@@ -82,8 +82,8 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
