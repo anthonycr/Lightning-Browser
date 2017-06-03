@@ -167,6 +167,7 @@
     <string name="settings_privacy">Privatsphäre</string>
     <string name="settings_about">Über</string>
     <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
+    <string name="close_other_tabs">Andere Tabs schließen</string>
     <string name="close_tab">Aktuellen Tab schließen</string>
     <string name="close_all_tabs">Alle Tabs schließen</string>
     <string name="third_party">Drittanbieter Cookies blockieren</string>
@@ -201,6 +202,8 @@
     <string name="tabs">Tabs</string>
     <string name="theme">App-Design</string>
     <string name="title_rename_folder">Ordner umbenennen</string>
+    <string name="action_add_to_homescreen">Auf Startbildschirm legen</string>
+    <string name="message_added_to_homescreen">Verknüpfung auf dem Startbildschirm abgelegt</string>
     <string name="http_proxy">HTTP-Proxy</string>
     <string name="i2p_not_running">I2P läuft nicht.</string>
     <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
