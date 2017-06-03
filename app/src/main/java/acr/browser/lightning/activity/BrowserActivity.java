@@ -750,7 +750,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public boolean dispatchKeyEvent(KeyEvent event) {
         // Keyboard shortcuts
         if (event.isCtrlPressed() && event.getAction() == KeyEvent.ACTION_DOWN) {
-            switch(event.getKeyCode()) {
+            switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_T:
                     // Open new tab
                     newTab(null, true);
@@ -765,23 +765,32 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     return true;
                 case KeyEvent.KEYCODE_R:
                     // Refresh current tab
-                    mTabsManager.getCurrentTab().reload();
+                    LightningView currentTab = mTabsManager.getCurrentTab();
+                    if (currentTab != null) {
+                        currentTab.reload();
+                    }
                     return true;
                 case KeyEvent.KEYCODE_TAB:
                     int nextIndex = 0;
-                    if(event.isShiftPressed()) {
+                    if (event.isShiftPressed()) {
                         // Go back one tab
-                        if(mTabsManager.indexOfCurrentTab() > 0) nextIndex = mTabsManager.indexOfCurrentTab() - 1;
-                        else nextIndex = mTabsManager.last();
+                        if (mTabsManager.indexOfCurrentTab() > 0) {
+                            nextIndex = mTabsManager.indexOfCurrentTab() - 1;
+                        } else {
+                            nextIndex = mTabsManager.last();
+                        }
                     } else {
                         // Go forward one tab
-                        if(mTabsManager.indexOfCurrentTab() < mTabsManager.last()) nextIndex = mTabsManager.indexOfCurrentTab() + 1;
-                        else nextIndex = 0;
+                        if (mTabsManager.indexOfCurrentTab() < mTabsManager.last()) {
+                            nextIndex = mTabsManager.indexOfCurrentTab() + 1;
+                        } else {
+                            nextIndex = 0;
+                        }
                     }
                     mPresenter.tabChanged(nextIndex);
                     return true;
             }
-        } else if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
+        } else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
             // Highlight search field
             mSearch.requestFocus();
             mSearch.selectAll();
@@ -1648,18 +1657,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void openDownloads() {
         new DownloadsPage().getDownloadsPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<String>() {
-                    @Override
-                    public void onItem(@Nullable String item) {
-                        Preconditions.checkNonNull(item);
-                        LightningView view = mTabsManager.getCurrentTab();
-                        if (view != null) {
-                            view.loadUrl(item);
-                        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    LightningView view = mTabsManager.getCurrentTab();
+                    if (view != null) {
+                        view.loadUrl(item);
                     }
-                });
+                }
+            });
     }
 
     private View getBookmarkDrawer() {
@@ -2178,7 +2187,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public void handleDownloadDeleted() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-                && currentTab.getUrl().endsWith(DownloadsPage.FILENAME)) {
+            && currentTab.getUrl().endsWith(DownloadsPage.FILENAME)) {
             currentTab.loadDownloadspage();
         }
         if (currentTab != null) {

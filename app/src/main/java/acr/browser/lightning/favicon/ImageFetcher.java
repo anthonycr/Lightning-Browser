@@ -8,12 +8,14 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import acr.browser.lightning.utils.Utils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * An image fetcher that creates image
@@ -65,11 +67,17 @@ class ImageFetcher {
             Request imageRequest = new Request.Builder().url(url).build();
 
             Response boundsResponse = mHttpClient.newCall(imageRequest).execute();
-            boundsStream = boundsResponse.body().byteStream();
+            ResponseBody boundsBody = boundsResponse.body();
+
+            if (boundsBody == null) {
+                return null;
+            }
+
+            boundsStream = boundsBody.byteStream();
 
             BitmapFactory.decodeStream(boundsStream, null, mLoaderOptions);
 
-            boundsResponse.body().close();
+            boundsBody.close();
 
             int size = Utils.dpToPx(24);
 
@@ -77,12 +85,19 @@ class ImageFetcher {
             mLoaderOptions.inJustDecodeBounds = false;
 
             Response imageResponse = mHttpClient.newCall(imageRequest).execute();
-            iconStream = imageResponse.body().byteStream();
+
+            ResponseBody imageBody = imageResponse.body();
+
+            if (imageBody == null) {
+                return null;
+            }
+
+            iconStream = imageBody.byteStream();
 
             icon = BitmapFactory.decodeStream(iconStream, null, mLoaderOptions);
 
-            imageResponse.body().close();
-        } catch (Exception e) {
+            imageBody.close();
+        } catch (IOException exception) {
             Log.d(TAG, "Unable to download icon: " + url);
         } finally {
             Utils.close(boundsStream);

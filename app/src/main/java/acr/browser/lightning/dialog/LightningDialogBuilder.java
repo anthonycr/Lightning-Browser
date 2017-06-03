@@ -16,7 +16,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
-import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 
