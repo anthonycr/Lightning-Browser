@@ -101,10 +101,10 @@
     <string name="action_find">Auf Seite suchen</string>
     <string name="download_pending">Herunterladen läuft\u2026</string>
     <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
-    <string name="download_no_sdcard_dlg_title" >Keine SD-Karte</string>
-    <string name="download_no_sdcard_dlg_msg" >USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
+    <string name="download_no_sdcard_dlg_title">Keine SD-Karte</string>
+    <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar</string>
-    <string name="download_sdcard_busy_dlg_msg" >Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
+    <string name="download_sdcard_busy_dlg_msg">Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuell</string>
@@ -180,9 +180,9 @@
     <string name="mit_license">MIT Lizenz</string>
     <string name="url_contents">URL-Box Inhalt</string>
     <string-array name="url_content_array">
-        <item >Domain (Standard)</item>
-        <item >URL</item>
-        <item >Titel</item>
+        <item>Domain (Standard)</item>
+        <item>URL</item>
+        <item>Titel</item>
     </string-array>
     <string name="action_folder">Ordner</string>
     <string name="action_rename">Umbenennen</string>
@@ -218,7 +218,6 @@
     <string name="use_i2p_prompt">Es sieht aus, als ob I2P installiert wäre. Möchten Sie es verwenden?</string>
     <string name="text_encoding">Textcodierung</string>
     <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
-    <string name="action_add_to_homescreen">Zum Homescreen hinzufügen</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
     <string name="app_restart">Bitte schließen Sie die App um die Änderungen anzuwenden.</string>
     <string name="dialog_remove_folder">Ordner löschen</string>
@@ -226,7 +225,6 @@
     <string name="dialog_open_new_tab">In neuem Tab öffnen</string>
     <string name="dialog_open_incognito_tab">In Inkognito-Tab öffnen</string>
     <string name="dialog_edit_bookmark">Lesezeichen bearbeiten</string>
-    <string name="close_other_tabs">Andere Tabs schließen</string>
     <string name="debug_title">Debug Einstellungen</string>
     <string name="dialog_copy_link">Link kopieren</string>
     <string name="dialog_download_image">Bild herunterladen</string>
@@ -237,7 +235,6 @@
     <string name="do_not_track">\"Nicht verfolgen\"-Funktion anfordern</string>
     <string name="faq">FAQ</string>
     <string name="faq_description">Häufige Fragen</string>
-    <string name="message_added_to_homescreen">Lesezeichen zum Homescreen hinzugefügt</string>
     <string name="name_increase_contrast">Kontrast erhöhen</string>
     <string name="powered_by_duck">Unterstützt durch DuckDuckGo</string>
     <string name="remove_identifying_headers">Identifizierbare Header entfernen</string>
