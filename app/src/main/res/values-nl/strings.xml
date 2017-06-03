@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2013 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="app_name">Lightning</string>
+    <string name="action_new_tab">Nieuw Tabblad</string>
+    <string name="action_share">Deel</string>
+    <string name="action_history">Geschiedenis</string>
+    <string name="action_bookmarks">Bladwijzers</string>
+    <string name="action_add_bookmark">Bladwijzer toevoegen</string>
+    <string name="action_copy">Kopieer link</string>
+    <string name="action_forward">Voorwaarts</string>
+    <string name="settings">Instellingen</string>
+    <string name="location">Locatie toegang</string>
+    <string name="password">Bewaar jouw paswoord</string>
+    <string name="agent">Gebruikersagent</string>
+    <string name="flash">Adobe Flash activeren</string>
+    <string name="home">Startpagina</string>
+    <string name="fullscreen">Volledig scherm modus</string>
+    <string name="java">JavaScript activeren</string>
+    <string name="download">Download naar locatie</string>
+    <string name="settings_advanced">Geavanceerde instellingen</string>
+    <string name="apache">Apache License 2.0</string>
+    <string name="version">Application versie</string>
+    <string name="cache">Wis cache bij beëindigen</string>
+    <string name="reflow">Text herschikking activeren</string>
+    <string name="block">Blokkeer afbeeldingen</string>
+    <string name="window">Sta sites toe om in een nieuwe pagina te openen</string>
+    <string name="cookies">Cookies activeren</string>
+    <string name="importbookmarks">Importeer bladwijzers van browser</string>
+    <string name="size">Tekst grootte</string>
+    <string name="recommended">Aanbevolen</string>
+    <string name="search">Zoekmachine</string>
+    <string name="search_hint">Zoek</string>
+    <string name="wideViewPort">Gebruik wijde viewport</string>
+    <string name="overViewMode">Laad pagina\'s in overzichtsweergave</string>
+    <string name="restore">Herstel tabbladen bij opstart</string>
+    <string name="supported_browsers_title">Ondersteunde browsers</string>
+    <string name="stock_browser">Standaard browser</string>
+    <string name="stock_browser_unavailable">Geen standaard browser gevonden</string>
+    <string name="stock_browser_available">standaard browser gevonden</string>
+    <string name="fullScreenOption">Verberg status balk tijdens surfen</string>
+    <string name="clear_cookies">Wis browser cookies</string>
+    <string name="clear_history">Wis browser historiek</string>
+    <string name="dialog_image">Wat wil je met deze afbeelding doen?</string>
+    <string name="action_download">Download</string>
+    <string name="action_open">Open</string>
+    <string name="dialog_link">Wat wil je met deze link doen?</string>
+    <string name="dialog_title_share">Deel deze pagina</string>
+    <string name="dialog_history_long_press">Wat wil je met dit item doen?</string>
+    <string name="dialog_bookmark">Wat wil je met deze bladwijzer doen?</string>
+    <string name="action_delete">Verwijderen</string>
+    <string name="action_blank">Witte pagina</string>
+    <string name="agent_default">Standaard</string>
+    <string name="agent_desktop">Desktop</string>
+    <string name="agent_mobile">Mobile</string>
+    <string name="agent_custom">Aangepast</string>
+    <string name="title_search_engine">Zoekmachine</string>
+    <string name="action_ok">OK</string>
+    <string name="dialog_download">Wil je dit bestand downloaden?</string>
+    <string name="action_cancel">Annuleer</string>
+    <string name="title_warning">Waarschuwing</string>
+    <string name="dialog_adobe_not_installed">Adobe Flash Player werd niet gevonden.\nGelieve Flash Player te installeren.</string>
+    <string name="title_user_agent">User Agent</string>
+    <string name="title_download_location">Locatie downloaden</string>
+    <string name="title_custom_homepage">Aangepaste startpagina</string>
+    <string name="action_webpage">Webpagina</string>
+    <string name="title_clear_history">Wis historiek</string>
+    <string name="title_clear_cookies">Wisk cookies</string>
+    <string name="dialog_history">Wil je alle browser historiek wissen?</string>
+    <string name="dialog_cookies">Wil je alle browser cookies wissen?</string>
+    <string name="action_yes">Ja</string>
+    <string name="action_no">Nee</string>
+    <string name="title_text_size">Tekst grootte</string>
+    <string name="size_largest">Grootst</string>
+    <string name="size_large">Groot</string>
+    <string name="size_normal">Normaal</string>
+    <string name="size_small">Smal</string>
+    <string name="size_smallest">Smaller</string>
+    <string name="title_error">Fout</string>
+    <string name="dialog_import_error">Er werd geen browser gevonden om bladwijzers van te importeren.</string>
+    <string name="hint_title">Titel</string>
+    <string name="hint_url">URL</string>
+    <string name="title_edit_bookmark">Wijzig bladwijzer</string>
+    <string name="action_edit">Wijzig</string>
+    <string name="action_incognito">Nieuw incognito tabblad</string>
+    <string name="action_homepage">Standaard</string>
+    <string name="action_back">Terug</string>
+    <string name="action_find">Vind in pagina</string>
+    <string name="download_pending">Download starten\u2026</string>
+    <string name="cannot_download">Kan alleen \"http\" of \"https\" URLs downloaden.</string>
+    <string name="problem_download">ongeldige URL gevonden, kan niet downloaden</string>
+    <string name="problem_location_download">Kan niet downloaden naar de bestemming</string>
+    <string name="download_no_sdcard_dlg_title">Geen SD kaart</string>
+    <string name="download_no_sdcard_dlg_msg">USB opslag is vereist om bestand te downloaden.</string>
+    <string name="download_sdcard_busy_dlg_title">USB opslag niet beschikbaar</string>
+    <string name="download_sdcard_busy_dlg_msg">Opslag is bezet. Om downloads toe te laten, gelieve USB opslag uit te zetten in het notificatiecentrum.</string>
+    <string name="incognito_cookies">Cookies activeren in incognito modus</string>
+    <string name="title_flash">Adobe Flash</string>
+    <string name="action_manual">Manueel</string>
+    <string name="action_auto">Auto</string>
+    <string name="action_follow_me">Contacteer Mij</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="clear_cache">Wis cache</string>
+    <string name="message_cache_cleared">Cache gewist</string>
+    <string name="message_import">Bladwijzers zijn geïmporteerd</string>
+    <string name="message_clear_history">Historiek gewist</string>
+    <string name="message_cookies_cleared">Cookies gewist</string>
+    <string name="max_tabs">Maximum aantal tabbladen bereikt</string>
+    <string name="message_text_copied">Tekst gekopieerd naar klembord</string>
+    <string name="message_link_copied">Link gekopieerd naar klembord</string>
+    <string name="custom_url">Aangepaste URL</string>
+    <string name="message_blocked_local">Lokaal bestand werd geblokkeerd</string>
+    <string name="licenses">Open Source Licenses</string>
+    <string name="suggestion">Zoek voor</string>
+    <string name="block_ads">Blokkeer advertenties</string>
+    <string name="message_insecure_connection">Verbinding met deze site is niet veilig :\n%1$s\nToch doorgaan?</string>
+    <string name="message_certificate_date_invalid">datum van certificaat is ongeldig</string>
+    <string name="message_certificate_expired">certificaat is vervallen</string>
+    <string name="message_certificate_domain_mismatch">domein in certificaat komt niet overeen met site domein</string>
+    <string name="message_certificate_invalid">certificaat is ongeldig</string>
+    <string name="message_certificate_not_yet_valid">certificaat is nog niet geldig</string>
+    <string name="message_certificate_untrusted">certificaat wordt niet vertrouwd</string>
+    <string name="title_form_resubmission">Formulier herverzending</string>
+    <string name="message_form_resubmission">Wil je de gegevens opnieuw verzenden?</string>
+    <string name="message_location">\nWil jouw locatie gebruiken</string>
+    <string name="action_allow">Toestaan</string>
+    <string name="action_dont_allow">Niet toestaan</string>
+    <string name="title_sign_in">Inloggen</string>
+    <string name="hint_username">Gebruiksnaam</string>
+    <string name="hint_password">Paswoord</string>
+    <string name="google_suggestions">Zoeksuggesties</string>
+    <string name="powered_by_google">Ondersteund door Google</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>None</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manual</item>
+    </string-array>
+    <string name="manual_proxy">Manuele proxy</string>
+    <string name="host">Host:</string>
+    <string name="port">Poort:</string>
+    <string name="use_tor_prompt">Je lijkt Orbit te hebben geïnstalleerd. Wil je Tor gebruiken?</string>
+    <string name="use_i2p_prompt">Je lijkt I2P te hebben geïnstalleerd. Wil je I2P gebruiken?</string>
+    <string name="install_orbot">Gelieve Orbot te installeren om proxies te doen met Tor.</string>
+    <string name="i2p_not_running">I2P draait niet.</string>
+    <string name="i2p_tunnels_not_ready">I2P tunnels zijn niet klaar.</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="clear_cookies_exit">Wis cookies bij beëindigen</string>
+    <string name="clear_history_exit">Wis geschiedenis bij beëindigen</string>
+    <string name="folder_default">Standaard</string>
+    <string name="folder_custom">Aangepast</string>
+    <string name="untitled">Geen titel</string>
+    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="freeware">Freeware</string>
+    <string name="android_open_source_project">Android Open Source Project</string>
+    <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
+    <string name="deleted_tab">Oud tabblad heropend</string>
+    <string name="rendering_mode">Render modus</string>
+    <string name="name_inverted">Omgekeerd</string>
+    <string name="name_grayscale">Zwart-wit</string>
+    <string name="name_inverted_grayscale">Omgkeerd zwart-wit</string>
+    <string name="name_increase_contrast">Contrast vergroten</string>
+    <string name="name_normal">Normaal</string>
+    <string name="sync_history">Synchroniseer geschiedenis met Google</string>
+    <string name="title_file_chooser">Bestand kiezer</string>
+    <string name="library_netcipher">NetCipher</string>
+    <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="export_bookmarks">Exporteer bladwijzers naar backup</string>
+    <string name="import_backup">Importeer bladwijzers van backup</string>
+    <string name="bookmark_export_path">Bladwijzers geëxporteerd naar</string>
+    <string name="bookmark_settings">Bladwijzer instellingen</string>
+    <string name="import_bookmark_error">Kon bladwijzers niet van bestand laden</string>
+    <string name="title_chooser">Kies een bestand</string>
+    <string name="settings_general">Algemene instellingen</string>
+    <string name="settings_display">Scherm instellingen</string>
+    <string name="settings_privacy">Privacy instellingen</string>
+    <string name="settings_about">Over</string>
+    <string name="settings_about_explain">Details over versie, auteur en licensie.</string>
+    <string name="close_tab">Sluit tabblad</string>
+    <string name="close_all_tabs">Alle tabbladen sluiten</string>
+    <string name="close_other_tabs">Alle andere tabbladen sluiten</string>
+    <string name="third_party">Blokkeer derde partij cookies</string>
+    <string name="color_mode">Activeer kleurmodus</string>
+    <string name="reading_mode">Leesmodus</string>
+    <string name="loading">Laden&#8230;</string>
+    <string name="loading_failed">Kon niets van deze pagina laden.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML Parser</string>
+    <string name="mit_license">MIT licensie</string>
+    <string name="url_contents">URL box inhoud</string>
+    <string name="text_encoding">Tekst codering</string>
+    <string-array name="url_content_array">
+        <item>Domein (standaard)</item>
+        <item>URL</item>
+        <item>Titel</item>
+    </string-array>
+    <string name="invert_color">Keer kleur om</string>
+    <string name="dark_theme">Donker thema</string>
+    <string name="tabs">Tabbladen</string>
+    <string name="theme">App thema</string>
+    <string name="light_theme">Licht thema</string>
+    <string name="black_theme">Zwart Thema (AMOLED)</string>
+    <string name="folder">Map naam</string>
+    <string name="action_folder">Map</string>
+    <string name="action_rename">Geef nieuwe naam</string>
+    <string name="title_rename_folder">Geef map naam</string>
+    <string name="dialog_folder">Wat wil je met deze map doen?</string>
+    <string name="clear_web_storage">Wis web opslag</string>
+    <string name="clear_web_storage_exit">Wis web opslag bij beëindigen</string>
+    <string name="message_web_storage_cleared">Web opslag gewist</string>
+    <string name="hosts_source">Bron hosts bestand om advertenties te blokkeren</string>
+    <string name="settings_adblock">Advertentie blokkeer instellingen</string>
+    <string name="tabs_in_drawer">Toon tabbladen in navigatie lade</string>
+    <string name="do_not_track">Vraag \'Niet Volgen\'</string>
+    <string name="remove_identifying_headers">Verwijder identificatie hoofden</string>
+    <string name="action_add_to_homescreen">Voeg aan startscherm toe</string>
+    <string name="message_added_to_homescreen">Snelkoppeling aan startscherm toegevoegd</string>
+    <string name="action_delete_all_bookmarks">Verwijder alle bladwijzers</string>
+</resources>

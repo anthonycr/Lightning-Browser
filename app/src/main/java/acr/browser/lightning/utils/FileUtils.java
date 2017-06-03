@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Schedulers;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,14 +20,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.constant.Constants;
-
 /**
  * A utility class containing helpful methods
  * pertaining to file storage.
  */
 public class FileUtils {
+
+    private static final String TAG = "FileUtils";
 
     /**
      * Writes a bundle to persistent storage in the files directory
@@ -37,7 +38,7 @@ public class FileUtils {
      * @param name   the name of the file to store the bundle in.
      */
     public static void writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
-        BrowserApp.getIOThread().execute(new Runnable() {
+        Schedulers.io().execute(new Runnable() {
             @Override
             public void run() {
                 File outputFile = new File(app.getFilesDir(), name);
@@ -51,7 +52,7 @@ public class FileUtils {
                     outputStream.flush();
                     parcel.recycle();
                 } catch (IOException e) {
-                    Log.e(Constants.TAG, "Unable to write bundle to storage");
+                    Log.e(TAG, "Unable to write bundle to storage");
                 } finally {
                     Utils.close(outputStream);
                 }
@@ -103,7 +104,7 @@ public class FileUtils {
             parcel.recycle();
             return out;
         } catch (FileNotFoundException e) {
-            Log.e(Constants.TAG, "Unable to read bundle from storage");
+            Log.e(TAG, "Unable to read bundle from storage");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -131,14 +132,15 @@ public class FileUtils {
             throwable.printStackTrace(new PrintStream(outputStream));
             outputStream.flush();
         } catch (IOException e) {
-            Log.e(Constants.TAG, "Unable to write bundle to storage");
+            Log.e(TAG, "Unable to write bundle to storage");
         } finally {
             Utils.close(outputStream);
         }
     }
 
     @NonNull
-    public static String readStringFromFile(@NonNull InputStream inputStream, @NonNull String encoding) throws IOException {
+    public static String readStringFromStream(@NonNull InputStream inputStream,
+                                              @NonNull String encoding) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, encoding));
         StringBuilder result = new StringBuilder();
         String line;
@@ -146,6 +148,16 @@ public class FileUtils {
             result.append(line);
         }
         return result.toString();
+    }
+
+    /**
+     * Converts megabytes to bytes.
+     *
+     * @param megaBytes the number of megabytes.
+     * @return the converted bytes.
+     */
+    public static long megabytesToBytes(long megaBytes) {
+        return megaBytes * 1024 * 1024;
     }
 
 }

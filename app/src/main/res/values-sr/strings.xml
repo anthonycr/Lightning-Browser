@@ -70,7 +70,7 @@
     <string name="agent_custom">Посебна</string>
     <string name="title_search_engine">Мотор претраге</string>
     <string name="action_ok">У реду</string>
-    <string name="dialog_download">Желите ли да преузмете овај фајл?</string>
+    <string name="dialog_download">Желите ли да преузмете овај фајл? (%1$s)</string>
     <string name="action_cancel">Одустани</string>
     <string name="title_warning">Упозорење</string>
     <string name="dialog_adobe_not_installed">Адобов Флеш није откривен.\nИнсталирајте Флеш Плејер.</string>

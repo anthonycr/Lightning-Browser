@@ -8,14 +8,10 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import acr.browser.lightning.BuildConfig;
-
 public final class Constants {
 
     private Constants() {
     }
-
-    public static final boolean FULL_VERSION = BuildConfig.FULL_VERSION;
 
     // Hardcoded user agents
     public static final String DESKTOP_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36";
@@ -67,13 +63,10 @@ public final class Constants {
     public static final String ABOUT = "about:";
     public static final String FOLDER = "folder://";
 
-    // Application log tag
-    public static final String TAG = "Lightning";
-
     // These should match the order of @array/proxy_choices_array
     @IntDef({NO_PROXY, PROXY_ORBOT, PROXY_I2P, PROXY_MANUAL})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface PROXY {}
+    public @interface Proxy {}
 
     public static final int NO_PROXY = 0;
     public static final int PROXY_ORBOT = 1;

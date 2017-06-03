@@ -23,15 +23,12 @@ import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
-import com.squareup.otto.Bus;
-
 import java.io.File;
 import java.io.IOException;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
-import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
@@ -42,21 +39,13 @@ import acr.browser.lightning.utils.Utils;
  */
 public class DownloadHandler {
 
-    private static final String TAG = DownloadHandler.class.getSimpleName();
+    private static final String TAG = "DownloadHandler";
+
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     public static final String DEFAULT_DOWNLOAD_PATH =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             .getPath();
-
-    @Nullable
-    public static String guessFileExtension(@NonNull String filename) {
-        int lastIndex = filename.lastIndexOf('.') + 1;
-        if (lastIndex > 0 && filename.length() > lastIndex) {
-            return filename.substring(lastIndex, filename.length());
-        }
-        return null;
-    }
 
     /**
      * Notify the host application a download should be done, or that the data
@@ -157,7 +146,6 @@ public class DownloadHandler {
     private static void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
                                                 String url, String userAgent,
                                                 String contentDisposition, @Nullable String mimetype) {
-        final Bus eventBus = BrowserApp.getBus(context);
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
@@ -225,7 +213,7 @@ public class DownloadHandler {
             Utils.showSnackbar(context, R.string.problem_location_download);
             return;
         }
-        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(guessFileExtension(filename));
+        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
         Log.d(TAG, "New mimetype: " + newMimeType);
         request.setMimeType(newMimeType);
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));

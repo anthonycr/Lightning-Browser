@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,9 +16,9 @@ import java.lang.reflect.Method;
 
 public class MemoryLeakUtils {
 
-    private static final String TAG = MemoryLeakUtils.class.getSimpleName();
+    private static final String TAG = "MemoryLeakUtils";
 
-    private static Method sFinishInputLocked = null;
+    @Nullable private static Method sFinishInputLocked = null;
 
     /**
      * Clears the mNextServedView and mServedView in

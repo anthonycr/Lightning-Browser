@@ -48,6 +48,9 @@
         android:id="@+id/action_history"
         android:title="@string/action_history"/>
     <item
+        android:id="@+id/action_downloads"
+        android:title="@string/action_downloads"/>
+    <item
         android:id="@+id/action_find"
         android:title="@string/action_find"/>
     <item

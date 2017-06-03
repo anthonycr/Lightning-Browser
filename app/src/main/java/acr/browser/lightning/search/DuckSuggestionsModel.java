@@ -6,33 +6,32 @@ import android.support.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.FileUtils;
 
-final class DuckSuggestionsTask extends BaseSuggestionsTask {
+final class DuckSuggestionsModel extends BaseSuggestionsModel {
 
-    private static final String ENCODING = "UTF-8";
+    @NonNull private static final String ENCODING = "UTF-8";
     @NonNull private final String mSearchSubtitle;
 
-    DuckSuggestionsTask(@NonNull String query,
-                        @NonNull Application application,
-                        @NonNull SuggestionsResult callback) {
-        super(query, application, callback);
+    DuckSuggestionsModel(@NonNull Application application) {
+        super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 
+    @NonNull
     @Override
-    protected String getQueryUrl(@NonNull String query, @NonNull String language) {
+    protected String createQueryUrl(@NonNull String query, @NonNull String language) {
         return "https://duckduckgo.com/ac/?q=" + query;
     }
 
     @Override
-    protected void parseResults(FileInputStream inputStream, List<HistoryItem> results) throws Exception {
-        String content = FileUtils.readStringFromFile(inputStream, ENCODING);
+    protected void parseResults(@NonNull InputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
+        String content = FileUtils.readStringFromStream(inputStream, ENCODING);
         JSONArray jsonArray = new JSONArray(content);
         int counter = 0;
         for (int n = 0, size = jsonArray.length(); n < size; n++) {
@@ -45,11 +44,6 @@ final class DuckSuggestionsTask extends BaseSuggestionsTask {
                 break;
             }
         }
-    }
-
-    @Override
-    protected String getEncoding() {
-        return ENCODING;
     }
 
 }

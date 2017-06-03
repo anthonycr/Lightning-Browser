@@ -1,8 +1,1 @@
 include ':app'
-include ':libnetcipher'
-include ':bonsai'
-include ':animated-progress-bar'
-
-project(':libnetcipher').projectDir = new File(rootProject.projectDir, 'external/netcipher/libnetcipher')
-project(':bonsai').projectDir = new File(rootProject.projectDir, 'Bonsai/library')
-project(':animated-progress-bar').projectDir = new File(rootProject.projectDir, 'AnimatedProgressBar/library')
