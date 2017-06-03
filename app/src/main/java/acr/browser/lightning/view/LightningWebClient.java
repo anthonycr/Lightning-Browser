@@ -22,7 +22,6 @@ import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
-import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -360,8 +359,8 @@ public class LightningWebClient extends WebViewClient {
                 }
                 return true;
             }
-        } else if (url.startsWith("file://")) {
-            File file = new File(url.replace("file://", ""));
+        } else if (url.startsWith(Constants.FILE)) {
+            File file = new File(url.replace(Constants.FILE, ""));
 
             if (file.exists()) {
                 String newMimeType = MimeTypeMap.getSingleton()

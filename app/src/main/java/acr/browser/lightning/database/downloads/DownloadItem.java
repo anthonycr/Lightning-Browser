@@ -25,6 +25,7 @@ public class DownloadItem implements Comparable<DownloadItem> {
     public DownloadItem(@NonNull String url, @NonNull String title, @NonNull String size) {
         Preconditions.checkNonNull(url);
         Preconditions.checkNonNull(title);
+        Preconditions.checkNonNull(size);
         this.mUrl = url;
         this.mTitle = title;
         this.mContentSize = size;

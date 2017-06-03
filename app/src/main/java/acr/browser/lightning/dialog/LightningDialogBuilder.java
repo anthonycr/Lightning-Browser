@@ -16,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
+import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 
@@ -39,14 +40,13 @@ import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * TODO Rename this class it doesn't build dialogs only for bookmarks
  * <p/>
  * Created by Stefano Pacifici on 02/09/15, based on Anthony C. Restaino's code.
  */
 public class LightningDialogBuilder {
+    public static final String TAG = "LightningDialogBuilder";
 
     public enum NewTab {
         FOREGROUND,
@@ -173,8 +173,15 @@ public class LightningDialogBuilder {
             new BrowserDialog.Item(R.string.dialog_delete_all_downloads) {
                 @Override
                 public void onClick() {
-                    mDownloadsModel.deleteAllDownloads().subscribeOn(Schedulers.io()).subscribe();
-                    uiController.handleDownloadDeleted();
+                    mDownloadsModel.deleteAllDownloads()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.main())
+                            .subscribe(new CompletableOnSubscribe() {
+                                @Override
+                                public void onComplete() {
+                                    uiController.handleDownloadDeleted();
+                                }
+                            });
                 }
             });
     }

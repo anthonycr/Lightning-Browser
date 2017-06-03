@@ -12,7 +12,7 @@ import java.util.List;
  * The interface that should be used to
  * communicate with the download database.
  * <p>
- * Created by anthonycr on 5/6/17.
+ * Created by df1e on 29/5/17.
  */
 public interface DownloadsModel {
 
