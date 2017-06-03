@@ -48,10 +48,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private CharSequence[] mProxyChoices;
-    private Preference proxy, useragent, downloadloc, home, searchengine, searchsSuggestions;
+    private Preference proxy, /*useragent,*/ downloadloc, /*home, searchengine,*/ searchsSuggestions;
     private String mDownloadLocation;
-    private int mAgentChoice;
-    private String mHomepage;
+//    private int mAgentChoice;
+//    private String mHomepage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,10 +66,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
     private void initPrefs() {
         proxy = findPreference(SETTINGS_PROXY);
-        useragent = findPreference(SETTINGS_USERAGENT);
+//        useragent = findPreference(SETTINGS_USERAGENT);
         downloadloc = findPreference(SETTINGS_DOWNLOAD);
-        home = findPreference(SETTINGS_HOME);
-        searchengine = findPreference(SETTINGS_SEARCHENGINE);
+//        home = findPreference(SETTINGS_HOME);
+//        searchengine = findPreference(SETTINGS_SEARCHENGINE);
         searchsSuggestions = findPreference(SETTINGS_SUGGESTIONS);
 
         CheckBoxPreference cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
@@ -79,19 +79,19 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         CheckBoxPreference cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
 
         proxy.setOnPreferenceClickListener(this);
-        useragent.setOnPreferenceClickListener(this);
+//        useragent.setOnPreferenceClickListener(this);
         downloadloc.setOnPreferenceClickListener(this);
-        home.setOnPreferenceClickListener(this);
+//        home.setOnPreferenceClickListener(this);
         searchsSuggestions.setOnPreferenceClickListener(this);
-        searchengine.setOnPreferenceClickListener(this);
+//        searchengine.setOnPreferenceClickListener(this);
         cbFlash.setOnPreferenceChangeListener(this);
         cbAds.setOnPreferenceChangeListener(this);
         cbImages.setOnPreferenceChangeListener(this);
         cbJsScript.setOnPreferenceChangeListener(this);
         cbColorMode.setOnPreferenceChangeListener(this);
 
-        mAgentChoice = mPreferenceManager.getUserAgentChoice();
-        mHomepage = mPreferenceManager.getHomepage();
+//        mAgentChoice = mPreferenceManager.getUserAgentChoice();
+//        mHomepage = mPreferenceManager.getHomepage();
         mDownloadLocation = mPreferenceManager.getDownloadDirectory();
         mProxyChoices = getResources().getStringArray(R.array.proxy_choices_array);
 
@@ -106,7 +106,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             mPreferenceManager.setFlashSupport(0);
         }
 
-        setSearchEngineSummary(mPreferenceManager.getSearchChoice());
+//        setSearchEngineSummary(mPreferenceManager.getSearchChoice());
 
         downloadloc.setSummary(mDownloadLocation);
 
@@ -117,35 +117,38 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SUGGESTION_DUCK:
                 searchsSuggestions.setSummary(R.string.powered_by_duck);
                 break;
+            case SUGGESTION_BAIDU:
+                searchsSuggestions.setSummary(R.string.powered_by_baidu);
+                break;
             case SUGGESTION_NONE:
                 searchsSuggestions.setSummary(R.string.search_suggestions_off);
                 break;
         }
 
 
-        if (mHomepage.contains(Constants.SCHEME_HOMEPAGE)) {
-            home.setSummary(getResources().getString(R.string.action_homepage));
-        } else if (mHomepage.contains(Constants.SCHEME_BLANK)) {
-            home.setSummary(getResources().getString(R.string.action_blank));
-        } else if (mHomepage.contains(Constants.SCHEME_BOOKMARKS)) {
-            home.setSummary(getResources().getString(R.string.action_bookmarks));
-        } else {
-            home.setSummary(mHomepage);
-        }
+//        if (mHomepage.contains(Constants.SCHEME_HOMEPAGE)) {
+//            home.setSummary(getResources().getString(R.string.action_homepage));
+//        } else if (mHomepage.contains(Constants.SCHEME_BLANK)) {
+//            home.setSummary(getResources().getString(R.string.action_blank));
+//        } else if (mHomepage.contains(Constants.SCHEME_BOOKMARKS)) {
+//            home.setSummary(getResources().getString(R.string.action_bookmarks));
+//        } else {
+//            home.setSummary(mHomepage);
+//        }
 
-        switch (mAgentChoice) {
-            case 1:
-                useragent.setSummary(getResources().getString(R.string.agent_default));
-                break;
-            case 2:
-                useragent.setSummary(getResources().getString(R.string.agent_desktop));
-                break;
-            case 3:
-                useragent.setSummary(getResources().getString(R.string.agent_mobile));
-                break;
-            case 4:
-                useragent.setSummary(getResources().getString(R.string.agent_custom));
-        }
+//        switch (mAgentChoice) {
+//            case 1:
+//                useragent.setSummary(getResources().getString(R.string.agent_default));
+//                break;
+//            case 2:
+//                useragent.setSummary(getResources().getString(R.string.agent_desktop));
+//                break;
+//            case 3:
+//                useragent.setSummary(getResources().getString(R.string.agent_mobile));
+//                break;
+//            case 4:
+//                useragent.setSummary(getResources().getString(R.string.agent_custom));
+//        }
 
         int flashNum = mPreferenceManager.getFlashSupport();
         boolean imagesBool = mPreferenceManager.getBlockImagesEnabled();
@@ -161,22 +164,22 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
     }
 
-    private void searchUrlPicker() {
-
-        BrowserDialog.showEditText(mActivity,
-            R.string.custom_url,
-            R.string.custom_url,
-            mPreferenceManager.getSearchUrl(),
-            R.string.action_ok,
-            new BrowserDialog.EditorListener() {
-                @Override
-                public void onClick(String text) {
-                    mPreferenceManager.setSearchUrl(text);
-                    searchengine.setSummary(mActivity.getString(R.string.custom_url) + ": " + text);
-                }
-            });
-
-    }
+//    private void searchUrlPicker() {
+//
+//        BrowserDialog.showEditText(mActivity,
+//            R.string.custom_url,
+//            R.string.custom_url,
+//            mPreferenceManager.getSearchUrl(),
+//            R.string.action_ok,
+//            new BrowserDialog.EditorListener() {
+//                @Override
+//                public void onClick(String text) {
+//                    mPreferenceManager.setSearchUrl(text);
+//                    searchengine.setSummary(mActivity.getString(R.string.custom_url) + ": " + text);
+//                }
+//            });
+//
+//    }
 
     private void getFlashChoice() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
@@ -285,82 +288,82 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void searchDialog() {
-        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-        picker.setTitle(getResources().getString(R.string.title_search_engine));
-        CharSequence[] chars = {getResources().getString(R.string.custom_url), "Google",
-            "Ask", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
-            "DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
-            "Yandex (Russian)"};
+//    private void searchDialog() {
+//        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+//        picker.setTitle(getResources().getString(R.string.title_search_engine));
+//        CharSequence[] chars = {getResources().getString(R.string.custom_url), "Google",
+//            "Ask", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
+//            "DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
+//            "Yandex (Russian)"};
+//
+//        int n = mPreferenceManager.getSearchChoice();
+//
+//        picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                mPreferenceManager.setSearchChoice(which);
+//                setSearchEngineSummary(which);
+//            }
+//        });
+//        picker.setPositiveButton(R.string.action_ok, null);
+//        Dialog dialog = picker.show();
+//        BrowserDialog.setDialogSize(mActivity, dialog);
+//    }
 
-        int n = mPreferenceManager.getSearchChoice();
-
-        picker.setSingleChoiceItems(chars, n, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mPreferenceManager.setSearchChoice(which);
-                setSearchEngineSummary(which);
-            }
-        });
-        picker.setPositiveButton(R.string.action_ok, null);
-        Dialog dialog = picker.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
-    }
-
-    private void homepageDialog() {
-        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
-        picker.setTitle(R.string.home);
-        mHomepage = mPreferenceManager.getHomepage();
-        int n;
-        switch (mHomepage) {
-            case Constants.SCHEME_HOMEPAGE:
-                n = 0;
-                break;
-            case Constants.SCHEME_BLANK:
-                n = 1;
-                break;
-            case Constants.SCHEME_BOOKMARKS:
-                n = 2;
-                break;
-            default:
-                n = 3;
-                break;
-        }
-
-        picker.setSingleChoiceItems(R.array.homepage, n,
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case 0:
-                            mPreferenceManager.setHomepage(Constants.SCHEME_HOMEPAGE);
-                            home.setSummary(getResources().getString(R.string.action_homepage));
-                            break;
-                        case 1:
-                            mPreferenceManager.setHomepage(Constants.SCHEME_BLANK);
-                            home.setSummary(getResources().getString(R.string.action_blank));
-                            break;
-                        case 2:
-                            mPreferenceManager.setHomepage(Constants.SCHEME_BOOKMARKS);
-                            home.setSummary(getResources().getString(R.string.action_bookmarks));
-                            break;
-                        case 3:
-                            homePicker();
-                            break;
-                    }
-                }
-            });
-        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
-        Dialog dialog = picker.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
-    }
+//    private void homepageDialog() {
+//        AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
+//        picker.setTitle(R.string.home);
+//        mHomepage = mPreferenceManager.getHomepage();
+//        int n;
+//        switch (mHomepage) {
+//            case Constants.SCHEME_HOMEPAGE:
+//                n = 0;
+//                break;
+//            case Constants.SCHEME_BLANK:
+//                n = 1;
+//                break;
+//            case Constants.SCHEME_BOOKMARKS:
+//                n = 2;
+//                break;
+//            default:
+//                n = 3;
+//                break;
+//        }
+//
+//        picker.setSingleChoiceItems(R.array.homepage, n,
+//            new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    switch (which) {
+//                        case 0:
+//                            mPreferenceManager.setHomepage(Constants.SCHEME_HOMEPAGE);
+//                            home.setSummary(getResources().getString(R.string.action_homepage));
+//                            break;
+//                        case 1:
+//                            mPreferenceManager.setHomepage(Constants.SCHEME_BLANK);
+//                            home.setSummary(getResources().getString(R.string.action_blank));
+//                            break;
+//                        case 2:
+//                            mPreferenceManager.setHomepage(Constants.SCHEME_BOOKMARKS);
+//                            home.setSummary(getResources().getString(R.string.action_bookmarks));
+//                            break;
+//                        case 3:
+//                            homePicker();
+//                            break;
+//                    }
+//                }
+//            });
+//        picker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+//        Dialog dialog = picker.show();
+//        BrowserDialog.setDialogSize(mActivity, dialog);
+//    }
 
     private void suggestionsDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.search_suggestions));
 
-        int currentChoice = 2;
+        int currentChoice = 3;
 
         switch (mPreferenceManager.getSearchSuggestionChoice()) {
             case SUGGESTION_GOOGLE:
@@ -369,8 +372,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SUGGESTION_DUCK:
                 currentChoice = 1;
                 break;
-            case SUGGESTION_NONE:
+            case SUGGESTION_BAIDU:
                 currentChoice = 2;
+                break;
+            case SUGGESTION_NONE:
+                currentChoice = 3;
                 break;
         }
 
@@ -388,6 +394,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                             searchsSuggestions.setSummary(R.string.powered_by_duck);
                             break;
                         case 2:
+                            mPreferenceManager.setSearchSuggestionChoice(Suggestion.SUGGESTION_BAIDU);
+                            searchsSuggestions.setSummary(R.string.powered_by_baidu);
+                            break;
+                        case 3:
                             mPreferenceManager.setSearchSuggestionChoice(Suggestion.SUGGESTION_NONE);
                             searchsSuggestions.setSummary(R.string.search_suggestions_off);
                             break;
@@ -399,28 +409,28 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void homePicker() {
-        String currentHomepage;
-        mHomepage = mPreferenceManager.getHomepage();
-        if (!mHomepage.startsWith(Constants.ABOUT)) {
-            currentHomepage = mHomepage;
-        } else {
-            currentHomepage = "https://www.google.com";
-        }
-
-        BrowserDialog.showEditText(mActivity,
-            R.string.title_custom_homepage,
-            R.string.title_custom_homepage,
-            currentHomepage,
-            R.string.action_ok,
-            new BrowserDialog.EditorListener() {
-                @Override
-                public void onClick(String text) {
-                    mPreferenceManager.setHomepage(text);
-                    home.setSummary(text);
-                }
-            });
-    }
+//    private void homePicker() {
+//        String currentHomepage;
+//        mHomepage = mPreferenceManager.getHomepage();
+//        if (!mHomepage.startsWith(Constants.ABOUT)) {
+//            currentHomepage = mHomepage;
+//        } else {
+//            currentHomepage = "https://www.google.com";
+//        }
+//
+//        BrowserDialog.showEditText(mActivity,
+//            R.string.title_custom_homepage,
+//            R.string.title_custom_homepage,
+//            currentHomepage,
+//            R.string.action_ok,
+//            new BrowserDialog.EditorListener() {
+//                @Override
+//                public void onClick(String text) {
+//                    mPreferenceManager.setHomepage(text);
+//                    home.setSummary(text);
+//                }
+//            });
+//    }
 
     private void downloadLocDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
@@ -453,52 +463,52 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void agentDialog() {
-        AlertDialog.Builder agentPicker = new AlertDialog.Builder(mActivity);
-        agentPicker.setTitle(getResources().getString(R.string.title_user_agent));
-        mAgentChoice = mPreferenceManager.getUserAgentChoice();
-        agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mPreferenceManager.setUserAgentChoice(which + 1);
-                    switch (which) {
-                        case 0:
-                            useragent.setSummary(getResources().getString(R.string.agent_default));
-                            break;
-                        case 1:
-                            useragent.setSummary(getResources().getString(R.string.agent_desktop));
-                            break;
-                        case 2:
-                            useragent.setSummary(getResources().getString(R.string.agent_mobile));
-                            break;
-                        case 3:
-                            useragent.setSummary(getResources().getString(R.string.agent_custom));
-                            agentPicker();
-                            break;
-                    }
-                }
-            });
-        agentPicker.setPositiveButton(getResources().getString(R.string.action_ok), null);
-        Dialog dialog = agentPicker.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
-    }
-
-    private void agentPicker() {
-
-        BrowserDialog.showEditText(mActivity,
-            R.string.title_user_agent,
-            R.string.title_user_agent,
-            mPreferenceManager.getUserAgentString(""),
-            R.string.action_ok,
-            new BrowserDialog.EditorListener() {
-                @Override
-                public void onClick(String text) {
-                    mPreferenceManager.setUserAgentString(text);
-                    useragent.setSummary(mActivity.getString(R.string.agent_custom));
-                }
-            });
-    }
+//    private void agentDialog() {
+//        AlertDialog.Builder agentPicker = new AlertDialog.Builder(mActivity);
+//        agentPicker.setTitle(getResources().getString(R.string.title_user_agent));
+//        mAgentChoice = mPreferenceManager.getUserAgentChoice();
+//        agentPicker.setSingleChoiceItems(R.array.user_agent, mAgentChoice - 1,
+//            new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    mPreferenceManager.setUserAgentChoice(which + 1);
+//                    switch (which) {
+//                        case 0:
+//                            useragent.setSummary(getResources().getString(R.string.agent_default));
+//                            break;
+//                        case 1:
+//                            useragent.setSummary(getResources().getString(R.string.agent_desktop));
+//                            break;
+//                        case 2:
+//                            useragent.setSummary(getResources().getString(R.string.agent_mobile));
+//                            break;
+//                        case 3:
+//                            useragent.setSummary(getResources().getString(R.string.agent_custom));
+//                            agentPicker();
+//                            break;
+//                    }
+//                }
+//            });
+//        agentPicker.setPositiveButton(getResources().getString(R.string.action_ok), null);
+//        Dialog dialog = agentPicker.show();
+//        BrowserDialog.setDialogSize(mActivity, dialog);
+//    }
+//
+//    private void agentPicker() {
+//
+//        BrowserDialog.showEditText(mActivity,
+//            R.string.title_user_agent,
+//            R.string.title_user_agent,
+//            mPreferenceManager.getUserAgentString(""),
+//            R.string.action_ok,
+//            new BrowserDialog.EditorListener() {
+//                @Override
+//                public void onClick(String text) {
+//                    mPreferenceManager.setUserAgentString(text);
+//                    useragent.setSummary(mActivity.getString(R.string.agent_custom));
+//                }
+//            });
+//    }
 
     private void downPicker() {
 
@@ -528,42 +538,42 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void setSearchEngineSummary(int which) {
-        switch (which) {
-            case 0:
-                searchUrlPicker();
-                break;
-            case 1:
-                searchengine.setSummary("Google");
-                break;
-            case 2:
-                searchengine.setSummary("Ask");
-                break;
-            case 3:
-                searchengine.setSummary("Bing");
-                break;
-            case 4:
-                searchengine.setSummary("Yahoo");
-                break;
-            case 5:
-                searchengine.setSummary("StartPage");
-                break;
-            case 6:
-                searchengine.setSummary("StartPage (Mobile)");
-                break;
-            case 7:
-                searchengine.setSummary("DuckDuckGo");
-                break;
-            case 8:
-                searchengine.setSummary("DuckDuckGo Lite");
-                break;
-            case 9:
-                searchengine.setSummary("Baidu");
-                break;
-            case 10:
-                searchengine.setSummary("Yandex");
-        }
-    }
+//    private void setSearchEngineSummary(int which) {
+//        switch (which) {
+//            case 0:
+//                searchUrlPicker();
+//                break;
+//            case 1:
+//                searchengine.setSummary("Google");
+//                break;
+//            case 2:
+//                searchengine.setSummary("Ask");
+//                break;
+//            case 3:
+//                searchengine.setSummary("Bing");
+//                break;
+//            case 4:
+//                searchengine.setSummary("Yahoo");
+//                break;
+//            case 5:
+//                searchengine.setSummary("StartPage");
+//                break;
+//            case 6:
+//                searchengine.setSummary("StartPage (Mobile)");
+//                break;
+//            case 7:
+//                searchengine.setSummary("DuckDuckGo");
+//                break;
+//            case 8:
+//                searchengine.setSummary("DuckDuckGo Lite");
+//                break;
+//            case 9:
+//                searchengine.setSummary("Baidu");
+//                break;
+//            case 10:
+//                searchengine.setSummary("Yandex");
+//        }
+//    }
 
     @Override
     public boolean onPreferenceClick(@NonNull Preference preference) {
@@ -571,18 +581,18 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SETTINGS_PROXY:
                 proxyChoicePicker();
                 return true;
-            case SETTINGS_USERAGENT:
-                agentDialog();
-                return true;
+//            case SETTINGS_USERAGENT:
+//                agentDialog();
+//                return true;
             case SETTINGS_DOWNLOAD:
                 downloadLocDialog();
                 return true;
-            case SETTINGS_HOME:
-                homepageDialog();
-                return true;
-            case SETTINGS_SEARCHENGINE:
-                searchDialog();
-                return true;
+//            case SETTINGS_HOME:
+//                homepageDialog();
+//                return true;
+//            case SETTINGS_SEARCHENGINE:
+//                searchDialog();
+//                return true;
             case SETTINGS_SUGGESTIONS:
                 suggestionsDialog();
                 return true;

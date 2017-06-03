@@ -70,6 +70,7 @@ public class PreferenceManager {
     public enum Suggestion {
         SUGGESTION_GOOGLE,
         SUGGESTION_DUCK,
+        SUGGESTION_BAIDU,
         SUGGESTION_NONE
     }
 
@@ -104,7 +105,7 @@ public class PreferenceManager {
     }
 
     public boolean getAdBlockEnabled() {
-        return mPrefs.getBoolean(Name.BLOCK_ADS, false);
+        return mPrefs.getBoolean(Name.BLOCK_ADS, true);
     }
 
     public boolean getBlockImagesEnabled() {
@@ -166,7 +167,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getHomepage() {
-        return mPrefs.getString(Name.HOMEPAGE, Constants.SCHEME_HOMEPAGE);
+        return mPrefs.getString(Name.HOMEPAGE, Constants.HOME_PAGE_URL);
     }
 
     public boolean getIncognitoCookiesEnabled() {
@@ -224,12 +225,12 @@ public class PreferenceManager {
     }
 
     public int getSearchChoice() {
-        return mPrefs.getInt(Name.SEARCH, 1);
+        return mPrefs.getInt(Name.SEARCH, 0);
     }
 
     @NonNull
     public String getSearchUrl() {
-        return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
+        return mPrefs.getString(Name.SEARCH_URL, Constants.BAIDU_SEARCH);
     }
 
     public boolean getTextReflowEnabled() {

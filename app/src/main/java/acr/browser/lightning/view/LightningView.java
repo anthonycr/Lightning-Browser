@@ -70,6 +70,7 @@ public class LightningView {
 
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
+    public static final String HEADER_USER_AGENT = "User-Agent";
     private static final String HEADER_DNT = "DNT";
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
@@ -266,6 +267,7 @@ public class LightningView {
         if (mPreferences.getRemoveIdentifyingHeadersEnabled()) {
             mRequestHeaders.put(HEADER_REQUESTED_WITH, "");
             mRequestHeaders.put(HEADER_WAP_PROFILE, "");
+            mRequestHeaders.put(HEADER_USER_AGENT, "Mozilla/8.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
         } else {
             mRequestHeaders.remove(HEADER_REQUESTED_WITH);
             mRequestHeaders.remove(HEADER_WAP_PROFILE);
