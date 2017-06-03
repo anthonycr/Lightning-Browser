@@ -17,8 +17,6 @@ import com.anthonycr.bonsai.Schedulers;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 

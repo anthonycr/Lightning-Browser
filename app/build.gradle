@@ -76,14 +76,14 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.2'
 
     // dependency injection
-    def daggerVersion = '2.10'
+    def daggerVersion = '2.11'
     compile "com.google.dagger:dagger:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
