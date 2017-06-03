@@ -42,7 +42,7 @@
     <string name="block">Блокирај слике</string>
     <string name="window">Дозволи сајтовима да отварају нове прозоре</string>
     <string name="cookies">Омогући колачиће</string>
-    <string name="importbookmarks">Увези обележиваче из Прегледача</string>
+    <string name="importbookmarks">Увези обележиваче из прегледача</string>
     <string name="size">Величина текста</string>
     <string name="recommended">Препоручљиво</string>
     <string name="search">Мотор претраге</string>
@@ -50,6 +50,8 @@
     <string name="wideViewPort">Широки приказ</string>
     <string name="overViewMode">Учитај странице у режиму прегледа</string>
     <string name="restore">Врати изгубљене језичке по покретању</string>
+    <string name="supported_browsers_title">Подржани прегледачи</string>
+    <string name="stock_browser">Уграђени прегледач</string>
     <string name="stock_browser_unavailable">Нема уграђеног прегледача</string>
     <string name="stock_browser_available">Откривен подржани уграђени прегледач</string>
     <string name="fullScreenOption">Сакриј траку стања током прегледања</string>
@@ -170,11 +172,12 @@
     <string name="freeware">Фривер</string>
     <string name="android_open_source_project">Андроид пројекат отвореног кôда</string>
     <string name="hphosts_ad_server_list">hpHosts списак рекламних сервера</string>
-    <string name="deleted_tab">Поново отворени претходни језичци</string>
+    <string name="deleted_tab">Поново отворени претходни језичак</string>
     <string name="rendering_mode">Исцртавање</string>
     <string name="name_inverted">Инверзно</string>
     <string name="name_grayscale">Сивило</string>
     <string name="name_inverted_grayscale">Инверзно сивило</string>
+    <string name="name_increase_contrast">Појачан контраст</string>
     <string name="name_normal">Нормално</string>
     <string name="sync_history">Синхронизуј историјат са Гуглом</string>
     <string name="title_file_chooser">Бирач фајлова</string>
@@ -193,6 +196,7 @@
     <string name="settings_about_explain">Детаљи о издању, аутору и лиценци.</string>
     <string name="close_tab">Затвори језичак</string>
     <string name="close_all_tabs">Затвори све језичке</string>
+    <string name="close_other_tabs">Затвори друге језичке</string>
     <string name="third_party">Блокирај колачиће треће стране</string>
     <string name="color_mode">Режим боје</string>
     <string name="reading_mode">Режим за читање</string>
@@ -225,4 +229,9 @@
     <string name="hosts_source">Извор hosts фајла за блокирање реклама</string>
     <string name="settings_adblock">Поставке Адблока</string>
     <string name="tabs_in_drawer">Језичци у фиоци навигације</string>
+    <string name="do_not_track">Захтевај „Не прати ме“</string>
+    <string name="remove_identifying_headers">Уклони идентификујућа заглавља</string>
+    <string name="action_add_to_homescreen">Додај на почетни екран</string>
+    <string name="message_added_to_homescreen">Пречица додата на почетни екран</string>
+    <string name="action_delete_all_bookmarks">Обриши све обележиваче</string>
 </resources>
