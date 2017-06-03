@@ -8,12 +8,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
+import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 
@@ -29,6 +32,8 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.downloads.DownloadItem;
+import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.IntentUtils;
@@ -41,6 +46,7 @@ import acr.browser.lightning.utils.Utils;
  * Created by Stefano Pacifici on 02/09/15, based on Anthony C. Restaino's code.
  */
 public class LightningDialogBuilder {
+    public static final String TAG = "LightningDialogBuilder";
 
     public enum NewTab {
         FOREGROUND,
@@ -49,6 +55,7 @@ public class LightningDialogBuilder {
     }
 
     @Inject BookmarkModel mBookmarkManager;
+    @Inject DownloadsModel mDownloadsModel;
     @Inject PreferenceManager mPreferenceManager;
 
     @Inject
@@ -148,6 +155,33 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     showEditBookmarkDialog(activity, uiController, item);
+                }
+            });
+    }
+
+    /**
+     * Show the appropriated dialog for the long pressed link.
+     *
+     * @param activity used to show the dialog
+     * @param url      the long pressed url
+     */
+    public void showLongPressedDialogForDownloadUrl(@NonNull final Activity activity,
+                                                    @NonNull final UIController uiController,
+                                                    @NonNull final String url) {
+
+        BrowserDialog.show(activity, R.string.action_downloads,
+            new BrowserDialog.Item(R.string.dialog_delete_all_downloads) {
+                @Override
+                public void onClick() {
+                    mDownloadsModel.deleteAllDownloads()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.main())
+                            .subscribe(new CompletableOnSubscribe() {
+                                @Override
+                                public void onComplete() {
+                                    uiController.handleDownloadDeleted();
+                                }
+                            });
                 }
             });
     }
@@ -352,6 +386,15 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
+
+                    mDownloadsModel.addDownloadIfNotExists(new DownloadItem(url, URLUtil.guessFileName(url, null, null), ""))
+                        .subscribe(new SingleOnSubscribe<Boolean>() {
+                            @Override
+                            public void onItem(@Nullable Boolean item) {
+                                if (item != null && !item)
+                                    Log.i(TAG, "error saving download to database");
+                            }
+                        });
                 }
             });
     }

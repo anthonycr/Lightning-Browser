@@ -6,6 +6,7 @@
     <string name="action_share">Share</string>
     <string name="action_history">History</string>
     <string name="action_bookmarks">Bookmarks</string>
+    <string name="action_downloads">Downloads</string>
     <string name="action_add_bookmark">Add bookmark</string>
     <string name="action_copy">Copy link</string>
     <string name="action_forward">Forward</string>
@@ -245,4 +246,6 @@
     <string name="dialog_rename_folder">Rename folder</string>
     <string name="dialog_remove_folder">Remove folder</string>
     <string name="dialog_title_close_browser">Close browser</string>
+    <string name="dialog_delete_download">Delete download</string>
+    <string name="dialog_delete_all_downloads">Delete all downloads</string>
 </resources>

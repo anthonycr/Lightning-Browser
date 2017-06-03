@@ -86,6 +86,8 @@ public interface UIController {
 
     void handleBookmarksChange();
 
+    void handleDownloadDeleted();
+
     void handleBookmarkDeleted(@NonNull HistoryItem item);
 
     void handleNewTab(@NonNull LightningDialogBuilder.NewTab newTabType, @NonNull String url);

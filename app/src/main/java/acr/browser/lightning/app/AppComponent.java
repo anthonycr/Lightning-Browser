@@ -9,6 +9,7 @@ import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.database.history.HistoryDatabase;
@@ -66,6 +67,8 @@ public interface AppComponent {
     void inject(HistoryPage historyPage);
 
     void inject(BookmarkPage bookmarkPage);
+
+    void inject(DownloadsPage downloadsPage);
 
     void inject(BrowserPresenter presenter);
 

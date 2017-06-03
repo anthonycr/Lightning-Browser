@@ -33,6 +33,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -171,6 +172,17 @@ public class TabsManager {
                                         tab.loadUrl(item);
                                     }
                                 });
+                        } else if (UrlUtils.isDownloadsUrl(url)) {
+                            new DownloadsPage().getDownloadsPage()
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(Schedulers.main())
+                                    .subscribe(new SingleOnSubscribe<String>() {
+                                        @Override
+                                        public void onItem(@Nullable String item) {
+                                            Preconditions.checkNonNull(item);
+                                            tab.loadUrl(item);
+                                        }
+                                    });
                         } else if (UrlUtils.isStartPageUrl(url)) {
                             new StartPage().getHomepage()
                                 .subscribeOn(Schedulers.io())

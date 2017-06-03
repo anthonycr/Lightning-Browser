@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.database.bookmark.BookmarkDatabase;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.downloads.DownloadsDatabase;
+import acr.browser.lightning.database.downloads.DownloadsModel;
 import dagger.Module;
 import dagger.Provides;
 
@@ -36,6 +38,13 @@ public class AppModule {
     @Singleton
     public BookmarkModel provideBookmarkMode() {
         return new BookmarkDatabase(mApp);
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public DownloadsModel provideDownloadsMode() {
+        return new DownloadsDatabase(mApp);
     }
 
     @NonNull

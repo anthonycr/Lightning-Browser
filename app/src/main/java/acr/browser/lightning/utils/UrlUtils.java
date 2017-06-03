@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 
@@ -91,6 +92,7 @@ public class UrlUtils {
     public static boolean isSpecialUrl(@Nullable String url) {
         return url != null && url.startsWith(Constants.FILE) &&
             (url.endsWith(BookmarkPage.FILENAME) ||
+                url.endsWith(DownloadsPage.FILENAME) ||
                 url.endsWith(HistoryPage.FILENAME) ||
                 url.endsWith(StartPage.FILENAME));
     }
@@ -103,6 +105,16 @@ public class UrlUtils {
      */
     public static boolean isBookmarkUrl(@Nullable String url) {
         return url != null && url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME);
+    }
+
+    /**
+     * Determines if the url is a url for the bookmark page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a bookmark url, false otherwise.
+     */
+    public static boolean isDownloadsUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(DownloadsPage.FILENAME);
     }
 
     /**
