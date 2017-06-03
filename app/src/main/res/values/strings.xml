@@ -134,6 +134,7 @@
     <string name="search_suggestions">Search suggestions</string>
     <string name="powered_by_google">Powered by Google</string>
     <string name="powered_by_duck">Powered by DuckDuckGo</string>
+    <string name="powered_by_baidu">Powered by Baidu</string>
     <string name="search_suggestions_off">No search suggestions</string>
     <string name="http_proxy">HTTP proxy</string>
     <string-array name="proxy_choices_array">

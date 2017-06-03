@@ -35,6 +35,21 @@ class SuggestionsManager {
     }
 
     @NonNull
+    static Single<List<HistoryItem>> createBaiduQueryObservable(@NonNull final String query,
+                                                                 @NonNull final Application application) {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
+            @Override
+            public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
+                sIsTaskExecuting = true;
+                List<HistoryItem> results = new BaiduSuggestionsModel(application).getResults(query);
+                subscriber.onItem(results);
+                subscriber.onComplete();
+                sIsTaskExecuting = false;
+            }
+        });
+    }
+
+    @NonNull
     static Single<List<HistoryItem>> createDuckQueryObservable(@NonNull final String query,
                                                                @NonNull final Application application) {
         return Single.create(new SingleAction<List<HistoryItem>>() {

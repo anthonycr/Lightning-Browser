@@ -186,6 +186,7 @@
     <string name="message_certificate_untrusted">不受信任的证书</string>
 
     <string name="powered_by_duck">由DuckDuckGo提供技术支持</string>
+    <string name="powered_by_baidu">由百度提供技术支持</string>
     <string name="search_suggestions_off">关闭搜索建议</string>
     <string name="http_proxy">HTTP代理</string>
     <string-array name="proxy_choices_array">
