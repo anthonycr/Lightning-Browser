@@ -3,7 +3,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -82,8 +82,9 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    compile 'com.jakewharton:butterknife:8.6.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    def butterknifeVersion = '8.6.0'
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
@@ -91,7 +92,7 @@ dependencies {
     // proxy support
     compile 'net.i2p.android:client:0.8'
 
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
 
     // tor proxy
     def netcipherVersion = '2.0.0-alpha1'
