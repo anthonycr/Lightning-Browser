@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.controller.UIController;
 
 public class IntentUtils {
 
