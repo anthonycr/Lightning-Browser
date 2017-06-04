@@ -68,7 +68,7 @@
     <string name="agent_custom">Personalizado</string>
     <string name="title_search_engine">Mecanismo de pesquisa</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Gostaria de transferir este arquivo?</string>
+    <string name="dialog_download">Gostaria de transferir este arquivo? (%1$s)</string>
     <string name="action_cancel">Cancelar</string>
     <string name="title_warning">Aviso</string>
     <string name="dialog_adobe_not_installed">O Adobe Flash Player não foi detectado.\nNecessário instalar o Flash Player.</string>
