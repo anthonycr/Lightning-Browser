@@ -173,14 +173,14 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     mDownloadsModel.deleteAllDownloads()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.main())
-                            .subscribe(new CompletableOnSubscribe() {
-                                @Override
-                                public void onComplete() {
-                                    uiController.handleDownloadDeleted();
-                                }
-                            });
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new CompletableOnSubscribe() {
+                            @Override
+                            public void onComplete() {
+                                uiController.handleDownloadDeleted();
+                            }
+                        });
                 }
             });
     }
@@ -363,7 +363,7 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, url);
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);

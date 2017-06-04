@@ -36,7 +36,6 @@
     <string name="download">Scegli un percorso</string>
     <string name="settings_advanced">Avanzate</string>
     <string name="apache">Apache License 2.0</string>
-    <string name="version">Versione App</string>
     <string name="cache">Cancella la cache in chiusura</string>
     <string name="reflow">Abilità il reflow del testo</string>
     <string name="block">Blocca immagini</string>
@@ -104,6 +103,7 @@
     <string name="action_back">Indietro</string>
     <string name="action_find">Trova nella pagina</string>
     <string name="download_pending">Avvio download\u2026</string>
+    <string name="cannot_download">È possibile scaricare solo da URL \"http\" o \"https\".</string>
     <string name="problem_download">URL non supportato: scaricamento fallito</string>
     <string name="problem_location_download">Impssibile scaricare nella posizione scelta</string>
     <string name="download_no_sdcard_dlg_title" >Nessuna scheda SD trovata.</string>
