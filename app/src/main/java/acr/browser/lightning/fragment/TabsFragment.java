@@ -37,6 +37,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.TabsView;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.fragment.anim.HorizontalItemAnimator;
 import acr.browser.lightning.fragment.anim.VerticalItemAnimator;
@@ -325,7 +326,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final LightningViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final LightningViewHolder holder, final int position) {
             holder.exitButton.setTag(position);
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
@@ -336,17 +337,34 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             }
             holder.txtTitle.setText(web.getTitle());
 
-            final Bitmap favicon = web.getFavicon();
+            Bitmap favicon = web.getFavicon();
             if (web.isForegroundTab()) {
-                Drawable foregroundDrawable = null;
+                final Drawable foregroundDrawable;
                 if (!mDrawerTabs) {
                     foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
                     if (!mIsIncognito && mColorMode) {
                         foregroundDrawable.setColorFilter(mUiController.getUiColor(), PorterDuff.Mode.SRC_IN);
                     }
+                } else {
+                    foregroundDrawable = null;
                 }
-                if (!mIsIncognito && mColorMode) {
-                    mUiController.changeToolbarBackground(favicon, foregroundDrawable);
+
+                if (!mIsIncognito && mColorMode && web.getProgress() == 100) {
+                    String url = web.getUrl() == null ? "" : web.getUrl();
+                    if(url.startsWith(Constants.ABOUT) || url.startsWith(Constants.FILE)) {
+                        favicon = ThemeUtils.getThemedBitmap(getContext(), R.drawable.ic_webpage, mUiController.getUseDarkTheme());
+                        web.setFavicon(favicon);
+                    }
+                    if(web.usingDefaultIcon()) {
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mUiController.changeToolbarBackground(mTabsManager.getTabAtPosition(position).getFavicon(), foregroundDrawable);
+                            }
+                        }, 1000);
+                    } else {
+                        mUiController.changeToolbarBackground(favicon, foregroundDrawable);
+                    }
                 }
 
                 TextViewCompat.setTextAppearance(holder.txtTitle, R.style.boldText);

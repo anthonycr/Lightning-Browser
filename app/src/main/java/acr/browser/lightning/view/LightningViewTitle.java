@@ -22,6 +22,7 @@ class LightningViewTitle {
     @Nullable private Bitmap mFavicon = null;
     @NonNull private String mTitle;
     @NonNull private final Context mContext;
+    private boolean mUsingDefaultIcon = true;
 
     public LightningViewTitle(@NonNull Context context) {
         mContext = context;
@@ -98,9 +99,18 @@ class LightningViewTitle {
     @NonNull
     public Bitmap getFavicon(boolean darkTheme) {
         if (mFavicon == null) {
+            mUsingDefaultIcon = true;
             return getDefaultIcon(mContext, darkTheme);
         }
+        mUsingDefaultIcon = false;
         return mFavicon;
     }
 
+    /**
+     * true if the default favicon is used
+     * @return
+     */
+    public boolean usingDefaultFavicon() {
+        return mUsingDefaultIcon;
+    }
 }

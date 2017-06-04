@@ -1079,6 +1079,14 @@ public class LightningView {
     }
 
     /**
+     * true if the default favicon is used
+     * @return
+     */
+    public boolean usingDefaultIcon() {
+        return mTitle.usingDefaultFavicon();
+    }
+
+    /**
      * Loads the URL in the WebView. If the proxy settings
      * are still initializing, then the URL will not load
      * as it is necessary to have the settings initialized
@@ -1123,6 +1131,10 @@ public class LightningView {
         } else {
             return "";
         }
+    }
+
+    public void setFavicon(Bitmap favicon) {
+        mTitle.setFavicon(favicon);
     }
 
     /**
