@@ -363,7 +363,7 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, url);
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+            new BrowserDialog.Item(R.string.dialog_open_incognito_tab) {
                 @Override
                 public void onClick() {
                     uiController.handleNewTab(NewTab.INCOGNITO, url);

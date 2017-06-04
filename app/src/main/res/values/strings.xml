@@ -226,6 +226,7 @@
     <string name="action_add_to_homescreen">Add to home screen</string>
     <string name="message_added_to_homescreen">Shortcut added to home screen</string>
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
+    <string name="flash_not_supported">Flash Player is not supported by your system!</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Frequently asked questions</string>
@@ -242,6 +243,8 @@
     <string name="dialog_remove_bookmark">Remove bookmark</string>
     <string name="dialog_edit_bookmark">Edit bookmark</string>
     <string name="dialog_remove_from_history">Remove from history</string>
+    <string name="dialog_image_new_tab">Open image in new tab</string>
+    <string name="dialog_image_background_tab">Open image in background tab</string>
     <string name="dialog_download_image">Download image</string>
     <string name="dialog_copy_link">Copy link</string>
     <string name="dialog_rename_folder">Rename folder</string>
