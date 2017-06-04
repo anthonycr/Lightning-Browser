@@ -144,7 +144,6 @@
     <string name="title_sign_in">Inloggen</string>
     <string name="hint_username">Gebruiksnaam</string>
     <string name="hint_password">Paswoord</string>
-    <string name="google_suggestions">Zoeksuggesties</string>
     <string name="powered_by_google">Ondersteund door Google</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
