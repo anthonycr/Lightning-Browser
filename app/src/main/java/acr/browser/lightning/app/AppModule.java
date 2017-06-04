@@ -4,23 +4,23 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.squareup.otto.Bus;
-
 import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Singleton;
 
+import acr.browser.lightning.database.bookmark.BookmarkDatabase;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.downloads.DownloadsDatabase;
+import acr.browser.lightning.database.downloads.DownloadsModel;
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class AppModule {
     private final BrowserApp mApp;
-    @NonNull private final Bus mBus;
 
     public AppModule(BrowserApp app) {
         this.mApp = app;
-        this.mBus = new Bus();
     }
 
     @Provides
@@ -35,8 +35,16 @@ public class AppModule {
 
     @NonNull
     @Provides
-    public Bus provideBus() {
-        return mBus;
+    @Singleton
+    public BookmarkModel provideBookmarkMode() {
+        return new BookmarkDatabase(mApp);
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public DownloadsModel provideDownloadsMode() {
+        return new DownloadsDatabase(mApp);
     }
 
     @NonNull

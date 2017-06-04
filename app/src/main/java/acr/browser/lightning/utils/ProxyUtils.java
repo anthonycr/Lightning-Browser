@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import com.squareup.otto.Bus;
-
 import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Inject;
@@ -20,17 +18,19 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
-import info.guardianproject.netcipher.web.WebkitProxy;
+import info.guardianproject.netcipher.webkit.WebkitProxy;
 
 @Singleton
 public class ProxyUtils {
+
+    private static final String TAG = "ProxyUtils";
+
     // Helper
     private static boolean mI2PHelperBound;
     private static boolean mI2PProxyInitialized;
 
     @Inject PreferenceManager mPreferences;
     @Inject I2PAndroidHelper mI2PHelper;
-    @Inject Bus mBus;
 
     @Inject
     public ProxyUtils() {
@@ -114,8 +114,9 @@ public class ProxyUtils {
                 // We shouldn't be here
                 return;
             case Constants.PROXY_ORBOT:
-                if (!OrbotHelper.isOrbotRunning(activity))
+                if (!OrbotHelper.isOrbotRunning(activity)) {
                     OrbotHelper.requestStartTor(activity);
+                }
                 host = "localhost";
                 port = 8118;
                 break;
@@ -140,7 +141,7 @@ public class ProxyUtils {
         try {
             WebkitProxy.setProxy(BrowserApp.class.getName(), activity.getApplicationContext(), null, host, port);
         } catch (Exception e) {
-            Log.d(Constants.TAG, "error enabling web proxying", e);
+            Log.d(TAG, "error enabling web proxying", e);
         }
 
     }
@@ -192,7 +193,7 @@ public class ProxyUtils {
         }
     }
 
-    @Constants.PROXY
+    @Constants.Proxy
     public static int setProxyChoice(int choice, @NonNull Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
@@ -201,9 +202,8 @@ public class ProxyUtils {
                     Utils.showSnackbar(activity, R.string.install_orbot);
                 }
                 break;
-
             case Constants.PROXY_I2P:
-                I2PAndroidHelper ih = new I2PAndroidHelper(BrowserApp.get(activity));
+                I2PAndroidHelper ih = new I2PAndroidHelper(activity.getApplication());
                 if (!ih.isI2PAndroidInstalled()) {
                     choice = Constants.NO_PROXY;
                     ih.promptToInstall(activity);

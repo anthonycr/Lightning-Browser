@@ -44,7 +44,7 @@
 
         <!-- Theme Colors -->
         <item name="colorPrimary">@color/primary_color</item>
-        <item name="colorPrimaryDark">@color/secondary_color</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="drawerBackground">@color/drawer_background</item>
         <item name="dividerColor">@color/divider_light</item>
@@ -67,7 +67,7 @@
 
         <!-- Theme colors -->
         <item name="colorPrimary">@color/primary_color_dark</item>
-        <item name="colorPrimaryDark">@color/secondary_color</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
         <item name="colorAccent">@color/accent_color</item>
         <item name="drawerBackground">@color/drawer_background_dark</item>
         <item name="dividerColor">@color/divider_dark</item>

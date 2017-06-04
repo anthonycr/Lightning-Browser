@@ -8,19 +8,21 @@ import android.view.Menu;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+
 import acr.browser.lightning.R;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {
 
+    @NonNull
     @Override
-    public Observable<Void> updateCookiePreference() {
-        return Observable.create(new Action<Void>() {
+    public Completable updateCookiePreference() {
+        return Completable.create(new CompletableAction() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<Void> subscriber) {
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
                 CookieManager cookieManager = CookieManager.getInstance();
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     CookieSyncManager.createInstance(MainActivity.this);
@@ -32,7 +34,7 @@ public class MainActivity extends BrowserActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }

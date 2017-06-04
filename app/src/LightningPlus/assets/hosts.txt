@@ -15,6 +15,7 @@
 127.0.0.1	007.go2cloud.org
 127.0.0.1	0075-7112-e7eb-f9b9.reporo.net
 127.0.0.1	008.free-counter.co.uk
+127.0.0.1	00zasdf.pw
 127.0.0.1	011i5.voluumtrk.com
 127.0.0.1	0124498474f7c13ac9a2-6b191446002b31342189d56cabcf5227.r11.cf2.rackcdn.com
 127.0.0.1	02gzx.voluumtrk.com
@@ -1797,6 +1798,10 @@
 127.0.0.1	abandonglare.8m.com
 127.0.0.1	abbie-surber.us
 127.0.0.1	abbott.vo.llnwd.net
+127.0.0.1	abbp1.pw
+127.0.0.1	abbp1.science
+127.0.0.1	abbp1.space
+127.0.0.1	abbp1.website
 127.0.0.1	abby-clowers.us
 127.0.0.1	abc.apportium.com
 127.0.0.1	abc.bnex.com
@@ -18571,6 +18576,8 @@
 127.0.0.1	adspaes.ero-advertising.com
 127.0.0.1	adspages.ero-advertising.com
 127.0.0.1	adspaper.org
+127.0.0.1	adspayformy.site
+127.0.0.1	adspayformymortgage.win
 127.0.0.1	adspcces.ero-advertising.com
 127.0.0.1	adspdbl.com
 127.0.0.1	adspeed.com
@@ -24020,7 +24027,25 @@
 127.0.0.1	cdn1.tribalfusion.com
 127.0.0.1	cdn10-ref.landing.comcontent.net
 127.0.0.1	cdn11-ref.landing.comcontent.net
+127.0.0.1	cdn11.00zasdf.pw
+127.0.0.1	cdn11.abbp1.pw
+127.0.0.1	cdn11.abbp1.science
+127.0.0.1	cdn11.abbp1.space
+127.0.0.1	cdn11.abbp1.website
+127.0.0.1	cdn11.adspayformy.site
+127.0.0.1	cdn11.adspayformymortgage.win
 127.0.0.1	cdn11.contentabc.com
+127.0.0.1	cdn11.monzta.pet
+127.0.0.1	cdn11.oknplm.website
+127.0.0.1	cdn11.olmknp.space
+127.0.0.1	cdn11.pleasedontslaymy.download
+127.0.0.1	cdn11.plmokn.pw
+127.0.0.1	cdn11.poolnoodle.tech
+127.0.0.1	cdn11.routehero.com
+127.0.0.1	cdn11.tgbvfr.website
+127.0.0.1	cdn11.yuiop.trade
+127.0.0.1	cdn11.yuiout.online
+127.0.0.1	cdn11.zxcvb.space
 127.0.0.1	cdn12-ref.landing.comcontent.net
 127.0.0.1	cdn13-ref.landing.comcontent.net
 127.0.0.1	cdn14-ref.landing.comcontent.net
@@ -26278,10 +26303,21 @@
 127.0.0.1	coxnetmasterglobal.112.2o7.net
 127.0.0.1	coxnews.cimedia.com
 127.0.0.1	coxpalmbeachpost.112.2o7.net
+127.0.0.1	cp.abbp1.pw
+127.0.0.1	cp.abbp1.science
+127.0.0.1	cp.abbp1.space
+127.0.0.1	cp.abbp1.website
+127.0.0.1	cp.adspayformy.site
 127.0.0.1	cp.doublepimp.com
 127.0.0.1	cp.intl.match.com
+127.0.0.1	cp.monzta.pet
+127.0.0.1	cp.pleasedontslaymy.download
+127.0.0.1	cp.poolnoodle.tech
 127.0.0.1	cp.pushwoosh.com
+127.0.0.1	cp.routehero.com
 127.0.0.1	cp.surf-town.net
+127.0.0.1	cp.yuiop.trade
+127.0.0.1	cp.yuiout.online
 127.0.0.1	cp1dk.voluumtrk.com
 127.0.0.1	cpa.ly
 127.0.0.1	cpaaltima.go2cloud.org
@@ -29283,6 +29319,7 @@
 127.0.0.1	ftp01.dus.vmsn.de
 127.0.0.1	ftpcontent.worldnow.com
 127.0.0.1	ftr2.external.xerox.com
+127.0.0.1	ftrackb.net
 127.0.0.1	fu7fb.voluumtrk.com
 127.0.0.1	fuauq.voluumtrk.com
 127.0.0.1	fucktubenetwork.com
@@ -29699,6 +29736,7 @@
 127.0.0.1	go-clicks.de
 127.0.0.1	go.activengage.com
 127.0.0.1	go.ad2up.com
+127.0.0.1	go.ad2upapp.com
 127.0.0.1	go.adify.com
 127.0.0.1	go.adinfuse.com
 127.0.0.1	go.adversal.com
@@ -29707,6 +29745,7 @@
 127.0.0.1	go.by
 127.0.0.1	go.coxds.com
 127.0.0.1	go.cpmadvisors.com
+127.0.0.1	go.deliverymodo.com
 127.0.0.1	go.delnapb.com
 127.0.0.1	go.feedxfeed.com
 127.0.0.1	go.goroost.com
@@ -33428,6 +33467,7 @@
 127.0.0.1	monitor01.con.vmsn.de
 127.0.0.1	monster.gostats.com
 127.0.0.1	monsterpops.com
+127.0.0.1	monzta.pet
 127.0.0.1	moo.go2cloud.org
 127.0.0.1	mopo.ivwbox.de
 127.0.0.1	mopub.web107-east.manage.com
@@ -34350,6 +34390,7 @@
 127.0.0.1	oin.valuead.com
 127.0.0.1	ojolink.com
 127.0.0.1	ojrq.net
+127.0.0.1	oknplm.website
 127.0.0.1	okohp.voluumtrk.com
 127.0.0.1	okpgn.voluumtrk.com
 127.0.0.1	okrg0.voluumtrk.com
@@ -34363,6 +34404,7 @@
 127.0.0.1	olivia-hermes.us
 127.0.0.1	olivia-stanfield.us
 127.0.0.1	olizyr.com
+127.0.0.1	olmknp.space
 127.0.0.1	om.1and1.co.uk
 127.0.0.1	om.1und1.info
 127.0.0.1	om.cbsi.com
@@ -35207,6 +35249,7 @@
 127.0.0.1	playminigolf.com
 127.0.0.1	playtomic.com
 127.0.0.1	plb27.voluumtrk.com
+127.0.0.1	pleasedontslaymy.download
 127.0.0.1	plemedia.com
 127.0.0.1	plemx.com
 127.0.0.1	plenews.net
@@ -35215,6 +35258,7 @@
 127.0.0.1	plex.r.worldssl.net
 127.0.0.1	plex2.com
 127.0.0.1	pll28.voluumtrk.com
+127.0.0.1	plmokn.pw
 127.0.0.1	plocia.com
 127.0.0.1	ploko.voluumtrk.com
 127.0.0.1	pls.webtype.com
@@ -35274,10 +35318,12 @@
 127.0.0.1	pongoresume.com
 127.0.0.1	pons.ivwbox.de
 127.0.0.1	pontiflex.com
+127.0.0.1	pool.admedo.com
 127.0.0.1	pool.ads.netlog.com
 127.0.0.1	pool.skyhookwireless.com
 127.0.0.1	pool01.2cnt.net
 127.0.0.1	pool02.2cnt.net
+127.0.0.1	poolnoodle.tech
 127.0.0.1	poopoo.freestats.com
 127.0.0.1	pop.adcocktail.com
 127.0.0.1	pop.adconjure.com
@@ -36366,6 +36412,7 @@
 127.0.0.1	rotator.tradetracker.nl
 127.0.0.1	rotator.trafficstars.com
 127.0.0.1	rotrk.com
+127.0.0.1	routehero.com
 127.0.0.1	router.adlure.net
 127.0.0.1	router.revmob.com
 127.0.0.1	router.tlvmedia.com
@@ -36476,7 +36523,6 @@
 127.0.0.1	rwbd0.voluumtrk.com
 127.0.0.1	rwnkj.voluumtrk.com
 127.0.0.1	rxdja.voluumtrk.com
-127.0.0.1	rxf.answcdn.com
 127.0.0.1	ry7c5.directadsopt.com
 127.0.0.1	ryan-lietz.us
 127.0.0.1	rydium.us.intellitxt.com
@@ -38900,6 +38946,7 @@
 127.0.0.1	tfp.2ref.co
 127.0.0.1	tga.acs86.com
 127.0.0.1	tga.csbew.com
+127.0.0.1	tgbvfr.website
 127.0.0.1	tgp.buzzsession.com
 127.0.0.1	tgp.pornsponsors.com
 127.0.0.1	thaliaat02.webtrekk.net
@@ -39310,6 +39357,7 @@
 127.0.0.1	track.scorpiointeractive.com
 127.0.0.1	track.searchignite.com
 127.0.0.1	track.sexchangegirl.com
+127.0.0.1	track.sharktrkr.xyz
 127.0.0.1	track.shop2market.com
 127.0.0.1	track.sigfig.com
 127.0.0.1	track.slideshare.net
@@ -44537,7 +44585,6 @@
 127.0.0.1	webtrack-brickstreetconnect-mkt-prd.hsbc.com.hk
 127.0.0.1	webtrack.jwgrant.co.uk
 127.0.0.1	webtracker.educationconnection.com
-127.0.0.1	webtracker.tnt.com
 127.0.0.1	webtrackerplus.com
 127.0.0.1	webtracking.touchclarity.com
 127.0.0.1	webtraffic.ttinet.com
@@ -44736,9 +44783,27 @@
 127.0.0.1	wrestling.searchwho.com
 127.0.0.1	ws-eu.amazon-adsystem.com
 127.0.0.1	ws-na.amazon-adsystem.com
+127.0.0.1	ws.00zasdf.pw
+127.0.0.1	ws.abbp1.pw
+127.0.0.1	ws.abbp1.science
+127.0.0.1	ws.abbp1.space
+127.0.0.1	ws.abbp1.website
+127.0.0.1	ws.adspayformy.site
+127.0.0.1	ws.adspayformymortgage.win
 127.0.0.1	ws.amazon.com
+127.0.0.1	ws.monzta.pet
+127.0.0.1	ws.oknplm.website
+127.0.0.1	ws.olmknp.space
+127.0.0.1	ws.pleasedontslaymy.download
+127.0.0.1	ws.plmokn.pw
+127.0.0.1	ws.poolnoodle.tech
+127.0.0.1	ws.routehero.com
 127.0.0.1	ws.sharethis.com
 127.0.0.1	ws.tapjoyads.com
+127.0.0.1	ws.tgbvfr.website
+127.0.0.1	ws.yuiop.trade
+127.0.0.1	ws.yuiout.online
+127.0.0.1	ws.zxcvb.space
 127.0.0.1	ws1.surf-town.net
 127.0.0.1	ws10.surf-town.net
 127.0.0.1	ws11.surf-town.net
@@ -44782,6 +44847,7 @@
 127.0.0.1	wsc1.webspectator.com
 127.0.0.1	wsc4.webspectator.com
 127.0.0.1	wsclick.infospace.com
+127.0.0.1	wsg.abbp1.pw
 127.0.0.1	wsi1.surf-town.net
 127.0.0.1	wsod.com
 127.0.0.1	wsp1.surf-town.net
@@ -44953,6 +45019,7 @@
 127.0.0.1	www.ad-lite.com
 127.0.0.1	www.ad-maker.net
 127.0.0.1	www.ad-media.org
+127.0.0.1	www.ad-rev.in
 127.0.0.1	www.ad-search.com
 127.0.0.1	www.ad-solutions.com
 127.0.0.1	www.ad-space.net
@@ -45085,6 +45152,7 @@
 127.0.0.1	www.adsniper.ru
 127.0.0.1	www.adsoogle.com
 127.0.0.1	www.adspaces.ero-advertising.com
+127.0.0.1	www.adspayformy.site
 127.0.0.1	www.adsphinx.com
 127.0.0.1	www.adspics.com
 127.0.0.1	www.adspinner.com
@@ -45880,6 +45948,7 @@
 127.0.0.1	www.freeviral.com
 127.0.0.1	www.freewha.com
 127.0.0.1	www.friendlyduck.com
+127.0.0.1	www.ftrackb.net
 127.0.0.1	www.fucktubenetwork.com
 127.0.0.1	www.fuel451.com
 127.0.0.1	www.fullqurandownload.com
@@ -46682,6 +46751,7 @@
 127.0.0.1	www.pixetrk.com
 127.0.0.1	www.placehold.it
 127.0.0.1	www.platinscience.com
+127.0.0.1	www.pleasedontslaymy.download
 127.0.0.1	www.plocia.com
 127.0.0.1	www.plug-media.com
 127.0.0.1	www.plus500.com
@@ -47727,6 +47797,8 @@
 127.0.0.1	ysm.hauchi.com.tw
 127.0.0.1	ytubevideoqualitymanager.com
 127.0.0.1	yuilop.com
+127.0.0.1	yuiop.trade
+127.0.0.1	yuiout.online
 127.0.0.1	yume.com
 127.0.0.1	yuppy.2cnt.net
 127.0.0.1	yvap.query.yahoo.com
@@ -47894,6 +47966,7 @@
 127.0.0.1	zw.zeroredirect1.com
 127.0.0.1	zww.ero-advertising.com
 127.0.0.1	zx.zeroredirect1.com
+127.0.0.1	zxcvb.space
 127.0.0.1	zxypenguin.people-group.su
 127.0.0.1	zy.zeroredirect1.com
 127.0.0.1	zyngawithfriends.com
@@ -47901,4 +47974,4 @@
 127.0.0.1	zz.zeroredirect1.com
 127.0.0.1	zzz.clickbank.net
 127.0.0.1	_thums.ero-advertising.com
-# Hosts: 47893
+# Hosts: 47966

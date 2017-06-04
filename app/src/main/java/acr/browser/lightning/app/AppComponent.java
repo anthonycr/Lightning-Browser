@@ -8,7 +8,11 @@ import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
 import acr.browser.lightning.browser.BrowserPresenter;
+import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.DownloadsPage;
+import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.database.history.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
@@ -18,8 +22,8 @@ import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.search.SuggestionsAdapter;
-import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.view.LightningChromeClient;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.LightningWebClient;
 import dagger.Component;
@@ -54,13 +58,17 @@ public interface AppComponent {
 
     void inject(ThemableSettingsActivity activity);
 
-    void inject(AdBlock adBlock);
-
     void inject(LightningDownloadListener listener);
 
     void inject(PrivacySettingsFragment fragment);
 
     void inject(StartPage startPage);
+
+    void inject(HistoryPage historyPage);
+
+    void inject(BookmarkPage bookmarkPage);
+
+    void inject(DownloadsPage downloadsPage);
 
     void inject(BrowserPresenter presenter);
 
@@ -69,5 +77,9 @@ public interface AppComponent {
     void inject(DebugSettingsFragment fragment);
 
     void inject(SuggestionsAdapter suggestionsAdapter);
+
+    void inject(LightningChromeClient chromeClient);
+
+    HistoryDatabase historyDatabase();
 
 }

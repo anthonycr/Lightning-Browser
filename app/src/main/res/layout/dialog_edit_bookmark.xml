@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="10dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/dialog_padding">
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/bookmark_title"
-        android:singleLine="true"
-        android:hint="@string/hint_title"/>
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/hint_title"
+        android:maxLines="1"
+        android:singleLine="true"/>
+
+    <EditText
         android:id="@+id/bookmark_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/hint_url"
-        android:singleLine="true"
-        android:inputType="textUri"/>
+        android:inputType="textUri"
+        android:maxLines="1"
+        android:singleLine="true"/>
 
     <AutoCompleteTextView
+        android:id="@+id/bookmark_folder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bookmark_folder"
         android:hint="@string/folder"
+        android:maxLines="1"
         android:singleLine="true"/>
 </LinearLayout>

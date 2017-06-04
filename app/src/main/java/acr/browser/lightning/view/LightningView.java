@@ -32,7 +32,11 @@ import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
-import com.squareup.otto.Bus;
+import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -43,20 +47,14 @@ import javax.inject.Inject;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Subscriber;
-import com.anthonycr.bonsai.OnSubscribe;
-
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
@@ -69,7 +67,7 @@ import acr.browser.lightning.utils.Utils;
  */
 public class LightningView {
 
-    private static final String TAG = LightningView.class.getSimpleName();
+    private static final String TAG = "LightningView";
 
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
@@ -77,8 +75,8 @@ public class LightningView {
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private static final int SCROLL_UP_THRESHOLD = Utils.dpToPx(10);
 
-    private static String sHomepage;
-    private static String sDefaultUserAgent;
+    @Nullable private static String sHomepage;
+    @Nullable private static String sDefaultUserAgent;
     private static float sMaxFling;
     private static final float[] sNegativeColorArray = {
         -1.0f, 0, 0, 0, 255, // red
@@ -99,19 +97,17 @@ public class LightningView {
     @NonNull private final GestureDetector mGestureDetector;
     @NonNull private final Activity mActivity;
     @NonNull private final Paint mPaint = new Paint();
-    @Nullable private Object mTag;
+    private boolean mIsNewTab;
     private final boolean mIsIncognitoTab;
-    private boolean isForegroundTab;
+    private boolean mIsForegroundTab;
     private boolean mInvertPage = false;
     private boolean mToggleDesktop = false;
     @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
     @NonNull private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
-    @Inject Bus mEventBus;
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
-    @Inject BookmarkManager mBookmarkManager;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -163,25 +159,27 @@ public class LightningView {
     }
 
     /**
-     * Sets the tag on the object,
-     * a reference to this object is held
-     * indefinitely.
+     * Sets whether this tab was the
+     * result of a new intent sent
+     * to the browser.
      *
-     * @param tag the tag to set, may be null.
+     * @param isNewTab true if it's from
+     *                 a new intent,
+     *                 false otherwise.
      */
-    public void setTag(@Nullable Object tag) {
-        mTag = tag;
+    public void setIsNewTab(boolean isNewTab) {
+        mIsNewTab = isNewTab;
     }
 
     /**
-     * The tag set on the object.
+     * Returns whether this tab was created
+     * as a result of a new intent.
      *
-     * @return the tag set on the object,
-     * may be null.
+     * @return true if it was a new intent,
+     * false otherwise.
      */
-    @Nullable
-    public Object getTag() {
-        return mTag;
+    public boolean isNewTab() {
+        return mIsNewTab;
     }
 
     /**
@@ -194,6 +192,8 @@ public class LightningView {
         if (mWebView == null) {
             return;
         }
+
+        Preconditions.checkNonNull(sHomepage);
         switch (sHomepage) {
             case Constants.SCHEME_HOMEPAGE:
                 loadStartpage();
@@ -213,7 +213,16 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        new StartPage(this, BrowserApp.get(mActivity)).load();
+        new StartPage().getHomepage()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    loadUrl(item);
+                }
+            });
     }
 
     /**
@@ -222,9 +231,34 @@ public class LightningView {
      * UI thread. It also caches the default folder icon locally.
      */
     public void loadBookmarkpage() {
-        if (mWebView == null)
-            return;
-        new BookmarkPage(this, mActivity, mBookmarkManager).load();
+        new BookmarkPage(mActivity).getBookmarkPage()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    loadUrl(item);
+                }
+            });
+    }
+
+    /**
+     * This method gets the bookmark page URL from the {@link BookmarkPage}
+     * class asynchronously and loads the URL in the WebView on the
+     * UI thread. It also caches the default folder icon locally.
+     */
+    public void loadDownloadspage() {
+        new DownloadsPage().getDownloadsPage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<String>() {
+                    @Override
+                    public void onItem(@Nullable String item) {
+                        Preconditions.checkNonNull(item);
+                        loadUrl(item);
+                    }
+                });
     }
 
     /**
@@ -405,59 +439,55 @@ public class LightningView {
             settings.setAllowUniversalAccessFromFileURLs(false);
         }
 
-        getPathObservable("appcache")
-            .subscribeOn(Schedulers.io())
+        getPathObservable("appcache").subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
-            .subscribe(new OnSubscribe<File>() {
+            .subscribe(new SingleOnSubscribe<File>() {
                 @Override
-                public void onNext(File item) {
+                public void onItem(@Nullable File item) {
+                    Preconditions.checkNonNull(item);
                     settings.setAppCachePath(item.getPath());
                 }
-
-                @Override
-                public void onComplete() {}
             });
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            getPathObservable("geolocation")
-                .subscribeOn(Schedulers.io())
+            getPathObservable("geolocation").subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<File>() {
+                .subscribe(new SingleOnSubscribe<File>() {
                     @Override
-                    public void onNext(File item) {
+                    public void onItem(@Nullable File item) {
+                        Preconditions.checkNonNull(item);
                         //noinspection deprecation
                         settings.setGeolocationDatabasePath(item.getPath());
                     }
-
-                    @Override
-                    public void onComplete() {}
                 });
         }
 
-        getPathObservable("databases")
-            .subscribeOn(Schedulers.io())
+        getPathObservable("databases").subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
-            .subscribe(new OnSubscribe<File>() {
+            .subscribe(new SingleOnSubscribe<File>() {
                 @Override
-                public void onNext(File item) {
+                public void onItem(@Nullable File item) {
                     if (API < Build.VERSION_CODES.KITKAT) {
+                        Preconditions.checkNonNull(item);
                         //noinspection deprecation
                         settings.setDatabasePath(item.getPath());
                     }
                 }
 
                 @Override
-                public void onComplete() {}
+                public void onComplete() {
+                }
             });
 
     }
 
-    private Observable<File> getPathObservable(final String subFolder) {
-        return Observable.create(new Action<File>() {
+    @NonNull
+    private Single<File> getPathObservable(final String subFolder) {
+        return Single.create(new SingleAction<File>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<File> subscriber) {
-                File file = BrowserApp.get(mActivity).getDir(subFolder, 0);
-                subscriber.onNext(file);
+            public void onSubscribe(@NonNull SingleSubscriber<File> subscriber) {
+                File file = mActivity.getDir(subFolder, 0);
+                subscriber.onItem(file);
                 subscriber.onComplete();
             }
         });
@@ -604,8 +634,8 @@ public class LightningView {
      * @param isForeground true if the tab should be set as
      *                     foreground, false otherwise.
      */
-    public void setForegroundTab(boolean isForeground) {
-        isForegroundTab = isForeground;
+    public void setIsForegroundTab(boolean isForeground) {
+        mIsForegroundTab = isForeground;
         mUIController.tabChanged(this);
     }
 
@@ -616,7 +646,7 @@ public class LightningView {
      * false otherwise.
      */
     public boolean isForegroundTab() {
-        return isForegroundTab;
+        return mIsForegroundTab;
     }
 
     /**
@@ -961,36 +991,43 @@ public class LightningView {
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
             if (currentUrl.endsWith(HistoryPage.FILENAME)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, url);
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, newUrl);
+                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, newUrl);
                 }
             } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, url);
+                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, newUrl);
+                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, newUrl);
+                }
+            } else if (currentUrl.endsWith(DownloadsPage.FILENAME)) {
+                if (url != null) {
+                    mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, newUrl);
                 }
             }
         } else {
             if (url != null) {
                 if (result != null) {
                     if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                        mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, url, getUserAgent());
+                        mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, mUIController, url, getUserAgent());
                     } else {
-                        mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                        mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, url);
                     }
                 } else {
-                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, url);
+                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, url);
                 }
             } else if (result != null && result.getExtra() != null) {
                 final String newUrl = result.getExtra();
                 if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                    mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, newUrl, getUserAgent());
+                    mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, mUIController, newUrl, getUserAgent());
                 } else {
-                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, newUrl);
+                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, newUrl);
                 }
             }
         }
@@ -1198,7 +1235,7 @@ public class LightningView {
 
         @NonNull private final WeakReference<LightningView> mReference;
 
-        public WebViewHandler(LightningView view) {
+        WebViewHandler(@NonNull LightningView view) {
             mReference = new WeakReference<>(view);
         }
 

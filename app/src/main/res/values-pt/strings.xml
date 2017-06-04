@@ -32,35 +32,38 @@
     <string name="home">Página inicial</string>
     <string name="fullscreen">Modo de ecrã completo</string>
     <string name="java">Ativar JavaScript</string>
-    <string name="download">Local de transferências</string>
+    <string name="download">Local para descargas</string>
     <string name="settings_advanced">Definições avançadas</string>
     <string name="apache">Apache License 2.0</string>
     <string name="version">Versão da aplicação</string>
     <string name="cache">Limpar cache ao sair</string>
     <string name="reflow">Ativar ajuste de texto</string>
     <string name="block">Bloquear imagens</string>
-    <string name="window">Permitir que os sítios web abram novas janelas</string>
+    <string name="window">Permitir que os sites abram novas janelas</string>
     <string name="cookies">Ativar cookies</string>
     <string name="importbookmarks">Importar marcadores do navegador</string>
     <string name="size">Tamanho do texto</string>
     <string name="recommended">Recomendado</string>
-    <string name="search">Mecanismo de pesquisa</string>
+    <string name="search">Motor de pesquisa</string>
     <string name="search_hint">Pesquisa</string>
     <string name="wideViewPort">Utilizar viewport amplo</string>
     <string name="overViewMode">Carregar páginas no modo panorâmico</string>
     <string name="restore">Restaurar separadores ao iniciar</string>
+    <string name="supported_browsers_title">Navegadores suportados</string>
+    <string name="stock_browser">Navegador do sistema</string>
     <string name="stock_browser_unavailable">Navegador não detetado</string>
     <string name="stock_browser_available">Navegador detetado</string>
     <string name="fullScreenOption">Ocultar barra de estado ao navegar</string>
     <string name="clear_cookies">Limpar cookies</string>
     <string name="clear_history">Limpar histórico</string>
     <string name="dialog_image">O que gostaria de fazer com esta imagem?</string>
-    <string name="action_download">Transferir</string>
+    <string name="action_download">Descarregar</string>
     <string name="action_open">Abrir</string>
     <string name="dialog_link">O que gostaria de fazer com esta ligação?</string>
     <string name="dialog_title_share">Partilhar esta página</string>
+    <string name="dialog_history_long_press">O que gostaria de fazer com este item do histórico?</string>
     <string name="dialog_bookmark">O que gostaria de fazer com este marcador?</string>
-    <string name="action_delete">Eliminar</string>
+    <string name="action_delete">Apagar</string>
     <string name="action_blank">Página vazia</string>
     <string name="agent_default">Padrão</string>
     <string name="agent_desktop">Desktop</string>
@@ -68,12 +71,12 @@
     <string name="agent_custom">Personalizado</string>
     <string name="title_search_engine">Mecanismo de pesquisa</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Gostaria de transferir este ficheiro?</string>
+    <string name="dialog_download">Deseja descarregar este ficheiro? (%1$s)</string>
     <string name="action_cancel">Cancelar</string>
     <string name="title_warning">Aviso</string>
     <string name="dialog_adobe_not_installed">O Adobe Flash Player não foi detetado.\nTem que instalar o Flash Player.</string>
     <string name="title_user_agent">Agente de utilizador</string>
-    <string name="title_download_location">Local das transferências</string>
+    <string name="title_download_location">Local para as descargas</string>
     <string name="title_custom_homepage">Página inicial personalizada</string>
     <string name="action_webpage">Página web</string>
     <string name="title_clear_history">Limpar histórico</string>
@@ -98,12 +101,14 @@
     <string name="action_homepage">Padrão</string>
     <string name="action_back">Recuar</string>
     <string name="action_find">Localizar na página</string>
-    <string name="download_pending">A iniciar transferência\u2026</string>
+    <string name="download_pending">A iniciar descarga\u2026</string>
     <string name="cannot_download">Apenas possível para os URL \"http\" ou \"https\".</string>
+    <string name="problem_download">URL inválido e a descarga não é possível</string>
+    <string name="problem_location_download">Não é possível descarregar da localização especificada</string>
     <string name="download_no_sdcard_dlg_title">Cartão SD não encontrado</string>
-    <string name="download_no_sdcard_dlg_msg">Necessita de um cartão SD para guardar o ficheiro transferido.</string>
+    <string name="download_no_sdcard_dlg_msg">Necessita de um cartão SD para guardar o ficheiro descarregado.</string>
     <string name="download_sdcard_busy_dlg_title">Cartão SD não disponível</string>
-    <string name="download_sdcard_busy_dlg_msg">O cartão SD está ocupado. Para poder transferir ficheiros, desative a opção Desativar armazenamento USB na notificação.</string>
+    <string name="download_sdcard_busy_dlg_msg">O cartão SD está ocupado. Para poder descarregar ficheiros, desative a opção Desativar armazenamento USB na notificação.</string>
     <string name="incognito_cookies">Permitir cookies no modo incógnito</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
@@ -115,7 +120,7 @@
     <string name="message_import">Marcadores importados</string>
     <string name="message_clear_history">Histórico removido</string>
     <string name="message_cookies_cleared">Cookies removidos</string>
-    <string name="max_tabs">Atingido número máximo de separadores</string>
+    <string name="max_tabs">Atingido o número máximo de separadores</string>
     <string name="message_text_copied">Texto copiado para a área de transferência</string>
     <string name="message_link_copied">Ligação copiada para a área de transferência</string>
     <string name="custom_url">URL personalizado</string>
@@ -123,6 +128,13 @@
     <string name="licenses">Licenças Open Source</string>
     <string name="suggestion">Pesquisar por</string>
     <string name="block_ads">Bloquear anúncios</string>
+    <string name="message_insecure_connection">A ligação a este site não é segura:\n%1$s\nContinuar?</string>
+    <string name="message_certificate_date_invalid">data de certificado inválida</string>
+    <string name="message_certificate_expired">certificado expirado</string>
+    <string name="message_certificate_domain_mismatch">domínio do certificado não coincide com o domínio do site</string>
+    <string name="message_certificate_invalid">certificado inválido</string>
+    <string name="message_certificate_not_yet_valid">certificado ainda não válido</string>
+    <string name="message_certificate_untrusted">certificado não confiável</string>
     <string name="title_form_resubmission">Submissão de formulário</string>
     <string name="message_form_resubmission">Gostaria de reenviar os dados?</string>
     <string name="message_location">\nGostaria de utilizar a sua localização</string>
@@ -132,7 +144,9 @@
     <string name="hint_username">Utilizador</string>
     <string name="hint_password">Palavra-passe</string>
     <string name="search_suggestions">Sugestões de pesquisa</string>
-    <string name="powered_by_google">Disponibilizado por Google</string>
+    <string name="powered_by_google">Disponibilizadas por Google</string>
+    <string name="powered_by_duck">Disponibilizadas por DuckDuckGo</string>
+    <string name="search_suggestions_off">Sem sugestões de pesquisa</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">
         <item>Não</item>
@@ -153,7 +167,7 @@
     <string name="clear_cookies_exit">Limpar cookies ao sair</string>
     <string name="clear_history_exit">Limpar histórico ao sair</string>
     <string name="folder_default">Padrão</string>
-    <string name="folder_custom">Personalizado</string>
+    <string name="folder_custom">Personalizada</string>
     <string name="untitled">Sem título</string>
     <string name="mpl_license">Mozilla Public License v. 2.0</string>
     <string name="freeware">Freeware</string>
@@ -164,6 +178,7 @@
     <string name="name_inverted">Invertido</string>
     <string name="name_grayscale">Escala de cinzento</string>
     <string name="name_inverted_grayscale">Escala de cinzento invertida</string>
+    <string name="name_increase_contrast">Aumentar contraste</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Sincronizar histórico com Google</string>
     <string name="title_file_chooser">Seletor de ficheiros</string>
@@ -178,10 +193,11 @@
     <string name="settings_general">Definições gerais</string>
     <string name="settings_display">Definições de exibição</string>
     <string name="settings_privacy">Definições de privacidade</string>
-    <string name="settings_about">Sobre</string>
+    <string name="settings_about">Acerca</string>
     <string name="settings_about_explain">Detalhes da versão, do autor e da licença</string>
     <string name="close_tab">Fechar separador</string>
     <string name="close_all_tabs">Fechar todos os separadores</string>
+    <string name="close_other_tabs">Fechar os outros separadores</string>
     <string name="third_party">Bloquear cookies de terceiros</string>
     <string name="color_mode">Ativar modo de cor</string>
     <string name="reading_mode">Modo de leitura</string>
@@ -189,8 +205,9 @@
     <string name="loading_failed">A página não foi carregada.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
-    <string name="mit_license">MIT License</string>
+    <string name="mit_license">Licença MIT</string>
     <string name="url_contents">Conteúdo da caixa do URL</string>
+    <string name="text_encoding">Codificação do texto</string>
     <string-array name="url_content_array">
         <item>Domínio (padrão)</item>
         <item>URL</item>
@@ -199,4 +216,45 @@
     <string name="invert_color">Inverter cores</string>
     <string name="dark_theme">Tema escuro</string>
     <string name="tabs">Separadores</string>
+    <string name="theme">Tema da aplicação</string>
+    <string name="light_theme">Tema claro</string>
+    <string name="black_theme">Tema preto (AMOLED)</string>
+    <string name="folder">Nome da pasta</string>
+    <string name="action_folder">Pasta</string>
+    <string name="action_rename">Renomear</string>
+    <string name="title_rename_folder">Renomear pasta</string>
+    <string name="dialog_folder">O que gostaria de fazer com esta pasta?</string>
+    <string name="clear_web_storage">Limpar armazenamento web</string>
+    <string name="clear_web_storage_exit">Limpar armazenamento web ao sair</string>
+    <string name="message_web_storage_cleared">Armazenamento web removido</string>
+    <string name="hosts_source">Fonte do ficheiro hosts para Ad Blocking</string>
+    <string name="settings_adblock">Definições AdBlock</string>
+    <string name="tabs_in_drawer">Mostrar separadores no menu de navegação</string>
+    <string name="swap_bookmarks_and_tabs">Trocar menus de marcadores e separadores</string>
+    <string name="do_not_track">Pedidos \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Remover cabeçalhos de identificação</string>
+    <string name="action_add_to_homescreen">Adicionar ao ecrã</string>
+    <string name="message_added_to_homescreen">Atalho adicionado ao ecrã</string>
+    <string name="action_delete_all_bookmarks">Apagar todos os marcadores</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Perguntas frequentes</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Definições de depuração</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Reinicie a aplicação para aplicar as alterações.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Abrir em novo separador</string>
+    <string name="dialog_open_background_tab">Abrir em separador de fundo</string>
+    <string name="dialog_open_incognito_tab">Abrir em separador incógnito</string>
+    <string name="dialog_remove_bookmark">Remover marcador</string>
+    <string name="dialog_edit_bookmark">Editar marcador</string>
+    <string name="dialog_remove_from_history">Remover do histórico</string>
+    <string name="dialog_download_image">Descarregar imagem</string>
+    <string name="dialog_copy_link">Copiar ligação</string>
+    <string name="dialog_rename_folder">Renomear pasta</string>
+    <string name="dialog_remove_folder">Remover pasta</string>
+    <string name="dialog_title_close_browser">Fechar navegador</string>
 </resources>

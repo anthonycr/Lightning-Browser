@@ -3,9 +3,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.7'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.2.1'
+        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
     }
 }
 
@@ -14,4 +13,10 @@ allprojects {
         jcenter()
         mavenCentral()
     }
+}
+
+ext {
+    minSdkVersion = 14
+    targetSdkVersion = 25
+    buildToolsVersion = '25.0.2'
 }
