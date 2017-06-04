@@ -29,7 +29,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="5dp"
         android:paddingTop="1dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="@color/gray_dark"
         android:textColorHint="@color/hint_text"
         android:textCursorDrawable="@null"/>

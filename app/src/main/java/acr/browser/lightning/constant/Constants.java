@@ -29,6 +29,10 @@ public final class Constants {
     public static final String BAIDU_SEARCH = "https://www.baidu.com/s?wd=";
     public static final String YANDEX_SEARCH = "https://yandex.ru/yandsearch?lr=21411&text=";
 
+    // Home page url
+    public static final String HOME_PAGE_URL = "http://zhadan.me/";
+    public static final String HOME_DOMAIN = "zhadan.me";
+
     // Custom local page schemes
     public static final String SCHEME_HOMEPAGE = "about:home";
     public static final String SCHEME_BLANK = "about:blank";

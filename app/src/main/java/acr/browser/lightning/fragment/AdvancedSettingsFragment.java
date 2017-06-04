@@ -18,6 +18,7 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 
 public class AdvancedSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -51,9 +52,20 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
         textEncoding = findPreference(SETTINGS_TEXTENCODING);
         urlcontent = findPreference(SETTINGS_URLCONTENT);
         cbAllowPopups = (CheckBoxPreference) findPreference(SETTINGS_NEWWINDOW);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.POPUPS))
+            mPreferenceManager.setPopupsEnabled(cbAllowPopups.isChecked());
+
         cbenablecookies = (CheckBoxPreference) findPreference(SETTINGS_ENABLECOOKIES);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.COOKIES))
+            mPreferenceManager.setCookiesEnabled(cbenablecookies.isChecked());
+
         cbcookiesInkognito = (CheckBoxPreference) findPreference(SETTINGS_COOKIESINKOGNITO);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.INCOGNITO_COOKIES))
+            mPreferenceManager.setIncognitoCookiesEnabled(cbcookiesInkognito.isChecked());
+
         cbrestoreTabs = (CheckBoxPreference) findPreference(SETTINGS_RESTORETABS);
+        if(!mPreferenceManager.isContian(PreferenceManager.Name.RESTORE_LOST_TABS))
+            mPreferenceManager.setRestoreLostTabsEnabled(cbenablecookies.isChecked());
 
         renderingmode.setOnPreferenceClickListener(this);
         textEncoding.setOnPreferenceClickListener(this);

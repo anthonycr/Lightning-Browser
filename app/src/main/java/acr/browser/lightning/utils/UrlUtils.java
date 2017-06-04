@@ -90,11 +90,12 @@ public class UrlUtils {
      * Returns whether the given url is the bookmarks/history page or a normal website
      */
     public static boolean isSpecialUrl(@Nullable String url) {
-        return url != null && url.startsWith(Constants.FILE) &&
+        return url != null && ((url.startsWith(Constants.FILE) &&
             (url.endsWith(BookmarkPage.FILENAME) ||
                 url.endsWith(DownloadsPage.FILENAME) ||
                 url.endsWith(HistoryPage.FILENAME) ||
-                url.endsWith(StartPage.FILENAME));
+                url.endsWith(StartPage.FILENAME))) ||
+                url.contains(Constants.HOME_DOMAIN));
     }
 
     /**

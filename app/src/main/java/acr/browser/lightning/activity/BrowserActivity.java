@@ -1620,7 +1620,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         url = searchString.toString();
                     }
                 }
-                if (url == null) {
+                if (url == null || UrlUtils.isSpecialUrl(url)) {
                     return;
                 }
                 getUrl.setText(url);
