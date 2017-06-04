@@ -8,7 +8,7 @@
     <string name="action_copy">Copiar enlace</string>
     <string name="action_forward">Adelante</string>
     <string name="settings">Ajustes</string>
-    <string name="location">Acceso a tu ubicación</string>
+    <string name="location">Permitir acceso a tu ubicación</string>
     <string name="password">Almacenar tus contraseñas</string>
     <string name="agent">Agente de usuario</string>
     <string name="flash">Habilitar Adobe Flash</string>
@@ -29,9 +29,11 @@
     <string name="recommended">(Recomendado)</string>
     <string name="search">Motor de búsqueda</string>
     <string name="search_hint">Buscar</string>
-    <string name="wideViewPort">Utilizar ventana de visualización normal</string>
+    <string name="wideViewPort">Utilizar viewport normal</string>
     <string name="overViewMode">Visualizar la página de lejos al cargar</string>
     <string name="restore">Restaurar pestañas cerradas al iniciar</string>
+    <string name="supported_browsers_title">Navegadores compatibles</string>
+    <string name="stock_browser">Navegador de sistema</string>
     <string name="stock_browser_unavailable">Navegador de sistema no detectado</string>
     <string name="stock_browser_available">Detectado navegador de sistema soportado</string>
     <string name="fullScreenOption">Ocultar barra de estado al navegar</string>
@@ -94,12 +96,12 @@
     <string name="action_follow_me">Contáctame</string>
     <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Limpiar caché</string>
-    <string name="message_cache_cleared">La caché ha sido borrada</string>
-    <string name="message_import">Se han importado los marcadores</string>
-    <string name="message_clear_history">El historial ha sido borrado</string>
-    <string name="message_cookies_cleared">Las cookies han sido borradas</string>
+    <string name="message_cache_cleared">La caché se ha borrado</string>
+    <string name="message_import">Los marcadores se han importado</string>
+    <string name="message_clear_history">El historial se ha borrado</string>
+    <string name="message_cookies_cleared">Las cookies se han borrado</string>
     <string name="max_tabs">Se ha alcanzado el máximo de pestañas</string>
-    <string name="message_text_copied">El texto ha sido copiado al portapapeles</string>
+    <string name="message_text_copied">El texto se ha copiado al portapapeles</string>
     <string name="message_link_copied">El enlace se ha copiado al portapapeles</string>
     <string name="custom_url">Dirección personalizada</string>
     <string name="message_blocked_local">Se ha bloqueado la carga del archivo local</string>
@@ -165,11 +167,12 @@
     <string name="settings_about_explain">Detalles sobre la versión, autor y licencias.</string>
     <string name="close_tab">Cerrar pestaña</string>
     <string name="close_all_tabs">Cerrar todas las pestañas</string>
+    <string name="close_other_tabs">Cerrar las demás pestañas</string>
     <string name="third_party">Bloquear cookies de terceras partes</string>
     <string name="color_mode">Habilitar modo de color</string>
     <string name="reading_mode">Modo de lectura</string>
     <string name="loading">Cargando&#8230;</string>
-    <string name="loading_failed">No se pudo cargar de la página.</string>
+    <string name="loading_failed">No se pudo cargar la página.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT License</string>
@@ -231,10 +234,11 @@
     <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
 
     <string name="message_certificate_date_invalid">la fecha del certificado no es válida</string>
-    <string name="message_certificate_domain_mismatch">el dominio en el certificado no corresponde al dominio del sitio</string>
-    <string name="message_certificate_expired">el certificado expiró</string>
+    <string name="message_certificate_domain_mismatch">el dominio del certificado no coincide con el dominio del sitio web</string>
+    <string name="message_certificate_expired">el certificado está caducado</string>
     <string name="message_certificate_invalid">el certificado no es válido</string>
     <string name="message_certificate_not_yet_valid">el certificado no es válido todavía</string>
+
     <string name="message_certificate_untrusted">el certificado no es confiable</string>
     <string name="message_insecure_connection">La conexión a este sitio no es segura:\n%1$s\n¿Continuar en cualquier caso?</string>
 
