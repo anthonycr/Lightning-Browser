@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 
@@ -33,43 +34,17 @@ import acr.browser.lightning.constant.StartPage;
  */
 public class UrlUtils {
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
-            "(?i)" + // switch on case insensitive matching
-                    '(' +    // begin group for schema
-                    "(?:http|https|file)://" +
-                    "|(?:inline|data|about|javascript):" +
-                    "|(?:.*:.*@)" +
-                    ')' +
-                    "(.*)");
+        "(?i)" + // switch on case insensitive matching
+            '(' +    // begin group for schema
+            "(?:http|https|file)://" +
+            "|(?:inline|data|about|javascript):" +
+            "|(?:.*:.*@)" +
+            ')' +
+            "(.*)");
     // Google search
     public final static String QUERY_PLACE_HOLDER = "%s";
-    // Regular expression to strip http:// and optionally
-    // the trailing slash
-    private static final Pattern STRIP_URL_PATTERN =
-            Pattern.compile("^http://(.*?)/?$");
 
     private UrlUtils() { /* cannot be instantiated */ }
-
-    /**
-     * Strips the provided url of preceding "http://" and any trailing "/". Does not
-     * strip "https://". If the provided string cannot be stripped, the original string
-     * is returned.
-     * <p/>
-     * TODO: Put this in TextUtils to be used by other packages doing something similar.
-     *
-     * @param url a url to strip, like "http://www.google.com/"
-     * @return a stripped url like "www.google.com", or the original string if it could
-     * not be stripped
-     */
-    @Nullable
-    public static String stripUrl(@Nullable String url) {
-        if (url == null) return null;
-        Matcher m = STRIP_URL_PATTERN.matcher(url);
-        if (m.matches()) {
-            return m.group(1);
-        } else {
-            return url;
-        }
-    }
 
     /**
      * Attempts to determine whether user input is a URL or search
@@ -106,55 +81,9 @@ public class UrlUtils {
         }
         if (canBeSearch) {
             return URLUtil.composeSearchUrl(inUrl,
-                    searchUrl, QUERY_PLACE_HOLDER);
+                searchUrl, QUERY_PLACE_HOLDER);
         }
         return "";
-    }
-
-    /* package */
-    @NonNull
-    static String fixUrl(@NonNull String inUrl) {
-        // FIXME: Converting the url to lower case
-        // duplicates functionality in smartUrlFilter().
-        // However, changing all current callers of fixUrl to
-        // call smartUrlFilter in addition may have unwanted
-        // consequences, and is deferred for now.
-        int colon = inUrl.indexOf(':');
-        boolean allLower = true;
-        for (int index = 0; index < colon; index++) {
-            char ch = inUrl.charAt(index);
-            if (!Character.isLetter(ch)) {
-                break;
-            }
-            allLower &= Character.isLowerCase(ch);
-            if (index == colon - 1 && !allLower) {
-                inUrl = inUrl.substring(0, colon).toLowerCase()
-                        + inUrl.substring(colon);
-            }
-        }
-        if (inUrl.startsWith("http://") || inUrl.startsWith("https://"))
-            return inUrl;
-        if (inUrl.startsWith("http:") ||
-                inUrl.startsWith("https:")) {
-            if (inUrl.startsWith("http:/") || inUrl.startsWith("https:/")) {
-                inUrl = inUrl.replaceFirst("/", "//");
-            } else inUrl = inUrl.replaceFirst(":", "://");
-        }
-        return inUrl;
-    }
-
-    // Returns the filtered URL. Cannot return null, but can return an empty string
-    /* package */
-    @Nullable
-    static String filteredUrl(@Nullable String inUrl) {
-        if (inUrl == null) {
-            return "";
-        }
-        if (inUrl.startsWith("content:")
-                || inUrl.startsWith("browser:")) {
-            return "";
-        }
-        return inUrl;
     }
 
     /**
@@ -162,9 +91,10 @@ public class UrlUtils {
      */
     public static boolean isSpecialUrl(@Nullable String url) {
         return url != null && url.startsWith(Constants.FILE) &&
-                (url.endsWith(BookmarkPage.FILENAME) ||
-                        url.endsWith(HistoryPage.FILENAME) ||
-                        url.endsWith(StartPage.FILENAME));
+            (url.endsWith(BookmarkPage.FILENAME) ||
+                url.endsWith(DownloadsPage.FILENAME) ||
+                url.endsWith(HistoryPage.FILENAME) ||
+                url.endsWith(StartPage.FILENAME));
     }
 
     /**
@@ -175,6 +105,16 @@ public class UrlUtils {
      */
     public static boolean isBookmarkUrl(@Nullable String url) {
         return url != null && url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME);
+    }
+
+    /**
+     * Determines if the url is a url for the bookmark page.
+     *
+     * @param url the url to check, may be null.
+     * @return true if the url is a bookmark url, false otherwise.
+     */
+    public static boolean isDownloadsUrl(@Nullable String url) {
+        return url != null && url.startsWith(Constants.FILE) && url.endsWith(DownloadsPage.FILENAME);
     }
 
     /**

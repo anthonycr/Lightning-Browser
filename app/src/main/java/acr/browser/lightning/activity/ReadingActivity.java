@@ -30,28 +30,27 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.OnSubscribe;
-import com.anthonycr.bonsai.Subscriber;
+
 import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 import com.anthonycr.bonsai.Subscription;
+
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReadingActivity extends AppCompatActivity {
 
-    private static final String TAG = ReadingActivity.class.getSimpleName();
+    private static final String TAG = "ReadingActivity";
 
-    @Bind(R.id.textViewTitle)
-    TextView mTitle;
-
-    @Bind(R.id.textViewBody)
-    TextView mBody;
+    @BindView(R.id.textViewTitle) TextView mTitle;
+    @BindView(R.id.textViewBody) TextView mBody;
 
     @Inject PreferenceManager mPreferences;
 
@@ -151,56 +150,56 @@ public class ReadingActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
         mPageLoaderSubscription = loadPage(mUrl).subscribeOn(Schedulers.worker())
-                .observeOn(Schedulers.main())
-                .subscribe(new OnSubscribe<ReaderInfo>() {
-                    @Override
-                    public void onStart() {
-                        mProgressDialog = new ProgressDialog(ReadingActivity.this);
-                        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        mProgressDialog.setCancelable(false);
-                        mProgressDialog.setIndeterminate(true);
-                        mProgressDialog.setMessage(getString(R.string.loading));
-                        mProgressDialog.show();
-                        BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
-                    }
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<ReaderInfo>() {
+                @Override
+                public void onStart() {
+                    mProgressDialog = new ProgressDialog(ReadingActivity.this);
+                    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.setIndeterminate(true);
+                    mProgressDialog.setMessage(getString(R.string.loading));
+                    mProgressDialog.show();
+                    BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
+                }
 
-                    @Override
-                    public void onNext(@Nullable ReaderInfo item) {
-                        if (item == null || item.getTitle().isEmpty() || item.getBody().isEmpty()) {
-                            setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                        } else {
-                            setText(item.getTitle(), item.getBody());
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable throwable) {
+                @Override
+                public void onItem(@Nullable ReaderInfo item) {
+                    if (item == null || item.getTitle().isEmpty() || item.getBody().isEmpty()) {
                         setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
-                            mProgressDialog = null;
-                        }
+                    } else {
+                        setText(item.getTitle(), item.getBody());
                     }
+                }
 
-                    @Override
-                    public void onComplete() {
-                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
-                            mProgressDialog = null;
-                        }
+                @Override
+                public void onError(@NonNull Throwable throwable) {
+                    setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
+                        mProgressDialog = null;
                     }
-                });
+                }
+
+                @Override
+                public void onComplete() {
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
+                        mProgressDialog = null;
+                    }
+                }
+            });
         return true;
     }
 
-    private static Observable<ReaderInfo> loadPage(@NonNull final String url) {
-        return Observable.create(new Action<ReaderInfo>() {
+    private static Single<ReaderInfo> loadPage(@NonNull final String url) {
+        return Single.create(new SingleAction<ReaderInfo>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<ReaderInfo> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<ReaderInfo> subscriber) {
                 HtmlFetcher fetcher = new HtmlFetcher();
                 try {
                     JResult result = fetcher.fetchAndExtract(url, 2500, true);
-                    subscriber.onNext(new ReaderInfo(result.getTitle(), result.getText()));
+                    subscriber.onItem(new ReaderInfo(result.getTitle(), result.getText()));
                 } catch (Exception e) {
                     subscriber.onError(new Throwable("Encountered exception"));
                     Log.e(TAG, "Error parsing page", e);
@@ -290,9 +289,8 @@ public class ReadingActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.text_size_item:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                LayoutInflater inflater = this.getLayoutInflater();
-                View view = inflater.inflate(R.layout.seek_layout, null);
+
+                View view = LayoutInflater.from(this).inflate(R.layout.dialog_seek_bar, null);
                 final SeekBar bar = (SeekBar) view.findViewById(R.id.text_size_seekbar);
                 bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -312,18 +310,20 @@ public class ReadingActivity extends AppCompatActivity {
                 });
                 bar.setMax(5);
                 bar.setProgress(mTextSize);
-                builder.setView(view);
-                builder.setTitle(R.string.size);
-                builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        mTextSize = bar.getProgress();
-                        mBody.setTextSize(getTextSize(mTextSize));
-                        mPreferences.setReadingTextSize(bar.getProgress());
-                    }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setView(view)
+                    .setTitle(R.string.size)
+                    .setPositiveButton(android.R.string.ok, new OnClickListener() {
 
-                });
+                        @Override
+                        public void onClick(DialogInterface dialog, int arg1) {
+                            mTextSize = bar.getProgress();
+                            mBody.setTextSize(getTextSize(mTextSize));
+                            mPreferences.setReadingTextSize(bar.getProgress());
+                        }
+
+                    });
                 Dialog dialog = builder.show();
                 BrowserDialog.setDialogSize(this, dialog);
                 break;

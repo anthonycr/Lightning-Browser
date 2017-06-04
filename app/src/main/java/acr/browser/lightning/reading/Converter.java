@@ -25,15 +25,15 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
-import acr.browser.lightning.constant.Constants;
-
 /**
  * This class is not thread safe. Use one new instance every time due to
  * encoding variable.
- * 
+ *
  * @author Peter Karich
  */
 public class Converter {
+
+    private static final String TAG = "Converter";
 
     private final static String UTF8 = "UTF-8";
     private final static String ISO = "ISO-8859-1";
@@ -93,7 +93,7 @@ public class Converter {
 
     /**
      * reads bytes off the string and returns a string
-     * 
+     *
      * @param is input stream to read
      * @param maxBytes
      *            The max bytes that we want to read from the input stream
@@ -118,20 +118,20 @@ public class Converter {
                 if (tmpEnc != null)
                     encoding = tmpEnc;
                 else {
-                    Log.d(Constants.TAG, "no charset found in first stage");
+                    Log.d(TAG, "no charset found in first stage");
                     // detect with the help of xml beginning ala
                     // encoding="charset"
                     tmpEnc = detectCharset("encoding=", output, in, encoding);
                     if (tmpEnc != null)
                         encoding = tmpEnc;
                     else
-                        Log.d(Constants.TAG, "no charset found in second stage");
+                        Log.d(TAG, "no charset found in second stage");
                 }
 
                 if (!Charset.isSupported(encoding))
                     throw new UnsupportedEncodingException(encoding);
             } catch (UnsupportedEncodingException e) {
-                Log.d(Constants.TAG,
+                Log.d(TAG,
                         "Using default encoding:" + UTF8 + " problem:" + e.getMessage()
                                 + " encoding:" + encoding + ' ' + url);
                 encoding = UTF8;
@@ -146,7 +146,7 @@ public class Converter {
             byte[] arr = new byte[K2];
             while (true) {
                 if (bytesRead >= maxBytes) {
-                    Log.d(Constants.TAG, "Maxbyte of " + maxBytes
+                    Log.d(TAG, "Maxbyte of " + maxBytes
                             + " exceeded! Maybe html is now broken but try it nevertheless. Url: "
                             + url);
                     break;
@@ -161,7 +161,7 @@ public class Converter {
 
             return output.toString(encoding);
         } catch (IOException e) {
-            Log.e(Constants.TAG, e.toString() + " url:" + url);
+            Log.e(TAG, e.toString() + " url:" + url);
         } finally {
             if (in != null) {
                 try {
@@ -178,7 +178,7 @@ public class Converter {
      * This method detects the charset even if the first call only returns some
      * bytes. It will read until 4K bytes are reached and then try to determine
      * the encoding
-     * 
+     *
      * @throws IOException
      */
     private static String detectCharset(String key, ByteArrayOutputStream bos, BufferedInputStream in,
@@ -236,7 +236,7 @@ public class Converter {
                     bos.reset();
                     return tmpEnc;
                 } catch (IOException ex) {
-                    Log.e(Constants.TAG, "Couldn't reset stream to re-read with new encoding "
+                    Log.e(TAG, "Couldn't reset stream to re-read with new encoding "
                             + tmpEnc + ' ' + ex.toString());
                 }
             }

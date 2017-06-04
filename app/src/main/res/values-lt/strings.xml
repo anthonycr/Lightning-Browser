@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lightning</string>
+    <string name="action_add_bookmark">Pridėti žymę</string>
+    <string name="action_add_to_homescreen">Pridėti į pradžios langą</string>
+    <string name="action_allow">Leisti</string>
+    <string name="action_back">Atgal</string>
+    <string name="action_blank">Tuščias puslapis</string>
+    <string name="action_bookmarks">Žymės</string>
+    <string name="action_cancel">Atšaukti</string>
+    <string name="action_copy">Kopijuoti nuorodą</string>
+    <string name="action_delete">Ištrinti</string>
+    <string name="action_dont_allow">Neleisti</string>
+    <string name="action_download">Atsiųsti</string>
+    <string name="action_folder">Aplankas</string>
+    <string name="action_follow_me">Susisiekti</string>
+    <string name="action_new_tab">Nauja kortelė</string>
+    <string name="action_incognito">Nauja privati kortelė</string>
+    <string name="action_manual">Vadovas</string>
+    <string name="action_no">Ne</string>
+    <string name="action_ok">Gerai</string>
+    <string name="action_open">Atidaryti</string>
+    <string name="action_history">Istorija</string>
+    <string name="action_homepage">Numatytasis</string>
+    <string name="action_forward">Pirmyn</string>
+    <string name="action_edit">Keisti</string>
+    <string name="action_find">Rasti puslapyje</string>
+    <string name="action_rename">Pervadinti</string>
+    <string name="action_share">Dalintis</string>
+    <string name="action_webpage">Tinklalapis</string>
+    <string name="action_yes">Taip</string>
+    <string name="agent">Naudotojo agentas</string>
+    <string name="agent_default">Default</string>
+    <string name="agent_desktop">Desktop</string>
+    <string name="agent_mobile">Mobile</string>
+    <string name="agent_custom">Custom</string>
+    <string name="faq">FAQ</string>
+    <string name="yes">Taip</string>
+    <string name="reading_mode">Skaitymo rėžimas</string>
+    <string name="no">Ne</string>
+    <string name="name_normal">Normalus</string>
+    <string name="port">Portas:</string>
+</resources>

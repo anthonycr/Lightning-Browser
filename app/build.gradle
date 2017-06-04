@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 24
-        versionName "4.3.3"
+        targetSdkVersion 25
+        versionName "4.4.2"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -34,15 +33,15 @@ android {
 
     productFlavors {
         lightningPlus {
-            buildConfigField "boolean", "FULL_VERSION", "true"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
-            versionCode 88
+            versionCode 91
         }
 
         lightningLite {
-            buildConfigField "boolean", "FULL_VERSION", "false"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
-            versionCode 90
+            versionCode 93
         }
     }
 
@@ -58,7 +57,7 @@ android {
 dexcount {
     includeClasses = false
     includeFieldCount = false
-    printAsTree = true
+    format = "tree"
     orderByMethodCount = true
     verbose = false
 }
@@ -66,25 +65,26 @@ dexcount {
 dependencies {
 
     // support libraries
-    compile 'com.android.support:palette-v7:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
+    def supportLibVersion = '25.3.1'
+    compile "com.android.support:palette-v7:$supportLibVersion"
+    compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:design:$supportLibVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibVersion"
+    compile "com.android.support:support-v4:$supportLibVersion"
 
     // html parsing for reading mode
-    compile 'org.jsoup:jsoup:1.9.2'
-
-    // event bus
-    compile 'com.squareup:otto:1.3.8'
+    compile 'org.jsoup:jsoup:1.10.2'
 
     // dependency injection
-    compile 'com.google.dagger:dagger:2.0.2'
-    apt 'com.google.dagger:dagger-compiler:2.0.2'
+    def daggerVersion = '2.11'
+    compile "com.google.dagger:dagger:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    compile 'com.jakewharton:butterknife:7.0.1'
+    def butterknifeVersion = '8.6.0'
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
@@ -92,16 +92,19 @@ dependencies {
     // proxy support
     compile 'net.i2p.android:client:0.8'
 
-    // Use the following code to update the libnetcipher submodule
-    // git submodule foreach git reset --hard
-    // git submodule update --remote
-    compile project(':libnetcipher')
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
 
-    compile project(':bonsai')
+    // tor proxy
+    def netcipherVersion = '2.0.0-alpha1'
+    compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
+    compile "info.guardianproject.netcipher:netcipher-webkit:$netcipherVersion"
 
-    compile project(':animated-progress-bar')
+    compile 'com.anthonycr.bonsai:bonsai:1.1.0'
+
+    compile 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    def leakCanaryVersion = '1.5.1'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 }

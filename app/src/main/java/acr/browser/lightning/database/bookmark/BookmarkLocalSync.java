@@ -1,4 +1,4 @@
-package acr.browser.lightning.database;
+package acr.browser.lightning.database.bookmark;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,17 +8,19 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleSubscriber;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.anthonycr.bonsai.Action;
-import com.anthonycr.bonsai.Observable;
-import com.anthonycr.bonsai.Subscriber;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkLocalSync {
 
-    private static final String TAG = BookmarkLocalSync.class.getSimpleName();
+    private static final String TAG = "BookmarkLocalSync";
 
     private static final String STOCK_BOOKMARKS_CONTENT = "content://browser/bookmarks";
     private static final String CHROME_BOOKMARKS_CONTENT = "content://com.android.chrome.browser/bookmarks";
@@ -42,6 +44,7 @@ public class BookmarkLocalSync {
         mContext = context;
     }
 
+    @NonNull
     private List<HistoryItem> getBookmarksFromContentUri(String contentUri) {
         List<HistoryItem> list = new ArrayList<>();
         Cursor cursor = getBrowserCursor(contentUri);
@@ -81,7 +84,7 @@ public class BookmarkLocalSync {
         Uri uri = Uri.parse(contentUri);
         try {
             cursor = mContext.getContentResolver().query(uri,
-                    new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
+                new String[]{COLUMN_URL, COLUMN_TITLE, COLUMN_BOOKMARK}, null, null, null);
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -89,10 +92,10 @@ public class BookmarkLocalSync {
     }
 
     @NonNull
-    public Observable<List<Source>> getSupportedBrowsers() {
-        return Observable.create(new Action<List<Source>>() {
+    public Single<List<Source>> getSupportedBrowsers() {
+        return Single.create(new SingleAction<List<Source>>() {
             @Override
-            public void onSubscribe(@NonNull Subscriber<List<Source>> subscriber) {
+            public void onSubscribe(@NonNull SingleSubscriber<List<Source>> subscriber) {
                 List<Source> sources = new ArrayList<>(1);
                 if (isBrowserSupported(STOCK_BOOKMARKS_CONTENT)) {
                     sources.add(Source.STOCK);
@@ -106,7 +109,7 @@ public class BookmarkLocalSync {
                 if (isBrowserSupported(CHROME_DEV_BOOKMARKS_CONTENT)) {
                     sources.add(Source.CHROME_DEV);
                 }
-                subscriber.onNext(sources);
+                subscriber.onItem(sources);
                 subscriber.onComplete();
             }
         });
@@ -143,16 +146,23 @@ public class BookmarkLocalSync {
         return getBookmarksFromContentUri(CHROME_DEV_BOOKMARKS_CONTENT);
     }
 
-    @WorkerThread
-    public boolean isBrowserImportSupported() {
-        Cursor chrome = getChromeCursor();
-        Utils.close(chrome);
-        Cursor dev = getChromeDevCursor();
-        Utils.close(dev);
-        Cursor beta = getChromeBetaCursor();
-        Cursor stock = getStockCursor();
-        Utils.close(stock);
-        return chrome != null || dev != null || beta != null || stock != null;
+    @NonNull
+    public Single<Boolean> isBrowserImportSupported() {
+        return Single.create(new SingleAction<Boolean>() {
+            @Override
+            public void onSubscribe(@NonNull SingleSubscriber<Boolean> subscriber) {
+                Cursor chrome = getChromeCursor();
+                Utils.close(chrome);
+                Cursor dev = getChromeDevCursor();
+                Utils.close(dev);
+                Cursor beta = getChromeBetaCursor();
+                Cursor stock = getStockCursor();
+                Utils.close(stock);
+
+                subscriber.onItem(chrome != null || dev != null || beta != null || stock != null);
+                subscriber.onComplete();
+            }
+        });
     }
 
     @Nullable

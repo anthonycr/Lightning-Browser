@@ -13,15 +13,12 @@ import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
 import com.anthonycr.bonsai.Schedulers;
-import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -34,7 +31,7 @@ import acr.browser.lightning.utils.Utils;
  */
 class FetchUrlMimeType extends Thread {
 
-    private static final String TAG = FetchUrlMimeType.class.getSimpleName();
+    private static final String TAG = "FetchUrlMimeType";
 
     private final Activity mContext;
     private final DownloadManager.Request mRequest;
@@ -55,7 +52,6 @@ class FetchUrlMimeType extends Thread {
     public void run() {
         // User agent is likely to be null, though the AndroidHttpClient
         // seems ok with that.
-        final Bus eventBus = BrowserApp.getBus(mContext);
         String mimeType = null;
         String contentDisposition = null;
         HttpURLConnection connection = null;
@@ -97,7 +93,7 @@ class FetchUrlMimeType extends Thread {
             if (mimeType.equalsIgnoreCase("text/plain")
                 || mimeType.equalsIgnoreCase("application/octet-stream")) {
                 String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    DownloadHandler.guessFileExtension(mUri));
+                    Utils.guessFileExtension(mUri));
                 if (newMimeType != null) {
                     mRequest.setMimeType(newMimeType);
                 }
