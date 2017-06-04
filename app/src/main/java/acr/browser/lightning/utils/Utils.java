@@ -56,7 +56,7 @@ import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
 
-    private static final String TAG = Utils.class.getSimpleName();
+    private static final String TAG = "Utils";
 
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -72,7 +72,7 @@ public final class Utils {
      * @param userAgent          the user agent of the browser.
      * @param contentDisposition the content description of the file.
      */
-    public static void downloadFile(final Activity activity, final PreferenceManager manager, final String url,
+    public static void downloadFile(@NonNull final Activity activity, @NonNull final PreferenceManager manager, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
@@ -80,7 +80,7 @@ public final class Utils {
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);
                 DownloadHandler.onDownloadStart(activity, manager, url, userAgent, contentDisposition, null);
-                Log.i(Constants.TAG, "Downloading: " + fileName);
+                Log.i(TAG, "Downloading: " + fileName);
             }
 
             @Override
@@ -256,6 +256,7 @@ public final class Utils {
      * @param bitmap is the bitmap to pad.
      * @return the padded bitmap.
      */
+    @NonNull
     public static Bitmap padFavicon(@NonNull Bitmap bitmap) {
         int padding = Utils.dpToPx(4);
 
@@ -417,7 +418,7 @@ public final class Utils {
         if (TextUtils.isEmpty(item.getUrl())) {
             return;
         }
-        Log.d(Constants.TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
+        Log.d(TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
         Intent shortcutIntent = new Intent(activity, MainActivity.class);
         shortcutIntent.setData(Uri.parse(item.getUrl()));
 
@@ -453,6 +454,15 @@ public final class Utils {
         }
 
         return inSampleSize;
+    }
+
+    @Nullable
+    public static String guessFileExtension(@NonNull String filename) {
+        int lastIndex = filename.lastIndexOf('.') + 1;
+        if (lastIndex > 0 && filename.length() > lastIndex) {
+            return filename.substring(lastIndex, filename.length());
+        }
+        return null;
     }
 
 }

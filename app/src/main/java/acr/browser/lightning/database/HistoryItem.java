@@ -25,18 +25,10 @@ public class HistoryItem implements Comparable<HistoryItem> {
     private Bitmap mBitmap = null;
 
     private int mImageId = 0;
-    private int mOrder = 0;
+    private int mPosition = 0;
     private boolean mIsFolder = false;
 
     public HistoryItem() {}
-
-    public HistoryItem(@NonNull HistoryItem item) {
-        this.mUrl = item.mUrl;
-        this.mTitle = item.mTitle;
-        this.mFolder = item.mFolder;
-        this.mOrder = item.mOrder;
-        this.mIsFolder = item.mIsFolder;
-    }
 
     public HistoryItem(@NonNull String url, @NonNull String title) {
         Preconditions.checkNonNull(url);
@@ -71,12 +63,12 @@ public class HistoryItem implements Comparable<HistoryItem> {
         mFolder = (folder == null) ? "" : folder;
     }
 
-    public void setOrder(int order) {
-        mOrder = order;
+    public void setPosition(int order) {
+        mPosition = order;
     }
 
-    public int getOrder() {
-        return mOrder;
+    public int getPosition() {
+        return mPosition;
     }
 
     @NonNull
@@ -140,8 +132,8 @@ public class HistoryItem implements Comparable<HistoryItem> {
         HistoryItem that = (HistoryItem) object;
 
         return mImageId == that.mImageId &&
-                this.mTitle.equals(that.mTitle) && this.mUrl.equals(that.mUrl) &&
-                this.mFolder.equals(that.mFolder);
+            this.mTitle.equals(that.mTitle) && this.mUrl.equals(that.mUrl) &&
+            this.mFolder.equals(that.mFolder);
     }
 
     @Override

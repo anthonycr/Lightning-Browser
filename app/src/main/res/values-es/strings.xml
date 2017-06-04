@@ -53,7 +53,7 @@
     <string name="agent_custom">Personalizado</string>
     <string name="title_search_engine">Motor de búsqueda</string>
     <string name="action_ok">Aceptar</string>
-    <string name="dialog_download">¿Quieres descargar este archivo?</string>
+    <string name="dialog_download">¿Quieres descargar este archivo? (%1$s)</string>
     <string name="action_cancel">Cancelar</string>
     <string name="title_warning">Aviso</string>
     <string name="dialog_adobe_not_installed">No se detecta Adobe Flash Player.\nPor favor, instálalo.</string>
@@ -84,7 +84,7 @@
     <string name="action_back">Atrás</string>
     <string name="action_find">Buscar en la página</string>
     <string name="download_pending">Iniciando descarga\u2026</string>
-    <string name="cannot_download">Sólo se puede descargar de direcciones \"http\" o \"https\".</string>
+    <string name="cannot_download">Sólo se puede descargar de URLs \"http\" o \"https\".</string>
     <string name="download_no_sdcard_dlg_title">No hay tarjeta SD</string>
     <string name="download_no_sdcard_dlg_msg">Se requiere de almacenamiento USB para descargar el archivo.</string>
     <string name="download_sdcard_busy_dlg_title">Almacenamiento USB no disponible</string>
@@ -120,12 +120,16 @@
     <string name="powered_by_google">Proporcionadas por Google</string>
     <string name="powered_by_duck">Proporcionadas por DuckDuckGo</string>
     <string name="search_suggestions_off">Sin sugerencias de búsqueda</string>
+    <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">
         <item>Ninguno</item>
         <item>Orbot</item>
         <item>I2P</item>
         <item>Manual</item>
     </string-array>
+    <string name="manual_proxy">Proxy manual</string>
+    <string name="host">Host:</string>
+    <string name="port">Puerto:</string>
     <string name="use_tor_prompt">Parece que tienes Orbot instalado. ¿Quieres usar Tor?</string>
     <string name="install_orbot">Por favor, instala Orbot para usar Tor.</string>
     <string name="yes">Sí</string>
@@ -171,8 +175,9 @@
     <string name="loading_failed">No se pudo cargar la página.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
-    <string name="mit_license">Licencia MIT</string>
-    <string name="url_contents">Contenido de la caja de la dirección</string>
+    <string name="mit_license">MIT License</string>
+    <string name="url_contents">Contenido de la caja de la URL</string>
+    <string name="text_encoding">Codificación de texto</string>
     <string-array name="url_content_array">
         <item>Dominio (por defecto)</item>
         <item>Dirección URL</item>
@@ -181,64 +186,62 @@
     <string name="invert_color">Invertir color</string>
     <string name="dark_theme">Tema oscuro</string>
     <string name="tabs">Pestañas</string>
+    <string name="theme">Tema de la app</string>
+    <string name="light_theme">Tema claro</string>
+    <string name="black_theme">Tema negro (AMOLED)</string>
+    <string name="folder">Nombre de la carpeta</string>
     <string name="action_folder">Carpeta</string>
     <string name="action_rename">Renombrar</string>
-    <string name="black_theme">Tema negro (AMOLED)</string>
-    <string name="clear_web_storage">Limpiar el almacenamiento web</string>
-    <string name="clear_web_storage_exit">Vaciar almacenamiento web al salir</string>
-    <string name="dialog_folder">¿Qué quieres hacer con esta carpeta?</string>
-    <string name="dialog_history_long_press">¿Qué quieres hacer con esta entrada del historial?</string>
-    <string name="folder">Nombre de la carpeta</string>
-    <string name="hosts_source">Fuente del fichero hosts para bloqueo de anuncios</string>
-    <string name="http_proxy">Proxy HTTP</string>
-    <string name="i2p_not_running">I2P no está en funcionamiento.</string>
+    <string name="title_rename_folder">Renombrar carpeta</string>
+    <string name="dialog_folder">¿Qué te gustaría hacer con esta carpeta?</string>
+    <string name="dialog_history_long_press">¿Qué quieres hacer con este elemento del historial?</string>
+    <string name="clear_web_storage">Borrar almacenamiento web</string>
+    <string name="clear_web_storage_exit">Borrar almacenamiento web al salir</string>
+    <string name="message_web_storage_cleared">Almacenamiento web borrado</string>
+    <string name="hosts_source">Fuente de bloqueo de anuncios del archivo hosts</string>
+    <string name="settings_adblock">Ajustes de bloqueo de anuncios</string>
+    <string name="tabs_in_drawer">Mostrar pestañas en el cajón de navegación</string>
+    <string name="swap_bookmarks_and_tabs">Cambiar marcador y tabuladores</string>
+    <string name="do_not_track">Solicitar \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">Remover encabezados de identificación</string>
+    <string name="action_add_to_homescreen">Añadir a pantalla de inicio</string>
+    <string name="message_added_to_homescreen">Acceso directo añadido a la pantalla de inicio</string>
+    <string name="action_delete_all_bookmarks">Borrar todos los marcadores</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Preguntas frecuentes</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">Ajustes de depuración</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Reinicia la aplicación para que el cambio tenga efecto.</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">Abrir en nueva pestaña</string>
+    <string name="dialog_open_background_tab">Abrir en pestaña de fondo</string>
+    <string name="dialog_open_incognito_tab">Abrir en pestaña incógnito</string>
+    <string name="dialog_remove_bookmark">Remover marcador</string>
+    <string name="dialog_edit_bookmark">Editar marcador</string>
+    <string name="dialog_remove_from_history">Remover del historial</string>
+    <string name="dialog_download_image">Descargar imagen</string>
+    <string name="dialog_copy_link">Copiar enlace</string>
+    <string name="dialog_rename_folder">Renombrar carpeta</string>
+    <string name="dialog_remove_folder">Remover carpeta</string>
+    <string name="dialog_title_close_browser">Cerrar navegador</string>
+
+    <string name="i2p_not_running">I2P no está corriendo.</string>
     <string name="i2p_tunnels_not_ready">Los túneles I2P no están preparados aún.</string>
-    <string name="light_theme">Tema claro</string>
-    <string name="manual_proxy">Proxy manual</string>
+    <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
+
     <string name="message_certificate_date_invalid">la fecha del certificado no es válida</string>
     <string name="message_certificate_domain_mismatch">el dominio del certificado no coincide con el dominio del sitio web</string>
     <string name="message_certificate_expired">el certificado está caducado</string>
     <string name="message_certificate_invalid">el certificado no es válido</string>
     <string name="message_certificate_not_yet_valid">el certificado no es válido todavía</string>
-    <string name="message_certificate_untrusted">el certificado no es de confianza</string>
-    <string name="message_insecure_connection">La conexión a este sitio no es segura:\n%1$s\n¿Continuar de todas formas?</string>
-    <string name="message_web_storage_cleared">Se limpió el almacenamiento web</string>
-    <string name="port">Puerto:</string>
-    <string name="problem_download">No se pudo iniciar la descarga: la dirección no es válida</string>
-    <string name="problem_location_download">No se pudo descargar en la ubicación de destino</string>
-    <string name="settings_adblock">Preferencias del bloqueo de anuncios</string>
-    <string name="tabs_in_drawer">Mostrar las pestañas en el menú lateral</string>
-    <string name="text_encoding">Codificación del texto</string>
-    <string name="theme">Tema gráfico de la aplicación</string>
-    <string name="title_rename_folder">Renombrar carpeta</string>
-    <string name="use_i2p_prompt">Parece que tienes I2P instalado. ¿Quieres usar I2P?</string>
-    <string name="host">Servidor:</string>
 
-    <string name="swap_bookmarks_and_tabs">Intercambiar los paneles de marcadores y de pestañas</string>
-    <string name="do_not_track">Petición «No rastrear» («Do Not Track»)</string>
-    <string name="remove_identifying_headers">Eliminar cabeceras identificativas</string>
-    <string name="action_add_to_homescreen">Añadir a la pantalla de inicio</string>
-    <string name="message_added_to_homescreen">Se añadió el atajo a la pantalla de inicio</string>
-    <string name="action_delete_all_bookmarks">Borrar todos los marcadores</string>
+    <string name="message_certificate_untrusted">el certificado no es confiable</string>
+    <string name="message_insecure_connection">La conexión a este sitio no es segura:\n%1$s\n¿Continuar en cualquier caso?</string>
 
-    <string name="faq">PP. FF.</string>
-    <string name="faq_description">Preguntas frecuentes</string>
-
-    <!-- debug strings -->
-    <string name="debug_title">Preferencias de depuración</string>
-    <string name="debug_leak_canary">LeakCanary</string>
-    <string name="app_restart">Por favor, reinicie la aplicación para que se apliquen los cambios.</string>
-
-    <!-- Dialogs -->
-    <string name="dialog_open_new_tab">Abrir en una pestaña nueva</string>
-    <string name="dialog_open_background_tab">Abrir en una pestaña en segundo plano</string>
-    <string name="dialog_open_incognito_tab">Abrir en una pestaña de incógnito</string>
-    <string name="dialog_remove_bookmark">Eliminar marcador</string>
-    <string name="dialog_edit_bookmark">Editar marcador</string>
-    <string name="dialog_remove_from_history">Eliminar del historial</string>
-    <string name="dialog_download_image">Descargar imagen</string>
-    <string name="dialog_copy_link">Copiar enlace</string>
-    <string name="dialog_rename_folder">Renombrar carpeta</string>
-    <string name="dialog_remove_folder">Eliminar carpeta</string>
-    <string name="dialog_title_close_browser">Cerrar el navegador</string>
+    <string name="problem_download">La dirección no es válida, no se pudo descargar</string>
+    <string name="problem_location_download">No se pudo descargar en la localización específica</string>
 </resources>

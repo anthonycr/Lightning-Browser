@@ -6,9 +6,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 /**
- * Created by anthonycr on 4/13/17.
+ * Simple utils for favicon fetching.
  */
-
 class FaviconUtils {
     @Nullable
     static Uri safeUri(@NonNull String url) {

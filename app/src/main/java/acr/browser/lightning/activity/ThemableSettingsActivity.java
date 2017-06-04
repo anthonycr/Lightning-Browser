@@ -1,6 +1,8 @@
 package acr.browser.lightning.activity;
 
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import javax.inject.Inject;
@@ -14,12 +16,12 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
 
     private int mTheme;
 
-    @Inject PreferenceManager mPreferenceManager;
+    @Inject PreferenceManager mPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         BrowserApp.getAppComponent().inject(this);
-        mTheme = mPreferenceManager.getUseTheme();
+        mTheme = mPreferences.getUseTheme();
 
         // set the theme
         if (mTheme == 0) {
@@ -33,12 +35,25 @@ public abstract class ThemableSettingsActivity extends AppCompatPreferenceActivi
             this.getWindow().setBackgroundDrawable(new ColorDrawable(ThemeUtils.getPrimaryColorDark(this)));
         }
         super.onCreate(savedInstanceState);
+
+        resetPreferences();
+    }
+
+    private void resetPreferences() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mPreferences.getUseBlackStatusBar()) {
+                getWindow().setStatusBarColor(Color.BLACK);
+            } else {
+                getWindow().setStatusBarColor(ThemeUtils.getStatusBarColor(this));
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mPreferenceManager.getUseTheme() != mTheme) {
+        resetPreferences();
+        if (mPreferences.getUseTheme() != mTheme) {
             restart();
         }
     }

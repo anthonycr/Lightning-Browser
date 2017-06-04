@@ -1,10 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -34,13 +33,13 @@ android {
 
     productFlavors {
         lightningPlus {
-            buildConfigField "boolean", "FULL_VERSION", "true"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
             versionCode 91
         }
 
         lightningLite {
-            buildConfigField "boolean", "FULL_VERSION", "false"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
             versionCode 93
         }
@@ -76,23 +75,24 @@ dependencies {
     // html parsing for reading mode
     compile 'org.jsoup:jsoup:1.10.2'
 
-    // event bus
-    compile 'com.squareup:otto:1.3.8'
-
     // dependency injection
-    def daggerVersion = '2.0.2'
+    def daggerVersion = '2.11'
     compile "com.google.dagger:dagger:$daggerVersion"
-    apt "com.google.dagger:dagger-compiler:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    compile 'com.jakewharton:butterknife:7.0.1'
+    def butterknifeVersion = '8.6.0'
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
     compile 'net.i2p.android:client:0.8'
+
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
 
     // tor proxy
     def netcipherVersion = '2.0.0-alpha1'
@@ -104,7 +104,7 @@ dependencies {
     compile 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
-    def leakCanaryVersion = '1.5'
+    def leakCanaryVersion = '1.5.1'
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 }

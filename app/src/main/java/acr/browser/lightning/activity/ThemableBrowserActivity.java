@@ -2,6 +2,8 @@ package acr.browser.lightning.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -10,6 +12,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.ThemeUtils;
 
 public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
@@ -32,6 +35,18 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
             setTheme(R.style.Theme_BlackTheme);
         }
         super.onCreate(savedInstanceState);
+
+        resetPreferences();
+    }
+
+    private void resetPreferences() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mPreferences.getUseBlackStatusBar()) {
+                getWindow().setStatusBarColor(Color.BLACK);
+            } else {
+                getWindow().setStatusBarColor(ThemeUtils.getStatusBarColor(this));
+            }
+        }
     }
 
     @Override
@@ -56,6 +71,7 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        resetPreferences();
         mShouldRunOnResumeActions = true;
         int theme = mPreferences.getUseTheme();
         boolean drawerTabs = mPreferences.getShowTabsInDrawer(!isTablet());

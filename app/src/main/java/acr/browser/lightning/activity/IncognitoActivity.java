@@ -17,6 +17,7 @@ import acr.browser.lightning.R;
 @SuppressWarnings("deprecation")
 public class IncognitoActivity extends BrowserActivity {
 
+    @NonNull
     @Override
     public Completable updateCookiePreference() {
         return Completable.create(new CompletableAction() {
@@ -33,7 +34,7 @@ public class IncognitoActivity extends BrowserActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.incognito, menu);
         return super.onCreateOptionsMenu(menu);
     }

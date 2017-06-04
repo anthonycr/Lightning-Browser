@@ -9,10 +9,10 @@ import android.util.Log;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
-import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
@@ -30,11 +30,10 @@ import acr.browser.lightning.view.LightningView;
  */
 public class BrowserPresenter {
 
-    private static final String TAG = BrowserPresenter.class.getSimpleName();
+    private static final String TAG = "BrowserPresenter";
 
     @NonNull private final TabsManager mTabsModel;
     @Inject PreferenceManager mPreferences;
-    @Inject Bus mEventBus;
 
     @NonNull private final BrowserView mView;
     @Nullable private LightningView mCurrentTab;
@@ -63,16 +62,16 @@ public class BrowserPresenter {
      */
     public void setupTabs(@Nullable Intent intent) {
         mTabsModel.initializeTabs((Activity) mView, intent, mIsIncognito)
-                .subscribeOn(Schedulers.main())
-                .subscribe(new CompletableOnSubscribe() {
-                    @Override
-                    public void onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        mView.notifyTabViewInitialized();
-                        mView.updateTabNumber(mTabsModel.size());
-                        tabChanged(mTabsModel.last());
-                    }
-                });
+            .subscribeOn(Schedulers.main())
+            .subscribe(new CompletableOnSubscribe() {
+                @Override
+                public void onComplete() {
+                    // At this point we always have at least a tab in the tab manager
+                    mView.notifyTabViewInitialized();
+                    mView.updateTabNumber(mTabsModel.size());
+                    tabChanged(mTabsModel.last());
+                }
+            });
     }
 
     /**
@@ -107,12 +106,12 @@ public class BrowserPresenter {
                     // TODO: Restore this when Google fixes the bug where the WebView is
                     // blank after calling onPause followed by onResume.
                     // mCurrentTab.onPause();
-                    mCurrentTab.setForegroundTab(false);
+                    mCurrentTab.setIsForegroundTab(false);
                 }
 
                 newTab.resumeTimers();
                 newTab.onResume();
-                newTab.setForegroundTab(true);
+                newTab.setIsForegroundTab(true);
 
                 mView.updateProgress(newTab.getProgress());
                 mView.setBackButtonEnabled(newTab.canGoBack());
@@ -163,10 +162,10 @@ public class BrowserPresenter {
         }
 
         final boolean isShown = tabToDelete.isShown();
-        boolean shouldClose = mShouldClose && isShown && Boolean.TRUE.equals(tabToDelete.getTag());
+        boolean shouldClose = mShouldClose && isShown && tabToDelete.isNewTab();
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
-            (UrlUtils.isSpecialUrl(currentTab.getUrl()) ||
+            (UrlUtils.isStartPageUrl(currentTab.getUrl()) ||
                 currentTab.getUrl().equals(mPreferences.getHomepage()))) {
             mView.closeActivity();
             return;
@@ -222,13 +221,16 @@ public class BrowserPresenter {
                 } else {
                     url = null;
                 }
-                int num = 0;
+                int tabHashCode = 0;
                 if (intent != null && intent.getExtras() != null) {
-                    num = intent.getExtras().getInt(Constants.INTENT_ORIGIN);
+                    tabHashCode = intent.getExtras().getInt(Constants.INTENT_ORIGIN);
                 }
 
-                if (num == 1) {
-                    loadUrlInCurrentView(url);
+                if (tabHashCode != 0) {
+                    LightningView tab = mTabsModel.getTabForHashCode(tabHashCode);
+                    if (tab != null) {
+                        tab.loadUrl(url);
+                    }
                 } else if (url != null) {
                     if (url.startsWith(Constants.FILE)) {
                         mView.showBlockedLocalFileDialog(new DialogInterface.OnClickListener() {
@@ -238,7 +240,7 @@ public class BrowserPresenter {
                                 mShouldClose = true;
                                 LightningView tab = mTabsModel.lastTab();
                                 if (tab != null) {
-                                    tab.setTag(true);
+                                    tab.setIsNewTab(true);
                                 }
                             }
                         });
@@ -247,7 +249,7 @@ public class BrowserPresenter {
                         mShouldClose = true;
                         LightningView tab = mTabsModel.lastTab();
                         if (tab != null) {
-                            tab.setTag(true);
+                            tab.setIsNewTab(true);
                         }
                     }
                 }
@@ -316,7 +318,7 @@ public class BrowserPresenter {
      */
     public synchronized boolean newTab(@Nullable String url, boolean show) {
         // Limit number of tabs for limited version of app
-        if (!Constants.FULL_VERSION && mTabsModel.size() >= 10) {
+        if (!BuildConfig.FULL_VERSION && mTabsModel.size() >= 10) {
             mView.showSnackbar(R.string.max_tabs);
             return false;
         }

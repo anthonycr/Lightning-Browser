@@ -16,6 +16,7 @@ import android.webkit.WebChromeClient.CustomViewCallback;
 
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.view.LightningView;
 
 public interface UIController {
@@ -82,5 +83,15 @@ public interface UIController {
     void onForwardButtonPressed();
 
     void onHomeButtonPressed();
+
+    void handleBookmarksChange();
+
+    void handleDownloadDeleted();
+
+    void handleBookmarkDeleted(@NonNull HistoryItem item);
+
+    void handleNewTab(@NonNull LightningDialogBuilder.NewTab newTabType, @NonNull String url);
+
+    void handleHistoryChange();
 
 }

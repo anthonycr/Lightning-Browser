@@ -73,7 +73,7 @@
     <string name="agent_custom">Personnalisé</string>
     <string name="title_search_engine">Moteur de recherche</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Voulez-vous télécharger ce fichier ?</string>
+    <string name="dialog_download">Voulez-vous télécharger ce fichier ? (%1$s)</string>
     <string name="action_cancel">Annuler</string>
     <string name="title_warning">Avertissement</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player n\'a pas été détecté.\nVeuillez installer Flash Player.</string>

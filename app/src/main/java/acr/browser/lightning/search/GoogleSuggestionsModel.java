@@ -9,36 +9,34 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 
-class GoogleSuggestionsTask extends BaseSuggestionsTask {
+class GoogleSuggestionsModel extends BaseSuggestionsModel {
 
-    private static final String ENCODING = "ISO-8859-1";
+    @NonNull private static final String ENCODING = "ISO-8859-1";
     @Nullable private static XmlPullParser sXpp;
     @NonNull private final String mSearchSubtitle;
 
-    GoogleSuggestionsTask(@NonNull String query,
-                          @NonNull Application application,
-                          @NonNull SuggestionsResult callback) {
-        super(query, application, callback);
+    GoogleSuggestionsModel(@NonNull Application application) {
+        super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
 
     @NonNull
-    protected String getQueryUrl(@NonNull String query, @NonNull String language) {
-        return "https://suggestqueries.google.com/complete/search?output=toolbar&hl="
+    protected String createQueryUrl(@NonNull String query, @NonNull String language) {
+        return "https://suggestqueries.google.com/complete/search?output=toolbar&oe=latin1&hl="
             + language + "&q=" + query;
     }
 
     @Override
-    protected void parseResults(FileInputStream inputStream, List<HistoryItem> results) throws Exception {
-        BufferedInputStream fileInput = new BufferedInputStream(inputStream);
+    protected void parseResults(@NonNull InputStream inputStream, @NonNull List<HistoryItem> results) throws Exception {
+        BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);
         XmlPullParser parser = getParser();
-        parser.setInput(fileInput, ENCODING);
+        parser.setInput(bufferedInput, ENCODING);
         int eventType = parser.getEventType();
         int counter = 0;
         while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -53,11 +51,6 @@ class GoogleSuggestionsTask extends BaseSuggestionsTask {
             }
             eventType = parser.next();
         }
-    }
-
-    @Override
-    protected String getEncoding() {
-        return ENCODING;
     }
 
     @NonNull
