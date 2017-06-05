@@ -49,7 +49,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
     private static final Scheduler FILTER_SCHEDULER = Schedulers.newSingleThreadedScheduler();
 
-    static final String CACHE_FILE_TYPE = ".sgg";
+    private static final String CACHE_FILE_TYPE = ".sgg";
 
     private final List<HistoryItem> mFilteredList = new ArrayList<>(5);
 

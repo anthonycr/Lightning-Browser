@@ -67,7 +67,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private static final String TAG = "BookmarksFragment";
 
-    public final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
+    private final static String INCOGNITO_MODE = TAG + ".INCOGNITO_MODE";
 
     // Managers
     @Inject BookmarkModel mBookmarkManager;

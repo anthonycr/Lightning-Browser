@@ -76,8 +76,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
      * Arguments boolean to tell the fragment it is displayed in the drawner or on the tab strip
      * If true, the fragment is in the left drawner in the strip otherwise.
      */
-    public static final String VERTICAL_MODE = TAG + ".VERTICAL_MODE";
-    public static final String IS_INCOGNITO = TAG + ".IS_INCOGNITO";
+    private static final String VERTICAL_MODE = TAG + ".VERTICAL_MODE";
+    private static final String IS_INCOGNITO = TAG + ".IS_INCOGNITO";
 
     private boolean mIsIncognito, mDarkTheme;
     private int mIconColor;

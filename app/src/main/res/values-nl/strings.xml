@@ -72,7 +72,7 @@
     <string name="agent_custom">Aangepast</string>
     <string name="title_search_engine">Zoekmachine</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Wil je dit bestand downloaden?</string>
+    <string name="dialog_download">Wil je dit bestand downloaden? (%1$s)</string>
     <string name="action_cancel">Annuleer</string>
     <string name="title_warning">Waarschuwing</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player werd niet gevonden.\nGelieve Flash Player te installeren.</string>
@@ -144,7 +144,6 @@
     <string name="title_sign_in">Inloggen</string>
     <string name="hint_username">Gebruiksnaam</string>
     <string name="hint_password">Paswoord</string>
-    <string name="google_suggestions">Zoeksuggesties</string>
     <string name="powered_by_google">Ondersteund door Google</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">

@@ -45,7 +45,7 @@ import acr.browser.lightning.utils.Utils;
  * Created by Stefano Pacifici on 02/09/15, based on Anthony C. Restaino's code.
  */
 public class LightningDialogBuilder {
-    public static final String TAG = "LightningDialogBuilder";
+    private static final String TAG = "LightningDialogBuilder";
 
     public enum NewTab {
         FOREGROUND,
@@ -173,14 +173,14 @@ public class LightningDialogBuilder {
                 @Override
                 public void onClick() {
                     mDownloadsModel.deleteAllDownloads()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.main())
-                            .subscribe(new CompletableOnSubscribe() {
-                                @Override
-                                public void onComplete() {
-                                    uiController.handleDownloadDeleted();
-                                }
-                            });
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new CompletableOnSubscribe() {
+                            @Override
+                            public void onComplete() {
+                                uiController.handleDownloadDeleted();
+                            }
+                        });
                 }
             });
     }

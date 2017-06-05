@@ -19,4 +19,8 @@ ext {
     minSdkVersion = 14
     targetSdkVersion = 25
     buildToolsVersion = '25.0.2'
+
+    versionName = '4.4.3'
+    versionCode_lite = 94
+    versionCode_plus = 92
 }
