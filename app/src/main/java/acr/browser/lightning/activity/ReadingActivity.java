@@ -131,11 +131,17 @@ public class ReadingActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.reading, menu);
         MenuItem invert = menu.findItem(R.id.invert_item);
         MenuItem textSize = menu.findItem(R.id.text_size_item);
-        int iconColor = mInvert ? ThemeUtils.getIconDarkThemeColor(this) : ThemeUtils.getIconLightThemeColor(this);
-        if (invert != null && invert.getIcon() != null)
-            invert.getIcon().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
-        if (textSize != null && textSize.getIcon() != null)
-            textSize.getIcon().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+
+        int iconColor = ThemeUtils.getIconThemeColor(this, mInvert);
+
+        if (invert != null && invert.getIcon() != null) {
+            invert.getIcon().mutate().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+        }
+
+        if (textSize != null && textSize.getIcon() != null) {
+            textSize.getIcon().mutate().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
