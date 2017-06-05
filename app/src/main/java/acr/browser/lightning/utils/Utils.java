@@ -34,6 +34,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
+import android.widget.Toast;
 
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
@@ -75,7 +76,7 @@ public final class Utils {
     public static void downloadFile(@NonNull final Activity activity, @NonNull final PreferenceManager manager, final String url,
                                     final String userAgent, final String contentDisposition) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
             @Override
             public void onGranted() {
                 String fileName = URLUtil.guessFileName(url, null, null);
@@ -125,13 +126,13 @@ public final class Utils {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         builder.setMessage(message)
-                .setCancelable(true)
-                .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
+            .setCancelable(true)
+            .setPositiveButton(activity.getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
         BrowserDialog.setDialogSize(activity, alert);
@@ -173,6 +174,18 @@ public final class Utils {
             return;
         }
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Shows a toast to the user.
+     * Should only be used if an activity is
+     * not available to show a snackbar.
+     *
+     * @param context  the context needed to show the toast.
+     * @param resource the string shown by the toast to the user.
+     */
+    public static void showToast(@NonNull Context context, @StringRes int resource) {
+        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -261,7 +274,7 @@ public final class Utils {
         int padding = Utils.dpToPx(4);
 
         Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
-                + padding, Bitmap.Config.ARGB_8888);
+            + padding, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(paddedBitmap);
         canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
@@ -305,10 +318,10 @@ public final class Utils {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + '_';
         File storageDir = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
+            ".jpg", /* suffix */
+            storageDir /* directory */
         );
     }
 
@@ -382,9 +395,9 @@ public final class Utils {
         paint.setDither(true);
         if (withShader) {
             paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                    0, canvas.getHeight(),
-                    color, mixTwoColors(Color.BLACK, color, 0.5f),
-                    Shader.TileMode.CLAMP));
+                0, canvas.getHeight(),
+                color, mixTwoColors(Color.BLACK, color, 0.5f),
+                Shader.TileMode.CLAMP));
         } else {
             paint.setShader(null);
         }
@@ -448,7 +461,7 @@ public final class Utils {
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
             while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
+                && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
         }

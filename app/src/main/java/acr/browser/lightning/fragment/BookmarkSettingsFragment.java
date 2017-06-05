@@ -5,6 +5,7 @@ package acr.browser.lightning.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
@@ -61,6 +62,8 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     @Nullable private Activity mActivity;
 
     @Inject BookmarkModel mBookmarkManager;
+    @Inject Application mApplication;
+
     private File[] mFileList;
     private String[] mFileNameList;
     @Nullable private BookmarkLocalSync mSync;
@@ -454,7 +457,12 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                             @Override
                             public void onError(@NonNull Throwable throwable) {
                                 Log.e(TAG, "onError: importing bookmarks", throwable);
-                                Utils.createInformativeDialog(getActivity(), R.string.title_error, R.string.import_bookmark_error);
+                                Activity activity = getActivity();
+                                if (activity != null) {
+                                    Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error);
+                                } else {
+                                    Utils.showToast(mApplication, R.string.import_bookmark_error);
+                                }
                             }
                         });
                 }

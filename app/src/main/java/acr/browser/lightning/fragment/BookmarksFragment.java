@@ -233,12 +233,16 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 @Override
                 public void onItem(@Nullable Boolean item) {
                     Preconditions.checkNonNull(item);
+                    Activity activity = getActivity();
+                    if (mBookmarkImage == null || activity == null) {
+                        return;
+                    }
                     if (!item) {
                         mBookmarkImage.setImageResource(R.drawable.ic_action_star);
                         mBookmarkImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
                     } else {
                         mBookmarkImage.setImageResource(R.drawable.ic_bookmark);
-                        mBookmarkImage.setColorFilter(ThemeUtils.getAccentColor(getContext()), PorterDuff.Mode.SRC_IN);
+                        mBookmarkImage.setColorFilter(ThemeUtils.getAccentColor(activity), PorterDuff.Mode.SRC_IN);
                     }
                 }
             });
