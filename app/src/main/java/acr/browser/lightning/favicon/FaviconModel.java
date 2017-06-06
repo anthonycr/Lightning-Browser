@@ -144,6 +144,7 @@ public class FaviconModel {
                 }
 
                 if (favicon == null) {
+                    // TODO: 6/5/17 figure out if optimistic favicon retrieval should be added back or dropped
                     // favicon = mImageFetcher.retrieveBitmapFromDomain(uri);
                 } else {
                     Bitmap newFavicon = Utils.padFavicon(favicon);
