@@ -20,7 +20,7 @@ ext {
     targetSdkVersion = 25
     buildToolsVersion = '25.0.2'
 
-    versionName = '4.4.3'
-    versionCode_lite = 94
-    versionCode_plus = 92
+    versionName = '4.5.0'
+    versionCode_lite = 95
+    versionCode_plus = 93
 }
