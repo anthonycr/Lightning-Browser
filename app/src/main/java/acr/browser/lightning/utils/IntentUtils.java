@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.FileUriExposedException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -75,8 +76,9 @@ public class IntentUtils {
             if (mActivity.startActivityIfNeeded(intent, -1)) {
                 return true;
             }
-        } catch (ActivityNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            // TODO: 6/5/17 fix case where this could throw a FileUriExposedException due to file:// urls
         }
         return false;
     }
