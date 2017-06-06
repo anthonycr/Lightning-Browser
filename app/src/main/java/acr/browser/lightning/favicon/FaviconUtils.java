@@ -17,7 +17,7 @@ class FaviconUtils {
 
         Uri uri = Uri.parse(url);
 
-        if (uri.getHost() == null || uri.getScheme() == null) {
+        if (TextUtils.isEmpty(uri.getScheme()) || TextUtils.isEmpty(uri.getHost())) {
             return null;
         }
 
