@@ -136,14 +136,15 @@ public class FaviconModel {
 
                 File faviconCacheFile = createFaviconCacheFile(mApplication, uri);
 
+
                 Bitmap favicon = getFaviconFromMemCache(url);
 
-                if (faviconCacheFile.exists() && favicon != null) {
+                if (faviconCacheFile.exists() && favicon == null) {
                     favicon = mImageFetcher.retrieveFaviconFromCache(faviconCacheFile);
                 }
 
                 if (favicon == null) {
-                    favicon = mImageFetcher.retrieveBitmapFromDomain(uri);
+                    // favicon = mImageFetcher.retrieveBitmapFromDomain(uri);
                 } else {
                     Bitmap newFavicon = Utils.padFavicon(favicon);
 
@@ -153,18 +154,18 @@ public class FaviconModel {
                     return;
                 }
 
-                if (favicon == null && allowGoogleService) {
-                    favicon = mImageFetcher.retrieveBitmapFromGoogle(uri);
-                }
+                // if (favicon == null && allowGoogleService) {
+                //     favicon = mImageFetcher.retrieveBitmapFromGoogle(uri);
+                // }
 
-                if (favicon != null) {
-                    addFaviconToMemCache(url, favicon);
-                    cacheFaviconForUrl(favicon, url).subscribe();
-                }
+                // if (favicon != null) {
+                //     addFaviconToMemCache(url, favicon);
+                //     cacheFaviconForUrl(favicon, url).subscribe();
+                // }
 
-                if (favicon == null) {
-                    favicon = defaultFavicon;
-                }
+                // if (favicon == null) {
+                favicon = defaultFavicon;
+                // }
 
                 Bitmap newFavicon = Utils.padFavicon(favicon);
 
