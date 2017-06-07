@@ -1537,6 +1537,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
+        // Send to Handover
+        Intent i = new Intent("com.hamzahrmalik.handover.android.SEND");
+        // Put the data in using the tag
+        i.putExtra("**URL**=", url);
+        // Send broadcast
+        sendBroadcast(i);
+
         final LightningView currentTab = mTabsManager.getCurrentTab();
         mBookmarksView.handleUpdatedUrl(url);
         if (shortUrl && !UrlUtils.isSpecialUrl(url)) {
