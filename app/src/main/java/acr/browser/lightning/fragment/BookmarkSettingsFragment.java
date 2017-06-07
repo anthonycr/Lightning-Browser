@@ -211,6 +211,17 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                                                             + ' ' + exportFile.getPath());
                                                     }
                                                 }
+
+                                                @Override
+                                                public void onError(@NonNull Throwable throwable) {
+                                                    Log.e(TAG, "onError: exporting bookmarks", throwable);
+                                                    Activity activity = getActivity();
+                                                    if (activity != null) {
+                                                        Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure);
+                                                    } else {
+                                                        Utils.showToast(mApplication, R.string.bookmark_export_failure);
+                                                    }
+                                                }
                                             });
                                     }
                                 });

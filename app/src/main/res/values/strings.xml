@@ -176,6 +176,7 @@
     <string name="export_bookmarks">Export bookmarks to backup</string>
     <string name="import_backup">Import bookmarks from backup</string>
     <string name="bookmark_export_path">Bookmarks exported to</string>
+    <string name="bookmark_export_failure">Sorry, bookmarks could not be exported!</string>
     <string name="bookmark_settings">Bookmark Settings</string>
     <string name="import_bookmark_error">Could not import bookmarks from file</string>
     <string name="title_chooser">Choose a file</string>
