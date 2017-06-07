@@ -480,6 +480,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                     SubscriptionUtils.safeUnsubscribe(mImportSubscription);
                     mImportSubscription = BookmarkExporter.importBookmarksFromFile(mFileList[which])
                         .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.main())
                         .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                             @Override
                             public void onItem(@Nullable final List<HistoryItem> importList) {
@@ -487,6 +488,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
                                 Preconditions.checkNonNull(importList);
                                 mBookmarkManager.addBookmarkList(importList)
+                                    .subscribeOn(Schedulers.io())
                                     .observeOn(Schedulers.main())
                                     .subscribe(new CompletableOnSubscribe() {
                                         @Override
