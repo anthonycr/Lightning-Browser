@@ -26,9 +26,10 @@ import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.Subscription;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
@@ -47,6 +48,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Preconditions;
+import acr.browser.lightning.utils.SubscriptionUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.view.LightningView;
 import butterknife.BindView;
@@ -94,19 +96,18 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @BindView(R.id.starIcon) ImageView mBookmarkTitleImage;
     @BindView(R.id.icon_star) ImageView mBookmarkImage;
 
-    @Nullable
-    private Unbinder mUnbinder;
+    @Nullable private Unbinder mUnbinder;
 
     // Colors
     private int mIconColor, mScrollIndex;
 
     private boolean mIsIncognito;
 
-    @Nullable
-    private Subscription mBookmarksSubscription;
+    @Nullable private Subscription mBookmarksSubscription;
+    @Nullable private Subscription mFoldersSubscription;
+    @Nullable private Subscription mBookmarkUpdateSubscription;
 
-    @NonNull
-    private final BookmarkUiModel mUiModel = new BookmarkUiModel();
+    @NonNull private final BookmarkUiModel mUiModel = new BookmarkUiModel();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -194,10 +195,15 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mBookmarksSubscription != null) {
-            mBookmarksSubscription.unsubscribe();
-            mBookmarksSubscription = null;
+
+        SubscriptionUtils.safeUnsubscribe(mBookmarksSubscription);
+        SubscriptionUtils.safeUnsubscribe(mFoldersSubscription);
+        SubscriptionUtils.safeUnsubscribe(mBookmarkUpdateSubscription);
+
+        if (mBookmarkAdapter != null) {
+            mBookmarkAdapter.cleanupSubscriptions();
         }
+
         if (mUnbinder != null) {
             mUnbinder.unbind();
             mUnbinder = null;
@@ -207,9 +213,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBookmarksSubscription != null) {
-            mBookmarksSubscription.unsubscribe();
-            mBookmarksSubscription = null;
+
+        SubscriptionUtils.safeUnsubscribe(mBookmarksSubscription);
+        SubscriptionUtils.safeUnsubscribe(mFoldersSubscription);
+        SubscriptionUtils.safeUnsubscribe(mBookmarkUpdateSubscription);
+
+        if (mBookmarkAdapter != null) {
+            mBookmarkAdapter.cleanupSubscriptions();
         }
     }
 
@@ -226,12 +236,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     private void updateBookmarkIndicator(final String url) {
-        mBookmarkManager.isBookmark(url)
+        SubscriptionUtils.safeUnsubscribe(mBookmarkUpdateSubscription);
+        mBookmarkUpdateSubscription = mBookmarkManager.isBookmark(url)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
             .subscribe(new SingleOnSubscribe<Boolean>() {
                 @Override
                 public void onItem(@Nullable Boolean item) {
+                    mBookmarkUpdateSubscription = null;
                     Preconditions.checkNonNull(item);
                     Activity activity = getActivity();
                     if (mBookmarkImage == null || activity == null) {
@@ -258,6 +270,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     private void setBookmarksShown(@Nullable final String folder, final boolean animate) {
+        SubscriptionUtils.safeUnsubscribe(mBookmarksSubscription);
         mBookmarksSubscription = mBookmarkManager.getBookmarksFromFolderSorted(folder)
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
@@ -269,12 +282,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
                     mUiModel.setCurrentFolder(folder);
                     if (folder == null) {
-                        mBookmarkManager.getFoldersSorted()
+                        SubscriptionUtils.safeUnsubscribe(mFoldersSubscription);
+                        mFoldersSubscription = mBookmarkManager.getFoldersSorted()
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.main())
                             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                                 @Override
                                 public void onItem(@Nullable List<HistoryItem> folders) {
+                                    mFoldersSubscription = null;
                                     Preconditions.checkNonNull(folders);
                                     item.addAll(folders);
                                     setBookmarkDataSet(item, animate);
@@ -424,6 +439,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         @NonNull private final FaviconModel mFaviconModel;
         @NonNull private final Bitmap mFolderBitmap;
         @NonNull private final Bitmap mWebpageBitmap;
+        @NonNull private final Map<String, Subscription> mFaviconFetchSubscriptions = new ConcurrentHashMap<>();
 
         @Nullable private OnItemLongClickListener mOnItemLongCLickListener;
         @Nullable private OnItemClickListener mOnItemClickListener;
@@ -484,6 +500,13 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             diffResult.dispatchUpdatesTo(this);
         }
 
+        void cleanupSubscriptions() {
+            for (Subscription subscription : mFaviconFetchSubscriptions.values()) {
+                subscription.unsubscribe();
+            }
+            mFaviconFetchSubscriptions.clear();
+        }
+
         @Override
         public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -493,7 +516,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
 
         @Override
-        public void onBindViewHolder(BookmarkViewHolder holder, int position) {
+        public void onViewRecycled(BookmarkViewHolder holder) {
+            super.onViewRecycled(holder);
+        }
+
+        @Override
+        public void onBindViewHolder(final BookmarkViewHolder holder, int position) {
             ViewCompat.jumpDrawablesToCurrentState(holder.itemView);
 
             final HistoryItem web = mBookmarks.get(position);
@@ -505,23 +533,27 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 holder.favicon.setTag(web.getUrl().hashCode());
 
                 final String url = web.getUrl();
-                final WeakReference<ImageView> imageViewReference = new WeakReference<>(holder.favicon);
 
-                mFaviconModel.faviconForUrl(url, mWebpageBitmap, true)
+                Subscription oldSubscription = mFaviconFetchSubscriptions.get(url);
+                SubscriptionUtils.safeUnsubscribe(oldSubscription);
+
+                final Subscription faviconSubscription = mFaviconModel.faviconForUrl(url, mWebpageBitmap, true)
                     .subscribeOn(Schedulers.worker())
                     .observeOn(Schedulers.main())
                     .subscribe(new SingleOnSubscribe<Bitmap>() {
                         @Override
                         public void onItem(@Nullable Bitmap item) {
-                            ImageView imageView = imageViewReference.get();
-                            Object tag = imageView != null ? imageView.getTag() : null;
+                            mFaviconFetchSubscriptions.remove(url);
+                            Object tag = holder.favicon.getTag();
                             if (tag != null && tag.equals(url.hashCode())) {
-                                imageView.setImageBitmap(item);
+                                holder.favicon.setImageBitmap(item);
                             }
 
                             web.setBitmap(item);
                         }
                     });
+
+                mFaviconFetchSubscriptions.put(url, faviconSubscription);
             } else {
                 holder.favicon.setImageBitmap(web.getBitmap());
             }
