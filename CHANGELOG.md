@@ -12,6 +12,8 @@ Version 4.5.0 *(2017-06-08)*
 - Added setting for black status bar
 - Added downloads page
 - Baidu search suggestions option
+- Updated bookmark page UI
+- Updated history page UI
 - Fixed numerous bugs
 
 Version 4.4.1 *(2016-11-05)*
