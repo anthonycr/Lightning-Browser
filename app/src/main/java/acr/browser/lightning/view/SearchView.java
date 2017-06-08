@@ -1,13 +1,14 @@
 package acr.browser.lightning.view;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.widget.AutoCompleteTextView;
 
-public class SearchView extends AutoCompleteTextView {
+public class SearchView extends AppCompatAutoCompleteTextView {
 
     public interface PreFocusListener {
         void onPreFocus();
@@ -17,15 +18,15 @@ public class SearchView extends AutoCompleteTextView {
     private boolean mIsBeingClicked;
     private long mTimePressed;
 
-    public SearchView(Context context) {
+    public SearchView(@NonNull Context context) {
         super(context);
     }
 
-    public SearchView(Context context, AttributeSet attrs) {
+    public SearchView(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SearchView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SearchView(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -34,7 +35,7 @@ public class SearchView extends AutoCompleteTextView {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mTimePressed = System.currentTimeMillis();

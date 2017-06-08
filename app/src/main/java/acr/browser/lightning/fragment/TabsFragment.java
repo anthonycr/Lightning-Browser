@@ -31,8 +31,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.otto.Bus;
-
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
@@ -48,6 +46,9 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.BackgroundDrawable;
 import acr.browser.lightning.view.LightningView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A fragment that holds and manages the tabs and interaction with the tabs.
@@ -58,14 +59,25 @@ import acr.browser.lightning.view.LightningView;
  */
 public class TabsFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, TabsView {
 
-    private static final String TAG = TabsFragment.class.getSimpleName();
+    @NonNull
+    public static TabsFragment createTabsFragment(boolean isIncognito, boolean showTabsInDrawer) {
+        TabsFragment tabsFragment = new TabsFragment();
+        final Bundle tabsFragmentArguments = new Bundle();
+        tabsFragmentArguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito);
+        tabsFragmentArguments.putBoolean(TabsFragment.VERTICAL_MODE, showTabsInDrawer);
+        tabsFragment.setArguments(tabsFragmentArguments);
+
+        return tabsFragment;
+    }
+
+    private static final String TAG = "TabsFragment";
 
     /**
      * Arguments boolean to tell the fragment it is displayed in the drawner or on the tab strip
      * If true, the fragment is in the left drawner in the strip otherwise.
      */
-    public static final String VERTICAL_MODE = TAG + ".VERTICAL_MODE";
-    public static final String IS_INCOGNITO = TAG + ".IS_INCOGNITO";
+    private static final String VERTICAL_MODE = TAG + ".VERTICAL_MODE";
+    private static final String IS_INCOGNITO = TAG + ".IS_INCOGNITO";
 
     private boolean mIsIncognito, mDarkTheme;
     private int mIconColor;
@@ -74,10 +86,11 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
     @Nullable private LightningViewAdapter mTabsAdapter;
     private UIController mUiController;
-    private RecyclerView mRecyclerView;
+
+    @BindView(R.id.tabs_list) RecyclerView mRecyclerView;
+    private Unbinder mUnbinder;
 
     private TabsManager mTabsManager;
-    @Inject Bus mBus;
     @Inject PreferenceManager mPreferences;
 
     public TabsFragment() {
@@ -126,7 +139,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 }
             });
         }
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.tabs_list);
+
+        mUnbinder = ButterKnife.bind(this, view);
+
         SimpleItemAnimator animator;
         if (mShowInNavigationDrawer) {
             animator = new VerticalItemAnimator();
@@ -144,7 +159,18 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         mTabsAdapter = new LightningViewAdapter(mShowInNavigationDrawer);
         mRecyclerView.setAdapter(mTabsAdapter);
         mRecyclerView.setHasFixedSize(true);
+
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            mUnbinder = null;
+        }
+        mTabsAdapter = null;
     }
 
     private TabsManager getTabsManager() {
@@ -164,30 +190,12 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mTabsAdapter = null;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mBus.register(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // Force adapter refresh
         if (mTabsAdapter != null) {
             mTabsAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mBus.unregister(this);
     }
 
     @Override

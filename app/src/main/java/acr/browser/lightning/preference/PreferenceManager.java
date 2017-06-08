@@ -55,6 +55,7 @@ public class PreferenceManager {
         static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
         static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
+        static final String BLACK_STATUS_BAR = "blackStatusBar";
 
         static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
@@ -69,6 +70,7 @@ public class PreferenceManager {
     public enum Suggestion {
         SUGGESTION_GOOGLE,
         SUGGESTION_DUCK,
+        SUGGESTION_BAIDU,
         SUGGESTION_NONE
     }
 
@@ -156,7 +158,7 @@ public class PreferenceManager {
     }
 
     public boolean getFullScreenEnabled() {
-        return mPrefs.getBoolean(Name.FULL_SCREEN, false);
+        return mPrefs.getBoolean(Name.FULL_SCREEN, true);
     }
 
     public boolean getHideStatusBarEnabled() {
@@ -251,9 +253,9 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_PROXY, false);
     }
 
-    @Constants.PROXY
+    @Constants.Proxy
     public int getProxyChoice() {
-        @Constants.PROXY int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
+        @Constants.Proxy int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
         switch (proxy) {
             case Constants.NO_PROXY:
             case Constants.PROXY_ORBOT:
@@ -295,6 +297,10 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
+    public boolean getUseBlackStatusBar() {
+        return mPrefs.getBoolean(Name.BLACK_STATUS_BAR, false);
+    }
+
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -305,6 +311,10 @@ public class PreferenceManager {
 
     private void putString(@NonNull String name, @Nullable String value) {
         mPrefs.edit().putString(name, value).apply();
+    }
+
+    public void setUseBlackStatusBar(boolean enabled) {
+        putBoolean(Name.BLACK_STATUS_BAR, enabled);
     }
 
     public void setRemoveIdentifyingHeadersEnabled(boolean enabled) {
@@ -473,7 +483,7 @@ public class PreferenceManager {
      *
      * @param choice the proxy to use.
      */
-    public void setProxyChoice(@Constants.PROXY int choice) {
+    public void setProxyChoice(@Constants.Proxy int choice) {
         putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
         putInt(Name.PROXY_CHOICE, choice);
     }

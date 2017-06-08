@@ -2,7 +2,6 @@ package acr.browser.lightning.view;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -19,28 +18,32 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
+
+import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.utils.Preconditions;
 
-class LightningChromeClient extends WebChromeClient {
-
-    private static final String TAG = LightningChromeClient.class.getSimpleName();
+public class LightningChromeClient extends WebChromeClient {
 
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
 
     @NonNull private final Activity mActivity;
     @NonNull private final LightningView mLightningView;
     @NonNull private final UIController mUIController;
+    @Inject FaviconModel mFaviconModel;
 
     LightningChromeClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         Preconditions.checkNonNull(activity);
         Preconditions.checkNonNull(lightningView);
+        BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
@@ -57,7 +60,7 @@ class LightningChromeClient extends WebChromeClient {
     public void onReceivedIcon(@NonNull WebView view, Bitmap icon) {
         mLightningView.getTitleInfo().setFavicon(icon);
         mUIController.tabChanged(mLightningView);
-        cacheFavicon(view.getUrl(), icon, mActivity);
+        cacheFavicon(view.getUrl(), icon);
     }
 
     /**
@@ -65,13 +68,20 @@ class LightningChromeClient extends WebChromeClient {
      *
      * @param icon the icon to cache
      */
-    private static void cacheFavicon(@Nullable final String url, @Nullable final Bitmap icon, @NonNull final Context context) {
-        if (icon == null || url == null) return;
-        final Uri uri = Uri.parse(url);
+    private void cacheFavicon(@Nullable final String url, @Nullable final Bitmap icon) {
+        if (icon == null || url == null) {
+            return;
+        }
+
+        Uri uri = Uri.parse(url);
+
         if (uri.getHost() == null) {
             return;
         }
-        BrowserApp.getIOThread().execute(new IconCacheTask(uri, icon, BrowserApp.get(context)));
+
+        mFaviconModel.cacheFaviconForUrl(icon, url)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
     }
 
 

@@ -4,123 +4,140 @@
 package acr.browser.lightning.constant;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.history.HistoryModel;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.view.LightningView;
 
-public class HistoryPage extends AsyncTask<Void, Void, Void> {
+public class HistoryPage {
 
-    private static final String TAG = HistoryPage.class.getSimpleName();
+    private static final String TAG = "HistoryPage";
 
     public static final String FILENAME = "history.html";
 
-    private static final String HEADING_1 = "<!DOCTYPE html><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta content=\"en-us\" http-equiv=\"Content-Language\" /><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"><title>";
+    private static final String HEADING_1 = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
+        "<head>\n" +
+        "<meta content=en-us http-equiv=Content-Language />\n" +
+        "<meta content='text/html; charset=utf-8' http-equiv=Content-Type />\n" +
+        "<meta name=viewport content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>\n" +
+        "<title>";
 
-    private static final String HEADING_2 = "</title></head><style>body { background: #f5f5f5;}.box { vertical-align:middle;position:relative; display: block; margin: 10px;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px; background-color:#fff;box-shadow: 0px 2px 3px rgba( 0, 0, 0, 0.25 );font-family: Arial;color: #444;font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;}.box a { width: 100%; height: 100%; position: absolute; left: 0; top: 0;}.black {color: black;font-size: 15px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}.font {color: gray;font-size: 10px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}</style><body><div id=\"content\">";
+    private static final String HEADING_2 = "</title></head><style>body,html {margin: 0px; padding: 0px;}" +
+        ".box { vertical-align:middle;position:relative; display: block; margin: 0px;padding-left:14px;padding-right:14px;padding-top:9px;padding-bottom:9px; background-color:#fff;border-bottom: 1px solid #d2d2d2;font-family: Arial;color: #444;font-size: 12px;}" +
+        ".box a { width: 100%; height: 100%; position: absolute; left: 0; top: 0;}" +
+        ".black {color: black;font-size: 15px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}" +
+        ".font {color: gray;font-size: 10px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}" +
+        "</style><body><div id=\"content\">";
 
-    private static final String PART1 = "<div class=\"box\"><a href=\"";
+    private static final String PART1 = "<div class=box><a href='";
 
-    private static final String PART2 = "\"></a><p class=\"black\">";
+    private static final String PART2 = "'></a><p class='black'>";
 
-    private static final String PART3 = "</p><p class=\"font\">";
+    private static final String PART3 = "</p><p class='font'>";
 
-    private static final String PART4 = "</p></div></div>";
+    private static final String PART4 = "</p></div>";
 
     private static final String END = "</div></body></html>";
 
-    @NonNull private final WeakReference<LightningView> mTabReference;
-    @NonNull private final Application mApp;
     @NonNull private final String mTitle;
-    private final HistoryDatabase mHistoryDatabase;
 
-    @Nullable private String mHistoryUrl = null;
+    @Inject Application mApp;
 
-    public HistoryPage(LightningView tab, @NonNull Application app, HistoryDatabase database) {
-        mTabReference = new WeakReference<>(tab);
-        mApp = app;
-        mTitle = app.getString(R.string.action_history);
-        mHistoryDatabase = database;
-    }
-
-    @Nullable
-    @Override
-    protected Void doInBackground(Void... params) {
-        mHistoryUrl = getHistoryPage();
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        LightningView tab = mTabReference.get();
-        if (tab != null && mHistoryUrl != null) {
-            tab.loadUrl(mHistoryUrl);
-        }
+    public HistoryPage() {
+        BrowserApp.getAppComponent().inject(this);
+        mTitle = mApp.getString(R.string.action_history);
     }
 
     @NonNull
-    private String getHistoryPage() {
-        StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
-        List<HistoryItem> historyList = mHistoryDatabase.getLastHundredItems();
-        Iterator<HistoryItem> it = historyList.iterator();
-        HistoryItem helper;
-        while (it.hasNext()) {
-            helper = it.next();
-            historyBuilder.append(PART1);
-            historyBuilder.append(helper.getUrl());
-            historyBuilder.append(PART2);
-            historyBuilder.append(helper.getTitle());
-            historyBuilder.append(PART3);
-            historyBuilder.append(helper.getUrl());
-            historyBuilder.append(PART4);
-        }
+    public Single<String> getHistoryPage() {
+        return Single.create(new SingleAction<String>() {
+            @Override
+            public void onSubscribe(@NonNull final SingleSubscriber<String> subscriber) {
+                final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
-        historyBuilder.append(END);
-        File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
-        FileWriter historyWriter = null;
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            historyWriter = new FileWriter(historyWebPage, false);
-            historyWriter.write(historyBuilder.toString());
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to write history page to disk", e);
-        } finally {
-            Utils.close(historyWriter);
-        }
-        return Constants.FILE + historyWebPage;
-    }
+                HistoryModel.lastHundredVisitedHistoryItems()
+                    .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                        @Override
+                        public void onItem(@Nullable List<HistoryItem> item) {
 
-    public void load() {
-        executeOnExecutor(BrowserApp.getIOThread());
+                            Preconditions.checkNonNull(item);
+                            Iterator<HistoryItem> it = item.iterator();
+                            HistoryItem helper;
+                            while (it.hasNext()) {
+                                helper = it.next();
+                                historyBuilder.append(PART1);
+                                historyBuilder.append(helper.getUrl());
+                                historyBuilder.append(PART2);
+                                historyBuilder.append(helper.getTitle());
+                                historyBuilder.append(PART3);
+                                historyBuilder.append(helper.getUrl());
+                                historyBuilder.append(PART4);
+                            }
+
+                            historyBuilder.append(END);
+                            File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
+                            FileWriter historyWriter = null;
+                            try {
+                                //noinspection IOResourceOpenedButNotSafelyClosed
+                                historyWriter = new FileWriter(historyWebPage, false);
+                                historyWriter.write(historyBuilder.toString());
+                            } catch (IOException e) {
+                                Log.e(TAG, "Unable to write history page to disk", e);
+                            } finally {
+                                Utils.close(historyWriter);
+                            }
+
+                            subscriber.onItem(Constants.FILE + historyWebPage);
+                            subscriber.onComplete();
+                        }
+                    });
+            }
+        });
     }
 
     /**
-     * Use this method to immediately delete the history
-     * page on the current thread. This will clear the
-     * cached history page that was stored on file.
+     * Use this observable to immediately delete the history
+     * page. This will clear the cached history page that was
+     * stored on file.
      *
-     * @param application the application object needed to get the file.
+     * @return a completable that deletes the history page
+     * when subscribed.
      */
-    public static void deleteHistoryPage(@NonNull Application application) {
-        File historyWebPage = new File(application.getFilesDir(), FILENAME);
-        if (historyWebPage.exists()) {
-            historyWebPage.delete();
-        }
+    @NonNull
+    public static Completable deleteHistoryPage(@NonNull final Application application) {
+        return Completable.create(new CompletableAction() {
+            @Override
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                File historyWebPage = new File(application.getFilesDir(), FILENAME);
+                if (historyWebPage.exists()) {
+                    historyWebPage.delete();
+                }
+
+                subscriber.onComplete();
+            }
+        });
     }
 
 }

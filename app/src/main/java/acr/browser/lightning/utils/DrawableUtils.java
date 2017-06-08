@@ -1,7 +1,5 @@
 package acr.browser.lightning.utils;
 
-import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,10 +9,8 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.TypedValue;
 import android.view.View;
 
 public class DrawableUtils {
@@ -76,16 +72,6 @@ public class DrawableUtils {
             (startR + (int) (fraction * (endR - startR))) << 16 |
             (startG + (int) (fraction * (endG - startG))) << 8 |
             (startB + (int) (fraction * (endB - startB)));
-    }
-
-    public static Drawable resolveDrawableAttribute(@NonNull Context context, @AttrRes int res) {
-        int[] attribute = new int[]{res};
-        int indexOfAttrTextSize = 0;
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = context.obtainStyledAttributes(typedValue.data, attribute);
-        Drawable drawable = a.getDrawable(indexOfAttrTextSize);
-        a.recycle();
-        return drawable;
     }
 
     public static void setBackground(@NonNull View view, @Nullable Drawable drawable) {

@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -23,7 +22,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
@@ -51,7 +49,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
-import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -80,12 +77,12 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.VideoView;
 
-import com.anthonycr.bonsai.Observable;
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
+import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.progress.AnimatedProgressBar;
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,15 +95,14 @@ import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.bus.BookmarkEvents;
-import acr.browser.lightning.bus.BrowserEvents;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
-import acr.browser.lightning.database.HistoryDatabase;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.fragment.BookmarksFragment;
@@ -115,6 +111,8 @@ import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.DrawableUtils;
+import acr.browser.lightning.utils.IntentUtils;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -123,12 +121,12 @@ import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.Handlers;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.SearchView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener, OnLongClickListener {
+public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener {
 
-    private static final String TAG = BrowserActivity.class.getSimpleName();
+    private static final String TAG = "BrowserActivity";
 
     private static final String INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER";
 
@@ -136,18 +134,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private static final String TAG_TABS_FRAGMENT = "TAG_TABS_FRAGMENT";
 
     // Static Layout
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.content_frame) FrameLayout mBrowserFrame;
-    @Bind(R.id.left_drawer) ViewGroup mDrawerLeft;
-    @Bind(R.id.right_drawer) ViewGroup mDrawerRight;
-    @Bind(R.id.ui_layout) ViewGroup mUiLayout;
-    @Bind(R.id.toolbar_layout) ViewGroup mToolbarLayout;
-    @Bind(R.id.progress_view) AnimatedProgressBar mProgressBar;
-    @Bind(R.id.search_bar) RelativeLayout mSearchBar;
-
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.content_frame) FrameLayout mBrowserFrame;
+    @BindView(R.id.left_drawer) ViewGroup mDrawerLeft;
+    @BindView(R.id.right_drawer) ViewGroup mDrawerRight;
+    @BindView(R.id.ui_layout) ViewGroup mUiLayout;
+    @BindView(R.id.toolbar_layout) ViewGroup mToolbarLayout;
+    @BindView(R.id.progress_view) AnimatedProgressBar mProgressBar;
+    @BindView(R.id.search_bar) RelativeLayout mSearchBar;
 
     // Toolbar Views
-    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
     private View mSearchBackground;
     private SearchView mSearch;
     private ImageView mArrowImage;
@@ -168,7 +165,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private ValueCallback<Uri> mUploadMessage;
     private ValueCallback<Uri[]> mFilePathCallback;
 
-    // Primatives
+    // Primitives
     private boolean mFullScreen;
     private boolean mDarkTheme;
     private boolean mIsFullScreen = false;
@@ -185,19 +182,12 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private String mUntitledTitle;
     private String mCameraPhotoPath;
 
-    private final Handler mDrawerHandler = new Handler();
-
     // The singleton BookmarkManager
-    @Inject BookmarkManager mBookmarkManager;
-
-    // Event bus
-    @Inject Bus mEventBus;
+    @Inject BookmarkModel mBookmarkManager;
 
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
     private TabsManager mTabsManager;
-
-    @Inject HistoryDatabase mHistoryDatabase;
 
     // Image
     private Bitmap mWebpageBitmap;
@@ -225,7 +215,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
-    abstract Observable<Void> updateCookiePreference();
+    @NonNull
+    abstract Completable updateCookiePreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,20 +283,27 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         mWebpageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, mDarkTheme);
 
-        final TabsFragment tabsFragment = new TabsFragment();
-        mTabsView = tabsFragment;
-        final Bundle tabsFragmentArguments = new Bundle();
-        tabsFragmentArguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito());
-        tabsFragmentArguments.putBoolean(TabsFragment.VERTICAL_MODE, mShowTabsInDrawer);
-        tabsFragment.setArguments(tabsFragmentArguments);
-
-        final BookmarksFragment bookmarksFragment = new BookmarksFragment();
-        mBookmarksView = bookmarksFragment;
-        final Bundle bookmarksFragmentArguments = new Bundle();
-        bookmarksFragmentArguments.putBoolean(BookmarksFragment.INCOGNITO_MODE, isIncognito());
-        bookmarksFragment.setArguments(bookmarksFragmentArguments);
-
         final FragmentManager fragmentManager = getSupportFragmentManager();
+
+        TabsFragment tabsFragment = (TabsFragment) fragmentManager.findFragmentByTag(TAG_TABS_FRAGMENT);
+        BookmarksFragment bookmarksFragment = (BookmarksFragment) fragmentManager.findFragmentByTag(TAG_BOOKMARK_FRAGMENT);
+
+        if (tabsFragment != null) {
+            fragmentManager.beginTransaction().remove(tabsFragment).commit();
+        }
+        tabsFragment = TabsFragment.createTabsFragment(isIncognito(), mShowTabsInDrawer);
+
+        mTabsView = tabsFragment;
+
+        if (bookmarksFragment != null) {
+            fragmentManager.beginTransaction().remove(bookmarksFragment).commit();
+        }
+        bookmarksFragment = BookmarksFragment.createFragment(isIncognito());
+
+        mBookmarksView = bookmarksFragment;
+
+        fragmentManager.executePendingTransactions();
+
         fragmentManager
             .beginTransaction()
             .replace(getTabsFragmentViewId(), tabsFragment, TAG_TABS_FRAGMENT)
@@ -315,8 +313,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             mToolbarLayout.removeView(findViewById(R.id.tabs_toolbar_container));
         }
 
-        if (actionBar == null)
-            return;
+        Preconditions.checkNonNull(actionBar);
 
         // set display options of the ActionBar
         actionBar.setDisplayShowTitleEnabled(false);
@@ -337,11 +334,35 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 mArrowImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             }
             updateTabNumber(0);
+
+            // Post drawer locking in case the activity is being recreated
+            Handlers.MAIN.post(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getTabDrawer());
+                }
+            });
         } else {
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer());
+
+            // Post drawer locking in case the activity is being recreated
+            Handlers.MAIN.post(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer());
+                }
+            });
             mArrowImage.setImageResource(R.drawable.ic_action_home);
             mArrowImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
         }
+
+        // Post drawer locking in case the activity is being recreated
+        Handlers.MAIN.post(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getBookmarkDrawer());
+            }
+        });
+
         arrowButton.setOnClickListener(this);
 
         // create the search EditText in the ToolBar
@@ -414,6 +435,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    /**
+     * Determines if an intent is originating
+     * from a panic trigger.
+     *
+     * @param intent the intent to check.
+     * @return true if the panic trigger sent
+     * the intent, false otherwise.
+     */
     static boolean isPanicTrigger(@Nullable Intent intent) {
         return intent != null && INTENT_PANIC_TRIGGER.equals(intent.getAction());
     }
@@ -423,7 +452,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mTabsManager.newTab(this, "", false);
         mTabsManager.switchToTab(0);
         mTabsManager.clearSavedState();
-        HistoryPage.deleteHistoryPage(getApplication());
+        HistoryPage.deleteHistoryPage(getApplication()).subscribe();
         closeBrowser();
         // System exit needed in the case of receiving
         // the panic intent since finish() isn't completely
@@ -520,10 +549,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return;
             }
             String url = currentView.getUrl();
-            if (UrlUtils.isSpecialUrl(url)) {
-                mSearch.setText("");
-            } else {
-                mSearch.setText(url);
+            if (!UrlUtils.isSpecialUrl(url)) {
+                if (!mSearch.hasFocus()) {
+                    mSearch.setText(url);
+                }
             }
         }
     }
@@ -532,19 +561,25 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         @Override
         public void onDrawerClosed(View v) {
-            if (v == mDrawerRight && mShowTabsInDrawer) {
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerLeft);
-            } else {
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, mDrawerRight);
+            View tabsDrawer = getTabDrawer();
+            View bookmarksDrawer = getBookmarkDrawer();
+
+            if (v == tabsDrawer) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, bookmarksDrawer);
+            } else if (mShowTabsInDrawer) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, tabsDrawer);
             }
         }
 
         @Override
         public void onDrawerOpened(View v) {
-            if (v == mDrawerRight) {
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerLeft);
+            View tabsDrawer = getTabDrawer();
+            View bookmarksDrawer = getBookmarkDrawer();
+
+            if (v == tabsDrawer) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, bookmarksDrawer);
             } else {
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, mDrawerRight);
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, tabsDrawer);
             }
         }
 
@@ -611,7 +646,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (bookmarksFragment instanceof BookmarksFragment) {
             ((BookmarksFragment) bookmarksFragment).reinitializePreferences();
         }
-
 
         // TODO layout transition causing memory leak
 //        mBrowserFrame.setLayoutTransition(new LayoutTransition());
@@ -713,6 +747,59 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        // Keyboard shortcuts
+        if (event.isCtrlPressed() && event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_T:
+                    // Open new tab
+                    newTab(null, true);
+                    return true;
+                case KeyEvent.KEYCODE_W:
+                    // Close current tab
+                    mPresenter.deleteTab(mTabsManager.indexOfCurrentTab());
+                    return true;
+                case KeyEvent.KEYCODE_Q:
+                    // Close browser
+                    closeBrowser();
+                    return true;
+                case KeyEvent.KEYCODE_R:
+                    // Refresh current tab
+                    LightningView currentTab = mTabsManager.getCurrentTab();
+                    if (currentTab != null) {
+                        currentTab.reload();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_TAB:
+                    int nextIndex = 0;
+                    if (event.isShiftPressed()) {
+                        // Go back one tab
+                        if (mTabsManager.indexOfCurrentTab() > 0) {
+                            nextIndex = mTabsManager.indexOfCurrentTab() - 1;
+                        } else {
+                            nextIndex = mTabsManager.last();
+                        }
+                    } else {
+                        // Go forward one tab
+                        if (mTabsManager.indexOfCurrentTab() < mTabsManager.last()) {
+                            nextIndex = mTabsManager.indexOfCurrentTab() + 1;
+                        } else {
+                            nextIndex = 0;
+                        }
+                    }
+                    mPresenter.tabChanged(nextIndex);
+                    return true;
+            }
+        } else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
+            // Highlight search field
+            mSearch.requestFocus();
+            mSearch.selectAll();
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final LightningView currentView = mTabsManager.getCurrentTab();
         final String currentUrl = currentView != null ? currentView.getUrl() : null;
@@ -748,13 +835,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
                 return true;
             case R.id.action_share:
-                if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, currentView.getTitle());
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, currentUrl);
-                    startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.dialog_title_share)));
-                }
+                new IntentUtils(this).shareUrl(currentUrl, currentView != null ? currentView.getTitle() : null);
                 return true;
             case R.id.action_bookmarks:
                 openBookmarks();
@@ -772,6 +853,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 return true;
             case R.id.action_history:
                 openHistory();
+                return true;
+            case R.id.action_downloads:
+                openDownloads();
                 return true;
             case R.id.action_add_bookmark:
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
@@ -795,23 +879,37 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     // By using a manager, adds a bookmark and notifies third parties about that
     private void addBookmark(final String title, final String url) {
-        final HistoryItem item = !mBookmarkManager.isBookmark(url)
-            ? new HistoryItem(url, title)
-            : null;
-        if (item != null && mBookmarkManager.addBookmark(item)) {
-            mSuggestionsAdapter.refreshBookmarks();
-            mBookmarksView.handleUpdatedUrl(url);
-        }
+
+        final HistoryItem item = new HistoryItem(url, title);
+        mBookmarkManager.addBookmarkIfNotExists(item)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<Boolean>() {
+                @Override
+                public void onItem(@Nullable Boolean item) {
+                    if (Boolean.TRUE.equals(item)) {
+                        mSuggestionsAdapter.refreshBookmarks();
+                        mBookmarksView.handleUpdatedUrl(url);
+                    }
+                }
+            });
     }
 
     private void deleteBookmark(final String title, final String url) {
-        final HistoryItem item = mBookmarkManager.isBookmark(url)
-            ? new HistoryItem(url, title)
-            : null;
-        if (item != null && mBookmarkManager.deleteBookmark(item)) {
-            mSuggestionsAdapter.refreshBookmarks();
-            mBookmarksView.handleUpdatedUrl(url);
-        }
+        final HistoryItem item = new HistoryItem(url, title);
+
+        mBookmarkManager.deleteBookmark(item)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<Boolean>() {
+                @Override
+                public void onItem(@Nullable Boolean item) {
+                    if (Boolean.TRUE.equals(item)) {
+                        mSuggestionsAdapter.refreshBookmarks();
+                        mBookmarksView.handleUpdatedUrl(url);
+                    }
+                }
+            });
     }
 
     private void putToolbarInRoot() {
@@ -956,7 +1054,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        mDrawerHandler.postDelayed(new Runnable() {
+        Handlers.MAIN.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
@@ -995,14 +1093,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        mDrawerHandler.postDelayed(new Runnable() {
+        Handlers.MAIN.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mDrawerLayout.closeDrawers();
             }
         }, 200);
 
-        // mDrawerHandler.postDelayed(new Runnable() {
+        // Handlers.MAIN.postDelayed(new Runnable() {
         //     @Override
         //     public void run() {
         // Remove browser frame background to reduce overdraw
@@ -1066,11 +1164,19 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         if (!UrlUtils.isSpecialUrl(url)) {
-            if (!mBookmarkManager.isBookmark(url)) {
-                addBookmark(title, url);
-            } else {
-                deleteBookmark(title, url);
-            }
+            mBookmarkManager.isBookmark(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<Boolean>() {
+                    @Override
+                    public void onItem(@Nullable Boolean item) {
+                        if (Boolean.TRUE.equals(item)) {
+                            deleteBookmark(title, url);
+                        } else {
+                            addBookmark(title, url);
+                        }
+                    }
+                });
         }
     }
 
@@ -1079,12 +1185,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mPresenter.loadUrlInCurrentView(item.getUrl());
         // keep any jank from happening when the drawer is closed after the
         // URL starts to load
-        mDrawerHandler.postDelayed(new Runnable() {
+        Handlers.MAIN.postDelayed(new Runnable() {
             @Override
             public void run() {
                 closeDrawers(null);
             }
         }, 150);
+    }
+
+    @Override
+    public void handleHistoryChange() {
+        openHistory();
     }
 
     /**
@@ -1139,7 +1250,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             Log.d(TAG, "Cache Cleared");
         }
         if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
-            WebUtils.clearHistory(this, mHistoryDatabase);
+            WebUtils.clearHistory(this);
             Log.d(TAG, "History Cleared");
         }
         if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
@@ -1249,15 +1360,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         Log.d(TAG, "onPause");
         mTabsManager.pauseAll();
         try {
-            BrowserApp.get(this).unregisterReceiver(mNetworkReceiver);
+            getApplication().unregisterReceiver(mNetworkReceiver);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "Receiver was not registered", e);
         }
         if (isIncognito() && isFinishing()) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
-
-        mEventBus.unregister(mBusEventListener);
     }
 
     void saveOpenTabs() {
@@ -1276,14 +1385,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
 
-        mDrawerHandler.removeCallbacksAndMessages(null);
+        Handlers.MAIN.removeCallbacksAndMessages(null);
 
         mPresenter.shutdown();
-
-        if (mHistoryDatabase != null) {
-            mHistoryDatabase.close();
-            mHistoryDatabase = null;
-        }
 
         super.onDestroy();
     }
@@ -1319,9 +1423,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(NETWORK_BROADCAST_ACTION);
-        BrowserApp.get(this).registerReceiver(mNetworkReceiver, filter);
-
-        mEventBus.register(mBusEventListener);
+        getApplication().registerReceiver(mNetworkReceiver, filter);
 
         if (mFullScreen) {
             overlayToolbarOnWebView();
@@ -1481,20 +1583,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (UrlUtils.isSpecialUrl(url)) {
             return;
         }
-        BrowserApp.getIOThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mHistoryDatabase.visitHistoryItem(url, title);
-                } catch (IllegalStateException e) {
-                    Log.e(TAG, "IllegalStateException in updateHistory", e);
-                } catch (NullPointerException e) {
-                    Log.e(TAG, "NullPointerException in updateHistory", e);
-                } catch (SQLiteException e) {
-                    Log.e(TAG, "SQLiteException in updateHistory", e);
+
+        HistoryModel.visitHistoryItem(url, title)
+            .subscribeOn(Schedulers.io())
+            .subscribe(new CompletableOnSubscribe() {
+                @Override
+                public void onError(@NonNull Throwable throwable) {
+                    Log.e(TAG, "Exception while updating history", throwable);
                 }
-            }
-        });
+            });
     }
 
     /**
@@ -1543,7 +1640,35 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * function that opens the HTML history page in the browser
      */
     private void openHistory() {
-        new HistoryPage(mTabsManager.getCurrentTab(), getApplication(), mHistoryDatabase).load();
+        new HistoryPage().getHistoryPage()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    LightningView view = mTabsManager.getCurrentTab();
+                    if (view != null) {
+                        view.loadUrl(item);
+                    }
+                }
+            });
+    }
+
+    private void openDownloads() {
+        new DownloadsPage().getDownloadsPage()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    LightningView view = mTabsManager.getCurrentTab();
+                    if (view != null) {
+                        view.loadUrl(item);
+                    }
+                }
+            });
     }
 
     private View getBookmarkDrawer() {
@@ -1884,6 +2009,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (currentTab != null) {
             if (currentTab.canGoBack()) {
                 currentTab.goBack();
+                closeDrawers(null);
             } else {
                 mPresenter.deleteTab(mTabsManager.positionOf(currentTab));
             }
@@ -1896,6 +2022,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (currentTab != null) {
             if (currentTab.canGoForward()) {
                 currentTab.goForward();
+                closeDrawers(null);
             }
         }
     }
@@ -2046,6 +2173,55 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+    @Override
+    public void handleBookmarksChange() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
+            && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
+            currentTab.loadBookmarkpage();
+        }
+        if (currentTab != null) {
+            mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
+        }
+    }
+
+    @Override
+    public void handleDownloadDeleted() {
+        final LightningView currentTab = mTabsManager.getCurrentTab();
+        if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
+            && currentTab.getUrl().endsWith(DownloadsPage.FILENAME)) {
+            currentTab.loadDownloadspage();
+        }
+        if (currentTab != null) {
+            mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
+        }
+    }
+
+    @Override
+    public void handleBookmarkDeleted(@NonNull HistoryItem item) {
+        mBookmarksView.handleBookmarkDeleted(item);
+        handleBookmarksChange();
+    }
+
+    @Override
+    public void handleNewTab(@NonNull LightningDialogBuilder.NewTab newTabType, @NonNull String url) {
+        mDrawerLayout.closeDrawers();
+        switch (newTabType) {
+            case FOREGROUND:
+                newTab(url, true);
+                break;
+            case BACKGROUND:
+                newTab(url, false);
+                break;
+            case INCOGNITO:
+                Intent intent = new Intent(BrowserActivity.this, IncognitoActivity.class);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
+                break;
+        }
+    }
+
     /**
      * Performs an action when the provided view is laid out.
      *
@@ -2143,21 +2319,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     /**
-     * Handle long presses on views that use this class
-     * as their OnLongClickListener. This method should
-     * distinguish between the IDs of the views that are
-     * getting clicked.
-     *
-     * @param view the view that has been long pressed
-     * @return returns true since the method handles the long press
-     * event
-     */
-    @Override
-    public boolean onLongClick(View view) {
-        return true;
-    }
-
-    /**
      * This NetworkReceiver notifies each of the WebViews in the browser whether
      * the network is currently connected or not. This is important because some
      * JavaScript properties rely on the WebView knowing the current network state.
@@ -2186,66 +2347,4 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private final Object mBusEventListener = new Object() {
-
-        @Subscribe
-        public void loadHistory(final BrowserEvents.OpenHistoryInCurrentTab event) {
-            new HistoryPage(mTabsManager.getCurrentTab(), getApplication(), mHistoryDatabase).load();
-        }
-
-        /**
-         * Load the given url in a new tab, used by the the
-         * {@link acr.browser.lightning.fragment.BookmarksFragment} and by the
-         * {@link LightningDialogBuilder}
-         *
-         * @param event   Bus event indicating that the user wishes
-         *                to open a bookmark in a new tab
-         */
-        @Subscribe
-        public void loadUrlInNewTab(final BrowserEvents.OpenUrlInNewTab event) {
-            mDrawerLayout.closeDrawers();
-            if (event.location == BrowserEvents.OpenUrlInNewTab.Location.NEW_TAB) {
-                newTab(event.url, true);
-            } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.BACKGROUND) {
-                newTab(event.url, false);
-            } else if (event.location == BrowserEvents.OpenUrlInNewTab.Location.INCOGNITO) {
-                Intent intent = new Intent(BrowserActivity.this, IncognitoActivity.class);
-                intent.setData(Uri.parse(event.url));
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
-            }
-        }
-
-        /**
-         * This method is called when the user edits a bookmark.
-         *
-         * @param event the event that the bookmark has changed.
-         */
-        @Subscribe
-        public void bookmarkChanged(final BookmarkEvents.BookmarkChanged event) {
-            handleBookmarksChange();
-        }
-
-        /**
-         * Notify the browser that a bookmark was deleted.
-         *
-         * @param event the event that the bookmark has been deleted
-         */
-        @Subscribe
-        public void bookmarkDeleted(final BookmarkEvents.Deleted event) {
-            handleBookmarksChange();
-        }
-
-        private void handleBookmarksChange() {
-            final LightningView currentTab = mTabsManager.getCurrentTab();
-            if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-                && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
-                currentTab.loadBookmarkpage();
-            }
-            if (currentTab != null) {
-                mBookmarksView.handleUpdatedUrl(currentTab.getUrl());
-            }
-        }
-
-    };
 }

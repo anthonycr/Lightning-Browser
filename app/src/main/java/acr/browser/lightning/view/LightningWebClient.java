@@ -8,16 +8,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.MailTo;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.webkit.HttpAuthHandler;
+import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
@@ -25,9 +28,10 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
@@ -47,6 +52,8 @@ import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningWebClient extends WebViewClient {
+
+    private static final String TAG = "LightningWebClient";
 
     @NonNull private final Activity mActivity;
     @NonNull private final LightningView mLightningView;
@@ -125,44 +132,38 @@ public class LightningWebClient extends WebViewClient {
                                           final String host, final String realm) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        final EditText name = new EditText(mActivity);
-        final EditText password = new EditText(mActivity);
-        LinearLayout passLayout = new LinearLayout(mActivity);
-        passLayout.setOrientation(LinearLayout.VERTICAL);
 
-        passLayout.addView(name);
-        passLayout.addView(password);
+        View dialogView = LayoutInflater.from(mActivity).inflate(R.layout.dialog_auth_request, null);
 
-        name.setHint(mActivity.getString(R.string.hint_username));
-        name.setSingleLine();
-        password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        password.setSingleLine();
-        password.setTransformationMethod(new PasswordTransformationMethod());
-        password.setHint(mActivity.getString(R.string.hint_password));
-        builder.setTitle(mActivity.getString(R.string.title_sign_in));
-        builder.setView(passLayout);
-        builder.setCancelable(true)
-            .setPositiveButton(mActivity.getString(R.string.title_sign_in),
+        final TextView realmLabel = (TextView) dialogView.findViewById(R.id.auth_request_realm_textview);
+        final EditText name = (EditText) dialogView.findViewById(R.id.auth_request_username_edittext);
+        final EditText password = (EditText) dialogView.findViewById(R.id.auth_request_password_edittext);
+
+        realmLabel.setText(mActivity.getString(R.string.label_realm, realm));
+
+        builder.setView(dialogView)
+            .setTitle(R.string.title_sign_in)
+            .setCancelable(true)
+            .setPositiveButton(R.string.title_sign_in,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         String user = name.getText().toString();
                         String pass = password.getText().toString();
                         handler.proceed(user.trim(), pass.trim());
-                        Log.d(Constants.TAG, "Request Login");
-
+                        Log.d(TAG, "Attempting HTTP Authentication");
                     }
                 })
-            .setNegativeButton(mActivity.getString(R.string.action_cancel),
+            .setNegativeButton(R.string.action_cancel,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         handler.cancel();
                     }
                 });
-        AlertDialog alert = builder.create();
-        alert.show();
-        BrowserDialog.setDialogSize(mActivity, alert);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
     private volatile boolean mIsRunning = false;
@@ -280,7 +281,7 @@ public class LightningWebClient extends WebViewClient {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull WebResourceRequest request) {
         return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
     }
 
@@ -290,7 +291,7 @@ public class LightningWebClient extends WebViewClient {
         return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
     }
 
-    private boolean shouldOverrideLoading(WebView view, String url) {
+    private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
         // Check if configured proxy is available
         if (!mProxyUtils.isProxyReady(mActivity)) {
             // User has been notified
@@ -299,45 +300,35 @@ public class LightningWebClient extends WebViewClient {
 
         Map<String, String> headers = mLightningView.getRequestHeaders();
 
-        // If the headers are empty, the user has not expressed the desire
-        // to use them and therefore we can revert back to the old way of loading
-        if (headers.isEmpty()) {
-            if (mLightningView.isIncognito()) {
-                // If we are in incognito, immediately load, we don't want the url to leave the app
-                return false;
-            }
-            if (url.startsWith(Constants.ABOUT)) {
-                // If this is an about page, immediately load, we don't need to leave the app
-                return false;
-            }
-
-            if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
-                // If it was a mailto: link, or an intent, or could be launched elsewhere, do that
-                return true;
-            }
-        } else {
-            if (mLightningView.isIncognito() && Utils.doesSupportHeaders()) {
-                // If we are in incognito, immediately load, we don't want the url to leave the app
-                view.loadUrl(url, headers);
-                return true;
-            }
-            if (url.startsWith(Constants.ABOUT) && Utils.doesSupportHeaders()) {
-                // If this is an about page, immediately load, we don't need to leave the app
-                view.loadUrl(url, headers);
-                return true;
-            }
-
-            if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
-                // If it was a mailto: link, or an intent, or could be launched elsewhere, do that
-                return true;
-            } else if (Utils.doesSupportHeaders()) {
-                // Otherwise, load the headers.
-                view.loadUrl(url, headers);
-                return true;
-            }
+        if (mLightningView.isIncognito()) {
+            // If we are in incognito, immediately load, we don't want the url to leave the app
+            return continueLoadingUrl(view, url, headers);
         }
-        // If none of those instances was true, revert back to the old way of loading
-        return false;
+        if (url.startsWith(Constants.ABOUT)) {
+            // If this is an about page, immediately load, we don't need to leave the app
+            return continueLoadingUrl(view, url, headers);
+        }
+
+        if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
+            // If it was a mailto: link, or an intent, or could be launched elsewhere, do that
+            return true;
+        }
+
+        // If none of the special conditions was met, continue with loading the url
+        return continueLoadingUrl(view, url, headers);
+    }
+
+    private boolean continueLoadingUrl(@NonNull WebView webView,
+                                       @NonNull String url,
+                                       @NonNull Map<String, String> headers) {
+        if (headers.isEmpty()) {
+            return false;
+        } else if (Utils.doesSupportHeaders()) {
+            webView.loadUrl(url, headers);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean isMailOrIntent(@NonNull String url, @NonNull WebView view) {
@@ -364,7 +355,27 @@ public class LightningWebClient extends WebViewClient {
                 try {
                     mActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
-                    Log.e(Constants.TAG, "ActivityNotFoundException");
+                    Log.e(TAG, "ActivityNotFoundException");
+                }
+                return true;
+            }
+        } else if (url.startsWith(Constants.FILE)) {
+            File file = new File(url.replace(Constants.FILE, ""));
+
+            if (file.exists()) {
+                String newMimeType = MimeTypeMap.getSingleton()
+                        .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
+
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileprovider", file);
+                intent.setDataAndType(contentUri, newMimeType);
+
+                try {
+                    mActivity.startActivity(intent);
+                } catch (Exception e) {
+                    System.out.println("LightningWebClient: cannot open downloaded file");
                 }
                 return true;
             }

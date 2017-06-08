@@ -12,10 +12,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,7 +25,6 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.utils.DeviceUtils;
 import acr.browser.lightning.utils.ResourceUtils;
-import acr.browser.lightning.utils.Utils;
 
 /**
  * Copyright 7/31/2016 Anthony Restaino
@@ -44,10 +43,6 @@ import acr.browser.lightning.utils.Utils;
  */
 public class BrowserDialog {
 
-    public interface Listener {
-        void onClick();
-    }
-
     public interface EditorListener {
         void onClick(String text);
     }
@@ -57,12 +52,12 @@ public class BrowserDialog {
         private final int mTitle;
         private boolean mCondition = true;
 
-        public Item(@StringRes int title, boolean condition) {
+        Item(@StringRes int title, boolean condition) {
             this(title);
             mCondition = condition;
         }
 
-        public Item(@StringRes int title) {
+        protected Item(@StringRes int title) {
             mTitle = title;
         }
 
@@ -78,16 +73,11 @@ public class BrowserDialog {
         public abstract void onClick();
     }
 
-
-    public static void show(@NonNull Activity activity, @NonNull Item item, @Nullable Item... items) {
-        show(activity, null, item, items);
+    public static void show(@NonNull Activity activity, @StringRes int title, @NonNull Item... items) {
+        show(activity, activity.getString(title), items);
     }
 
-    public static void show(@NonNull Activity activity, @StringRes int title, @NonNull Item item, @Nullable Item... items) {
-        show(activity, activity.getString(title), item, items);
-    }
-
-    public static void show(@NonNull Activity activity, @Nullable String title, @NonNull Item item, @Nullable Item... items) {
+    public static void show(@NonNull Activity activity, @Nullable String title, @NonNull Item... items) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         View layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null);
@@ -99,14 +89,9 @@ public class BrowserDialog {
             android.R.layout.simple_list_item_1);
 
         final List<Item> itemList = new ArrayList<>(1);
-        if (item.isConditionMet()) {
-            itemList.add(item);
-        }
-        if (items != null) {
-            for (Item it : items) {
-                if (it.isConditionMet()) {
-                    itemList.add(it);
-                }
+        for (Item it : items) {
+            if (it.isConditionMet()) {
+                itemList.add(it);
             }
         }
 
@@ -136,37 +121,39 @@ public class BrowserDialog {
         });
     }
 
-    public static void showEditText(@NonNull Activity activity, @StringRes int title,
-                                    @StringRes int hint, @StringRes int action,
+    public static void showEditText(@NonNull Activity activity,
+                                    @StringRes int title,
+                                    @StringRes int hint,
+                                    @StringRes int action,
                                     @NonNull final EditorListener listener) {
         showEditText(activity, title, hint, null, action, listener);
     }
 
-    public static void showEditText(@NonNull Activity activity, @StringRes int title,
-                                    @StringRes int hint, @Nullable String currentText,
-                                    @StringRes int action, @NonNull final EditorListener listener) {
-        final AlertDialog.Builder editorDialog = new AlertDialog.Builder(activity);
-        editorDialog.setTitle(title);
-        final EditText editText = new EditText(activity);
+    public static void showEditText(@NonNull Activity activity,
+                                    @StringRes int title,
+                                    @StringRes int hint,
+                                    @Nullable String currentText,
+                                    @StringRes int action,
+                                    @NonNull final EditorListener listener) {
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.dialog_edit_text);
+
         editText.setHint(hint);
         if (currentText != null) {
             editText.setText(currentText);
         }
-        editText.setSingleLine();
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.dpToPx(10);
-        layout.setPadding(padding, padding, padding, padding);
-        layout.addView(editText);
-        editorDialog.setView(layout);
-        editorDialog.setPositiveButton(action,
-            new DialogInterface.OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    listener.onClick(editText.getText().toString());
-                }
-            });
+        final AlertDialog.Builder editorDialog = new AlertDialog.Builder(activity)
+            .setTitle(title)
+            .setView(dialogView)
+            .setPositiveButton(action,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onClick(editText.getText().toString());
+                    }
+                });
 
         Dialog dialog = editorDialog.show();
         setDialogSize(activity, dialog);
@@ -179,7 +166,10 @@ public class BrowserDialog {
         if (maxWidth > screenSize - 2 * padding) {
             maxWidth = screenSize - 2 * padding;
         }
-        dialog.getWindow().setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 
 }

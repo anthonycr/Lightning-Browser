@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Lightning</string>
+    <string name="app_name">闪电</string>
     <string name="action_new_tab">新建标签</string>
     <string name="action_share">分享页面</string>
     <string name="action_history">历史记录</string>
@@ -11,7 +11,6 @@
     <string name="settings">浏览器设置</string>
     <string name="location">允许站点访问地理位置</string>
     <string name="password">保存密码</string>
-    <!-- <string name="keep_last_tab">不关闭最后一个标签</string> -->
     <string name="agent">User Agent</string>
     <string name="flash">启用 Adobe Flash</string>
     <string name="home">设置首页</string>
@@ -38,7 +37,7 @@
     <string name="stock_browser_available">（已检测到受支持的原生浏览器）</string>
     <string name="fullScreenOption">浏览时隐藏状态栏</string>
     <string name="clear_cookies">清除浏览器 Cookies</string>
-    <string name="clear_history">Clear Browser History</string>
+    <string name="clear_history">清除浏览历史</string>
     <string name="dialog_image">您希望对此图片进行什么操作？</string>
     <string name="action_download">下载</string>
     <string name="action_open">打开</string>
@@ -53,7 +52,7 @@
     <string name="agent_custom">自定义 UA</string>
     <string name="title_search_engine">搜索引擎</string>
     <string name="action_ok">确认</string>
-    <string name="dialog_download">您是否需要下载此文件？</string>
+    <string name="dialog_download">您是否需要下载此文件？ (%1$s)</string>
     <string name="action_cancel">取消</string>
     <string name="title_warning">警告</string>
     <string name="dialog_adobe_not_installed">"未检测到您的设备中安装了 Adobe Flash Player，请先安装 Adobe  Flash Player 后再启用此选项。"</string>
@@ -162,13 +161,90 @@
     <string name="settings_display">显示设置</string>
     <string name="settings_general">常规设置</string>
     <string-array name="url_content_array">
-        <item >域 (默认)</item>
-        <item >URL</item>
-        <item >标题</item>
+        <item>域 (默认)</item>
+        <item>URL</item>
+        <item>标题</item>
     </string-array>
     <string name="settings_privacy">隐私设置</string>
     <string name="tabs">标签</string>
     <string name="third_party">阻止第三方 Cookies</string>
     <string name="url_contents">URL 框内容</string>
     <!-- <string name="exit">退出</string> -->
+
+    <string name="supported_browsers_title">支持的浏览器</string>
+    <string name="stock_browser">股票浏览器</string>
+    <string name="dialog_history_long_press">你想对这条历史记录执行什么操作？</string>
+    <string name="problem_download">非法的URL，不能下载</string>
+    <string name="problem_location_download">不能下载到指定的位置</string>
+
+    <string name="message_insecure_connection">这个站点连接不安全：\n%1$s\n仍然执行？</string>
+    <string name="message_certificate_date_invalid">证书日期无效</string>
+    <string name="message_certificate_expired">证书过期</string>
+    <string name="message_certificate_domain_mismatch">证书域名不匹配</string>
+    <string name="message_certificate_invalid">证书无效</string>
+    <string name="message_certificate_not_yet_valid">证书暂时无效</string>
+    <string name="message_certificate_untrusted">不受信任的证书</string>
+
+    <string name="powered_by_duck">由DuckDuckGo提供技术支持</string>
+    <string name="powered_by_baidu">由百度提供技术支持</string>
+    <string name="search_suggestions_off">关闭搜索建议</string>
+    <string name="http_proxy">HTTP代理</string>
+    <string-array name="proxy_choices_array">
+        <item>无</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>手动</item>
+    </string-array>
+    <string name="manual_proxy">手动代理</string>
+    <string name="host">主机:</string>
+    <string name="port">端口:</string>
+    <string name="use_i2p_prompt">看上去你已经安装I2P。是否希望使用I2P？</string>
+    <string name="i2p_not_running">I2P没有运行</string>
+    <string name="i2p_tunnels_not_ready">I2P隧道没有准备好。</string>
+    <string name="name_increase_contrast">增加对比度</string>
+    <string name="close_other_tabs">关闭其他标签</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="text_encoding">文本编码</string>
+
+    <string name="theme">应用风格</string>
+    <string name="light_theme">明亮主题</string>
+    <string name="black_theme">黑暗主题 (AMOLED)</string>
+    <string name="folder">文件夹名</string>
+    <string name="action_folder">文件夹</string>
+    <string name="action_rename">重命名</string>
+    <string name="title_rename_folder">重命名文件夹</string>
+    <string name="dialog_folder">你想对这个个文件夹做什么操作？</string>
+    <string name="clear_web_storage">清除Web存储</string>
+    <string name="clear_web_storage_exit">退出时清除Web存储</string>
+    <string name="message_web_storage_cleared">已经清除Web存储</string>
+    <string name="hosts_source">HOSTS文件禁止广告来源</string>
+    <string name="settings_adblock">禁止广告设置</string>
+    <string name="tabs_in_drawer">在导航抽屉显示标签</string>
+    <string name="swap_bookmarks_and_tabs">书签和标签抽屉交换位置</string>
+    <string name="do_not_track">请求 \'Do Not Track\'</string>
+    <string name="remove_identifying_headers">清除标志头</string>
+    <string name="action_add_to_homescreen">添加到主屏</string>
+    <string name="message_added_to_homescreen">快捷方式添加到主屏</string>
+    <string name="action_delete_all_bookmarks">删除所有书签</string>
+
+    <string name="faq">FAQ</string>
+    <string name="faq_description">常见问题</string>
+
+    <!-- debug strings -->
+    <string name="debug_title">调试设置</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">重启APP以使设置生效</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_new_tab">在新标签打开</string>
+    <string name="dialog_open_background_tab">在后台标签打开</string>
+    <string name="dialog_open_incognito_tab">在匿名标签打开</string>
+    <string name="dialog_remove_bookmark">删除书签</string>
+    <string name="dialog_edit_bookmark">编辑书签</string>
+    <string name="dialog_remove_from_history">从历史删除</string>
+    <string name="dialog_download_image">下载图片</string>
+    <string name="dialog_copy_link">复制链接</string>
+    <string name="dialog_rename_folder">重命名文件夹</string>
+    <string name="dialog_remove_folder">删除文件夹</string>
+    <string name="dialog_title_close_browser">关闭浏览器</string>
 </resources>

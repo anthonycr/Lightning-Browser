@@ -12,7 +12,7 @@ public abstract class NetworkReceiver extends BroadcastReceiver {
     public abstract void onConnectivityChange(boolean isConnected);
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(@NonNull Context context, Intent intent) {
         onConnectivityChange(isConnected(context));
     }
 

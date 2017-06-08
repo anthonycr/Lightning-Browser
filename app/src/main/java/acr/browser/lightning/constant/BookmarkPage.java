@@ -6,27 +6,32 @@ package acr.browser.lightning.constant;
 import android.app.Activity;
 import android.app.Application;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.SingleSubscriber;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.view.LightningView;
 
-public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
+public final class BookmarkPage {
 
     /**
      * The bookmark page standard suffix
@@ -42,8 +47,14 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
 
     private static final String HEADING_2 = "</title>\n" +
         "</head>\n" +
-        "<style>body{background:#f5f5f5;max-width:100%;min-height:100%}#content{width:100%;max-width:800px;margin:0 auto;text-align:center}.box{vertical-align:middle;text-align:center;position:relative;display:inline-block;height:45px;width:150px;margin:10px;background-color:#fff;box-shadow:0 3px 6px rgba(0,0,0,0.25);font-family:Arial;color:#444;font-size:12px;-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px}.box-content{height:25px;width:100%;vertical-align:middle;text-align:center;display:table-cell}p.ellipses{" +
-        "width:130px;font-size: small;font-family: Arial, Helvetica, 'sans-serif';white-space:nowrap;overflow:hidden;text-align:left;vertical-align:middle;margin:auto;text-overflow:ellipsis;-o-text-overflow:ellipsis;-ms-text-overflow:ellipsis}.box a{width:100%;height:100%;position:absolute;left:0;top:0}img{vertical-align:middle;margin-right:10px;width:20px;height:20px;}.margin{margin:10px}</style>\n" +
+        "<style>body{background: #E5E5E5; padding-top: 5px;max-width:100%;min-height:100%}" +
+        "#content{width:100%;max-width:800px;margin:0 auto;text-align:center}" +
+        ".box{vertical-align:middle;text-align:center;position:relative;display:inline-block;height:45px;width:150px;margin:6px;padding:4px;background-color:#fff;border: 1px solid #d2d2d2;border-top-width: 0;border-bottom-width: 2px;font-family:Arial;color:#444;font-size:12px;-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px}" +
+        ".box-content{height:25px;width:100%;vertical-align:middle;text-align:center;display:table-cell}" +
+        "p.ellipses{width:130px;font-size: small;font-family: Arial, Helvetica, 'sans-serif';white-space:nowrap;overflow:hidden;text-align:left;vertical-align:middle;margin:auto;text-overflow:ellipsis;-o-text-overflow:ellipsis;-ms-text-overflow:ellipsis}" +
+        ".box a{width:100%;height:100%;position:absolute;left:0;top:0}" +
+        "img{vertical-align:middle;margin-right:10px;width:20px;height:20px;}" +
+        ".margin{margin:10px}</style>\n" +
         "<body><div id=content>";
 
     private static final String PART1 = "<div class=box><a href='";
@@ -67,38 +78,34 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
     private File mFilesDir;
     private File mCacheDir;
 
-    private final Application mApp;
-    private final BookmarkManager mManager;
-    @NonNull private final WeakReference<LightningView> mTabReference;
-    private final Bitmap mFolderIcon;
+    @Inject Application mApp;
+    @Inject BookmarkModel mManager;
+
+    @NonNull private final Bitmap mFolderIcon;
     @NonNull private final String mTitle;
 
-    public BookmarkPage(LightningView tab, @NonNull Activity activity, BookmarkManager manager) {
-        mApp = BrowserApp.get(activity);
-        final Bitmap folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false);
+    public BookmarkPage(@NonNull Activity activity) {
+        BrowserApp.getAppComponent().inject(this);
+        mFolderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false);
         mTitle = mApp.getString(R.string.action_bookmarks);
-        mManager = manager;
-        mTabReference = new WeakReference<>(tab);
-        mFolderIcon = folderIcon;
     }
 
-    @Override
-    protected Void doInBackground(Void... params) {
-        mCacheDir = mApp.getCacheDir();
-        mFilesDir = mApp.getFilesDir();
-        cacheDefaultFolderIcon();
-        buildBookmarkPage(null, mManager);
-        return null;
-    }
+    @NonNull
+    public Single<String> getBookmarkPage() {
+        return Single.create(new SingleAction<String>() {
+            @Override
+            public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
+                mCacheDir = mApp.getCacheDir();
+                mFilesDir = mApp.getFilesDir();
+                cacheDefaultFolderIcon();
+                buildBookmarkPage(null);
 
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        LightningView tab = mTabReference.get();
-        if (tab != null) {
-            File bookmarkWebPage = new File(mFilesDir, FILENAME);
-            tab.loadUrl(Constants.FILE + bookmarkWebPage);
-        }
+                File bookmarkWebPage = new File(mFilesDir, FILENAME);
+
+                subscriber.onItem(Constants.FILE + bookmarkWebPage);
+                subscriber.onComplete();
+            }
+        });
     }
 
     private void cacheDefaultFolderIcon() {
@@ -115,50 +122,53 @@ public final class BookmarkPage extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void buildBookmarkPage(@Nullable final String folder, @NonNull final BookmarkManager manager) {
-        final List<HistoryItem> list = manager.getBookmarksCopyFromFolder(folder, true);
-        final File bookmarkWebPage;
-        if (folder == null || folder.isEmpty()) {
-            bookmarkWebPage = new File(mFilesDir, FILENAME);
-        } else {
-            bookmarkWebPage = new File(mFilesDir, folder + '-' + FILENAME);
-        }
-        final StringBuilder bookmarkBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
+    private void buildBookmarkPage(@Nullable final String folder) {
+        mManager.getBookmarksFromFolderSorted(folder)
+            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                @Override
+                public void onItem(@Nullable List<HistoryItem> list) {
+                    Preconditions.checkNonNull(list);
 
-        final String folderIconPath = Constants.FILE + mCacheDir + '/' + FOLDER_ICON;
-        for (int n = 0, size = list.size(); n < size; n++) {
-            final HistoryItem item = list.get(n);
-            bookmarkBuilder.append(PART1);
-            if (item.isFolder()) {
-                final File folderPage = new File(mFilesDir, item.getTitle() + '-' + FILENAME);
-                bookmarkBuilder.append(Constants.FILE).append(folderPage);
-                bookmarkBuilder.append(PART2);
-                bookmarkBuilder.append(folderIconPath);
-                buildBookmarkPage(item.getTitle(), manager);
-            } else {
-                bookmarkBuilder.append(item.getUrl());
-                bookmarkBuilder.append(PART2).append(PART3);
-                bookmarkBuilder.append(item.getUrl());
-            }
-            bookmarkBuilder.append(PART4);
-            bookmarkBuilder.append(item.getTitle());
-            bookmarkBuilder.append(PART5);
-        }
-        bookmarkBuilder.append(END);
-        FileWriter bookWriter = null;
-        try {
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            bookWriter = new FileWriter(bookmarkWebPage, false);
-            bookWriter.write(bookmarkBuilder.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.close(bookWriter);
-        }
-    }
+                    final File bookmarkWebPage;
+                    if (folder == null || folder.isEmpty()) {
+                        bookmarkWebPage = new File(mFilesDir, FILENAME);
+                    } else {
+                        bookmarkWebPage = new File(mFilesDir, folder + '-' + FILENAME);
+                    }
+                    final StringBuilder bookmarkBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
-    public void load() {
-        executeOnExecutor(BrowserApp.getIOThread());
+                    final String folderIconPath = Constants.FILE + mCacheDir + '/' + FOLDER_ICON;
+                    for (int n = 0, size = list.size(); n < size; n++) {
+                        final HistoryItem item = list.get(n);
+                        bookmarkBuilder.append(PART1);
+                        if (item.isFolder()) {
+                            final File folderPage = new File(mFilesDir, item.getTitle() + '-' + FILENAME);
+                            bookmarkBuilder.append(Constants.FILE).append(folderPage);
+                            bookmarkBuilder.append(PART2);
+                            bookmarkBuilder.append(folderIconPath);
+                            buildBookmarkPage(item.getTitle());
+                        } else {
+                            bookmarkBuilder.append(item.getUrl());
+                            bookmarkBuilder.append(PART2).append(PART3);
+                            bookmarkBuilder.append(item.getUrl());
+                        }
+                        bookmarkBuilder.append(PART4);
+                        bookmarkBuilder.append(item.getTitle());
+                        bookmarkBuilder.append(PART5);
+                    }
+                    bookmarkBuilder.append(END);
+                    FileWriter bookWriter = null;
+                    try {
+                        //noinspection IOResourceOpenedButNotSafelyClosed
+                        bookWriter = new FileWriter(bookmarkWebPage, false);
+                        bookWriter.write(bookmarkBuilder.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        Utils.close(bookWriter);
+                    }
+                }
+            });
     }
 
 }
