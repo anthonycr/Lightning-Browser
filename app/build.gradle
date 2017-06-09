@@ -65,7 +65,7 @@ dexcount {
 dependencies {
 
     // support libraries
-    def supportLibVersion = '25.3.1'
+    def supportLibVersion = '25.4.0'
     compile "com.android.support:palette-v7:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile "com.android.support:design:$supportLibVersion"
