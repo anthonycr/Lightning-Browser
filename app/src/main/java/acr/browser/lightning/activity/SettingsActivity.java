@@ -29,7 +29,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // this is a workaround for the Toolbar in PreferenceActitivty
-        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        ViewGroup root = findViewById(android.R.id.content);
         LinearLayout content = (LinearLayout) root.getChildAt(0);
         LinearLayout toolbarContainer = (LinearLayout) View.inflate(this, R.layout.toolbar_settings, null);
 
@@ -38,7 +38,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
         root.addView(toolbarContainer);
 
         // now we can set the Toolbar using AppCompatPreferenceActivity
-        Toolbar toolbar = (Toolbar) toolbarContainer.findViewById(R.id.toolbar);
+        Toolbar toolbar = toolbarContainer.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

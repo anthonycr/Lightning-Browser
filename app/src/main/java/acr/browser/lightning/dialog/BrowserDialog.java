@@ -82,8 +82,8 @@ public class BrowserDialog {
 
         View layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null);
 
-        TextView titleView = (TextView) layout.findViewById(R.id.dialog_title);
-        ListView listView = (ListView) layout.findViewById(R.id.dialog_list);
+        TextView titleView = layout.findViewById(R.id.dialog_title);
+        ListView listView = layout.findViewById(R.id.dialog_list);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
             android.R.layout.simple_list_item_1);
@@ -136,7 +136,7 @@ public class BrowserDialog {
                                     @StringRes int action,
                                     @NonNull final EditorListener listener) {
         View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null);
-        final EditText editText = (EditText) dialogView.findViewById(R.id.dialog_edit_text);
+        final EditText editText = dialogView.findViewById(R.id.dialog_edit_text);
 
         editText.setHint(hint);
         if (currentText != null) {

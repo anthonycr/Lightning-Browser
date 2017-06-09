@@ -135,9 +135,9 @@ public class LightningWebClient extends WebViewClient {
 
         View dialogView = LayoutInflater.from(mActivity).inflate(R.layout.dialog_auth_request, null);
 
-        final TextView realmLabel = (TextView) dialogView.findViewById(R.id.auth_request_realm_textview);
-        final EditText name = (EditText) dialogView.findViewById(R.id.auth_request_username_edittext);
-        final EditText password = (EditText) dialogView.findViewById(R.id.auth_request_password_edittext);
+        final TextView realmLabel = dialogView.findViewById(R.id.auth_request_realm_textview);
+        final EditText name = dialogView.findViewById(R.id.auth_request_username_edittext);
+        final EditText password = dialogView.findViewById(R.id.auth_request_password_edittext);
 
         realmLabel.setText(mActivity.getString(R.string.label_realm, realm));
 

@@ -152,7 +152,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         LinearLayout view = (LinearLayout) inflater.inflate(R.layout.dialog_seek_bar, null);
-        final SeekBar bar = (SeekBar) view.findViewById(R.id.text_size_seekbar);
+        final SeekBar bar = view.findViewById(R.id.text_size_seekbar);
         final TextView sample = new TextView(getActivity());
         sample.setText(R.string.untitled);
         sample.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT));

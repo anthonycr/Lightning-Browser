@@ -495,7 +495,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                                         public void onComplete() {
                                             Activity activity = getActivity();
                                             if (activity != null) {
-                                                String message = activity.getResources().getString(R.string.message_import);
+                                                String message = activity.getString(R.string.message_import);
                                                 Utils.showSnackbar(activity, importList.size() + " " + message);
                                             }
                                         }

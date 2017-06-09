@@ -257,8 +257,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
     private void manualProxyPicker() {
         View v = mActivity.getLayoutInflater().inflate(R.layout.dialog_manual_proxy, null);
-        final EditText eProxyHost = (EditText) v.findViewById(R.id.proxyHost);
-        final EditText eProxyPort = (EditText) v.findViewById(R.id.proxyPort);
+        final EditText eProxyHost = v.findViewById(R.id.proxyHost);
+        final EditText eProxyPort = v.findViewById(R.id.proxyPort);
 
         // Limit the number of characters since the port needs to be of type int
         // Use input filters to limite the EditText length and determine the max
@@ -519,7 +519,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private void downPicker() {
 
         View dialogView = LayoutInflater.from(mActivity).inflate(R.layout.dialog_edit_text, null);
-        final EditText getDownload = (EditText) dialogView.findViewById(R.id.dialog_edit_text);
+        final EditText getDownload = dialogView.findViewById(R.id.dialog_edit_text);
 
         final int errorColor = ContextCompat.getColor(mActivity, R.color.error_red);
         final int regularColor = ThemeUtils.getTextColor(mActivity);

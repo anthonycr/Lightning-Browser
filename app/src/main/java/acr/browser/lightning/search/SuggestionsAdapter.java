@@ -136,9 +136,9 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     private static class SuggestionHolder {
 
         SuggestionHolder(@NonNull View view) {
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mUrl = (TextView) view.findViewById(R.id.url);
-            mImage = (ImageView) view.findViewById(R.id.suggestionIcon);
+            mTitle = view.findViewById(R.id.title);
+            mUrl = view.findViewById(R.id.url);
+            mImage = view.findViewById(R.id.suggestionIcon);
         }
 
         @NonNull final ImageView mImage;

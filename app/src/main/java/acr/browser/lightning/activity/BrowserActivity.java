@@ -327,8 +327,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         lp.height = LayoutParams.MATCH_PARENT;
         customView.setLayoutParams(lp);
 
-        mArrowImage = (ImageView) customView.findViewById(R.id.arrow);
-        FrameLayout arrowButton = (FrameLayout) customView.findViewById(R.id.arrow_button);
+        mArrowImage = customView.findViewById(R.id.arrow);
+        FrameLayout arrowButton = customView.findViewById(R.id.arrow_button);
         if (mShowTabsInDrawer) {
             if (mArrowImage.getWidth() <= 0) {
                 mArrowImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -366,7 +366,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         arrowButton.setOnClickListener(this);
 
         // create the search EditText in the ToolBar
-        mSearch = (SearchView) customView.findViewById(R.id.search);
+        mSearch = customView.findViewById(R.id.search);
         mSearchBackground = customView.findViewById(R.id.search_container);
 
         // initialize search background color

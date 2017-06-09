@@ -130,7 +130,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false);
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            ImageView newTab = (ImageView) view.findViewById(R.id.new_tab_button);
+            ImageView newTab = view.findViewById(R.id.new_tab_button);
             newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(getActivity()));
             newTab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,7 +183,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     private void setupFrameLayoutButton(@NonNull final View root, @IdRes final int buttonId,
                                         @IdRes final int imageId) {
         final View frameButton = root.findViewById(buttonId);
-        final ImageView buttonImage = (ImageView) root.findViewById(imageId);
+        final ImageView buttonImage = root.findViewById(imageId);
         frameButton.setOnClickListener(this);
         frameButton.setOnLongClickListener(this);
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
@@ -399,11 +399,11 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             public LightningViewHolder(@NonNull View view) {
                 super(view);
-                txtTitle = (TextView) view.findViewById(R.id.textTab);
-                favicon = (ImageView) view.findViewById(R.id.faviconTab);
-                exit = (ImageView) view.findViewById(R.id.deleteButton);
-                layout = (LinearLayout) view.findViewById(R.id.tab_item_background);
-                exitButton = (FrameLayout) view.findViewById(R.id.deleteAction);
+                txtTitle = view.findViewById(R.id.textTab);
+                favicon = view.findViewById(R.id.faviconTab);
+                exit = view.findViewById(R.id.deleteButton);
+                layout = view.findViewById(R.id.tab_item_background);
+                exitButton = view.findViewById(R.id.deleteAction);
                 exit.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
 
                 exitButton.setOnClickListener(this);

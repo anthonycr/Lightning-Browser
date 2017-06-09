@@ -320,10 +320,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     private void setupNavigationButton(@NonNull View view, @IdRes int buttonId, @IdRes int imageId) {
-        FrameLayout frameButton = (FrameLayout) view.findViewById(buttonId);
+        FrameLayout frameButton = view.findViewById(buttonId);
         frameButton.setOnClickListener(this);
         frameButton.setOnLongClickListener(this);
-        ImageView buttonImage = (ImageView) view.findViewById(imageId);
+        ImageView buttonImage = view.findViewById(imageId);
         buttonImage.setColorFilter(mIconColor, PorterDuff.Mode.SRC_IN);
     }
 
