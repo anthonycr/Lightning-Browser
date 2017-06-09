@@ -156,11 +156,15 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
         cbAds.setEnabled(BuildConfig.FULL_VERSION);
 
+        if (!BuildConfig.FULL_VERSION) {
+            cbAds.setSummary(R.string.upsell_plus_version);
+        }
+
         if (API < Build.VERSION_CODES.KITKAT) {
             cbFlash.setEnabled(true);
         } else {
             cbFlash.setEnabled(false);
-            cbFlash.setSummary(getResources().getString(R.string.flash_not_supported));
+            cbFlash.setSummary(R.string.flash_not_supported);
         }
 
         cbImages.setChecked(imagesBool);
