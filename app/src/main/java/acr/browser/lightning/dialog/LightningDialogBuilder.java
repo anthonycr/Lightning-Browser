@@ -55,6 +55,7 @@ public class LightningDialogBuilder {
 
     @Inject BookmarkModel mBookmarkManager;
     @Inject DownloadsModel mDownloadsModel;
+    @Inject HistoryModel mHistoryModel;
     @Inject PreferenceManager mPreferenceManager;
 
     @Inject
@@ -332,7 +333,7 @@ public class LightningDialogBuilder {
             new BrowserDialog.Item(R.string.dialog_remove_from_history) {
                 @Override
                 public void onClick() {
-                    HistoryModel.deleteHistoryItem(url)
+                    mHistoryModel.deleteHistoryItem(url)
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.main())
                         .subscribe(new CompletableOnSubscribe() {

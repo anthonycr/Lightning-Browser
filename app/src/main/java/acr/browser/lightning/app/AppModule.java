@@ -12,6 +12,8 @@ import acr.browser.lightning.database.bookmark.BookmarkDatabase;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.database.downloads.DownloadsDatabase;
 import acr.browser.lightning.database.downloads.DownloadsModel;
+import acr.browser.lightning.database.history.HistoryDatabase;
+import acr.browser.lightning.database.history.HistoryModel;
 import dagger.Module;
 import dagger.Provides;
 
@@ -36,15 +38,22 @@ public class AppModule {
     @NonNull
     @Provides
     @Singleton
-    public BookmarkModel provideBookmarkMode() {
+    public BookmarkModel provideBookmarkModel() {
         return new BookmarkDatabase(mApp);
     }
 
     @NonNull
     @Provides
     @Singleton
-    public DownloadsModel provideDownloadsMode() {
+    public DownloadsModel provideDownloadsModel() {
         return new DownloadsDatabase(mApp);
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public HistoryModel providesHistoryModel() {
+        return new HistoryDatabase(mApp);
     }
 
     @NonNull

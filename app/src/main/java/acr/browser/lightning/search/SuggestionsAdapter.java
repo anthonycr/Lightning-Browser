@@ -67,6 +67,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
 
     @Inject BookmarkModel mBookmarkManager;
     @Inject PreferenceManager mPreferenceManager;
+    @Inject HistoryModel mHistoryModel;
     @Inject Application mApplication;
 
     private final List<HistoryItem> mAllBookmarks = new ArrayList<>(5);
@@ -197,7 +198,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     @NonNull
     @Override
     public Filter getFilter() {
-        return new SearchFilter(this);
+        return new SearchFilter(this, mHistoryModel);
     }
 
     private synchronized void publishResults(@NonNull List<HistoryItem> list) {
@@ -318,9 +319,12 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     private static class SearchFilter extends Filter {
 
         @NonNull private final SuggestionsAdapter mSuggestionsAdapter;
+        @NonNull private final HistoryModel mHistoryModel;
 
-        SearchFilter(@NonNull SuggestionsAdapter suggestionsAdapter) {
+        SearchFilter(@NonNull SuggestionsAdapter suggestionsAdapter,
+                     @NonNull HistoryModel historyModel) {
             mSuggestionsAdapter = suggestionsAdapter;
+            mHistoryModel = historyModel;
         }
 
         @NonNull
@@ -355,7 +359,7 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
                     }
                 });
 
-            HistoryModel.findHistoryItemsContaining(query)
+            mHistoryModel.findHistoryItemsContaining(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {

@@ -185,6 +185,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     // The singleton BookmarkManager
     @Inject BookmarkModel mBookmarkManager;
 
+    @Inject HistoryModel mHistoryModel;
+
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
     private TabsManager mTabsManager;
@@ -1250,7 +1252,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             Log.d(TAG, "Cache Cleared");
         }
         if (mPreferences.getClearHistoryExitEnabled() && !isIncognito()) {
-            WebUtils.clearHistory(this);
+            WebUtils.clearHistory(this, mHistoryModel);
             Log.d(TAG, "History Cleared");
         }
         if (mPreferences.getClearCookiesExitEnabled() && !isIncognito()) {
@@ -1584,7 +1586,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return;
         }
 
-        HistoryModel.visitHistoryItem(url, title)
+        mHistoryModel.visitHistoryItem(url, title)
             .subscribeOn(Schedulers.io())
             .subscribe(new CompletableOnSubscribe() {
                 @Override

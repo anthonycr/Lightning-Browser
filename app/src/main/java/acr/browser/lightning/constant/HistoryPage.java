@@ -64,6 +64,7 @@ public class HistoryPage {
     @NonNull private final String mTitle;
 
     @Inject Application mApp;
+    @Inject HistoryModel mHistoryModel;
 
     public HistoryPage() {
         BrowserApp.getAppComponent().inject(this);
@@ -77,7 +78,7 @@ public class HistoryPage {
             public void onSubscribe(@NonNull final SingleSubscriber<String> subscriber) {
                 final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
-                HistoryModel.lastHundredVisitedHistoryItems()
+                mHistoryModel.lastHundredVisitedHistoryItems()
                     .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                         @Override
                         public void onItem(@Nullable List<HistoryItem> item) {
