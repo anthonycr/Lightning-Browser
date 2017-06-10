@@ -112,7 +112,7 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
     @Override
     public int compareTo(@NonNull HistoryItem another) {
-        int compare = this.mTitle.compareTo(another.mTitle);
+        int compare = this.mTitle.compareToIgnoreCase(another.mTitle);
         if (compare == 0) {
             return this.mUrl.compareTo(another.mUrl);
         }

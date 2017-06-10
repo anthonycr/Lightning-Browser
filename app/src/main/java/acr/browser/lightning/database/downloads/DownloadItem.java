@@ -62,7 +62,7 @@ public class DownloadItem implements Comparable<DownloadItem> {
 
     @Override
     public int compareTo(@NonNull DownloadItem another) {
-        int compare = this.mTitle.compareTo(another.mTitle);
+        int compare = this.mTitle.compareToIgnoreCase(another.mTitle);
         if (compare == 0) {
             return this.mUrl.compareTo(another.mUrl);
         }
