@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.download.DownloadHandler;
+import acr.browser.lightning.utils.FileUtils;
 
 @Singleton
 public class PreferenceManager {
@@ -150,7 +150,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getDownloadDirectory() {
-        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, DownloadHandler.DEFAULT_DOWNLOAD_PATH);
+        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH);
     }
 
     public int getFlashSupport() {

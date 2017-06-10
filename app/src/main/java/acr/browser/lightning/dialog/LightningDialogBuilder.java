@@ -8,9 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -31,13 +29,12 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
-import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.database.history.HistoryModel;
+import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
-import acr.browser.lightning.utils.Utils;
 
 /**
  * TODO Rename this class it doesn't build dialogs only for bookmarks
@@ -57,6 +54,7 @@ public class LightningDialogBuilder {
     @Inject DownloadsModel mDownloadsModel;
     @Inject HistoryModel mHistoryModel;
     @Inject PreferenceManager mPreferenceManager;
+    @Inject DownloadHandler mDownloadHandler;
 
     @Inject
     public LightningDialogBuilder() {
@@ -385,16 +383,7 @@ public class LightningDialogBuilder {
             new BrowserDialog.Item(R.string.dialog_download_image) {
                 @Override
                 public void onClick() {
-                    Utils.downloadFile(activity, mPreferenceManager, url, userAgent, "attachment");
-
-                    mDownloadsModel.addDownloadIfNotExists(new DownloadItem(url, URLUtil.guessFileName(url, null, null), ""))
-                        .subscribe(new SingleOnSubscribe<Boolean>() {
-                            @Override
-                            public void onItem(@Nullable Boolean item) {
-                                if (item != null && !item)
-                                    Log.i(TAG, "error saving download to database");
-                            }
-                        });
+                    mDownloadHandler.onDownloadStart(activity, mPreferenceManager, url, userAgent, "attachment", null, "");
                 }
             });
     }

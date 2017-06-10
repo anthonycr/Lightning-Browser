@@ -25,7 +25,7 @@ import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.download.DownloadHandler;
+import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -459,8 +459,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case 0:
-                            mPreferenceManager.setDownloadDirectory(DownloadHandler.DEFAULT_DOWNLOAD_PATH);
-                            downloadloc.setSummary(DownloadHandler.DEFAULT_DOWNLOAD_PATH);
+                            mPreferenceManager.setDownloadDirectory(FileUtils.DEFAULT_DOWNLOAD_PATH);
+                            downloadloc.setSummary(FileUtils.DEFAULT_DOWNLOAD_PATH);
                             break;
                         case 1:
                             downPicker();
@@ -539,7 +539,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String text = getDownload.getText().toString();
-                        text = DownloadHandler.addNecessarySlashes(text);
+                        text = FileUtils.addNecessarySlashes(text);
                         mPreferenceManager.setDownloadDirectory(text);
                         downloadloc.setSummary(text);
                     }
@@ -667,7 +667,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
         @Override
         public void afterTextChanged(@NonNull Editable s) {
-            if (!DownloadHandler.isWriteAccessAvailable(s.toString())) {
+            if (!FileUtils.isWriteAccessAvailable(s.toString())) {
                 this.getDownload.setTextColor(this.errorColor);
             } else {
                 this.getDownload.setTextColor(this.regularColor);
