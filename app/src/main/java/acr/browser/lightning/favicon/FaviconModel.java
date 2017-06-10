@@ -136,11 +136,14 @@ public class FaviconModel {
 
                 File faviconCacheFile = createFaviconCacheFile(mApplication, uri);
 
-
                 Bitmap favicon = getFaviconFromMemCache(url);
 
                 if (faviconCacheFile.exists() && favicon == null) {
                     favicon = mImageFetcher.retrieveFaviconFromCache(faviconCacheFile);
+
+                    if (favicon != null) {
+                        addFaviconToMemCache(url, favicon);
+                    }
                 }
 
                 if (favicon == null) {
