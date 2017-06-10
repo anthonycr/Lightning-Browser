@@ -10,15 +10,11 @@ import acr.browser.lightning.utils.Preconditions;
 
 public class DownloadItem implements Comparable<DownloadItem> {
 
-    // private variables
-    @NonNull
-    private String mUrl = "";
+    @NonNull private String mUrl = "";
 
-    @NonNull
-    private String mTitle = "";
+    @NonNull private String mTitle = "";
 
-    @NonNull
-    private String mContentSize = "";
+    @NonNull private String mContentSize = "";
 
     public DownloadItem() {}
 
@@ -83,7 +79,7 @@ public class DownloadItem implements Comparable<DownloadItem> {
         DownloadItem that = (DownloadItem) object;
 
         return this.mTitle.equals(that.mTitle) && this.mUrl.equals(that.mUrl)
-                && this.mContentSize.equals(that.mContentSize);
+            && this.mContentSize.equals(that.mContentSize);
     }
 
     @Override

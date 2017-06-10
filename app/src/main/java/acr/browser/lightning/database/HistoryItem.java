@@ -11,21 +11,18 @@ import acr.browser.lightning.utils.Preconditions;
 
 public class HistoryItem implements Comparable<HistoryItem> {
 
-    // private variables
-    @NonNull
-    private String mUrl = "";
+    @NonNull private String mUrl = "";
 
-    @NonNull
-    private String mTitle = "";
+    @NonNull private String mTitle = "";
 
-    @NonNull
-    private String mFolder = "";
+    @NonNull private String mFolder = "";
 
-    @Nullable
-    private Bitmap mBitmap = null;
+    @Nullable private Bitmap mBitmap = null;
 
     private int mImageId = 0;
+
     private int mPosition = 0;
+
     private boolean mIsFolder = false;
 
     public HistoryItem() {}
