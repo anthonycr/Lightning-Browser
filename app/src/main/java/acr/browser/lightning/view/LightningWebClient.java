@@ -366,8 +366,7 @@ public class LightningWebClient extends WebViewClient {
                 String newMimeType = MimeTypeMap.getSingleton()
                         .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
 
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileprovider", file);
                 intent.setDataAndType(contentUri, newMimeType);
@@ -377,8 +376,10 @@ public class LightningWebClient extends WebViewClient {
                 } catch (Exception e) {
                     System.out.println("LightningWebClient: cannot open downloaded file");
                 }
-                return true;
+            } else {
+                Utils.showSnackbar(mActivity, R.string.message_open_download_fail);
             }
+            return true;
         }
         return false;
     }
