@@ -70,23 +70,24 @@ public class DownloadItem implements Comparable<DownloadItem> {
     }
 
     @Override
-    public boolean equals(@Nullable Object object) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (this == object) return true;
-        if (object == null) return false;
-        if (!(object instanceof DownloadItem)) return false;
+        DownloadItem that = (DownloadItem) o;
 
-        DownloadItem that = (DownloadItem) object;
+        if (!mUrl.equals(that.mUrl)) return false;
+        if (!mTitle.equals(that.mTitle)) return false;
 
-        return this.mTitle.equals(that.mTitle) && this.mUrl.equals(that.mUrl)
-            && this.mContentSize.equals(that.mContentSize);
+        return mContentSize.equals(that.mContentSize);
+
     }
 
     @Override
     public int hashCode() {
-
         int result = mUrl.hashCode();
         result = 31 * result + mTitle.hashCode();
+        result = 31 * result + mContentSize.hashCode();
 
         return result;
     }

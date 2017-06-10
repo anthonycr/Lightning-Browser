@@ -120,27 +120,30 @@ public class HistoryItem implements Comparable<HistoryItem> {
     }
 
     @Override
-    public boolean equals(@Nullable Object object) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (this == object) return true;
-        if (object == null) return false;
-        if (!(object instanceof HistoryItem)) return false;
+        HistoryItem that = (HistoryItem) o;
 
-        HistoryItem that = (HistoryItem) object;
+        if (mImageId != that.mImageId) return false;
+        if (mPosition != that.mPosition) return false;
+        if (mIsFolder != that.mIsFolder) return false;
+        if (!mUrl.equals(that.mUrl)) return false;
+        if (!mTitle.equals(that.mTitle)) return false;
 
-        return mImageId == that.mImageId &&
-            this.mTitle.equals(that.mTitle) && this.mUrl.equals(that.mUrl) &&
-            this.mFolder.equals(that.mFolder);
+        return mFolder.equals(that.mFolder);
+
     }
 
     @Override
     public int hashCode() {
-
         int result = mUrl.hashCode();
-        result = 31 * result + mImageId;
         result = 31 * result + mTitle.hashCode();
-        result = 32 * result + mFolder.hashCode();
+        result = 31 * result + mFolder.hashCode();
         result = 31 * result + mImageId;
+        result = 31 * result + mPosition;
+        result = 31 * result + (mIsFolder ? 1 : 0);
 
         return result;
     }
