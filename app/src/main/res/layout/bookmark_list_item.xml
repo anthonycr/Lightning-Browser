@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/faviconBookmark"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/bookmark_item_icon_size"
+        android:layout_height="@dimen/bookmark_item_icon_size"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:contentDescription="Favicon"

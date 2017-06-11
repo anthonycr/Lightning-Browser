@@ -37,4 +37,9 @@
 
     <color name="error_red">#F44336</color>
 
+    <color name="bookmark_default_blue">#2196F3</color>
+    <color name="bookmark_default_green">#4CAF50</color>
+    <color name="bookmark_default_red">#EF5350</color>
+    <color name="bookmark_default_orange">#FF9800</color>
+
 </resources>

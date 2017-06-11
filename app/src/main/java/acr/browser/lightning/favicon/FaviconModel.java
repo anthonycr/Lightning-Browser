@@ -3,6 +3,7 @@ package acr.browser.lightning.favicon;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -22,6 +23,8 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import acr.browser.lightning.R;
+import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
@@ -44,10 +47,13 @@ public class FaviconModel {
         }
     };
 
+    private final int mBookmarkIconSize;
+
     @Inject
     FaviconModel(@NonNull Application application) {
         mImageFetcher = new ImageFetcher();
         mApplication = application;
+        mBookmarkIconSize = mApplication.getResources().getDimensionPixelSize(R.dimen.bookmark_item_icon_size);
     }
 
     /**
@@ -66,6 +72,16 @@ public class FaviconModel {
         synchronized (mFaviconCache) {
             return mFaviconCache.get(url);
         }
+    }
+
+    @NonNull
+    private Bitmap getDefaultBitmapForCharacter(@NonNull Character character) {
+        @ColorInt int defaultFaviconColor = DrawableUtils.characterToColorHash(character, mApplication);
+
+        return DrawableUtils.getRoundedLetterImage(character,
+            mBookmarkIconSize,
+            mBookmarkIconSize,
+            defaultFaviconColor);
     }
 
     /**
@@ -106,18 +122,15 @@ public class FaviconModel {
      * Retrieves the favicon for a URL,
      * may be from network or cache.
      *
-     * @param url                the URL that we should retrieve the
+     * @param url                The URL that we should retrieve the
      *                           favicon for.
-     * @param defaultFavicon     the default favicon if no
-     *                           favicon is found.
-     * @param allowGoogleService true to allow grabbing favicons
-     *                           from Google, false otherwise.
-     * @return an observable that emits a bitmap if one is found,
-     * or the default if none was found.
+     * @param title              The title for the web page.
+     * @param allowGoogleService True to allow grabbing favicons
+     *                           from Google, false otherwise.   @return an observable that emits a bitmap if one is found,
      */
     @NonNull
     public Single<Bitmap> faviconForUrl(@NonNull final String url,
-                                        @NonNull final Bitmap defaultFavicon,
+                                        @NonNull final String title,
                                         final boolean allowGoogleService) {
         return Single.create(new SingleAction<Bitmap>() {
             @Override
@@ -126,13 +139,16 @@ public class FaviconModel {
 
                 if (uri == null) {
 
-                    Bitmap newFavicon = Utils.padFavicon(defaultFavicon);
+                    Bitmap newFavicon = Utils.padFavicon(getDefaultBitmapForCharacter('?'));
 
                     subscriber.onItem(newFavicon);
                     subscriber.onComplete();
 
                     return;
                 }
+
+                Character firstTitleCharacter = !title.isEmpty() ? title.charAt(0) : '?';
+
 
                 File faviconCacheFile = createFaviconCacheFile(mApplication, uri);
 
@@ -168,7 +184,7 @@ public class FaviconModel {
                 // }
 
                 // if (favicon == null) {
-                favicon = defaultFavicon;
+                favicon = getDefaultBitmapForCharacter(firstTitleCharacter);
                 // }
 
                 Bitmap newFavicon = Utils.padFavicon(favicon);
