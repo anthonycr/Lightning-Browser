@@ -32,10 +32,10 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BrowserActivity;
 import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -81,7 +81,7 @@ public class DownloadHandler {
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
         if (contentDisposition == null
-                || !contentDisposition.regionMatches(true, 0, "attachment", 0, 10)) {
+            || !contentDisposition.regionMatches(true, 0, "attachment", 0, 10)) {
             // query the package manager to see if there's a registered handler
             // that matches.
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -93,12 +93,12 @@ public class DownloadHandler {
                 intent.setSelector(null);
             }
             ResolveInfo info = context.getPackageManager().resolveActivity(intent,
-                    PackageManager.MATCH_DEFAULT_ONLY);
+                PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {
                 // If we resolved to ourselves, we don't want to attempt to
                 // load the url only to try and download it again.
                 if (BuildConfig.APPLICATION_ID.equals(info.activityInfo.packageName)
-                        || MainActivity.class.getName().equals(info.activityInfo.name)) {
+                    || MainActivity.class.getName().equals(info.activityInfo.name)) {
                     // someone (other than us) knows how to handle this mime
                     // type with this scheme, don't download.
                     try {
@@ -178,8 +178,8 @@ public class DownloadHandler {
             }
 
             Dialog dialog = new AlertDialog.Builder(context).setTitle(title)
-                    .setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
-                    .setPositiveButton(R.string.action_ok, null).show();
+                .setIcon(android.R.drawable.ic_dialog_alert).setMessage(msg)
+                .setPositiveButton(R.string.action_ok, null).show();
             BrowserDialog.setDialogSize(context, dialog);
             return;
         }
@@ -246,7 +246,7 @@ public class DownloadHandler {
         } else {
             Log.d(TAG, "Valid mimetype, attempting to download");
             final DownloadManager manager = (DownloadManager) context
-                    .getSystemService(Context.DOWNLOAD_SERVICE);
+                .getSystemService(Context.DOWNLOAD_SERVICE);
             try {
                 manager.enqueue(request);
             } catch (IllegalArgumentException e) {
@@ -262,18 +262,18 @@ public class DownloadHandler {
         }
 
         // save download in database
-        BrowserActivity browserActivity = (BrowserActivity) context;
+        UIController browserActivity = (UIController) context;
         LightningView view = browserActivity.getTabModel().getCurrentTab();
 
         if (view != null && !view.isIncognito()) {
             downloadsModel.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
-                    .subscribe(new SingleOnSubscribe<Boolean>() {
-                        @Override
-                        public void onItem(@Nullable Boolean item) {
-                            if (item != null && !item)
-                                Log.i(TAG, "error saving download to database");
-                        }
-                    });
+                .subscribe(new SingleOnSubscribe<Boolean>() {
+                    @Override
+                    public void onItem(@Nullable Boolean item) {
+                        if (item != null && !item)
+                            Log.i(TAG, "error saving download to database");
+                    }
+                });
         }
     }
 
