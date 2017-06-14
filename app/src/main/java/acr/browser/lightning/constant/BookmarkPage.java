@@ -8,6 +8,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
@@ -75,8 +76,16 @@ public final class BookmarkPage {
 
     private static final String FOLDER_ICON = "folder.png";
 
-    private File mFilesDir;
-    private File mCacheDir;
+    @NonNull
+    private static File getBookmarkPage(@NonNull Application application, @Nullable String folder) {
+        String prefix = !TextUtils.isEmpty(folder) ? folder + '-' : "";
+        return new File(application.getFilesDir(), prefix + FILENAME);
+    }
+
+    @NonNull
+    private static File getFaviconFile(@NonNull Application application) {
+        return new File(application.getCacheDir(), FOLDER_ICON);
+    }
 
     @Inject Application mApp;
     @Inject BookmarkModel mManager;
@@ -95,12 +104,10 @@ public final class BookmarkPage {
         return Single.create(new SingleAction<String>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
-                mCacheDir = mApp.getCacheDir();
-                mFilesDir = mApp.getFilesDir();
                 cacheDefaultFolderIcon();
                 buildBookmarkPage(null);
 
-                File bookmarkWebPage = new File(mFilesDir, FILENAME);
+                File bookmarkWebPage = getBookmarkPage(mApp, null);
 
                 subscriber.onItem(Constants.FILE + bookmarkWebPage);
                 subscriber.onComplete();
@@ -110,9 +117,8 @@ public final class BookmarkPage {
 
     private void cacheDefaultFolderIcon() {
         FileOutputStream outputStream = null;
-        File image = new File(mCacheDir, FOLDER_ICON);
         try {
-            outputStream = new FileOutputStream(image);
+            outputStream = new FileOutputStream(getFaviconFile(mApp));
             mFolderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
             mFolderIcon.recycle();
         } catch (FileNotFoundException e) {
@@ -126,49 +132,64 @@ public final class BookmarkPage {
         mManager.getBookmarksFromFolderSorted(folder)
             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                 @Override
-                public void onItem(@Nullable List<HistoryItem> list) {
+                public void onItem(@Nullable final List<HistoryItem> list) {
                     Preconditions.checkNonNull(list);
 
-                    final File bookmarkWebPage;
-                    if (folder == null || folder.isEmpty()) {
-                        bookmarkWebPage = new File(mFilesDir, FILENAME);
-                    } else {
-                        bookmarkWebPage = new File(mFilesDir, folder + '-' + FILENAME);
-                    }
-                    final StringBuilder bookmarkBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
+                    if (folder == null) {
+                        mManager.getFoldersSorted()
+                            .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                                @Override
+                                public void onItem(@Nullable List<HistoryItem> item) {
+                                    Preconditions.checkNonNull(item);
 
-                    final String folderIconPath = Constants.FILE + mCacheDir + '/' + FOLDER_ICON;
-                    for (int n = 0, size = list.size(); n < size; n++) {
-                        final HistoryItem item = list.get(n);
-                        bookmarkBuilder.append(PART1);
-                        if (item.isFolder()) {
-                            final File folderPage = new File(mFilesDir, item.getTitle() + '-' + FILENAME);
-                            bookmarkBuilder.append(Constants.FILE).append(folderPage);
-                            bookmarkBuilder.append(PART2);
-                            bookmarkBuilder.append(folderIconPath);
-                            buildBookmarkPage(item.getTitle());
-                        } else {
-                            bookmarkBuilder.append(item.getUrl());
-                            bookmarkBuilder.append(PART2).append(PART3);
-                            bookmarkBuilder.append(item.getUrl());
-                        }
-                        bookmarkBuilder.append(PART4);
-                        bookmarkBuilder.append(item.getTitle());
-                        bookmarkBuilder.append(PART5);
-                    }
-                    bookmarkBuilder.append(END);
-                    FileWriter bookWriter = null;
-                    try {
-                        //noinspection IOResourceOpenedButNotSafelyClosed
-                        bookWriter = new FileWriter(bookmarkWebPage, false);
-                        bookWriter.write(bookmarkBuilder.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        Utils.close(bookWriter);
+                                    list.addAll(item);
+
+                                    buildPageHtml(list, null);
+                                }
+                            });
+                    } else {
+                        buildPageHtml(list, folder);
                     }
                 }
             });
+    }
+
+    private void buildPageHtml(@NonNull List<HistoryItem> bookmarksAndFolders, @Nullable String folder) {
+        final File bookmarkWebPage = getBookmarkPage(mApp, folder);
+
+        final StringBuilder bookmarkBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
+
+        final String folderIconPath = getFaviconFile(mApp).toString();
+
+        for (int n = 0, size = bookmarksAndFolders.size(); n < size; n++) {
+            final HistoryItem item = bookmarksAndFolders.get(n);
+            bookmarkBuilder.append(PART1);
+            if (item.isFolder()) {
+                final File folderPage = getBookmarkPage(mApp, item.getTitle());
+                bookmarkBuilder.append(Constants.FILE).append(folderPage);
+                bookmarkBuilder.append(PART2);
+                bookmarkBuilder.append(folderIconPath);
+                buildBookmarkPage(item.getTitle());
+            } else {
+                bookmarkBuilder.append(item.getUrl());
+                bookmarkBuilder.append(PART2).append(PART3);
+                bookmarkBuilder.append(item.getUrl());
+            }
+            bookmarkBuilder.append(PART4);
+            bookmarkBuilder.append(item.getTitle());
+            bookmarkBuilder.append(PART5);
+        }
+        bookmarkBuilder.append(END);
+        FileWriter bookWriter = null;
+        try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            bookWriter = new FileWriter(bookmarkWebPage, false);
+            bookWriter.write(bookmarkBuilder.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.close(bookWriter);
+        }
     }
 
 }

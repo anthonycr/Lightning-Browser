@@ -79,7 +79,7 @@ public final class DownloadsPage {
             public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
                 buildDownloadsPage();
 
-                File downloadsWebPage = new File(getDownloadsPageFile(mApp), FILENAME);
+                File downloadsWebPage = getDownloadsPageFile(mApp);
 
                 subscriber.onItem(Constants.FILE + downloadsWebPage);
                 subscriber.onComplete();

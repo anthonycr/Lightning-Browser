@@ -49,6 +49,7 @@ import acr.browser.lightning.utils.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningWebClient extends WebViewClient {
@@ -359,12 +360,12 @@ public class LightningWebClient extends WebViewClient {
                 }
                 return true;
             }
-        } else if (url.startsWith(Constants.FILE)) {
+        } else if (url.startsWith(Constants.FILE) && !UrlUtils.isSpecialUrl(url)) {
             File file = new File(url.replace(Constants.FILE, ""));
 
             if (file.exists()) {
                 String newMimeType = MimeTypeMap.getSingleton()
-                        .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
+                    .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
