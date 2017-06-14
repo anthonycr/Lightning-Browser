@@ -63,6 +63,7 @@ dexcount {
 }
 
 dependencies {
+    testCompile 'junit:junit:4.12'
 
     // support libraries
     def supportLibVersion = '25.4.0'
