@@ -6,6 +6,7 @@ package acr.browser.lightning.constant;
 import android.app.Activity;
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -28,6 +29,8 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.favicon.FaviconModel;
+import acr.browser.lightning.favicon.FaviconUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
@@ -75,6 +78,7 @@ public final class BookmarkPage {
     private static final String END = "</div></body></html>";
 
     private static final String FOLDER_ICON = "folder.png";
+    private static final String DEFAULT_ICON = "default.png";
 
     @NonNull
     private static File getBookmarkPage(@NonNull Application application, @Nullable String folder) {
@@ -87,8 +91,14 @@ public final class BookmarkPage {
         return new File(application.getCacheDir(), FOLDER_ICON);
     }
 
+    @NonNull
+    private static File getDefaultIconFile(@NonNull Application application) {
+        return new File(application.getCacheDir(), DEFAULT_ICON);
+    }
+
     @Inject Application mApp;
-    @Inject BookmarkModel mManager;
+    @Inject BookmarkModel mBookmarkModel;
+    @Inject FaviconModel mFaviconModel;
 
     @NonNull private final Bitmap mFolderIcon;
     @NonNull private final String mTitle;
@@ -104,7 +114,8 @@ public final class BookmarkPage {
         return Single.create(new SingleAction<String>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
-                cacheDefaultFolderIcon();
+                cacheIcon(mFolderIcon, getFaviconFile(mApp));
+                cacheIcon(mFaviconModel.getDefaultBitmapForString(null), getDefaultIconFile(mApp));
                 buildBookmarkPage(null);
 
                 File bookmarkWebPage = getBookmarkPage(mApp, null);
@@ -115,12 +126,12 @@ public final class BookmarkPage {
         });
     }
 
-    private void cacheDefaultFolderIcon() {
+    private void cacheIcon(@NonNull Bitmap icon, @NonNull File file) {
         FileOutputStream outputStream = null;
         try {
-            outputStream = new FileOutputStream(getFaviconFile(mApp));
-            mFolderIcon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            mFolderIcon.recycle();
+            outputStream = new FileOutputStream(file);
+            icon.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            icon.recycle();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -129,14 +140,14 @@ public final class BookmarkPage {
     }
 
     private void buildBookmarkPage(@Nullable final String folder) {
-        mManager.getBookmarksFromFolderSorted(folder)
+        mBookmarkModel.getBookmarksFromFolderSorted(folder)
             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                 @Override
                 public void onItem(@Nullable final List<HistoryItem> list) {
                     Preconditions.checkNonNull(list);
 
                     if (folder == null) {
-                        mManager.getFoldersSorted()
+                        mBookmarkModel.getFoldersSorted()
                             .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                                 @Override
                                 public void onItem(@Nullable List<HistoryItem> item) {
@@ -171,9 +182,26 @@ public final class BookmarkPage {
                 bookmarkBuilder.append(folderIconPath);
                 buildBookmarkPage(item.getTitle());
             } else {
+
+                Uri bookmarkUri = FaviconUtils.safeUri(item.getUrl());
+
+                String faviconFileUrl;
+
+                if (bookmarkUri != null) {
+                    File faviconFile = FaviconModel.getFaviconCacheFile(mApp, bookmarkUri);
+                    if (!faviconFile.exists()) {
+                        mFaviconModel.cacheFaviconForUrl(mFaviconModel.getDefaultBitmapForString(item.getTitle()), item.getUrl())
+                            .subscribe();
+                    }
+
+                    faviconFileUrl = Constants.FILE + faviconFile;
+                } else {
+                    faviconFileUrl = Constants.FILE + getDefaultIconFile(mApp);
+                }
+
+
                 bookmarkBuilder.append(item.getUrl());
-                bookmarkBuilder.append(PART2).append(PART3);
-                bookmarkBuilder.append(item.getUrl());
+                bookmarkBuilder.append(PART2).append(faviconFileUrl);
             }
             bookmarkBuilder.append(PART4);
             bookmarkBuilder.append(item.getTitle());
