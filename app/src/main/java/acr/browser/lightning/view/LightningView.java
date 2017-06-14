@@ -32,6 +32,7 @@ import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
@@ -46,16 +47,12 @@ import javax.inject.Inject;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.constant.HistoryPage;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-
-import com.anthonycr.bonsai.Schedulers;
-
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -69,7 +66,7 @@ import acr.browser.lightning.utils.Utils;
  */
 public class LightningView {
 
-    private static final String TAG = LightningView.class.getSimpleName();
+    private static final String TAG = "LightningView";
 
     public static final String HEADER_REQUESTED_WITH = "X-Requested-With";
     public static final String HEADER_WAP_PROFILE = "X-Wap-Profile";
@@ -99,9 +96,9 @@ public class LightningView {
     @NonNull private final GestureDetector mGestureDetector;
     @NonNull private final Activity mActivity;
     @NonNull private final Paint mPaint = new Paint();
-    @Nullable private Object mTag;
+    private boolean mIsNewTab;
     private final boolean mIsIncognitoTab;
-    private boolean isForegroundTab;
+    private boolean mIsForegroundTab;
     private boolean mInvertPage = false;
     private boolean mToggleDesktop = false;
     @NonNull private final WebViewHandler mWebViewHandler = new WebViewHandler(this);
@@ -110,7 +107,6 @@ public class LightningView {
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
-    @Inject BookmarkManager mBookmarkManager;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -162,25 +158,27 @@ public class LightningView {
     }
 
     /**
-     * Sets the tag on the object,
-     * a reference to this object is held
-     * indefinitely.
+     * Sets whether this tab was the
+     * result of a new intent sent
+     * to the browser.
      *
-     * @param tag the tag to set, may be null.
+     * @param isNewTab true if it's from
+     *                 a new intent,
+     *                 false otherwise.
      */
-    public void setTag(@Nullable Object tag) {
-        mTag = tag;
+    public void setIsNewTab(boolean isNewTab) {
+        mIsNewTab = isNewTab;
     }
 
     /**
-     * The tag set on the object.
+     * Returns whether this tab was created
+     * as a result of a new intent.
      *
-     * @return the tag set on the object,
-     * may be null.
+     * @return true if it was a new intent,
+     * false otherwise.
      */
-    @Nullable
-    public Object getTag() {
-        return mTag;
+    public boolean isNewTab() {
+        return mIsNewTab;
     }
 
     /**
@@ -242,6 +240,24 @@ public class LightningView {
                     loadUrl(item);
                 }
             });
+    }
+
+    /**
+     * This method gets the bookmark page URL from the {@link BookmarkPage}
+     * class asynchronously and loads the URL in the WebView on the
+     * UI thread. It also caches the default folder icon locally.
+     */
+    public void loadDownloadspage() {
+        new DownloadsPage().getDownloadsPage()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.main())
+                .subscribe(new SingleOnSubscribe<String>() {
+                    @Override
+                    public void onItem(@Nullable String item) {
+                        Preconditions.checkNonNull(item);
+                        loadUrl(item);
+                    }
+                });
     }
 
     /**
@@ -617,8 +633,8 @@ public class LightningView {
      * @param isForeground true if the tab should be set as
      *                     foreground, false otherwise.
      */
-    public void setForegroundTab(boolean isForeground) {
-        isForegroundTab = isForeground;
+    public void setIsForegroundTab(boolean isForeground) {
+        mIsForegroundTab = isForeground;
         mUIController.tabChanged(this);
     }
 
@@ -629,7 +645,7 @@ public class LightningView {
      * false otherwise.
      */
     public boolean isForegroundTab() {
-        return isForegroundTab;
+        return mIsForegroundTab;
     }
 
     /**
@@ -972,19 +988,26 @@ public class LightningView {
         final WebView.HitTestResult result = mWebView.getHitTestResult();
         String currentUrl = mWebView.getUrl();
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
-            if (currentUrl.endsWith(HistoryPage.FILENAME)) {
+            if (UrlUtils.isHistoryUrl(currentUrl)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, newUrl);
                 }
-            } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
+            } else if (UrlUtils.isBookmarkUrl(currentUrl)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
                     mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, newUrl);
+                }
+            } else if (UrlUtils.isDownloadsUrl(currentUrl)) {
+                if (url != null) {
+                    mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, url);
+                } else if (result != null && result.getExtra() != null) {
+                    final String newUrl = result.getExtra();
+                    mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, newUrl);
                 }
             }
         } else {
@@ -1211,7 +1234,7 @@ public class LightningView {
 
         @NonNull private final WeakReference<LightningView> mReference;
 
-        public WebViewHandler(LightningView view) {
+        WebViewHandler(@NonNull LightningView view) {
             mReference = new WeakReference<>(view);
         }
 

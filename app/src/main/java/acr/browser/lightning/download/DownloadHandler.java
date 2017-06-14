@@ -23,36 +23,40 @@ import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
+import com.anthonycr.bonsai.SingleOnSubscribe;
+
 import java.io.File;
 import java.io.IOException;
+
+import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.MainActivity;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
+import acr.browser.lightning.database.downloads.DownloadItem;
+import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.view.LightningView;
 
 /**
  * Handle download requests
  */
 public class DownloadHandler {
 
-    private static final String TAG = DownloadHandler.class.getSimpleName();
+    private static final String TAG = "DownloadHandler";
+
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
-    public static final String DEFAULT_DOWNLOAD_PATH =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            .getPath();
+    @Inject DownloadsModel downloadsModel;
 
-    @Nullable
-    static String guessFileExtension(@NonNull String filename) {
-        int lastIndex = filename.lastIndexOf('.') + 1;
-        if (lastIndex > 0 && filename.length() > lastIndex) {
-            return filename.substring(lastIndex, filename.length());
-        }
-        return null;
+    public DownloadHandler() {
+        BrowserApp.getAppComponent().inject(this);
     }
 
     /**
@@ -64,9 +68,10 @@ public class DownloadHandler {
      * @param userAgent          User agent of the downloading application.
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
+     * @param contentSize        The size of the content
      */
-    public static void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, String url, String userAgent,
-                                       @Nullable String contentDisposition, String mimetype) {
+    public void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, String url, String userAgent,
+                                @Nullable String contentDisposition, String mimetype, String contentSize) {
 
         Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
         Log.d(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
@@ -106,7 +111,7 @@ public class DownloadHandler {
                 }
             }
         }
-        onDownloadStartNoStream(context, manager, url, userAgent, contentDisposition, mimetype);
+        onDownloadStartNoStream(context, manager, url, userAgent, contentDisposition, mimetype, contentSize);
     }
 
     // This is to work around the fact that java.net.URI throws Exceptions
@@ -149,11 +154,12 @@ public class DownloadHandler {
      * @param userAgent          User agent of the downloading application.
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
+     * @param contentSize        The size of the content
      */
     /* package */
-    private static void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
-                                                String url, String userAgent,
-                                                String contentDisposition, @Nullable String mimetype) {
+    private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
+                                         String url, String userAgent,
+                                         String contentDisposition, @Nullable String mimetype, String contentSize) {
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
@@ -206,22 +212,14 @@ public class DownloadHandler {
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
         String location = preferences.getDownloadDirectory();
-        Uri downloadFolder;
-        location = addNecessarySlashes(location);
-        downloadFolder = Uri.parse(location);
-
-        File dir = new File(downloadFolder.getPath());
-        if (!dir.isDirectory() && !dir.mkdirs()) {
-            // Cannot make the directory
-            Utils.showSnackbar(context, R.string.problem_location_download);
-            return;
-        }
+        location = FileUtils.addNecessarySlashes(location);
+        Uri downloadFolder = Uri.parse(location);
 
         if (!isWriteAccessAvailable(downloadFolder)) {
             Utils.showSnackbar(context, R.string.problem_location_download);
             return;
         }
-        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(guessFileExtension(filename));
+        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
         Log.d(TAG, "New mimetype: " + newMimeType);
         request.setMimeType(newMimeType);
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
@@ -262,80 +260,30 @@ public class DownloadHandler {
             }
             Utils.showSnackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
         }
-    }
 
-    private static final String sFileName = "test";
-    private static final String sFileExtension = ".txt";
+        // save download in database
+        UIController browserActivity = (UIController) context;
+        LightningView view = browserActivity.getTabModel().getCurrentTab();
 
-    /**
-     * Determine whether there is write access in the given directory. Returns false if a
-     * file cannot be created in the directory or if the directory does not exist.
-     *
-     * @param directory the directory to check for write access
-     * @return returns true if the directory can be written to or is in a directory that can
-     * be written to. false if there is no write access.
-     */
-    public static boolean isWriteAccessAvailable(@Nullable String directory) {
-        if (directory == null || directory.isEmpty()) {
-            return false;
-        }
-        String dir = addNecessarySlashes(directory);
-        dir = getFirstRealParentDirectory(dir);
-        File file = new File(dir + sFileName + sFileExtension);
-        for (int n = 0; n < 100; n++) {
-            if (!file.exists()) {
-                try {
-                    if (file.createNewFile()) {
-                        //noinspection ResultOfMethodCallIgnored
-                        file.delete();
+        if (view != null && !view.isIncognito()) {
+            downloadsModel.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
+                .subscribe(new SingleOnSubscribe<Boolean>() {
+                    @Override
+                    public void onItem(@Nullable Boolean item) {
+                        if (item != null && !item)
+                            Log.i(TAG, "error saving download to database");
                     }
-                    return true;
-                } catch (IOException ignored) {
-                    return false;
-                }
-            } else {
-                file = new File(dir + sFileName + '-' + n + sFileExtension);
-            }
-        }
-        return file.canWrite();
-    }
-
-    /**
-     * Returns the first parent directory of a directory that exists. This is useful
-     * for subdirectories that do not exist but their parents do.
-     *
-     * @param directory the directory to find the first existent parent
-     * @return the first existent parent
-     */
-    @Nullable
-    private static String getFirstRealParentDirectory(@Nullable String directory) {
-        while (true) {
-            if (directory == null || directory.isEmpty()) {
-                return "/";
-            }
-            directory = addNecessarySlashes(directory);
-            File file = new File(directory);
-            if (!file.isDirectory()) {
-                int indexSlash = directory.lastIndexOf('/');
-                if (indexSlash > 0) {
-                    String parent = directory.substring(0, indexSlash);
-                    int previousIndex = parent.lastIndexOf('/');
-                    if (previousIndex > 0) {
-                        directory = parent.substring(0, previousIndex);
-                    } else {
-                        return "/";
-                    }
-                } else {
-                    return "/";
-                }
-            } else {
-                return directory;
-            }
+                });
         }
     }
 
     private static boolean isWriteAccessAvailable(@NonNull Uri fileUri) {
         File file = new File(fileUri.getPath());
+
+        if (!file.isDirectory() && !file.mkdirs()) {
+            return false;
+        }
+
         try {
             if (file.createNewFile()) {
                 //noinspection ResultOfMethodCallIgnored
@@ -346,19 +294,4 @@ public class DownloadHandler {
             return false;
         }
     }
-
-    @NonNull
-    public static String addNecessarySlashes(@Nullable String originalPath) {
-        if (originalPath == null || originalPath.length() == 0) {
-            return "/";
-        }
-        if (originalPath.charAt(originalPath.length() - 1) != '/') {
-            originalPath = originalPath + '/';
-        }
-        if (originalPath.charAt(0) != '/') {
-            originalPath = '/' + originalPath;
-        }
-        return originalPath;
-    }
-
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.download.DownloadHandler;
+import acr.browser.lightning.utils.FileUtils;
 
 @Singleton
 public class PreferenceManager {
@@ -55,6 +55,7 @@ public class PreferenceManager {
         static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
         static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
+        static final String BLACK_STATUS_BAR = "blackStatusBar";
 
         static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
@@ -69,6 +70,7 @@ public class PreferenceManager {
     public enum Suggestion {
         SUGGESTION_GOOGLE,
         SUGGESTION_DUCK,
+        SUGGESTION_BAIDU,
         SUGGESTION_NONE
     }
 
@@ -148,7 +150,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getDownloadDirectory() {
-        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, DownloadHandler.DEFAULT_DOWNLOAD_PATH);
+        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH);
     }
 
     public int getFlashSupport() {
@@ -156,7 +158,7 @@ public class PreferenceManager {
     }
 
     public boolean getFullScreenEnabled() {
-        return mPrefs.getBoolean(Name.FULL_SCREEN, false);
+        return mPrefs.getBoolean(Name.FULL_SCREEN, true);
     }
 
     public boolean getHideStatusBarEnabled() {
@@ -295,6 +297,10 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
     }
 
+    public boolean getUseBlackStatusBar() {
+        return mPrefs.getBoolean(Name.BLACK_STATUS_BAR, false);
+    }
+
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -305,6 +311,10 @@ public class PreferenceManager {
 
     private void putString(@NonNull String name, @Nullable String value) {
         mPrefs.edit().putString(name, value).apply();
+    }
+
+    public void setUseBlackStatusBar(boolean enabled) {
+        putBoolean(Name.BLACK_STATUS_BAR, enabled);
     }
 
     public void setRemoveIdentifyingHeadersEnabled(boolean enabled) {

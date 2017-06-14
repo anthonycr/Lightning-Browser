@@ -53,7 +53,7 @@
     <string name="agent_custom">Własny identyfikator</string>
     <string name="title_search_engine">Wyszukiwarka</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Czy chcesz pobrać ten plik?</string>
+    <string name="dialog_download">Czy chcesz pobrać ten plik? (%1$s)</string>
     <string name="action_cancel">Anuluj</string>
     <string name="title_warning">Ostrzeżenie</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player nie został wykryty.\nProszę go zainstalować.</string>

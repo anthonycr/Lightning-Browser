@@ -53,7 +53,7 @@
     <string name="agent_custom">Συγκεκριμένο</string>
     <string name="title_search_engine">Μηχανή Αναζήτησης</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">Θα θέλατε να κατεβάσετε αυτό το αρχείο;</string>
+    <string name="dialog_download">Θα θέλατε να κατεβάσετε αυτό το αρχείο; (%1$s)</string>
     <string name="action_cancel">Ακύρωση</string>
     <string name="title_warning">Προσοχή</string>
     <string name="dialog_adobe_not_installed">Δεν ανιχνεύτηκε ο Adobe Flash Player.\nΠαρακαλώ εγκαταστήστε τον Flash Player.</string>

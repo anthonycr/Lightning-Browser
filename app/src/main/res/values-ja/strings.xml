@@ -69,7 +69,7 @@
     <string name="agent_custom">カスタム</string>
     <string name="title_search_engine">検索エンジン</string>
     <string name="action_ok">OK</string>
-    <string name="dialog_download">このファイルをダウンロードしますか?</string>
+    <string name="dialog_download">このファイルをダウンロードしますか? (%1$s)</string>
     <string name="action_cancel">キャンセル</string>
     <string name="title_warning">警告</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player が見つかりません\nFlash Player をインストールしてください</string>

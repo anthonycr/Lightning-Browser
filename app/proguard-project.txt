@@ -111,3 +111,8 @@
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
 
 -dontwarn org.apache.http.HttpHost
+
+# Needed for okhttp
+-dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault

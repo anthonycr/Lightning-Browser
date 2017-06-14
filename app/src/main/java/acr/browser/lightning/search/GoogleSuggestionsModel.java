@@ -28,7 +28,7 @@ class GoogleSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull
     protected String createQueryUrl(@NonNull String query, @NonNull String language) {
-        return "https://suggestqueries.google.com/complete/search?output=toolbar&hl="
+        return "https://suggestqueries.google.com/complete/search?output=toolbar&oe=latin1&hl="
             + language + "&q=" + query;
     }
 

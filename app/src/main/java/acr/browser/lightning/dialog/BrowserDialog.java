@@ -16,7 +16,6 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,7 +25,6 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.utils.DeviceUtils;
 import acr.browser.lightning.utils.ResourceUtils;
-import acr.browser.lightning.utils.Utils;
 
 /**
  * Copyright 7/31/2016 Anthony Restaino
@@ -84,8 +82,8 @@ public class BrowserDialog {
 
         View layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null);
 
-        TextView titleView = (TextView) layout.findViewById(R.id.dialog_title);
-        ListView listView = (ListView) layout.findViewById(R.id.dialog_list);
+        TextView titleView = layout.findViewById(R.id.dialog_title);
+        ListView listView = layout.findViewById(R.id.dialog_list);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
             android.R.layout.simple_list_item_1);
@@ -123,37 +121,39 @@ public class BrowserDialog {
         });
     }
 
-    public static void showEditText(@NonNull Activity activity, @StringRes int title,
-                                    @StringRes int hint, @StringRes int action,
+    public static void showEditText(@NonNull Activity activity,
+                                    @StringRes int title,
+                                    @StringRes int hint,
+                                    @StringRes int action,
                                     @NonNull final EditorListener listener) {
         showEditText(activity, title, hint, null, action, listener);
     }
 
-    public static void showEditText(@NonNull Activity activity, @StringRes int title,
-                                    @StringRes int hint, @Nullable String currentText,
-                                    @StringRes int action, @NonNull final EditorListener listener) {
-        final AlertDialog.Builder editorDialog = new AlertDialog.Builder(activity);
-        editorDialog.setTitle(title);
-        final EditText editText = new EditText(activity);
+    public static void showEditText(@NonNull Activity activity,
+                                    @StringRes int title,
+                                    @StringRes int hint,
+                                    @Nullable String currentText,
+                                    @StringRes int action,
+                                    @NonNull final EditorListener listener) {
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null);
+        final EditText editText = dialogView.findViewById(R.id.dialog_edit_text);
+
         editText.setHint(hint);
         if (currentText != null) {
             editText.setText(currentText);
         }
-        editText.setSingleLine();
-        LinearLayout layout = new LinearLayout(activity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        int padding = Utils.dpToPx(10);
-        layout.setPadding(padding, padding, padding, padding);
-        layout.addView(editText);
-        editorDialog.setView(layout);
-        editorDialog.setPositiveButton(action,
-            new DialogInterface.OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    listener.onClick(editText.getText().toString());
-                }
-            });
+        final AlertDialog.Builder editorDialog = new AlertDialog.Builder(activity)
+            .setTitle(title)
+            .setView(dialogView)
+            .setPositiveButton(action,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onClick(editText.getText().toString());
+                    }
+                });
 
         Dialog dialog = editorDialog.show();
         setDialogSize(activity, dialog);

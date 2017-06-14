@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion project.targetSdkVersion
+    buildToolsVersion project.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 25
-        versionName "4.4.2"
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        versionName project.versionName
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -33,15 +33,15 @@ android {
 
     productFlavors {
         lightningPlus {
-            buildConfigField "boolean", "FULL_VERSION", "true"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
-            versionCode 91
+            versionCode project.versionCode_plus
         }
 
         lightningLite {
-            buildConfigField "boolean", "FULL_VERSION", "false"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
-            versionCode 93
+            versionCode project.versionCode_lite
         }
     }
 
@@ -63,9 +63,10 @@ dexcount {
 }
 
 dependencies {
+    testCompile 'junit:junit:4.12'
 
     // support libraries
-    def supportLibVersion = '25.3.1'
+    def supportLibVersion = '25.4.0'
     compile "com.android.support:palette-v7:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile "com.android.support:design:$supportLibVersion"
@@ -76,14 +77,15 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.2'
 
     // dependency injection
-    def daggerVersion = '2.10'
+    def daggerVersion = '2.11'
     compile "com.google.dagger:dagger:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    def butterknifeVersion = '8.6.0'
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
@@ -91,7 +93,7 @@ dependencies {
     // proxy support
     compile 'net.i2p.android:client:0.8'
 
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
 
     // tor proxy
     def netcipherVersion = '2.0.0-alpha1'
@@ -103,7 +105,7 @@ dependencies {
     compile 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
-    def leakCanaryVersion = '1.5'
+    def leakCanaryVersion = '1.5.1'
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 }

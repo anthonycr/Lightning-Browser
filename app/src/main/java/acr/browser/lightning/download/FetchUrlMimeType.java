@@ -31,7 +31,7 @@ import acr.browser.lightning.utils.Utils;
  */
 class FetchUrlMimeType extends Thread {
 
-    private static final String TAG = FetchUrlMimeType.class.getSimpleName();
+    private static final String TAG = "FetchUrlMimeType";
 
     private final Activity mContext;
     private final DownloadManager.Request mRequest;
@@ -93,7 +93,7 @@ class FetchUrlMimeType extends Thread {
             if (mimeType.equalsIgnoreCase("text/plain")
                 || mimeType.equalsIgnoreCase("application/octet-stream")) {
                 String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    DownloadHandler.guessFileExtension(mUri));
+                    Utils.guessFileExtension(mUri));
                 if (newMimeType != null) {
                     mRequest.setMimeType(newMimeType);
                 }

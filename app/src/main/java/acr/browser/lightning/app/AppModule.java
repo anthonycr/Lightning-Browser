@@ -8,6 +8,13 @@ import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Singleton;
 
+import acr.browser.lightning.database.bookmark.BookmarkDatabase;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.downloads.DownloadsDatabase;
+import acr.browser.lightning.database.downloads.DownloadsModel;
+import acr.browser.lightning.database.history.HistoryDatabase;
+import acr.browser.lightning.database.history.HistoryModel;
+import acr.browser.lightning.download.DownloadHandler;
 import dagger.Module;
 import dagger.Provides;
 
@@ -27,6 +34,34 @@ public class AppModule {
     @Provides
     public Context provideContext() {
         return mApp.getApplicationContext();
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public BookmarkModel provideBookmarkModel() {
+        return new BookmarkDatabase(mApp);
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public DownloadsModel provideDownloadsModel() {
+        return new DownloadsDatabase(mApp);
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public HistoryModel providesHistoryModel() {
+        return new HistoryDatabase(mApp);
+    }
+
+    @NonNull
+    @Provides
+    @Singleton
+    public DownloadHandler provideDownloadHandler() {
+        return new DownloadHandler();
     }
 
     @NonNull

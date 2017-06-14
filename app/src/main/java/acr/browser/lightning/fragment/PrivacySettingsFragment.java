@@ -8,8 +8,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
@@ -22,8 +20,11 @@ import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Schedulers;
 
+import javax.inject.Inject;
+
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
@@ -46,6 +47,8 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
     private Activity mActivity;
+
+    @Inject HistoryModel mHistoryModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -189,7 +192,8 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
                 Activity activity = getActivity();
                 if (activity != null) {
-                    WebUtils.clearHistory(activity);
+                    // TODO: 6/9/17 clearHistory is not synchronous
+                    WebUtils.clearHistory(activity, mHistoryModel);
                     subscriber.onComplete();
                 }
                 subscriber.onError(new RuntimeException("Activity was null in clearHistory"));

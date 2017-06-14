@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.utils;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -34,9 +33,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
-
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
+import android.widget.Toast;
 
 import java.io.Closeable;
 import java.io.File;
@@ -51,44 +48,13 @@ import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.download.DownloadHandler;
-import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
 
-    private static final String TAG = Utils.class.getSimpleName();
+    private static final String TAG = "Utils";
 
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
-    /**
-     * Downloads a file from the specified URL. Handles permissions
-     * requests, and creates all the necessary dialogs that must be
-     * showed to the user.
-     *
-     * @param activity           activity needed to created dialogs.
-     * @param url                url to download from.
-     * @param userAgent          the user agent of the browser.
-     * @param contentDisposition the content description of the file.
-     */
-    public static void downloadFile(@NonNull final Activity activity, @NonNull final PreferenceManager manager, final String url,
-                                    final String userAgent, final String contentDisposition) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
-            @Override
-            public void onGranted() {
-                String fileName = URLUtil.guessFileName(url, null, null);
-                DownloadHandler.onDownloadStart(activity, manager, url, userAgent, contentDisposition, null);
-                Log.i(TAG, "Downloading: " + fileName);
-            }
-
-            @Override
-            public void onDenied(String permission) {
-                // TODO Show Message
-            }
-        });
-
     }
 
     /**
@@ -125,13 +91,13 @@ public final class Utils {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         builder.setMessage(message)
-                .setCancelable(true)
-                .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
+            .setCancelable(true)
+            .setPositiveButton(activity.getResources().getString(R.string.action_ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
         BrowserDialog.setDialogSize(activity, alert);
@@ -176,6 +142,18 @@ public final class Utils {
     }
 
     /**
+     * Shows a toast to the user.
+     * Should only be used if an activity is
+     * not available to show a snackbar.
+     *
+     * @param context  the context needed to show the toast.
+     * @param resource the string shown by the toast to the user.
+     */
+    public static void showToast(@NonNull Context context, @StringRes int resource) {
+        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
      * Converts Density Pixels (DP) to Pixels (PX).
      *
      * @param dp the number of density pixels to convert.
@@ -198,7 +176,7 @@ public final class Utils {
     public static String getDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 
-        boolean ssl = url.startsWith(Constants.HTTPS);
+        boolean ssl = URLUtil.isHttpsUrl(url);
         int index = url.indexOf('/', 8);
         if (index != -1) {
             url = url.substring(0, index);
@@ -261,7 +239,7 @@ public final class Utils {
         int padding = Utils.dpToPx(4);
 
         Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
-                + padding, Bitmap.Config.ARGB_8888);
+            + padding, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(paddedBitmap);
         canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
@@ -305,10 +283,10 @@ public final class Utils {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + '_';
         File storageDir = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
+            ".jpg", /* suffix */
+            storageDir /* directory */
         );
     }
 
@@ -382,9 +360,9 @@ public final class Utils {
         paint.setDither(true);
         if (withShader) {
             paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                    0, canvas.getHeight(),
-                    color, mixTwoColors(Color.BLACK, color, 0.5f),
-                    Shader.TileMode.CLAMP));
+                0, canvas.getHeight(),
+                color, mixTwoColors(Color.BLACK, color, 0.5f),
+                Shader.TileMode.CLAMP));
         } else {
             paint.setShader(null);
         }
@@ -448,12 +426,21 @@ public final class Utils {
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
             while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
+                && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
         }
 
         return inSampleSize;
+    }
+
+    @Nullable
+    public static String guessFileExtension(@NonNull String filename) {
+        int lastIndex = filename.lastIndexOf('.') + 1;
+        if (lastIndex > 0 && filename.length() > lastIndex) {
+            return filename.substring(lastIndex, filename.length());
+        }
+        return null;
     }
 
 }

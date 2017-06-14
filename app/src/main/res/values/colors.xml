@@ -8,7 +8,7 @@
     <color name="gray_list_bg">#0d000000</color>
 
     <color name="primary_color">#E0E0E0</color>
-    <color name="secondary_color">#4D000000</color>
+    <color name="secondary_color">#66000000</color>
     <color name="accent_color">#0073EF</color>
 
     <color name="drawer_background">#ffffff</color>
@@ -36,5 +36,10 @@
     <color name="icon_dark_theme_disabled">#8AFFFFFF</color>
 
     <color name="error_red">#F44336</color>
+
+    <color name="bookmark_default_blue">#2196F3</color>
+    <color name="bookmark_default_green">#4CAF50</color>
+    <color name="bookmark_default_red">#EF5350</color>
+    <color name="bookmark_default_orange">#FF9800</color>
 
 </resources>

@@ -8,16 +8,16 @@ import android.text.TextUtils;
 /**
  * Simple utils for favicon fetching.
  */
-class FaviconUtils {
+public class FaviconUtils {
     @Nullable
-    static Uri safeUri(@NonNull String url) {
+    public static Uri safeUri(@NonNull String url) {
         if (TextUtils.isEmpty(url)) {
             return null;
         }
 
         Uri uri = Uri.parse(url);
 
-        if (uri.getHost() == null || uri.getScheme() == null) {
+        if (TextUtils.isEmpty(uri.getScheme()) || TextUtils.isEmpty(uri.getHost())) {
             return null;
         }
 

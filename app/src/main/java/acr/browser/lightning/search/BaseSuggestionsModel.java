@@ -26,10 +26,11 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 abstract class BaseSuggestionsModel {
 
-    private static final String TAG = BaseSuggestionsModel.class.getSimpleName();
+    private static final String TAG = "BaseSuggestionsModel";
 
     static final int MAX_RESULTS = 5;
     private static final long INTERVAL_DAY = TimeUnit.DAYS.toSeconds(1);
@@ -112,9 +113,10 @@ abstract class BaseSuggestionsModel {
 
             Response suggestionsResponse = mHttpClient.newCall(suggestionsRequest).execute();
 
-            return suggestionsResponse.body().byteStream();
-        } catch (Exception e) {
-            Log.e(TAG, "Problem getting search suggestions", e);
+            ResponseBody responseBody = suggestionsResponse.body();
+            return responseBody != null ? responseBody.byteStream() : null;
+        } catch (IOException exception) {
+            Log.e(TAG, "Problem getting search suggestions", exception);
         }
 
         return null;

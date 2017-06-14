@@ -2,9 +2,15 @@ package acr.browser.lightning.favicon;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.CompletableAction;
@@ -20,6 +26,10 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import acr.browser.lightning.R;
+import acr.browser.lightning.utils.DrawableUtils;
+import acr.browser.lightning.utils.FileUtils;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 
 /**
@@ -31,17 +41,81 @@ public class FaviconModel {
 
     private static final String TAG = "FaviconModel";
 
-    @NonNull private final ImageFetcher mImageFetcher;
+    @NonNull private final BitmapFactory.Options mLoaderOptions = new BitmapFactory.Options();
     @NonNull private final Application mApplication;
+    @NonNull private final LruCache<String, Bitmap> mFaviconCache = new LruCache<String, Bitmap>((int) FileUtils.megabytesToBytes(1)) {
+        @Override
+        protected int sizeOf(String key, Bitmap value) {
+            return value.getByteCount();
+        }
+    };
+
+    private final int mBookmarkIconSize;
 
     @Inject
-    public FaviconModel(@NonNull Application application) {
-        mImageFetcher = new ImageFetcher();
+    FaviconModel(@NonNull Application application) {
         mApplication = application;
+        mBookmarkIconSize = mApplication.getResources().getDimensionPixelSize(R.dimen.bookmark_item_icon_size);
+    }
+
+    /**
+     * Retrieves a favicon from the memory cache.
+     * Bitmap may not be present if no bitmap has
+     * been added for the URL or if it has been
+     * evicted from the memory cache.
+     *
+     * @param url the URL to retrieve the bitmap for.
+     * @return the bitmap associated with the URL,
+     * may be null.
+     */
+    @Nullable
+    private Bitmap getFaviconFromMemCache(@NonNull String url) {
+        Preconditions.checkNonNull(url);
+        synchronized (mFaviconCache) {
+            return mFaviconCache.get(url);
+        }
     }
 
     @NonNull
-    private static File createFaviconCacheFile(@NonNull Application app, @NonNull Uri uri) {
+    public Bitmap getDefaultBitmapForString(@Nullable String title) {
+        Character firstTitleCharacter = !TextUtils.isEmpty(title) ? title.charAt(0) : '?';
+
+        @ColorInt int defaultFaviconColor = DrawableUtils.characterToColorHash(firstTitleCharacter, mApplication);
+
+        return DrawableUtils.getRoundedLetterImage(firstTitleCharacter,
+            mBookmarkIconSize,
+            mBookmarkIconSize,
+            defaultFaviconColor);
+    }
+
+    /**
+     * Adds a bitmap to the memory cache
+     * for the given URL.
+     *
+     * @param url    the URL to map the bitmap to.
+     * @param bitmap the bitmap to store.
+     */
+    private void addFaviconToMemCache(@NonNull String url, @NonNull Bitmap bitmap) {
+        Preconditions.checkNonNull(url);
+        Preconditions.checkNonNull(bitmap);
+        synchronized (mFaviconCache) {
+            mFaviconCache.put(url, bitmap);
+        }
+    }
+
+    /**
+     * Creates the cache file for the favicon
+     * image. File name will be in the form of
+     * [hash of URI host].png
+     *
+     * @param app the context needed to retrieve the
+     *            cache directory.
+     * @param uri the URI to use as a unique identifier.
+     * @return a valid cache file.
+     */
+    @WorkerThread
+    @NonNull
+    public static File getFaviconCacheFile(@NonNull Application app, @NonNull Uri uri) {
         FaviconUtils.assertUriSafe(uri);
 
         String hash = String.valueOf(uri.getHost().hashCode());
@@ -49,11 +123,17 @@ public class FaviconModel {
         return new File(app.getCacheDir(), hash + ".png");
     }
 
-
+    /**
+     * Retrieves the favicon for a URL,
+     * may be from network or cache.
+     *
+     * @param url   The URL that we should retrieve the
+     *              favicon for.
+     * @param title The title for the web page.
+     */
     @NonNull
     public Single<Bitmap> faviconForUrl(@NonNull final String url,
-                                        @NonNull final Bitmap defaultFavicon,
-                                        final boolean allowGoogleService) {
+                                        @NonNull final String title) {
         return Single.create(new SingleAction<Bitmap>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<Bitmap> subscriber) {
@@ -61,7 +141,7 @@ public class FaviconModel {
 
                 if (uri == null) {
 
-                    Bitmap newFavicon = Utils.padFavicon(defaultFavicon);
+                    Bitmap newFavicon = Utils.padFavicon(getDefaultBitmapForString(title));
 
                     subscriber.onItem(newFavicon);
                     subscriber.onComplete();
@@ -69,17 +149,19 @@ public class FaviconModel {
                     return;
                 }
 
-                File faviconCacheFile = createFaviconCacheFile(mApplication, uri);
+                File faviconCacheFile = getFaviconCacheFile(mApplication, uri);
 
-                Bitmap favicon = null;
+                Bitmap favicon = getFaviconFromMemCache(url);
 
-                if (faviconCacheFile.exists()) {
-                    favicon = mImageFetcher.retrieveFaviconFromCache(faviconCacheFile);
+                if (faviconCacheFile.exists() && favicon == null) {
+                    favicon = BitmapFactory.decodeFile(faviconCacheFile.getPath(), mLoaderOptions);
+
+                    if (favicon != null) {
+                        addFaviconToMemCache(url, favicon);
+                    }
                 }
 
-                if (favicon == null) {
-                    favicon = mImageFetcher.retrieveBitmapFromDomain(uri);
-                } else {
+                if (favicon != null) {
                     Bitmap newFavicon = Utils.padFavicon(favicon);
 
                     subscriber.onItem(newFavicon);
@@ -88,17 +170,7 @@ public class FaviconModel {
                     return;
                 }
 
-                if (favicon == null && allowGoogleService) {
-                    favicon = mImageFetcher.retrieveBitmapFromGoogle(uri);
-                }
-
-                if (favicon != null) {
-                    cacheFaviconForUrl(favicon, url).subscribe();
-                }
-
-                if (favicon == null) {
-                    favicon = defaultFavicon;
-                }
+                favicon = getDefaultBitmapForString(title);
 
                 Bitmap newFavicon = Utils.padFavicon(favicon);
 
@@ -108,6 +180,14 @@ public class FaviconModel {
         });
     }
 
+    /**
+     * Caches a favicon for a particular URL.
+     *
+     * @param favicon the favicon to cache.
+     * @param url     the URL to cache the favicon for.
+     * @return an observable that notifies the consumer
+     * when it is complete.
+     */
     @NonNull
     public Completable cacheFaviconForUrl(@NonNull final Bitmap favicon,
                                           @NonNull final String url) {
@@ -125,7 +205,7 @@ public class FaviconModel {
                 FileOutputStream fos = null;
 
                 try {
-                    File image = createFaviconCacheFile(mApplication, uri);
+                    File image = getFaviconCacheFile(mApplication, uri);
                     fos = new FileOutputStream(image);
                     favicon.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.flush();

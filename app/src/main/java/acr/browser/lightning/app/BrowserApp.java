@@ -9,17 +9,22 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.webkit.WebView;
 
+import com.anthonycr.bonsai.Schedulers;
 import com.squareup.leakcanary.LeakCanary;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
+import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.bookmark.BookmarkExporter;
+import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager;
+import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.MemoryLeakUtils;
@@ -27,13 +32,16 @@ import acr.browser.lightning.utils.Preconditions;
 
 public class BrowserApp extends Application {
 
-    private static final String TAG = BrowserApp.class.getSimpleName();
+    private static final String TAG = "BrowserApp";
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT);
+    }
 
     @Nullable private static AppComponent sAppComponent;
-    private static final Executor mIOThread = Executors.newSingleThreadExecutor();
-    private static final Executor mTaskThread = Executors.newCachedThreadPool();
 
     @Inject PreferenceManager mPreferenceManager;
+    @Inject BookmarkModel mBookmarkModel;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -75,6 +83,22 @@ public class BrowserApp extends Application {
         sAppComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
         sAppComponent.inject(this);
 
+        Schedulers.worker().execute(new Runnable() {
+            @Override
+            public void run() {
+                List<HistoryItem> oldBookmarks = LegacyBookmarkManager.destructiveGetBookmarks(BrowserApp.this);
+
+                if (!oldBookmarks.isEmpty()) {
+                    // If there are old bookmarks, import them
+                    mBookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(Schedulers.io()).subscribe();
+                } else if (mBookmarkModel.count() == 0) {
+                    // If the database is empty, fill it from the assets list
+                    List<HistoryItem> assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(BrowserApp.this);
+                    mBookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(Schedulers.io()).subscribe();
+                }
+            }
+        });
+
         if (mPreferenceManager.getUseLeakCanary() && !isRelease()) {
             LeakCanary.install(this);
         }
@@ -95,11 +119,6 @@ public class BrowserApp extends Application {
     public static AppComponent getAppComponent() {
         Preconditions.checkNonNull(sAppComponent);
         return sAppComponent;
-    }
-
-    @NonNull
-    public static Executor getIOThread() {
-        return mIOThread;
     }
 
     /**

@@ -1,4 +1,4 @@
-package acr.browser.lightning.database;
+package acr.browser.lightning.database.bookmark;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -15,11 +15,12 @@ import com.anthonycr.bonsai.SingleSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkLocalSync {
 
-    private static final String TAG = BookmarkLocalSync.class.getSimpleName();
+    private static final String TAG = "BookmarkLocalSync";
 
     private static final String STOCK_BOOKMARKS_CONTENT = "content://browser/bookmarks";
     private static final String CHROME_BOOKMARKS_CONTENT = "content://com.android.chrome.browser/bookmarks";

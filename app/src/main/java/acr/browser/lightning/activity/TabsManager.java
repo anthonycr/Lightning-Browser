@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.URLUtil;
 import android.webkit.WebView;
 
 import com.anthonycr.bonsai.Completable;
@@ -32,10 +33,9 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
-import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.database.BookmarkManager;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;
@@ -50,20 +50,20 @@ import acr.browser.lightning.view.LightningView;
  */
 public class TabsManager {
 
-    private static final String TAG = TabsManager.class.getSimpleName();
+    private static final String TAG = "TabsManager";
+
     private static final String BUNDLE_KEY = "WEBVIEW_";
     private static final String URL_KEY = "URL_KEY";
     private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
-    private final List<LightningView> mTabList = new ArrayList<>(1);
+    @NonNull private final List<LightningView> mTabList = new ArrayList<>(1);
     @Nullable private LightningView mCurrentTab;
     @Nullable private TabNumberChangedListener mTabNumberListener;
 
     private boolean mIsInitialized = false;
-    private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
+    @NonNull private final List<Runnable> mPostInitializationWorkList = new ArrayList<>();
 
     @Inject PreferenceManager mPreferenceManager;
-    @Inject BookmarkManager mBookmarkManager;
     @Inject Application mApp;
 
     public TabsManager() {
@@ -172,6 +172,17 @@ public class TabsManager {
                                         tab.loadUrl(item);
                                     }
                                 });
+                        } else if (UrlUtils.isDownloadsUrl(url)) {
+                            new DownloadsPage().getDownloadsPage()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.main())
+                                .subscribe(new SingleOnSubscribe<String>() {
+                                    @Override
+                                    public void onItem(@Nullable String item) {
+                                        Preconditions.checkNonNull(item);
+                                        tab.loadUrl(item);
+                                    }
+                                });
                         } else if (UrlUtils.isStartPageUrl(url)) {
                             new StartPage().getHomepage()
                                 .subscribeOn(Schedulers.io())
@@ -203,7 +214,7 @@ public class TabsManager {
                 @Override
                 public void onComplete() {
                     if (url != null) {
-                        if (url.startsWith(Constants.FILE)) {
+                        if (URLUtil.isFileUrl(url)) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                             Dialog dialog = builder.setCancelable(true)
                                 .setTitle(R.string.title_warning)

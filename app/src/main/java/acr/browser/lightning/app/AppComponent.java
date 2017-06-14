@@ -9,10 +9,12 @@ import acr.browser.lightning.activity.ThemableBrowserActivity;
 import acr.browser.lightning.activity.ThemableSettingsActivity;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
-import acr.browser.lightning.database.HistoryDatabase;
+import acr.browser.lightning.database.history.HistoryDatabase;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
+import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
@@ -67,6 +69,8 @@ public interface AppComponent {
 
     void inject(BookmarkPage bookmarkPage);
 
+    void inject(DownloadsPage downloadsPage);
+
     void inject(BrowserPresenter presenter);
 
     void inject(TabsManager manager);
@@ -76,6 +80,8 @@ public interface AppComponent {
     void inject(SuggestionsAdapter suggestionsAdapter);
 
     void inject(LightningChromeClient chromeClient);
+
+    void inject(DownloadHandler downloadHandler);
 
     HistoryDatabase historyDatabase();
 

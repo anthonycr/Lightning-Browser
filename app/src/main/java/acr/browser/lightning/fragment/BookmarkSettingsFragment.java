@@ -5,6 +5,7 @@ package acr.browser.lightning.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
@@ -21,7 +22,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.SingleOnSubscribe;
+import com.anthonycr.bonsai.Subscription;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
@@ -36,15 +39,17 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.BookmarkLocalSync;
-import acr.browser.lightning.database.BookmarkLocalSync.Source;
-import acr.browser.lightning.database.BookmarkManager;
+import acr.browser.lightning.database.bookmark.BookmarkExporter;
+import acr.browser.lightning.database.bookmark.BookmarkLocalSync;
+import acr.browser.lightning.database.bookmark.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.HistoryItem;
 
 import com.anthonycr.bonsai.Schedulers;
 
+import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;
+import acr.browser.lightning.utils.SubscriptionUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -58,10 +63,16 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     @Nullable private Activity mActivity;
 
-    @Inject BookmarkManager mBookmarkManager;
+    @Inject BookmarkModel mBookmarkManager;
+    @Inject Application mApplication;
+
     private File[] mFileList;
     private String[] mFileNameList;
+
     @Nullable private BookmarkLocalSync mSync;
+
+    @Nullable private Subscription mImportSubscription;
+    @Nullable private Subscription mExportSubscription;
 
     private static final String[] REQUIRED_PERMISSIONS = new String[]{
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -149,8 +160,20 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        SubscriptionUtils.safeUnsubscribe(mExportSubscription);
+        SubscriptionUtils.safeUnsubscribe(mImportSubscription);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
+
+        SubscriptionUtils.safeUnsubscribe(mExportSubscription);
+        SubscriptionUtils.safeUnsubscribe(mImportSubscription);
+
         mActivity = null;
     }
 
@@ -187,12 +210,58 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                     new PermissionsResultAction() {
                         @Override
                         public void onGranted() {
-                            mBookmarkManager.exportBookmarks(getActivity());
+                            mBookmarkManager.getAllBookmarks()
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                                    @Override
+                                    public void onItem(@Nullable List<HistoryItem> item) {
+                                        if (!isAdded()) {
+                                            return;
+                                        }
+
+                                        Preconditions.checkNonNull(item);
+                                        final File exportFile = BookmarkExporter.createNewExportFile();
+                                        SubscriptionUtils.safeUnsubscribe(mExportSubscription);
+                                        mExportSubscription = BookmarkExporter.exportBookmarksToFile(item, exportFile)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(Schedulers.main())
+                                            .subscribe(new CompletableOnSubscribe() {
+                                                @Override
+                                                public void onComplete() {
+                                                    mExportSubscription = null;
+
+                                                    Activity activity = getActivity();
+                                                    if (activity != null) {
+                                                        Utils.showSnackbar(activity, activity.getString(R.string.bookmark_export_path)
+                                                            + ' ' + exportFile.getPath());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onError(@NonNull Throwable throwable) {
+                                                    mExportSubscription = null;
+
+                                                    Log.e(TAG, "onError: exporting bookmarks", throwable);
+                                                    Activity activity = getActivity();
+                                                    if (activity != null && !activity.isFinishing() && isAdded()) {
+                                                        Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure);
+                                                    } else {
+                                                        Utils.showToast(mApplication, R.string.bookmark_export_failure);
+                                                    }
+                                                }
+                                            });
+                                    }
+                                });
                         }
 
                         @Override
                         public void onDenied(String permission) {
-                            //TODO Show message
+                            Activity activity = getActivity();
+                            if (activity != null && !activity.isFinishing() && isAdded()) {
+                                Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure);
+                            } else {
+                                Utils.showToast(mApplication, R.string.bookmark_export_failure);
+                            }
                         }
                     });
                 return true;
@@ -245,7 +314,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mBookmarkManager.deleteAllBookmarks();
+                mBookmarkManager.deleteAllBookmarks().subscribeOn(Schedulers.io()).subscribe();
             }
         });
         Dialog dialog = builder.show();
@@ -408,7 +477,44 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                     Dialog dialog1 = builder.show();
                     BrowserDialog.setDialogSize(mActivity, dialog1);
                 } else {
-                    mBookmarkManager.importBookmarksFromFile(mFileList[which], getActivity());
+                    SubscriptionUtils.safeUnsubscribe(mImportSubscription);
+                    mImportSubscription = BookmarkExporter.importBookmarksFromFile(mFileList[which])
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.main())
+                        .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                            @Override
+                            public void onItem(@Nullable final List<HistoryItem> importList) {
+                                mImportSubscription = null;
+
+                                Preconditions.checkNonNull(importList);
+                                mBookmarkManager.addBookmarkList(importList)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(Schedulers.main())
+                                    .subscribe(new CompletableOnSubscribe() {
+                                        @Override
+                                        public void onComplete() {
+                                            Activity activity = getActivity();
+                                            if (activity != null) {
+                                                String message = activity.getString(R.string.message_import);
+                                                Utils.showSnackbar(activity, importList.size() + " " + message);
+                                            }
+                                        }
+                                    });
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable throwable) {
+                                mImportSubscription = null;
+
+                                Log.e(TAG, "onError: importing bookmarks", throwable);
+                                Activity activity = getActivity();
+                                if (activity != null && !activity.isFinishing() && isAdded()) {
+                                    Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error);
+                                } else {
+                                    Utils.showToast(mApplication, R.string.import_bookmark_error);
+                                }
+                            }
+                        });
                 }
             }
 
