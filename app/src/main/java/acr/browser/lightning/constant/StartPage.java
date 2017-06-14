@@ -54,6 +54,11 @@ public class StartPage {
 
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
+    @NonNull
+    private static File getStartPageFile(@NonNull Application application) {
+        return new File(application.getFilesDir(), FILENAME);
+    }
+
     @NonNull private final String mTitle;
 
     @Inject Application mApp;
@@ -151,7 +156,7 @@ public class StartPage {
                 homepageBuilder.append(searchUrl);
                 homepageBuilder.append(END);
 
-                File homepage = new File(mApp.getFilesDir(), FILENAME);
+                File homepage = getStartPageFile(mApp);
                 FileWriter hWriter = null;
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed

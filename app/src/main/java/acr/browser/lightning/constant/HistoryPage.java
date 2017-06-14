@@ -61,6 +61,18 @@ public class HistoryPage {
 
     private static final String END = "</div></body></html>";
 
+    /**
+     * Get the file that the history page is stored in
+     * or should be stored in.
+     *
+     * @param application the application used to access the file.
+     * @return a valid file object, note that the file might not exist.
+     */
+    @NonNull
+    private static File getHistoryPageFile(@NonNull Application application) {
+        return new File(application.getFilesDir(), FILENAME);
+    }
+
     @NonNull private final String mTitle;
 
     @Inject Application mApp;
@@ -98,7 +110,7 @@ public class HistoryPage {
                             }
 
                             historyBuilder.append(END);
-                            File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
+                            File historyWebPage = getHistoryPageFile(mApp);
                             FileWriter historyWriter = null;
                             try {
                                 //noinspection IOResourceOpenedButNotSafelyClosed
@@ -131,7 +143,7 @@ public class HistoryPage {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                File historyWebPage = new File(application.getFilesDir(), FILENAME);
+                File historyWebPage = getHistoryPageFile(application);
                 if (historyWebPage.exists()) {
                     historyWebPage.delete();
                 }

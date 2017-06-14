@@ -48,7 +48,6 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
-import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
@@ -989,21 +988,21 @@ public class LightningView {
         final WebView.HitTestResult result = mWebView.getHitTestResult();
         String currentUrl = mWebView.getUrl();
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
-            if (currentUrl.endsWith(HistoryPage.FILENAME)) {
+            if (UrlUtils.isHistoryUrl(currentUrl)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
                     mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, newUrl);
                 }
-            } else if (currentUrl.endsWith(BookmarkPage.FILENAME)) {
+            } else if (UrlUtils.isBookmarkUrl(currentUrl)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
                     mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, newUrl);
                 }
-            } else if (currentUrl.endsWith(DownloadsPage.FILENAME)) {
+            } else if (UrlUtils.isDownloadsUrl(currentUrl)) {
                 if (url != null) {
                     mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {

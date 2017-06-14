@@ -56,7 +56,10 @@ public final class DownloadsPage {
 
     private static final String END = "</div></body></html>";
 
-    private File mFilesDir;
+    @NonNull
+    private static File getDownloadsPageFile(@NonNull Application application) {
+        return new File(application.getFilesDir(), FILENAME);
+    }
 
     @Inject Application mApp;
     @Inject PreferenceManager mPreferenceManager;
@@ -74,11 +77,9 @@ public final class DownloadsPage {
         return Single.create(new SingleAction<String>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<String> subscriber) {
-                mFilesDir = mApp.getFilesDir();
-
                 buildDownloadsPage();
 
-                File downloadsWebPage = new File(mFilesDir, FILENAME);
+                File downloadsWebPage = new File(getDownloadsPageFile(mApp), FILENAME);
 
                 subscriber.onItem(Constants.FILE + downloadsWebPage);
                 subscriber.onComplete();
@@ -120,7 +121,7 @@ public final class DownloadsPage {
                     FileWriter bookWriter = null;
                     try {
                         //noinspection IOResourceOpenedButNotSafelyClosed
-                        bookWriter = new FileWriter(new File(mFilesDir, FILENAME), false);
+                        bookWriter = new FileWriter(getDownloadsPageFile(mApp), false);
                         bookWriter.write(downloadsBuilder.toString());
                     } catch (IOException e) {
                         e.printStackTrace();

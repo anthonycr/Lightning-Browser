@@ -35,6 +35,7 @@ import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
+import acr.browser.lightning.utils.UrlUtils;
 
 /**
  * TODO Rename this class it doesn't build dialogs only for bookmarks
@@ -72,7 +73,7 @@ public class LightningDialogBuilder {
                                                     @NonNull final UIController uiController,
                                                     @NonNull final String url) {
         final HistoryItem item;
-        if (url.startsWith(Constants.FILE) && url.endsWith(BookmarkPage.FILENAME)) {
+        if (UrlUtils.isBookmarkUrl(url)) {
             // TODO hacky, make a better bookmark mechanism in the future
             final Uri uri = Uri.parse(url);
             final String filename = uri.getLastPathSegment();

@@ -95,7 +95,6 @@ import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
@@ -2178,8 +2177,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void handleBookmarksChange() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-            && currentTab.getUrl().endsWith(BookmarkPage.FILENAME)) {
+        if (currentTab != null && UrlUtils.isBookmarkUrl(currentTab.getUrl())) {
             currentTab.loadBookmarkpage();
         }
         if (currentTab != null) {
@@ -2190,8 +2188,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void handleDownloadDeleted() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
-        if (currentTab != null && currentTab.getUrl().startsWith(Constants.FILE)
-            && currentTab.getUrl().endsWith(DownloadsPage.FILENAME)) {
+        if (currentTab != null && UrlUtils.isDownloadsUrl(currentTab.getUrl())) {
             currentTab.loadDownloadspage();
         }
         if (currentTab != null) {
