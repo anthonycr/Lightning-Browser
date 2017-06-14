@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.URLUtil;
 import android.webkit.WebView;
 
 import com.anthonycr.bonsai.Completable;
@@ -32,7 +33,6 @@ import javax.inject.Inject;
 import acr.browser.lightning.R;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
-import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
 import acr.browser.lightning.constant.StartPage;
@@ -174,15 +174,15 @@ public class TabsManager {
                                 });
                         } else if (UrlUtils.isDownloadsUrl(url)) {
                             new DownloadsPage().getDownloadsPage()
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(Schedulers.main())
-                                    .subscribe(new SingleOnSubscribe<String>() {
-                                        @Override
-                                        public void onItem(@Nullable String item) {
-                                            Preconditions.checkNonNull(item);
-                                            tab.loadUrl(item);
-                                        }
-                                    });
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.main())
+                                .subscribe(new SingleOnSubscribe<String>() {
+                                    @Override
+                                    public void onItem(@Nullable String item) {
+                                        Preconditions.checkNonNull(item);
+                                        tab.loadUrl(item);
+                                    }
+                                });
                         } else if (UrlUtils.isStartPageUrl(url)) {
                             new StartPage().getHomepage()
                                 .subscribeOn(Schedulers.io())
@@ -214,7 +214,7 @@ public class TabsManager {
                 @Override
                 public void onComplete() {
                     if (url != null) {
-                        if (url.startsWith(Constants.FILE)) {
+                        if (URLUtil.isFileUrl(url)) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                             Dialog dialog = builder.setCancelable(true)
                                 .setTitle(R.string.title_warning)

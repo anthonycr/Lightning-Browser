@@ -19,6 +19,7 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 
 import acr.browser.lightning.BuildConfig;
@@ -422,7 +423,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private void homePicker() {
         String currentHomepage;
         mHomepage = mPreferenceManager.getHomepage();
-        if (!mHomepage.startsWith(Constants.ABOUT)) {
+        if (!URLUtil.isAboutUrl(mHomepage)) {
             currentHomepage = mHomepage;
         } else {
             currentHomepage = "https://www.google.com";

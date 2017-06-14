@@ -61,6 +61,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
@@ -656,8 +657,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         switch (mPreferences.getSearchChoice()) {
             case 0:
                 mSearchText = mPreferences.getSearchUrl();
-                if (!mSearchText.startsWith(Constants.HTTP)
-                    && !mSearchText.startsWith(Constants.HTTPS)) {
+                if (!URLUtil.isNetworkUrl(mSearchText)) {
                     mSearchText = Constants.GOOGLE_SEARCH;
                 }
                 break;

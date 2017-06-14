@@ -30,9 +30,9 @@ public final class Constants {
     public static final String YANDEX_SEARCH = "https://yandex.ru/yandsearch?lr=21411&text=";
 
     // Custom local page schemes
-    public static final String SCHEME_HOMEPAGE = "about:home";
-    public static final String SCHEME_BLANK = "about:blank";
-    public static final String SCHEME_BOOKMARKS = "about:bookmarks";
+    public static final String SCHEME_HOMEPAGE = Constants.ABOUT + "home";
+    public static final String SCHEME_BLANK = Constants.ABOUT + "blank";
+    public static final String SCHEME_BOOKMARKS = Constants.ABOUT + "bookmarks";
 
     // Miscellaneous JavaScript
     public static final String JAVASCRIPT_INVERT_PAGE = "javascript:(function(){var e='img {-webkit-filter: invert(100%);'+'-moz-filter: invert(100%);'+'-o-filter: invert(100%);'+'-ms-filter: invert(100%); }',t=document.getElementsByTagName('head')[0],n=document.createElement('style');if(!window.counter){window.counter=1}else{window.counter++;if(window.counter%2==0){var e='html {-webkit-filter: invert(0%); -moz-filter: invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'}}n.type='text/css';if(n.styleSheet){n.styleSheet.cssText=e}else{n.appendChild(document.createTextNode(e))}t.appendChild(n)})();";

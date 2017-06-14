@@ -32,6 +32,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import java.io.Closeable;
@@ -175,7 +176,7 @@ public final class Utils {
     public static String getDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 
-        boolean ssl = url.startsWith(Constants.HTTPS);
+        boolean ssl = URLUtil.isHttpsUrl(url);
         int index = url.indexOf('/', 8);
         if (index != -1) {
             url = url.substring(0, index);

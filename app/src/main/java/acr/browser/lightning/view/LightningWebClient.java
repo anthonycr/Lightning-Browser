@@ -22,6 +22,7 @@ import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -305,7 +306,7 @@ public class LightningWebClient extends WebViewClient {
             // If we are in incognito, immediately load, we don't want the url to leave the app
             return continueLoadingUrl(view, url, headers);
         }
-        if (url.startsWith(Constants.ABOUT)) {
+        if (URLUtil.isAboutUrl(url)) {
             // If this is an about page, immediately load, we don't need to leave the app
             return continueLoadingUrl(view, url, headers);
         }
@@ -360,7 +361,7 @@ public class LightningWebClient extends WebViewClient {
                 }
                 return true;
             }
-        } else if (url.startsWith(Constants.FILE) && !UrlUtils.isSpecialUrl(url)) {
+        } else if (URLUtil.isFileUrl(url) && !UrlUtils.isSpecialUrl(url)) {
             File file = new File(url.replace(Constants.FILE, ""));
 
             if (file.exists()) {
