@@ -3,7 +3,6 @@
  */
 package acr.browser.lightning.utils;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -33,11 +32,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.Toast;
-
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
 
 import java.io.Closeable;
 import java.io.File;
@@ -52,8 +47,6 @@ import acr.browser.lightning.activity.MainActivity;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.download.DownloadHandler;
-import acr.browser.lightning.preference.PreferenceManager;
 
 public final class Utils {
 
@@ -61,35 +54,6 @@ public final class Utils {
 
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
-    /**
-     * Downloads a file from the specified URL. Handles permissions
-     * requests, and creates all the necessary dialogs that must be
-     * showed to the user.
-     *
-     * @param activity           activity needed to created dialogs.
-     * @param url                url to download from.
-     * @param userAgent          the user agent of the browser.
-     * @param contentDisposition the content description of the file.
-     */
-    public static void downloadFile(@NonNull final Activity activity, @NonNull final PreferenceManager manager, final String url,
-                                    final String userAgent, final String contentDisposition) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsResultAction() {
-            @Override
-            public void onGranted() {
-                String fileName = URLUtil.guessFileName(url, null, null);
-                DownloadHandler.onDownloadStart(activity, manager, url, userAgent, contentDisposition, null);
-                Log.i(TAG, "Downloading: " + fileName);
-            }
-
-            @Override
-            public void onDenied(String permission) {
-                // TODO Show Message
-            }
-        });
-
     }
 
     /**
