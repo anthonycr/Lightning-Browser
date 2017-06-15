@@ -105,7 +105,7 @@ public class LightningView {
     @NonNull private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
     @Inject PreferenceManager mPreferences;
-    @Inject LightningDialogBuilder mBookmarksDialogBuilder;
+    @Inject LightningDialogBuilder mDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
@@ -249,15 +249,15 @@ public class LightningView {
      */
     public void loadDownloadspage() {
         new DownloadsPage().getDownloadsPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(new SingleOnSubscribe<String>() {
-                    @Override
-                    public void onItem(@Nullable String item) {
-                        Preconditions.checkNonNull(item);
-                        loadUrl(item);
-                    }
-                });
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.main())
+            .subscribe(new SingleOnSubscribe<String>() {
+                @Override
+                public void onItem(@Nullable String item) {
+                    Preconditions.checkNonNull(item);
+                    loadUrl(item);
+                }
+            });
     }
 
     /**
@@ -990,43 +990,43 @@ public class LightningView {
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
             if (UrlUtils.isHistoryUrl(currentUrl)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, url);
+                    mDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    mBookmarksDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, newUrl);
+                    mDialogBuilder.showLongPressedHistoryLinkDialog(mActivity, mUIController, newUrl);
                 }
             } else if (UrlUtils.isBookmarkUrl(currentUrl)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, url);
+                    mDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    mBookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, newUrl);
+                    mDialogBuilder.showLongPressedDialogForBookmarkUrl(mActivity, mUIController, newUrl);
                 }
             } else if (UrlUtils.isDownloadsUrl(currentUrl)) {
                 if (url != null) {
-                    mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, url);
+                    mDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, url);
                 } else if (result != null && result.getExtra() != null) {
                     final String newUrl = result.getExtra();
-                    mBookmarksDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, newUrl);
+                    mDialogBuilder.showLongPressedDialogForDownloadUrl(mActivity, mUIController, newUrl);
                 }
             }
         } else {
             if (url != null) {
                 if (result != null) {
                     if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                        mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, mUIController, url, getUserAgent());
+                        mDialogBuilder.showLongPressImageDialog(mActivity, mUIController, url, getUserAgent());
                     } else {
-                        mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, url);
+                        mDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, url);
                     }
                 } else {
-                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, url);
+                    mDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, url);
                 }
             } else if (result != null && result.getExtra() != null) {
                 final String newUrl = result.getExtra();
                 if (result.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-                    mBookmarksDialogBuilder.showLongPressImageDialog(mActivity, mUIController, newUrl, getUserAgent());
+                    mDialogBuilder.showLongPressImageDialog(mActivity, mUIController, newUrl, getUserAgent());
                 } else {
-                    mBookmarksDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, newUrl);
+                    mDialogBuilder.showLongPressLinkDialog(mActivity, mUIController, newUrl);
                 }
             }
         }
