@@ -68,7 +68,7 @@ public class DownloadsDatabase extends SQLiteOpenHelper implements DownloadsMode
      */
     @WorkerThread
     @NonNull
-    private SQLiteDatabase lazyDatabase() {
+    private synchronized SQLiteDatabase lazyDatabase() {
         if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = getWritableDatabase();
         }

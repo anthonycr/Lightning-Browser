@@ -75,7 +75,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
      */
     @WorkerThread
     @NonNull
-    private SQLiteDatabase lazyDatabase() {
+    private synchronized SQLiteDatabase lazyDatabase() {
         if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = getWritableDatabase();
         }

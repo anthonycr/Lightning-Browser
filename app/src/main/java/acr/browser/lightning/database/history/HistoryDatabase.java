@@ -92,7 +92,7 @@ public class HistoryDatabase extends SQLiteOpenHelper implements HistoryModel {
 
     @WorkerThread
     @NonNull
-    private SQLiteDatabase lazyDatabase() {
+    private synchronized SQLiteDatabase lazyDatabase() {
         if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = this.getWritableDatabase();
         }
