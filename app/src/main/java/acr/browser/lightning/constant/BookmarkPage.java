@@ -190,8 +190,8 @@ public final class BookmarkPage {
                 if (bookmarkUri != null) {
                     File faviconFile = FaviconModel.getFaviconCacheFile(mApp, bookmarkUri);
                     if (!faviconFile.exists()) {
-                        mFaviconModel.cacheFaviconForUrl(mFaviconModel.getDefaultBitmapForString(item.getTitle()), item.getUrl())
-                            .subscribe();
+                        Bitmap defaultFavicon = mFaviconModel.getDefaultBitmapForString(item.getTitle());
+                        mFaviconModel.cacheFaviconForUrl(defaultFavicon, item.getUrl()).subscribe();
                     }
 
                     faviconFileUrl = Constants.FILE + faviconFile;

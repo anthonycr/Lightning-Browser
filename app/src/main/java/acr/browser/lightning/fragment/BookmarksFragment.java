@@ -538,7 +538,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 SubscriptionUtils.safeUnsubscribe(oldSubscription);
 
                 final Subscription faviconSubscription = mFaviconModel.faviconForUrl(url, web.getTitle())
-                    .subscribeOn(Schedulers.worker())
+                    .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.main())
                     .subscribe(new SingleOnSubscribe<Bitmap>() {
                         @Override

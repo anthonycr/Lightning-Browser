@@ -73,15 +73,9 @@ public class LightningChromeClient extends WebChromeClient {
             return;
         }
 
-        Uri uri = Uri.parse(url);
-
-        if (uri.getHost() == null) {
-            return;
-        }
-
         mFaviconModel.cacheFaviconForUrl(icon, url)
-                .subscribeOn(Schedulers.io())
-                .subscribe();
+            .subscribeOn(Schedulers.io())
+            .subscribe();
     }
 
 
@@ -114,21 +108,21 @@ public class LightningChromeClient extends WebChromeClient {
                     org = origin;
                 }
                 builder.setMessage(org + mActivity.getString(R.string.message_location))
-                        .setCancelable(true)
-                        .setPositiveButton(mActivity.getString(R.string.action_allow),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        callback.invoke(origin, true, remember);
-                                    }
-                                })
-                        .setNegativeButton(mActivity.getString(R.string.action_dont_allow),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        callback.invoke(origin, false, remember);
-                                    }
-                                });
+                    .setCancelable(true)
+                    .setPositiveButton(mActivity.getString(R.string.action_allow),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                callback.invoke(origin, true, remember);
+                            }
+                        })
+                    .setNegativeButton(mActivity.getString(R.string.action_dont_allow),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                callback.invoke(origin, false, remember);
+                            }
+                        });
                 AlertDialog alert = builder.create();
                 alert.show();
                 BrowserDialog.setDialogSize(mActivity, alert);
