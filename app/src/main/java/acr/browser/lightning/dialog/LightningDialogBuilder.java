@@ -91,6 +91,7 @@ public class LightningDialogBuilder {
                 .subscribe(new SingleOnSubscribe<HistoryItem>() {
                     @Override
                     public void onItem(@Nullable HistoryItem historyItem) {
+                        // TODO: 6/14/17 figure out solution to case where slashes get appended to root urls causing the item to be null 
                         if (historyItem != null) {
                             showLongPressedDialogForBookmarkUrl(activity, uiController, historyItem);
                         }
