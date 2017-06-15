@@ -1,10 +1,8 @@
 package acr.browser.lightning.interpolator;
 
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.view.animation.DecelerateInterpolator;
+import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.view.animation.Interpolator;
-import android.view.animation.PathInterpolator;
 
 /**
  * Bezier decelerate curve similar to iOS.
@@ -17,11 +15,7 @@ public class BezierDecelerateInterpolator implements Interpolator {
     private static final Interpolator PATH_INTERPOLATOR;
 
     static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            PATH_INTERPOLATOR = new PathInterpolator(0.25f, 0.1f, 0.25f, 1);
-        } else {
-            PATH_INTERPOLATOR = new DecelerateInterpolator();
-        }
+        PATH_INTERPOLATOR = PathInterpolatorCompat.create(0.25f, 0.1f, 0.25f, 1);
     }
 
     @Override
