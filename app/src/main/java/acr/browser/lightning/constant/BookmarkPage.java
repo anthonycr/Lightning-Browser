@@ -81,7 +81,7 @@ public final class BookmarkPage {
     private static final String DEFAULT_ICON = "default.png";
 
     @NonNull
-    private static File getBookmarkPage(@NonNull Application application, @Nullable String folder) {
+    public static File getBookmarkPage(@NonNull Application application, @Nullable String folder) {
         String prefix = !TextUtils.isEmpty(folder) ? folder + '-' : "";
         return new File(application.getFilesDir(), prefix + FILENAME);
     }

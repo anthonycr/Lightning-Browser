@@ -55,7 +55,7 @@ public class StartPage {
     private static final String END = "\" + document.getElementById(\"search_input\").value;document.getElementById(\"search_input\").value = \"\";}return false;}</script></body></html>";
 
     @NonNull
-    private static File getStartPageFile(@NonNull Application application) {
+    public static File getStartPageFile(@NonNull Application application) {
         return new File(application.getFilesDir(), FILENAME);
     }
 
