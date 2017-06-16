@@ -6,6 +6,7 @@ package acr.browser.lightning.constant;
 import android.app.Application;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
@@ -29,9 +30,8 @@ import acr.browser.lightning.utils.Utils;
 
 public final class DownloadsPage {
 
-    /**
-     * The download page standard suffix
-     */
+    private static final String TAG = "DownloadsPage";
+
     public static final String FILENAME = "downloads.html";
 
     private static final String HEADING_1 = "<!DOCTYPE html><html xmlns=http://www.w3.org/1999/xhtml>\n" +
@@ -41,10 +41,12 @@ public final class DownloadsPage {
         "<meta name=viewport content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>\n" +
         "<title>";
 
-    private static final String HEADING_2 = "</title>" +
-        "</head>" +
-        "<style>body{background:#f5f5f5;}.box{vertical-align:middle;position:relative; display: block; margin: 10px;padding:10px; background-color:#fff;box-shadow: 0px 2px 4px rgba( 0, 0, 0, 0.25 );font-family: Arial;color: #444;font-size: 12px;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius: 2px;}.box a { width: 100%; height: 100%; position: absolute; left: 0; top: 0;}.black {color: black;font-size: 15px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}.font {color: gray;font-size: 10px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}</style>" +
-        "<body><div id='content'>";
+    private static final String HEADING_2 = "</title></head><style>body,html {margin: 0px; padding: 0px;}" +
+        ".box { vertical-align:middle;position:relative; display: block; margin: 0px;padding-left:14px;padding-right:14px;padding-top:9px;padding-bottom:9px; background-color:#fff;border-bottom: 1px solid #d2d2d2;font-family: Arial;color: #444;font-size: 12px;}" +
+        ".box a { width: 100%; height: 100%; position: absolute; left: 0; top: 0;}" +
+        ".black {color: black;font-size: 15px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}" +
+        ".font {color: gray;font-size: 10px;font-family: Arial; white-space: nowrap; overflow: hidden;margin:auto; text-overflow: ellipsis; -o-text-overflow: ellipsis; -ms-text-overflow: ellipsis;}" +
+        "</style><body><div id=\"content\">";
 
     private static final String PART1 = "<div class=box><a href='";
 
@@ -124,7 +126,7 @@ public final class DownloadsPage {
                         bookWriter = new FileWriter(getDownloadsPageFile(mApp), false);
                         bookWriter.write(downloadsBuilder.toString());
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Unable to write download page to disk", e);
                     } finally {
                         Utils.close(bookWriter);
                     }
