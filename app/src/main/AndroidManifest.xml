@@ -40,7 +40,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:alwaysRetainTaskState="true"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/Theme.LightTheme"
@@ -123,7 +123,7 @@
         </activity>
         <activity
             android:name=".activity.SettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:label="@string/settings"
             android:theme="@style/Theme.SettingsTheme">
             <intent-filter>
@@ -135,7 +135,7 @@
         <activity
             android:name=".activity.IncognitoActivity"
             android:alwaysRetainTaskState="true"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/Theme.DarkTheme"
@@ -148,7 +148,7 @@
         </activity>
         <activity
             android:name=".activity.ReadingActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
             android:label="@string/reading_mode"
             android:theme="@style/Theme.SettingsTheme">
             <intent-filter>
