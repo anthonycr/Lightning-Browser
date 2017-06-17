@@ -105,6 +105,13 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         onCreate(db);
     }
 
+    /**
+     * Binds a {@link HistoryItem} to {@link ContentValues}.
+     *
+     * @param bookmarkItem the bookmark to bind.
+     * @return a valid values object that can be inserted
+     * into the database.
+     */
     @NonNull
     private static ContentValues bindBookmarkToContentValues(@NonNull HistoryItem bookmarkItem) {
         ContentValues contentValues = new ContentValues(4);
@@ -116,6 +123,15 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         return contentValues;
     }
 
+    /**
+     * Binds a cursor to a {@link HistoryItem}. This is
+     * a non consuming operation on the cursor. Note that
+     * this operation is not safe to perform on a cursor
+     * unless you know that the cursor is of history items.
+     *
+     * @param cursor the cursor to read from.
+     * @return a valid item containing all the pertinent information.
+     */
     @NonNull
     private static HistoryItem bindCursorToHistoryItem(@NonNull Cursor cursor) {
         HistoryItem bookmark = new HistoryItem();
@@ -129,6 +145,13 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         return bookmark;
     }
 
+    /**
+     * Binds a cursor to a list of {@link HistoryItem}.
+     * This operation consumes the cursor.
+     *
+     * @param cursor the cursor to bind.
+     * @return a valid list of history items, may be empty.
+     */
     @NonNull
     private static List<HistoryItem> bindCursorToHistoryItemList(@NonNull Cursor cursor) {
         List<HistoryItem> bookmarks = new ArrayList<>();
@@ -142,13 +165,91 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         return bookmarks;
     }
 
+    /**
+     * URLs can represent the same thing with or without a trailing slash,
+     * for instance, google.com/ is the same page as google.com. Since these
+     * can be represented as different bookmarks within the bookmark database,
+     * it is important to be able to get the alternate version of a URL.
+     *
+     * @param url the string that might have a trailing slash.
+     * @return a string without a trailing slash if the original had one,
+     * or a string with a trailing slash if the original did not.
+     */
+    @NonNull
+    private static String alternateSlashUrl(@NonNull String url) {
+        if (url.endsWith("/")) {
+            return url.substring(0, url.length() - 1);
+        } else {
+            return url + '/';
+        }
+    }
+
+    /**
+     * Queries the database for bookmarks with the provided URL. If it
+     * cannot find any bookmarks with the given URL, it will try to query
+     * for bookmarks with the {@link #alternateSlashUrl(String)} as its URL.
+     *
+     * @param url the URL to query for.
+     * @return a cursor with bookmarks matching the URL.
+     */
+    @NonNull
+    private Cursor queryWithOptionalEndSlash(@NonNull String url) {
+        Cursor cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{url}, null, null, null, "1");
+
+        if (cursor.getCount() == 0) {
+            String alternateUrl = alternateSlashUrl(url);
+            cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{alternateUrl}, null, null, null, "1");
+        }
+
+        return cursor;
+    }
+
+    /**
+     * Deletes a bookmark from the database with the provided URL. If it
+     * cannot find any bookmark with the given URL, it will try to delete
+     * a bookmark with the {@link #alternateSlashUrl(String)} as its URL.
+     *
+     * @param url the URL to delete.
+     * @return the number of deleted rows.
+     */
+    private int deleteWithOptionalEndSlash(@NonNull String url) {
+        int deletedRows = lazyDatabase().delete(TABLE_BOOKMARK, KEY_URL + "=?", new String[]{url});
+
+        if (deletedRows == 0) {
+            String alternateUrl = alternateSlashUrl(url);
+            deletedRows = lazyDatabase().delete(TABLE_BOOKMARK, KEY_URL + "=?", new String[]{alternateUrl});
+        }
+
+        return deletedRows;
+    }
+
+    /**
+     * Updates a bookmark in the database with the provided URL. If it
+     * cannot find any bookmark with the given URL, it will try to update
+     * a bookmark with the {@link #alternateSlashUrl(String)} as its URL.
+     *
+     * @param url           the URL to update.
+     * @param contentValues the new values to update to.
+     * @return the numebr of rows updated.
+     */
+    private int updateWithOptionalEndSlash(@NonNull String url, @NonNull ContentValues contentValues) {
+        int updatedRows = lazyDatabase().update(TABLE_BOOKMARK, contentValues, KEY_URL + "=?", new String[]{url});
+
+        if (updatedRows == 0) {
+            String alternateUrl = alternateSlashUrl(url);
+            updatedRows = lazyDatabase().update(TABLE_BOOKMARK, contentValues, KEY_URL + "=?", new String[]{alternateUrl});
+        }
+
+        return updatedRows;
+    }
+
     @NonNull
     @Override
     public Single<HistoryItem> findBookmarkForUrl(@NonNull final String url) {
         return Single.create(new SingleAction<HistoryItem>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<HistoryItem> subscriber) {
-                Cursor cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{url}, null, null, null, "1");
+                Cursor cursor = queryWithOptionalEndSlash(url);
 
                 if (cursor.moveToFirst()) {
                     subscriber.onItem(bindCursorToHistoryItem(cursor));
@@ -168,7 +269,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         return Single.create(new SingleAction<Boolean>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<Boolean> subscriber) {
-                Cursor cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{url}, null, null, null, "1");
+                Cursor cursor = queryWithOptionalEndSlash(url);
 
                 subscriber.onItem(cursor.moveToFirst());
 
@@ -184,7 +285,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         return Single.create(new SingleAction<Boolean>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<Boolean> subscriber) {
-                Cursor cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{item.getUrl()}, null, null, null, "1");
+                Cursor cursor = queryWithOptionalEndSlash(item.getUrl());
 
                 if (cursor.moveToFirst()) {
                     cursor.close();
@@ -229,7 +330,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         return Single.create(new SingleAction<Boolean>() {
             @Override
             public void onSubscribe(@NonNull SingleSubscriber<Boolean> subscriber) {
-                int rows = lazyDatabase().delete(TABLE_BOOKMARK, KEY_URL + "=?", new String[]{bookmark.getUrl()});
+                int rows = deleteWithOptionalEndSlash(bookmark.getUrl());
 
                 subscriber.onItem(rows > 0);
                 subscriber.onComplete();
@@ -290,7 +391,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
                 }
                 ContentValues contentValues = bindBookmarkToContentValues(newBookmark);
 
-                lazyDatabase().update(TABLE_BOOKMARK, contentValues, KEY_URL + "=?", new String[]{oldBookmark.getUrl()});
+                updateWithOptionalEndSlash(oldBookmark.getUrl(), contentValues);
 
                 subscriber.onComplete();
             }
