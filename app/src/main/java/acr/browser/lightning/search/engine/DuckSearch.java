@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.engine;
 
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 
 /**
@@ -10,7 +11,7 @@ import acr.browser.lightning.constant.Constants;
 public class DuckSearch extends BaseSearchEngine {
 
     public DuckSearch() {
-        super("file:///android_asset/duckduckgo.png", Constants.DUCK_SEARCH);
+        super("file:///android_asset/duckduckgo.png", Constants.DUCK_SEARCH, R.string.search_engine_duckduckgo);
     }
 
 }

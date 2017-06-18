@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.engine;
 
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 
 /**
@@ -10,6 +11,6 @@ import acr.browser.lightning.constant.Constants;
 public class GoogleSearch extends BaseSearchEngine {
 
     public GoogleSearch() {
-        super("file:///android_asset/google.png", Constants.GOOGLE_SEARCH);
+        super("file:///android_asset/google.png", Constants.GOOGLE_SEARCH, R.string.search_engine_google);
     }
 }

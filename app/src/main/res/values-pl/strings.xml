@@ -105,7 +105,7 @@
     <string name="max_tabs">Maksymalna liczba otwartych kart osiągnięta</string>
     <string name="message_text_copied">Tekst został skopiowany do schowka</string>
     <string name="message_link_copied">Link został skopiowany do schowka</string>
-    <string name="custom_url">Własny URL</string>
+    <string name="search_engine_custom">Własny URL</string>
     <string name="message_blocked_local">Wczytywanie lokalnego pliku zostało zablokowane</string>
     <string name="licenses">Licencje Open Source</string>
     <string name="suggestion">Wyszukaj</string>

@@ -124,7 +124,7 @@
     <string name="max_tabs">Hai raggiunto il numero massimo di schede apribili</string>
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
-    <string name="custom_url">URL personalizzato</string>
+    <string name="search_engine_custom">URL personalizzato</string>
     <string name="message_blocked_local">Caricamento file locale bloccato</string>
     <string name="licenses">Licenze Open Source</string>
     <string name="suggestion">Cerca</string>

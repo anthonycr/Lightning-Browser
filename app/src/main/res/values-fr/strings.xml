@@ -125,7 +125,7 @@
     <string name="max_tabs">Onglets maximuns atteint</string>
     <string name="message_text_copied">Texte copié dans le presse-papiers</string>
     <string name="message_link_copied">Adresse copiée dans le presse-papiers</string>    
-    <string name="custom_url">Adresse personnalisée</string>
+    <string name="search_engine_custom">Adresse personnalisée</string>
     <string name="message_blocked_local">Le fichier local a été bloqué au chargement</string>
     <string name="licenses">Licences open source</string>
     <string name="suggestion">Recherche</string>

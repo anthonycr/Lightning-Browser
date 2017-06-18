@@ -103,7 +103,7 @@
     <string name="max_tabs">Μέγιστος αριθμός καρτελών ξεπεράστηκε</string>
     <string name="message_text_copied">Το κείμενο αντιγράφτηκε</string>
     <string name="message_link_copied">Ο σύνδεσμος αντιγράφτηκε</string>
-    <string name="custom_url">Ειδικό URL</string>
+    <string name="search_engine_custom">Ειδικό URL</string>
     <string name="message_blocked_local">Τοπικά αρχεία εχουν μπλοκαριστεί απο την φόρτωση</string>
     <string name="licenses">Άδειες ανοιχτού κώδικα</string>
     <string name="suggestion">Αναζήτηση για</string>

@@ -2,6 +2,9 @@ package acr.browser.lightning.search;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import acr.browser.lightning.app.BrowserApp;
@@ -59,6 +62,51 @@ public class SearchEngineProvider {
             case 10:
                 return new YandexSearch();
         }
+    }
+
+    public int mapSearchEngineToPreferenceIndex(@NonNull BaseSearchEngine searchEngine) {
+        if (searchEngine instanceof CustomSearch) {
+            return 0;
+        } else if (searchEngine instanceof GoogleSearch) {
+            return 1;
+        } else if (searchEngine instanceof AskSearch) {
+            return 2;
+        } else if (searchEngine instanceof BingSearch) {
+            return 3;
+        } else if (searchEngine instanceof YahooSearch) {
+            return 4;
+        } else if (searchEngine instanceof StartPageSearch) {
+            return 5;
+        } else if (searchEngine instanceof StartPageMobileSearch) {
+            return 6;
+        } else if (searchEngine instanceof DuckSearch) {
+            return 7;
+        } else if (searchEngine instanceof DuckLiteSearch) {
+            return 8;
+        } else if (searchEngine instanceof BaiduSearch) {
+            return 9;
+        } else if (searchEngine instanceof YandexSearch) {
+            return 10;
+        } else {
+            throw new UnsupportedOperationException("Unknown search engine provided: " + searchEngine.getClass());
+        }
+    }
+
+    @NonNull
+    public List<BaseSearchEngine> getAllSearchEngines() {
+        return new ArrayList<BaseSearchEngine>(11) {{
+            add(new CustomSearch(mPreferenceManager.getSearchUrl()));
+            add(new GoogleSearch());
+            add(new AskSearch());
+            add(new BingSearch());
+            add(new YahooSearch());
+            add(new StartPageSearch());
+            add(new StartPageMobileSearch());
+            add(new DuckSearch());
+            add(new DuckLiteSearch());
+            add(new BaiduSearch());
+            add(new YandexSearch());
+        }};
     }
 
 }

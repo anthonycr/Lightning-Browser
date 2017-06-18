@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.engine;
 
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 
 /**
@@ -11,7 +12,7 @@ import acr.browser.lightning.constant.Constants;
 public class YandexSearch extends BaseSearchEngine {
 
     public YandexSearch() {
-        super("file:///android_asset/yandex.png", Constants.YANDEX_SEARCH);
+        super("file:///android_asset/yandex.png", Constants.YANDEX_SEARCH, R.string.search_engine_yandex);
     }
 
 }

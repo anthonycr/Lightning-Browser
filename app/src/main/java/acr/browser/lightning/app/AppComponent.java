@@ -19,6 +19,7 @@ import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.fragment.BookmarkSettingsFragment;
 import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.DebugSettingsFragment;
+import acr.browser.lightning.fragment.GeneralSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
@@ -87,5 +88,7 @@ public interface AppComponent {
     void inject(SearchBoxModel searchBoxModel);
 
     void inject(SearchEngineProvider searchEngineProvider);
+
+    void inject(GeneralSettingsFragment generalSettingsFragment);
 
 }

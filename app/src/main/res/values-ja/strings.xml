@@ -110,7 +110,7 @@
     <string name="max_tabs">これ以上タブは開けません</string>
     <string name="message_text_copied">テキストをクリップボードにコピーしました</string>
     <string name="message_link_copied">リンクをクリップボードにコピーしました</string>
-    <string name="custom_url">カスタム URL</string>
+    <string name="search_engine_custom">カスタム URL</string>
     <string name="message_blocked_local">ファイルを読み込めませんでした</string>
     <string name="licenses">オープンソース ライセンス</string>
     <string name="suggestion">検索 :</string>

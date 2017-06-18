@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.engine;
 
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 
 /**
@@ -11,7 +12,7 @@ import acr.browser.lightning.constant.Constants;
 public class YahooSearch extends BaseSearchEngine {
 
     public YahooSearch() {
-        super("file:///android_asset/yahoo.png", Constants.YAHOO_SEARCH);
+        super("file:///android_asset/yahoo.png", Constants.YAHOO_SEARCH, R.string.search_engine_yahoo);
     }
 
 }

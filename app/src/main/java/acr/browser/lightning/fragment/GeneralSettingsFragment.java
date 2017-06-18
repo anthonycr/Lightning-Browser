@@ -22,10 +22,18 @@ import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.EditText;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
+import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.search.SearchEngineProvider;
+import acr.browser.lightning.search.engine.BaseSearchEngine;
+import acr.browser.lightning.search.engine.CustomSearch;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -54,11 +62,15 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private int mAgentChoice;
     private String mHomepage;
 
+    @Inject SearchEngineProvider mSearchEngineProvider;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_general);
+
+        BrowserApp.getAppComponent().inject(this);
 
         mActivity = getActivity();
 
@@ -107,7 +119,8 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             mPreferenceManager.setFlashSupport(0);
         }
 
-        setSearchEngineSummary(mPreferenceManager.getSearchChoice());
+        BaseSearchEngine currentSearchEngine = mSearchEngineProvider.getCurrentSearchEngine();
+        setSearchEngineSummary(currentSearchEngine);
 
         downloadloc.setSummary(mDownloadLocation);
 
@@ -175,18 +188,18 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
     }
 
-    private void searchUrlPicker() {
+    private void showUrlPicker(@NonNull final CustomSearch customSearch) {
 
         BrowserDialog.showEditText(mActivity,
-            R.string.custom_url,
-            R.string.custom_url,
+            R.string.search_engine_custom,
+            R.string.search_engine_custom,
             mPreferenceManager.getSearchUrl(),
             R.string.action_ok,
             new BrowserDialog.EditorListener() {
                 @Override
                 public void onClick(String text) {
                     mPreferenceManager.setSearchUrl(text);
-                    searchengine.setSummary(mActivity.getString(R.string.custom_url) + ": " + text);
+                    setSearchEngineSummary(customSearch);
                 }
             });
 
@@ -299,13 +312,24 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
+    @NonNull
+    private CharSequence[] convertSearchEngineToString(@NonNull List<BaseSearchEngine> searchEngines) {
+        CharSequence[] titles = new CharSequence[searchEngines.size()];
+
+        for (int n = 0; n < searchEngines.size(); n++) {
+            titles[n] = getString(searchEngines.get(n).getTitleRes());
+        }
+
+        return titles;
+    }
+
     private void searchDialog() {
         AlertDialog.Builder picker = new AlertDialog.Builder(mActivity);
         picker.setTitle(getResources().getString(R.string.title_search_engine));
-        CharSequence[] chars = {getResources().getString(R.string.custom_url), "Google",
-            "Ask", "Bing", "Yahoo", "StartPage", "StartPage (Mobile)",
-            "DuckDuckGo (Privacy)", "DuckDuckGo Lite (Privacy)", "Baidu (Chinese)",
-            "Yandex (Russian)"};
+
+        final List<BaseSearchEngine> searchEngineList = mSearchEngineProvider.getAllSearchEngines();
+
+        CharSequence[] chars = convertSearchEngineToString(searchEngineList);
 
         int n = mPreferenceManager.getSearchChoice();
 
@@ -313,8 +337,19 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPreferenceManager.setSearchChoice(which);
-                setSearchEngineSummary(which);
+                BaseSearchEngine searchEngine = searchEngineList.get(which);
+
+                // Store the search engine preference
+                int preferencesIndex = mSearchEngineProvider.mapSearchEngineToPreferenceIndex(searchEngine);
+                mPreferenceManager.setSearchChoice(preferencesIndex);
+
+                if (searchEngine instanceof CustomSearch) {
+                    // Show the URL picker
+                    showUrlPicker((CustomSearch) searchEngine);
+                } else {
+                    // Set the new search engine summary
+                    setSearchEngineSummary(searchEngine);
+                }
             }
         });
         picker.setPositiveButton(R.string.action_ok, null);
@@ -549,40 +584,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void setSearchEngineSummary(int which) {
-        switch (which) {
-            case 0:
-                searchUrlPicker();
-                break;
-            case 1:
-                searchengine.setSummary("Google");
-                break;
-            case 2:
-                searchengine.setSummary("Ask");
-                break;
-            case 3:
-                searchengine.setSummary("Bing");
-                break;
-            case 4:
-                searchengine.setSummary("Yahoo");
-                break;
-            case 5:
-                searchengine.setSummary("StartPage");
-                break;
-            case 6:
-                searchengine.setSummary("StartPage (Mobile)");
-                break;
-            case 7:
-                searchengine.setSummary("DuckDuckGo");
-                break;
-            case 8:
-                searchengine.setSummary("DuckDuckGo Lite");
-                break;
-            case 9:
-                searchengine.setSummary("Baidu");
-                break;
-            case 10:
-                searchengine.setSummary("Yandex");
+    private void setSearchEngineSummary(BaseSearchEngine baseSearchEngine) {
+        if (baseSearchEngine instanceof CustomSearch) {
+            searchengine.setSummary(mPreferenceManager.getSearchUrl());
+        } else {
+            searchengine.setSummary(getString(baseSearchEngine.getTitleRes()));
         }
     }
 
