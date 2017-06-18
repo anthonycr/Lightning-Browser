@@ -31,11 +31,11 @@ public class SearchBoxModel {
 
     /**
      * Returns the contents of the search box based on a variety of factors.
-     * <li>
-     * <ul>The user's preference to show either the URL, domain, or page title</ul>
-     * <ul>Whether or not the current page is loading</ul>
-     * <ul>Whether or not the current page is a Lightning generated page.</ul>
-     * </li>
+     * <ul>
+     * <li>The user's preference to show either the URL, domain, or page title</li>
+     * <li>Whether or not the current page is loading</li>
+     * <li>Whether or not the current page is a Lightning generated page.</li>
+     * </ul>
      * This method uses the URL, title, and loading information to determine what
      * should be displayed by the search box.
      *
