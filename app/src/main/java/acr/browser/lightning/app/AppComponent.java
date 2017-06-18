@@ -22,6 +22,7 @@ import acr.browser.lightning.fragment.DebugSettingsFragment;
 import acr.browser.lightning.fragment.LightningPreferenceFragment;
 import acr.browser.lightning.fragment.PrivacySettingsFragment;
 import acr.browser.lightning.fragment.TabsFragment;
+import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.view.LightningChromeClient;
@@ -84,5 +85,7 @@ public interface AppComponent {
     void inject(DownloadHandler downloadHandler);
 
     void inject(SearchBoxModel searchBoxModel);
+
+    void inject(SearchEngineProvider searchEngineProvider);
 
 }

@@ -61,7 +61,6 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebIconDatabase;
@@ -110,7 +109,9 @@ import acr.browser.lightning.fragment.BookmarksFragment;
 import acr.browser.lightning.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.receiver.NetworkReceiver;
+import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.SuggestionsAdapter;
+import acr.browser.lightning.search.engine.BaseSearchEngine;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -191,6 +192,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
 
     @Inject SearchBoxModel mSearchBoxModel;
+
+    @Inject SearchEngineProvider mSearchEngineProvider;
 
     private TabsManager mTabsManager;
 
@@ -657,44 +660,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         setFullscreen(mPreferences.getHideStatusBarEnabled(), false);
 
-        switch (mPreferences.getSearchChoice()) {
-            case 0:
-                mSearchText = mPreferences.getSearchUrl();
-                if (!URLUtil.isNetworkUrl(mSearchText)) {
-                    mSearchText = Constants.GOOGLE_SEARCH;
-                }
-                break;
-            case 1:
-                mSearchText = Constants.GOOGLE_SEARCH;
-                break;
-            case 2:
-                mSearchText = Constants.ASK_SEARCH;
-                break;
-            case 3:
-                mSearchText = Constants.BING_SEARCH;
-                break;
-            case 4:
-                mSearchText = Constants.YAHOO_SEARCH;
-                break;
-            case 5:
-                mSearchText = Constants.STARTPAGE_SEARCH;
-                break;
-            case 6:
-                mSearchText = Constants.STARTPAGE_MOBILE_SEARCH;
-                break;
-            case 7:
-                mSearchText = Constants.DUCK_SEARCH;
-                break;
-            case 8:
-                mSearchText = Constants.DUCK_LITE_SEARCH;
-                break;
-            case 9:
-                mSearchText = Constants.BAIDU_SEARCH;
-                break;
-            case 10:
-                mSearchText = Constants.YANDEX_SEARCH;
-                break;
-        }
+        BaseSearchEngine currentSearchEngine = mSearchEngineProvider.getCurrentSearchEngine();
+        mSearchText = currentSearchEngine.getQueryUrl();
 
         updateCookiePreference().subscribeOn(Schedulers.worker()).subscribe();
         mProxyUtils.updateProxySettings(this);
