@@ -121,7 +121,7 @@ public class BrowserPresenter {
                 mView.updateProgress(newTab.getProgress());
                 mView.setBackButtonEnabled(newTab.canGoBack());
                 mView.setForwardButtonEnabled(newTab.canGoForward());
-                mView.updateUrl(newTab.getUrl(), true);
+                mView.updateUrl(newTab.getUrl(), false);
                 mView.setTabView(newTab.getWebView());
                 int index = mTabsModel.indexOfTab(newTab);
                 if (index >= 0) {

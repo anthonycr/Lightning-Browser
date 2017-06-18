@@ -95,6 +95,7 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
+import acr.browser.lightning.browser.SearchBoxModel;
 import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
@@ -188,6 +189,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject HistoryModel mHistoryModel;
 
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
+
+    @Inject SearchBoxModel mSearchBoxModel;
 
     private TabsManager mTabsManager;
 
@@ -510,7 +513,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             final LightningView currentView = mTabsManager.getCurrentTab();
             if (!hasFocus && currentView != null) {
                 setIsLoading(currentView.getProgress() < 100);
-                updateUrl(currentView.getUrl(), true);
+                updateUrl(currentView.getUrl(), false);
             } else if (hasFocus && currentView != null) {
 
                 // Hack to make sure the text gets selected
@@ -1112,7 +1115,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void showBlockedLocalFileDialog(DialogInterface.OnClickListener listener) {
+    public void showBlockedLocalFileDialog(@NonNull DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Dialog dialog = builder.setCancelable(true)
             .setTitle(R.string.title_warning)
@@ -1534,36 +1537,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void updateUrl(@Nullable String url, boolean shortUrl) {
+    public void updateUrl(@Nullable String url, boolean isLoading) {
         if (url == null || mSearch == null || mSearch.hasFocus()) {
             return;
         }
         final LightningView currentTab = mTabsManager.getCurrentTab();
         mBookmarksView.handleUpdatedUrl(url);
-        if (shortUrl && !UrlUtils.isSpecialUrl(url)) {
-            switch (mPreferences.getUrlBoxContentChoice()) {
-                case 0: // Default, show only the domain
-                    url = url.replaceFirst(Constants.HTTP, "");
-                    url = Utils.getDomainName(url);
-                    mSearch.setText(url);
-                    break;
-                case 1: // URL, show the entire URL
-                    mSearch.setText(url);
-                    break;
-                case 2: // Title, show the page's title
-                    if (currentTab != null && !currentTab.getTitle().isEmpty()) {
-                        mSearch.setText(currentTab.getTitle());
-                    } else {
-                        mSearch.setText(mUntitledTitle);
-                    }
-                    break;
-            }
-        } else {
-            if (UrlUtils.isSpecialUrl(url)) {
-                url = "";
-            }
-            mSearch.setText(url);
-        }
+
+        String currentTitle = currentTab != null ? currentTab.getTitle() : null;
+
+        mSearch.setText(mSearchBoxModel.getDisplayContent(url, currentTitle, isLoading));
     }
 
     @Override

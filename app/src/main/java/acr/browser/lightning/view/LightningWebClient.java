@@ -102,7 +102,7 @@ public class LightningWebClient extends WebViewClient {
     @Override
     public void onPageFinished(@NonNull WebView view, String url) {
         if (view.isShown()) {
-            mUIController.updateUrl(url, true);
+            mUIController.updateUrl(url, false);
             mUIController.setBackButtonEnabled(view.canGoBack());
             mUIController.setForwardButtonEnabled(view.canGoForward());
             view.postInvalidate();
@@ -123,7 +123,7 @@ public class LightningWebClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         mLightningView.getTitleInfo().setFavicon(null);
         if (mLightningView.isShown()) {
-            mUIController.updateUrl(url, false);
+            mUIController.updateUrl(url, true);
             mUIController.showActionBar();
         }
         mUIController.tabChanged(mLightningView);

@@ -28,7 +28,7 @@ public interface UIController {
 
     boolean getUseDarkTheme();
 
-    void updateUrl(@Nullable String title, boolean shortUrl);
+    void updateUrl(@Nullable String title, boolean isLoading);
 
     void updateProgress(int n);
 
