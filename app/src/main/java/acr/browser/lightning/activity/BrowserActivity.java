@@ -720,52 +720,70 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         // Keyboard shortcuts
-        if (event.isCtrlPressed() && event.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (event.getKeyCode()) {
-                case KeyEvent.KEYCODE_T:
-                    // Open new tab
-                    newTab(null, true);
-                    return true;
-                case KeyEvent.KEYCODE_W:
-                    // Close current tab
-                    mPresenter.deleteTab(mTabsManager.indexOfCurrentTab());
-                    return true;
-                case KeyEvent.KEYCODE_Q:
-                    // Close browser
-                    closeBrowser();
-                    return true;
-                case KeyEvent.KEYCODE_R:
-                    // Refresh current tab
-                    LightningView currentTab = mTabsManager.getCurrentTab();
-                    if (currentTab != null) {
-                        currentTab.reload();
-                    }
-                    return true;
-                case KeyEvent.KEYCODE_TAB:
-                    int nextIndex = 0;
-                    if (event.isShiftPressed()) {
-                        // Go back one tab
-                        if (mTabsManager.indexOfCurrentTab() > 0) {
-                            nextIndex = mTabsManager.indexOfCurrentTab() - 1;
-                        } else {
-                            nextIndex = mTabsManager.last();
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.isCtrlPressed()) {
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_F:
+                        // Search in page
+                        findInPage();
+                        return true;
+                    case KeyEvent.KEYCODE_T:
+                        // Open new tab
+                        newTab(null, true);
+                        return true;
+                    case KeyEvent.KEYCODE_W:
+                        // Close current tab
+                        mPresenter.deleteTab(mTabsManager.indexOfCurrentTab());
+                        return true;
+                    case KeyEvent.KEYCODE_Q:
+                        // Close browser
+                        closeBrowser();
+                        return true;
+                    case KeyEvent.KEYCODE_R:
+                        // Refresh current tab
+                        LightningView currentTab = mTabsManager.getCurrentTab();
+                        if (currentTab != null) {
+                            currentTab.reload();
                         }
+                        return true;
+                    case KeyEvent.KEYCODE_TAB:
+                        int nextIndex = 0;
+                        if (event.isShiftPressed()) {
+                            // Go back one tab
+                            if (mTabsManager.indexOfCurrentTab() > 0) {
+                                nextIndex = mTabsManager.indexOfCurrentTab() - 1;
+                            } else {
+                                nextIndex = mTabsManager.last();
+                            }
+                        } else {
+                            // Go forward one tab
+                            if (mTabsManager.indexOfCurrentTab() < mTabsManager.last()) {
+                                nextIndex = mTabsManager.indexOfCurrentTab() + 1;
+                            } else {
+                                nextIndex = 0;
+                            }
+                        }
+                        mPresenter.tabChanged(nextIndex);
+                        return true;
+                }
+            } else if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
+                // Highlight search field
+                mSearch.requestFocus();
+                mSearch.selectAll();
+                return true;
+            } else if (event.isAltPressed()) {
+                // Alt + tab number
+                if (KeyEvent.KEYCODE_0 <= event.getKeyCode() && event.getKeyCode() <= KeyEvent.KEYCODE_9) {
+                    int nextIndex;
+                    if (event.getKeyCode() > mTabsManager.last() + KeyEvent.KEYCODE_1 || event.getKeyCode() == KeyEvent.KEYCODE_0) {
+                        nextIndex = mTabsManager.last();
                     } else {
-                        // Go forward one tab
-                        if (mTabsManager.indexOfCurrentTab() < mTabsManager.last()) {
-                            nextIndex = mTabsManager.indexOfCurrentTab() + 1;
-                        } else {
-                            nextIndex = 0;
-                        }
+                        nextIndex = event.getKeyCode() - KeyEvent.KEYCODE_1;
                     }
                     mPresenter.tabChanged(nextIndex);
                     return true;
+                }
             }
-        } else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
-            // Highlight search field
-            mSearch.requestFocus();
-            mSearch.selectAll();
-            return true;
         }
         return super.dispatchKeyEvent(event);
     }
