@@ -26,7 +26,7 @@
         android:icon="@drawable/ic_action_back"
         android:title="@string/action_back"
         android:visible="true"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_forward"
         android:checkable="false"
@@ -34,7 +34,7 @@
         android:icon="@drawable/ic_action_forward"
         android:title="@string/action_forward"
         android:visible="true"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_new_tab"
         android:title="@string/action_new_tab"/>

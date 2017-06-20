@@ -61,6 +61,7 @@ public class MainActivity extends BrowserActivity {
         addItemToHistory(title, url);
     }
 
+
     @Override
     public boolean isIncognito() {
         return false;

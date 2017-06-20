@@ -13,12 +13,12 @@
     <FrameLayout
         android:id="@+id/tabs_toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="30dp"/>
+        android:layout_height="@dimen/location_bar_height"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="@dimen/location_bar_height"
         android:paddingBottom="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"

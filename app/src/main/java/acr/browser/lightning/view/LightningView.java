@@ -570,6 +570,7 @@ public class LightningView {
                 settings.setUserAgentString(ua);
                 break;
         }
+        settings.setUserAgentString(Constants.DESKTOP_USER_AGENT);
     }
 
     /**
@@ -1151,9 +1152,9 @@ public class LightningView {
             } else if (mAction == MotionEvent.ACTION_UP) {
                 final float distance = (mY - mLocation);
                 if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
-                    mUIController.showActionBar();
+                  //  mUIController.showActionBar();
                 } else if (distance < -SCROLL_UP_THRESHOLD) {
-                    mUIController.hideActionBar();
+                //    mUIController.hideActionBar();
                 }
                 mLocation = 0;
             }
@@ -1174,9 +1175,9 @@ public class LightningView {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             int power = (int) (velocityY * 100 / sMaxFling);
             if (power < -10) {
-                mUIController.hideActionBar();
+               // mUIController.hideActionBar();
             } else if (power > 15) {
-                mUIController.showActionBar();
+               // mUIController.showActionBar();
             }
             return super.onFling(e1, e2, velocityX, velocityY);
         }
