@@ -1150,12 +1150,6 @@ public class LightningView {
             if (mAction == MotionEvent.ACTION_DOWN) {
                 mLocation = mY;
             } else if (mAction == MotionEvent.ACTION_UP) {
-                final float distance = (mY - mLocation);
-                if (distance > SCROLL_UP_THRESHOLD && view.getScrollY() < SCROLL_UP_THRESHOLD) {
-                  //  mUIController.showActionBar();
-                } else if (distance < -SCROLL_UP_THRESHOLD) {
-                //    mUIController.hideActionBar();
-                }
                 mLocation = 0;
             }
             mGestureDetector.onTouchEvent(arg1);
