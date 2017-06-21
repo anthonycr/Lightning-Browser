@@ -1581,7 +1581,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mSuggestionsAdapter = new SuggestionsAdapter(this, mDarkTheme, isIncognito());
 
         getUrl.setThreshold(1);
-        getUrl.setDropDownWidth(-1);
+        getUrl.setDropDownWidth(LayoutParams.WRAP_CONTENT);
         getUrl.setDropDownAnchor(R.id.toolbar_layout);
         getUrl.setOnItemClickListener(new OnItemClickListener() {
 

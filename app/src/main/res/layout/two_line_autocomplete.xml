@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:clickable="false"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="3dp"
     android:paddingEnd="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingStart="16dp"
-    android:paddingTop="3dp">
+    android:paddingStart="16dp">
 
     <ImageView
         android:id="@+id/suggestionIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"/>
+        android:layout_width="16dp"
+        android:layout_height="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,13 +25,14 @@
 
         <TextView
             android:id="@+id/title"
+            tools:text="Sentio desktop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="#000000"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/auto_suggest_title_text_size" />
 
         <TextView
             android:id="@+id/url"
@@ -41,8 +40,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
+            tools:text="www.sentio.com"
             android:maxLines="1"
-            android:textColor="#6a6a6a"/>
+            android:textSize="@dimen/auto_suggest_content_text_size"
+            android:textColor="#6a6a6a" />
     </LinearLayout>
 
 </LinearLayout>

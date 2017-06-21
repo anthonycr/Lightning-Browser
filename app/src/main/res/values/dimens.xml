@@ -12,5 +12,7 @@
 
     <dimen name="bookmark_item_icon_size">24dp</dimen>
     <dimen name="location_bar_height">30dp</dimen>
+    <dimen name="auto_suggest_title_text_size">12sp</dimen>
+    <dimen name="auto_suggest_content_text_size">10sp</dimen>
 
 </resources>
