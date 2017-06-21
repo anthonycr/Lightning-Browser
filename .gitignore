@@ -4,6 +4,7 @@
 /local.properties
 /.idea/workspace.xml
 /build
+/captures
 
 # External tool builders
 .externalToolBuilders/

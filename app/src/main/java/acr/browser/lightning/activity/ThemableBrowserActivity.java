@@ -16,7 +16,8 @@ import acr.browser.lightning.utils.ThemeUtils;
 
 public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
-    @Inject PreferenceManager mPreferences;
+    @Inject
+    PreferenceManager mPreferences;
 
     private int mTheme;
     private boolean mShowTabsInDrawer;
@@ -59,10 +60,10 @@ public abstract class ThemableBrowserActivity extends AppCompatActivity {
     }
 
     /**
-     * Called after the activity is resumed
-     * and the UI becomes visible to the user.
-     * Called by onWindowFocusChanged only if
-     * onResume has been called.
+     Called after the activity is resumed
+     and the UI becomes visible to the user.
+     Called by onWindowFocusChanged only if
+     onResume has been called.
      */
     void onWindowVisibleToUserAfterResume() {
 

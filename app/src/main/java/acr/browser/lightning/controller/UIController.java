@@ -46,10 +46,6 @@ public interface UIController {
 
     void onCloseWindow(LightningView view);
 
-    void hideActionBar();
-
-    void showActionBar();
-
     void showFileChooser(ValueCallback<Uri[]> filePathCallback);
 
     void closeEmptyTab();

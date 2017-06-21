@@ -124,7 +124,6 @@ public class LightningWebClient extends WebViewClient {
         mLightningView.getTitleInfo().setFavicon(null);
         if (mLightningView.isShown()) {
             mUIController.updateUrl(url, true);
-            mUIController.showActionBar();
         }
         mUIController.tabChanged(mLightningView);
     }

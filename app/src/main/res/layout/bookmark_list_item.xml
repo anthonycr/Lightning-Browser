@@ -28,7 +28,6 @@
         android:gravity="center_vertical"
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
 
 </LinearLayout>
