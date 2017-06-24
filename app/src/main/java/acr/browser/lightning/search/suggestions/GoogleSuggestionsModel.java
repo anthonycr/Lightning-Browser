@@ -1,4 +1,4 @@
-package acr.browser.lightning.search;
+package acr.browser.lightning.search.suggestions;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
@@ -15,13 +15,13 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 
-class GoogleSuggestionsModel extends BaseSuggestionsModel {
+public class GoogleSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "ISO-8859-1";
     @Nullable private static XmlPullParser sXpp;
     @NonNull private final String mSearchSubtitle;
 
-    GoogleSuggestionsModel(@NonNull Application application) {
+    public GoogleSuggestionsModel(@NonNull Application application) {
         super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }

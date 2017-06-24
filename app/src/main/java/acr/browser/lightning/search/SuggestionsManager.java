@@ -10,6 +10,9 @@ import com.anthonycr.bonsai.SingleSubscriber;
 import java.util.List;
 
 import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.search.suggestions.BaiduSuggestionsModel;
+import acr.browser.lightning.search.suggestions.DuckSuggestionsModel;
+import acr.browser.lightning.search.suggestions.GoogleSuggestionsModel;
 
 class SuggestionsManager {
 
@@ -26,7 +29,7 @@ class SuggestionsManager {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
                 sIsTaskExecuting = true;
-                List<HistoryItem> results = new GoogleSuggestionsModel(application).getResults(query);
+                List<HistoryItem> results = new GoogleSuggestionsModel(application).fetchResults(query);
                 subscriber.onItem(results);
                 subscriber.onComplete();
                 sIsTaskExecuting = false;
@@ -41,7 +44,7 @@ class SuggestionsManager {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
                 sIsTaskExecuting = true;
-                List<HistoryItem> results = new BaiduSuggestionsModel(application).getResults(query);
+                List<HistoryItem> results = new BaiduSuggestionsModel(application).fetchResults(query);
                 subscriber.onItem(results);
                 subscriber.onComplete();
                 sIsTaskExecuting = false;
@@ -56,7 +59,7 @@ class SuggestionsManager {
             @Override
             public void onSubscribe(@NonNull final SingleSubscriber<List<HistoryItem>> subscriber) {
                 sIsTaskExecuting = true;
-                List<HistoryItem> results = new DuckSuggestionsModel(application).getResults(query);
+                List<HistoryItem> results = new DuckSuggestionsModel(application).fetchResults(query);
                 subscriber.onItem(results);
                 subscriber.onComplete();
                 sIsTaskExecuting = false;

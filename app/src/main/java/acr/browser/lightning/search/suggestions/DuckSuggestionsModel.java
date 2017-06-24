@@ -1,4 +1,4 @@
-package acr.browser.lightning.search;
+package acr.browser.lightning.search.suggestions;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
@@ -13,12 +13,12 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.FileUtils;
 
-final class DuckSuggestionsModel extends BaseSuggestionsModel {
+public final class DuckSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "UTF-8";
     @NonNull private final String mSearchSubtitle;
 
-    DuckSuggestionsModel(@NonNull Application application) {
+    public DuckSuggestionsModel(@NonNull Application application) {
         super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }

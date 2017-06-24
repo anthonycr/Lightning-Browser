@@ -1,4 +1,4 @@
-package acr.browser.lightning.search;
+package acr.browser.lightning.search.suggestions;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
@@ -28,7 +28,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-abstract class BaseSuggestionsModel {
+public abstract class BaseSuggestionsModel {
 
     private static final String TAG = "BaseSuggestionsModel";
 
@@ -57,23 +57,25 @@ abstract class BaseSuggestionsModel {
         mCacheControl = new CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build();
     }
 
+    /**
+     * Retrieves the results for a query.
+     *
+     * @param rawQuery the raw query to retrieve the results for.
+     * @return a list of history items for the query.
+     */
     @NonNull
-    private static String getLanguage() {
-        String language = Locale.getDefault().getLanguage();
-        if (TextUtils.isEmpty(language)) {
-            language = DEFAULT_LANGUAGE;
-        }
-        return language;
-    }
-
-    @NonNull
-    List<HistoryItem> getResults(@NonNull String query) {
+    public final List<HistoryItem> fetchResults(@NonNull final String rawQuery) {
         List<HistoryItem> filter = new ArrayList<>(5);
+
+        String query;
         try {
-            query = URLEncoder.encode(query, mEncoding);
+            query = URLEncoder.encode(rawQuery, mEncoding);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Unable to encode the URL", e);
+
+            return filter;
         }
+
         InputStream inputStream = downloadSuggestionsForQuery(query, mLanguage);
         if (inputStream == null) {
             // There are no suggestions for this query, return an empty list.
@@ -83,7 +85,6 @@ abstract class BaseSuggestionsModel {
             parseResults(inputStream, filter);
         } catch (Exception e) {
             Log.e(TAG, "Unable to parse results", e);
-            return filter;
         } finally {
             Utils.close(inputStream);
         }
@@ -93,7 +94,7 @@ abstract class BaseSuggestionsModel {
 
     /**
      * This method downloads the search suggestions for the specific query.
-     * NOTE: This is a blocking operation, do not getResults on the UI thread.
+     * NOTE: This is a blocking operation, do not fetchResults on the UI thread.
      *
      * @param query the query to get suggestions for
      * @return the cache file containing the suggestions
@@ -120,6 +121,15 @@ abstract class BaseSuggestionsModel {
         }
 
         return null;
+    }
+
+    @NonNull
+    private static String getLanguage() {
+        String language = Locale.getDefault().getLanguage();
+        if (TextUtils.isEmpty(language)) {
+            language = DEFAULT_LANGUAGE;
+        }
+        return language;
     }
 
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {

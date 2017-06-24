@@ -1,11 +1,9 @@
-package acr.browser.lightning.search;
+package acr.browser.lightning.search.suggestions;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
-import org.xmlpull.v1.XmlPullParser;
 
 import java.io.InputStream;
 import java.util.List;
@@ -18,13 +16,12 @@ import acr.browser.lightning.utils.FileUtils;
 // http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
 
 
-class BaiduSuggestionsModel extends BaseSuggestionsModel {
+public class BaiduSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "UTF-8";
-    @Nullable private static XmlPullParser sXpp;
     @NonNull private final String mSearchSubtitle;
 
-    BaiduSuggestionsModel(@NonNull Application application) {
+    public BaiduSuggestionsModel(@NonNull Application application) {
         super(application, ENCODING);
         mSearchSubtitle = application.getString(R.string.suggestion);
     }
@@ -39,12 +36,14 @@ class BaiduSuggestionsModel extends BaseSuggestionsModel {
         String content = FileUtils.readStringFromStream(inputStream, "GBK");
         JSONArray respArray = new JSONArray(content);
         JSONArray jsonArray = respArray.getJSONArray(1);
+
         int counter = 0;
         for (int n = 0, size = jsonArray.length(); n < size; n++) {
             String suggestion = jsonArray.getString(n);
             results.add(new HistoryItem(mSearchSubtitle + " \"" + suggestion + '"',
-                    suggestion, R.drawable.ic_search));
+                suggestion, R.drawable.ic_search));
             counter++;
+
             if (counter >= MAX_RESULTS) {
                 break;
             }
