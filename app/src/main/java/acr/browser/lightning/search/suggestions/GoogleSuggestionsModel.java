@@ -15,6 +15,9 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 
+/**
+ * Search suggestions provider for Google search engine.
+ */
 public class GoogleSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "ISO-8859-1";

@@ -28,6 +28,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+/**
+ * The base search suggestions API. Provides common
+ * fetching and caching functionality for each potential
+ * suggestions provider.
+ */
 public abstract class BaseSuggestionsModel {
 
     private static final String TAG = "BaseSuggestionsModel";
@@ -41,9 +46,23 @@ public abstract class BaseSuggestionsModel {
     @NonNull private final String mEncoding;
     @NonNull private final String mLanguage;
 
+    /**
+     * Create a URL for the given query in the given language.
+     *
+     * @param query    the query that was made.
+     * @param language the locale of the user.
+     * @return should return a URL that can be fetched using a GET.
+     */
     @NonNull
     protected abstract String createQueryUrl(@NonNull String query, @NonNull String language);
 
+    /**
+     * Parse the results of an input stream into a list of {@link HistoryItem}.
+     *
+     * @param inputStream the raw input to parse.
+     * @param results     the list to populate.
+     * @throws Exception throw an exception if anything goes wrong.
+     */
     protected abstract void parseResults(@NonNull InputStream inputStream, @NonNull List<HistoryItem> results) throws Exception;
 
     BaseSuggestionsModel(@NonNull Application application, @NonNull String encoding) {

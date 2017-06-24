@@ -12,10 +12,9 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.FileUtils;
 
-// http://unionsug.baidu.com/su?wd=encodeURIComponent(U)
-// http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
-
-
+/**
+ * The search suggestions provider for the Baidu search engine.
+ */
 public class BaiduSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull private static final String ENCODING = "UTF-8";
@@ -28,6 +27,8 @@ public class BaiduSuggestionsModel extends BaseSuggestionsModel {
 
     @NonNull
     protected String createQueryUrl(@NonNull String query, @NonNull String language) {
+        // see http://unionsug.baidu.com/su?wd=encodeURIComponent(U)
+        // see http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
         return "http://suggestion.baidu.com/s?wd=" + query + "&action=opensearch";
     }
 
