@@ -747,7 +747,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                         }
                         return true;
                     case KeyEvent.KEYCODE_TAB:
-                        int nextIndex = 0;
+                        int nextIndex;
                         if (event.isShiftPressed()) {
                             // Go back one tab
                             if (mTabsManager.indexOfCurrentTab() > 0) {
