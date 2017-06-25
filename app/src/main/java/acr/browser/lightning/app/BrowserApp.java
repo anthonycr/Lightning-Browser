@@ -136,4 +136,18 @@ public class BrowserApp extends Application {
         clipboard.setPrimaryClip(clip);
     }
 
+    @Override
+    public String getPackageName() {
+        try {
+            throw new Exception();
+        } catch (Exception e){
+            StackTraceElement[] elements = e.getStackTrace();
+            for (StackTraceElement element: elements) {
+                if(element.getClassName().startsWith("android.webkit.")){
+                    return null;
+                }
+            }
+        }
+        return super.getPackageName();
+    }
 }
