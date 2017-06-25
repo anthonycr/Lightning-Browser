@@ -151,6 +151,7 @@ public abstract class BaseSuggestionsModel {
         return language;
     }
 
+    @NonNull
     private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public Response intercept(@NonNull Chain chain) throws IOException {

@@ -21,9 +21,9 @@ public class BaseSearchEngine {
     @NonNull private final String mQueryUrl;
     @StringRes private final int mTitleRes;
 
-    public BaseSearchEngine(@NonNull String iconUrl,
-                            @NonNull String queryUrl,
-                            @StringRes int titleRes) {
+    BaseSearchEngine(@NonNull String iconUrl,
+                     @NonNull String queryUrl,
+                     @StringRes int titleRes) {
 
         Preconditions.checkNonNull(iconUrl);
         Preconditions.checkNonNull(queryUrl);
