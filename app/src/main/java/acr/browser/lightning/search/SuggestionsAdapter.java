@@ -302,11 +302,11 @@ public class SuggestionsAdapter extends BaseAdapter implements Filterable {
     @NonNull
     private Single<List<HistoryItem>> getSuggestionsForQuery(@NonNull final String query) {
         if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_GOOGLE) {
-            return SuggestionsManager.INSTANCE.createGoogleQueryObservable(query, mApplication);
+            return SuggestionsManager.createGoogleQueryObservable(query, mApplication);
         } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
-            return SuggestionsManager.INSTANCE.createDuckQueryObservable(query, mApplication);
+            return SuggestionsManager.createDuckQueryObservable(query, mApplication);
         } else if (mSuggestionChoice == PreferenceManager.Suggestion.SUGGESTION_BAIDU) {
-            return SuggestionsManager.INSTANCE.createBaiduQueryObservable(query, mApplication);
+            return SuggestionsManager.createBaiduQueryObservable(query, mApplication);
         } else {
             return Single.empty();
         }

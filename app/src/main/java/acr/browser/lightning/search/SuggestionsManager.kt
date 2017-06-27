@@ -13,6 +13,7 @@ internal object SuggestionsManager {
     @JvmStatic
     @Volatile var isRequestInProgress: Boolean = false
 
+    @JvmStatic
     fun createGoogleQueryObservable(query: String, application: Application) =
             Single.create(SingleAction<List<HistoryItem>> { subscriber ->
                 isRequestInProgress = true
@@ -22,6 +23,7 @@ internal object SuggestionsManager {
                 isRequestInProgress = false
             })
 
+    @JvmStatic
     fun createBaiduQueryObservable(query: String, application: Application) =
             Single.create(SingleAction<List<HistoryItem>> { subscriber ->
                 isRequestInProgress = true
@@ -31,6 +33,7 @@ internal object SuggestionsManager {
                 isRequestInProgress = false
             })
 
+    @JvmStatic
     fun createDuckQueryObservable(query: String, application: Application) =
             Single.create(SingleAction<List<HistoryItem>> { subscriber ->
                 isRequestInProgress = true
