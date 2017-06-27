@@ -23,12 +23,12 @@ import acr.browser.lightning.BrowserApp;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 
-    @NonNull private static final List<String> mFragments = new ArrayList<>(7);
+    @NonNull private static final List<String> sFragments = new ArrayList<>(7);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // this is a workaround for the Toolbar in PreferenceActitivty
+        // this is a workaround for the Toolbar in PreferenceActivity
         ViewGroup root = findViewById(android.R.id.content);
         LinearLayout content = (LinearLayout) root.getChildAt(0);
         LinearLayout toolbarContainer = (LinearLayout) View.inflate(this, R.layout.toolbar_settings, null);
@@ -46,7 +46,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
     @Override
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.preferences_headers, target);
-        mFragments.clear();
+        sFragments.clear();
         Iterator<Header> headerIterator = target.iterator();
         while (headerIterator.hasNext()) {
             Header header = headerIterator.next();
@@ -59,17 +59,17 @@ public class SettingsActivity extends ThemableSettingsActivity {
                 if (BrowserApp.isRelease()) {
                     headerIterator.remove();
                 } else {
-                    mFragments.add(header.fragment);
+                    sFragments.add(header.fragment);
                 }
             } else {
-                mFragments.add(header.fragment);
+                sFragments.add(header.fragment);
             }
         }
     }
 
     @Override
     protected boolean isValidFragment(String fragmentName) {
-        return mFragments.contains(fragmentName);
+        return sFragments.contains(fragmentName);
     }
 
     @Override

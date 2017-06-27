@@ -9,13 +9,13 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.util.Log;
 
 import acr.browser.lightning.R;
 
 public class AboutSettingsFragment extends PreferenceFragment {
 
-    private Activity mActivity;
-
+    private static final String TAG = "AboutSettingsFragment";
     private static final String SETTINGS_VERSION = "pref_version";
 
     @Override
@@ -24,18 +24,18 @@ public class AboutSettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_about);
 
-        mActivity = getActivity();
-
         Preference version = findPreference(SETTINGS_VERSION);
         version.setSummary(getVersion());
     }
 
     private String getVersion() {
         try {
-            PackageInfo p = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), 0);
-            return p.versionName;
+            Activity activity = getActivity();
+            String packageName = activity.getPackageName();
+            PackageInfo packageInfo = activity.getPackageManager().getPackageInfo(packageName, 0);
+            return packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getVersion: error", e);
             return "1.0";
         }
     }
