@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.fragment;
+package acr.browser.lightning.settings.fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -23,6 +23,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
+import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.Subscription;
 import com.anthonycr.grant.PermissionsManager;
@@ -38,14 +39,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkExporter;
 import acr.browser.lightning.database.bookmark.BookmarkLocalSync;
 import acr.browser.lightning.database.bookmark.BookmarkLocalSync.Source;
-import acr.browser.lightning.database.HistoryItem;
-
-import com.anthonycr.bonsai.Schedulers;
-
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;

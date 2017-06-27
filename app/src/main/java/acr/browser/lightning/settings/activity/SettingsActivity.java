@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.activity;
+package acr.browser.lightning.settings.activity;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 
 public class SettingsActivity extends ThemableSettingsActivity {
 

@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning.browser;
 
 import android.app.Activity;
 import android.app.Application;
@@ -31,7 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;

@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.search.engine.AskSearch;
 import acr.browser.lightning.search.engine.BaiduSearch;

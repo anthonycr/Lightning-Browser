@@ -1,4 +1,4 @@
-package acr.browser.lightning.utils;
+package acr.browser.lightning.adblock;
 
 import android.app.Application;
 import android.content.res.AssetManager;
@@ -24,6 +24,8 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.utils.StringBuilderUtils;
+import acr.browser.lightning.utils.Utils;
 
 @Singleton
 public class AdBlock {

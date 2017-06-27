@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning.settings.activity;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -8,7 +8,8 @@ import android.os.Bundle;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.activity.AppCompatPreferenceActivity;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 

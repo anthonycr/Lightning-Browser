@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.fragment;
+package acr.browser.lightning.settings.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -23,7 +23,7 @@ import com.anthonycr.bonsai.Schedulers;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Utils;

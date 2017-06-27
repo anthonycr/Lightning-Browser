@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning.browser.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,13 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.ThemeUtils;
 
 public abstract class ThemableBrowserActivity extends AppCompatActivity {
 
-    @Inject PreferenceManager mPreferences;
+    // TODO: 6/26/17 get rid fo protected reference
+    @Inject protected PreferenceManager mPreferences;
 
     private int mTheme;
     private boolean mShowTabsInDrawer;

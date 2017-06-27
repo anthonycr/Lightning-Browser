@@ -1,4 +1,4 @@
-package acr.browser.lightning.fragment;
+package acr.browser.lightning.browser.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,12 +34,12 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.TabsManager;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.browser.TabsManager;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.fragment.anim.HorizontalItemAnimator;
-import acr.browser.lightning.fragment.anim.VerticalItemAnimator;
+import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator;
+import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.ThemeUtils;

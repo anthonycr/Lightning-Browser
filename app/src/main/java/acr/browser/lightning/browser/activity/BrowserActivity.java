@@ -2,7 +2,7 @@
  * Copyright 2015 Anthony Restaino
  */
 
-package acr.browser.lightning.activity;
+package acr.browser.lightning.browser.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -90,12 +90,15 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
+import acr.browser.lightning.IncognitoActivity;
 import acr.browser.lightning.browser.SearchBoxModel;
+import acr.browser.lightning.browser.TabsManager;
 import acr.browser.lightning.browser.TabsView;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
@@ -105,13 +108,14 @@ import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
-import acr.browser.lightning.fragment.BookmarksFragment;
-import acr.browser.lightning.fragment.TabsFragment;
+import acr.browser.lightning.browser.fragment.BookmarksFragment;
+import acr.browser.lightning.browser.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.engine.BaseSearchEngine;
+import acr.browser.lightning.settings.activity.SettingsActivity;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -224,7 +228,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     public abstract void updateHistory(@Nullable final String title, @NonNull final String url);
 
     @NonNull
-    abstract Completable updateCookiePreference();
+    protected abstract Completable updateCookiePreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -451,11 +455,11 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @return true if the panic trigger sent
      * the intent, false otherwise.
      */
-    static boolean isPanicTrigger(@Nullable Intent intent) {
+    protected static boolean isPanicTrigger(@Nullable Intent intent) {
         return intent != null && INTENT_PANIC_TRIGGER.equals(intent.getAction());
     }
 
-    void panicClean() {
+    protected void panicClean() {
         Log.d(TAG, "Closing browser");
         mTabsManager.newTab(this, "", false);
         mTabsManager.switchToTab(0);
@@ -1208,7 +1212,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    void handleNewIntent(Intent intent) {
+    protected void handleNewIntent(Intent intent) {
         mPresenter.onNewIntent(intent);
     }
 
@@ -1232,7 +1236,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         return mPresenter.newTab(url, show);
     }
 
-    void performExitCleanUp() {
+    protected void performExitCleanUp() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mPreferences.getClearCacheExit() && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.getWebView());
@@ -1358,7 +1362,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
-    void saveOpenTabs() {
+    protected void saveOpenTabs() {
         if (mPreferences.getRestoreLostTabsEnabled()) {
             mTabsManager.saveState();
         }
@@ -1548,7 +1552,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mProgressBar.setProgress(n);
     }
 
-    void addItemToHistory(@Nullable final String title, @NonNull final String url) {
+    protected void addItemToHistory(@Nullable final String title, @NonNull final String url) {
         if (UrlUtils.isSpecialUrl(url)) {
             return;
         }
@@ -1665,7 +1669,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param runnable an optional runnable to run after
      *                 the drawers are closed.
      */
-    void closeDrawers(@Nullable final Runnable runnable) {
+    protected final void closeDrawers(@Nullable final Runnable runnable) {
         if (!mDrawerLayout.isDrawerOpen(mDrawerLeft) && !mDrawerLayout.isDrawerOpen(mDrawerRight)) {
             if (runnable != null) {
                 runnable.run();

@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.fragment;
+package acr.browser.lightning.settings.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package acr.browser.lightning.fragment.anim;
+package acr.browser.lightning.browser.fragment.anim;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
@@ -34,11 +34,11 @@ import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 /**
  * This implementation of {@link RecyclerView.ItemAnimator} provides basic
  * animations on remove, add, and move events that happen to the items in
- * a RecyclerView. RecyclerView uses a HorizontalItemAnimator by default.
+ * a RecyclerView. RecyclerView uses a VerticalItemAnimator by default.
  *
  * @see RecyclerView#setItemAnimator(RecyclerView.ItemAnimator)
  */
-public class HorizontalItemAnimator extends SimpleItemAnimator {
+public class VerticalItemAnimator extends SimpleItemAnimator {
     private static final boolean DEBUG = false;
 
     private final ArrayList<ViewHolder> mPendingRemovals = new ArrayList<>();
@@ -206,7 +206,7 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         mRemoveAnimations.add(holder);
         animation.setDuration(getRemoveDuration())
-                .alpha(0).translationY(holder.itemView.getHeight())
+                .alpha(0).translationX(-holder.itemView.getWidth() / 2)
                 .setInterpolator(new AccelerateInterpolator()).setListener(new VpaListenerAdapter() {
             @Override
             public void onAnimationStart(View view) {
@@ -217,7 +217,7 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
             public void onAnimationEnd(View view) {
                 animation.setListener(null);
                 ViewCompat.setAlpha(view, 1);
-                ViewCompat.setTranslationY(view, 0);
+                ViewCompat.setTranslationX(view, 0);
                 dispatchRemoveFinished(holder);
                 mRemoveAnimations.remove(holder);
                 dispatchFinishedWhenDone();
@@ -229,7 +229,7 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
     public boolean animateAdd(final ViewHolder holder) {
         resetAnimation(holder);
         ViewCompat.setAlpha(holder.itemView, 0);
-        ViewCompat.setTranslationY(holder.itemView, holder.itemView.getHeight());
+        ViewCompat.setTranslationX(holder.itemView, -holder.itemView.getWidth() / 2);
         mPendingAdditions.add(holder);
         return true;
     }
@@ -238,9 +238,8 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
         final View view = holder.itemView;
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         mAddAnimations.add(holder);
-        animation.alpha(1).translationY(0)
-                .setInterpolator(new BezierDecelerateInterpolator()).setDuration(getAddDuration())
-                .setListener(new VpaListenerAdapter() {
+        animation.alpha(1).translationX(0).setDuration(getAddDuration())
+                .setInterpolator(new BezierDecelerateInterpolator()).setListener(new VpaListenerAdapter() {
                     @Override
                     public void onAnimationStart(View view) {
                         dispatchAddStarting(holder);
@@ -248,8 +247,8 @@ public class HorizontalItemAnimator extends SimpleItemAnimator {
 
                     @Override
                     public void onAnimationCancel(View view) {
-                        ViewCompat.setTranslationY(view, 0);
                         ViewCompat.setAlpha(view, 1);
+                        ViewCompat.setTranslationX(view, 0);
                     }
 
                     @Override

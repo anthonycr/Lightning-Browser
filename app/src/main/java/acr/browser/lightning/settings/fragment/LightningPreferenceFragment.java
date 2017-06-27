@@ -1,11 +1,11 @@
-package acr.browser.lightning.fragment;
+package acr.browser.lightning.settings.fragment;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.preference.PreferenceManager;
 
 /**

@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning.reading.activity;
 
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
@@ -26,7 +26,7 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;

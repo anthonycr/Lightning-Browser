@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning;
 
 import android.content.Intent;
 import android.os.Build;
@@ -13,7 +13,7 @@ import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.CompletableAction;
 import com.anthonycr.bonsai.CompletableSubscriber;
 
-import acr.browser.lightning.R;
+import acr.browser.lightning.browser.activity.BrowserActivity;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends BrowserActivity {

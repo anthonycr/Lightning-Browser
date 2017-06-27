@@ -1,4 +1,4 @@
-package acr.browser.lightning.app;
+package acr.browser.lightning.di;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,6 +8,7 @@ import net.i2p.android.ui.I2PAndroidHelper;
 
 import javax.inject.Singleton;
 
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.database.bookmark.BookmarkDatabase;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.database.downloads.DownloadsDatabase;

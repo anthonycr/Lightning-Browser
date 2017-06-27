@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning.browser.bookmark;
 
 import android.support.annotation.Nullable;
 

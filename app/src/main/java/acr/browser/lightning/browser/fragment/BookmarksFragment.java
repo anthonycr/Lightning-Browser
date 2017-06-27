@@ -1,4 +1,4 @@
-package acr.browser.lightning.fragment;
+package acr.browser.lightning.browser.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,11 +34,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.BookmarkUiModel;
-import acr.browser.lightning.activity.ReadingActivity;
-import acr.browser.lightning.activity.TabsManager;
+import acr.browser.lightning.browser.bookmark.BookmarkUiModel;
+import acr.browser.lightning.reading.activity.ReadingActivity;
+import acr.browser.lightning.browser.TabsManager;
 import acr.browser.lightning.animation.AnimationUtils;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;

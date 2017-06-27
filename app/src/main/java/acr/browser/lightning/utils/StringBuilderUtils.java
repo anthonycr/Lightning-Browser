@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
  * API equality with the {@link String}
  * API.
  */
-class StringBuilderUtils {
+public class StringBuilderUtils {
 
     private static final String SPACE = " ";
     private static final String EMPTY = "";
@@ -21,7 +21,7 @@ class StringBuilderUtils {
      * @param toReplace     the string to replace.
      * @param replacement   the replacement string.
      */
-    static void replace(@NonNull StringBuilder stringBuilder,
+    public static void replace(@NonNull StringBuilder stringBuilder,
                         @NonNull String toReplace,
                         @NonNull String replacement) {
         int index = stringBuilder.indexOf(toReplace);
