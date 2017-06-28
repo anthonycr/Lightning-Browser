@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -134,42 +136,16 @@ public class AdBlock {
                     String line;
                     long time = System.currentTimeMillis();
 
+                    final List<String> domains = new ArrayList<>(1);
+
                     while ((line = reader.readLine()) != null) {
                         lineBuilder.append(line);
 
-                        if (!StringBuilderUtils.isEmpty(lineBuilder) &&
-                            !StringBuilderUtils.startsWith(lineBuilder, COMMENT)) {
-                            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4, EMPTY);
-                            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY);
-                            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V6, EMPTY);
-                            StringBuilderUtils.replace(lineBuilder, TAB, EMPTY);
-
-                            int comment = lineBuilder.indexOf(COMMENT);
-                            if (comment >= 0) {
-                                lineBuilder.replace(comment, lineBuilder.length(), EMPTY);
-                            }
-
-                            StringBuilderUtils.trim(lineBuilder);
-
-                            if (!StringBuilderUtils.isEmpty(lineBuilder) &&
-                                !StringBuilderUtils.equals(lineBuilder, LOCALHOST)) {
-                                while (StringBuilderUtils.contains(lineBuilder, SPACE)) {
-                                    int space = lineBuilder.indexOf(SPACE);
-                                    StringBuilder partial = StringBuilderUtils.substring(lineBuilder, 0, space);
-                                    StringBuilderUtils.trim(partial);
-
-                                    String partialLine = partial.toString();
-                                    mBlockedDomainsList.add(partialLine);
-                                    StringBuilderUtils.replace(lineBuilder, partialLine, EMPTY);
-                                    StringBuilderUtils.trim(lineBuilder);
-                                }
-                                if (lineBuilder.length() > 0) {
-                                    mBlockedDomainsList.add(lineBuilder.toString());
-                                }
-                            }
-                        }
+                        parseString(lineBuilder, domains);
                         lineBuilder.setLength(0);
                     }
+
+                    mBlockedDomainsList.addAll(domains);
                     Log.d(TAG, "Loaded ad list in: " + (System.currentTimeMillis() - time) + " ms");
                 } catch (IOException e) {
                     Log.wtf(TAG, "Reading blocked domains list from file '"
@@ -179,6 +155,43 @@ public class AdBlock {
                 }
             }
         });
+    }
+
+    private static void parseString(@NonNull StringBuilder lineBuilder, @NonNull List<String> parsedList) {
+        if (!StringBuilderUtils.isEmpty(lineBuilder) &&
+            !StringBuilderUtils.startsWith(lineBuilder, COMMENT)) {
+            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4, EMPTY);
+            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY);
+            StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V6, EMPTY);
+            StringBuilderUtils.replace(lineBuilder, TAB, EMPTY);
+
+            int comment = lineBuilder.indexOf(COMMENT);
+            if (comment >= 0) {
+                lineBuilder.replace(comment, lineBuilder.length(), EMPTY);
+            }
+
+            StringBuilderUtils.trim(lineBuilder);
+
+            if (!StringBuilderUtils.isEmpty(lineBuilder) &&
+                !StringBuilderUtils.equals(lineBuilder, LOCALHOST)) {
+                while (StringBuilderUtils.contains(lineBuilder, SPACE)) {
+                    int space = lineBuilder.indexOf(SPACE);
+                    StringBuilder partial = StringBuilderUtils.substring(lineBuilder, 0, space);
+                    StringBuilderUtils.trim(partial);
+
+                    String partialLine = partial.toString();
+
+                    // Add string to list
+                    parsedList.add(partialLine);
+                    StringBuilderUtils.replace(lineBuilder, partialLine, EMPTY);
+                    StringBuilderUtils.trim(lineBuilder);
+                }
+                if (lineBuilder.length() > 0) {
+                    // Add string to list.
+                    parsedList.add(lineBuilder.toString());
+                }
+            }
+        }
     }
 
 }
