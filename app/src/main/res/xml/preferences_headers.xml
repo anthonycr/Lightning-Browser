@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
     <header
-        android:fragment="acr.browser.lightning.fragment.GeneralSettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.GeneralSettingsFragment"
         android:title="@string/settings_general"/>
     <header
-        android:fragment="acr.browser.lightning.fragment.BookmarkSettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.BookmarkSettingsFragment"
         android:title="@string/bookmark_settings"/>
     <header
-        android:fragment="acr.browser.lightning.fragment.DisplaySettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.DisplaySettingsFragment"
         android:title="@string/settings_display"/>
     <header
-        android:fragment="acr.browser.lightning.fragment.PrivacySettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.PrivacySettingsFragment"
         android:title="@string/settings_privacy"/>
     <header
-        android:fragment="acr.browser.lightning.fragment.AdvancedSettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.AdvancedSettingsFragment"
         android:title="@string/settings_advanced"/>
     <header
-        android:fragment="acr.browser.lightning.fragment.AboutSettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.AboutSettingsFragment"
         android:summary="@string/settings_about_explain"
         android:title="@string/settings_about"/>
     <header
@@ -31,6 +31,6 @@
         </intent>
     </header>
     <header
-        android:fragment="acr.browser.lightning.fragment.DebugSettingsFragment"
+        android:fragment="acr.browser.lightning.settings.fragment.DebugSettingsFragment"
         android:title="@string/debug_title"/>
 </preference-headers>

@@ -5,8 +5,8 @@ jdk:
 android:
   components:
     - tools
-    - build-tools-25.0.3
-    - android-25
+    - build-tools-26.0.0
+    - android-26
     - extra-android-support
     - extra-android-m2repository
   licenses:
@@ -18,4 +18,5 @@ before_install:
 install:
   - ./gradlew
 script:
-  - ./gradlew assembleDebug --stacktrace
+  - ./gradlew :app:assembleDebug --stacktrace
+  - ./gradlew :app:test --stacktrace

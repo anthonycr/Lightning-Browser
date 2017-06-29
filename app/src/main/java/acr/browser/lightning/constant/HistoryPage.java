@@ -25,7 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.utils.Preconditions;
@@ -61,9 +61,22 @@ public class HistoryPage {
 
     private static final String END = "</div></body></html>";
 
+    /**
+     * Get the file that the history page is stored in
+     * or should be stored in.
+     *
+     * @param application the application used to access the file.
+     * @return a valid file object, note that the file might not exist.
+     */
+    @NonNull
+    private static File getHistoryPageFile(@NonNull Application application) {
+        return new File(application.getFilesDir(), FILENAME);
+    }
+
     @NonNull private final String mTitle;
 
     @Inject Application mApp;
+    @Inject HistoryModel mHistoryModel;
 
     public HistoryPage() {
         BrowserApp.getAppComponent().inject(this);
@@ -77,7 +90,7 @@ public class HistoryPage {
             public void onSubscribe(@NonNull final SingleSubscriber<String> subscriber) {
                 final StringBuilder historyBuilder = new StringBuilder(HEADING_1 + mTitle + HEADING_2);
 
-                HistoryModel.lastHundredVisitedHistoryItems()
+                mHistoryModel.lastHundredVisitedHistoryItems()
                     .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
                         @Override
                         public void onItem(@Nullable List<HistoryItem> item) {
@@ -97,7 +110,7 @@ public class HistoryPage {
                             }
 
                             historyBuilder.append(END);
-                            File historyWebPage = new File(mApp.getFilesDir(), FILENAME);
+                            File historyWebPage = getHistoryPageFile(mApp);
                             FileWriter historyWriter = null;
                             try {
                                 //noinspection IOResourceOpenedButNotSafelyClosed
@@ -130,7 +143,7 @@ public class HistoryPage {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
-                File historyWebPage = new File(application.getFilesDir(), FILENAME);
+                File historyWebPage = getHistoryPageFile(application);
                 if (historyWebPage.exists()) {
                     historyWebPage.delete();
                 }

@@ -4,13 +4,10 @@
 ![](ic_launcher_small.png)
 
 #### Download
-* [Download APK from here](https://github.com/anthonycr/Lightning-Browser/releases)
-
-* [Download from F-Droid](https://f-droid.org/repository/browse/?fdfilter=lightning&fdid=acr.browser.lightning)
-
-* [Download Free from Google Play](https://play.google.com/store/apps/details?id=acr.browser.barebones)
-
-* [Download Paid from Google Play](https://play.google.com/store/apps/details?id=acr.browser.lightning)
+[<img src="https://f-droid.org/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="80">](https://f-droid.org/app/acr.browser.lightning) [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
+alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=acr.browser.lightning)
 
 #### Master Branch
 * [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)

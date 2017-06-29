@@ -14,7 +14,7 @@ import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient.CustomViewCallback;
 
-import acr.browser.lightning.activity.TabsManager;
+import acr.browser.lightning.browser.TabsManager;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.view.LightningView;
@@ -28,7 +28,7 @@ public interface UIController {
 
     boolean getUseDarkTheme();
 
-    void updateUrl(@Nullable String title, boolean shortUrl);
+    void updateUrl(@Nullable String title, boolean isLoading);
 
     void updateProgress(int n);
 

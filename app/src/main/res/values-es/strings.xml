@@ -103,7 +103,7 @@
     <string name="max_tabs">Se ha alcanzado el máximo de pestañas</string>
     <string name="message_text_copied">El texto se ha copiado al portapapeles</string>
     <string name="message_link_copied">El enlace se ha copiado al portapapeles</string>
-    <string name="custom_url">Dirección personalizada</string>
+    <string name="search_engine_custom">Dirección personalizada</string>
     <string name="message_blocked_local">Se ha bloqueado la carga del archivo local</string>
     <string name="licenses">Licencias de código abierto (open source)</string>
     <string name="suggestion">Buscar</string>

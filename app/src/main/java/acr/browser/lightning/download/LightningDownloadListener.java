@@ -7,7 +7,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -15,13 +14,11 @@ import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
-import acr.browser.lightning.database.downloads.DownloadItem;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 
-import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
@@ -34,7 +31,7 @@ public class LightningDownloadListener implements DownloadListener {
     private final Activity mActivity;
 
     @Inject PreferenceManager mPreferenceManager;
-
+    @Inject DownloadHandler mDownloadHandler;
     @Inject DownloadsModel downloadsModel;
 
     public LightningDownloadListener(Activity context) {
@@ -64,17 +61,7 @@ public class LightningDownloadListener implements DownloadListener {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    DownloadHandler.onDownloadStart(mActivity, mPreferenceManager, url, userAgent,
-                                        contentDisposition, mimetype);
-
-                                    downloadsModel.addDownloadIfNotExists(new DownloadItem(url, fileName, downloadSize))
-                                            .subscribe(new SingleOnSubscribe<Boolean>() {
-                                        @Override
-                                        public void onItem(@Nullable Boolean item) {
-                                            if (item != null && !item)
-                                                Log.i(TAG, "error saving download to database");
-                                        }
-                                    });
+                                    mDownloadHandler.onDownloadStart(mActivity, mPreferenceManager, url, userAgent, contentDisposition, mimetype, downloadSize);
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     break;

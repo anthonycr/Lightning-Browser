@@ -376,8 +376,8 @@ public class HtmlFetcher {
      */
     private String getResolvedUrl(String urlAsString, int timeout,
                                   int num_redirects) {
-        String newUrl = null;
-        int responseCode = -1;
+        String newUrl;
+        int responseCode;
         try {
             HttpURLConnection hConn = createUrlConnection(urlAsString, timeout, true);
             // force no follow

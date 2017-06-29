@@ -102,7 +102,7 @@
     <string name="max_tabs">达到最大标签数</string>
     <string name="message_text_copied">文本已复制到剪贴板</string>
     <string name="message_link_copied">链接已复制到剪贴板</string>
-    <string name="custom_url">自定义 URL</string>
+    <string name="search_engine_custom">自定义 URL</string>
     <string name="message_blocked_local">本地文件已被阻止加载</string>
     <string name="licenses">开源许可</string>
     <string name="suggestion">搜索目标</string>

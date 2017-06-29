@@ -36,8 +36,8 @@ public class WebUtils {
         WebStorage.getInstance().deleteAllData();
     }
 
-    public static void clearHistory(@NonNull Context context) {
-        HistoryModel.deleteHistory()
+    public static void clearHistory(@NonNull Context context, @NonNull HistoryModel historyModel) {
+        historyModel.deleteHistory()
                 .subscribeOn(Schedulers.io())
                 .subscribe();
         WebViewDatabase m = WebViewDatabase.getInstance(context);

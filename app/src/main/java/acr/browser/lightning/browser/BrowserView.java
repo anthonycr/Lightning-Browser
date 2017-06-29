@@ -2,6 +2,7 @@ package acr.browser.lightning.browser;
 
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
 
@@ -11,7 +12,7 @@ public interface BrowserView {
 
     void removeTabView();
 
-    void updateUrl(String url, boolean shortUrl);
+    void updateUrl(@Nullable String url, boolean isLoading);
 
     void updateProgress(int progress);
 
@@ -21,7 +22,7 @@ public interface BrowserView {
 
     void closeActivity();
 
-    void showBlockedLocalFileDialog(DialogInterface.OnClickListener listener);
+    void showBlockedLocalFileDialog(@NonNull DialogInterface.OnClickListener listener);
 
     void showSnackbar(@StringRes int resource);
 

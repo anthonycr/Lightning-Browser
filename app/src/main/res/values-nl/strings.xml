@@ -124,7 +124,7 @@
     <string name="max_tabs">Maximum aantal tabbladen bereikt</string>
     <string name="message_text_copied">Tekst gekopieerd naar klembord</string>
     <string name="message_link_copied">Link gekopieerd naar klembord</string>
-    <string name="custom_url">Aangepaste URL</string>
+    <string name="search_engine_custom">Aangepaste URL</string>
     <string name="message_blocked_local">Lokaal bestand werd geblokkeerd</string>
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Zoek voor</string>

@@ -14,16 +14,16 @@ public class StringBuilderUtils {
     private static final String EMPTY = "";
 
     /**
-     * Replace a string in a string
-     * builder with another string.
+     * Replace the first string found in a
+     * string builder with another string.
      *
      * @param stringBuilder the string builder.
      * @param toReplace     the string to replace.
      * @param replacement   the replacement string.
      */
     public static void replace(@NonNull StringBuilder stringBuilder,
-                               @NonNull String toReplace,
-                               @NonNull String replacement) {
+                        @NonNull String toReplace,
+                        @NonNull String replacement) {
         int index = stringBuilder.indexOf(toReplace);
         if (index >= 0) {
             stringBuilder.replace(index, index + toReplace.length(), replacement);
@@ -42,7 +42,7 @@ public class StringBuilderUtils {
             stringBuilder.replace(0, 1, EMPTY);
         }
 
-        while (stringBuilder.lastIndexOf(SPACE) == (stringBuilder.length() - 1)) {
+        while (stringBuilder.lastIndexOf(SPACE) == (stringBuilder.length() - 1) && stringBuilder.length() > 0) {
             stringBuilder.replace(stringBuilder.length() - 1, stringBuilder.length(), EMPTY);
         }
     }

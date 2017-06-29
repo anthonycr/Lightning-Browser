@@ -110,7 +110,6 @@
     <string name="max_tabs">Max tabs reached</string>
     <string name="message_text_copied">Text copied to clipboard</string>
     <string name="message_link_copied">Link copied to clipboard</string>
-    <string name="custom_url">Custom URL</string>
     <string name="message_blocked_local">Local file has been blocked from loading</string>
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
@@ -227,7 +226,9 @@
     <string name="action_add_to_homescreen">Add to home screen</string>
     <string name="message_added_to_homescreen">Shortcut added to home screen</string>
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
-    <string name="flash_not_supported">Flash Player is not supported by your system!</string>
+    <string name="flash_not_supported">Flash Player is not supported by your system</string>
+    <string name="upsell_plus_version">Upgrade to Lightning Plus to block ads</string>
+    <string name="message_open_download_fail">This file doesn\'t exist anymore</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Frequently asked questions</string>
@@ -251,4 +252,17 @@
     <string name="dialog_title_close_browser">Close browser</string>
     <string name="dialog_delete_download">Delete download</string>
     <string name="dialog_delete_all_downloads">Delete all downloads</string>
+
+    <!-- Search Engines -->
+    <string name="search_engine_custom">Custom URL</string>
+    <string name="search_engine_google">Google</string>
+    <string name="search_engine_ask">Ask</string>
+    <string name="search_engine_bing">Bing</string>
+    <string name="search_engine_yahoo">Yahoo</string>
+    <string name="search_engine_startpage">StartPage</string>
+    <string name="search_engine_startpage_mobile">StartPage Mobile</string>
+    <string name="search_engine_duckduckgo">DuckDuckGo</string>
+    <string name="search_engine_duckduckgo_lite">DuckDuckGo Lite</string>
+    <string name="search_engine_baidu">Baidu</string>
+    <string name="search_engine_yandex">Yandex</string>
 </resources>

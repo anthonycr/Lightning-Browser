@@ -22,6 +22,7 @@ import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -41,14 +42,15 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.utils.AdBlock;
+import acr.browser.lightning.adblock.AdBlock;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
+import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 
 public class LightningWebClient extends WebViewClient {
@@ -100,7 +102,7 @@ public class LightningWebClient extends WebViewClient {
     @Override
     public void onPageFinished(@NonNull WebView view, String url) {
         if (view.isShown()) {
-            mUIController.updateUrl(url, true);
+            mUIController.updateUrl(url, false);
             mUIController.setBackButtonEnabled(view.canGoBack());
             mUIController.setForwardButtonEnabled(view.canGoForward());
             view.postInvalidate();
@@ -121,7 +123,7 @@ public class LightningWebClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         mLightningView.getTitleInfo().setFavicon(null);
         if (mLightningView.isShown()) {
-            mUIController.updateUrl(url, false);
+            mUIController.updateUrl(url, true);
             mUIController.showActionBar();
         }
         mUIController.tabChanged(mLightningView);
@@ -135,9 +137,9 @@ public class LightningWebClient extends WebViewClient {
 
         View dialogView = LayoutInflater.from(mActivity).inflate(R.layout.dialog_auth_request, null);
 
-        final TextView realmLabel = (TextView) dialogView.findViewById(R.id.auth_request_realm_textview);
-        final EditText name = (EditText) dialogView.findViewById(R.id.auth_request_username_edittext);
-        final EditText password = (EditText) dialogView.findViewById(R.id.auth_request_password_edittext);
+        final TextView realmLabel = dialogView.findViewById(R.id.auth_request_realm_textview);
+        final EditText name = dialogView.findViewById(R.id.auth_request_username_edittext);
+        final EditText password = dialogView.findViewById(R.id.auth_request_password_edittext);
 
         realmLabel.setText(mActivity.getString(R.string.label_realm, realm));
 
@@ -304,7 +306,7 @@ public class LightningWebClient extends WebViewClient {
             // If we are in incognito, immediately load, we don't want the url to leave the app
             return continueLoadingUrl(view, url, headers);
         }
-        if (url.startsWith(Constants.ABOUT)) {
+        if (URLUtil.isAboutUrl(url)) {
             // If this is an about page, immediately load, we don't need to leave the app
             return continueLoadingUrl(view, url, headers);
         }
@@ -359,15 +361,14 @@ public class LightningWebClient extends WebViewClient {
                 }
                 return true;
             }
-        } else if (url.startsWith(Constants.FILE)) {
+        } else if (URLUtil.isFileUrl(url) && !UrlUtils.isSpecialUrl(url)) {
             File file = new File(url.replace(Constants.FILE, ""));
 
             if (file.exists()) {
                 String newMimeType = MimeTypeMap.getSingleton()
-                        .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
+                    .getMimeTypeFromExtension(Utils.guessFileExtension(file.toString()));
 
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Uri contentUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".fileprovider", file);
                 intent.setDataAndType(contentUri, newMimeType);
@@ -377,8 +378,10 @@ public class LightningWebClient extends WebViewClient {
                 } catch (Exception e) {
                     System.out.println("LightningWebClient: cannot open downloaded file");
                 }
-                return true;
+            } else {
+                Utils.showSnackbar(mActivity, R.string.message_open_download_fail);
             }
+            return true;
         }
         return false;
     }

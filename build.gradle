@@ -1,10 +1,12 @@
 buildscript {
+    ext.kotlin_version = '1.1.3'
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -12,15 +14,16 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url "https://maven.google.com" }
     }
 }
 
 ext {
     minSdkVersion = 14
-    targetSdkVersion = 25
-    buildToolsVersion = '25.0.2'
+    targetSdkVersion = 26
+    buildToolsVersion = '26.0.0'
 
-    versionName = '4.5.0'
-    versionCode_lite = 97
-    versionCode_plus = 95
+    versionName = '4.5.1'
+    versionCode_lite = 98
+    versionCode_plus = 96
 }

@@ -102,7 +102,7 @@
     <string name="max_tabs">최대 탭 수에 도달했습니다</string>
     <string name="message_text_copied">텍스트가 클립보드로 복사되었습니다</string>
     <string name="message_link_copied">링크가 클립보드로 복사되었습니다</string>
-    <string name="custom_url">임의의 URL</string>
+    <string name="search_engine_custom">임의의 URL</string>
     <string name="message_blocked_local">로컬 파일 불러오기가 차단되었습니다</string>
     <string name="licenses">오픈 소스 라이센스</string>
     <string name="suggestion">다음을 검색</string>

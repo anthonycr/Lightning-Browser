@@ -124,7 +124,7 @@
     <string name="max_tabs">Досегнут макс. број језичака</string>
     <string name="message_text_copied">Текст копиран на клипборд</string>
     <string name="message_link_copied">Веза копирана на клипборд</string>
-    <string name="custom_url">Посебна адреса</string>
+    <string name="search_engine_custom">Посебна адреса</string>
     <string name="message_blocked_local">Учитавање локалног фајла је блокирано</string>
     <string name="licenses">Лиценце отвореног кôда</string>
     <string name="suggestion">Тражи</string>

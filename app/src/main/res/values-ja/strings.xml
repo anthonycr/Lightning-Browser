@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright 2013 The Android Open Source Project
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="app_name">Lightning</string>
     <string name="action_new_tab">新しいタブ</string>
     <string name="action_share">共有</string>
     <string name="action_history">履歴</string>
     <string name="action_bookmarks">ブックマーク</string>
+    <string name="action_downloads">ダウンロード</string>
     <string name="action_add_bookmark">ブックマークに追加</string>
     <string name="action_copy">ページの URL をコピー</string>
     <string name="action_forward">進む</string>
@@ -70,6 +58,7 @@
     <string name="title_search_engine">検索エンジン</string>
     <string name="action_ok">OK</string>
     <string name="dialog_download">このファイルをダウンロードしますか? (%1$s)</string>
+    <string name="unknown_size">サイズ不明</string>
     <string name="action_cancel">キャンセル</string>
     <string name="title_warning">警告</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player が見つかりません\nFlash Player をインストールしてください</string>
@@ -121,7 +110,7 @@
     <string name="max_tabs">これ以上タブは開けません</string>
     <string name="message_text_copied">テキストをクリップボードにコピーしました</string>
     <string name="message_link_copied">リンクをクリップボードにコピーしました</string>
-    <string name="custom_url">カスタム URL</string>
+    <string name="search_engine_custom">カスタム URL</string>
     <string name="message_blocked_local">ファイルを読み込めませんでした</string>
     <string name="licenses">オープンソース ライセンス</string>
     <string name="suggestion">検索 :</string>
@@ -139,11 +128,13 @@
     <string name="action_allow">許可する</string>
     <string name="action_dont_allow">許可しない</string>
     <string name="title_sign_in">サインイン</string>
+    <string name="label_realm">サーバー メッセージ: %s</string>
     <string name="hint_username">ユーザー名</string>
     <string name="hint_password">パスワード</string>
     <string name="search_suggestions">検索候補表示</string>
     <string name="powered_by_google">Google を使用する</string>
     <string name="powered_by_duck">DuckDuckGo を使用する</string>
+    <string name="powered_by_baidu">Baidu を使用する</string>
     <string name="search_suggestions_off">検索候補を表示しない</string>
     <string name="http_proxy">HTTP プロキシ</string>
     <string-array name="proxy_choices_array">
@@ -185,6 +176,7 @@
     <string name="export_bookmarks">ブックマークをエクスポートする</string>
     <string name="import_backup">ブックマークをインポートする</string>
     <string name="bookmark_export_path">ブックマークをエクスポートしました</string>
+    <string name="bookmark_export_failure">ブックマークのエクスポートに失敗しました!</string>
     <string name="bookmark_settings">ブックマーク</string>
     <string name="import_bookmark_error">ブックマークのインポートに失敗しました</string>
     <string name="title_chooser">ファイルを選択してください</string>
@@ -213,6 +205,7 @@
     </string-array>
     <string name="invert_color">色を反転する</string>
     <string name="dark_theme">ダーク</string>
+    <string name="settings_black_status_bar">ステータスバーを暗色にする</string>
     <string name="tabs">タブ</string>
     <string name="theme">アプリのテーマ</string>
     <string name="light_theme">ライト</string>
@@ -234,6 +227,9 @@
     <string name="action_add_to_homescreen">ホーム画面に追加</string>
     <string name="message_added_to_homescreen">ホーム画面にショートカットを追加しました</string>
     <string name="action_delete_all_bookmarks">すべてのブックマークを削除する</string>
+    <string name="flash_not_supported">このシステムは Flash Player をサポートしていません</string>
+    <string name="upsell_plus_version">広告をブロックするには Lightning Plus へアップグレードしてください</string>
+    <string name="message_open_download_fail">このファイルは存在しません</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">よくある質問と回答</string>
@@ -255,4 +251,6 @@
     <string name="dialog_rename_folder">フォルダ名を変更する</string>
     <string name="dialog_remove_folder">フォルダを削除する</string>
     <string name="dialog_title_close_browser">タブの消去</string>
+    <string name="dialog_delete_download">ダウンロードの削除</string>
+    <string name="dialog_delete_all_downloads">ダウンロードの全削除</string>
 </resources>

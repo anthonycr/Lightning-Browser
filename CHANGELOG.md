@@ -1,6 +1,18 @@
 Change Log
 ==========
 
+Version 4.5.1 *(2017-06-28)*
+----------------------------
+- Fixed bug with folders disappearing on bookmark homepage
+- Updated history page
+- Updated bookmark page
+- Updating target to Android O
+- Updating default bookmark favicons
+- Fixed occasional bug with bookmark long press
+- Updated downloads page design
+- Enhanced keyboard shortcuts
+- Fixed bug in google search suggestions for certain languages
+
 Version 4.5.0 *(2017-06-08)*
 ----------------------------
 - Translation updates

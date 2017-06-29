@@ -13,6 +13,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import com.anthonycr.bonsai.Completable;
+import com.anthonycr.bonsai.CompletableAction;
+import com.anthonycr.bonsai.CompletableSubscriber;
+import com.anthonycr.bonsai.Single;
+import com.anthonycr.bonsai.SingleAction;
+import com.anthonycr.bonsai.SingleSubscriber;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +29,15 @@ import javax.inject.Singleton;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 
+
+/**
+ * The disk backed download database.
+ * See {@link HistoryModel} for method
+ * documentation.
+ */
 @Singleton
 @WorkerThread
-public class HistoryDatabase extends SQLiteOpenHelper {
+public class HistoryDatabase extends SQLiteOpenHelper implements HistoryModel {
 
     // All Static variables
     // Database Version
@@ -45,9 +58,8 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @Nullable private SQLiteDatabase mDatabase;
 
     @Inject
-    HistoryDatabase(@NonNull Application application) {
+    public HistoryDatabase(@NonNull Application application) {
         super(application, DATABASE_NAME, null, DATABASE_VERSION);
-        mDatabase = HistoryDatabase.this.getWritableDatabase();
     }
 
     // Creating Tables
@@ -80,40 +92,108 @@ public class HistoryDatabase extends SQLiteOpenHelper {
 
     @WorkerThread
     @NonNull
-    private SQLiteDatabase lazyDatabase() {
+    private synchronized SQLiteDatabase lazyDatabase() {
         if (mDatabase == null || !mDatabase.isOpen()) {
             mDatabase = this.getWritableDatabase();
         }
         return mDatabase;
     }
 
-    @WorkerThread
-    synchronized void deleteHistory() {
-        lazyDatabase().delete(TABLE_HISTORY, null, null);
-        lazyDatabase().close();
+    @NonNull
+    @Override
+    public Completable deleteHistory() {
+        return Completable.create(new CompletableAction() {
+            @Override
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                lazyDatabase().delete(TABLE_HISTORY, null, null);
+                lazyDatabase().close();
+
+                subscriber.onComplete();
+            }
+        });
     }
 
-    @WorkerThread
-    synchronized void deleteHistoryItem(@NonNull String url) {
-        lazyDatabase().delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
+    @NonNull
+    @Override
+    public Completable deleteHistoryItem(@NonNull final String url) {
+        return Completable.create(new CompletableAction() {
+            @Override
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                lazyDatabase().delete(TABLE_HISTORY, KEY_URL + " = ?", new String[]{url});
+
+                subscriber.onComplete();
+            }
+        });
     }
 
-    @WorkerThread
-    synchronized void visitHistoryItem(@NonNull String url, @Nullable String title) {
-        ContentValues values = new ContentValues();
-        values.put(KEY_TITLE, title == null ? "" : title);
-        values.put(KEY_TIME_VISITED, System.currentTimeMillis());
+    @NonNull
+    @Override
+    public Completable visitHistoryItem(@NonNull final String url, @Nullable final String title) {
+        return Completable.create(new CompletableAction() {
+            @Override
+            public void onSubscribe(@NonNull CompletableSubscriber subscriber) {
+                ContentValues values = new ContentValues();
+                values.put(KEY_TITLE, title == null ? "" : title);
+                values.put(KEY_TIME_VISITED, System.currentTimeMillis());
 
-        Cursor cursor = lazyDatabase().query(false, TABLE_HISTORY, new String[]{KEY_URL},
-            KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
+                Cursor cursor = lazyDatabase().query(false, TABLE_HISTORY, new String[]{KEY_URL},
+                    KEY_URL + " = ?", new String[]{url}, null, null, null, "1");
 
-        if (cursor.getCount() > 0) {
-            lazyDatabase().update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
-        } else {
-            addHistoryItem(new HistoryItem(url, title == null ? "" : title));
-        }
+                if (cursor.getCount() > 0) {
+                    lazyDatabase().update(TABLE_HISTORY, values, KEY_URL + " = ?", new String[]{url});
+                } else {
+                    addHistoryItem(new HistoryItem(url, title == null ? "" : title));
+                }
 
-        cursor.close();
+                cursor.close();
+            }
+        });
+    }
+
+    @NonNull
+    @Override
+    public Single<List<HistoryItem>> findHistoryItemsContaining(@NonNull final String query) {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
+            @Override
+            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
+                List<HistoryItem> itemList = new ArrayList<>(5);
+
+                String search = '%' + query + '%';
+
+                Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, KEY_TITLE + " LIKE ? OR " + KEY_URL + " LIKE ?",
+                    new String[]{search, search}, null, null, KEY_TIME_VISITED + " DESC", "5");
+
+                while (cursor.moveToNext()) {
+                    itemList.add(fromCursor(cursor));
+                }
+
+                cursor.close();
+
+                subscriber.onItem(itemList);
+                subscriber.onComplete();
+            }
+        });
+    }
+
+    @NonNull
+    @Override
+    public Single<List<HistoryItem>> lastHundredVisitedHistoryItems() {
+        return Single.create(new SingleAction<List<HistoryItem>>() {
+            @Override
+            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
+                List<HistoryItem> itemList = new ArrayList<>(100);
+                Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100");
+
+                while (cursor.moveToNext()) {
+                    itemList.add(fromCursor(cursor));
+                }
+
+                cursor.close();
+
+                subscriber.onItem(itemList);
+                subscriber.onComplete();
+            }
+        });
     }
 
     @WorkerThread
@@ -138,43 +218,6 @@ public class HistoryDatabase extends SQLiteOpenHelper {
             cursor.close();
         }
         return m;
-    }
-
-    @WorkerThread
-    @NonNull
-    synchronized List<HistoryItem> findItemsContaining(@Nullable String search) {
-        List<HistoryItem> itemList = new ArrayList<>(5);
-        if (search == null) {
-            return itemList;
-        }
-
-        search = '%' + search + '%';
-
-        Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, KEY_TITLE + " LIKE ? OR " + KEY_URL + " LIKE ?",
-            new String[]{search, search}, null, null, KEY_TIME_VISITED + " DESC", "5");
-
-        while (cursor.moveToNext()) {
-            itemList.add(fromCursor(cursor));
-        }
-
-        cursor.close();
-
-        return itemList;
-    }
-
-    @WorkerThread
-    @NonNull
-    synchronized List<HistoryItem> getLastHundredItems() {
-        List<HistoryItem> itemList = new ArrayList<>(100);
-        Cursor cursor = lazyDatabase().query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100");
-
-        while (cursor.moveToNext()) {
-            itemList.add(fromCursor(cursor));
-        }
-
-        cursor.close();
-
-        return itemList;
     }
 
     @WorkerThread

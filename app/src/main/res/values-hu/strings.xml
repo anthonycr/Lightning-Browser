@@ -124,7 +124,7 @@
     <string name="max_tabs">Maximálisan megnyitható lapok száma elérve</string>
     <string name="message_text_copied">Szöveg másolva a vágólapra</string>
     <string name="message_link_copied">Link másolva a vágólapra</string>
-    <string name="custom_url">Egyéni URL</string>
+    <string name="search_engine_custom">Egyéni URL</string>
     <string name="message_blocked_local">Helyi fájl betöltése blokkolva</string>
     <string name="licenses">Nyílt forráskódú licencek</string>
     <string name="suggestion">Keresés</string>

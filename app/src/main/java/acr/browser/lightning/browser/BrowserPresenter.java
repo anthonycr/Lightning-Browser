@@ -1,11 +1,13 @@
 package acr.browser.lightning.browser;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
@@ -14,9 +16,10 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.activity.TabsManager;
-import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.constant.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.StartPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 
@@ -33,6 +36,7 @@ public class BrowserPresenter {
     private static final String TAG = "BrowserPresenter";
 
     @NonNull private final TabsManager mTabsModel;
+    @Inject Application mApplication;
     @Inject PreferenceManager mPreferences;
 
     @NonNull private final BrowserView mView;
@@ -116,7 +120,7 @@ public class BrowserPresenter {
                 mView.updateProgress(newTab.getProgress());
                 mView.setBackButtonEnabled(newTab.canGoBack());
                 mView.setForwardButtonEnabled(newTab.canGoForward());
-                mView.updateUrl(newTab.getUrl(), true);
+                mView.updateUrl(newTab.getUrl(), false);
                 mView.setTabView(newTab.getWebView());
                 int index = mTabsModel.indexOfTab(newTab);
                 if (index >= 0) {
@@ -143,6 +147,19 @@ public class BrowserPresenter {
 
     }
 
+    @NonNull
+    private String mapHomepageToCurrentUrl() {
+        String homepage = mPreferences.getHomepage();
+        switch (homepage) {
+            case Constants.SCHEME_HOMEPAGE:
+                return Constants.FILE + StartPage.getStartPageFile(mApplication);
+            case Constants.SCHEME_BOOKMARKS:
+                return Constants.FILE + BookmarkPage.getBookmarkPage(mApplication, null);
+            default:
+                return homepage;
+        }
+    }
+
     /**
      * Deletes the tab at the specified position.
      *
@@ -165,8 +182,8 @@ public class BrowserPresenter {
         boolean shouldClose = mShouldClose && isShown && tabToDelete.isNewTab();
         final LightningView currentTab = mTabsModel.getCurrentTab();
         if (mTabsModel.size() == 1 && currentTab != null &&
-            (UrlUtils.isStartPageUrl(currentTab.getUrl()) ||
-                currentTab.getUrl().equals(mPreferences.getHomepage()))) {
+            URLUtil.isFileUrl(currentTab.getUrl()) &&
+            currentTab.getUrl().equals(mapHomepageToCurrentUrl())) {
             mView.closeActivity();
             return;
         } else {
@@ -232,7 +249,7 @@ public class BrowserPresenter {
                         tab.loadUrl(url);
                     }
                 } else if (url != null) {
-                    if (url.startsWith(Constants.FILE)) {
+                    if (URLUtil.isFileUrl(url)) {
                         mView.showBlockedLocalFileDialog(new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

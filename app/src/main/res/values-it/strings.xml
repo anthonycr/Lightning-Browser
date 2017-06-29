@@ -124,7 +124,7 @@
     <string name="max_tabs">Hai raggiunto il numero massimo di schede apribili</string>
     <string name="message_text_copied">Testo copiato negli appunti</string>
     <string name="message_link_copied">Link copiato negli appunti</string>
-    <string name="custom_url">URL personalizzato</string>
+    <string name="search_engine_custom">URL personalizzato</string>
     <string name="message_blocked_local">Caricamento file locale bloccato</string>
     <string name="licenses">Licenze Open Source</string>
     <string name="suggestion">Cerca</string>
@@ -237,7 +237,7 @@
     <string name="message_added_to_homescreen">Scorciatoia aggiunta</string>
     <string name="action_delete_all_bookmarks">Cancella tutti i segnalibri</string>
     <string name="swap_bookmarks_and_tabs">Inverti pannello segnalibri con schede</string>
-    <string name="flash_not_supported">Flash Player non è supportato dal tuo sistema!</string>
+    <string name="flash_not_supported">Flash Player non è supportato dal tuo sistema</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Domande più frequenti</string>

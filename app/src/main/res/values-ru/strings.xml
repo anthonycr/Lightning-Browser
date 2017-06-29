@@ -107,7 +107,7 @@
     <string name="max_tabs">Достигнуто максимальное число вкладок</string>
     <string name="message_text_copied">Текст скопирован в буфер обмена</string>
     <string name="message_link_copied">Ссылка скопирована в буфер обмена</string>
-    <string name="custom_url">Пользовательский URL</string>
+    <string name="search_engine_custom">Пользовательский URL</string>
     <string name="message_blocked_local">Локальный файл недоступен для загрузки</string>
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Искать</string>
