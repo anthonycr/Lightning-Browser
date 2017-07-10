@@ -1620,10 +1620,15 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 @Override
                 public void onItem(@Nullable String item) {
                     Preconditions.checkNonNull(item);
-                    LightningView view = mTabsManager.getCurrentTab();
-                    if (view != null) {
-                        view.loadUrl(item);
+                    for (int i = 0; i < mTabsManager.size(); i++) {
+                        String url = mTabsManager.getTabAtPosition(i).getUrl();
+                        if (UrlUtils.isHistoryUrl(url))
+                        {
+                            mPresenter.tabChanged(i);
+                            return;
+                        }
                     }
+                    newTab(item, true);
                 }
             });
     }
