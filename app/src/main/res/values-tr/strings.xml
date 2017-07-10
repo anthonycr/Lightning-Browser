@@ -228,7 +228,7 @@
     <string name="message_added_to_homescreen">Ana ekrana kısayol eklendi</string>
     <string name="action_delete_all_bookmarks">Tüm yer işaretlerini sil</string>
     <string name="flash_not_supported">Flash Player, sisteminiz tarafından desteklenmiyor</string>
-    <string name="upsell_plus_version">Reklamları engellemek için Lightning Plus'a geçin</string>
+    <string name="upsell_plus_version">Reklamları engellemek için Lightning Plus\'a geçin</string>
     <string name="message_open_download_fail">Bu dosya artık yok</string>																						
     <string name="faq">S.S.S</string>
     <string name="faq_description">Sık Sorulan Sorular</string>    
