@@ -197,6 +197,8 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
         Cursor cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{url}, null, null, null, "1");
 
         if (cursor.getCount() == 0) {
+            cursor.close();
+
             String alternateUrl = alternateSlashUrl(url);
             cursor = lazyDatabase().query(TABLE_BOOKMARK, null, KEY_URL + "=?", new String[]{alternateUrl}, null, null, null, "1");
         }
@@ -408,6 +410,8 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
 
                 subscriber.onItem(bindCursorToHistoryItemList(cursor));
                 subscriber.onComplete();
+
+                cursor.close();
             }
         });
     }
@@ -425,6 +429,8 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
                 Collections.sort(list);
                 subscriber.onItem(list);
                 subscriber.onComplete();
+
+                cursor.close();
             }
         });
     }

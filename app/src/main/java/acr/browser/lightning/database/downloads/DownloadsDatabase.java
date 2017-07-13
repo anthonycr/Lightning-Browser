@@ -249,6 +249,8 @@ public class DownloadsDatabase extends SQLiteOpenHelper implements DownloadsMode
 
                 subscriber.onItem(bindCursorToDownloadItemList(cursor));
                 subscriber.onComplete();
+
+                cursor.close();
             }
         });
     }
