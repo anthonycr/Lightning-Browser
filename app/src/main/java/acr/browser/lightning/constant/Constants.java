@@ -73,11 +73,13 @@ public final class Constants {
     public static final int PROXY_I2P = 2;
     public static final int PROXY_MANUAL = 3;
 
+    public static final String UTF8 = "UTF-8";
+
     // Default text encoding we will use
-    public static final String DEFAULT_ENCODING = "UTF-8";
+    public static final String DEFAULT_ENCODING = UTF8;
 
     // Allowable text encodings for the WebView
-    public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", "UTF-8", "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
+    public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", UTF8, "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
 
     public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
 }
