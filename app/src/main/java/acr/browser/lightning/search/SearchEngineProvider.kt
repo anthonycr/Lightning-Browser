@@ -3,7 +3,6 @@ package acr.browser.lightning.search
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.search.engine.*
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -18,23 +17,22 @@ class SearchEngineProvider @Inject constructor() {
         BrowserApp.getAppComponent().inject(this)
     }
 
-    val currentSearchEngine: BaseSearchEngine
-        get() {
-            when (preferenceManager.searchChoice) {
-                0 -> return CustomSearch(preferenceManager.searchUrl)
-                1 -> return GoogleSearch()
-                2 -> return AskSearch()
-                3 -> return BingSearch()
-                4 -> return YahooSearch()
-                5 -> return StartPageSearch()
-                6 -> return StartPageMobileSearch()
-                7 -> return DuckSearch()
-                8 -> return DuckLiteSearch()
-                9 -> return BaiduSearch()
-                10 -> return YandexSearch()
-                else -> return GoogleSearch()
-            }
+    fun getCurrentSearchEngine(): BaseSearchEngine {
+        when (preferenceManager.searchChoice) {
+            0 -> return CustomSearch(preferenceManager.searchUrl)
+            1 -> return GoogleSearch()
+            2 -> return AskSearch()
+            3 -> return BingSearch()
+            4 -> return YahooSearch()
+            5 -> return StartPageSearch()
+            6 -> return StartPageMobileSearch()
+            7 -> return DuckSearch()
+            8 -> return DuckLiteSearch()
+            9 -> return BaiduSearch()
+            10 -> return YandexSearch()
+            else -> return GoogleSearch()
         }
+    }
 
     fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): Int {
         if (searchEngine is CustomSearch) {
@@ -64,21 +62,20 @@ class SearchEngineProvider @Inject constructor() {
         }
     }
 
-    val allSearchEngines: List<BaseSearchEngine>
-        get() = object : ArrayList<BaseSearchEngine>(11) {
-            init {
-                add(CustomSearch(preferenceManager.searchUrl))
-                add(GoogleSearch())
-                add(AskSearch())
-                add(BingSearch())
-                add(YahooSearch())
-                add(StartPageSearch())
-                add(StartPageMobileSearch())
-                add(DuckSearch())
-                add(DuckLiteSearch())
-                add(BaiduSearch())
-                add(YandexSearch())
-            }
-        }
+    fun getAllSearchEngines(): List<BaseSearchEngine> {
+        return listOf(
+                CustomSearch(preferenceManager.searchUrl),
+                GoogleSearch(),
+                AskSearch(),
+                BingSearch(),
+                YahooSearch(),
+                StartPageSearch(),
+                StartPageMobileSearch(),
+                DuckSearch(),
+                DuckLiteSearch(),
+                BaiduSearch(),
+                YandexSearch()
+        )
+    }
 
 }
