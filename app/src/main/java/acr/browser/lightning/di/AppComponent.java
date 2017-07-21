@@ -3,6 +3,7 @@ package acr.browser.lightning.di;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.browser.activity.BrowserActivity;
+import acr.browser.lightning.network.NetworkObservable;
 import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.browser.TabsManager;
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity;
@@ -91,5 +92,7 @@ public interface AppComponent {
     void inject(SearchEngineProvider searchEngineProvider);
 
     void inject(GeneralSettingsFragment generalSettingsFragment);
+
+    void inject(NetworkObservable networkObservable);
 
 }

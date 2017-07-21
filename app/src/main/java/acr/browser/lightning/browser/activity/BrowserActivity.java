@@ -11,7 +11,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -89,16 +88,17 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.IncognitoActivity;
 import acr.browser.lightning.R;
-import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.browser.BookmarksView;
 import acr.browser.lightning.browser.BrowserPresenter;
 import acr.browser.lightning.browser.BrowserView;
-import acr.browser.lightning.IncognitoActivity;
 import acr.browser.lightning.browser.SearchBoxModel;
 import acr.browser.lightning.browser.TabsManager;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.browser.fragment.BookmarksFragment;
+import acr.browser.lightning.browser.fragment.TabsFragment;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.DownloadsPage;
 import acr.browser.lightning.constant.HistoryPage;
@@ -108,10 +108,9 @@ import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
-import acr.browser.lightning.browser.fragment.BookmarksFragment;
-import acr.browser.lightning.browser.fragment.TabsFragment;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
-import acr.browser.lightning.receiver.NetworkReceiver;
+import acr.browser.lightning.network.NetworkObservable;
+import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.search.engine.BaseSearchEngine;
@@ -197,6 +196,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject SearchBoxModel mSearchBoxModel;
 
     @Inject SearchEngineProvider mSearchEngineProvider;
+
+    @Inject NetworkObservable mNetworkObservable;
 
     private TabsManager mTabsManager;
 
@@ -1350,11 +1351,9 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         super.onPause();
         Log.d(TAG, "onPause");
         mTabsManager.pauseAll();
-        try {
-            getApplication().unregisterReceiver(mNetworkReceiver);
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Receiver was not registered", e);
-        }
+
+        mNetworkObservable.stopListening(mNetworkListener);
+
         if (isIncognito() && isFinishing()) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out);
         }
@@ -1412,9 +1411,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
         supportInvalidateOptionsMenu();
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(NETWORK_BROADCAST_ACTION);
-        getApplication().registerReceiver(mNetworkReceiver, filter);
+        mNetworkObservable.beginListening(mNetworkListener);
 
         if (mFullScreen) {
             overlayToolbarOnWebView();
@@ -2292,17 +2289,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
     }
 
+
     /**
-     * This NetworkReceiver notifies each of the WebViews in the browser whether
+     * This EventListener notifies each of the WebViews in the browser whether
      * the network is currently connected or not. This is important because some
      * JavaScript properties rely on the WebView knowing the current network state.
      * It is used to help the browser be compliant with the HTML5 spec, sec. 5.7.7
      */
-    private final NetworkReceiver mNetworkReceiver = new NetworkReceiver() {
+    private final NetworkObservable.EventListener mNetworkListener = new NetworkObservable.EventListener() {
         @Override
-        public void onConnectivityChange(boolean isConnected) {
-            Log.d(TAG, "Network Connected: " + isConnected);
-            mTabsManager.notifyConnectionStatus(isConnected);
+        public void onNetworkConnectionChange(boolean connected) {
+            Log.d(TAG, "Network Connected: " + connected);
+            mTabsManager.notifyConnectionStatus(connected);
         }
     };
 
