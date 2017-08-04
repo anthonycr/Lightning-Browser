@@ -109,8 +109,7 @@
     <string name="message_cookies_cleared">Çerezler temizlendi</string>
     <string name="max_tabs">Maksimum sekme sınırına ulaşıldı</string>
     <string name="message_text_copied">Yazı panoya kopyalandı</string>
-    <string name="message_link_copied">Bağlantı panoya kopyalandı</string>
-    
+    <string name="message_link_copied">Bağlantı panoya kopyalandı</string>    
     <string name="message_blocked_local">Yerel dosyanın yüklenmesi engellendi</string>
     <string name="licenses">Açık Kaynak Lisansları</string>
     <string name="suggestion">Ara</string>
@@ -121,10 +120,10 @@
     <string name="message_certificate_domain_mismatch">sertifika alan adı site etki alanıyla eşleşmiyor</string>
     <string name="message_certificate_invalid">sertifika geçersiz</string>
     <string name="message_certificate_not_yet_valid">sertifika henüz geçerli değil</string>
-    <string name="message_certificate_untrusted">sertifika güvenilir değil</string>
+    <string name="message_certificate_untrusted">sertifika güvenilir değil</string>	
     <string name="title_form_resubmission">Formu yeniden gönder</string>
-    <string name="message_form_resubmission">Veriyi yeniden göndermek istiyor musun?</string>
-    <string name="message_location">\nKonum bilgisi isteniyor</string>
+    <string name="message_form_resubmission">Verileri tekrar göndermek ister misiniz?</string>
+    <string name="message_location">Konumunuzu kullanmak ister misiniz?</string>
     <string name="action_allow">İzin ver</string>
     <string name="action_dont_allow">İzin verme</string>
     <string name="title_sign_in">Giriş Yap</string>
@@ -134,7 +133,7 @@
     <string name="search_suggestions">Önerilenleri ara</string>
     <string name="powered_by_google">Google tarafından desteklenmektedir</string>
     <string name="powered_by_duck">DuckDuckGo tarafından desteklenmektedir</string>
-    <string name="powered_by_baidu">Baidu tarafından desteklenmektedir</string>														 
+    <string name="powered_by_baidu">Baidu tarafından desteklenmektedir</string>    
     <string name="search_suggestions_off">Arama önerisi yok</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
@@ -172,7 +171,7 @@
     <string name="sync_history">Geçmişi Google ile eşitle</string>
     <string name="title_file_chooser">Dosya seçimi</string>
     <string name="library_netcipher">NetCipher</string>
-    <string name="license_gnu">GNU Lesser General Public License</string>
+    <string name="license_gnu">GNU Genel Kamu Lisansı</string>
     <string name="export_bookmarks">Yer işaretlerini yedekle</string>
     <string name="import_backup">Yer işaretlerini geri yükle</string>
     <string name="bookmark_export_path">Yer işaretlerinin yedeklendiği yer</string>    
@@ -195,7 +194,7 @@
     <string name="loading_failed">Sayfadan bir şey yüklenemedi.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
-    <string name="mit_license">MIT License</string>
+    <string name="mit_license">MIT Lisansı</string>
     <string name="url_contents">URL Kutusu İçeriği</string>
     <string name="text_encoding">Metin Kodlama</string>
     <string-array name="url_content_array">
@@ -232,10 +231,13 @@
     <string name="message_open_download_fail">Bu dosya artık yok</string>																						
     <string name="faq">S.S.S</string>
     <string name="faq_description">Sık Sorulan Sorular</string>    
+    
+	
     <!-- debug strings -->					  
     <string name="debug_title">Hata Ayıklama Ayarları</string>
     <string name="debug_leak_canary">LeakCanary</string>
     <string name="app_restart">Değişikliklerin etkili olması için lütfen uygulamayı yeniden başlatın.</string>   
+    
     <!-- Dialogs -->				
     <string name="dialog_open_new_tab">Yeni sekmede aç</string>
     <string name="dialog_open_background_tab">Arka planda aç</string>
