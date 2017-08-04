@@ -1,4 +1,4 @@
-package acr.browser.lightning.activity;
+package acr.browser.lightning.settings.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

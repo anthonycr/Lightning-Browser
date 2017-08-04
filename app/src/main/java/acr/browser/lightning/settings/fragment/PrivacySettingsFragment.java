@@ -26,6 +26,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.database.history.HistoryModel;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.LightningView;
@@ -46,8 +47,6 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_DONOTTRACK = "do_not_track";
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
-    private Activity mActivity;
-
     @Inject HistoryModel mHistoryModel;
 
     @Override
@@ -56,8 +55,6 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         BrowserApp.getAppComponent().inject(this);
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_privacy);
-
-        mActivity = getActivity();
 
         initPrefs();
     }
@@ -134,7 +131,9 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private void clearHistoryDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        Activity activity = getActivity();
+        Preconditions.checkNonNull(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(getResources().getString(R.string.title_clear_history));
         Dialog dialog = builder.setMessage(getResources().getString(R.string.dialog_history))
             .setPositiveButton(getResources().getString(R.string.action_yes),
@@ -153,11 +152,13 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                     }
                 })
             .setNegativeButton(getResources().getString(R.string.action_no), null).show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
+        BrowserDialog.setDialogSize(activity, dialog);
     }
 
     private void clearCookiesDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        Activity activity = getActivity();
+        Preconditions.checkNonNull(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(getResources().getString(R.string.title_clear_cookies));
         builder.setMessage(getResources().getString(R.string.dialog_cookies))
             .setPositiveButton(getResources().getString(R.string.action_yes),
@@ -179,10 +180,12 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private void clearCache() {
-        WebView webView = new WebView(mActivity);
+        Activity activity = getActivity();
+        Preconditions.checkNonNull(activity);
+        WebView webView = new WebView(activity);
         webView.clearCache(true);
         webView.destroy();
-        Utils.showSnackbar(mActivity, R.string.message_cache_cleared);
+        Utils.showSnackbar(activity, R.string.message_cache_cleared);
     }
 
     @NonNull
