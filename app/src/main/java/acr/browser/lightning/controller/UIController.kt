@@ -18,12 +18,14 @@ import android.webkit.WebChromeClient.CustomViewCallback
 
 interface UIController {
 
+    @ColorInt
+    fun getUiColor(): Int
+
+    fun getUseDarkTheme(): Boolean
+
+    fun getTabModel(): TabsManager
+
     fun changeToolbarBackground(favicon: Bitmap, drawable: Drawable?)
-
-    @get:ColorInt
-    val uiColor: Int
-
-    val useDarkTheme: Boolean
 
     fun updateUrl(title: String?, isLoading: Boolean)
 
@@ -72,8 +74,6 @@ interface UIController {
     fun setBackButtonEnabled(enabled: Boolean)
 
     fun tabChanged(tab: LightningView)
-
-    val tabModel: TabsManager
 
     fun onBackButtonPressed()
 
