@@ -242,7 +242,7 @@ public class JResult implements Serializable {
     /**
      * set images list
      */
-    public void setImages(List<ImageResult> images) {
+    public void setImages(@Nullable List<ImageResult> images) {
         this.images = images;
     }
 
@@ -256,8 +256,6 @@ public class JResult implements Serializable {
 
     @NonNull
     public List<Map<String, String>> getLinks() {
-        if (links == null)
-            return Collections.emptyList();
         return links;
     }
 

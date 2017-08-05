@@ -977,7 +977,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void showCloseDialog(final int position) {
+    private void showCloseDialog(final int position) {
         if (position < 0) {
             return;
         }
@@ -1446,7 +1446,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * @param tabBackground the optional LinearLayout to color
      */
     @Override
-    public void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
+    private void changeToolbarBackground(@NonNull Bitmap favicon, @Nullable final Drawable tabBackground) {
         final int defaultColor = ContextCompat.getColor(this, R.color.primary_color);
         if (mCurrentUiColor == Color.BLACK) {
             mCurrentUiColor = defaultColor;
@@ -1859,7 +1859,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public synchronized void onShowCustomView(@NonNull final View view, @NonNull CustomViewCallback callback, int requestedOrientation) {
+    private synchronized void onShowCustomView(@NonNull final View view, @NonNull CustomViewCallback callback, int requestedOrientation) {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mCustomView != null) {
             try {
@@ -1912,7 +1912,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void onHideCustomView() {
+    private void onHideCustomView() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (mCustomView == null || mCustomViewCallback == null || currentTab == null) {
             if (mCustomViewCallback != null) {
@@ -2062,10 +2062,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      *                  the newly created WebView.
      */
     @Override
-    public synchronized void onCreateWindow(Message resultMsg) {
-        if (resultMsg == null) {
-            return;
-        }
+    public synchronized void onCreateWindow(@NonNull Message resultMsg) {
         if (newTab("", true)) {
             LightningView newTab = mTabsManager.getTabAtPosition(mTabsManager.size() - 1);
             if (newTab != null) {
@@ -2126,7 +2123,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * incorrect so that the animation can happen correctly.
      */
     @Override
-    public void showActionBar() {
+    private void showActionBar() {
         if (mFullScreen) {
             Log.d(TAG, "showActionBar");
             if (mToolbarLayout == null)
@@ -2156,7 +2153,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void handleBookmarksChange() {
+    private void handleBookmarksChange() {
         final LightningView currentTab = mTabsManager.getCurrentTab();
         if (currentTab != null && UrlUtils.isBookmarkUrl(currentTab.getUrl())) {
             currentTab.loadBookmarkpage();
