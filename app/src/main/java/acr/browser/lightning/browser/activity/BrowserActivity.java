@@ -74,6 +74,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.anthonycr.bonsai.Completable;
@@ -852,6 +853,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             case R.id.action_add_bookmark:
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     addBookmark(currentView.getTitle(), currentUrl);
+                    Toast.makeText(this, "BookMark Added", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_find:
