@@ -24,14 +24,14 @@ object AnimationUtils {
                                           @DrawableRes drawableRes: Int): Animation {
         val animation = object : Animation() {
 
-            private var mSetFinalDrawable: Boolean = false
+            private var setFinalDrawable: Boolean = false
 
             override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
                 if (interpolatedTime < 0.5f) {
                     imageView.rotationY = 90f * interpolatedTime * 2f
                 } else {
-                    if (!mSetFinalDrawable) {
-                        mSetFinalDrawable = true
+                    if (!setFinalDrawable) {
+                        setFinalDrawable = true
                         imageView.setImageResource(drawableRes)
                     }
                     imageView.rotationY = -90 + 90f * (interpolatedTime - 0.5f) * 2f
