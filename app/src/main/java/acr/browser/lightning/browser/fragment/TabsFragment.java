@@ -88,7 +88,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     private UIController mUiController;
 
     @BindView(R.id.tabs_list) RecyclerView mRecyclerView;
-    private Unbinder mUnbinder;
+    @Nullable private Unbinder mUnbinder;
 
     private TabsManager mTabsManager;
     @Inject PreferenceManager mPreferences;

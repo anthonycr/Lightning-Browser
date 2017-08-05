@@ -218,13 +218,13 @@ public class HtmlFetcher {
         return charset;
     }
 
-    @Nullable
+    @NonNull
     public JResult fetchAndExtract(String url, int timeout, boolean resolve) throws Exception {
         return fetchAndExtract(url, timeout, resolve, 0, false);
     }
 
     // main workhorse to call externally
-    @Nullable
+    @NonNull
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     private JResult fetchAndExtract(String url, int timeout, boolean resolve,
                                     int maxContentSize, boolean forceReload) throws Exception {

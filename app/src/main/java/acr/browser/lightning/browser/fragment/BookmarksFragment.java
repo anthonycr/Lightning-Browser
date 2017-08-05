@@ -235,7 +235,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             ThemeUtils.getIconLightThemeColor(activity);
     }
 
-    private void updateBookmarkIndicator(final String url) {
+    private void updateBookmarkIndicator(@NonNull final String url) {
         SubscriptionUtils.safeUnsubscribe(mBookmarkUpdateSubscription);
         mBookmarkUpdateSubscription = mBookmarkManager.isBookmark(url)
             .subscribeOn(Schedulers.io())
@@ -507,8 +507,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             mFaviconFetchSubscriptions.clear();
         }
 
+        @Nullable
         @Override
-        public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public BookmarkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View itemView = inflater.inflate(R.layout.bookmark_list_item, parent, false);
 
@@ -521,7 +522,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
 
         @Override
-        public void onBindViewHolder(final BookmarkViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final BookmarkViewHolder holder, int position) {
             ViewCompat.jumpDrawablesToCurrentState(holder.itemView);
 
             final HistoryItem web = mBookmarks.get(position);
