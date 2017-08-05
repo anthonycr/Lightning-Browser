@@ -108,6 +108,8 @@ public class LightningView {
     @Inject LightningDialogBuilder mDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
 
+    private final LightningWebClient mLightningWebClient;
+
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
         mActivity = activity;
@@ -138,7 +140,8 @@ public class LightningView {
         mWebView.setSaveEnabled(true);
         mWebView.setNetworkAvailable(true);
         mWebView.setWebChromeClient(new LightningChromeClient(activity, this));
-        mWebView.setWebViewClient(new LightningWebClient(activity, this));
+        mLightningWebClient = new LightningWebClient(activity, this);
+        mWebView.setWebViewClient(mLightningWebClient);
         mWebView.setDownloadListener(new LightningDownloadListener(activity));
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
@@ -272,6 +275,8 @@ public class LightningView {
         if (mWebView == null) {
             return;
         }
+
+        mLightningWebClient.updatePreferences();
 
         WebSettings settings = mWebView.getSettings();
 

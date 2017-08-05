@@ -40,13 +40,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.adblock.AdBlocker;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.adblock.AdBlock;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -63,7 +64,9 @@ public class LightningWebClient extends WebViewClient {
     @NonNull private final IntentUtils mIntentUtils;
 
     @Inject ProxyUtils mProxyUtils;
-    @Inject AdBlock mAdBlock;
+    @Inject PreferenceManager mPreferences;
+
+    @NonNull private AdBlocker mAdBlock;
 
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
@@ -72,8 +75,20 @@ public class LightningWebClient extends WebViewClient {
         mActivity = activity;
         mUIController = (UIController) activity;
         mLightningView = lightningView;
-        mAdBlock.updatePreference();
+        mAdBlock = chooseAdBlocker();
         mIntentUtils = new IntentUtils(activity);
+    }
+
+    public void updatePreferences() {
+        mAdBlock = chooseAdBlocker();
+    }
+
+    private AdBlocker chooseAdBlocker() {
+        if (mPreferences.getAdBlockEnabled()) {
+            return BrowserApp.getAppComponent().provideAssetsAdBlocker();
+        } else {
+            return BrowserApp.getAppComponent().provideNoOpAdBlocker();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
