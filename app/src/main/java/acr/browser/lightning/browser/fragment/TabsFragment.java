@@ -386,7 +386,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             final TabViewModel web = mTabList.get(position);
 
             updateViewHolderTitle(holder, web.getTitle());
-            updateViewHolderAppearance(holder, web.isForegroundTab());
+            updateViewHolderAppearance(holder, web.getFavicon(), web.isForegroundTab());
             updateViewHolderFavicon(holder, web.getFavicon(), web.isForegroundTab());
             updateViewHolderBackground(holder, web.isForegroundTab());
         }
@@ -415,7 +415,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             }
         }
 
-        private void updateViewHolderAppearance(@NonNull LightningViewHolder viewHolder, boolean isForeground) {
+        private void updateViewHolderAppearance(@NonNull LightningViewHolder viewHolder, @NonNull Bitmap favicon, boolean isForeground) {
             if (isForeground) {
                 Drawable foregroundDrawable = null;
                 if (!mDrawerTabs) {
@@ -427,6 +427,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.boldText);
                 if (!mDrawerTabs) {
                     DrawableUtils.setBackground(viewHolder.layout, foregroundDrawable);
+                }
+                if (!mIsIncognito && mColorMode) {
+                    mUiController.changeToolbarBackground(favicon, foregroundDrawable);
                 }
             } else {
                 TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.normalText);
