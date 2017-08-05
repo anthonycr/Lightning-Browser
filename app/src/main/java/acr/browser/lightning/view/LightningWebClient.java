@@ -31,6 +31,8 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.anthonycr.mezzanine.MezzanineGenerator;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URISyntaxException;
@@ -47,6 +49,8 @@ import acr.browser.lightning.adblock.AdBlocker;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.js.InvertPage;
+import acr.browser.lightning.js.TextReflow;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
@@ -68,6 +72,9 @@ public class LightningWebClient extends WebViewClient {
 
     @NonNull private AdBlocker mAdBlock;
 
+    @NonNull private final TextReflow mTextReflowJs;
+    @NonNull private final InvertPage mInvertPageJs;
+
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
         Preconditions.checkNonNull(activity);
@@ -77,6 +84,8 @@ public class LightningWebClient extends WebViewClient {
         mLightningView = lightningView;
         mAdBlock = chooseAdBlocker();
         mIntentUtils = new IntentUtils(activity);
+        mTextReflowJs = new MezzanineGenerator.TextReflow();
+        mInvertPageJs = new MezzanineGenerator.InvertPage();
     }
 
     public void updatePreferences() {
@@ -127,9 +136,8 @@ public class LightningWebClient extends WebViewClient {
         } else {
             mLightningView.getTitleInfo().setTitle(view.getTitle());
         }
-        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT &&
-            mLightningView.getInvertePage()) {
-            view.evaluateJavascript(Constants.JAVASCRIPT_INVERT_PAGE, null);
+        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && mLightningView.getInvertePage()) {
+            view.evaluateJavascript(mInvertPageJs.provideJs(), null);
         }
         mUIController.tabChanged(mLightningView);
     }
@@ -199,7 +207,7 @@ public class LightningWebClient extends WebViewClient {
                     @Override
                     public void run() {
                         mZoomScale = newScale;
-                        view.evaluateJavascript(Constants.JAVASCRIPT_TEXT_REFLOW, new ValueCallback<String>() {
+                        view.evaluateJavascript(mTextReflowJs.provideJs(), new ValueCallback<String>() {
                             @Override
                             public void onReceiveValue(String value) {
                                 mIsRunning = false;
