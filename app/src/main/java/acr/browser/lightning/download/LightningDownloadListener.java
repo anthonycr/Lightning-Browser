@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class LightningDownloadListener implements DownloadListener {
     }
 
     @Override
-    public void onDownloadStart(final String url, final String userAgent,
+    public void onDownloadStart(@NonNull final String url, final String userAgent,
                                 final String contentDisposition, final String mimetype, final long contentLength) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity,
             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},

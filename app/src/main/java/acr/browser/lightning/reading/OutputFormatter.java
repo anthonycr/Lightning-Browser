@@ -1,5 +1,7 @@
 package acr.browser.lightning.reading;
 
+import android.support.annotation.NonNull;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -58,7 +60,7 @@ public class OutputFormatter {
     /**
      * takes an element and turns the P tags into \n\n
      */
-    public String getFormattedText(Element topNode) {
+    public String getFormattedText(@NonNull Element topNode) {
         setParagraphIndex(topNode, nodesToKeepCssSelector);
         removeNodesWithNegativeScores(topNode);
         StringBuilder sb = new StringBuilder();
@@ -91,7 +93,7 @@ public class OutputFormatter {
      * If there are elements inside our top node that have a negative gravity
      * score remove them
      */
-    private void removeNodesWithNegativeScores(Element topNode) {
+    private void removeNodesWithNegativeScores(@NonNull Element topNode) {
         Elements gravityItems = topNode.select("*[gravityScore]");
         for (Element item : gravityItems) {
             int score = getScore(item);
@@ -102,7 +104,7 @@ public class OutputFormatter {
         }
     }
 
-    private int append(Element node, StringBuilder sb, String tagName) {
+    private int append(@NonNull Element node, @NonNull StringBuilder sb, @NonNull String tagName) {
         int countOfP = 0; // Number of P elements in the article
         int paragraphWithTextIndex = 0;
         // is select more costly then getElementsByTag?
@@ -134,7 +136,7 @@ public class OutputFormatter {
         return countOfP;
     }
 
-    private static void setParagraphIndex(Element node, String tagName) {
+    private static void setParagraphIndex(@NonNull Element node, @NonNull String tagName) {
         int paragraphIndex = 0;
         for (Element e : node.select(tagName)) {
             e.attr("paragraphIndex", Integer.toString(paragraphIndex++));
@@ -149,7 +151,7 @@ public class OutputFormatter {
         }
     }
 
-    private static int getParagraphIndex(Element el) {
+    private static int getParagraphIndex(@NonNull Element el) {
         try {
             return Integer.parseInt(el.attr("paragraphIndex"));
         } catch (NumberFormatException ex) {
@@ -157,7 +159,7 @@ public class OutputFormatter {
         }
     }
 
-    private static int getScore(Element el) {
+    private static int getScore(@NonNull Element el) {
         try {
             return Integer.parseInt(el.attr("gravityScore"));
         } catch (Exception ex) {
@@ -165,7 +167,7 @@ public class OutputFormatter {
         }
     }
 
-    private boolean unlikely(Node e) {
+    private boolean unlikely(@NonNull Node e) {
         if (e.attr("class") != null && e.attr("class").toLowerCase().contains("caption"))
             return true;
 
@@ -174,7 +176,7 @@ public class OutputFormatter {
         return unlikelyPattern.matcher(style).find() || unlikelyPattern.matcher(clazz).find();
     }
 
-    private void appendTextSkipHidden(Element e, StringBuilder accum, int indent) {
+    private void appendTextSkipHidden(@NonNull Element e, @NonNull StringBuilder accum, int indent) {
         for (Node child : e.childNodes()) {
             if (unlikely(child)) {
                 continue;
@@ -195,21 +197,23 @@ public class OutputFormatter {
         }
     }
 
-    private static boolean lastCharIsWhitespace(StringBuilder accum) {
+    private static boolean lastCharIsWhitespace(@NonNull StringBuilder accum) {
         return accum.length() != 0 && Character.isWhitespace(accum.charAt(accum.length() - 1));
     }
 
-    private String node2Text(Element el) {
+    private String node2Text(@NonNull Element el) {
         StringBuilder sb = new StringBuilder(200);
         appendTextSkipHidden(el, sb, 0);
         return sb.toString();
     }
 
-    private OutputFormatter setUnlikelyPattern(String unlikelyPattern) {
+    @NonNull
+    private OutputFormatter setUnlikelyPattern(@NonNull String unlikelyPattern) {
         this.unlikelyPattern = Pattern.compile(unlikelyPattern);
         return this;
     }
 
+    @NonNull
     public OutputFormatter appendUnlikelyPattern(String str) {
         return setUnlikelyPattern(unlikelyPattern.toString() + '|' + str);
     }

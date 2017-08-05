@@ -353,7 +353,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         return titles;
     }
 
-    private void showChooserDialog(final Activity activity, List<String> list) {
+    private void showChooserDialog(@NonNull final Activity activity, @NonNull List<String> list) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
             android.R.layout.simple_list_item_1);

@@ -163,7 +163,7 @@ public class BookmarkExporter {
 
                     subscriber.onItem(bookmarks);
                     subscriber.onComplete();
-                } catch (IOException | JSONException e) {
+                } catch (@NonNull IOException | JSONException e) {
                     subscriber.onError(e);
                 } finally {
                     Utils.close(bookmarksReader);

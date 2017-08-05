@@ -15,12 +15,15 @@
  */
 package acr.browser.lightning.reading;
 
+import android.support.annotation.NonNull;
+
 /**
  * 
  * @author Peter Karich
  */
 public interface SCache {
 
+    @NonNull
     JResult get(String url);
 
     void put(String url, JResult res);
