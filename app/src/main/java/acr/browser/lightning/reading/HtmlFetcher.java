@@ -480,15 +480,13 @@ public class HtmlFetcher {
     private JResult getFromCache(String url, String originalUrl) {
         if (cache != null) {
             JResult res = cache.get(url);
-            if (res != null) {
-                // e.g. the cache returned a shortened url as original url now we want to store the
-                // current original url! Also it can be that the cache response to url but the JResult
-                // does not contain it so overwrite it:
-                res.setUrl(url);
-                res.setOriginalUrl(originalUrl);
-                cacheCounter.addAndGet(1);
-                return res;
-            }
+            // e.g. the cache returned a shortened url as original url now we want to store the
+            // current original url! Also it can be that the cache response to url but the JResult
+            // does not contain it so overwrite it:
+            res.setUrl(url);
+            res.setOriginalUrl(originalUrl);
+            cacheCounter.addAndGet(1);
+            return res;
         }
         return null;
     }

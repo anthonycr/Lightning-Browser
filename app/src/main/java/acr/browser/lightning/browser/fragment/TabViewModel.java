@@ -10,7 +10,7 @@ import acr.browser.lightning.view.LightningView;
  */
 final class TabViewModel {
 
-    @NonNull private LightningView mLightningView;
+    @NonNull private final LightningView mLightningView;
     @NonNull private final String mTitle;
     @NonNull private final Bitmap mFavicon;
     private final boolean mIsForeground;

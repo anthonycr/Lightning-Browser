@@ -42,14 +42,14 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     }
 
     @NonNull
-    protected final ActionBar getSupportActionBar() {
+    final ActionBar getSupportActionBar() {
         ActionBar actionBar = getDelegate().getSupportActionBar();
         Preconditions.checkNonNull(actionBar);
 
         return actionBar;
     }
 
-    protected final void setSupportActionBar(@Nullable Toolbar toolbar) {
+    final void setSupportActionBar(@Nullable Toolbar toolbar) {
         getDelegate().setSupportActionBar(toolbar);
     }
 
