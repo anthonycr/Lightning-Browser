@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.TextViewCompat;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
@@ -31,15 +32,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.browser.TabsManager;
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.browser.TabsView;
-import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator;
 import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator;
+import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.DrawableUtils;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -173,6 +177,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         mTabsAdapter = null;
     }
 
+    @NonNull
     private TabsManager getTabsManager() {
         if (mTabsManager == null) {
             mTabsManager = mUiController.getTabModel();
@@ -255,10 +260,21 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         return true;
     }
 
+    @NonNull
+    private static List<TabViewModel> toViewModels(@NonNull List<LightningView> tabs) {
+        List<TabViewModel> tabViewModels = new ArrayList<>(tabs.size());
+
+        for (LightningView tab : tabs) {
+            tabViewModels.add(new TabViewModel(tab));
+        }
+
+        return tabViewModels;
+    }
+
     @Override
     public void tabAdded() {
         if (mTabsAdapter != null) {
-            mTabsAdapter.notifyItemInserted(getTabsManager().last());
+            mTabsAdapter.showTabs(toViewModels(getTabsManager().getAllTabs()));
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -271,14 +287,14 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void tabRemoved(int position) {
         if (mTabsAdapter != null) {
-            mTabsAdapter.notifyItemRemoved(position);
+            mTabsAdapter.showTabs(toViewModels(getTabsManager().getAllTabs()));
         }
     }
 
     @Override
     public void tabChanged(int position) {
         if (mTabsAdapter != null) {
-            mTabsAdapter.notifyItemChanged(position);
+            mTabsAdapter.showTabs(toViewModels(getTabsManager().getAllTabs()));
         }
     }
 
@@ -294,7 +310,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
         private final boolean mDrawerTabs;
 
-        public LightningViewAdapter(final boolean vertical) {
+        private List<TabViewModel> mTabList = new ArrayList<>();
+
+        LightningViewAdapter(final boolean vertical) {
             this.mLayoutResourceId = vertical ? R.layout.tab_list_item : R.layout.tab_list_item_horizontal;
             this.mDrawerTabs = vertical;
 
@@ -311,6 +329,41 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 mForegroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175), Utils.dpToPx(30), Bitmap.Config.ARGB_8888);
                 Utils.drawTrapezoid(new Canvas(mForegroundTabBitmap), foregroundColor, false);
             }
+        }
+
+        void showTabs(@NonNull List<TabViewModel> tabs) {
+            final List<TabViewModel> oldList = mTabList;
+            mTabList = new ArrayList<>(tabs);
+
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return oldList.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return mTabList.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    return oldList.get(oldItemPosition).equals(mTabList.get(newItemPosition));
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    TabViewModel oldTab = oldList.get(oldItemPosition);
+                    TabViewModel newTab = mTabList.get(newItemPosition);
+
+                    return oldTab.getTitle().equals(newTab.getTitle())
+                        && oldTab.getFavicon().equals(newTab.getFavicon())
+                        && oldTab.isForegroundTab() == newTab.isForegroundTab()
+                        && oldTab.equals(newTab);
+                }
+            });
+
+            result.dispatchUpdatesTo(this);
         }
 
         @NonNull
@@ -330,42 +383,31 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
             ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
 
-            LightningView web = getTabsManager().getTabAtPosition(position);
-            if (web == null) {
-                return;
-            }
-            holder.txtTitle.setText(web.getTitle());
+            final TabViewModel web = mTabList.get(position);
 
-            final Bitmap favicon = web.getFavicon();
-            if (web.isForegroundTab()) {
-                Drawable foregroundDrawable = null;
-                if (!mDrawerTabs) {
-                    foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
-                    if (!mIsIncognito && mColorMode) {
-                        foregroundDrawable.setColorFilter(mUiController.getUiColor(), PorterDuff.Mode.SRC_IN);
-                    }
-                }
-                if (!mIsIncognito && mColorMode) {
-                    mUiController.changeToolbarBackground(favicon, foregroundDrawable);
-                }
+            updateViewHolderTitle(holder, web.getTitle());
+            updateViewHolderAppearance(holder, web.isForegroundTab());
+            updateViewHolderFavicon(holder, web.getFavicon(), web.isForegroundTab());
+            updateViewHolderBackground(holder, web.isForegroundTab());
+        }
 
-                TextViewCompat.setTextAppearance(holder.txtTitle, R.style.boldText);
-                if (!mDrawerTabs) {
-                    DrawableUtils.setBackground(holder.layout, foregroundDrawable);
-                }
-                holder.favicon.setImageBitmap(favicon);
+        private void updateViewHolderTitle(@NonNull LightningViewHolder viewHolder, @NonNull String title) {
+            viewHolder.txtTitle.setText(title);
+        }
+
+        private void updateViewHolderFavicon(@NonNull LightningViewHolder viewHolder, @NonNull Bitmap favicon, boolean isForeground) {
+            if (isForeground) {
+                viewHolder.favicon.setImageBitmap(favicon);
             } else {
-                TextViewCompat.setTextAppearance(holder.txtTitle, R.style.normalText);
-                if (!mDrawerTabs) {
-                    DrawableUtils.setBackground(holder.layout, mBackgroundTabDrawable);
-                }
-                holder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
+                viewHolder.favicon.setImageBitmap(getDesaturatedBitmap(favicon));
             }
+        }
 
+        private void updateViewHolderBackground(@NonNull LightningViewHolder viewHolder, boolean isForeground) {
             if (mDrawerTabs) {
-                BackgroundDrawable verticalBackground = (BackgroundDrawable) holder.layout.getBackground();
+                BackgroundDrawable verticalBackground = (BackgroundDrawable) viewHolder.layout.getBackground();
                 verticalBackground.setCrossFadeEnabled(false);
-                if (web.isForegroundTab()) {
+                if (isForeground) {
                     verticalBackground.startTransition(200);
                 } else {
                     verticalBackground.reverseTransition(200);
@@ -373,12 +415,34 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             }
         }
 
-        @Override
-        public int getItemCount() {
-            return getTabsManager().size();
+        private void updateViewHolderAppearance(@NonNull LightningViewHolder viewHolder, boolean isForeground) {
+            if (isForeground) {
+                Drawable foregroundDrawable = null;
+                if (!mDrawerTabs) {
+                    foregroundDrawable = new BitmapDrawable(getResources(), mForegroundTabBitmap);
+                    if (!mIsIncognito && mColorMode) {
+                        foregroundDrawable.setColorFilter(mUiController.getUiColor(), PorterDuff.Mode.SRC_IN);
+                    }
+                }
+                TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.boldText);
+                if (!mDrawerTabs) {
+                    DrawableUtils.setBackground(viewHolder.layout, foregroundDrawable);
+                }
+            } else {
+                TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.normalText);
+                if (!mDrawerTabs) {
+                    DrawableUtils.setBackground(viewHolder.layout, mBackgroundTabDrawable);
+                }
+            }
         }
 
-        public Bitmap getDesaturatedBitmap(@NonNull Bitmap favicon) {
+        @Override
+        public int getItemCount() {
+            return mTabList.size();
+        }
+
+        @NonNull
+        Bitmap getDesaturatedBitmap(@NonNull Bitmap favicon) {
             Bitmap grayscaleBitmap = Bitmap.createBitmap(favicon.getWidth(),
                 favicon.getHeight(), Bitmap.Config.ARGB_8888);
 
@@ -395,9 +459,15 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             return grayscaleBitmap;
         }
 
-        public class LightningViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        class LightningViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-            public LightningViewHolder(@NonNull View view) {
+            @NonNull final TextView txtTitle;
+            @NonNull final ImageView favicon;
+            @NonNull final ImageView exit;
+            @NonNull final FrameLayout exitButton;
+            @NonNull final LinearLayout layout;
+
+            LightningViewHolder(@NonNull View view) {
                 super(view);
                 txtTitle = view.findViewById(R.id.textTab);
                 favicon = view.findViewById(R.id.faviconTab);
@@ -410,12 +480,6 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
                 layout.setOnClickListener(this);
                 layout.setOnLongClickListener(this);
             }
-
-            @NonNull final TextView txtTitle;
-            @NonNull final ImageView favicon;
-            @NonNull final ImageView exit;
-            @NonNull final FrameLayout exitButton;
-            @NonNull final LinearLayout layout;
 
             @Override
             public void onClick(View v) {
