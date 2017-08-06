@@ -852,7 +852,6 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             case R.id.action_add_bookmark:
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     addBookmark(currentView.getTitle(), currentUrl);
-                    Toast.makeText(this, "BookMark Added", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_find:
@@ -883,6 +882,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     if (Boolean.TRUE.equals(item)) {
                         mSuggestionsAdapter.refreshBookmarks();
                         mBookmarksView.handleUpdatedUrl(url);
+                        Utils.showToast(BrowserActivity.this , R.string.message_bookmark_added);
                     }
                 }
             });
