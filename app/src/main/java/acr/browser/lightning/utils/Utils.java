@@ -22,6 +22,7 @@ import android.graphics.Path;
 import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,8 +44,8 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import acr.browser.lightning.R;
 import acr.browser.lightning.MainActivity;
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -150,7 +151,14 @@ public final class Utils {
      * @param resource the string shown by the toast to the user.
      */
     public static void showToast(@NonNull Context context, @StringRes int resource) {
-        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
+       final Toast toast = Toast.makeText( context , resource ,Toast.LENGTH_SHORT);
+        toast.show();
+        new CountDownTimer(2000, 1000)
+        {
+            public void onTick(long millisUntilFinished) {toast.show();}
+            public void onFinish() {toast.cancel();}
+        }.start();
     }
 
     /**
