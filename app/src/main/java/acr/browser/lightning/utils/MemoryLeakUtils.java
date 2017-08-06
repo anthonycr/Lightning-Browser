@@ -28,7 +28,7 @@ public class MemoryLeakUtils {
      *                    the InputMethodManager that is
      *                    leaking the views.
      */
-    public static void clearNextServedView(Activity activity, @NonNull Application application) {
+    public static void clearNextServedView(@NonNull Activity activity, @NonNull Application application) {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             // This shouldn't be a problem on N

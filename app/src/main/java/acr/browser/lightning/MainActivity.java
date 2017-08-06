@@ -78,7 +78,7 @@ public class MainActivity extends BrowserActivity {
     }
 
     @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.isCtrlPressed()) {
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_P:

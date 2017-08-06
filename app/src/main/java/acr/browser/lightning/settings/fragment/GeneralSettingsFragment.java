@@ -197,7 +197,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             R.string.action_ok,
             new BrowserDialog.EditorListener() {
                 @Override
-                public void onClick(String text) {
+                public void onClick(@NonNull String text) {
                     mPreferenceManager.setSearchUrl(text);
                     setSearchEngineSummary(customSearch);
                 }
@@ -471,7 +471,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             R.string.action_ok,
             new BrowserDialog.EditorListener() {
                 @Override
-                public void onClick(String text) {
+                public void onClick(@NonNull String text) {
                     mPreferenceManager.setHomepage(text);
                     home.setSummary(text);
                 }

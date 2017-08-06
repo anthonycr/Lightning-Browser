@@ -45,7 +45,7 @@ public class FaviconModel {
     @NonNull private final Application mApplication;
     @NonNull private final LruCache<String, Bitmap> mFaviconCache = new LruCache<String, Bitmap>((int) FileUtils.megabytesToBytes(1)) {
         @Override
-        protected int sizeOf(String key, Bitmap value) {
+        protected int sizeOf(String key, @NonNull Bitmap value) {
             return value.getByteCount();
         }
     };

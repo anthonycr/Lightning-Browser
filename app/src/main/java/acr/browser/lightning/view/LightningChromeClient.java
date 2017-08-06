@@ -137,7 +137,7 @@ public class LightningChromeClient extends WebChromeClient {
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
-                                  Message resultMsg) {
+                                  @NonNull Message resultMsg) {
         mUIController.onCreateWindow(resultMsg);
         return true;
     }
@@ -148,22 +148,22 @@ public class LightningChromeClient extends WebChromeClient {
     }
 
     @SuppressWarnings("unused")
-    public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+    public void openFileChooser(@NonNull ValueCallback<Uri> uploadMsg) {
         mUIController.openFileChooser(uploadMsg);
     }
 
     @SuppressWarnings("unused")
-    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
+    public void openFileChooser(@NonNull ValueCallback<Uri> uploadMsg, String acceptType) {
         mUIController.openFileChooser(uploadMsg);
     }
 
     @SuppressWarnings("unused")
-    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
+    public void openFileChooser(@NonNull ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
         mUIController.openFileChooser(uploadMsg);
     }
 
     @Override
-    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback,
+    public boolean onShowFileChooser(WebView webView, @NonNull ValueCallback<Uri[]> filePathCallback,
                                      WebChromeClient.FileChooserParams fileChooserParams) {
         mUIController.showFileChooser(filePathCallback);
         return true;
@@ -201,14 +201,14 @@ public class LightningChromeClient extends WebChromeClient {
     }
 
     @Override
-    public void onShowCustomView(View view, CustomViewCallback callback) {
+    public void onShowCustomView(@NonNull View view, @NonNull CustomViewCallback callback) {
         mUIController.onShowCustomView(view, callback);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onShowCustomView(View view, int requestedOrientation,
-                                 CustomViewCallback callback) {
+    public void onShowCustomView(@NonNull View view, int requestedOrientation,
+                                 @NonNull CustomViewCallback callback) {
         mUIController.onShowCustomView(view, callback, requestedOrientation);
     }
 }

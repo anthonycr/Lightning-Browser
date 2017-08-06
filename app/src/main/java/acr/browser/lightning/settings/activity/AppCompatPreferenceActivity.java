@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.utils.Preconditions;
 
 /**
  * A {@link android.preference.PreferenceActivity} which implements and proxies the necessary calls
@@ -40,11 +41,15 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         getDelegate().onPostCreate(savedInstanceState);
     }
 
-    protected final ActionBar getSupportActionBar() {
-        return getDelegate().getSupportActionBar();
+    @NonNull
+    final ActionBar getSupportActionBar() {
+        ActionBar actionBar = getDelegate().getSupportActionBar();
+        Preconditions.checkNonNull(actionBar);
+
+        return actionBar;
     }
 
-    protected final void setSupportActionBar(@Nullable Toolbar toolbar) {
+    final void setSupportActionBar(@Nullable Toolbar toolbar) {
         getDelegate().setSupportActionBar(toolbar);
     }
 

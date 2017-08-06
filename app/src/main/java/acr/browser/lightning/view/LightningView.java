@@ -108,7 +108,7 @@ public class LightningView {
     @Inject LightningDialogBuilder mDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
 
-    private final LightningWebClient mLightningWebClient;
+    @NonNull private final LightningWebClient mLightningWebClient;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);

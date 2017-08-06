@@ -44,7 +44,7 @@ public class SettingsActivity extends ThemableSettingsActivity {
     }
 
     @Override
-    public void onBuildHeaders(List<Header> target) {
+    public void onBuildHeaders(@NonNull List<Header> target) {
         loadHeadersFromResource(R.xml.preferences_headers, target);
         sFragments.clear();
         Iterator<Header> headerIterator = target.iterator();

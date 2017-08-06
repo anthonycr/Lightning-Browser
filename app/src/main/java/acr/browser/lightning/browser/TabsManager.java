@@ -315,6 +315,11 @@ public class TabsManager {
         return mTabList.get(position);
     }
 
+    @NonNull
+    public List<LightningView> getAllTabs() {
+        return mTabList;
+    }
+
     /**
      * Frees memory for each tab in the
      * manager. Note: this will only work

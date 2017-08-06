@@ -22,7 +22,7 @@ import acr.browser.lightning.constant.Constants;
 
 public class IntentUtils {
 
-    private final Activity mActivity;
+    @NonNull private final Activity mActivity;
 
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
         + // switch on case insensitive matching

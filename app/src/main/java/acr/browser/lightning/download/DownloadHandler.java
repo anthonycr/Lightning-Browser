@@ -70,8 +70,8 @@ public class DownloadHandler {
      * @param mimetype           The mimetype of the content reported by the server
      * @param contentSize        The size of the content
      */
-    public void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, String url, String userAgent,
-                                @Nullable String contentDisposition, String mimetype, String contentSize) {
+    public void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, @NonNull String url, String userAgent,
+                                @Nullable String contentDisposition, String mimetype, @NonNull String contentSize) {
 
         Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
         Log.d(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
@@ -158,8 +158,8 @@ public class DownloadHandler {
      */
     /* package */
     private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
-                                         String url, String userAgent,
-                                         String contentDisposition, @Nullable String mimetype, String contentSize) {
+                                         @NonNull String url, String userAgent,
+                                         String contentDisposition, @Nullable String mimetype, @NonNull String contentSize) {
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
