@@ -178,6 +178,7 @@
     <string name="bookmark_export_failure">Sorry, bookmarks could not be exported!</string>
     <string name="bookmark_settings">Bookmark Settings</string>
     <string name="import_bookmark_error">Could not import bookmarks from file</string>
+    <string name="message_bookmark_added">Bookmark added.</string>
     <string name="title_chooser">Choose a file</string>
     <string name="settings_general">General Settings</string>
     <string name="settings_display">Display Settings</string>

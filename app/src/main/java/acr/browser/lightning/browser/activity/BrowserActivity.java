@@ -74,6 +74,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.anthonycr.bonsai.Completable;
@@ -881,6 +882,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     if (Boolean.TRUE.equals(item)) {
                         mSuggestionsAdapter.refreshBookmarks();
                         mBookmarksView.handleUpdatedUrl(url);
+                        Utils.showToast(BrowserActivity.this , R.string.message_bookmark_added);
                     }
                 }
             });
