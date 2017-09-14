@@ -77,7 +77,7 @@ dependencies {
     compile "com.android.support:support-v4:$supportLibVersion"
 
     // html parsing for reading mode
-    compile 'org.jsoup:jsoup:1.10.2'
+    compile 'org.jsoup:jsoup:1.10.3'
 
     // dependency injection
     def daggerVersion = '2.11'
