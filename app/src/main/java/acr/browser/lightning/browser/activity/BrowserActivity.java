@@ -74,7 +74,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.anthonycr.bonsai.Completable;
