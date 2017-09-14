@@ -55,6 +55,10 @@ android {
     packagingOptions {
         exclude '.readme'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 dexcount {
@@ -69,7 +73,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // support libraries
-    def supportLibVersion = '25.4.0'
+    def supportLibVersion = '26.0.2'
     compile "com.android.support:palette-v7:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile "com.android.support:design:$supportLibVersion"
@@ -86,7 +90,7 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    def butterknifeVersion = '8.8.0'
+    def butterknifeVersion = '8.8.1'
     compile "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
