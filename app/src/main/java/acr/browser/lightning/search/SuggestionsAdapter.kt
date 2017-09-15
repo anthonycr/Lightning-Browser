@@ -156,13 +156,15 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
     }
 
     @Synchronized private fun publishResults(list: List<HistoryItem>) {
-        filteredList.clear()
-        filteredList.addAll(list)
-        notifyDataSetChanged()
+        if (list != filteredList) {
+            filteredList.clear()
+            filteredList.addAll(list)
+            notifyDataSetChanged()
+        }
     }
 
     private fun clearSuggestions() {
-        Completable.create(CompletableAction { subscriber ->
+        Completable.create({ subscriber ->
             bookmarks.clear()
             history.clear()
             suggestions.clear()
