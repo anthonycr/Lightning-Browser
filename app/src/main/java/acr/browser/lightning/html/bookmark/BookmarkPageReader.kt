@@ -1,4 +1,4 @@
-package acr.browser.lightning.html
+package acr.browser.lightning.html.bookmark
 
 import com.anthonycr.mezzanine.FileStream
 
@@ -8,6 +8,6 @@ import com.anthonycr.mezzanine.FileStream
 @FileStream("app/src/main/html/bookmarks.html")
 interface BookmarkPageReader {
 
-    fun provideString(): String
+    fun provideHtml(): String
 
 }

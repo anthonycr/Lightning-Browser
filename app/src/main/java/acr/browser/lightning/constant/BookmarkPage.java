@@ -29,7 +29,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.favicon.FaviconModel;
-import acr.browser.lightning.html.BookmarkPageBuilder;
+import acr.browser.lightning.html.bookmark.BookmarkPageBuilder;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
