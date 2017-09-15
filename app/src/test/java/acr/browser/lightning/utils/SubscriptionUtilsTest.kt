@@ -11,9 +11,7 @@ import org.junit.Test
 class SubscriptionUtilsTest {
 
     @Test
-    fun safeUnsubscribe_NullSubscription_Succeeds() {
-        SubscriptionUtils.safeUnsubscribe(null)
-    }
+    fun safeUnsubscribe_NullSubscription_Succeeds() = SubscriptionUtils.safeUnsubscribe(null)
 
     @Test
     fun safeUnsubscribe_NonNullSubscription_SuccessfullyUnsubscribes() {
@@ -25,9 +23,7 @@ class SubscriptionUtilsTest {
                 isUnsubscribed = true
             }
 
-            override fun isUnsubscribed(): Boolean {
-                return isUnsubscribed
-            }
+            override fun isUnsubscribed(): Boolean = isUnsubscribed
         }
 
         Assert.assertFalse(subscription.isUnsubscribed())

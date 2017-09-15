@@ -16,9 +16,8 @@ class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(ap
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
-    override fun createQueryUrl(query: String, language: String): String {
-        return "https://suggestqueries.google.com/complete/search?output=toolbar&hl=$language&q=$query"
-    }
+    override fun createQueryUrl(query: String, language: String): String =
+            "https://suggestqueries.google.com/complete/search?output=toolbar&hl=$language&q=$query"
 
     @Throws(Exception::class)
     override fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>) {

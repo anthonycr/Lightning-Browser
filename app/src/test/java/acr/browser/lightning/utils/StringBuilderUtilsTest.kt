@@ -76,7 +76,7 @@ class StringBuilderUtilsTest {
         Assert.assertFalse(StringBuilderUtils.contains(stringBuilder, "z"))
 
         // All these characters are in the string
-        for (n in 0..stringBuilder.length - 1) {
+        for (n in 0 until stringBuilder.length) {
             Assert.assertTrue(StringBuilderUtils.contains(stringBuilder, stringBuilder[n].toString()))
         }
     }

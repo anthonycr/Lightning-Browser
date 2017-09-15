@@ -18,11 +18,10 @@ class BaiduSuggestionsModel(
     private val searchSubtitle = application.getString(R.string.suggestion)
     private val inputEncoding = "GBK"
 
-    override fun createQueryUrl(query: String, language: String): String {
-        // see http://unionsug.baidu.com/su?wd=encodeURIComponent(U)
-        // see http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
-        return "http://suggestion.baidu.com/s?wd=$query&action=opensearch"
-    }
+    // see http://unionsug.baidu.com/su?wd=encodeURIComponent(U)
+    // see http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
+    override fun createQueryUrl(query: String, language: String): String =
+            "http://suggestion.baidu.com/s?wd=$query&action=opensearch"
 
     @Throws(Exception::class)
     override fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>) {

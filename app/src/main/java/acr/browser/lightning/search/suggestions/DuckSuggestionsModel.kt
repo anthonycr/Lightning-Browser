@@ -15,9 +15,8 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
-    override fun createQueryUrl(query: String, language: String): String {
-        return "https://duckduckgo.com/ac/?q=$query"
-    }
+    override fun createQueryUrl(query: String, language: String): String =
+            "https://duckduckgo.com/ac/?q=$query"
 
     @Throws(Exception::class)
     override fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>) {

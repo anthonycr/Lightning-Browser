@@ -86,7 +86,7 @@ public class ReadingActivity extends AppCompatActivity {
         setContentView(R.layout.reading_view);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null)

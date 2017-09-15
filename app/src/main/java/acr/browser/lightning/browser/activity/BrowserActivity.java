@@ -958,16 +958,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     private void showFindInPageControls(@NonNull String text) {
         mSearchBar.setVisibility(View.VISIBLE);
 
-        TextView tw = (TextView) findViewById(R.id.search_query);
+        TextView tw = findViewById(R.id.search_query);
         tw.setText('\'' + text + '\'');
 
-        ImageButton up = (ImageButton) findViewById(R.id.button_next);
+        ImageButton up = findViewById(R.id.button_next);
         up.setOnClickListener(this);
 
-        ImageButton down = (ImageButton) findViewById(R.id.button_back);
+        ImageButton down = findViewById(R.id.button_back);
         down.setOnClickListener(this);
 
-        ImageButton quit = (ImageButton) findViewById(R.id.button_quit);
+        ImageButton quit = findViewById(R.id.button_quit);
         quit.setOnClickListener(this);
     }
 

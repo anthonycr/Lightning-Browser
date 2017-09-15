@@ -42,22 +42,20 @@ class SearchBoxModel @Inject constructor() {
      * @return the string that should be displayed by the search box.
      */
     fun getDisplayContent(url: String, title: String?, isLoading: Boolean): String {
-        if (UrlUtils.isSpecialUrl(url)) {
-            return ""
-        } else if (isLoading) {
-            return url
-        } else {
-            when (mPreferences.urlBoxContentChoice) {
+        when {
+            UrlUtils.isSpecialUrl(url) -> return ""
+            isLoading -> return url
+            else -> when (mPreferences.urlBoxContentChoice) {
                 1 -> {
                     // URL, show the entire URL
                     return url
                 }
                 2 -> {
                     // Title, show the page's title
-                    if (title?.isEmpty() == false) {
-                        return title
+                    return if (title?.isEmpty() == false) {
+                        title
                     } else {
-                        return mUntitledTitle
+                        mUntitledTitle
                     }
                 }
                 0 -> {
@@ -72,8 +70,6 @@ class SearchBoxModel @Inject constructor() {
         }
     }
 
-    private fun safeDomain(url: String): String {
-        return Utils.getDomainName(url) ?: url
-    }
+    private fun safeDomain(url: String) = Utils.getDomainName(url) ?: url
 
 }

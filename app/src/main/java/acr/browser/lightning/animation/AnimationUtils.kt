@@ -26,17 +26,16 @@ object AnimationUtils {
 
             private var setFinalDrawable: Boolean = false
 
-            override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
-                if (interpolatedTime < 0.5f) {
-                    imageView.rotationY = 90f * interpolatedTime * 2f
-                } else {
-                    if (!setFinalDrawable) {
-                        setFinalDrawable = true
-                        imageView.setImageResource(drawableRes)
+            override fun applyTransformation(interpolatedTime: Float, t: Transformation) =
+                    if (interpolatedTime < 0.5f) {
+                        imageView.rotationY = 90f * interpolatedTime * 2f
+                    } else {
+                        if (!setFinalDrawable) {
+                            setFinalDrawable = true
+                            imageView.setImageResource(drawableRes)
+                        }
+                        imageView.rotationY = -90 + 90f * (interpolatedTime - 0.5f) * 2f
                     }
-                    imageView.rotationY = -90 + 90f * (interpolatedTime - 0.5f) * 2f
-                }
-            }
         }
 
         animation.duration = 300

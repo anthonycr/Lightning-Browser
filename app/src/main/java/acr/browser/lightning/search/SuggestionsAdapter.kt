@@ -68,10 +68,8 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         suggestionChoice = preferenceManager.searchSuggestionChoice
     }
 
-    fun clearCache() {
-        // We don't need these cache files anymore
-        Schedulers.io().execute(ClearCacheRunnable(application))
-    }
+    fun clearCache() = // We don't need these cache files anymore
+            Schedulers.io().execute(ClearCacheRunnable(application))
 
     fun refreshBookmarks() {
         bookmarkManager.allBookmarks
@@ -85,9 +83,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                 })
     }
 
-    override fun getCount(): Int {
-        return filteredList.size
-    }
+    override fun getCount(): Int = filteredList.size
 
     override fun getItem(position: Int): Any? {
         if (position > filteredList.size || position < 0) {
@@ -96,9 +92,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         return filteredList[position]
     }
 
-    override fun getItemId(position: Int): Long {
-        return 0
-    }
+    override fun getItemId(position: Int): Long = 0
 
     private class SuggestionHolder internal constructor(view: View) {
 
@@ -132,18 +126,11 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             holder.mTitle.setTextColor(Color.WHITE)
         }
 
-        val image: Drawable
-        when (web.imageId) {
-            R.drawable.ic_bookmark -> {
-                image = bookmarkDrawable
-            }
-            R.drawable.ic_search -> {
-                image = searchDrawable
-            }
-            R.drawable.ic_history -> {
-                image = historyDrawable
-            }
-            else -> image = searchDrawable
+        val image = when (web.imageId) {
+            R.drawable.ic_bookmark -> bookmarkDrawable
+            R.drawable.ic_search -> searchDrawable
+            R.drawable.ic_history -> historyDrawable
+            else -> searchDrawable
         }
 
         holder.mImage.setImageDrawable(image)
@@ -151,9 +138,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         return finalView
     }
 
-    override fun getFilter(): Filter {
-        return SearchFilter(this, historyModel)
-    }
+    override fun getFilter(): Filter = SearchFilter(this, historyModel)
 
     @Synchronized private fun publishResults(list: List<HistoryItem>) {
         if (list != filteredList) {
@@ -222,43 +207,37 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                 })
     }
 
-    private fun getBookmarksForQuery(query: String): Single<List<HistoryItem>> {
-        return Single.create(SingleAction<List<HistoryItem>> { subscriber ->
-            val bookmarks = ArrayList<HistoryItem>(5)
-            var counter = 0
-            for (n in allBookmarks.indices) {
-                if (counter >= 5) {
-                    break
+    private fun getBookmarksForQuery(query: String): Single<List<HistoryItem>> =
+            Single.create({ subscriber ->
+                val bookmarks = ArrayList<HistoryItem>(5)
+                var counter = 0
+                for (n in allBookmarks.indices) {
+                    if (counter >= 5) {
+                        break
+                    }
+                    if (allBookmarks[n].title.toLowerCase(Locale.getDefault())
+                            .startsWith(query)) {
+                        bookmarks.add(allBookmarks[n])
+                        counter++
+                    } else if (allBookmarks[n].url.contains(query)) {
+                        bookmarks.add(allBookmarks[n])
+                        counter++
+                    }
                 }
-                if (allBookmarks[n].title.toLowerCase(Locale.getDefault())
-                        .startsWith(query)) {
-                    bookmarks.add(allBookmarks[n])
-                    counter++
-                } else if (allBookmarks[n].url.contains(query)) {
-                    bookmarks.add(allBookmarks[n])
-                    counter++
-                }
+                subscriber.onItem(bookmarks)
+                subscriber.onComplete()
+            })
+
+    private fun getSuggestionsForQuery(query: String): Single<List<HistoryItem>> =
+            when (suggestionChoice) {
+                PreferenceManager.Suggestion.SUGGESTION_GOOGLE -> SuggestionsManager.createGoogleQueryObservable(query, application)
+                PreferenceManager.Suggestion.SUGGESTION_DUCK -> SuggestionsManager.createDuckQueryObservable(query, application)
+                PreferenceManager.Suggestion.SUGGESTION_BAIDU -> SuggestionsManager.createBaiduQueryObservable(query, application)
+                else -> Single.empty<List<HistoryItem>>()
             }
-            subscriber.onItem(bookmarks)
-            subscriber.onComplete()
-        })
-    }
 
-    private fun getSuggestionsForQuery(query: String): Single<List<HistoryItem>> {
-        if (suggestionChoice == PreferenceManager.Suggestion.SUGGESTION_GOOGLE) {
-            return SuggestionsManager.createGoogleQueryObservable(query, application)
-        } else if (suggestionChoice == PreferenceManager.Suggestion.SUGGESTION_DUCK) {
-            return SuggestionsManager.createDuckQueryObservable(query, application)
-        } else if (suggestionChoice == PreferenceManager.Suggestion.SUGGESTION_BAIDU) {
-            return SuggestionsManager.createBaiduQueryObservable(query, application)
-        } else {
-            return Single.empty<List<HistoryItem>>()
-        }
-    }
-
-    private fun shouldRequestNetwork(): Boolean {
-        return !isIncognito && suggestionChoice != PreferenceManager.Suggestion.SUGGESTION_NONE
-    }
+    private fun shouldRequestNetwork(): Boolean =
+            !isIncognito && suggestionChoice != PreferenceManager.Suggestion.SUGGESTION_NONE
 
     private class SearchFilter internal constructor(private val suggestionsAdapter: SuggestionsAdapter,
                                                     private val historyModel: HistoryModel) : Filter() {
@@ -276,9 +255,8 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                         .subscribeOn(Schedulers.worker())
                         .observeOn(Schedulers.main())
                         .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                            override fun onItem(item: List<HistoryItem>?) {
-                                suggestionsAdapter.combineResults(null, null, item)
-                            }
+                            override fun onItem(item: List<HistoryItem>?) =
+                                    suggestionsAdapter.combineResults(null, null, item)
                         })
             }
 
@@ -286,30 +264,25 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.main())
                     .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                        override fun onItem(item: List<HistoryItem>?) {
-                            suggestionsAdapter.combineResults(item, null, null)
-                        }
+                        override fun onItem(item: List<HistoryItem>?) =
+                                suggestionsAdapter.combineResults(item, null, null)
                     })
 
             historyModel.findHistoryItemsContaining(query)
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.main())
                     .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                        override fun onItem(item: List<HistoryItem>?) {
-                            suggestionsAdapter.combineResults(null, item, null)
-                        }
+                        override fun onItem(item: List<HistoryItem>?) =
+                                suggestionsAdapter.combineResults(null, item, null)
                     })
             results.count = 1
             return results
         }
 
-        override fun convertResultToString(resultValue: Any): CharSequence {
-            return (resultValue as HistoryItem).url
-        }
+        override fun convertResultToString(resultValue: Any) = (resultValue as HistoryItem).url
 
-        override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) {
-            suggestionsAdapter.combineResults(null, null, null)
-        }
+        override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) =
+                suggestionsAdapter.combineResults(null, null, null)
     }
 
     private class ClearCacheRunnable internal constructor(private val app: Application) : Runnable {
@@ -325,9 +298,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
 
             private val CACHE_FILE_TYPE = ".sgg"
 
-            override fun accept(dir: File, filename: String): Boolean {
-                return filename.endsWith(CACHE_FILE_TYPE)
-            }
+            override fun accept(dir: File, filename: String) = filename.endsWith(CACHE_FILE_TYPE)
         }
     }
 

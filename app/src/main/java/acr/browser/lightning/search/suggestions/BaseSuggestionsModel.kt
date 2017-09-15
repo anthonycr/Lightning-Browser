@@ -67,9 +67,8 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
     fun fetchResults(rawQuery: String): List<HistoryItem> {
         val filter = ArrayList<HistoryItem>(5)
 
-        val query: String
-        try {
-            query = URLEncoder.encode(rawQuery, encoding)
+        val query = try {
+            URLEncoder.encode(rawQuery, encoding)
         } catch (e: UnsupportedEncodingException) {
             Log.e(TAG, "Unable to encode the URL", e)
 

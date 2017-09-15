@@ -17,65 +17,50 @@ class SearchEngineProvider @Inject constructor() {
         BrowserApp.getAppComponent().inject(this)
     }
 
-    fun getCurrentSearchEngine(): BaseSearchEngine {
-        when (preferenceManager.searchChoice) {
-            0 -> return CustomSearch(preferenceManager.searchUrl)
-            1 -> return GoogleSearch()
-            2 -> return AskSearch()
-            3 -> return BingSearch()
-            4 -> return YahooSearch()
-            5 -> return StartPageSearch()
-            6 -> return StartPageMobileSearch()
-            7 -> return DuckSearch()
-            8 -> return DuckLiteSearch()
-            9 -> return BaiduSearch()
-            10 -> return YandexSearch()
-            else -> return GoogleSearch()
-        }
-    }
+    fun getCurrentSearchEngine(): BaseSearchEngine =
+            when (preferenceManager.searchChoice) {
+                0 -> CustomSearch(preferenceManager.searchUrl)
+                1 -> GoogleSearch()
+                2 -> AskSearch()
+                3 -> BingSearch()
+                4 -> YahooSearch()
+                5 -> StartPageSearch()
+                6 -> StartPageMobileSearch()
+                7 -> DuckSearch()
+                8 -> DuckLiteSearch()
+                9 -> BaiduSearch()
+                10 -> YandexSearch()
+                else -> GoogleSearch()
+            }
 
-    fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): Int {
-        if (searchEngine is CustomSearch) {
-            return 0
-        } else if (searchEngine is GoogleSearch) {
-            return 1
-        } else if (searchEngine is AskSearch) {
-            return 2
-        } else if (searchEngine is BingSearch) {
-            return 3
-        } else if (searchEngine is YahooSearch) {
-            return 4
-        } else if (searchEngine is StartPageSearch) {
-            return 5
-        } else if (searchEngine is StartPageMobileSearch) {
-            return 6
-        } else if (searchEngine is DuckSearch) {
-            return 7
-        } else if (searchEngine is DuckLiteSearch) {
-            return 8
-        } else if (searchEngine is BaiduSearch) {
-            return 9
-        } else if (searchEngine is YandexSearch) {
-            return 10
-        } else {
-            throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
-        }
-    }
+    fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): Int =
+            when (searchEngine) {
+                is CustomSearch -> 0
+                is GoogleSearch -> 1
+                is AskSearch -> 2
+                is BingSearch -> 3
+                is YahooSearch -> 4
+                is StartPageSearch -> 5
+                is StartPageMobileSearch -> 6
+                is DuckSearch -> 7
+                is DuckLiteSearch -> 8
+                is BaiduSearch -> 9
+                is YandexSearch -> 10
+                else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
+            }
 
-    fun getAllSearchEngines(): List<BaseSearchEngine> {
-        return listOf(
-                CustomSearch(preferenceManager.searchUrl),
-                GoogleSearch(),
-                AskSearch(),
-                BingSearch(),
-                YahooSearch(),
-                StartPageSearch(),
-                StartPageMobileSearch(),
-                DuckSearch(),
-                DuckLiteSearch(),
-                BaiduSearch(),
-                YandexSearch()
-        )
-    }
+    fun getAllSearchEngines(): List<BaseSearchEngine> = listOf(
+            CustomSearch(preferenceManager.searchUrl),
+            GoogleSearch(),
+            AskSearch(),
+            BingSearch(),
+            YahooSearch(),
+            StartPageSearch(),
+            StartPageMobileSearch(),
+            DuckSearch(),
+            DuckLiteSearch(),
+            BaiduSearch(),
+            YandexSearch()
+    )
 
 }
