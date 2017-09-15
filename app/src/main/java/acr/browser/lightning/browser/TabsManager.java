@@ -32,10 +32,10 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.BrowserApp;
-import acr.browser.lightning.constant.BookmarkPage;
-import acr.browser.lightning.constant.DownloadsPage;
-import acr.browser.lightning.constant.HistoryPage;
-import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.html.bookmark.BookmarkPage;
+import acr.browser.lightning.html.download.DownloadsPage;
+import acr.browser.lightning.html.history.HistoryPage;
+import acr.browser.lightning.html.homepage.StartPage;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.FileUtils;

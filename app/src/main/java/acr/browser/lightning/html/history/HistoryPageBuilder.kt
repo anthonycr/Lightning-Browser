@@ -9,7 +9,7 @@ import org.jsoup.Jsoup
 /**
  * The builder for the history page.
  */
-class HistoryPageBuilder(private val app: Application) {
+internal class HistoryPageBuilder(private val app: Application) {
 
     fun buildPage(historyList: List<HistoryItem>): String {
         val html = MezzanineGenerator.ListPageReader().provideHtml()

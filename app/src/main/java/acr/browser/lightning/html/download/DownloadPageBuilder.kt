@@ -10,7 +10,7 @@ import org.jsoup.Jsoup
 /**
  * The builder for the download page.
  */
-class DownloadPageBuilder(private val app: Application,
+internal class DownloadPageBuilder(private val app: Application,
                           private val storageDirectory: String) {
 
     fun buildPage(downloadList: List<DownloadItem>): String {

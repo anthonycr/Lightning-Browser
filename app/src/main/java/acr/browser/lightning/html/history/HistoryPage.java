@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.constant;
+package acr.browser.lightning.html.history;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
@@ -24,9 +24,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.history.HistoryModel;
-import acr.browser.lightning.html.history.HistoryPageBuilder;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 

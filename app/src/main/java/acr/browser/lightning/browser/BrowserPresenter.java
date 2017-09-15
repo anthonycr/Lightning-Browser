@@ -17,9 +17,9 @@ import javax.inject.Inject;
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.BrowserApp;
-import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.html.bookmark.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.html.homepage.StartPage;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
 

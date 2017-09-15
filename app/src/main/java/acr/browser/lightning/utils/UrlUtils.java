@@ -23,11 +23,11 @@ import android.webkit.URLUtil;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import acr.browser.lightning.constant.BookmarkPage;
+import acr.browser.lightning.html.bookmark.BookmarkPage;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.constant.DownloadsPage;
-import acr.browser.lightning.constant.HistoryPage;
-import acr.browser.lightning.constant.StartPage;
+import acr.browser.lightning.html.download.DownloadsPage;
+import acr.browser.lightning.html.history.HistoryPage;
+import acr.browser.lightning.html.homepage.StartPage;
 
 /**
  * Utility methods for Url manipulation

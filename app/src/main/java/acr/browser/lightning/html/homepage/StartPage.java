@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.constant;
+package acr.browser.lightning.html.homepage;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import acr.browser.lightning.BrowserApp;
-import acr.browser.lightning.html.homepage.HomePageBuilder;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.utils.Utils;
 

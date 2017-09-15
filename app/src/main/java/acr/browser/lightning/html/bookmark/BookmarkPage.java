@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package acr.browser.lightning.constant;
+package acr.browser.lightning.html.bookmark;
 
 import android.app.Activity;
 import android.app.Application;
@@ -26,10 +26,10 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.favicon.FaviconModel;
-import acr.browser.lightning.html.bookmark.BookmarkPageBuilder;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;

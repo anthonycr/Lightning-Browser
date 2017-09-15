@@ -13,7 +13,7 @@ import java.io.File
 /**
  * A builder for the bookmark page.
  */
-class BookmarkPageBuilder(private val faviconModel: FaviconModel,
+internal class BookmarkPageBuilder(private val faviconModel: FaviconModel,
                           private val app: Application) {
 
     private data class BookmarkViewModel(val title: String, val url: String, val iconUrl: String)

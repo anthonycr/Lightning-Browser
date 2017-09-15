@@ -9,7 +9,7 @@ import org.jsoup.Jsoup
 /**
  * A builder for the home page.
  */
-class HomePageBuilder(private val app: Application,
+internal class HomePageBuilder(private val app: Application,
                       private val searchEngineProvider: SearchEngineProvider) {
 
 
