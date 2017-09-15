@@ -60,8 +60,8 @@ class BookmarkPageBuilder(private val faviconModel: FaviconModel,
                 createViewModelForBookmark(it)
             }
 
-            newElement.select("a").first().attr("href", viewModel.url)
-            newElement.select("img").first().attr("src", viewModel.iconUrl)
+            newElement.getElementsByTag("a").first().attr("href", viewModel.url)
+            newElement.getElementsByTag("img").first().attr("src", viewModel.iconUrl)
             newElement.getElementById("title").appendText(viewModel.title)
             container.appendChild(newElement)
         }
