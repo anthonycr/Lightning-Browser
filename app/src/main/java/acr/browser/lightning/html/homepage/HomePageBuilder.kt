@@ -17,7 +17,7 @@ class HomePageBuilder(private val app: Application,
         val html = MezzanineGenerator.HomePageReader().provideHtml()
 
         val document = Jsoup.parse(html).apply {
-            title(app.getString(R.string.action_bookmarks))
+            title(app.getString(R.string.home))
         }
 
         val currentSearchEngine = searchEngineProvider.getCurrentSearchEngine()
