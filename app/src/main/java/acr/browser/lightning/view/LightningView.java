@@ -215,7 +215,7 @@ public class LightningView {
      * UI thread.
      */
     private void loadStartpage() {
-        new StartPage().getHomepage()
+        new StartPage().createHomePage()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
             .subscribe(new SingleOnSubscribe<String>() {
@@ -233,7 +233,7 @@ public class LightningView {
      * UI thread. It also caches the default folder icon locally.
      */
     public void loadBookmarkpage() {
-        new BookmarkPage(mActivity).getBookmarkPage()
+        new BookmarkPage(mActivity).createBookmarkPage()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
             .subscribe(new SingleOnSubscribe<String>() {

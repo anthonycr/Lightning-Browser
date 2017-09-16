@@ -162,7 +162,7 @@ public class TabsManager {
                     String url = item.getString(URL_KEY);
                     if (url != null && tab.getWebView() != null) {
                         if (UrlUtils.isBookmarkUrl(url)) {
-                            new BookmarkPage(activity).getBookmarkPage()
+                            new BookmarkPage(activity).createBookmarkPage()
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.main())
                                 .subscribe(new SingleOnSubscribe<String>() {
@@ -184,7 +184,7 @@ public class TabsManager {
                                     }
                                 });
                         } else if (UrlUtils.isStartPageUrl(url)) {
-                            new StartPage().getHomepage()
+                            new StartPage().createHomePage()
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.main())
                                 .subscribe(new SingleOnSubscribe<String>() {
@@ -195,7 +195,7 @@ public class TabsManager {
                                     }
                                 });
                         } else if (UrlUtils.isHistoryUrl(url)) {
-                            new HistoryPage().getHistoryPage()
+                            new HistoryPage().createHistoryPage()
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.main())
                                 .subscribe(new SingleOnSubscribe<String>() {

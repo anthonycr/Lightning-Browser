@@ -1609,7 +1609,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
      * function that opens the HTML history page in the browser
      */
     private void openHistory() {
-        new HistoryPage().getHistoryPage()
+        new HistoryPage().createHistoryPage()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.main())
             .subscribe(new SingleOnSubscribe<String>() {
