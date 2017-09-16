@@ -29,15 +29,14 @@ class BookmarkPage(activity: Activity) {
     @Inject internal lateinit var bookmarkModel: BookmarkModel
     @Inject internal lateinit var faviconModel: FaviconModel
 
-    private val mFolderIcon: Bitmap
+    private val folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)
 
     init {
         BrowserApp.getAppComponent().inject(this)
-        mFolderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)
     }
 
     fun createBookmarkPage(): Single<String> = Single.create { subscriber ->
-        cacheIcon(mFolderIcon, getFaviconFile(app))
+        cacheIcon(folderIcon, getFaviconFile(app))
         cacheIcon(faviconModel.getDefaultBitmapForString(null), getDefaultIconFile(app))
         buildBookmarkPage(null)
 
