@@ -116,7 +116,7 @@ public class FaviconModel {
     @WorkerThread
     @NonNull
     public static File getFaviconCacheFile(@NonNull Application app, @NonNull Uri uri) {
-        FaviconUtils.assertUriSafe(uri);
+        FaviconUtils.requireUriSafe(uri);
 
         String hash = String.valueOf(uri.getHost().hashCode());
 
