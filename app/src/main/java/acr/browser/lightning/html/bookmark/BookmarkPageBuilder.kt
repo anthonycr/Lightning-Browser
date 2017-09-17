@@ -1,7 +1,7 @@
 package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.safeUri
@@ -14,7 +14,7 @@ import java.io.File
  * A builder for the bookmark page.
  */
 internal class BookmarkPageBuilder(private val faviconModel: FaviconModel,
-                          private val app: Application) {
+                                   private val app: Application) {
 
     private data class BookmarkViewModel(val title: String, val url: String, val iconUrl: String)
 
@@ -72,7 +72,7 @@ internal class BookmarkPageBuilder(private val faviconModel: FaviconModel,
     private fun createViewModelForFolder(historyItem: HistoryItem): BookmarkViewModel {
         val folderPage = getBookmarkPage(app, historyItem.title)
         val iconUrl = folderIconPath
-        val url = "${Constants.FILE}$folderPage"
+        val url = "$FILE$folderPage"
 
         return BookmarkViewModel(
                 title = historyItem.title,
@@ -91,9 +91,9 @@ internal class BookmarkPageBuilder(private val faviconModel: FaviconModel,
                 faviconModel.cacheFaviconForUrl(defaultFavicon, historyItem.url).subscribe()
             }
 
-            "${Constants.FILE}$faviconFile"
+            "$FILE$faviconFile"
         } else {
-            "${Constants.FILE}${getDefaultIconFile(app)}"
+            "$FILE${getDefaultIconFile(app)}"
         }
 
         return BookmarkViewModel(

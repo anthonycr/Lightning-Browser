@@ -5,7 +5,7 @@ package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.favicon.FaviconModel
@@ -42,7 +42,7 @@ class BookmarkPage(activity: Activity) {
 
         val bookmarkWebPage = getBookmarkPage(app, null)
 
-        subscriber.onItem(Constants.FILE + bookmarkWebPage)
+        subscriber.onItem("$FILE$bookmarkWebPage")
         subscriber.onComplete()
     }
 

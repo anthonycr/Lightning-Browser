@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -11,7 +11,7 @@ import java.io.InputStream
 /**
  * The search suggestions provider for the DuckDuckGo search engine.
  */
-class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(application, Constants.UTF8) {
+class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(application, UTF8) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
@@ -20,7 +20,7 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
 
     @Throws(Exception::class)
     override fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>) {
-        val content = FileUtils.readStringFromStream(inputStream, Constants.UTF8)
+        val content = FileUtils.readStringFromStream(inputStream, UTF8)
         val jsonArray = JSONArray(content)
 
         var n = 0

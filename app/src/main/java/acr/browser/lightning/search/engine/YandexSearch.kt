@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.engine
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.YANDEX_SEARCH
 
 /**
  * The Yandex search engine.
@@ -11,6 +11,6 @@ import acr.browser.lightning.constant.Constants
  */
 class YandexSearch : BaseSearchEngine(
         "file:///android_asset/yandex.png",
-        Constants.YANDEX_SEARCH,
+        YANDEX_SEARCH,
         R.string.search_engine_yandex
 )

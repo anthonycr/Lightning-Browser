@@ -4,7 +4,7 @@
 package acr.browser.lightning.html.download
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadItem
 import acr.browser.lightning.database.downloads.DownloadsModel
 import acr.browser.lightning.preference.PreferenceManager
@@ -30,7 +30,7 @@ class DownloadsPage {
 
         val downloadsWebPage = getDownloadsPageFile(app)
 
-        subscriber.onItem(Constants.FILE + downloadsWebPage)
+        subscriber.onItem("$FILE$downloadsWebPage")
         subscriber.onComplete()
     }
 

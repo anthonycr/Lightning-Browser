@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.engine
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.BAIDU_SEARCH
 
 /**
  * The Baidu search engine.
@@ -10,6 +10,6 @@ import acr.browser.lightning.constant.Constants
  */
 class BaiduSearch : BaseSearchEngine(
         "file:///android_asset/baidu.png",
-        Constants.BAIDU_SEARCH,
+        BAIDU_SEARCH,
         R.string.search_engine_baidu
 )

@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import android.app.Application
 import org.xmlpull.v1.XmlPullParser
@@ -12,7 +12,7 @@ import java.io.InputStream
 /**
  * Search suggestions provider for Google search engine.
  */
-class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(application, Constants.UTF8) {
+class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(application, UTF8) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
@@ -23,7 +23,7 @@ class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(ap
     override fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>) {
         val bufferedInput = BufferedInputStream(inputStream)
 
-        parser.setInput(bufferedInput, Constants.UTF8)
+        parser.setInput(bufferedInput, UTF8)
 
         var eventType = parser.eventType
         var counter = 0

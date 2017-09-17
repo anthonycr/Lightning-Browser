@@ -4,7 +4,7 @@
 package acr.browser.lightning.html.history
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.history.HistoryModel
 import android.app.Application
@@ -40,7 +40,7 @@ class HistoryPage {
                             it.write(historyPageBuilder.buildPage(newList))
                         }
 
-                        subscriber.onItem(Constants.FILE + historyWebPage)
+                        subscriber.onItem("$FILE$historyWebPage")
                         subscriber.onComplete()
                     }
                 })

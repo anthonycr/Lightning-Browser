@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -13,7 +13,7 @@ import java.io.InputStream
  */
 class BaiduSuggestionsModel(
         application: Application
-) : BaseSuggestionsModel(application, Constants.UTF8) {
+) : BaseSuggestionsModel(application, UTF8) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
     private val inputEncoding = "GBK"

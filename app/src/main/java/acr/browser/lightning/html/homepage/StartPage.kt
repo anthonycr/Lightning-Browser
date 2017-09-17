@@ -4,7 +4,7 @@
 package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
 import com.anthonycr.bonsai.Single
@@ -30,7 +30,7 @@ class StartPage {
             it.write(homePageBuilder.buildPage())
         }
 
-        subscriber.onItem("${Constants.FILE}$homepage")
+        subscriber.onItem("$FILE$homepage")
     }
 
     companion object {

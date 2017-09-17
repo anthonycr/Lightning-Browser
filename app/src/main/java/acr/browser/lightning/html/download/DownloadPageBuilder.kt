@@ -1,7 +1,7 @@
 package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadItem
 import android.app.Application
 import com.anthonycr.mezzanine.MezzanineGenerator
@@ -38,7 +38,7 @@ internal class DownloadPageBuilder(private val app: Application,
     }
 
     private fun createFileUrl(fileName: String): String =
-            "${Constants.FILE}$storageDirectory/$fileName"
+            "$FILE$storageDirectory/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadItem): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {

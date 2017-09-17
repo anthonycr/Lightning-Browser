@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.engine
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.BING_SEARCH
 
 /**
  * The Bing search engine.
@@ -11,6 +11,6 @@ import acr.browser.lightning.constant.Constants
  */
 class BingSearch : BaseSearchEngine(
         "file:///android_asset/bing.png",
-        Constants.BING_SEARCH,
+        BING_SEARCH,
         R.string.search_engine_bing
 )

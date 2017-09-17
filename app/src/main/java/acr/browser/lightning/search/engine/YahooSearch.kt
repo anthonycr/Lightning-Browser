@@ -1,7 +1,7 @@
 package acr.browser.lightning.search.engine
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.Constants
+import acr.browser.lightning.constant.YAHOO_SEARCH
 
 /**
  * The Yahoo search engine.
@@ -11,6 +11,6 @@ import acr.browser.lightning.constant.Constants
  */
 class YahooSearch : BaseSearchEngine(
         "file:///android_asset/yahoo.png",
-        Constants.YAHOO_SEARCH,
+        YAHOO_SEARCH,
         R.string.search_engine_yahoo
 )

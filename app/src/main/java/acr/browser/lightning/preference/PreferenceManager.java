@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.utils.FileUtils;
 
 @Singleton
@@ -253,9 +254,9 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.USE_PROXY, false);
     }
 
-    @Constants.Proxy
+    @Proxy
     public int getProxyChoice() {
-        @Constants.Proxy int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
+        @Proxy int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
         switch (proxy) {
             case Constants.NO_PROXY:
             case Constants.PROXY_ORBOT:
@@ -483,7 +484,7 @@ public class PreferenceManager {
      *
      * @param choice the proxy to use.
      */
-    public void setProxyChoice(@Constants.Proxy int choice) {
+    public void setProxyChoice(@Proxy int choice) {
         putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
         putInt(Name.PROXY_CHOICE, choice);
     }

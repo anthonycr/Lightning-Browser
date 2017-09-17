@@ -26,10 +26,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.engine.BaseSearchEngine;
@@ -253,7 +254,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         BrowserDialog.setDialogSize(mActivity, dialog);
     }
 
-    private void setProxyChoice(@Constants.Proxy int choice) {
+    private void setProxyChoice(@Proxy int choice) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 choice = ProxyUtils.setProxyChoice(choice, mActivity);
