@@ -35,7 +35,7 @@ class DownloadsPage {
     }
 
     private fun buildDownloadsPage() {
-        manager.allDownloads
+        manager.getAllDownloads()
                 .subscribe(object : SingleOnSubscribe<List<DownloadItem>>() {
                     override fun onItem(list: List<DownloadItem>?) {
                         requireNotNull(list)

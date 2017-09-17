@@ -308,7 +308,7 @@ public class BookmarkDatabase extends SQLiteOpenHelper implements BookmarkModel 
 
     @NonNull
     @Override
-    public Completable addBookmarkList(@NonNull final List<HistoryItem> bookmarkItems) {
+    public Completable addBookmarkList(@NonNull final List<? extends HistoryItem> bookmarkItems) {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {

@@ -72,7 +72,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             Schedulers.io().execute(ClearCacheRunnable(application))
 
     fun refreshBookmarks() {
-        bookmarkManager.allBookmarks
+        bookmarkManager.getAllBookmarks()
                 .subscribeOn(Schedulers.io())
                 .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
                     override fun onItem(item: List<HistoryItem>?) {

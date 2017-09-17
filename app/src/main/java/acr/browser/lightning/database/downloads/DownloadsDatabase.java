@@ -80,11 +80,11 @@ public class DownloadsDatabase extends SQLiteOpenHelper implements DownloadsMode
     @Override
     public void onCreate(@NonNull SQLiteDatabase db) {
         String CREATE_BOOKMARK_TABLE = "CREATE TABLE " +
-                DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS) + '(' +
-                DatabaseUtils.sqlEscapeString(KEY_ID) + " INTEGER PRIMARY KEY," +
-                DatabaseUtils.sqlEscapeString(KEY_URL) + " TEXT," +
-                DatabaseUtils.sqlEscapeString(KEY_TITLE) + " TEXT," +
-                DatabaseUtils.sqlEscapeString(KEY_SIZE) + " TEXT" + ')';
+            DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS) + '(' +
+            DatabaseUtils.sqlEscapeString(KEY_ID) + " INTEGER PRIMARY KEY," +
+            DatabaseUtils.sqlEscapeString(KEY_URL) + " TEXT," +
+            DatabaseUtils.sqlEscapeString(KEY_TITLE) + " TEXT," +
+            DatabaseUtils.sqlEscapeString(KEY_SIZE) + " TEXT" + ')';
         db.execSQL(CREATE_BOOKMARK_TABLE);
     }
 
@@ -194,7 +194,7 @@ public class DownloadsDatabase extends SQLiteOpenHelper implements DownloadsMode
 
     @NonNull
     @Override
-    public Completable addDownloadsList(@NonNull final List<DownloadItem> bookmarkItems) {
+    public Completable addDownloadsList(@NonNull final List<? extends DownloadItem> bookmarkItems) {
         return Completable.create(new CompletableAction() {
             @Override
             public void onSubscribe(@NonNull CompletableSubscriber subscriber) {

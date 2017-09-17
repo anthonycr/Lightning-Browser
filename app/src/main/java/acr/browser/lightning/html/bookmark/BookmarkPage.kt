@@ -69,7 +69,7 @@ class BookmarkPage(activity: Activity) {
                         val newList = list!!.toMutableList()
 
                         if (folder == null) {
-                            bookmarkModel.foldersSorted
+                            bookmarkModel.getFoldersSorted()
                                     .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
                                         override fun onItem(item: List<HistoryItem>?) {
                                             requireNotNull(item)
