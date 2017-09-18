@@ -179,8 +179,6 @@ class DownloadsDatabase
 
     companion object {
 
-        private const val TAG = "DownloadsDatabase"
-
         // Database Version
         private const val DATABASE_VERSION = 1
 
