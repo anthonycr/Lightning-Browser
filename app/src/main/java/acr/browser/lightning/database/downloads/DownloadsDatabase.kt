@@ -17,8 +17,7 @@ import javax.inject.Singleton
  * The disk backed download database. See [DownloadsModel] for method documentation.
  */
 @Singleton
-class DownloadsDatabase
-@Inject constructor(
+class DownloadsDatabase @Inject constructor(
         application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), DownloadsModel {
 
