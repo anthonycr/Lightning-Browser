@@ -17,7 +17,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
@@ -261,14 +260,14 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
     }
 
     @NonNull
-    private static List<TabViewModel> toViewModels(@NonNull List<LightningView> tabs) {
-        List<TabViewModel> tabViewModels = new ArrayList<>(tabs.size());
+    private static List<TabViewState> toViewModels(@NonNull List<LightningView> tabs) {
+        List<TabViewState> tabViewStates = new ArrayList<>(tabs.size());
 
         for (LightningView tab : tabs) {
-            tabViewModels.add(new TabViewModel(tab));
+            tabViewStates.add(new TabViewState(tab));
         }
 
-        return tabViewModels;
+        return tabViewStates;
     }
 
     @Override
@@ -310,7 +309,7 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
         private final boolean mDrawerTabs;
 
-        private List<TabViewModel> mTabList = new ArrayList<>();
+        private List<TabViewState> mTabList = new ArrayList<>();
 
         LightningViewAdapter(final boolean vertical) {
             this.mLayoutResourceId = vertical ? R.layout.tab_list_item : R.layout.tab_list_item_horizontal;
@@ -331,8 +330,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
             }
         }
 
-        void showTabs(@NonNull List<TabViewModel> tabs) {
-            final List<TabViewModel> oldList = mTabList;
+        void showTabs(@NonNull List<TabViewState> tabs) {
+            final List<TabViewState> oldList = mTabList;
             mTabList = new ArrayList<>(tabs);
 
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
@@ -353,8 +352,8 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    TabViewModel oldTab = oldList.get(oldItemPosition);
-                    TabViewModel newTab = mTabList.get(newItemPosition);
+                    TabViewState oldTab = oldList.get(oldItemPosition);
+                    TabViewState newTab = mTabList.get(newItemPosition);
 
                     return oldTab.getTitle().equals(newTab.getTitle())
                         && oldTab.getFavicon().equals(newTab.getFavicon())
@@ -381,9 +380,9 @@ public class TabsFragment extends Fragment implements View.OnClickListener, View
         public void onBindViewHolder(@NonNull final LightningViewHolder holder, int position) {
             holder.exitButton.setTag(position);
 
-            ViewCompat.jumpDrawablesToCurrentState(holder.exitButton);
+            holder.exitButton.jumpDrawablesToCurrentState();
 
-            final TabViewModel web = mTabList.get(position);
+            final TabViewState web = mTabList.get(position);
 
             updateViewHolderTitle(holder, web.getTitle());
             updateViewHolderAppearance(holder, web.getFavicon(), web.isForegroundTab());
