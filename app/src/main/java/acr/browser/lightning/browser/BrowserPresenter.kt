@@ -65,7 +65,9 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      * @param tab the tab that changed, may be null.
      */
     fun tabChangeOccurred(tab: LightningView?) {
-        view.notifyTabViewChanged(tabsModel.indexOfTab(tab))
+        tab?.let {
+            view.notifyTabViewChanged(tabsModel.indexOfTab(it))
+        }
     }
 
     private fun onTabChanged(newTab: LightningView?) {
