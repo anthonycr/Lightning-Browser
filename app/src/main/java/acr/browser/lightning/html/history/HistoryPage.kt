@@ -21,7 +21,7 @@ class HistoryPage {
     @Inject internal lateinit var historyModel: HistoryModel
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     fun createHistoryPage(): Single<String> = Single.create { subscriber ->

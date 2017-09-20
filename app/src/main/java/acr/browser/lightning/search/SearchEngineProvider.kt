@@ -14,7 +14,7 @@ class SearchEngineProvider @Inject constructor() {
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     fun getCurrentSearchEngine(): BaseSearchEngine =

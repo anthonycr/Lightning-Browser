@@ -32,7 +32,7 @@ class BookmarkPage(activity: Activity) {
     private val folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     fun createBookmarkPage(): Single<String> = Single.create { subscriber ->

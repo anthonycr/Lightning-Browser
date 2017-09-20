@@ -19,7 +19,7 @@ class SearchBoxModel @Inject constructor() {
     private val mUntitledTitle: String
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
         mUntitledTitle = mApplication.getString(R.string.untitled)
     }
 

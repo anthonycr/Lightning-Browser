@@ -51,7 +51,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
     private var suggestionChoice: PreferenceManager.Suggestion? = null
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
         darkTheme = dark || incognito
         isIncognito = incognito
 

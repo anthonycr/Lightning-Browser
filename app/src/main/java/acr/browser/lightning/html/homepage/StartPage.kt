@@ -18,7 +18,7 @@ class StartPage {
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     fun createHomePage(): Single<String> = Single.create { subscriber ->

@@ -48,7 +48,7 @@ class TabsManager {
     @Inject internal lateinit var app: Application
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     @Deprecated("remove and make presenter call new tab methods so it always knows")

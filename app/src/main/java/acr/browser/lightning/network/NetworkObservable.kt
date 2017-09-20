@@ -41,7 +41,7 @@ class NetworkObservable @Inject constructor() : BroadcastReceiver() {
     @Inject internal lateinit var application: Application
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     /**

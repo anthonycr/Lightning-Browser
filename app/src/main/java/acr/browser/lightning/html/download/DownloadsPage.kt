@@ -22,7 +22,7 @@ class DownloadsPage {
     @Inject internal lateinit var manager: DownloadsModel
 
     init {
-        BrowserApp.getAppComponent().inject(this)
+        BrowserApp.appComponent.inject(this)
     }
 
     fun getDownloadsPage(): Single<String> = Single.create { subscriber ->
