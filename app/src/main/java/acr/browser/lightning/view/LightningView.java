@@ -64,7 +64,7 @@ import acr.browser.lightning.utils.Utils;
  * as properly initialing it. All interactions with the
  * WebView should be made through this class.
  */
-public class LightningView {
+public final class LightningView {
 
     private static final String TAG = "LightningView";
 

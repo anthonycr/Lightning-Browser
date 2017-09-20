@@ -20,7 +20,7 @@ interface BrowserView {
 
     fun closeActivity()
 
-    fun showBlockedLocalFileDialog(listener: DialogInterface.OnClickListener)
+    fun showBlockedLocalFileDialog(onPositiveClick: () -> Unit)
 
     fun showSnackbar(@StringRes resource: Int)
 

@@ -128,6 +128,8 @@ import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.SearchView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 public abstract class BrowserActivity extends ThemableBrowserActivity implements BrowserView, UIController, OnClickListener {
 
@@ -881,7 +883,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     if (Boolean.TRUE.equals(item)) {
                         mSuggestionsAdapter.refreshBookmarks();
                         mBookmarksView.handleUpdatedUrl(url);
-                        Utils.showToast(BrowserActivity.this , R.string.message_bookmark_added);
+                        Utils.showToast(BrowserActivity.this, R.string.message_bookmark_added);
                     }
                 }
             });
@@ -1104,13 +1106,18 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     }
 
     @Override
-    public void showBlockedLocalFileDialog(@NonNull DialogInterface.OnClickListener listener) {
+    public void showBlockedLocalFileDialog(final Function0<Unit> onPositiveClick) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Dialog dialog = builder.setCancelable(true)
             .setTitle(R.string.title_warning)
             .setMessage(R.string.message_blocked_local)
             .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.action_open, listener)
+            .setPositiveButton(R.string.action_open, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    onPositiveClick.invoke();
+                }
+            })
             .show();
 
         BrowserDialog.setDialogSize(this, dialog);
