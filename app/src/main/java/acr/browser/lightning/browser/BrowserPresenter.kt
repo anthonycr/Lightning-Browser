@@ -23,9 +23,8 @@ import com.anthonycr.bonsai.Schedulers
 import javax.inject.Inject
 
 /**
- * Presenter in charge of keeping track of
- * the current tab and setting the current tab
- * of the
+ * Presenter in charge of keeping track of the current tab and setting the current tab of the
+ * browser.
  */
 class BrowserPresenter(private val view: BrowserView, private val isIncognito: Boolean) {
 
@@ -42,8 +41,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     /**
-     * Initializes the tab manager with the new intent
-     * that is handed in by the BrowserActivity.
+     * Initializes the tab manager with the new intent that is handed in by the BrowserActivity.
      *
      * @param intent the intent to handle, may be null.
      */
@@ -61,10 +59,8 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     /**
-     * Notify the presenter that a change occurred to
-     * the current tab. Currently doesn't do anything
-     * other than tell the view to notify the adapter
-     * about the change.
+     * Notify the presenter that a change occurred to the current tab. Currently doesn't do anything
+     * other than tell the view to notify the adapter about the change.
      *
      * @param tab the tab that changed, may be null.
      */
@@ -145,8 +141,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     /**
      * Deletes the tab at the specified position.
      *
-     * @param position the position at which to
-     * delete the tab.
+     * @param position the position at which to delete the tab.
      */
     fun deleteTab(position: Int) {
         Log.d(TAG, "delete Tab")
@@ -195,11 +190,9 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     /**
-     * Handle a new intent from the the main
-     * BrowserActivity.
+     * Handle a new intent from the the main BrowserActivity.
      *
-     * @param intent the intent to handle,
-     * may be null.
+     * @param intent the intent to handle, may be null.
      */
     fun onNewIntent(intent: Intent?) {
         tabsModel.doAfterInitialization {
@@ -233,8 +226,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     /**
      * Loads a URL in the current tab.
      *
-     * @param url the URL to load, must
-     * not be null.
+     * @param url the URL to load, must not be null.
      */
     fun loadUrlInCurrentView(url: String) {
         val currentTab = tabsModel.currentTab ?: // This is a problem, probably an assert will be better than a return
@@ -244,10 +236,8 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     /**
-     * Notifies the presenter that it should
-     * shut down. This should be called when
-     * the BrowserActivity is destroyed so that
-     * we don't leak any memory.
+     * Notifies the presenter that it should shut down. This should be called when the
+     * BrowserActivity is destroyed so that we don't leak any memory.
      */
     fun shutdown() {
         onTabChanged(null)
@@ -256,14 +246,10 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     /**
-     * Notifies the presenter that we wish
-     * to switch to a different tab at the
-     * specified position. If the position
-     * is not in the model, this method will
-     * do nothing.
+     * Notifies the presenter that we wish to switch to a different tab at the specified position.
+     * If the position is not in the model, this method will do nothing.
      *
-     * @param position the position of the
-     * tab to switch to.
+     * @param position the position of the tab to switch to.
      */
     @Synchronized
     fun tabChanged(position: Int) {
@@ -276,16 +262,12 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     /**
-     * Open a new tab with the specified URL. You
-     * can choose to show the tab or load it in the
+     * Open a new tab with the specified URL. You can choose to show the tab or load it in the
      * background.
      *
-     * @param url  the URL to load, may be null if you
-     * don't wish to load anything.
-     * @param show whether or not to switch to this
-     * tab after opening it.
-     * @return true if we successfully created the tab,
-     * false if we have hit max tabs.
+     * @param url  the URL to load, may be null if you don't wish to load anything.
+     * @param show whether or not to switch to this tab after opening it.
+     * @return true if we successfully created the tab, false if we have hit max tabs.
      */
     @Synchronized
     fun newTab(url: String?, show: Boolean): Boolean {
