@@ -1899,7 +1899,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         final FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
 
         mFullscreenContainer = new FrameLayout(this);
-        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
+        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(this, R.color.black));
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
                 mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();

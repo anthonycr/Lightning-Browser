@@ -35,7 +35,7 @@
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@android:color/transparent"
+            android:background="@color/transparent"
             custom:bidirectionalAnimate="false"
             custom:progressColor="?attr/colorAccent"/>
     </LinearLayout>
