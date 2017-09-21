@@ -216,26 +216,32 @@ class LightningDialogBuilder @Inject constructor() {
     private fun showRenameFolderDialog(activity: Activity,
                                        uiController: UIController,
                                        item: HistoryItem) {
-        BrowserDialog.showEditText(activity, R.string.title_rename_folder,
-                R.string.hint_title, item.title,
-                R.string.action_ok) { text ->
-            if (!TextUtils.isEmpty(text)) {
-                val oldTitle = item.title
-                val editedItem = HistoryItem()
-                editedItem.setTitle(text)
-                editedItem.setUrl("$FOLDER$text")
-                editedItem.setFolder(item.folder)
-                editedItem.setIsFolder(true)
-                bookmarkManager.renameFolder(oldTitle, text)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.main())
-                        .subscribe(object : CompletableOnSubscribe() {
-                            override fun onComplete() {
-                                uiController.handleBookmarksChange()
-                            }
-                        })
-            }
-        }
+        BrowserDialog.showEditText(activity,
+                R.string.title_rename_folder,
+                R.string.hint_title,
+                item.title,
+                R.string.action_ok,
+                object : BrowserDialog.EditorListener {
+                    override fun onClick(text: String) {
+
+                        if (!TextUtils.isEmpty(text)) {
+                            val oldTitle = item.title
+                            val editedItem = HistoryItem()
+                            editedItem.setTitle(text)
+                            editedItem.setUrl("$FOLDER$text")
+                            editedItem.setFolder(item.folder)
+                            editedItem.setIsFolder(true)
+                            bookmarkManager.renameFolder(oldTitle, text)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(Schedulers.main())
+                                    .subscribe(object : CompletableOnSubscribe() {
+                                        override fun onComplete() {
+                                            uiController.handleBookmarksChange()
+                                        }
+                                    })
+                        }
+                    }
+                })
     }
 
     fun showLongPressedHistoryLinkDialog(activity: Activity,
