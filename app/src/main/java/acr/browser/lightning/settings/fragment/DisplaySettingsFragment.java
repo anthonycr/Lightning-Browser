@@ -59,7 +59,7 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
     }
 
     private void initPrefs() {
-        // mPreferences storage
+        // preferences storage
         mThemeOptions = this.getResources().getStringArray(R.array.themes);
         mCurrentTheme = mPreferenceManager.getUseTheme();
 

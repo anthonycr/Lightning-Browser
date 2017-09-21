@@ -110,6 +110,7 @@ import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.network.NetworkObservable;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.reading.activity.ReadingActivity;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.SuggestionsAdapter;
@@ -200,6 +201,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Inject SearchEngineProvider mSearchEngineProvider;
 
     @Inject NetworkObservable mNetworkObservable;
+
+    @Inject protected PreferenceManager mPreferences;
 
     private TabsManager mTabsManager;
 

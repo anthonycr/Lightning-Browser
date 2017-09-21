@@ -17,7 +17,7 @@ class IncognitoActivity : BrowserActivity() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 CookieSyncManager.createInstance(this@IncognitoActivity)
             }
-            cookieManager.setAcceptCookie(mPreferences.incognitoCookiesEnabled)
+            cookieManager.setAcceptCookie(preferences.incognitoCookiesEnabled)
             subscriber.onComplete()
         }
     }

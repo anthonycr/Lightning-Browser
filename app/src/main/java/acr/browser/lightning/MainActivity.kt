@@ -18,7 +18,7 @@ class MainActivity : BrowserActivity() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 CookieSyncManager.createInstance(this@MainActivity)
             }
-            cookieManager.setAcceptCookie(mPreferences.cookiesEnabled)
+            cookieManager.setAcceptCookie(preferences.cookiesEnabled)
             subscriber.onComplete()
         }
     }
