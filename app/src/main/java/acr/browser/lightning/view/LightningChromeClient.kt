@@ -117,17 +117,17 @@ class LightningChromeClient(
         uiController.onCloseWindow(lightningView)
     }
 
-    @Suppress("unused")
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun openFileChooser(uploadMsg: ValueCallback<Uri>) {
         uiController.openFileChooser(uploadMsg)
     }
 
-    @Suppress("unused")
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String) {
         uiController.openFileChooser(uploadMsg)
     }
 
-    @Suppress("unused")
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String, capture: String) {
         uiController.openFileChooser(uploadMsg)
     }
