@@ -100,6 +100,7 @@ import acr.browser.lightning.browser.TabsView;
 import acr.browser.lightning.browser.fragment.BookmarksFragment;
 import acr.browser.lightning.browser.fragment.TabsFragment;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.dialog.DialogItem;
 import acr.browser.lightning.html.download.DownloadsPage;
 import acr.browser.lightning.html.history.HistoryPage;
 import acr.browser.lightning.controller.UIController;
@@ -988,24 +989,27 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             return;
         }
         BrowserDialog.show(this, R.string.dialog_title_close_browser,
-            new BrowserDialog.Item(R.string.close_tab) {
+            new DialogItem(R.string.close_tab, new Function0<Unit>() {
                 @Override
-                public void onClick() {
+                public Unit invoke() {
                     mPresenter.deleteTab(position);
+                    return Unit.INSTANCE;
                 }
-            },
-            new BrowserDialog.Item(R.string.close_other_tabs) {
+            }),
+            new DialogItem(R.string.close_other_tabs, new Function0<Unit>() {
                 @Override
-                public void onClick() {
+                public Unit invoke() {
                     mPresenter.closeAllOtherTabs();
+                    return Unit.INSTANCE;
                 }
-            },
-            new BrowserDialog.Item(R.string.close_all_tabs) {
+            }),
+            new DialogItem(R.string.close_all_tabs, new Function0<Unit>() {
                 @Override
-                public void onClick() {
+                public Unit invoke() {
                     closeBrowser();
+                    return Unit.INSTANCE;
                 }
-            });
+            }));
     }
 
     @Override

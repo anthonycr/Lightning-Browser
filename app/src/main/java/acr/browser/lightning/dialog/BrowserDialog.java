@@ -1,3 +1,18 @@
+/*
+ * Copyright 7/31/2016 Anthony Restaino
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package acr.browser.lightning.dialog;
 
 import android.app.Activity;
@@ -26,58 +41,17 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.utils.DeviceUtils;
 import acr.browser.lightning.utils.ResourceUtils;
 
-/**
- * Copyright 7/31/2016 Anthony Restaino
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 public class BrowserDialog {
 
     public interface EditorListener {
         void onClick(String text);
     }
 
-    public static abstract class Item {
-
-        private final int mTitle;
-        private boolean mCondition = true;
-
-        Item(@StringRes int title, boolean condition) {
-            this(title);
-            mCondition = condition;
-        }
-
-        protected Item(@StringRes int title) {
-            mTitle = title;
-        }
-
-        @StringRes
-        private int getTitle() {
-            return mTitle;
-        }
-
-        private boolean isConditionMet() {
-            return mCondition;
-        }
-
-        public abstract void onClick();
-    }
-
-    public static void show(@NonNull Activity activity, @StringRes int title, @NonNull Item... items) {
+    public static void show(@NonNull Activity activity, @StringRes int title, @NonNull DialogItem... items) {
         show(activity, activity.getString(title), items);
     }
 
-    public static void show(@NonNull Activity activity, @Nullable String title, @NonNull Item... items) {
+    public static void show(@NonNull Activity activity, @Nullable String title, @NonNull DialogItem... items) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         View layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null);
@@ -88,14 +62,14 @@ public class BrowserDialog {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
             android.R.layout.simple_list_item_1);
 
-        final List<Item> itemList = new ArrayList<>(1);
-        for (Item it : items) {
+        final List<DialogItem> itemList = new ArrayList<>(1);
+        for (DialogItem it : items) {
             if (it.isConditionMet()) {
                 itemList.add(it);
             }
         }
 
-        for (Item it : itemList) {
+        for (DialogItem it : itemList) {
             adapter.add(activity.getString(it.getTitle()));
         }
 
