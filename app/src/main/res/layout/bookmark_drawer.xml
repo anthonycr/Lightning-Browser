@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/bookmark_title"
+        android:id="@+id/bookmark_title_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/dividerColor"
@@ -23,7 +23,7 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/starIcon"
+                android:id="@+id/bookmark_back_button_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -44,7 +44,7 @@
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/right_drawer_list"
+        android:id="@+id/bookmark_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -68,7 +68,7 @@
             android:clickable="true">
 
             <ImageView
-                android:id="@+id/icon_desktop"
+                android:id="@+id/action_toggle_desktop_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -89,7 +89,7 @@
             android:clickable="true">
 
             <ImageView
-                android:id="@+id/icon_star"
+                android:id="@+id/action_add_bookmark_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -110,7 +110,7 @@
             android:clickable="true">
 
             <ImageView
-                android:id="@+id/icon_reading"
+                android:id="@+id/action_reading_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
