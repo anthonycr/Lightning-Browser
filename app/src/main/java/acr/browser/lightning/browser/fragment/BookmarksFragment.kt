@@ -35,7 +35,6 @@ import android.widget.TextView
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.bonsai.Subscription
-import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.bookmark_drawer.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -160,7 +159,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         SubscriptionUtils.safeUnsubscribe(bookmarkUpdateSubscription)
 
         bookmarkAdapter?.cleanupSubscriptions()
-        clearFindViewByIdCache()
     }
 
     override fun onDestroy() {
