@@ -113,9 +113,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     // Primitives
     private var isFullScreen: Boolean = false
     private var isDarkTheme: Boolean = false
-    private var mIsFullScreen = false
-    private var mIsImmersive = false
-    private var mShowTabsInDrawer: Boolean = false
+    private var isImmersiveMode = false
+    private var shouldShowTabsInDrawer: Boolean = false
     private var swapBookmarksAndTabs: Boolean = false
 
     private var originalOrientation: Int = 0
@@ -129,15 +128,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     // The singleton BookmarkManager
     @Inject internal lateinit var bookmarkManager: BookmarkModel
-
     @Inject internal lateinit var historyModel: HistoryModel
-
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
-
     @Inject internal lateinit var searchBoxModel: SearchBoxModel
-
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-
     @Inject internal lateinit var networkObservable: NetworkObservable
 
     private var tabsManager: TabsManager? = null
@@ -167,7 +161,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         get() = if (swapBookmarksAndTabs) R.id.left_drawer else R.id.right_drawer
 
     private val tabsFragmentViewId: Int
-        get() = if (mShowTabsInDrawer) {
+        get() = if (shouldShowTabsInDrawer) {
             if (swapBookmarksAndTabs) R.id.right_drawer else R.id.left_drawer
         } else {
             R.id.tabs_toolbar_container
@@ -244,7 +238,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         } else {
             ContextCompat.getColor(this, R.color.icon_light_theme_disabled)
         }
-        mShowTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
+        shouldShowTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
         swapBookmarksAndTabs = preferences.bookmarksAndTabsSwapped
 
         // initialize background ColorDrawable
@@ -273,7 +267,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         })
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !mShowTabsInDrawer) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !shouldShowTabsInDrawer) {
             window.statusBarColor = Color.BLACK
         }
 
@@ -291,7 +285,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             fragmentManager.beginTransaction().remove(tabsFragment).commit()
         }
 
-        tabsView = tabsFragment ?: TabsFragment.createTabsFragment(isIncognito, mShowTabsInDrawer)
+        tabsView = tabsFragment ?: TabsFragment.createTabsFragment(isIncognito, shouldShowTabsInDrawer)
 
         if (bookmarksFragment != null) {
             fragmentManager.beginTransaction().remove(bookmarksFragment).commit()
@@ -306,7 +300,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .replace(tabsFragmentViewId, tabsView as Fragment, TAG_TABS_FRAGMENT)
                 .replace(bookmarksFragmentViewId, bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
                 .commit()
-        if (mShowTabsInDrawer) {
+        if (shouldShowTabsInDrawer) {
             toolbar_layout.removeView(findViewById(R.id.tabs_toolbar_container))
         }
 
@@ -323,7 +317,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         customView.layoutParams = lp
 
         arrowImageView = customView.findViewById<ImageView>(R.id.arrow).also {
-            if (mShowTabsInDrawer) {
+            if (shouldShowTabsInDrawer) {
                 if (it.width <= 0) {
                     it.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
                 }
@@ -441,14 +435,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             return false
         }
 
-        override fun onEditorAction(arg0: TextView, actionId: Int, arg2: KeyEvent): Boolean {
+        override fun onEditorAction(arg0: TextView, actionId: Int, arg2: KeyEvent?): Boolean {
             // hide the keyboard and search the web when the enter key
             // button is pressed
             if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE
                     || actionId == EditorInfo.IME_ACTION_NEXT
                     || actionId == EditorInfo.IME_ACTION_SEND
                     || actionId == EditorInfo.IME_ACTION_SEARCH
-                    || arg2.action == KeyEvent.KEYCODE_ENTER) {
+                    || arg2?.action == KeyEvent.KEYCODE_ENTER) {
                 searchView?.let {
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(it.windowToken, 0)
@@ -522,7 +516,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
             if (v === tabsDrawer) {
                 drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, bookmarksDrawer)
-            } else if (mShowTabsInDrawer) {
+            } else if (shouldShowTabsInDrawer) {
                 drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, tabsDrawer)
             }
         }
@@ -1311,14 +1305,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             val color = -0x1000000 or palette.getVibrantColor(defaultColor)
 
             // Lighten up the dark color if it is too dark
-            val finalColor = if (!mShowTabsInDrawer || Utils.isColorTooDark(color)) {
+            val finalColor = if (!shouldShowTabsInDrawer || Utils.isColorTooDark(color)) {
                 Utils.mixTwoColors(defaultColor, color, 0.25f)
             } else {
                 color
             }
 
             val window = window
-            if (!mShowTabsInDrawer) {
+            if (!shouldShowTabsInDrawer) {
                 window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
             }
 
@@ -1328,7 +1322,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             val animation = object : Animation() {
                 override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
                     val animatedColor = DrawableUtils.mixColor(interpolatedTime, currentUiColor, finalColor)
-                    if (mShowTabsInDrawer) {
+                    if (shouldShowTabsInDrawer) {
                         backgroundDrawable.color = animatedColor
                         Handlers.MAIN.post { window.setBackgroundDrawable(backgroundDrawable) }
                     } else drawable?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
@@ -1368,7 +1362,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun updateTabNumber(number: Int) {
-        if (mShowTabsInDrawer) {
+        if (shouldShowTabsInDrawer) {
             arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
                     Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
         }
@@ -1744,7 +1738,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         super.onWindowFocusChanged(hasFocus)
         Log.d(TAG, "onWindowFocusChanged")
         if (hasFocus) {
-            setFullscreen(mIsFullScreen, mIsImmersive)
+            setFullscreen(isFullScreen, isImmersiveMode)
         }
     }
 
@@ -1790,8 +1784,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param immersive true to enable immersive mode, false otherwise
      */
     private fun setFullscreen(enabled: Boolean, immersive: Boolean) {
-        mIsFullScreen = enabled
-        mIsImmersive = immersive
+        isFullScreen = enabled
+        isImmersiveMode = immersive
         val window = window
         val decor = window.decorView
         if (enabled) {
@@ -1987,7 +1981,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         when (v.id) {
             R.id.arrow_button -> when {
                 searchView?.hasFocus() == true -> currentTab.requestFocus()
-                mShowTabsInDrawer -> drawer_layout.openDrawer(tabDrawer)
+                shouldShowTabsInDrawer -> drawer_layout.openDrawer(tabDrawer)
                 else -> currentTab.loadHomepage()
             }
             R.id.button_next -> currentTab.findNext()
