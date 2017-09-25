@@ -27,9 +27,9 @@ interface UIController {
 
     fun changeToolbarBackground(favicon: Bitmap, drawable: Drawable?)
 
-    fun updateUrl(title: String?, isLoading: Boolean)
+    fun updateUrl(url: String?, isLoading: Boolean)
 
-    fun updateProgress(n: Int)
+    fun updateProgress(progress: Int)
 
     fun updateHistory(title: String?, url: String)
 

@@ -29,7 +29,7 @@ class MainActivity : BrowserActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
-        if (BrowserActivity.isPanicTrigger(intent)) {
+        if (isPanicTrigger(intent)) {
             panicClean()
         } else {
             handleNewIntent(intent)
@@ -46,7 +46,7 @@ class MainActivity : BrowserActivity() {
         addItemToHistory(title, url)
     }
 
-    public override fun isIncognito(): Boolean = false
+    override val isIncognito = false
 
     override fun closeActivity() {
         closeDrawers {

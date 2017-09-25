@@ -27,11 +27,13 @@ class IncognitoActivity : BrowserActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    @Suppress("RedundantOverride")
     override fun onNewIntent(intent: Intent) {
         // handleNewIntent(intent);
         super.onNewIntent(intent)
     }
 
+    @Suppress("RedundantOverride")
     override fun onPause() {
         super.onPause()
         // saveOpenTabs();
@@ -41,7 +43,7 @@ class IncognitoActivity : BrowserActivity() {
         // addItemToHistory(title, url);
     }
 
-    public override fun isIncognito(): Boolean = true
+    override val isIncognito = true
 
     override fun closeActivity() {
         closeDrawers { closeBrowser() }
