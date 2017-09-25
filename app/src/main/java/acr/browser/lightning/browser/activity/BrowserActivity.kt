@@ -1016,7 +1016,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .setTitle(R.string.title_warning)
                 .setMessage(R.string.message_blocked_local)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.action_open) { dialogInterface, i -> onPositiveClick.invoke() }
+                .setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
                 .show()
 
         BrowserDialog.setDialogSize(this, dialog)
@@ -1398,7 +1398,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         getUrl.threshold = 1
         getUrl.dropDownWidth = -1
         getUrl.dropDownAnchor = R.id.toolbar_layout
-        getUrl.onItemClickListener = OnItemClickListener { adapterView, view, pos, l ->
+        getUrl.onItemClickListener = OnItemClickListener { _, view, _, _ ->
             var url: String? = null
             val urlString = (view.findViewById<View>(R.id.url) as TextView).text
             if (urlString != null) {
