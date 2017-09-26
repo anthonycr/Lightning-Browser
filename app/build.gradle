@@ -100,7 +100,7 @@ dependencies {
     // proxy support
     compile 'net.i2p.android:client:0.8'
 
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // file reading
     def mezzanineVersion = '1.0.0'
