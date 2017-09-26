@@ -1,5 +1,14 @@
 package acr.browser.lightning
 
+import acr.browser.lightning.database.bookmark.BookmarkExporter
+import acr.browser.lightning.database.bookmark.BookmarkModel
+import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager
+import acr.browser.lightning.di.AppComponent
+import acr.browser.lightning.di.AppModule
+import acr.browser.lightning.di.DaggerAppComponent
+import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application
 import android.content.ClipData
@@ -10,22 +19,9 @@ import android.os.StrictMode
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.webkit.WebView
-
 import com.anthonycr.bonsai.Schedulers
 import com.squareup.leakcanary.LeakCanary
-
 import javax.inject.Inject
-
-import acr.browser.lightning.database.bookmark.BookmarkExporter
-import acr.browser.lightning.database.bookmark.BookmarkModel
-import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager
-import acr.browser.lightning.di.AppComponent
-import acr.browser.lightning.di.AppModule
-import acr.browser.lightning.di.DaggerAppComponent
-import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.MemoryLeakUtils
-import acr.browser.lightning.utils.Preconditions
 
 class BrowserApp : Application() {
 
