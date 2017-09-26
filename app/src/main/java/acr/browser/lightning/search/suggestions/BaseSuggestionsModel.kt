@@ -2,7 +2,7 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.safeUse
 import android.app.Application
 import android.text.TextUtils
 import android.util.Log
@@ -77,12 +77,8 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
 
         val inputStream = downloadSuggestionsForQuery(query, language) ?: return filter
 
-        try {
-            parseResults(inputStream, filter)
-        } catch (e: Exception) {
-            Log.e(TAG, "Unable to parse results", e)
-        } finally {
-            Utils.close(inputStream)
+        inputStream.safeUse {
+            parseResults(it, filter)
         }
 
         return filter
@@ -122,11 +118,11 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
 
     companion object {
 
-        private val TAG = "BaseSuggestionsModel"
+        private const val TAG = "BaseSuggestionsModel"
 
-        internal val MAX_RESULTS = 5
+        internal const val MAX_RESULTS = 5
         private val INTERVAL_DAY = TimeUnit.DAYS.toSeconds(1)
-        private val DEFAULT_LANGUAGE = "en"
+        private const val DEFAULT_LANGUAGE = "en"
 
         private val language by lazy {
             var lang = Locale.getDefault().language
