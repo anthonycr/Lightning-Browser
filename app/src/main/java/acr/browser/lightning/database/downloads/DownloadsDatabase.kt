@@ -28,13 +28,13 @@ class DownloadsDatabase @Inject constructor(
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_BOOKMARK_TABLE = "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS)}(" +
+        val createDownloadsTable = "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_DOWNLOADS)}(" +
                 "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
                 "${DatabaseUtils.sqlEscapeString(KEY_URL)} TEXT," +
                 "${DatabaseUtils.sqlEscapeString(KEY_TITLE)} TEXT," +
                 "${DatabaseUtils.sqlEscapeString(KEY_SIZE)} TEXT" +
                 ')'
-        db.execSQL(CREATE_BOOKMARK_TABLE)
+        db.execSQL(createDownloadsTable)
     }
 
     // Upgrading database

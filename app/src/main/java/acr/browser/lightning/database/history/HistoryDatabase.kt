@@ -38,13 +38,13 @@ class HistoryDatabase @Inject constructor(
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_HISTORY_TABLE = "CREATE TABLE $TABLE_HISTORY(" +
+        val createHistoryTable = "CREATE TABLE $TABLE_HISTORY(" +
                 " $KEY_ID INTEGER PRIMARY KEY," +
                 " $KEY_URL TEXT," +
                 " $KEY_TITLE TEXT," +
                 " $KEY_TIME_VISITED INTEGER" +
                 ")"
-        db.execSQL(CREATE_HISTORY_TABLE)
+        db.execSQL(createHistoryTable)
     }
 
     // Upgrading database
