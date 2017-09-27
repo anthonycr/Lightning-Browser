@@ -112,6 +112,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     // Primitives
     private var isFullScreen: Boolean = false
+    private var hideStatusBar: Boolean = false
     private var isDarkTheme: Boolean = false
     private var isImmersiveMode = false
     private var shouldShowTabsInDrawer: Boolean = false
@@ -1738,7 +1739,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         super.onWindowFocusChanged(hasFocus)
         Log.d(TAG, "onWindowFocusChanged")
         if (hasFocus) {
-            setFullscreen(isFullScreen, isImmersiveMode)
+            setFullscreen(hideStatusBar, isImmersiveMode)
         }
     }
 
@@ -1784,7 +1785,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param immersive true to enable immersive mode, false otherwise
      */
     private fun setFullscreen(enabled: Boolean, immersive: Boolean) {
-        isFullScreen = enabled
+        hideStatusBar = enabled
         isImmersiveMode = immersive
         val window = window
         val decor = window.decorView
@@ -1855,16 +1856,16 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
             val height = toolbar_layout.height
             if (toolbar_layout.translationY > -0.01f) {
-                val show = object : Animation() {
+                val hideAnimation = object : Animation() {
                     override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
                         val trans = interpolatedTime * height
                         toolbar_layout.translationY = -trans
                         setWebViewTranslation(height - trans)
                     }
                 }
-                show.duration = 250
-                show.interpolator = BezierDecelerateInterpolator()
-                content_frame.startAnimation(show)
+                hideAnimation.duration = 250
+                hideAnimation.interpolator = BezierDecelerateInterpolator()
+                content_frame.startAnimation(hideAnimation)
             }
         }
     }
