@@ -93,12 +93,12 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
                     // TODO: Restore this when Google fixes the bug where the WebView is
                     // blank after calling onPause followed by onResume.
                     // currentTab.onPause();
-                    it?.setIsForegroundTab(false)
+                    it?.isForegroundTab = false
                 }
 
                 newTab.resumeTimers()
                 newTab.onResume()
-                newTab.setIsForegroundTab(true)
+                newTab.isForegroundTab = true
 
                 view.updateProgress(newTab.progress)
                 view.setBackButtonEnabled(newTab.canGoBack())
@@ -213,13 +213,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
                         newTab(url, true)
                         shouldClose = true
                         val tab = tabsModel.lastTab()
-                        tab?.setIsNewTab(true)
+                        tab?.isNewTab = true
                     }
                 } else {
                     newTab(url, true)
                     shouldClose = true
                     val tab = tabsModel.lastTab()
-                    tab?.setIsNewTab(true)
+                    tab?.isNewTab = true
                 }
             }
         }

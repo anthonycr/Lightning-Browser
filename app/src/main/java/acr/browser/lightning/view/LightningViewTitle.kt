@@ -11,7 +11,7 @@ import android.graphics.Bitmap
  * for the favicon and page title, the information used
  * by the tab adapters to show the tabs to the user.
  */
-internal class LightningViewTitle(private val context: Context) {
+class LightningViewTitle(private val context: Context) {
 
     private var favicon: Bitmap? = null
     private var title = context.getString(R.string.action_new_tab)

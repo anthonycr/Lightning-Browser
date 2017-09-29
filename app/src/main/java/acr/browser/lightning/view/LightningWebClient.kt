@@ -103,14 +103,14 @@ class LightningWebClient(
         } else {
             lightningView.titleInfo.setTitle(view.title)
         }
-        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && lightningView.invertePage) {
+        if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && lightningView.invertPage) {
             view.evaluateJavascript(invertPageJs.provideJs(), null)
         }
         uiController.tabChanged(lightningView)
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-        lightningView.titleInfo.setFavicon(favicon)
+        lightningView.titleInfo.setFavicon(null)
         if (lightningView.isShown) {
             uiController.updateUrl(url, true)
             uiController.showActionBar()
@@ -150,7 +150,7 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
-        if (view.isShown && lightningView.mPreferences.textReflowEnabled &&
+        if (view.isShown && lightningView.preferences.textReflowEnabled &&
                 Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (isRunning)
                 return
