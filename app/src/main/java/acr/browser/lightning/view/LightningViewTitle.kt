@@ -22,12 +22,10 @@ class LightningViewTitle(private val context: Context) {
      *
      * @param favicon the potentially null favicon to set.
      */
-    fun setFavicon(favicon: Bitmap?) {
-        if (favicon == null) {
-            this.favicon = null
-        } else {
-            this.favicon = Utils.padFavicon(favicon)
-        }
+    fun setFavicon(favicon: Bitmap?) = if (favicon == null) {
+        this.favicon = null
+    } else {
+        this.favicon = Utils.padFavicon(favicon)
     }
 
     /**
@@ -67,26 +65,24 @@ class LightningViewTitle(private val context: Context) {
          * @param darkTheme whether the icon should be themed dark or not.
          * @return a not null icon.
          */
-        private fun getDefaultIcon(context: Context, darkTheme: Boolean): Bitmap {
-            return if (darkTheme) {
-                var darkIcon = defaultDarkIcon
+        private fun getDefaultIcon(context: Context, darkTheme: Boolean): Bitmap = if (darkTheme) {
+            var darkIcon = defaultDarkIcon
 
-                if (darkIcon == null) {
-                    darkIcon = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, true)
-                    defaultDarkIcon = darkIcon
-                }
-
-                darkIcon
-            } else {
-                var lightIcon = defaultLightIcon
-
-                if (lightIcon == null) {
-                    lightIcon = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, false)
-                    defaultLightIcon = lightIcon
-                }
-
-                lightIcon
+            if (darkIcon == null) {
+                darkIcon = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, true)
+                defaultDarkIcon = darkIcon
             }
+
+            darkIcon
+        } else {
+            var lightIcon = defaultLightIcon
+
+            if (lightIcon == null) {
+                lightIcon = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, false)
+                defaultLightIcon = lightIcon
+            }
+
+            lightIcon
         }
     }
 

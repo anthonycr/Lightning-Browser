@@ -45,93 +45,82 @@ class DownloadsDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun findDownloadForUrl(url: String): Single<DownloadItem> {
-        return Single.create { subscriber ->
-            val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1")
+    override fun findDownloadForUrl(url: String): Single<DownloadItem> =
+            Single.create { subscriber ->
+                val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1")
 
-            if (cursor.moveToFirst()) {
-                subscriber.onItem(cursor.bindToDownloadItem())
-            } else {
-                subscriber.onItem(null)
-            }
+                if (cursor.moveToFirst()) {
+                    subscriber.onItem(cursor.bindToDownloadItem())
+                } else {
+                    subscriber.onItem(null)
+                }
 
-            cursor.close()
-            subscriber.onComplete()
-        }
-    }
-
-    override fun isDownload(url: String): Single<Boolean> {
-        return Single.create { subscriber ->
-            val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1")
-
-            subscriber.onItem(cursor.moveToFirst())
-
-            cursor.close()
-            subscriber.onComplete()
-        }
-    }
-
-    override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> {
-        return Single.create(SingleAction { subscriber ->
-            val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1")
-
-            if (cursor.moveToFirst()) {
                 cursor.close()
-                subscriber.onItem(false)
                 subscriber.onComplete()
-                return@SingleAction
             }
 
-            cursor.close()
+    override fun isDownload(url: String): Single<Boolean> = Single.create { subscriber ->
+        val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1")
 
-            val id = database.insert(TABLE_DOWNLOADS, null, item.toContentValues())
+        subscriber.onItem(cursor.moveToFirst())
 
-            subscriber.onItem(id != -1L)
-            subscriber.onComplete()
-        })
+        cursor.close()
+        subscriber.onComplete()
     }
 
-    override fun addDownloadsList(downloadItems: List<DownloadItem>): Completable {
-        return Completable.create { subscriber ->
-            database.beginTransaction()
+    override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> =
+            Single.create(SingleAction { subscriber ->
+                val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1")
 
-            for (item in downloadItems) {
-                addDownloadIfNotExists(item).subscribe()
+                if (cursor.moveToFirst()) {
+                    cursor.close()
+                    subscriber.onItem(false)
+                    subscriber.onComplete()
+                    return@SingleAction
+                }
+
+                cursor.close()
+
+                val id = database.insert(TABLE_DOWNLOADS, null, item.toContentValues())
+
+                subscriber.onItem(id != -1L)
+                subscriber.onComplete()
+            })
+
+    override fun addDownloadsList(downloadItems: List<DownloadItem>): Completable =
+            Completable.create { subscriber ->
+                database.beginTransaction()
+
+                for (item in downloadItems) {
+                    addDownloadIfNotExists(item).subscribe()
+                }
+
+                database.setTransactionSuccessful()
+                database.endTransaction()
+
+                subscriber.onComplete()
             }
 
-            database.setTransactionSuccessful()
-            database.endTransaction()
+    override fun deleteDownload(url: String): Single<Boolean> = Single.create { subscriber ->
+        val rows = database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url))
 
-            subscriber.onComplete()
-        }
+        subscriber.onItem(rows > 0)
+        subscriber.onComplete()
     }
 
-    override fun deleteDownload(url: String): Single<Boolean> {
-        return Single.create { subscriber ->
-            val rows = database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url))
+    override fun deleteAllDownloads(): Completable = Completable.create { subscriber ->
+        database.delete(TABLE_DOWNLOADS, null, null)
 
-            subscriber.onItem(rows > 0)
-            subscriber.onComplete()
-        }
+        subscriber.onComplete()
     }
 
-    override fun deleteAllDownloads(): Completable {
-        return Completable.create { subscriber ->
-            database.delete(TABLE_DOWNLOADS, null, null)
+    override fun getAllDownloads(): Single<List<DownloadItem>> = Single.create { subscriber ->
+        val cursor = database.query(TABLE_DOWNLOADS, null, null, null, null, null, null)
 
-            subscriber.onComplete()
-        }
-    }
+        subscriber.onItem(cursor.bindToDownloadItemList())
+        subscriber.onComplete()
 
-    override fun getAllDownloads(): Single<List<DownloadItem>> {
-        return Single.create { subscriber ->
-            val cursor = database.query(TABLE_DOWNLOADS, null, null, null, null, null, null)
-
-            subscriber.onItem(cursor.bindToDownloadItemList())
-            subscriber.onComplete()
-
-            cursor.close()
-        }
+        cursor.close()
     }
 
     override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_DOWNLOADS)
@@ -164,16 +153,14 @@ class DownloadsDatabase @Inject constructor(
     /**
      * Binds a [Cursor] to a [List] of [DownloadItem].
      */
-    private fun Cursor.bindToDownloadItemList(): List<DownloadItem> {
-        return use {
-            val downloads = ArrayList<DownloadItem>()
+    private fun Cursor.bindToDownloadItemList(): List<DownloadItem> = use {
+        val downloads = ArrayList<DownloadItem>()
 
-            while (moveToNext()) {
-                downloads.add(bindToDownloadItem())
-            }
-
-            return@use downloads
+        while (moveToNext()) {
+            downloads.add(bindToDownloadItem())
         }
+
+        return@use downloads
     }
 
     companion object {

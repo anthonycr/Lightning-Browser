@@ -11,15 +11,13 @@ import com.anthonycr.bonsai.Completable
 class IncognitoActivity : BrowserActivity() {
 
     @Suppress("DEPRECATION")
-    public override fun updateCookiePreference(): Completable {
-        return Completable.create { subscriber ->
-            val cookieManager = CookieManager.getInstance()
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                CookieSyncManager.createInstance(this@IncognitoActivity)
-            }
-            cookieManager.setAcceptCookie(preferences.incognitoCookiesEnabled)
-            subscriber.onComplete()
+    public override fun updateCookiePreference(): Completable = Completable.create { subscriber ->
+        val cookieManager = CookieManager.getInstance()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            CookieSyncManager.createInstance(this@IncognitoActivity)
         }
+        cookieManager.setAcceptCookie(preferences.incognitoCookiesEnabled)
+        subscriber.onComplete()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -28,24 +26,17 @@ class IncognitoActivity : BrowserActivity() {
     }
 
     @Suppress("RedundantOverride")
-    override fun onNewIntent(intent: Intent) {
-        // handleNewIntent(intent);
-        super.onNewIntent(intent)
-    }
+    override fun onNewIntent(intent: Intent) =// handleNewIntent(intent);
+            super.onNewIntent(intent)
 
     @Suppress("RedundantOverride")
-    override fun onPause() {
-        super.onPause()
-        // saveOpenTabs();
-    }
+    override fun onPause() = super.onPause()
+    // saveOpenTabs();
 
-    override fun updateHistory(title: String?, url: String) {
-        // addItemToHistory(title, url);
-    }
+    override fun updateHistory(title: String?, url: String) =// addItemToHistory(title, url);
+            Unit
 
     override val isIncognito = true
 
-    override fun closeActivity() {
-        closeDrawers { closeBrowser() }
-    }
+    override fun closeActivity() = closeDrawers { closeBrowser() }
 }

@@ -94,13 +94,11 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     // Handle bookmark click
     private val itemClickListener = object : OnItemClickListener {
-        override fun onItemClick(item: HistoryItem) {
-            if (item.isFolder) {
-                scrollIndex = (bookmark_list_view.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                setBookmarksShown(item.title, true)
-            } else {
-                uiController.bookmarkItemClicked(item)
-            }
+        override fun onItemClick(item: HistoryItem) = if (item.isFolder) {
+            scrollIndex = (bookmark_list_view.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            setBookmarksShown(item.title, true)
+        } else {
+            uiController.bookmarkItemClicked(item)
         }
     }
 
@@ -271,12 +269,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         buttonImage.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
     }
 
-    private fun handleLongPress(item: HistoryItem) {
-        if (item.isFolder) {
-            bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(activity, uiController, item)
-        } else {
-            bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, item)
-        }
+    private fun handleLongPress(item: HistoryItem) = if (item.isFolder) {
+        bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(activity, uiController, item)
+    } else {
+        bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, item)
     }
 
     override fun onClick(v: View) {
@@ -408,10 +404,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
             val itemView = inflater.inflate(R.layout.bookmark_list_item, parent, false)
 
             return BookmarkViewHolder(itemView, this, onItemLongCLickListener, onItemClickListener)
-        }
-
-        override fun onViewRecycled(holder: BookmarkViewHolder?) {
-            super.onViewRecycled(holder)
         }
 
         override fun onBindViewHolder(holder: BookmarkViewHolder, position: Int) {

@@ -12,15 +12,13 @@ import com.anthonycr.bonsai.Completable
 class MainActivity : BrowserActivity() {
 
     @Suppress("DEPRECATION")
-    public override fun updateCookiePreference(): Completable {
-        return Completable.create { subscriber ->
-            val cookieManager = CookieManager.getInstance()
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                CookieSyncManager.createInstance(this@MainActivity)
-            }
-            cookieManager.setAcceptCookie(preferences.cookiesEnabled)
-            subscriber.onComplete()
+    public override fun updateCookiePreference(): Completable = Completable.create { subscriber ->
+        val cookieManager = CookieManager.getInstance()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            CookieSyncManager.createInstance(this@MainActivity)
         }
+        cookieManager.setAcceptCookie(preferences.cookiesEnabled)
+        subscriber.onComplete()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -28,13 +26,11 @@ class MainActivity : BrowserActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onNewIntent(intent: Intent) {
-        if (isPanicTrigger(intent)) {
-            panicClean()
-        } else {
-            handleNewIntent(intent)
-            super.onNewIntent(intent)
-        }
+    override fun onNewIntent(intent: Intent) = if (isPanicTrigger(intent)) {
+        panicClean()
+    } else {
+        handleNewIntent(intent)
+        super.onNewIntent(intent)
     }
 
     override fun onPause() {
@@ -42,17 +38,13 @@ class MainActivity : BrowserActivity() {
         saveOpenTabs()
     }
 
-    override fun updateHistory(title: String?, url: String) {
-        addItemToHistory(title, url)
-    }
+    override fun updateHistory(title: String?, url: String) = addItemToHistory(title, url)
 
     override val isIncognito = false
 
-    override fun closeActivity() {
-        closeDrawers {
-            performExitCleanUp()
-            moveTaskToBack(true)
-        }
+    override fun closeActivity() = closeDrawers {
+        performExitCleanUp()
+        moveTaskToBack(true)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {

@@ -78,34 +78,32 @@ class LightningChromeClient(
     }
 
     override fun onGeolocationPermissionsShowPrompt(origin: String,
-                                                    callback: GeolocationPermissions.Callback) {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, permissions, object : PermissionsResultAction() {
-            override fun onGranted() {
-                val remember = true
-                val builder = AlertDialog.Builder(activity)
-                builder.setTitle(activity.getString(R.string.location))
+                                                    callback: GeolocationPermissions.Callback) =
+            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, permissions, object : PermissionsResultAction() {
+                override fun onGranted() {
+                    val remember = true
+                    val builder = AlertDialog.Builder(activity)
+                    builder.setTitle(activity.getString(R.string.location))
 
-                val org = if (origin.length > 50) {
-                    "${origin.subSequence(0, 50)}..."
-                } else {
-                    origin
+                    val org = if (origin.length > 50) {
+                        "${origin.subSequence(0, 50)}..."
+                    } else {
+                        origin
+                    }
+                    builder.setMessage(org + activity.getString(R.string.message_location))
+                            .setCancelable(true)
+                            .setPositiveButton(activity.getString(R.string.action_allow)
+                            ) { _, _ -> callback.invoke(origin, true, remember) }
+                            .setNegativeButton(activity.getString(R.string.action_dont_allow)
+                            ) { _, _ -> callback.invoke(origin, false, remember) }
+                    val alert = builder.create()
+                    alert.show()
+                    BrowserDialog.setDialogSize(activity, alert)
                 }
-                builder.setMessage(org + activity.getString(R.string.message_location))
-                        .setCancelable(true)
-                        .setPositiveButton(activity.getString(R.string.action_allow)
-                        ) { _, _ -> callback.invoke(origin, true, remember) }
-                        .setNegativeButton(activity.getString(R.string.action_dont_allow)
-                        ) { _, _ -> callback.invoke(origin, false, remember) }
-                val alert = builder.create()
-                alert.show()
-                BrowserDialog.setDialogSize(activity, alert)
-            }
 
-            override fun onDenied(permission: String) {
-                //TODO show message and/or turn off setting
-            }
-        })
-    }
+                override fun onDenied(permission: String) =//TODO show message and/or turn off setting
+                        Unit
+            })
 
     override fun onCreateWindow(view: WebView, isDialog: Boolean, isUserGesture: Boolean,
                                 resultMsg: Message): Boolean {
@@ -113,24 +111,18 @@ class LightningChromeClient(
         return true
     }
 
-    override fun onCloseWindow(window: WebView) {
-        uiController.onCloseWindow(lightningView)
-    }
+    override fun onCloseWindow(window: WebView) = uiController.onCloseWindow(lightningView)
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun openFileChooser(uploadMsg: ValueCallback<Uri>) {
-        uiController.openFileChooser(uploadMsg)
-    }
+    fun openFileChooser(uploadMsg: ValueCallback<Uri>) = uiController.openFileChooser(uploadMsg)
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String) {
-        uiController.openFileChooser(uploadMsg)
-    }
+    fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String) =
+            uiController.openFileChooser(uploadMsg)
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String, capture: String) {
-        uiController.openFileChooser(uploadMsg)
-    }
+    fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String, capture: String) =
+            uiController.openFileChooser(uploadMsg)
 
     override fun onShowFileChooser(webView: WebView, filePathCallback: ValueCallback<Array<Uri>>,
                                    fileChooserParams: WebChromeClient.FileChooserParams): Boolean {
@@ -156,21 +148,16 @@ class LightningChromeClient(
      * @return A view that should be used to display the state
      * of a video's loading progress.
      */
-    override fun getVideoLoadingProgressView(): View {
-        return LayoutInflater.from(activity).inflate(R.layout.video_loading_progress, null)
-    }
+    override fun getVideoLoadingProgressView(): View =
+            LayoutInflater.from(activity).inflate(R.layout.video_loading_progress, null)
 
-    override fun onHideCustomView() {
-        uiController.onHideCustomView()
-    }
+    override fun onHideCustomView() = uiController.onHideCustomView()
 
-    override fun onShowCustomView(view: View, callback: WebChromeClient.CustomViewCallback) {
-        uiController.onShowCustomView(view, callback)
-    }
+    override fun onShowCustomView(view: View, callback: WebChromeClient.CustomViewCallback) =
+            uiController.onShowCustomView(view, callback)
 
     override fun onShowCustomView(view: View, requestedOrientation: Int,
-                                  callback: WebChromeClient.CustomViewCallback) {
-        uiController.onShowCustomView(view, callback, requestedOrientation)
-    }
+                                  callback: WebChromeClient.CustomViewCallback) =
+            uiController.onShowCustomView(view, callback, requestedOrientation)
 
 }

@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser
 
-import android.content.DialogInterface
 import android.support.annotation.StringRes
 import android.view.View
 

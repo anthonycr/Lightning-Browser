@@ -18,8 +18,9 @@ import javax.inject.Singleton
  * Checking whether a URL is an ad is an `O(log n)` operation.
  */
 @Singleton
-class AssetsAdBlocker @Inject
-internal constructor(private val application: Application) : AdBlocker {
+class AssetsAdBlocker @Inject internal constructor(
+        private val application: Application
+) : AdBlocker {
 
     private val blockedDomainsList = HashSet<String>()
 

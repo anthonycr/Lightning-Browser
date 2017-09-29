@@ -13,8 +13,6 @@ class DialogItem @JvmOverloads constructor(
         private val onClick: () -> Unit
 ) {
 
-    fun onClick() {
-        onClick.invoke()
-    }
+    fun onClick() = onClick.invoke()
 
 }

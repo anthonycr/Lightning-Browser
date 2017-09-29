@@ -83,49 +83,47 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param title The title for the web page.
      */
     fun faviconForUrl(url: String,
-                      title: String): Single<Bitmap> {
-        return Single.create(SingleAction { subscriber ->
-            val uri = safeUri(url)
+                      title: String): Single<Bitmap> = Single.create(SingleAction { subscriber ->
+                          val uri = safeUri(url)
 
-            if (uri == null) {
+                          if (uri == null) {
 
-                val newFavicon = Utils.padFavicon(getDefaultBitmapForString(title))
+                              val newFavicon = Utils.padFavicon(getDefaultBitmapForString(title))
 
-                subscriber.onItem(newFavicon)
-                subscriber.onComplete()
+                              subscriber.onItem(newFavicon)
+                              subscriber.onComplete()
 
-                return@SingleAction
-            }
+                              return@SingleAction
+                          }
 
-            val faviconCacheFile = getFaviconCacheFile(application, uri)
+                          val faviconCacheFile = getFaviconCacheFile(application, uri)
 
-            var favicon = getFaviconFromMemCache(url)
+                          var favicon = getFaviconFromMemCache(url)
 
-            if (faviconCacheFile.exists() && favicon == null) {
-                favicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
+                          if (faviconCacheFile.exists() && favicon == null) {
+                              favicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
 
-                if (favicon != null) {
-                    addFaviconToMemCache(url, favicon)
-                }
-            }
+                              if (favicon != null) {
+                                  addFaviconToMemCache(url, favicon)
+                              }
+                          }
 
-            if (favicon != null) {
-                val newFavicon = Utils.padFavicon(favicon)
+                          if (favicon != null) {
+                              val newFavicon = Utils.padFavicon(favicon)
 
-                subscriber.onItem(newFavicon)
-                subscriber.onComplete()
+                              subscriber.onItem(newFavicon)
+                              subscriber.onComplete()
 
-                return@SingleAction
-            }
+                              return@SingleAction
+                          }
 
-            favicon = getDefaultBitmapForString(title)
+                          favicon = getDefaultBitmapForString(title)
 
-            val newFavicon = Utils.padFavicon(favicon)
+                          val newFavicon = Utils.padFavicon(favicon)
 
-            subscriber.onItem(newFavicon)
-            subscriber.onComplete()
-        })
-    }
+                          subscriber.onItem(newFavicon)
+                          subscriber.onComplete()
+                      })
 
     /**
      * Caches a favicon for a particular URL.
@@ -135,30 +133,29 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @return an observable that notifies the consumer when it is complete.
      */
     fun cacheFaviconForUrl(favicon: Bitmap,
-                           url: String): Completable {
-        return Completable.create(CompletableAction { subscriber ->
-            val uri = safeUri(url)
+                           url: String): Completable =
+            Completable.create(CompletableAction { subscriber ->
+                val uri = safeUri(url)
 
-            if (uri == null) {
-                subscriber.onComplete()
-                return@CompletableAction
-            }
+                if (uri == null) {
+                    subscriber.onComplete()
+                    return@CompletableAction
+                }
 
-            Log.d(TAG, "Caching icon for " + uri.host)
-            var fos: FileOutputStream? = null
+                Log.d(TAG, "Caching icon for " + uri.host)
+                var fos: FileOutputStream? = null
 
-            try {
-                val image = getFaviconCacheFile(application, uri)
-                fos = FileOutputStream(image)
-                favicon.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                fos.flush()
-            } catch (e: IOException) {
-                Log.e(TAG, "Unable to cache favicon", e)
-            } finally {
-                Utils.close(fos)
-            }
-        })
-    }
+                try {
+                    val image = getFaviconCacheFile(application, uri)
+                    fos = FileOutputStream(image)
+                    favicon.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    fos.flush()
+                } catch (e: IOException) {
+                    Log.e(TAG, "Unable to cache favicon", e)
+                } finally {
+                    Utils.close(fos)
+                }
+            })
 
     companion object {
 

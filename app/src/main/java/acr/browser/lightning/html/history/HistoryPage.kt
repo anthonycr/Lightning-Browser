@@ -69,16 +69,15 @@ class HistoryPage {
          * when subscribed.
          */
         @JvmStatic
-        fun deleteHistoryPage(application: Application): Completable {
-            return Completable.create { subscriber ->
-                val historyWebPage = getHistoryPageFile(application)
-                if (historyWebPage.exists()) {
-                    historyWebPage.delete()
-                }
+        fun deleteHistoryPage(application: Application): Completable =
+                Completable.create { subscriber ->
+                    val historyWebPage = getHistoryPageFile(application)
+                    if (historyWebPage.exists()) {
+                        historyWebPage.delete()
+                    }
 
-                subscriber.onComplete()
-            }
-        }
+                    subscriber.onComplete()
+                }
     }
 
 }

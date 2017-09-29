@@ -55,77 +55,69 @@ class HistoryDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun deleteHistory(): Completable {
-        return Completable.create { subscriber ->
-            database.delete(TABLE_HISTORY, null, null)
-            database.close()
+    override fun deleteHistory(): Completable = Completable.create { subscriber ->
+        database.delete(TABLE_HISTORY, null, null)
+        database.close()
 
-            subscriber.onComplete()
-        }
+        subscriber.onComplete()
     }
 
-    override fun deleteHistoryItem(url: String): Completable {
-        return Completable.create { subscriber ->
-            database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
+    override fun deleteHistoryItem(url: String): Completable = Completable.create { subscriber ->
+        database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
 
-            subscriber.onComplete()
-        }
+        subscriber.onComplete()
     }
 
-    override fun visitHistoryItem(url: String, title: String?): Completable {
-        return Completable.create {
-            val values = ContentValues()
-            values.put(KEY_TITLE, title ?: "")
-            values.put(KEY_TIME_VISITED, System.currentTimeMillis())
+    override fun visitHistoryItem(url: String, title: String?): Completable = Completable.create {
+        val values = ContentValues()
+        values.put(KEY_TITLE, title ?: "")
+        values.put(KEY_TIME_VISITED, System.currentTimeMillis())
 
-            val cursor = database.query(false, TABLE_HISTORY, arrayOf(KEY_URL),
-                    "$KEY_URL = ?", arrayOf(url), null, null, null, "1")
+        val cursor = database.query(false, TABLE_HISTORY, arrayOf(KEY_URL),
+                "$KEY_URL = ?", arrayOf(url), null, null, null, "1")
 
-            if (cursor.count > 0) {
-                database.update(TABLE_HISTORY, values, KEY_URL + " = ?", arrayOf(url))
-            } else {
-                addHistoryItem(HistoryItem(url, title ?: ""))
+        if (cursor.count > 0) {
+            database.update(TABLE_HISTORY, values, KEY_URL + " = ?", arrayOf(url))
+        } else {
+            addHistoryItem(HistoryItem(url, title ?: ""))
+        }
+
+        cursor.close()
+    }
+
+    override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
+            Single.create { subscriber ->
+                val itemList = ArrayList<HistoryItem>(5)
+
+                val search = "%$query%"
+
+                val cursor = database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
+                        arrayOf(search, search), null, null, KEY_TIME_VISITED + " DESC", "5")
+
+                while (cursor.moveToNext()) {
+                    itemList.add(cursor.bindToHistoryItem())
+                }
+
+                cursor.close()
+
+                subscriber.onItem(itemList)
+                subscriber.onComplete()
             }
 
-            cursor.close()
-        }
-    }
+    override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
+            Single.create { subscriber ->
+                val itemList = ArrayList<HistoryItem>(100)
+                val cursor = database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100")
 
-    override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> {
-        return Single.create { subscriber ->
-            val itemList = ArrayList<HistoryItem>(5)
+                while (cursor.moveToNext()) {
+                    itemList.add(cursor.bindToHistoryItem())
+                }
 
-            val search = "%$query%"
+                cursor.close()
 
-            val cursor = database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                    arrayOf(search, search), null, null, KEY_TIME_VISITED + " DESC", "5")
-
-            while (cursor.moveToNext()) {
-                itemList.add(cursor.bindToHistoryItem())
+                subscriber.onItem(itemList)
+                subscriber.onComplete()
             }
-
-            cursor.close()
-
-            subscriber.onItem(itemList)
-            subscriber.onComplete()
-        }
-    }
-
-    override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> {
-        return Single.create { subscriber ->
-            val itemList = ArrayList<HistoryItem>(100)
-            val cursor = database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100")
-
-            while (cursor.moveToNext()) {
-                itemList.add(cursor.bindToHistoryItem())
-            }
-
-            cursor.close()
-
-            subscriber.onItem(itemList)
-            subscriber.onComplete()
-        }
-    }
 
     @WorkerThread
     @Synchronized private fun addHistoryItem(item: HistoryItem) {

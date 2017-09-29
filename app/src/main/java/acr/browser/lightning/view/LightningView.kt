@@ -243,9 +243,8 @@ class LightningView(private val activity: Activity,
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) {
-                        loadUrl(requireNotNull(item) { "HomePage url must not be null" })
-                    }
+                    override fun onItem(item: String?) =
+                            loadUrl(requireNotNull(item) { "HomePage url must not be null" })
                 })
     }
 
@@ -258,9 +257,8 @@ class LightningView(private val activity: Activity,
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) {
-                        loadUrl(requireNotNull(item) { "BookmarkPage url must not be null" })
-                    }
+                    override fun onItem(item: String?) =
+                            loadUrl(requireNotNull(item) { "BookmarkPage url must not be null" })
                 })
     }
 
@@ -273,9 +271,8 @@ class LightningView(private val activity: Activity,
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) {
-                        loadUrl(requireNotNull(item) { "DownloadsPage url must not be null" })
-                    }
+                    override fun onItem(item: String?) =
+                            loadUrl(requireNotNull(item) { "DownloadsPage url must not be null" })
                 })
     }
 
@@ -441,18 +438,16 @@ class LightningView(private val activity: Activity,
         getPathObservable("appcache").subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<File>() {
-                    override fun onItem(item: File?) {
-                        settings.setAppCachePath(requireNotNull(item).path)
-                    }
+                    override fun onItem(item: File?) =
+                            settings.setAppCachePath(requireNotNull(item).path)
                 })
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             getPathObservable("geolocation").subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.main())
                     .subscribe(object : SingleOnSubscribe<File>() {
-                        override fun onItem(item: File?) {
-                            settings.setGeolocationDatabasePath(requireNotNull(item).path)
-                        }
+                        override fun onItem(item: File?) =
+                                settings.setGeolocationDatabasePath(requireNotNull(item).path)
                     })
         }
 
@@ -465,17 +460,15 @@ class LightningView(private val activity: Activity,
                         }
                     }
 
-                    override fun onComplete() {}
+                    override fun onComplete() = Unit
                 })
 
     }
 
-    private fun getPathObservable(subFolder: String): Single<File> {
-        return Single.create { subscriber ->
-            val file = activity.getDir(subFolder, 0)
-            subscriber.onItem(file)
-            subscriber.onComplete()
-        }
+    private fun getPathObservable(subFolder: String): Single<File> = Single.create { subscriber ->
+        val file = activity.getDir(subFolder, 0)
+        subscriber.onItem(file)
+        subscriber.onComplete()
     }
 
     /**

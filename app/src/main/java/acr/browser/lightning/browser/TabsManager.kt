@@ -424,11 +424,9 @@ class TabsManager {
         val savedState = FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE)
         if (savedState != null) {
             Log.d(TAG, "Restoring previous WebView state now")
-            for (key in savedState.keySet()) {
-                if (key.startsWith(BUNDLE_KEY)) {
-                    subscriber.onNext(savedState.getBundle(key))
-                }
-            }
+            savedState.keySet()
+                    .filter { it.startsWith(BUNDLE_KEY) }
+                    .forEach { subscriber.onNext(savedState.getBundle(it)) }
         }
         FileUtils.deleteBundleInStorage(app, BUNDLE_STORAGE)
         subscriber.onComplete()

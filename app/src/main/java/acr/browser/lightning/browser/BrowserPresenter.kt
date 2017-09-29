@@ -196,31 +196,29 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      *
      * @param intent the intent to handle, may be null.
      */
-    fun onNewIntent(intent: Intent?) {
-        tabsModel.doAfterInitialization {
-            val url = intent?.dataString
-            var tabHashCode = 0
-            if (intent != null && intent.extras != null) {
-                tabHashCode = intent.extras.getInt(INTENT_ORIGIN)
-            }
+    fun onNewIntent(intent: Intent?) = tabsModel.doAfterInitialization {
+        val url = intent?.dataString
+        var tabHashCode = 0
+        if (intent != null && intent.extras != null) {
+            tabHashCode = intent.extras.getInt(INTENT_ORIGIN)
+        }
 
-            if (tabHashCode != 0 && url != null) {
-                val tab = tabsModel.getTabForHashCode(tabHashCode)
-                tab?.loadUrl(url)
-            } else if (url != null) {
-                if (URLUtil.isFileUrl(url)) {
-                    view.showBlockedLocalFileDialog {
-                        newTab(url, true)
-                        shouldClose = true
-                        val tab = tabsModel.lastTab()
-                        tab?.isNewTab = true
-                    }
-                } else {
+        if (tabHashCode != 0 && url != null) {
+            val tab = tabsModel.getTabForHashCode(tabHashCode)
+            tab?.loadUrl(url)
+        } else if (url != null) {
+            if (URLUtil.isFileUrl(url)) {
+                view.showBlockedLocalFileDialog {
                     newTab(url, true)
                     shouldClose = true
                     val tab = tabsModel.lastTab()
                     tab?.isNewTab = true
                 }
+            } else {
+                newTab(url, true)
+                shouldClose = true
+                val tab = tabsModel.lastTab()
+                tab?.isNewTab = true
             }
         }
     }
@@ -305,9 +303,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         tabsModel.currentTab?.find(query)
     }
 
-    fun onAppLowMemory() {
-        tabsModel.freeMemory()
-    }
+    fun onAppLowMemory() = tabsModel.freeMemory()
 
     companion object {
         private const val TAG = "BrowserPresenter"

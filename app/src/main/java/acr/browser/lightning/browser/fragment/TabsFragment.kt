@@ -164,15 +164,13 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         tabsAdapter?.notifyDataSetChanged()
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.tab_header_button -> uiController.showCloseDialog(tabsManager.indexOfCurrentTab())
-            R.id.new_tab_button -> uiController.newTabButtonClicked()
-            R.id.action_back -> uiController.onBackButtonPressed()
-            R.id.action_forward -> uiController.onForwardButtonPressed()
-            R.id.action_home -> uiController.onHomeButtonPressed()
-            else -> {
-            }
+    override fun onClick(v: View) = when (v.id) {
+        R.id.tab_header_button -> uiController.showCloseDialog(tabsManager.indexOfCurrentTab())
+        R.id.new_tab_button -> uiController.newTabButtonClicked()
+        R.id.action_back -> uiController.onBackButtonPressed()
+        R.id.action_forward -> uiController.onForwardButtonPressed()
+        R.id.action_home -> uiController.onHomeButtonPressed()
+        else -> {
         }
     }
 
@@ -282,13 +280,12 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
             viewHolder.txtTitle.text = title
         }
 
-        private fun updateViewHolderFavicon(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) {
-            if (isForeground) {
-                viewHolder.favicon.setImageBitmap(favicon)
-            } else {
-                viewHolder.favicon.setImageBitmap(getDesaturatedBitmap(favicon))
-            }
-        }
+        private fun updateViewHolderFavicon(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) =
+                if (isForeground) {
+                    viewHolder.favicon.setImageBitmap(favicon)
+                } else {
+                    viewHolder.favicon.setImageBitmap(getDesaturatedBitmap(favicon))
+                }
 
         private fun updateViewHolderBackground(viewHolder: LightningViewHolder, isForeground: Boolean) {
             if (mDrawerTabs) {

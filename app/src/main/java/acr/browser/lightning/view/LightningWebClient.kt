@@ -64,12 +64,10 @@ class LightningWebClient(
         adBlock = chooseAdBlocker()
     }
 
-    private fun chooseAdBlocker(): AdBlocker {
-        return if (preferences.adBlockEnabled) {
-            BrowserApp.appComponent.provideAssetsAdBlocker()
-        } else {
-            BrowserApp.appComponent.provideNoOpAdBlocker()
-        }
+    private fun chooseAdBlocker(): AdBlocker = if (preferences.adBlockEnabled) {
+        BrowserApp.appComponent.provideAssetsAdBlocker()
+    } else {
+        BrowserApp.appComponent.provideNoOpAdBlocker()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

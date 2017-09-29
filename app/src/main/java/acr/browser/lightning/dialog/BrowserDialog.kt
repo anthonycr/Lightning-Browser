@@ -36,9 +36,8 @@ object BrowserDialog {
     }
 
     @JvmStatic
-    fun show(activity: Activity, @StringRes title: Int, vararg items: DialogItem) {
-        show(activity, activity.getString(title), *items)
-    }
+    fun show(activity: Activity, @StringRes title: Int, vararg items: DialogItem) =
+            show(activity, activity.getString(title), *items)
 
     @JvmStatic
     fun show(activity: Activity, title: String?, vararg items: DialogItem) {
@@ -82,9 +81,8 @@ object BrowserDialog {
                      @StringRes title: Int,
                      @StringRes hint: Int,
                      @StringRes action: Int,
-                     listener: EditorListener) {
-        showEditText(activity, title, hint, null, action, listener)
-    }
+                     listener: EditorListener) =
+            showEditText(activity, title, hint, null, action, listener)
 
     @JvmStatic
     fun showEditText(activity: Activity,

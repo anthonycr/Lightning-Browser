@@ -61,9 +61,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
      * Called by onWindowFocusChanged only if
      * onResume has been called.
      */
-    protected open fun onWindowVisibleToUserAfterResume() {
-
-    }
+    protected open fun onWindowVisibleToUserAfterResume() = Unit
 
     override fun onResume() {
         super.onResume()
