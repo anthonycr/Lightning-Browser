@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
+import acr.browser.lightning.search.engine.GoogleSearch;
 import acr.browser.lightning.utils.FileUtils;
 
 @Singleton
@@ -231,7 +232,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getSearchUrl() {
-        return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
+        return mPrefs.getString(Name.SEARCH_URL, new GoogleSearch().getQueryUrl());
     }
 
     public boolean getTextReflowEnabled() {

@@ -1,7 +1,6 @@
 package acr.browser.lightning.search.engine
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.GOOGLE_SEARCH
 
 /**
  * The Google search engine.
@@ -10,6 +9,6 @@ import acr.browser.lightning.constant.GOOGLE_SEARCH
  */
 class GoogleSearch : BaseSearchEngine(
         "file:///android_asset/google.png",
-        GOOGLE_SEARCH,
+        "https://www.google.com/search?client=lightning&ie=UTF-8&oe=UTF-8&q=",
         R.string.search_engine_google
 )

@@ -1,7 +1,6 @@
 package acr.browser.lightning.search.engine
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.DUCK_SEARCH
 
 /**
  * The DuckDuckGo search engine.
@@ -10,6 +9,6 @@ import acr.browser.lightning.constant.DUCK_SEARCH
  */
 class DuckSearch : BaseSearchEngine(
         "file:///android_asset/duckduckgo.png",
-        DUCK_SEARCH,
+        "https://duckduckgo.com/?t=lightning&q=",
         R.string.search_engine_duckduckgo
 )
