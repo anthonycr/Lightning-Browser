@@ -53,9 +53,7 @@ object BrowserDialog {
 
         val itemList = items.filter { it -> it.isConditionMet }
 
-        for (it in itemList) {
-            adapter.add(activity.getString(it.title))
-        }
+        adapter.addAll(itemList.map { activity.getString(it.title) })
 
         if (!TextUtils.isEmpty(title)) {
             titleView.text = title

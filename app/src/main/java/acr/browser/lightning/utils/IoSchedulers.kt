@@ -4,7 +4,7 @@ import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executors
 
 /**
- * Created by anthonycr on 9/30/17.
+ * Schedulers for various io.
  */
 object IoSchedulers {
 
