@@ -1009,15 +1009,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun showBlockedLocalFileDialog(onPositiveClick: Function0<Unit>) {
-        val builder = AlertDialog.Builder(this)
-        val dialog = builder.setCancelable(true)
-                .setTitle(R.string.title_warning)
-                .setMessage(R.string.message_blocked_local)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
-                .show()
-
-        BrowserDialog.setDialogSize(this, dialog)
+        AlertDialog.Builder(this).apply {
+            setCancelable(true)
+            setTitle(R.string.title_warning)
+            setMessage(R.string.message_blocked_local)
+            setNegativeButton(android.R.string.cancel, null)
+            setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
+        }.resizeAndShow()
     }
 
     override fun showSnackbar(@StringRes resource: Int) = Utils.showSnackbar(this, resource)

@@ -3,8 +3,8 @@ package acr.browser.lightning.view
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
-import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.utils.resizeAndShow
 import android.Manifest
 import android.app.Activity
 import android.graphics.Bitmap
@@ -82,23 +82,22 @@ class LightningChromeClient(
             PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, permissions, object : PermissionsResultAction() {
                 override fun onGranted() {
                     val remember = true
-                    val builder = AlertDialog.Builder(activity)
-                    builder.setTitle(activity.getString(R.string.location))
-
-                    val org = if (origin.length > 50) {
-                        "${origin.subSequence(0, 50)}..."
-                    } else {
-                        origin
-                    }
-                    builder.setMessage(org + activity.getString(R.string.message_location))
-                            .setCancelable(true)
-                            .setPositiveButton(activity.getString(R.string.action_allow)
-                            ) { _, _ -> callback.invoke(origin, true, remember) }
-                            .setNegativeButton(activity.getString(R.string.action_dont_allow)
-                            ) { _, _ -> callback.invoke(origin, false, remember) }
-                    val alert = builder.create()
-                    alert.show()
-                    BrowserDialog.setDialogSize(activity, alert)
+                    AlertDialog.Builder(activity).apply {
+                        setTitle(activity.getString(R.string.location))
+                        val org = if (origin.length > 50) {
+                            "${origin.subSequence(0, 50)}..."
+                        } else {
+                            origin
+                        }
+                        setMessage(org + activity.getString(R.string.message_location))
+                        setCancelable(true)
+                        setPositiveButton(activity.getString(R.string.action_allow)) { _, _ ->
+                            callback.invoke(origin, true, remember)
+                        }
+                        setNegativeButton(activity.getString(R.string.action_dont_allow)) { _, _ ->
+                            callback.invoke(origin, false, remember)
+                        }
+                    }.resizeAndShow()
                 }
 
                 override fun onDenied(permission: String) =//TODO show message and/or turn off setting

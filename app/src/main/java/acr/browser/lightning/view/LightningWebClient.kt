@@ -6,12 +6,8 @@ import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
-import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.utils.IntentUtils
-import acr.browser.lightning.utils.ProxyUtils
-import acr.browser.lightning.utils.UrlUtils
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.*
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -119,31 +115,28 @@ class LightningWebClient(
     override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler,
                                            host: String, realm: String) {
 
-        val builder = AlertDialog.Builder(activity)
+        AlertDialog.Builder(activity).apply {
+            val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_auth_request, null)
 
-        val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_auth_request, null)
+            val realmLabel = dialogView.findViewById<TextView>(R.id.auth_request_realm_textview)
+            val name = dialogView.findViewById<EditText>(R.id.auth_request_username_edittext)
+            val password = dialogView.findViewById<EditText>(R.id.auth_request_password_edittext)
 
-        val realmLabel = dialogView.findViewById<TextView>(R.id.auth_request_realm_textview)
-        val name = dialogView.findViewById<EditText>(R.id.auth_request_username_edittext)
-        val password = dialogView.findViewById<EditText>(R.id.auth_request_password_edittext)
+            realmLabel.text = activity.getString(R.string.label_realm, realm)
 
-        realmLabel.text = activity.getString(R.string.label_realm, realm)
-
-        builder.setView(dialogView)
-                .setTitle(R.string.title_sign_in)
-                .setCancelable(true)
-                .setPositiveButton(R.string.title_sign_in
-                ) { _, _ ->
-                    val user = name.text.toString()
-                    val pass = password.text.toString()
-                    handler.proceed(user.trim { it <= ' ' }, pass.trim { it <= ' ' })
-                    Log.d(TAG, "Attempting HTTP Authentication")
-                }
-                .setNegativeButton(R.string.action_cancel
-                ) { _, _ -> handler.cancel() }
-        val dialog = builder.create()
-        dialog.show()
-        BrowserDialog.setDialogSize(activity, dialog)
+            setView(dialogView)
+            setTitle(R.string.title_sign_in)
+            setCancelable(true)
+            setPositiveButton(R.string.title_sign_in) { _, _ ->
+                val user = name.text.toString()
+                val pass = password.text.toString()
+                handler.proceed(user.trim { it <= ' ' }, pass.trim { it <= ' ' })
+                Log.d(TAG, "Attempting HTTP Authentication")
+            }
+            setNegativeButton(R.string.action_cancel) { _, _ ->
+                handler.cancel()
+            }
+        }.resizeAndShow()
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -172,30 +165,31 @@ class LightningWebClient(
         }
         val alertMessage = activity.getString(R.string.message_insecure_connection, stringBuilder.toString())
 
-        val builder = AlertDialog.Builder(activity)
-        builder.setTitle(activity.getString(R.string.title_warning))
-        builder.setMessage(alertMessage)
-                .setCancelable(true)
-                .setPositiveButton(activity.getString(R.string.action_yes)
-                ) { _, _ -> handler.proceed() }
-                .setNegativeButton(activity.getString(R.string.action_no)
-                ) { _, _ -> handler.cancel() }
-        val dialog = builder.show()
-        BrowserDialog.setDialogSize(activity, dialog)
+        AlertDialog.Builder(activity).apply {
+            setTitle(activity.getString(R.string.title_warning))
+            setMessage(alertMessage)
+            setCancelable(true)
+            setPositiveButton(activity.getString(R.string.action_yes)) { _, _ ->
+                handler.proceed()
+            }
+            setNegativeButton(activity.getString(R.string.action_no)) { _, _ ->
+                handler.cancel()
+            }
+        }.resizeAndShow()
     }
 
     override fun onFormResubmission(view: WebView, dontResend: Message, resend: Message) {
-        val builder = AlertDialog.Builder(activity)
-        builder.setTitle(activity.getString(R.string.title_form_resubmission))
-        builder.setMessage(activity.getString(R.string.message_form_resubmission))
-                .setCancelable(true)
-                .setPositiveButton(activity.getString(R.string.action_yes)
-                ) { _, _ -> resend.sendToTarget() }
-                .setNegativeButton(activity.getString(R.string.action_no)
-                ) { _, _ -> dontResend.sendToTarget() }
-        val alert = builder.create()
-        alert.show()
-        BrowserDialog.setDialogSize(activity, alert)
+        AlertDialog.Builder(activity).apply {
+            setTitle(activity.getString(R.string.title_form_resubmission))
+            setMessage(activity.getString(R.string.message_form_resubmission))
+            setCancelable(true)
+            setPositiveButton(activity.getString(R.string.action_yes)) { _, _ ->
+                resend.sendToTarget()
+            }
+            setNegativeButton(activity.getString(R.string.action_no)) { _, _ ->
+                dontResend.sendToTarget()
+            }
+        }.resizeAndShow()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

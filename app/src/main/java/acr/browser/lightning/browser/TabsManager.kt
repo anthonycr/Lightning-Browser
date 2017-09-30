@@ -2,7 +2,6 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
@@ -10,6 +9,7 @@ import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.UrlUtils
+import acr.browser.lightning.utils.resizeAndShow
 import acr.browser.lightning.view.LightningView
 import android.app.Activity
 import android.app.Application
@@ -174,20 +174,19 @@ class TabsManager {
 
                     override fun onComplete() = if (newTabUrl != null) {
                         if (URLUtil.isFileUrl(newTabUrl)) {
-                            val builder = AlertDialog.Builder(activity)
-                            val dialog = builder.setCancelable(true)
-                                    .setTitle(R.string.title_warning)
-                                    .setMessage(R.string.message_blocked_local)
-                                    .setOnDismissListener {
-                                        if (tabList.isEmpty()) {
-                                            newTab(activity, null, false)
-                                        }
-                                        finishInitialization()
-                                        subscriber.onComplete()
+                            AlertDialog.Builder(activity).apply {
+                                setTitle(R.string.title_warning)
+                                setMessage(R.string.message_blocked_local)
+                                setOnDismissListener {
+                                    if (tabList.isEmpty()) {
+                                        newTab(activity, null, false)
                                     }
-                                    .setNegativeButton(android.R.string.cancel, null)
-                                    .setPositiveButton(R.string.action_open) { _, _ -> newTab(activity, newTabUrl, false) }.show()
-                            BrowserDialog.setDialogSize(activity, dialog)
+                                    finishInitialization()
+                                    subscriber.onComplete()
+                                }
+                                setNegativeButton(android.R.string.cancel, null)
+                                setPositiveButton(R.string.action_open) { _, _ -> newTab(activity, newTabUrl, false) }
+                            }.resizeAndShow()
                         } else {
                             newTab(activity, newTabUrl, false)
                             if (tabList.isEmpty()) {
