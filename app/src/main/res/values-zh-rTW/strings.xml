@@ -25,7 +25,6 @@
     <string name="block">遮罩網頁圖像</string>
     <string name="window">允許站點打開新窗口</string>
     <string name="cookies">啟用 Cookies</string>
-    <string name="importbookmarks">從瀏覽器中導入書簽</string>
     <string name="size">頁面文本尺寸</string>
     <string name="recommended">（推薦）</string>
     <string name="search">搜索引擎</string>

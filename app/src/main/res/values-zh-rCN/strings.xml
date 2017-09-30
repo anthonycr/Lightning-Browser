@@ -25,7 +25,6 @@
     <string name="block">屏蔽网页图像</string>
     <string name="window">允许站点打开新窗口</string>
     <string name="cookies">启用 Cookies</string>
-    <string name="importbookmarks">从浏览器中导入书签</string>
     <string name="size">页面文本尺寸</string>
     <string name="recommended">（推荐）</string>
     <string name="search">搜索引擎</string>

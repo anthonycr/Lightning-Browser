@@ -27,7 +27,6 @@
     <string name="block">画像を読み込まない</string>
     <string name="window">サイトが新しいタブを開くことを許可する</string>
     <string name="cookies">Cookie を有効にする</string>
-    <string name="importbookmarks">他のブラウザからブックマークをインポートする</string>
     <string name="size">文字サイズ</string>
     <string name="recommended">推奨</string>
     <string name="search">検索エンジン</string>

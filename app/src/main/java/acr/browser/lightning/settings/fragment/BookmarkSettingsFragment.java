@@ -8,9 +8,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
@@ -30,20 +26,16 @@ import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.R;
 import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkExporter;
-import acr.browser.lightning.database.bookmark.BookmarkLocalSync;
-import acr.browser.lightning.database.bookmark.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.IoSchedulers;
@@ -60,7 +52,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     private static final String SETTINGS_EXPORT = "export_bookmark";
     private static final String SETTINGS_IMPORT = "import_bookmark";
-    private static final String SETTINGS_IMPORT_BROWSER = "import_browser";
     private static final String SETTINGS_DELETE_BOOKMARKS = "delete_bookmarks";
 
     @Nullable private Activity mActivity;
@@ -71,8 +62,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
     private File[] mFileList;
     private String[] mFileNameList;
 
-    @Nullable private BookmarkLocalSync mSync;
-
     @Nullable private Subscription mImportSubscription;
     @Nullable private Subscription mExportSubscription;
 
@@ -80,68 +69,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    private static final File mPath = new File(Environment.getExternalStorageDirectory().toString());
-
-    private class ImportBookmarksTask extends AsyncTask<Void, Void, Integer> {
-
-        @NonNull private final WeakReference<Activity> mActivityReference;
-        private final Source mSource;
-
-        public ImportBookmarksTask(Activity activity, Source source) {
-            mActivityReference = new WeakReference<>(activity);
-            mSource = source;
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            List<HistoryItem> list;
-            Log.d(TAG, "Loading bookmarks from: " + mSource.name());
-            switch (mSource) {
-                case STOCK:
-                    list = getSync().getBookmarksFromStockBrowser();
-                    break;
-                case CHROME_STABLE:
-                    list = getSync().getBookmarksFromChrome();
-                    break;
-                case CHROME_BETA:
-                    list = getSync().getBookmarksFromChromeBeta();
-                    break;
-                case CHROME_DEV:
-                    list = getSync().getBookmarksFromChromeDev();
-                    break;
-                default:
-                    list = new ArrayList<>(0);
-                    break;
-            }
-            int count = 0;
-            if (!list.isEmpty()) {
-                mBookmarkManager.addBookmarkList(list);
-                count = list.size();
-            }
-            return count;
-        }
-
-        @Override
-        protected void onPostExecute(Integer num) {
-            super.onPostExecute(num);
-            Activity activity = mActivityReference.get();
-            if (activity != null) {
-                int number = num;
-                final String message = activity.getResources().getString(R.string.message_import);
-                Utils.showSnackbar(activity, number + " " + message);
-            }
-        }
-    }
-
-    @NonNull
-    private BookmarkLocalSync getSync() {
-        Preconditions.checkNonNull(mActivity);
-        if (mSync == null) {
-            mSync = new BookmarkLocalSync(mActivity);
-        }
-
-        return mSync;
-    }
+    private final File mPath = new File(Environment.getExternalStorageDirectory().toString());
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,7 +79,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         addPreferencesFromResource(R.xml.preference_bookmarks);
 
         mActivity = getActivity();
-        mSync = new BookmarkLocalSync(mActivity);
 
         initPrefs();
 
@@ -188,19 +115,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         exportPref.setOnPreferenceClickListener(this);
         importPref.setOnPreferenceClickListener(this);
         deletePref.setOnPreferenceClickListener(this);
-
-        getSync().isBrowserImportSupported()
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.main())
-            .subscribe(new SingleOnSubscribe<Boolean>() {
-                @Override
-                public void onItem(@Nullable Boolean supported) {
-                    Preconditions.checkNonNull(supported);
-                    Preference importStock = findPreference(SETTINGS_IMPORT_BROWSER);
-                    importStock.setEnabled(supported);
-                    importStock.setOnPreferenceClickListener(BookmarkSettingsFragment.this);
-                }
-            });
 
     }
 
@@ -281,20 +195,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                         }
                     });
                 return true;
-            case SETTINGS_IMPORT_BROWSER:
-                getSync().getSupportedBrowsers().subscribeOn(Schedulers.worker())
-                    .observeOn(Schedulers.main()).subscribe(new SingleOnSubscribe<List<Source>>() {
-                    @Override
-                    public void onItem(@Nullable List<Source> item) {
-                        Activity activity = getActivity();
-                        if (item == null || activity == null) {
-                            return;
-                        }
-                        List<String> titles = buildTitleList(activity, item);
-                        showChooserDialog(activity, titles);
-                    }
-                });
-                return true;
             case SETTINGS_DELETE_BOOKMARKS:
                 showDeleteBookmarksDialog();
                 return true;
@@ -320,88 +220,6 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         });
         Dialog dialog = builder.show();
         BrowserDialog.setDialogSize(activity, dialog);
-    }
-
-    @NonNull
-    private List<String> buildTitleList(@NonNull Activity activity, @NonNull List<Source> items) {
-        List<String> titles = new ArrayList<>();
-        String title;
-        for (Source source : items) {
-            switch (source) {
-                case STOCK:
-                    titles.add(getString(R.string.stock_browser));
-                    break;
-                case CHROME_STABLE:
-                    title = getTitle(activity, "com.android.chrome");
-                    if (title != null) {
-                        titles.add(title);
-                    }
-                    break;
-                case CHROME_BETA:
-                    title = getTitle(activity, "com.chrome.beta");
-                    if (title != null) {
-                        titles.add(title);
-                    }
-                    break;
-                case CHROME_DEV:
-                    title = getTitle(activity, "com.chrome.beta");
-                    if (title != null) {
-                        titles.add(title);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        return titles;
-    }
-
-    private void showChooserDialog(@NonNull final Activity activity, @NonNull List<String> list) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-            android.R.layout.simple_list_item_1);
-        for (String title : list) {
-            adapter.add(title);
-        }
-        builder.setTitle(R.string.supported_browsers_title);
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String title = adapter.getItem(which);
-                Preconditions.checkNonNull(title);
-                Source source = null;
-                if (title.equals(getString(R.string.stock_browser))) {
-                    source = Source.STOCK;
-                } else if (title.equals(getTitle(activity, "com.android.chrome"))) {
-                    source = Source.CHROME_STABLE;
-                } else if (title.equals(getTitle(activity, "com.android.beta"))) {
-                    source = Source.CHROME_BETA;
-                } else if (title.equals(getTitle(activity, "com.android.dev"))) {
-                    source = Source.CHROME_DEV;
-                }
-                if (source != null) {
-                    new ImportBookmarksTask(activity, source).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
-        });
-        Dialog dialog = builder.show();
-        BrowserDialog.setDialogSize(activity, dialog);
-    }
-
-    @Nullable
-    private static String getTitle(@NonNull Activity activity, @NonNull String packageName) {
-        PackageManager pm = activity.getPackageManager();
-        try {
-            ApplicationInfo info = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-            CharSequence title = pm.getApplicationLabel(info);
-            if (title != null) {
-                return title.toString();
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private void loadFileList(@Nullable File path) {

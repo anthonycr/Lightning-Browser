@@ -43,7 +43,6 @@
     <string name="block">Bloquer les images</string>
     <string name="window">Autoriser les sites à ouvrir de nouvelles fenêtres</string>
     <string name="cookies">Activer les cookies</string>
-    <string name="importbookmarks">Importer les favoris depuis un navigateur</string>
     <string name="size">Taille du texte</string>
     <string name="recommended">Recommendé</string>
     <string name="search">Moteur de recherche</string>

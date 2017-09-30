@@ -25,7 +25,6 @@
     <string name="block">이미지 차단</string>
     <string name="window">웹사이트가 새 창을 열도록 허용</string>
     <string name="cookies">쿠키 사용</string>
-    <string name="importbookmarks">브라우저로부터 즐겨찾기 가져오기</string>
     <string name="size">글자 크기</string>
     <string name="recommended">권장합니다</string>
     <string name="search">검색 엔진</string>
