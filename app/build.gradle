@@ -117,7 +117,7 @@ dependencies {
     compile 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
-    def leakCanaryVersion = '1.5.1'
+    def leakCanaryVersion = '1.5.4'
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
