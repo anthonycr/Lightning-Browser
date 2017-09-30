@@ -14,9 +14,10 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.reading.activity.ReadingActivity
-import acr.browser.lightning.utils.Preconditions
+import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.SubscriptionUtils
 import acr.browser.lightning.utils.ThemeUtils
+import acr.browser.lightning.utils.safeDispose
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
@@ -35,6 +36,9 @@ import android.widget.TextView
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.bonsai.Subscription
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.bookmark_drawer.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -70,9 +74,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     private var isIncognito: Boolean = false
 
-    private var bookmarksSubscription: Subscription? = null
-    private var foldersSubscription: Subscription? = null
-    private var bookmarkUpdateSubscription: Subscription? = null
+    private var bookmarksSubscription: Disposable? = null
+    private var bookmarkUpdateSubscription: Disposable? = null
 
     private val uiModel = BookmarkUiModel()
 
@@ -152,9 +155,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     override fun onDestroyView() {
         super.onDestroyView()
 
-        SubscriptionUtils.safeUnsubscribe(bookmarksSubscription)
-        SubscriptionUtils.safeUnsubscribe(foldersSubscription)
-        SubscriptionUtils.safeUnsubscribe(bookmarkUpdateSubscription)
+        bookmarksSubscription.safeDispose()
+        bookmarkUpdateSubscription.safeDispose()
 
         bookmarkAdapter?.cleanupSubscriptions()
     }
@@ -162,9 +164,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     override fun onDestroy() {
         super.onDestroy()
 
-        SubscriptionUtils.safeUnsubscribe(bookmarksSubscription)
-        SubscriptionUtils.safeUnsubscribe(foldersSubscription)
-        SubscriptionUtils.safeUnsubscribe(bookmarkUpdateSubscription)
+        bookmarksSubscription.safeDispose()
+        bookmarkUpdateSubscription.safeDispose()
 
         bookmarkAdapter?.cleanupSubscriptions()
     }
@@ -181,27 +182,24 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     }
 
     private fun updateBookmarkIndicator(url: String) {
-        SubscriptionUtils.safeUnsubscribe(bookmarkUpdateSubscription)
+        bookmarkUpdateSubscription.safeDispose()
         bookmarkUpdateSubscription = bookmarkModel.isBookmark(url)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<Boolean>() {
-                    override fun onItem(item: Boolean?) {
-                        bookmarkUpdateSubscription = null
-                        Preconditions.checkNonNull(item)
-                        val activity = activity
-                        if (action_add_bookmark_image == null || activity == null) {
-                            return
-                        }
-                        if (item != true) {
-                            action_add_bookmark_image?.setImageResource(R.drawable.ic_action_star)
-                            action_add_bookmark_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-                        } else {
-                            action_add_bookmark_image?.setImageResource(R.drawable.ic_bookmark)
-                            action_add_bookmark_image?.setColorFilter(ThemeUtils.getAccentColor(activity), PorterDuff.Mode.SRC_IN)
-                        }
+                .subscribeOn(IoSchedulers.database)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { boolean ->
+                    bookmarkUpdateSubscription = null
+                    val activity = activity
+                    if (action_add_bookmark_image == null || activity == null) {
+                        return@subscribe
                     }
-                })
+                    if (boolean) {
+                        action_add_bookmark_image?.setImageResource(R.drawable.ic_action_star)
+                        action_add_bookmark_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+                    } else {
+                        action_add_bookmark_image?.setImageResource(R.drawable.ic_bookmark)
+                        action_add_bookmark_image?.setColorFilter(ThemeUtils.getAccentColor(activity), PorterDuff.Mode.SRC_IN)
+                    }
+                }
     }
 
     override fun handleBookmarkDeleted(item: HistoryItem) {
@@ -213,34 +211,23 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     }
 
     private fun setBookmarksShown(folder: String?, animate: Boolean) {
-        SubscriptionUtils.safeUnsubscribe(bookmarksSubscription)
+        bookmarksSubscription.safeDispose()
         bookmarksSubscription = bookmarkModel.getBookmarksFromFolderSorted(folder)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                    override fun onItem(item: List<HistoryItem>?) {
-                        bookmarksSubscription = null
-                        val list = requireNotNull(item) { "setBookmarksShown: bookmark list must not be null" }.toMutableList()
-
-                        uiModel.currentFolder = folder
-                        if (folder == null) {
-                            SubscriptionUtils.safeUnsubscribe(foldersSubscription)
-                            foldersSubscription = bookmarkModel.getFoldersSorted()
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(Schedulers.main())
-                                    .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                                        override fun onItem(folders: List<HistoryItem>?) {
-                                            foldersSubscription = null
-                                            val folderList = requireNotNull(folders) { "setBookmarksShown: folder list must not be null" }
-                                            list.addAll(folderList)
-                                            setBookmarkDataSet(list, animate)
-                                        }
-                                    })
-                        } else {
-                            setBookmarkDataSet(list, animate)
-                        }
+                .concatWith(Single.defer {
+                    if (folder == null) {
+                        bookmarkModel.getFoldersSorted()
+                    } else {
+                        Single.just(listOf())
                     }
-                })
+                }).toList()
+                .map { it.flatMap { it }.toMutableList() }
+                .subscribeOn(IoSchedulers.database)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { bookmarksAndFolders ->
+                    uiModel.currentFolder = folder
+                    bookmarksAndFolders.sort()
+                    setBookmarkDataSet(bookmarksAndFolders, animate)
+                }
     }
 
     private fun setBookmarkDataSet(items: List<HistoryItem>, animate: Boolean) {

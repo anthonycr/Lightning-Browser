@@ -107,6 +107,10 @@ dependencies {
     compile "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
+    // rx
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.4'
+
     // tor proxy
     def netcipherVersion = '2.0.0-alpha1'
     compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"

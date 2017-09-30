@@ -6,6 +6,7 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.database.history.HistoryModel
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.Preconditions
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
@@ -73,14 +74,11 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
 
     fun refreshBookmarks() {
         bookmarkManager.getAllBookmarks()
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                    override fun onItem(item: List<HistoryItem>?) {
-                        Preconditions.checkNonNull(item)
-                        allBookmarks.clear()
-                        allBookmarks.addAll(item!!)
-                    }
-                })
+                .subscribeOn(IoSchedulers.database)
+                .subscribe { list ->
+                    allBookmarks.clear()
+                    allBookmarks.addAll(list)
+                }
     }
 
     override fun getCount(): Int = filteredList.size

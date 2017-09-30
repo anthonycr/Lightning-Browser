@@ -46,9 +46,13 @@ import acr.browser.lightning.database.bookmark.BookmarkLocalSync;
 import acr.browser.lightning.database.bookmark.BookmarkLocalSync.Source;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.utils.IoSchedulers;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.SubscriptionUtils;
 import acr.browser.lightning.utils.Utils;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 
 public class BookmarkSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -209,18 +213,17 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                         @Override
                         public void onGranted() {
                             mBookmarkManager.getAllBookmarks()
-                                .subscribeOn(Schedulers.io())
-                                .subscribe(new SingleOnSubscribe<List<HistoryItem>>() {
+                                .subscribeOn(IoSchedulers.getDatabase())
+                                .subscribe(new Consumer<List<HistoryItem>>() {
                                     @Override
-                                    public void onItem(@Nullable List<HistoryItem> item) {
+                                    public void accept(List<HistoryItem> list) throws Exception {
                                         if (!isAdded()) {
                                             return;
                                         }
 
-                                        Preconditions.checkNonNull(item);
                                         final File exportFile = BookmarkExporter.createNewExportFile();
                                         SubscriptionUtils.safeUnsubscribe(mExportSubscription);
-                                        mExportSubscription = BookmarkExporter.exportBookmarksToFile(item, exportFile)
+                                        mExportSubscription = BookmarkExporter.exportBookmarksToFile(list, exportFile)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(Schedulers.main())
                                             .subscribe(new CompletableOnSubscribe() {
@@ -312,7 +315,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mBookmarkManager.deleteAllBookmarks().subscribeOn(Schedulers.io()).subscribe();
+                mBookmarkManager.deleteAllBookmarks().subscribeOn(IoSchedulers.getDatabase()).subscribe();
             }
         });
         Dialog dialog = builder.show();
@@ -486,11 +489,11 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
                                 Preconditions.checkNonNull(importList);
                                 mBookmarkManager.addBookmarkList(importList)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(Schedulers.main())
-                                    .subscribe(new CompletableOnSubscribe() {
+                                    .subscribeOn(IoSchedulers.getDatabase())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new Action() {
                                         @Override
-                                        public void onComplete() {
+                                        public void run() throws Exception {
                                             Activity activity = getActivity();
                                             if (activity != null) {
                                                 String message = activity.getString(R.string.message_import);

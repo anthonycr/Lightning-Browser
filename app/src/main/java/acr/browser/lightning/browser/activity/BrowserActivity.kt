@@ -79,6 +79,7 @@ import com.anthonycr.bonsai.CompletableOnSubscribe
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.grant.PermissionsManager
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
 import kotlinx.android.synthetic.main.search_interface.*
@@ -817,33 +818,29 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         val item = HistoryItem(url, title)
         bookmarkManager.addBookmarkIfNotExists(item)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<Boolean>() {
-                    override fun onItem(item: Boolean?) {
-                        if (java.lang.Boolean.TRUE == item) {
-                            suggestionsAdapter?.refreshBookmarks()
-                            bookmarksView?.handleUpdatedUrl(url)
-                            Utils.showToast(this@BrowserActivity, R.string.message_bookmark_added)
-                        }
+                .subscribeOn(IoSchedulers.database)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { boolean ->
+                    if (boolean) {
+                        suggestionsAdapter?.refreshBookmarks()
+                        bookmarksView?.handleUpdatedUrl(url)
+                        Utils.showToast(this@BrowserActivity, R.string.message_bookmark_added)
                     }
-                })
+                }
     }
 
     private fun deleteBookmark(title: String, url: String) {
         val item = HistoryItem(url, title)
 
         bookmarkManager.deleteBookmark(item)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<Boolean>() {
-                    override fun onItem(item: Boolean?) {
-                        if (java.lang.Boolean.TRUE == item) {
-                            suggestionsAdapter?.refreshBookmarks()
-                            bookmarksView?.handleUpdatedUrl(url)
-                        }
+                .subscribeOn(IoSchedulers.database)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { boolean ->
+                    if (boolean) {
+                        suggestionsAdapter?.refreshBookmarks()
+                        bookmarksView?.handleUpdatedUrl(url)
                     }
-                })
+                }
     }
 
     private fun putToolbarInRoot() {
@@ -1055,15 +1052,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         if (!UrlUtils.isSpecialUrl(url)) {
             bookmarkManager.isBookmark(url)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(object : SingleOnSubscribe<Boolean>() {
-                        override fun onItem(item: Boolean?) = if (java.lang.Boolean.TRUE == item) {
+                    .subscribeOn(IoSchedulers.database)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { boolean ->
+                        if (boolean) {
                             deleteBookmark(title, url)
                         } else {
                             addBookmark(title, url)
                         }
-                    })
+                    }
         }
     }
 

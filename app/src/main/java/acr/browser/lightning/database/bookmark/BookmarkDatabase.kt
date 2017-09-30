@@ -11,9 +11,9 @@ import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.text.TextUtils
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Single
-import com.anthonycr.bonsai.SingleAction
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -116,170 +116,131 @@ class BookmarkDatabase @Inject constructor(
         return updatedRows
     }
 
-    override fun findBookmarkForUrl(url: String): Single<HistoryItem> =
-            Single.create { subscriber ->
-                val cursor = queryWithOptionalEndSlash(url)
-
-                if (cursor.moveToFirst()) {
-                    subscriber.onItem(cursor.bindToHistoryItem())
-                } else {
-                    subscriber.onItem(null)
-                }
-
-                cursor.close()
-                subscriber.onComplete()
-            }
-
-    override fun isBookmark(url: String): Single<Boolean> = Single.create { subscriber ->
+    override fun findBookmarkForUrl(url: String): Maybe<HistoryItem> = Maybe.fromCallable {
         val cursor = queryWithOptionalEndSlash(url)
 
-        subscriber.onItem(cursor.moveToFirst())
-
-        cursor.close()
-        subscriber.onComplete()
+        if (cursor.moveToFirst()) {
+            return@fromCallable cursor.bindToHistoryItem()
+        } else {
+            return@fromCallable null
+        }
     }
 
-    override fun addBookmarkIfNotExists(item: HistoryItem): Single<Boolean> =
-            Single.create(SingleAction { subscriber ->
-                val cursor = queryWithOptionalEndSlash(item.url)
+    override fun isBookmark(url: String): Single<Boolean> = Single.fromCallable {
+        queryWithOptionalEndSlash(url).use {
+            return@fromCallable it.moveToFirst()
+        }
+    }
 
-                if (cursor.moveToFirst()) {
-                    cursor.close()
-                    subscriber.onItem(false)
-                    subscriber.onComplete()
-                    return@SingleAction
-                }
+    override fun addBookmarkIfNotExists(item: HistoryItem): Single<Boolean> = Single.fromCallable {
+        val cursor = queryWithOptionalEndSlash(item.url)
 
-                cursor.close()
+        if (cursor.moveToFirst()) {
+            cursor.close()
+            return@fromCallable false
+        }
 
-                val id = database.insert(TABLE_BOOKMARK, null, bindBookmarkToContentValues(item))
+        cursor.close()
 
-                subscriber.onItem(id != -1L)
-                subscriber.onComplete()
-            })
+        val id = database.insert(TABLE_BOOKMARK, null, bindBookmarkToContentValues(item))
 
-    override fun addBookmarkList(bookmarkItems: List<HistoryItem>): Completable =
-            Completable.create { subscriber ->
-                database.beginTransaction()
+        return@fromCallable id != -1L
+    }
 
-                for (item in bookmarkItems) {
-                    addBookmarkIfNotExists(item).subscribe()
-                }
+    override fun addBookmarkList(bookmarkItems: List<HistoryItem>): Completable = Completable.fromAction {
+        database.beginTransaction()
 
-                database.setTransactionSuccessful()
-                database.endTransaction()
+        for (item in bookmarkItems) {
+            addBookmarkIfNotExists(item).subscribe()
+        }
 
-                subscriber.onComplete()
-            }
+        database.setTransactionSuccessful()
+        database.endTransaction()
+    }
 
-    override fun deleteBookmark(bookmark: HistoryItem): Single<Boolean> =
-            Single.create { subscriber ->
-                val rows = deleteWithOptionalEndSlash(bookmark.url)
+    override fun deleteBookmark(bookmark: HistoryItem): Single<Boolean> = Single.defer {
+        val rows = deleteWithOptionalEndSlash(bookmark.url)
 
-                subscriber.onItem(rows > 0)
-                subscriber.onComplete()
-            }
+        return@defer Single.just(rows > 0)
+    }
 
-    override fun renameFolder(oldName: String, newName: String): Completable =
-            Completable.create { subscriber ->
-                val contentValues = ContentValues(1)
-                contentValues.put(KEY_FOLDER, newName)
+    override fun renameFolder(oldName: String, newName: String): Completable = Completable.fromAction {
+        val contentValues = ContentValues(1)
+        contentValues.put(KEY_FOLDER, newName)
 
-                database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
+        database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
+    }
 
-                subscriber.onComplete()
-            }
+    override fun deleteFolder(folderToDelete: String): Completable = Completable.fromAction {
+        renameFolder(folderToDelete, "").subscribe()
+    }
 
-    override fun deleteFolder(folderToDelete: String): Completable =
-            Completable.create { subscriber ->
-                renameFolder(folderToDelete, "").subscribe()
-
-                subscriber.onComplete()
-            }
-
-    override fun deleteAllBookmarks(): Completable = Completable.create { subscriber ->
+    override fun deleteAllBookmarks(): Completable = Completable.fromAction {
         database.delete(TABLE_BOOKMARK, null, null)
-
-        subscriber.onComplete()
     }
 
-    override fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem): Completable =
-            Completable.create { subscriber ->
-                if (newBookmark.title.isEmpty()) {
-                    newBookmark.setTitle(defaultBookmarkTitle)
+    override fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem) = Completable.fromAction {
+        if (newBookmark.title.isEmpty()) {
+            newBookmark.setTitle(defaultBookmarkTitle)
+        }
+        val contentValues = bindBookmarkToContentValues(newBookmark)
+
+        updateWithOptionalEndSlash(oldBookmark.url, contentValues)
+    }
+
+    override fun getAllBookmarks(): Single<List<HistoryItem>> = Single.fromCallable {
+        database.query(TABLE_BOOKMARK, null, null, null, null, null, null).use {
+            return@fromCallable it.bindToHistoryItemList()
+        }
+    }
+
+    override fun getBookmarksFromFolderSorted(folder: String?): Single<List<HistoryItem>> = Single.fromCallable {
+        val finalFolder = folder ?: ""
+        database.query(TABLE_BOOKMARK, null, "$KEY_FOLDER=?", arrayOf(finalFolder), null, null, null).use {
+            val list = it.bindToHistoryItemList()
+            Collections.sort(list)
+            return@fromCallable list
+        }
+    }
+
+    override fun getFoldersSorted(): Single<List<HistoryItem>> = Single.fromCallable {
+        database.query(true, TABLE_BOOKMARK, arrayOf(KEY_FOLDER), null, null, null, null, null, null).use {
+
+            val folders = ArrayList<HistoryItem>()
+            while (it.moveToNext()) {
+                val folderName = it.getString(it.getColumnIndex(KEY_FOLDER))
+                if (TextUtils.isEmpty(folderName)) {
+                    continue
                 }
-                val contentValues = bindBookmarkToContentValues(newBookmark)
 
-                updateWithOptionalEndSlash(oldBookmark.url, contentValues)
+                val folder = HistoryItem()
+                folder.setIsFolder(true)
+                folder.setTitle(folderName)
+                folder.imageId = R.drawable.ic_folder
+                folder.setUrl("$FOLDER$folderName")
 
-                subscriber.onComplete()
+                folders.add(folder)
             }
 
-    override fun getAllBookmarks(): Single<List<HistoryItem>> = Single.create { subscriber ->
-        val cursor = database.query(TABLE_BOOKMARK, null, null, null, null, null, null)
-
-        subscriber.onItem(cursor.bindToHistoryItemList())
-        subscriber.onComplete()
-
-        cursor.close()
+            Collections.sort(folders)
+            return@fromCallable folders
+        }
     }
 
-    override fun getBookmarksFromFolderSorted(folder: String?): Single<List<HistoryItem>> =
-            Single.create { subscriber ->
-                val finalFolder = folder ?: ""
-                val cursor = database.query(TABLE_BOOKMARK, null, "$KEY_FOLDER=?", arrayOf(finalFolder), null, null, null)
+    override fun getFolderNames(): Single<List<String>> = Single.fromCallable {
+        database.query(true, TABLE_BOOKMARK, arrayOf(KEY_FOLDER), null, null, null, null, null, null).use {
+            val folders = ArrayList<String>()
+            while (it.moveToNext()) {
+                val folderName = it.getString(it.getColumnIndex(KEY_FOLDER))
+                if (TextUtils.isEmpty(folderName)) {
+                    continue
+                }
 
-                val list = cursor.bindToHistoryItemList()
-                Collections.sort(list)
-                subscriber.onItem(list)
-                subscriber.onComplete()
-
-                cursor.close()
+                folders.add(folderName)
             }
 
-    override fun getFoldersSorted(): Single<List<HistoryItem>> = Single.create { subscriber ->
-        val cursor = database.query(true, TABLE_BOOKMARK, arrayOf(KEY_FOLDER), null, null, null, null, null, null)
-
-        val folders = ArrayList<HistoryItem>()
-        while (cursor.moveToNext()) {
-            val folderName = cursor.getString(cursor.getColumnIndex(KEY_FOLDER))
-            if (TextUtils.isEmpty(folderName)) {
-                continue
-            }
-
-            val folder = HistoryItem()
-            folder.setIsFolder(true)
-            folder.setTitle(folderName)
-            folder.imageId = R.drawable.ic_folder
-            folder.setUrl("$FOLDER$folderName")
-
-            folders.add(folder)
+            return@fromCallable folders
         }
-
-        cursor.close()
-
-        Collections.sort(folders)
-        subscriber.onItem(folders)
-        subscriber.onComplete()
-    }
-
-    override fun getFolderNames(): Single<List<String>> = Single.create { subscriber ->
-        val cursor = database.query(true, TABLE_BOOKMARK, arrayOf(KEY_FOLDER), null, null, null, null, null, null)
-
-        val folders = ArrayList<String>()
-        while (cursor.moveToNext()) {
-            val folderName = cursor.getString(cursor.getColumnIndex(KEY_FOLDER))
-            if (TextUtils.isEmpty(folderName)) {
-                continue
-            }
-
-            folders.add(folderName)
-        }
-
-        cursor.close()
-
-        subscriber.onItem(folders)
-        subscriber.onComplete()
     }
 
     override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_BOOKMARK)

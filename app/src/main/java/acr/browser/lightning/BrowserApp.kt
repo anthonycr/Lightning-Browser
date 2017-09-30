@@ -8,6 +8,7 @@ import acr.browser.lightning.di.AppModule
 import acr.browser.lightning.di.DaggerAppComponent
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application
@@ -63,11 +64,11 @@ class BrowserApp : Application() {
 
             if (!oldBookmarks.isEmpty()) {
                 // If there are old bookmarks, import them
-                bookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(Schedulers.io()).subscribe()
+                bookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(IoSchedulers.database).subscribe()
             } else if (bookmarkModel.count() == 0L) {
                 // If the database is empty, fill it from the assets list
                 val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
-                bookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(Schedulers.io()).subscribe()
+                bookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(IoSchedulers.database).subscribe()
             }
         }
 

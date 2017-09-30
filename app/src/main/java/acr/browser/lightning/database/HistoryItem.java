@@ -109,11 +109,18 @@ public class HistoryItem implements Comparable<HistoryItem> {
 
     @Override
     public int compareTo(@NonNull HistoryItem another) {
-        int compare = this.mTitle.compareToIgnoreCase(another.mTitle);
-        if (compare == 0) {
-            return this.mUrl.compareTo(another.mUrl);
+        int folderCompare = Boolean.valueOf(mIsFolder).compareTo(another.mIsFolder);
+
+        if (folderCompare == 0) {
+            int titleCompare = mTitle.compareToIgnoreCase(another.mTitle);
+            if (titleCompare == 0) {
+                return mUrl.compareTo(another.mUrl);
+            }
+
+            return titleCompare;
         }
-        return compare;
+
+        return folderCompare;
     }
 
     @Override

@@ -9,6 +9,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.Utils
 import android.app.Activity
@@ -16,7 +17,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.text.TextUtils
 import com.anthonycr.bonsai.Single
-import com.anthonycr.bonsai.SingleOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -60,30 +61,21 @@ class BookmarkPage(activity: Activity) {
     }
 
     private fun buildBookmarkPage(folder: String?) {
-        bookmarkModel
-                .getBookmarksFromFolderSorted(folder)
-                .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                    override fun onItem(list: List<HistoryItem>?) {
-                        requireNotNull(list)
-
-                        val newList = list!!.toMutableList()
-
-                        if (folder == null) {
-                            bookmarkModel.getFoldersSorted()
-                                    .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                                        override fun onItem(item: List<HistoryItem>?) {
-                                            requireNotNull(item)
-
-                                            newList.addAll(item!!)
-
-                                            buildPageHtml(list, null)
-                                        }
-                                    })
-                        } else {
-                            buildPageHtml(list, folder)
-                        }
+        bookmarkModel.getBookmarksFromFolderSorted(folder)
+                .concatWith(io.reactivex.Single.defer {
+                    if (folder == null) {
+                        bookmarkModel.getFoldersSorted()
+                    } else {
+                        io.reactivex.Single.just(listOf())
                     }
-                })
+                }).toList()
+                .map { it.flatMap { it }.toMutableList() }
+                .subscribeOn(IoSchedulers.database)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { bookmarksAndFolders ->
+                    bookmarksAndFolders.sort()
+                    buildPageHtml(bookmarksAndFolders, folder)
+                }
     }
 
     private fun buildPageHtml(bookmarksAndFolders: List<HistoryItem>, folder: String?) {
