@@ -69,8 +69,8 @@ class LightningWebClient(
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
         if (adBlock.isAd(request.url.toString())) {
-            val EMPTY = ByteArrayInputStream("".toByteArray())
-            return WebResourceResponse("text/plain", "utf-8", EMPTY)
+            val empty = ByteArrayInputStream("".toByteArray())
+            return WebResourceResponse("text/plain", "utf-8", empty)
         }
         return super.shouldInterceptRequest(view, request)
     }
@@ -78,8 +78,8 @@ class LightningWebClient(
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
         if (adBlock.isAd(url)) {
-            val EMPTY = ByteArrayInputStream("".toByteArray())
-            return WebResourceResponse("text/plain", "utf-8", EMPTY)
+            val empty = ByteArrayInputStream("".toByteArray())
+            return WebResourceResponse("text/plain", "utf-8", empty)
         }
         return null
     }

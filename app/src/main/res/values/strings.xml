@@ -225,6 +225,7 @@
     <string name="remove_identifying_headers">Remove identifying headers</string>
     <string name="action_add_to_homescreen">Add to home screen</string>
     <string name="message_added_to_homescreen">Shortcut added to home screen</string>
+    <string name="shortcut_message_failed_to_add">Sorry, your launcher does not support shortcuts.</string>
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
     <string name="flash_not_supported">Flash Player is not supported by your system</string>
     <string name="upsell_plus_version">Upgrade to Lightning Plus to block ads</string>

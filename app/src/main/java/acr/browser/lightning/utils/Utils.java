@@ -10,6 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,6 +22,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -43,7 +46,6 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import acr.browser.lightning.MainActivity;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
@@ -397,18 +399,35 @@ public final class Utils {
             return;
         }
         Log.d(TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
-        Intent shortcutIntent = new Intent(activity, MainActivity.class);
+        Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
         shortcutIntent.setData(Uri.parse(item.getUrl()));
 
         final String title = TextUtils.isEmpty(item.getTitle()) ? activity.getString(R.string.untitled) : item.getTitle();
 
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        activity.sendBroadcast(addIntent);
-        Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Intent addIntent = new Intent();
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
+            addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            activity.sendBroadcast(addIntent);
+            Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+        } else {
+            ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
+            if (shortcutManager.isRequestPinShortcutSupported()) {
+                ShortcutInfo pinShortcutInfo =
+                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + item.getUrl().hashCode())
+                        .setIntent(shortcutIntent)
+                        .setIcon(Icon.createWithBitmap(item.getBitmap()))
+                        .setShortLabel(title)
+                        .build();
+
+                shortcutManager.requestPinShortcut(pinShortcutInfo, null);
+                Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+            } else {
+                Utils.showSnackbar(activity, R.string.shortcut_message_failed_to_add);
+            }
+        }
     }
 
     public static int calculateInSampleSize(@NonNull BitmapFactory.Options options,
