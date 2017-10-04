@@ -25,8 +25,8 @@ import javax.inject.Inject
 
 class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito: Boolean) : BaseAdapter(), Filterable {
 
-    private val FILTER_SCHEDULER = Schedulers.newSingleThreadedScheduler()
-    private val MAX_SUGGESTIONS = 5
+    private val filterScheduler = Schedulers.newSingleThreadedScheduler()
+    private val maxSuggestions = 5
 
     private val filteredList = ArrayList<HistoryItem>(5)
 
@@ -152,7 +152,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             history.clear()
             suggestions.clear()
             subscriber.onComplete()
-        }).subscribeOn(FILTER_SCHEDULER)
+        }).subscribeOn(filterScheduler)
                 .observeOn(Schedulers.main())
                 .subscribe()
     }
@@ -177,17 +177,17 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             val bookmark = bookmarks.iterator()
             val history = history.iterator()
             val suggestion = suggestions.listIterator()
-            while (list.size < MAX_SUGGESTIONS) {
+            while (list.size < maxSuggestions) {
                 if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
                     break
                 }
                 if (bookmark.hasNext()) {
                     list.add(bookmark.next())
                 }
-                if (suggestion.hasNext() && list.size < MAX_SUGGESTIONS) {
+                if (suggestion.hasNext() && list.size < maxSuggestions) {
                     list.add(suggestion.next())
                 }
-                if (history.hasNext() && list.size < MAX_SUGGESTIONS) {
+                if (history.hasNext() && list.size < maxSuggestions) {
                     list.add(history.next())
                 }
             }
@@ -195,7 +195,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             Collections.sort(list, filterComparator)
             subscriber.onItem(list)
             subscriber.onComplete()
-        }).subscribeOn(FILTER_SCHEDULER)
+        }).subscribeOn(filterScheduler)
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
                     override fun onItem(item: List<HistoryItem>?) {
@@ -294,9 +294,9 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
 
         private class NameFilter : FilenameFilter {
 
-            private val CACHE_FILE_TYPE = ".sgg"
+            private val cacheFileType = ".sgg"
 
-            override fun accept(dir: File, filename: String) = filename.endsWith(CACHE_FILE_TYPE)
+            override fun accept(dir: File, filename: String) = filename.endsWith(cacheFileType)
         }
     }
 

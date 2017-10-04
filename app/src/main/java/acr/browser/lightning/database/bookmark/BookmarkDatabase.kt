@@ -179,7 +179,7 @@ class BookmarkDatabase @Inject constructor(
         database.delete(TABLE_BOOKMARK, null, null)
     }
 
-    override fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem) = Completable.fromAction {
+    override fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem): Completable = Completable.fromAction {
         if (newBookmark.title.isEmpty()) {
             newBookmark.setTitle(defaultBookmarkTitle)
         }

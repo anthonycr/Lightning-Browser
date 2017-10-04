@@ -113,31 +113,29 @@ class LightningWebClient(
     }
 
     override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler,
-                                           host: String, realm: String) {
+                                           host: String, realm: String) =
+            AlertDialog.Builder(activity).apply {
+                val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_auth_request, null)
 
-        AlertDialog.Builder(activity).apply {
-            val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_auth_request, null)
+                val realmLabel = dialogView.findViewById<TextView>(R.id.auth_request_realm_textview)
+                val name = dialogView.findViewById<EditText>(R.id.auth_request_username_edittext)
+                val password = dialogView.findViewById<EditText>(R.id.auth_request_password_edittext)
 
-            val realmLabel = dialogView.findViewById<TextView>(R.id.auth_request_realm_textview)
-            val name = dialogView.findViewById<EditText>(R.id.auth_request_username_edittext)
-            val password = dialogView.findViewById<EditText>(R.id.auth_request_password_edittext)
+                realmLabel.text = activity.getString(R.string.label_realm, realm)
 
-            realmLabel.text = activity.getString(R.string.label_realm, realm)
-
-            setView(dialogView)
-            setTitle(R.string.title_sign_in)
-            setCancelable(true)
-            setPositiveButton(R.string.title_sign_in) { _, _ ->
-                val user = name.text.toString()
-                val pass = password.text.toString()
-                handler.proceed(user.trim { it <= ' ' }, pass.trim { it <= ' ' })
-                Log.d(TAG, "Attempting HTTP Authentication")
-            }
-            setNegativeButton(R.string.action_cancel) { _, _ ->
-                handler.cancel()
-            }
-        }.resizeAndShow()
-    }
+                setView(dialogView)
+                setTitle(R.string.title_sign_in)
+                setCancelable(true)
+                setPositiveButton(R.string.title_sign_in) { _, _ ->
+                    val user = name.text.toString()
+                    val pass = password.text.toString()
+                    handler.proceed(user.trim { it <= ' ' }, pass.trim { it <= ' ' })
+                    Log.d(TAG, "Attempting HTTP Authentication")
+                }
+                setNegativeButton(R.string.action_cancel) { _, _ ->
+                    handler.cancel()
+                }
+            }.resizeAndShow()
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
@@ -178,19 +176,18 @@ class LightningWebClient(
         }.resizeAndShow()
     }
 
-    override fun onFormResubmission(view: WebView, dontResend: Message, resend: Message) {
-        AlertDialog.Builder(activity).apply {
-            setTitle(activity.getString(R.string.title_form_resubmission))
-            setMessage(activity.getString(R.string.message_form_resubmission))
-            setCancelable(true)
-            setPositiveButton(activity.getString(R.string.action_yes)) { _, _ ->
-                resend.sendToTarget()
-            }
-            setNegativeButton(activity.getString(R.string.action_no)) { _, _ ->
-                dontResend.sendToTarget()
-            }
-        }.resizeAndShow()
-    }
+    override fun onFormResubmission(view: WebView, dontResend: Message, resend: Message) =
+            AlertDialog.Builder(activity).apply {
+                setTitle(activity.getString(R.string.title_form_resubmission))
+                setMessage(activity.getString(R.string.message_form_resubmission))
+                setCancelable(true)
+                setPositiveButton(activity.getString(R.string.action_yes)) { _, _ ->
+                    resend.sendToTarget()
+                }
+                setNegativeButton(activity.getString(R.string.action_no)) { _, _ ->
+                    dontResend.sendToTarget()
+                }
+            }.resizeAndShow()
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =

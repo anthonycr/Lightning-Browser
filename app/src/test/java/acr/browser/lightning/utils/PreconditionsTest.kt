@@ -8,8 +8,8 @@ import org.junit.Test
 class PreconditionsTest {
 
     @Test(expected = RuntimeException::class)
-    fun checkNonNull_Null_ThrowsException() = Preconditions.checkNonNull(null)
+    fun `checkNonNull throws exception for null param`() = Preconditions.checkNonNull(null)
 
     @Test
-    fun checkNonNull_NonNull_Succeeds() = Preconditions.checkNonNull(Any())
+    fun `checkNonNull succeeds for non null param`() = Preconditions.checkNonNull(Any())
 }
