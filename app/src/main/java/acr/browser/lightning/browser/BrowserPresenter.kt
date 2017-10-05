@@ -37,7 +37,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     init {
         BrowserApp.appComponent.inject(this)
         tabsModel = (view as UIController).getTabModel()
-        tabsModel.setTabNumberChangedListener { newNumber -> view.updateTabNumber(newNumber) }
+        tabsModel.addTabNumberChangedListener { newNumber -> view.updateTabNumber(newNumber) }
     }
 
     /**
@@ -241,7 +241,6 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun shutdown() {
         onTabChanged(null)
-        tabsModel.setTabNumberChangedListener(null)
         tabsModel.cancelPendingWork()
     }
 

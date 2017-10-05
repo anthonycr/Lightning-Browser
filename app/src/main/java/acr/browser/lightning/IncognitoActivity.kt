@@ -1,6 +1,7 @@
 package acr.browser.lightning
 
 import acr.browser.lightning.browser.activity.BrowserActivity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.view.Menu
@@ -39,4 +40,13 @@ class IncognitoActivity : BrowserActivity() {
     override val isIncognito = true
 
     override fun closeActivity() = closeDrawers { closeBrowser() }
+
+    companion object {
+        /**
+         * Creates the intent with which to launch the activity. Adds the reorder to front flag.
+         */
+        fun createIntent(context: Context) = Intent(context, IncognitoActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        }
+    }
 }

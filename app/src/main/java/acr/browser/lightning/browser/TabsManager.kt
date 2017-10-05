@@ -39,7 +39,7 @@ class TabsManager {
     @get:Synchronized
     var currentTab: LightningView? = null
         private set
-    private var tabNumberListener: ((Int) -> Unit)? = null
+    private var tabNumberListeners: Set<((Int) -> Unit)> = hashSetOf()
 
     private var isInitialized = false
     private val postInitializationWorkList = ArrayList<() -> Unit>()
@@ -51,9 +51,8 @@ class TabsManager {
         BrowserApp.appComponent.inject(this)
     }
 
-    @Deprecated("remove and make presenter call new tab methods so it always knows")
-    fun setTabNumberChangedListener(listener: ((Int) -> Unit)?) {
-        tabNumberListener = listener
+    fun addTabNumberChangedListener(listener: ((Int) -> Unit)) {
+        tabNumberListeners += listener
     }
 
     fun cancelPendingWork() = postInitializationWorkList.clear()
@@ -267,10 +266,7 @@ class TabsManager {
      */
     @Synchronized
     fun shutdown() {
-        for (tab in tabList) {
-            tab.onDestroy()
-        }
-        tabList.clear()
+        tabList.indices.forEach { deleteTab(0) }
         isInitialized = false
         currentTab = null
     }
@@ -326,7 +322,7 @@ class TabsManager {
         Log.d(TAG, "New tab")
         val tab = LightningView(activity, url, isIncognito)
         tabList.add(tab)
-        tabNumberListener?.invoke(size())
+        tabNumberListeners.forEach { it(size()) }
         return tab
     }
 
@@ -370,7 +366,7 @@ class TabsManager {
         }
 
         removeTab(position)
-        tabNumberListener?.invoke(size())
+        tabNumberListeners.forEach { it(size()) }
         return current == position
     }
 

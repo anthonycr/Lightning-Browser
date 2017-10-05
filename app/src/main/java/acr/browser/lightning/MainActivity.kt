@@ -53,7 +53,7 @@ class MainActivity : BrowserActivity() {
                 KeyEvent.KEYCODE_P ->
                     // Open a new private window
                     if (event.isShiftPressed) {
-                        startActivity(Intent(this, IncognitoActivity::class.java))
+                        startActivity(IncognitoActivity.createIntent(this))
                         overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale)
                         return true
                     }

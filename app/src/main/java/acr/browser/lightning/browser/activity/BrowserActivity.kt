@@ -22,6 +22,7 @@ import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkObservable
+import acr.browser.lightning.notifications.IncognitoNotification
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
@@ -136,10 +137,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject internal lateinit var networkObservable: NetworkObservable
 
-    private var tabsManager: TabsManager? = null
+    private val tabsManager: TabsManager = TabsManager()
 
     // Image
-    private var webpageBitmap: Bitmap? = null
+    private var webPageBitmap: Bitmap? = null
     private val backgroundDrawable = ColorDrawable()
     private var deleteIconDrawable: Drawable? = null
     private var refreshIconDrawable: Drawable? = null
@@ -170,7 +171,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
     private val longPressBackRunnable = Runnable {
-        tabsManager?.let {
+        tabsManager.let {
             val currentTab = it.currentTab
             showCloseDialog(it.positionOf(currentTab))
         }
@@ -205,7 +206,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private val networkListener = object : NetworkObservable.EventListener {
         override fun onNetworkConnectionChange(connected: Boolean) {
             Log.d(TAG, "Network Connected: " + connected)
-            tabsManager?.notifyConnectionStatus(connected)
+            tabsManager.notifyConnectionStatus(connected)
         }
     }
 
@@ -221,13 +222,24 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 
-        tabsManager = TabsManager()
+        val incognitoNotification = IncognitoNotification(this)
+        tabsManager.addTabNumberChangedListener {
+            if (isIncognito) {
+                if (it == 0) {
+                    incognitoNotification.hide()
+                } else {
+                    incognitoNotification.show(it)
+                }
+            }
+        }
+
         presenter = BrowserPresenter(this, isIncognito)
 
         initialize(savedInstanceState)
     }
 
-    @Synchronized private fun initialize(savedInstanceState: Bundle?) {
+    @Synchronized
+    private fun initialize(savedInstanceState: Bundle?) {
         initializeToolbarHeight(resources.configuration)
         setSupportActionBar(toolbar)
         val actionBar = requireNotNull(supportActionBar)
@@ -276,7 +288,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setNavigationDrawerWidth()
         drawer_layout.addDrawerListener(DrawerLocker())
 
-        webpageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, isDarkTheme)
+        webPageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, isDarkTheme)
 
         val fragmentManager = supportFragmentManager
 
@@ -402,7 +414,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun panicClean() {
         Log.d(TAG, "Closing browser")
-        tabsManager?.let {
+        tabsManager.let {
             it.newTab(this, "", false)
             it.switchToTab(0)
             it.clearSavedState()
@@ -428,7 +440,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                         searchTheWeb(it.text.toString())
                     }
 
-                    tabsManager?.currentTab?.requestFocus()
+                    tabsManager.currentTab?.requestFocus()
                     return true
                 }
                 else -> {
@@ -451,14 +463,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     searchTheWeb(it.text.toString())
                 }
 
-                tabsManager?.currentTab?.requestFocus()
+                tabsManager.currentTab?.requestFocus()
                 return true
             }
             return false
         }
 
         override fun onFocusChange(v: View, hasFocus: Boolean) {
-            val currentView = tabsManager?.currentTab
+            val currentView = tabsManager.currentTab
             if (!hasFocus && currentView != null) {
                 setIsLoading(currentView.progress < 100)
                 updateUrl(currentView.url, false)
@@ -500,7 +512,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         override fun onPreFocus() {
-            val currentView = tabsManager?.currentTab ?: return
+            val currentView = tabsManager.currentTab ?: return
             val url = currentView.url
             if (!UrlUtils.isSpecialUrl(url)) {
                 if (searchView?.hasFocus() == false) {
@@ -573,12 +585,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun initializePreferences() {
-        val currentView = tabsManager?.currentTab
+        val currentView = tabsManager.currentTab
         isFullScreen = preferences.fullScreenEnabled
         var colorMode = preferences.colorModeEnabled
         colorMode = colorMode and !isDarkTheme
 
-        webpageBitmap?.let { webBitmap ->
+        webPageBitmap?.let { webBitmap ->
             if (!isIncognito && !colorMode && !isDarkTheme) {
                 changeToolbarBackground(webBitmap, null)
             } else if (!isIncognito && currentView != null && !isDarkTheme) {
@@ -662,7 +674,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     }
                     KeyEvent.KEYCODE_W -> {
                         // Close current tab
-                        tabsManager?.let { presenter?.deleteTab(it.indexOfCurrentTab()) }
+                        tabsManager.let { presenter?.deleteTab(it.indexOfCurrentTab()) }
                         return true
                     }
                     KeyEvent.KEYCODE_Q -> {
@@ -672,11 +684,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     }
                     KeyEvent.KEYCODE_R -> {
                         // Refresh current tab
-                        tabsManager?.currentTab?.reload()
+                        tabsManager.currentTab?.reload()
                         return true
                     }
                     KeyEvent.KEYCODE_TAB -> {
-                        tabsManager?.let {
+                        tabsManager.let {
                             val nextIndex = if (event.isShiftPressed) {
                                 // Go back one tab
                                 if (it.indexOfCurrentTab() > 0) {
@@ -706,7 +718,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     return true
                 }
                 event.isAltPressed -> // Alt + tab number
-                    tabsManager?.let {
+                    tabsManager.let {
                         if (KeyEvent.KEYCODE_0 <= event.keyCode && event.keyCode <= KeyEvent.KEYCODE_9) {
                             val nextIndex = if (event.keyCode > it.last() + KeyEvent.KEYCODE_1 || event.keyCode == KeyEvent.KEYCODE_0) {
                                 it.last()
@@ -723,7 +735,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val currentView = tabsManager?.currentTab
+        val currentView = tabsManager.currentTab
         val currentUrl = currentView?.url
         // Handle action buttons
         when (item.itemId) {
@@ -758,7 +770,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_incognito -> {
-                startActivity(Intent(this, IncognitoActivity::class.java))
+                startActivity(IncognitoActivity.createIntent(this))
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale)
                 return true
             }
@@ -907,7 +919,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         quit.setOnClickListener(this)
     }
 
-    override fun getTabModel(): TabsManager = tabsManager!!
+    override fun getTabModel(): TabsManager = tabsManager
 
     override fun showCloseDialog(position: Int) {
         if (position < 0) {
@@ -1040,7 +1052,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun bookmarkButtonClicked() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         val url = currentTab?.url
         val title = currentTab?.title
         if (url == null || title == null) {
@@ -1074,7 +1086,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * displays the WebView contained in the LightningView Also handles the
      * removal of previous views
      *
-     * @param position the poition of the tab to display
+     * @param position the position of the tab to display
      */
     // TODO move to presenter
     @Synchronized private fun showTab(position: Int) {
@@ -1102,7 +1114,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             presenter?.newTab(url, show) != false
 
     protected fun performExitCleanUp() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (preferences.clearCacheExit && currentTab != null && !isIncognito) {
             WebUtils.clearCache(currentTab.webView)
             Log.d(TAG, "Cache Cleared")
@@ -1158,8 +1170,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         content_frame.setBackgroundColor(backgroundColor)
         removeViewFromParent(currentTabView)
         performExitCleanUp()
-        val size = tabsManager?.size() ?: 0
-        tabsManager?.shutdown()
+        val size = tabsManager.size()
+        tabsManager.shutdown()
         currentTabView = null
         for (n in 0 until size) {
             tabsView?.tabRemoved(0)
@@ -1168,7 +1180,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     @Synchronized override fun onBackPressed() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (drawer_layout.isDrawerOpen(tabDrawer)) {
             drawer_layout.closeDrawer(tabDrawer)
         } else if (drawer_layout.isDrawerOpen(bookmarkDrawer)) {
@@ -1188,7 +1200,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     if (customView != null || customViewCallback != null) {
                         onHideCustomView()
                     } else {
-                        tabsManager?.let { presenter?.deleteTab(it.positionOf(currentTab)) }
+                        tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
                     }
                 }
             } else {
@@ -1201,7 +1213,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause")
-        tabsManager?.pauseAll()
+        tabsManager.pauseAll()
 
         networkObservable.stopListening(networkListener)
 
@@ -1212,7 +1224,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun saveOpenTabs() {
         if (preferences.restoreLostTabsEnabled) {
-            tabsManager?.saveState()
+            tabsManager.saveState()
         }
     }
 
@@ -1238,7 +1250,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        tabsManager?.shutdown()
+        tabsManager.shutdown()
     }
 
     override fun onResume() {
@@ -1252,7 +1264,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             it.refreshPreferences()
             it.refreshBookmarks()
         }
-        tabsManager?.resumeAll(this)
+        tabsManager.resumeAll(this)
         initializePreferences()
 
         supportInvalidateOptionsMenu()
@@ -1271,7 +1283,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * checks if it is a search, url, etc.
      */
     private fun searchTheWeb(query: String) {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (query.isEmpty()) {
             return
         }
@@ -1348,7 +1360,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (url == null || searchView?.hasFocus() != false) {
             return
         }
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         bookmarksView?.handleUpdatedUrl(url)
 
         val currentTitle = currentTab?.title
@@ -1429,7 +1441,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .subscribe(object : SingleOnSubscribe<String>() {
                     override fun onItem(item: String?) {
                         Preconditions.checkNonNull(item)
-                        tabsManager?.let {
+                        tabsManager.let {
                             for (i in 0 until it.size()) {
                                 val lightningView = it.getTabAtPosition(i)
                                 val url = lightningView?.url
@@ -1451,7 +1463,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .subscribe(object : SingleOnSubscribe<String>() {
                     override fun onItem(item: String?) {
                         val url = requireNotNull(item)
-                        tabsManager?.currentTab?.loadUrl(url)
+                        tabsManager.currentTab?.loadUrl(url)
                     }
                 })
     }
@@ -1624,7 +1636,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     @Synchronized override fun onShowCustomView(view: View, callback: CustomViewCallback, requestedOrientation: Int) {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (customView != null) {
             try {
                 callback.onCustomViewHidden()
@@ -1672,7 +1684,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun closeBookmarksDrawer() = drawer_layout.closeDrawer(bookmarkDrawer)
 
     override fun onHideCustomView() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (customView == null || customViewCallback == null || currentTab == null) {
             if (customViewCallback != null) {
                 try {
@@ -1738,19 +1750,19 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onBackButtonPressed() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (currentTab != null) {
             if (currentTab.canGoBack()) {
                 currentTab.goBack()
                 closeDrawers(null)
             } else {
-                tabsManager?.let { presenter?.deleteTab(it.positionOf(currentTab)) }
+                tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
             }
         }
     }
 
     override fun onForwardButtonPressed() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (currentTab != null) {
             if (currentTab.canGoForward()) {
                 currentTab.goForward()
@@ -1760,7 +1772,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onHomeButtonPressed() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (currentTab != null) {
             currentTab.loadHomepage()
             closeDrawers(null)
@@ -1812,7 +1824,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     @Synchronized override fun onCreateWindow(resultMsg: Message) {
         if (newTab("", true)) {
-            tabsManager?.let {
+            tabsManager.let {
                 val newTab = it.getTabAtPosition(it.size() - 1)
                 if (newTab != null) {
                     val webView = newTab.webView
@@ -1835,7 +1847,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param view the LightningView to close, delete it.
      */
     override fun onCloseWindow(view: LightningView) {
-        tabsManager?.let { presenter?.deleteTab(it.positionOf(view)) }
+        tabsManager.let { presenter?.deleteTab(it.positionOf(view)) }
     }
 
     /**
@@ -1898,7 +1910,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun handleBookmarksChange() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (currentTab != null && UrlUtils.isBookmarkUrl(currentTab.url)) {
             currentTab.loadBookmarkpage()
         }
@@ -1908,7 +1920,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun handleDownloadDeleted() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (currentTab != null && UrlUtils.isDownloadsUrl(currentTab.url)) {
             currentTab.loadDownloadspage()
         }
@@ -1928,8 +1940,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             LightningDialogBuilder.NewTab.FOREGROUND -> newTab(url, true)
             LightningDialogBuilder.NewTab.BACKGROUND -> newTab(url, false)
             LightningDialogBuilder.NewTab.INCOGNITO -> {
-                val intent = Intent(this@BrowserActivity, IncognitoActivity::class.java)
-                intent.data = Uri.parse(url)
+                val intent = IncognitoActivity.createIntent(this).apply { data = Uri.parse(url) }
                 startActivity(intent)
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale)
             }
@@ -1954,7 +1965,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * See setIsFinishedLoading and setIsLoading for displaying the correct icon
      */
     private fun refreshOrStop() {
-        val currentTab = tabsManager?.currentTab
+        val currentTab = tabsManager.currentTab
         if (currentTab != null) {
             if (currentTab.progress < 100) {
                 currentTab.stopLoading()
@@ -1972,7 +1983,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param v the view that the user has clicked
      */
     override fun onClick(v: View) {
-        val currentTab = tabsManager?.currentTab ?: return
+        val currentTab = tabsManager.currentTab ?: return
         when (v.id) {
             R.id.arrow_button -> when {
                 searchView?.hasFocus() == true -> currentTab.requestFocus()
