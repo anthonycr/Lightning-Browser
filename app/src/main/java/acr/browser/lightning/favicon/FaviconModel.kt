@@ -1,10 +1,7 @@
 package acr.browser.lightning.favicon
 
 import acr.browser.lightning.R
-import acr.browser.lightning.utils.DrawableUtils
-import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.Preconditions
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.*
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -84,46 +81,46 @@ class FaviconModel @Inject constructor(private val application: Application) {
      */
     fun faviconForUrl(url: String,
                       title: String): Single<Bitmap> = Single.create(SingleAction { subscriber ->
-                          val uri = safeUri(url)
+        val uri = safeUri(url)
 
-                          if (uri == null) {
+        if (uri == null) {
 
-                              val newFavicon = Utils.padFavicon(getDefaultBitmapForString(title))
+            val newFavicon = Utils.padFavicon(getDefaultBitmapForString(title))
 
-                              subscriber.onItem(newFavicon)
-                              subscriber.onComplete()
+            subscriber.onItem(newFavicon)
+            subscriber.onComplete()
 
-                              return@SingleAction
-                          }
+            return@SingleAction
+        }
 
-                          val faviconCacheFile = getFaviconCacheFile(application, uri)
+        val faviconCacheFile = getFaviconCacheFile(application, uri)
 
-                          var favicon = getFaviconFromMemCache(url)
+        var favicon = getFaviconFromMemCache(url)
 
-                          if (faviconCacheFile.exists() && favicon == null) {
-                              favicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
+        if (faviconCacheFile.exists() && favicon == null) {
+            favicon = BitmapFactory.decodeFile(faviconCacheFile.path, loaderOptions)
 
-                              if (favicon != null) {
-                                  addFaviconToMemCache(url, favicon)
-                              }
-                          }
+            if (favicon != null) {
+                addFaviconToMemCache(url, favicon)
+            }
+        }
 
-                          if (favicon != null) {
-                              val newFavicon = Utils.padFavicon(favicon)
+        if (favicon != null) {
+            val newFavicon = Utils.padFavicon(favicon)
 
-                              subscriber.onItem(newFavicon)
-                              subscriber.onComplete()
+            subscriber.onItem(newFavicon)
+            subscriber.onComplete()
 
-                              return@SingleAction
-                          }
+            return@SingleAction
+        }
 
-                          favicon = getDefaultBitmapForString(title)
+        favicon = getDefaultBitmapForString(title)
 
-                          val newFavicon = Utils.padFavicon(favicon)
+        val newFavicon = Utils.padFavicon(favicon)
 
-                          subscriber.onItem(newFavicon)
-                          subscriber.onComplete()
-                      })
+        subscriber.onItem(newFavicon)
+        subscriber.onComplete()
+    })
 
     /**
      * Caches a favicon for a particular URL.
@@ -143,17 +140,10 @@ class FaviconModel @Inject constructor(private val application: Application) {
                 }
 
                 Log.d(TAG, "Caching icon for " + uri.host)
-                var fos: FileOutputStream? = null
-
-                try {
-                    val image = getFaviconCacheFile(application, uri)
-                    fos = FileOutputStream(image)
-                    favicon.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                    fos.flush()
-                } catch (e: IOException) {
-                    Log.e(TAG, "Unable to cache favicon", e)
-                } finally {
-                    Utils.close(fos)
+                val image = getFaviconCacheFile(application, uri)
+                FileOutputStream(image).safeUse {
+                    favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
+                    it.flush()
                 }
             })
 

@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -323,24 +322,6 @@ public final class Utils {
         try {
             closeable.close();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Utility method to close cursors. Cursor did not
-     * implement Closeable until API 16, so using this
-     * method for when we want to close a cursor.
-     *
-     * @param cursor the cursor to close
-     */
-    public static void close(@Nullable Cursor cursor) {
-        if (cursor == null) {
-            return;
-        }
-        try {
-            cursor.close();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }

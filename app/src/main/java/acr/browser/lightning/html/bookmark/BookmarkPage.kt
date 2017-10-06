@@ -11,7 +11,7 @@ import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.safeUse
 import android.app.Activity
 import android.app.Application
 import android.graphics.Bitmap
@@ -19,7 +19,6 @@ import android.text.TextUtils
 import com.anthonycr.bonsai.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.FileWriter
 import javax.inject.Inject
@@ -48,15 +47,9 @@ class BookmarkPage(activity: Activity) {
     }
 
     private fun cacheIcon(icon: Bitmap, file: File) {
-        var outputStream: FileOutputStream? = null
-        try {
-            outputStream = FileOutputStream(file)
-            icon.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        FileOutputStream(file).safeUse {
+            icon.compress(Bitmap.CompressFormat.PNG, 100, it)
             icon.recycle()
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } finally {
-            Utils.close(outputStream)
         }
     }
 
