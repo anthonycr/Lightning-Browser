@@ -11,7 +11,8 @@ import com.anthonycr.bonsai.SingleAction
 internal object SuggestionsManager {
 
     @JvmStatic
-    @Volatile var isRequestInProgress: Boolean = false
+    @Volatile
+    var isRequestInProgress: Boolean = false
 
     @JvmStatic
     fun createGoogleQueryObservable(query: String, application: Application) =

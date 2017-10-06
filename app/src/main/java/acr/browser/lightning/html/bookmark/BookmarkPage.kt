@@ -46,11 +46,9 @@ class BookmarkPage(activity: Activity) {
         subscriber.onComplete()
     }
 
-    private fun cacheIcon(icon: Bitmap, file: File) {
-        FileOutputStream(file).safeUse {
-            icon.compress(Bitmap.CompressFormat.PNG, 100, it)
-            icon.recycle()
-        }
+    private fun cacheIcon(icon: Bitmap, file: File) = FileOutputStream(file).safeUse {
+        icon.compress(Bitmap.CompressFormat.PNG, 100, it)
+        icon.recycle()
     }
 
     private fun buildBookmarkPage(folder: String?) {

@@ -17,7 +17,6 @@ import com.anthonycr.bonsai.Single
 import com.anthonycr.bonsai.SingleAction
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 

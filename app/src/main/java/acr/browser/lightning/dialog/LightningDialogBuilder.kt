@@ -170,9 +170,7 @@ class LightningDialogBuilder @Inject constructor() {
                         bookmarkManager.editBookmark(item, editedItem)
                                 .subscribeOn(IoSchedulers.database)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe {
-                                    uiController.handleBookmarksChange()
-                                }
+                                .subscribe(uiController::handleBookmarksChange)
                     }
                     val dialog = editBookmarkDialog.show()
                     BrowserDialog.setDialogSize(activity, dialog)
@@ -215,9 +213,7 @@ class LightningDialogBuilder @Inject constructor() {
                         bookmarkManager.renameFolder(oldTitle, text)
                                 .subscribeOn(IoSchedulers.database)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe {
-                                    uiController.handleBookmarksChange()
-                                }
+                                .subscribe(uiController::handleBookmarksChange)
                     }
                 }
             })

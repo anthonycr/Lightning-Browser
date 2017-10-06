@@ -10,7 +10,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.graphics.drawable.Icon
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 
@@ -66,8 +65,6 @@ class IncognitoNotification(val context: Context) {
     /**
      * Hides the current notification if there is one.
      */
-    fun hide() {
-        notificationManager.cancel(incognitoNotificationId)
-    }
+    fun hide() = notificationManager.cancel(incognitoNotificationId)
 
 }

@@ -932,9 +932,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 DialogItem(R.string.close_other_tabs) {
                     presenter?.closeAllOtherTabs()
                 },
-                DialogItem(R.string.close_all_tabs) {
-                    closeBrowser()
-                })
+                DialogItem(title = R.string.close_all_tabs, onClick = this::closeBrowser))
     }
 
     override fun notifyTabViewRemoved(position: Int) {
@@ -975,7 +973,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        Handlers.MAIN.postDelayed({ drawer_layout.closeDrawers() }, 200)
+        Handlers.MAIN.postDelayed(drawer_layout::closeDrawers, 200)
 
     }
 
@@ -1008,7 +1006,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        Handlers.MAIN.postDelayed({ drawer_layout.closeDrawers() }, 200)
+        Handlers.MAIN.postDelayed(drawer_layout::closeDrawers, 200)
 
         // Handlers.MAIN.postDelayed(new Runnable() {
         //     @Override

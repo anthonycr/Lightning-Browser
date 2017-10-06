@@ -193,6 +193,7 @@ class LightningWebClient(
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
             shouldOverrideLoading(view, request.url.toString()) || super.shouldOverrideUrlLoading(view, request)
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean =
             shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url)
 

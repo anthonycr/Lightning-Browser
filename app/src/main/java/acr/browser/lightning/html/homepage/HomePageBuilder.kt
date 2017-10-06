@@ -10,7 +10,7 @@ import org.jsoup.Jsoup
  * A builder for the home page.
  */
 internal class HomePageBuilder(private val app: Application,
-                      private val searchEngineProvider: SearchEngineProvider) {
+                               private val searchEngineProvider: SearchEngineProvider) {
 
 
     fun buildPage(): String {

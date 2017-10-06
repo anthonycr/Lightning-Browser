@@ -22,9 +22,11 @@ import android.util.TypedValue;
 
 import acr.browser.lightning.R;
 
-public class ThemeUtils {
+public final class ThemeUtils {
 
     private static final TypedValue sTypedValue = new TypedValue();
+
+    private ThemeUtils() {}
 
     /**
      * Gets the primary color of the current theme.

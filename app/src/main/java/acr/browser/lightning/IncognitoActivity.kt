@@ -39,7 +39,7 @@ class IncognitoActivity : BrowserActivity() {
 
     override val isIncognito = true
 
-    override fun closeActivity() = closeDrawers { closeBrowser() }
+    override fun closeActivity() = closeDrawers(this::closeBrowser)
 
     companion object {
         /**

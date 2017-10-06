@@ -51,7 +51,7 @@ object BrowserDialog {
         val adapter = ArrayAdapter<String>(activity,
                 android.R.layout.simple_list_item_1)
 
-        val itemList = items.filter { it -> it.isConditionMet }
+        val itemList = items.filter(DialogItem::isConditionMet)
 
         adapter.addAll(itemList.map { activity.getString(it.title) })
 

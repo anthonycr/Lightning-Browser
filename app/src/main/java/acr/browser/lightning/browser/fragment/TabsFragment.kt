@@ -198,7 +198,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         tabsAdapter?.showTabs(toViewModels(tabsManager.allTabs))
     }
 
-    private fun toViewModels(tabs: List<LightningView>) = tabs.map { TabViewState(it) }
+    private fun toViewModels(tabs: List<LightningView>) = tabs.map(::TabViewState)
 
     private inner class LightningViewAdapter internal constructor(private val mDrawerTabs: Boolean) : RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder>() {
 

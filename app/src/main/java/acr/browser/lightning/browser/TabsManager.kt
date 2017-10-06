@@ -277,7 +277,7 @@ class TabsManager {
      * @param isConnected whether there is a network connection or not.
      */
     @Synchronized
-    fun notifyConnectionStatus(isConnected: Boolean) = tabList.map { it.webView }
+    fun notifyConnectionStatus(isConnected: Boolean) = tabList.map(LightningView::webView)
             .forEach { it?.setNetworkAvailable(isConnected) }
 
     /**
