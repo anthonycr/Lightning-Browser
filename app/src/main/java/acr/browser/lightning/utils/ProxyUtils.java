@@ -22,13 +22,13 @@ import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.webkit.WebkitProxy;
 
 @Singleton
-public class ProxyUtils {
+public final class ProxyUtils {
 
     private static final String TAG = "ProxyUtils";
 
     // Helper
-    private static boolean mI2PHelperBound;
-    private static boolean mI2PProxyInitialized;
+    private static boolean sI2PHelperBound;
+    private static boolean sI2PProxyInitialized;
 
     @Inject PreferenceManager mPreferences;
     @Inject I2PAndroidHelper mI2PHelper;
@@ -122,8 +122,8 @@ public class ProxyUtils {
                 port = 8118;
                 break;
             case Constants.PROXY_I2P:
-                mI2PProxyInitialized = true;
-                if (mI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
+                sI2PProxyInitialized = true;
+                if (sI2PHelperBound && !mI2PHelper.isI2PAndroidRunning()) {
                     mI2PHelper.requestI2PAndroidStart(activity);
                 }
                 host = "localhost";
@@ -171,13 +171,13 @@ public class ProxyUtils {
                 e.printStackTrace();
             }
 
-            mI2PProxyInitialized = false;
+            sI2PProxyInitialized = false;
         }
     }
 
     public void onStop() {
         mI2PHelper.unbind();
-        mI2PHelperBound = false;
+        sI2PHelperBound = false;
     }
 
     public void onStart(final Activity activity) {
@@ -186,8 +186,8 @@ public class ProxyUtils {
             mI2PHelper.bind(new I2PAndroidHelper.Callback() {
                 @Override
                 public void onI2PAndroidBound() {
-                    mI2PHelperBound = true;
-                    if (mI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
+                    sI2PHelperBound = true;
+                    if (sI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
                         mI2PHelper.requestI2PAndroidStart(activity);
                 }
             });
