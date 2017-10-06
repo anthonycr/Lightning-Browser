@@ -1370,8 +1370,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun updateTabNumber(number: Int) {
         if (shouldShowTabsInDrawer) {
-            arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
-                    Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
+            if (isIncognito) {
+                arrowImageView?.setImageDrawable(ThemeUtils.getThemedDrawable(this, R.drawable.incognito_mode, true))
+            } else {
+                arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
+                        Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
+            }
         }
     }
 
