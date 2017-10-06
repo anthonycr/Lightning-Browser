@@ -11,7 +11,7 @@ import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.utils.safeUse
+import acr.browser.lightning.extensions.safeUse
 import android.app.Activity
 import android.app.Application
 import android.graphics.Bitmap

@@ -4,7 +4,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.utils.resizeAndShow
+import acr.browser.lightning.extensions.resizeAndShow
 import android.Manifest
 import android.app.Activity
 import android.graphics.Bitmap

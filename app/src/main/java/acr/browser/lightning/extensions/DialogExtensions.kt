@@ -1,4 +1,4 @@
-package acr.browser.lightning.utils
+package acr.browser.lightning.extensions
 
 import acr.browser.lightning.dialog.BrowserDialog
 import android.support.v7.app.AlertDialog

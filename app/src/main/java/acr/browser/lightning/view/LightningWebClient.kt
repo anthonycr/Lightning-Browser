@@ -6,6 +6,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.*
 import android.annotation.TargetApi

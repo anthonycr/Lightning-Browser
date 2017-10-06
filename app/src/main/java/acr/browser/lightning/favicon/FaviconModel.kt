@@ -1,6 +1,7 @@
 package acr.browser.lightning.favicon
 
 import acr.browser.lightning.R
+import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.utils.*
 import android.app.Application
 import android.graphics.Bitmap

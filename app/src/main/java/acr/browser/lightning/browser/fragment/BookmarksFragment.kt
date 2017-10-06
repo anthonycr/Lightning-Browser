@@ -17,7 +17,7 @@ import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.utils.IoSchedulers
 import acr.browser.lightning.utils.SubscriptionUtils
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.utils.safeDispose
+import acr.browser.lightning.extensions.safeDispose
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff

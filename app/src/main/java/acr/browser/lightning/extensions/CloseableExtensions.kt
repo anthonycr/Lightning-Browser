@@ -1,4 +1,4 @@
-package acr.browser.lightning.utils
+package acr.browser.lightning.extensions
 
 import android.util.Log
 import java.io.Closeable

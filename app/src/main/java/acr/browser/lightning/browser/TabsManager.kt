@@ -9,7 +9,7 @@ import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.UrlUtils
-import acr.browser.lightning.utils.resizeAndShow
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.view.LightningView
 import android.app.Activity
 import android.app.Application

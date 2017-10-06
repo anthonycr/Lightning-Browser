@@ -2,7 +2,7 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.safeUse
+import acr.browser.lightning.extensions.safeUse
 import android.app.Application
 import android.text.TextUtils
 import android.util.Log
