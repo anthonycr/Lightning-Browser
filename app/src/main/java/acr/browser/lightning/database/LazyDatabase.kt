@@ -13,6 +13,9 @@ class LazyDatabase(private val sqLiteOpenHelper: SQLiteOpenHelper) {
 
     private var sqLiteDatabase: SQLiteDatabase? = null
 
+    /**
+     * Returns the current database object or opens a new one if the current one has been closed.
+     */
     fun db(): SQLiteDatabase {
         val currentDb = sqLiteDatabase
 
