@@ -24,12 +24,14 @@ import java.io.PrintStream;
  * A utility class containing helpful methods
  * pertaining to file storage.
  */
-public class FileUtils {
+public final class FileUtils {
 
     private static final String TAG = "FileUtils";
 
     public static final String DEFAULT_DOWNLOAD_PATH =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+
+    private FileUtils() {}
 
     /**
      * Writes a bundle to persistent storage in the files directory

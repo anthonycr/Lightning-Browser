@@ -19,7 +19,9 @@ import android.view.View;
 
 import acr.browser.lightning.R;
 
-public class DrawableUtils {
+public final class DrawableUtils {
+
+    private DrawableUtils() {}
 
     @NonNull
     public static Bitmap getRoundedNumberImage(int number, int width, int height, int color, int thickness) {

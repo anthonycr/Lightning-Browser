@@ -13,9 +13,8 @@ import acr.browser.lightning.database.history.HistoryModel
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.IntentUtils
-import acr.browser.lightning.utils.IoSchedulers
-import acr.browser.lightning.utils.Preconditions
 import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
 import android.net.Uri
@@ -154,14 +153,13 @@ class LightningDialogBuilder @Inject constructor() {
                 .subscribeOn(IoSchedulers.database)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { folders ->
-                    Preconditions.checkNonNull(folders)
+                    requireNotNull(folders)
                     val suggestionsAdapter = ArrayAdapter(activity,
                             android.R.layout.simple_dropdown_item_1line, folders)
                     getFolder.threshold = 1
                     getFolder.setAdapter(suggestionsAdapter)
                     editBookmarkDialog.setView(dialogLayout)
-                    editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok)
-                    ) { _, _ ->
+                    editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok)) { _, _ ->
                         val editedItem = HistoryItem()
                         editedItem.setTitle(getTitle.text.toString())
                         editedItem.setUrl(getUrl.text.toString())

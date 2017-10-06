@@ -25,6 +25,7 @@ import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkObservable
 import acr.browser.lightning.notifications.IncognitoNotification
 import acr.browser.lightning.reading.activity.ReadingActivity
+import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
@@ -179,20 +180,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private val bookmarkDrawer: View
-        get() {
-            val drawer = if (swapBookmarksAndTabs) left_drawer else right_drawer
-            Preconditions.checkNonNull(drawer)
-
-            return drawer
-        }
+        get() = if (swapBookmarksAndTabs) left_drawer else right_drawer
 
     private val tabDrawer: View
-        get() {
-            val drawer = if (swapBookmarksAndTabs) right_drawer else left_drawer
-            Preconditions.checkNonNull(drawer)
-
-            return drawer
-        }
+        get() = if (swapBookmarksAndTabs) right_drawer else left_drawer
 
     private var backMenuItem: MenuItem? = null
     private var forwardMenuItem: MenuItem? = null
@@ -1443,7 +1434,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<String>() {
                     override fun onItem(item: String?) {
-                        Preconditions.checkNonNull(item)
                         tabsManager.let {
                             for (i in 0 until it.size()) {
                                 val lightningView = it.getTabAtPosition(i)
@@ -1453,7 +1443,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                                     return
                                 }
                             }
-                            newTab(item, true)
+                            newTab(requireNotNull(item), true)
                         }
                     }
                 })
@@ -1666,16 +1656,16 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         fullscreenContainerView = FrameLayout(this)
         fullscreenContainerView?.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
         if (view is FrameLayout) {
-            if (view.focusedChild is VideoView) {
-                videoView = view.focusedChild as VideoView
-                Preconditions.checkNonNull(videoView)
-                videoView?.setOnErrorListener(VideoCompletionListener())
-                videoView?.setOnCompletionListener(VideoCompletionListener())
+            val child = view.focusedChild
+            if (child is VideoView) {
+                videoView = child
+                child.setOnErrorListener(VideoCompletionListener())
+                child.setOnCompletionListener(VideoCompletionListener())
             }
         } else if (view is VideoView) {
             videoView = view
-            videoView?.setOnErrorListener(VideoCompletionListener())
-            videoView?.setOnCompletionListener(VideoCompletionListener())
+            view.setOnErrorListener(VideoCompletionListener())
+            view.setOnCompletionListener(VideoCompletionListener())
         }
         decorView.addView(fullscreenContainerView, COVER_SCREEN_PARAMS)
         fullscreenContainerView?.addView(customView, COVER_SCREEN_PARAMS)

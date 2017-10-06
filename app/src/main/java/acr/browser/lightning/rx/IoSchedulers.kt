@@ -1,4 +1,4 @@
-package acr.browser.lightning.utils
+package acr.browser.lightning.rx
 
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Executors

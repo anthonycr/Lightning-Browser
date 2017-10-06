@@ -14,7 +14,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.reading.activity.ReadingActivity
-import acr.browser.lightning.utils.IoSchedulers
+import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.SubscriptionUtils
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.extensions.safeDispose

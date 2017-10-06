@@ -42,7 +42,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @return the bitmap associated with the URL, may be null.
      */
     private fun getFaviconFromMemCache(url: String): Bitmap? {
-        Preconditions.checkNonNull(url)
+        requireNotNull(url)
         synchronized(faviconCache) {
             return faviconCache.get(url)
         }
@@ -66,8 +66,8 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param bitmap the bitmap to store.
      */
     private fun addFaviconToMemCache(url: String, bitmap: Bitmap) {
-        Preconditions.checkNonNull(url)
-        Preconditions.checkNonNull(bitmap)
+        requireNotNull(url)
+        requireNotNull(bitmap)
         synchronized(faviconCache) {
             faviconCache.put(url, bitmap)
         }

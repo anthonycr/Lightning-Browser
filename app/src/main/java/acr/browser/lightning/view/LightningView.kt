@@ -16,7 +16,6 @@ import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.utils.Preconditions
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.utils.Utils
@@ -226,8 +225,7 @@ class LightningView(private val activity: Activity,
             return
         }
 
-        Preconditions.checkNonNull(homepage)
-        when (homepage) {
+        when (requireNotNull(homepage)) {
             SCHEME_HOMEPAGE -> loadStartpage()
             SCHEME_BOOKMARKS -> loadBookmarkpage()
             else -> webView?.loadUrl(homepage, requestHeaders)

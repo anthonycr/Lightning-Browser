@@ -38,7 +38,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkExporter;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.utils.IoSchedulers;
+import acr.browser.lightning.rx.IoSchedulers;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.SubscriptionUtils;
 import acr.browser.lightning.utils.Utils;

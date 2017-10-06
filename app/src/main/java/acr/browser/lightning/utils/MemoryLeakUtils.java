@@ -14,11 +14,13 @@ import android.view.inputmethod.InputMethodManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class MemoryLeakUtils {
+public final class MemoryLeakUtils {
 
     private static final String TAG = "MemoryLeakUtils";
 
     @Nullable private static Method sFinishInputLocked = null;
+
+    private MemoryLeakUtils() {}
 
     /**
      * Clears the mNextServedView and mServedView in

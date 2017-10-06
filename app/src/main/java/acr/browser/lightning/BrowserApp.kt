@@ -8,7 +8,7 @@ import acr.browser.lightning.di.AppModule
 import acr.browser.lightning.di.DaggerAppComponent
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.IoSchedulers
+import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application

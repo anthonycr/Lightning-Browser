@@ -9,7 +9,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.utils.IoSchedulers
+import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.extensions.safeUse
 import android.app.Activity
