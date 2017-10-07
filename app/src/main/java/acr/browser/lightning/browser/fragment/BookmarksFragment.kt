@@ -64,7 +64,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     private var bookmarkAdapter: BookmarkListAdapter? = null
 
     // Preloaded images
-    private var webpageBitmap: Bitmap? = null
+    private var webPageBitmap: Bitmap? = null
     private var folderBitmap: Bitmap? = null
 
     // Colors
@@ -85,7 +85,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         uiController = context as UIController
         isIncognito = arguments.getBoolean(INCOGNITO_MODE, false)
         val darkTheme = preferenceManager.useTheme != 0 || isIncognito
-        webpageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme)
+        webPageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme)
         folderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme)
         iconColor = if (darkTheme) {
             ThemeUtils.getIconDarkThemeColor(context)
@@ -137,7 +137,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.action_toggle_desktop_image)
 
 
-        bookmarkAdapter = BookmarkListAdapter(faviconModel, folderBitmap!!, webpageBitmap!!).apply {
+        bookmarkAdapter = BookmarkListAdapter(faviconModel, folderBitmap!!, webPageBitmap!!).apply {
             onItemClickListener = itemClickListener
             onItemLongCLickListener = itemLongClickListener
         }
@@ -172,7 +172,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     fun reinitializePreferences() {
         val activity = activity ?: return
         val darkTheme = preferenceManager.useTheme != 0 || isIncognito
-        webpageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme)
+        webPageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme)
         folderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme)
         iconColor = if (darkTheme)
             ThemeUtils.getIconDarkThemeColor(activity)
