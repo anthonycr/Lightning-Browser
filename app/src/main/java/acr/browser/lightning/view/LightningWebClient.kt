@@ -8,7 +8,11 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.utils.*
+import acr.browser.lightning.ssl.SslWarningPreferences
+import acr.browser.lightning.utils.IntentUtils
+import acr.browser.lightning.utils.ProxyUtils
+import acr.browser.lightning.utils.UrlUtils
+import acr.browser.lightning.utils.Utils
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -23,6 +27,7 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.webkit.*
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import com.anthonycr.mezzanine.MezzanineGenerator
@@ -42,6 +47,7 @@ class LightningWebClient(
 
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var sslWarningPreferences: SslWarningPreferences
 
     private var adBlock: AdBlocker
 
@@ -155,7 +161,13 @@ class LightningWebClient(
         }
     }
 
-    override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
+    override fun onReceivedSslError(webView: WebView, handler: SslErrorHandler, error: SslError) {
+        when (sslWarningPreferences.recallBehaviorForDomain(webView.url)) {
+            SslWarningPreferences.Behavior.PROCEED -> return handler.proceed()
+            SslWarningPreferences.Behavior.CANCEL -> return handler.cancel()
+            null -> Unit
+        }
+
         val errorCodeMessageCodes = getAllSslErrorMessageCodes(error)
 
         val stringBuilder = StringBuilder()
@@ -165,13 +177,23 @@ class LightningWebClient(
         val alertMessage = activity.getString(R.string.message_insecure_connection, stringBuilder.toString())
 
         AlertDialog.Builder(activity).apply {
+            val view = LayoutInflater.from(activity).inflate(R.layout.dialog_ssl_warning, null)
+            val dontAskAgain = view.findViewById<CheckBox>(R.id.checkBoxDontAskAgain)
             setTitle(activity.getString(R.string.title_warning))
             setMessage(alertMessage)
             setCancelable(true)
+            setView(view)
+            setOnCancelListener { handler.cancel() }
             setPositiveButton(activity.getString(R.string.action_yes)) { _, _ ->
+                if (dontAskAgain.isChecked) {
+                    sslWarningPreferences.rememberBehaviorForDomain(webView.url, SslWarningPreferences.Behavior.PROCEED)
+                }
                 handler.proceed()
             }
             setNegativeButton(activity.getString(R.string.action_no)) { _, _ ->
+                if (dontAskAgain.isChecked) {
+                    sslWarningPreferences.rememberBehaviorForDomain(webView.url, SslWarningPreferences.Behavior.CANCEL)
+                }
                 handler.cancel()
             }
         }.resizeAndShow()
