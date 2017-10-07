@@ -102,7 +102,10 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun deleteAllDownloads(): Completable = Completable.create { subscriber ->
-        database.delete(TABLE_DOWNLOADS, null, null)
+        database.run {
+            delete(TABLE_DOWNLOADS, null, null)
+            close()
+        }
 
         subscriber.onComplete()
     }

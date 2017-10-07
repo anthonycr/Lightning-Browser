@@ -173,7 +173,10 @@ class BookmarkDatabase @Inject constructor(
     }
 
     override fun deleteAllBookmarks(): Completable = Completable.fromAction {
-        database.delete(TABLE_BOOKMARK, null, null)
+        database.run {
+            delete(TABLE_BOOKMARK, null, null)
+            close()
+        }
     }
 
     override fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem): Completable = Completable.fromAction {

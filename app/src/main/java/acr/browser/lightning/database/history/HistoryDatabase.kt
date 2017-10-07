@@ -56,8 +56,10 @@ class HistoryDatabase @Inject constructor(
     }
 
     override fun deleteHistory(): Completable = Completable.create { subscriber ->
-        database.delete(TABLE_HISTORY, null, null)
-        database.close()
+        database.run {
+            delete(TABLE_HISTORY, null, null)
+            close()
+        }
 
         subscriber.onComplete()
     }
