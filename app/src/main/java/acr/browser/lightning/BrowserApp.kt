@@ -7,8 +7,8 @@ import acr.browser.lightning.di.AppComponent
 import acr.browser.lightning.di.AppModule
 import acr.browser.lightning.di.DaggerAppComponent
 import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.rx.IoSchedulers
+import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application
@@ -22,6 +22,7 @@ import android.util.Log
 import android.webkit.WebView
 import com.anthonycr.bonsai.Schedulers
 import com.squareup.leakcanary.LeakCanary
+import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
 
 class BrowserApp : Application() {
@@ -53,6 +54,13 @@ class BrowserApp : Application() {
                 defaultHandler.uncaughtException(thread, ex)
             } else {
                 System.exit(2)
+            }
+        }
+
+        RxJavaPlugins.setErrorHandler { throwable: Throwable? ->
+            if (BuildConfig.DEBUG && throwable != null) {
+                FileUtils.writeCrashToStorage(throwable)
+                throw throwable
             }
         }
 

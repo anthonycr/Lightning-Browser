@@ -11,14 +11,15 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
-import com.anthonycr.bonsai.Schedulers;
-
 import acr.browser.lightning.database.history.HistoryModel;
+import acr.browser.lightning.rx.IoSchedulers;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino
  */
-public class WebUtils {
+public final class WebUtils {
+
+    private WebUtils() {}
 
     public static void clearCookies(@NonNull Context context) {
         CookieManager c = CookieManager.getInstance();
@@ -38,7 +39,7 @@ public class WebUtils {
 
     public static void clearHistory(@NonNull Context context, @NonNull HistoryModel historyModel) {
         historyModel.deleteHistory()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(IoSchedulers.getDatabase())
                 .subscribe();
         WebViewDatabase m = WebViewDatabase.getInstance(context);
         m.clearFormData();

@@ -1,8 +1,8 @@
 package acr.browser.lightning.database.history
 
 import acr.browser.lightning.database.HistoryItem
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Single
+import io.reactivex.Completable
+import io.reactivex.Single
 
 /**
  * An interface that should be used to communicate with the history database.

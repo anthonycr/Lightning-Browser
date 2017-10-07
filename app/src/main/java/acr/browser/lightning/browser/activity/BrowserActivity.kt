@@ -80,7 +80,6 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView.OnEditorActionListener
 import butterknife.ButterKnife
 import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.CompletableOnSubscribe
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.grant.PermissionsManager
@@ -1382,12 +1381,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         historyModel.visitHistoryItem(url, title)
-                .subscribeOn(Schedulers.io())
-                .subscribe(object : CompletableOnSubscribe() {
-                    override fun onError(throwable: Throwable) {
-                        Log.e(TAG, "Exception while updating history", throwable)
-                    }
-                })
+                .subscribeOn(IoSchedulers.database)
+                .subscribe()
     }
 
     /**

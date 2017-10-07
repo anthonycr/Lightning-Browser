@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.anthonycr.bonsai.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FilenameFilter
 import java.util.*
@@ -265,12 +266,11 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                     })
 
             historyModel.findHistoryItemsContaining(query)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                        override fun onItem(item: List<HistoryItem>?) =
-                                suggestionsAdapter.combineResults(null, item, null)
-                    })
+                    .subscribeOn(IoSchedulers.database)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { list ->
+                        suggestionsAdapter.combineResults(null, list, null)
+                    }
             results.count = 1
             return results
         }

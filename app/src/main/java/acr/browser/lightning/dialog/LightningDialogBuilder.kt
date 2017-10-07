@@ -24,8 +24,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
-import com.anthonycr.bonsai.CompletableOnSubscribe
-import com.anthonycr.bonsai.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
@@ -235,11 +233,9 @@ class LightningDialogBuilder @Inject constructor() {
                     },
                     DialogItem(R.string.dialog_remove_from_history) {
                         historyModel.deleteHistoryItem(url)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.main())
-                                .subscribe(object : CompletableOnSubscribe() {
-                                    override fun onComplete() = uiController.handleHistoryChange()
-                                })
+                                .subscribeOn(IoSchedulers.database)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(uiController::handleHistoryChange)
                     })
 
     // TODO There should be a way in which we do not need an activity reference to dowload a file

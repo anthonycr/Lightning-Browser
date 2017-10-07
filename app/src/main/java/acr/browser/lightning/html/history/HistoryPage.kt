@@ -5,12 +5,10 @@ package acr.browser.lightning.html.history
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.history.HistoryModel
 import android.app.Application
 import com.anthonycr.bonsai.Completable
 import com.anthonycr.bonsai.Single
-import com.anthonycr.bonsai.SingleOnSubscribe
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -26,22 +24,20 @@ class HistoryPage {
 
     fun createHistoryPage(): Single<String> = Single.create { subscriber ->
         historyModel.lastHundredVisitedHistoryItems()
-                .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                    override fun onItem(item: List<HistoryItem>?) {
-                        val newList = requireNotNull(item).toMutableList()
+                .subscribe { list ->
+                    val newList = list.toMutableList()
 
-                        val historyPageBuilder = HistoryPageBuilder(app)
+                    val historyPageBuilder = HistoryPageBuilder(app)
 
-                        val historyWebPage = getHistoryPageFile(app)
+                    val historyWebPage = getHistoryPageFile(app)
 
-                        FileWriter(historyWebPage, false).use {
-                            it.write(historyPageBuilder.buildPage(newList))
-                        }
-
-                        subscriber.onItem("$FILE$historyWebPage")
-                        subscriber.onComplete()
+                    FileWriter(historyWebPage, false).use {
+                        it.write(historyPageBuilder.buildPage(newList))
                     }
-                })
+
+                    subscriber.onItem("$FILE$historyWebPage")
+                    subscriber.onComplete()
+                }
     }
 
     companion object {

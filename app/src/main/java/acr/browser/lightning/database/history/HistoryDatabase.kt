@@ -13,8 +13,8 @@ import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.support.annotation.WorkerThread
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Single
+import io.reactivex.Completable
+import io.reactivex.Single
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -55,19 +55,15 @@ class HistoryDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun deleteHistory(): Completable = Completable.create { subscriber ->
+    override fun deleteHistory() = Completable.fromAction {
         database.run {
             delete(TABLE_HISTORY, null, null)
             close()
         }
-
-        subscriber.onComplete()
     }
 
-    override fun deleteHistoryItem(url: String): Completable = Completable.create { subscriber ->
+    override fun deleteHistoryItem(url: String): Completable = Completable.fromAction {
         database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
-
-        subscriber.onComplete()
     }
 
     override fun visitHistoryItem(url: String, title: String?): Completable = Completable.create {
@@ -85,7 +81,7 @@ class HistoryDatabase @Inject constructor(
     }
 
     override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
-            Single.create { subscriber ->
+            Single.fromCallable {
                 val itemList = ArrayList<HistoryItem>(5)
 
                 val search = "%$query%"
@@ -97,12 +93,11 @@ class HistoryDatabase @Inject constructor(
                     }
                 }
 
-                subscriber.onItem(itemList)
-                subscriber.onComplete()
+                return@fromCallable itemList
             }
 
     override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
-            Single.create { subscriber ->
+            Single.fromCallable {
                 val itemList = ArrayList<HistoryItem>(100)
                 database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100").use {
                     while (it.moveToNext()) {
@@ -110,8 +105,7 @@ class HistoryDatabase @Inject constructor(
                     }
                 }
 
-                subscriber.onItem(itemList)
-                subscriber.onComplete()
+                return@fromCallable itemList
             }
 
     @WorkerThread
