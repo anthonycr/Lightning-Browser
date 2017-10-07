@@ -38,13 +38,12 @@ class DownloadsPage {
         manager.getAllDownloads()
                 .subscribe(object : SingleOnSubscribe<List<DownloadItem>>() {
                     override fun onItem(list: List<DownloadItem>?) {
-                        requireNotNull(list)
                         val directory = preferenceManager.downloadDirectory
 
                         val downloadPageBuilder = DownloadPageBuilder(app, directory)
 
                         FileWriter(getDownloadsPageFile(app), false).use {
-                            it.write(downloadPageBuilder.buildPage(list!!))
+                            it.write(downloadPageBuilder.buildPage(requireNotNull(list)))
                         }
                     }
                 })

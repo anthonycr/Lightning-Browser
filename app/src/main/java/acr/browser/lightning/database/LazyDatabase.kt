@@ -20,7 +20,7 @@ class LazyDatabase(private val sqLiteOpenHelper: SQLiteOpenHelper) {
         val currentDb = sqLiteDatabase
 
         return if (currentDb?.isOpen != true) {
-            val newDb = sqLiteOpenHelper.writableDatabase!!
+            val newDb = sqLiteOpenHelper.writableDatabase
             sqLiteDatabase = newDb
             newDb
         } else {

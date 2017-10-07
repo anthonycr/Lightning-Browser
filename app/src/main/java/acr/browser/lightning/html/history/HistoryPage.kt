@@ -28,9 +28,7 @@ class HistoryPage {
         historyModel.lastHundredVisitedHistoryItems()
                 .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
                     override fun onItem(item: List<HistoryItem>?) {
-                        requireNotNull(item)
-
-                        val newList = item!!.toMutableList()
+                        val newList = requireNotNull(item).toMutableList()
 
                         val historyPageBuilder = HistoryPageBuilder(app)
 
