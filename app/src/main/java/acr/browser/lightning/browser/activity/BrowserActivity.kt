@@ -18,6 +18,8 @@ import acr.browser.lightning.database.history.HistoryModel
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
+import acr.browser.lightning.extensions.doOnLayout
+import acr.browser.lightning.extensions.removeFromParent
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
@@ -958,7 +960,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Set the background color so the color mode color doesn't show through
         content_frame.setBackgroundColor(backgroundColor)
 
-        removeViewFromParent(currentTabView)
+        currentTabView.removeFromParent()
 
         currentTabView = null
 
@@ -979,8 +981,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Set the background color so the color mode color doesn't show through
         content_frame.setBackgroundColor(backgroundColor)
 
-        removeViewFromParent(view)
-        removeViewFromParent(currentTabView)
+        view.removeFromParent()
+        currentTabView.removeFromParent()
 
         content_frame.addView(view, 0, MATCH_PARENT)
         if (isFullScreen) {
@@ -1142,7 +1144,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun initializeToolbarHeight(configuration: Configuration) =// TODO externalize the dimensions
-            doOnLayout(ui_layout, Runnable {
+            ui_layout.doOnLayout {
                 val toolbarSize = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     // In portrait toolbar should be 56 dp tall
                     Utils.dpToPx(56f)
@@ -1152,13 +1154,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 }
                 toolbar.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
                 toolbar.minimumHeight = toolbarSize
-                doOnLayout(toolbar, Runnable { setWebViewTranslation(toolbar_layout.height.toFloat()) })
+                toolbar.doOnLayout { setWebViewTranslation(toolbar_layout.height.toFloat()) }
                 toolbar.requestLayout()
-            })
+            }
 
     override fun closeBrowser() {
         content_frame.setBackgroundColor(backgroundColor)
-        removeViewFromParent(currentTabView)
+        currentTabView.removeFromParent()
         performExitCleanUp()
         val size = tabsManager.size()
         tabsManager.shutdown()
@@ -2041,33 +2043,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         fun isPanicTrigger(intent: Intent?): Boolean =
                 intent != null && INTENT_PANIC_TRIGGER == intent.action
 
-        private fun removeViewFromParent(view: View?) {
-            if (view == null) {
-                return
-            }
-            val parent = view.parent
-            (parent as? ViewGroup)?.removeView(view)
-        }
-
-        /**
-         * Performs an action when the provided view is laid out.
-         *
-         * @param view     the view to listen to for layouts.
-         * @param runnable the runnable to run when the view is
-         * laid out.
-         */
-        private fun doOnLayout(view: View, runnable: Runnable) =
-                view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        } else {
-
-                            view.viewTreeObserver.removeGlobalOnLayoutListener(this)
-                        }
-                        runnable.run()
-                    }
-                })
     }
 
 }
