@@ -73,16 +73,13 @@ class HistoryDatabase @Inject constructor(
         values.put(KEY_TITLE, title ?: "")
         values.put(KEY_TIME_VISITED, System.currentTimeMillis())
 
-        val cursor = database.query(false, TABLE_HISTORY, arrayOf(KEY_URL),
-                "$KEY_URL = ?", arrayOf(url), null, null, null, "1")
-
-        if (cursor.count > 0) {
-            database.update(TABLE_HISTORY, values, KEY_URL + " = ?", arrayOf(url))
-        } else {
-            addHistoryItem(HistoryItem(url, title ?: ""))
+        database.query(false, TABLE_HISTORY, arrayOf(KEY_URL), "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
+            if (it.count > 0) {
+                database.update(TABLE_HISTORY, values, KEY_URL + " = ?", arrayOf(url))
+            } else {
+                addHistoryItem(HistoryItem(url, title ?: ""))
+            }
         }
-
-        cursor.close()
     }
 
     override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
@@ -91,14 +88,12 @@ class HistoryDatabase @Inject constructor(
 
                 val search = "%$query%"
 
-                val cursor = database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                        arrayOf(search, search), null, null, KEY_TIME_VISITED + " DESC", "5")
-
-                while (cursor.moveToNext()) {
-                    itemList.add(cursor.bindToHistoryItem())
+                database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
+                        arrayOf(search, search), null, null, KEY_TIME_VISITED + " DESC", "5").use {
+                    while (it.moveToNext()) {
+                        itemList.add(it.bindToHistoryItem())
+                    }
                 }
-
-                cursor.close()
 
                 subscriber.onItem(itemList)
                 subscriber.onComplete()
@@ -107,13 +102,11 @@ class HistoryDatabase @Inject constructor(
     override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
             Single.create { subscriber ->
                 val itemList = ArrayList<HistoryItem>(100)
-                val cursor = database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100")
-
-                while (cursor.moveToNext()) {
-                    itemList.add(cursor.bindToHistoryItem())
+                database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100").use {
+                    while (it.moveToNext()) {
+                        itemList.add(it.bindToHistoryItem())
+                    }
                 }
-
-                cursor.close()
 
                 subscriber.onItem(itemList)
                 subscriber.onComplete()
@@ -130,28 +123,22 @@ class HistoryDatabase @Inject constructor(
 
     @WorkerThread
     @Synchronized internal fun getHistoryItem(url: String): String? {
-        val cursor = database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
-                "$KEY_URL = ?", arrayOf(url), null, null, null, "1")
-        var m: String? = null
-        if (cursor != null) {
-            cursor.moveToFirst()
-            m = cursor.getString(0)
+        database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
+                "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
+            it.moveToFirst()
 
-            cursor.close()
+            return it.getString(0)
         }
-        return m
     }
 
     internal fun getAllHistoryItems(): List<HistoryItem> {
         val itemList = ArrayList<HistoryItem>()
 
-        val cursor = database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC")
-
-        while (cursor.moveToNext()) {
-            itemList.add(cursor.bindToHistoryItem())
+        database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC").use {
+            while (it.moveToNext()) {
+                itemList.add(it.bindToHistoryItem())
+            }
         }
-
-        cursor.close()
 
         return itemList
     }

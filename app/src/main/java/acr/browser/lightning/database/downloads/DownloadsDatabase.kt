@@ -47,39 +47,32 @@ class DownloadsDatabase @Inject constructor(
 
     override fun findDownloadForUrl(url: String): Single<DownloadItem> =
             Single.create { subscriber ->
-                val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1")
-
-                if (cursor.moveToFirst()) {
-                    subscriber.onItem(cursor.bindToDownloadItem())
-                } else {
-                    subscriber.onItem(null)
+                database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1").use {
+                    if (it.moveToFirst()) {
+                        subscriber.onItem(it.bindToDownloadItem())
+                    } else {
+                        subscriber.onItem(null)
+                    }
                 }
-
-                cursor.close()
                 subscriber.onComplete()
             }
 
     override fun isDownload(url: String): Single<Boolean> = Single.create { subscriber ->
-        val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1")
-
-        subscriber.onItem(cursor.moveToFirst())
-
-        cursor.close()
+        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1").use {
+            subscriber.onItem(it.moveToFirst())
+        }
         subscriber.onComplete()
     }
 
     override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> =
             Single.create(SingleAction { subscriber ->
-                val cursor = database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1")
-
-                if (cursor.moveToFirst()) {
-                    cursor.close()
-                    subscriber.onItem(false)
-                    subscriber.onComplete()
-                    return@SingleAction
+                database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1").use {
+                    if (it.moveToFirst()) {
+                        subscriber.onItem(false)
+                        subscriber.onComplete()
+                        return@SingleAction
+                    }
                 }
-
-                cursor.close()
 
                 val id = database.insert(TABLE_DOWNLOADS, null, item.toContentValues())
 
@@ -115,12 +108,10 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun getAllDownloads(): Single<List<DownloadItem>> = Single.create { subscriber ->
-        val cursor = database.query(TABLE_DOWNLOADS, null, null, null, null, null, null)
-
-        subscriber.onItem(cursor.bindToDownloadItemList())
-        subscriber.onComplete()
-
-        cursor.close()
+        database.query(TABLE_DOWNLOADS, null, null, null, null, null, null).use {
+            subscriber.onItem(it.bindToDownloadItemList())
+            subscriber.onComplete()
+        }
     }
 
     override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_DOWNLOADS)

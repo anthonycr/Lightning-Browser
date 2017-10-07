@@ -133,14 +133,11 @@ class BookmarkDatabase @Inject constructor(
     }
 
     override fun addBookmarkIfNotExists(item: HistoryItem): Single<Boolean> = Single.fromCallable {
-        val cursor = queryWithOptionalEndSlash(item.url)
-
-        if (cursor.moveToFirst()) {
-            cursor.close()
-            return@fromCallable false
+        queryWithOptionalEndSlash(item.url).use {
+            if (it.moveToFirst()) {
+                return@fromCallable false
+            }
         }
-
-        cursor.close()
 
         val id = database.insert(TABLE_BOOKMARK, null, bindBookmarkToContentValues(item))
 
