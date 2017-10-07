@@ -3,7 +3,6 @@ package acr.browser.lightning.notifications
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.utils.isAtLeast26
 import android.annotation.TargetApi
 import android.app.Notification
 import android.app.NotificationChannel
@@ -25,7 +24,7 @@ class IncognitoNotification(val context: Context) {
     private val channelId = "channel_incognito"
 
     init {
-        if (isAtLeast26()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
         }
     }
