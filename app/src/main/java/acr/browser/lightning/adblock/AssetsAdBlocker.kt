@@ -1,6 +1,9 @@
 package acr.browser.lightning.adblock
 
-import acr.browser.lightning.utils.StringBuilderUtils
+import acr.browser.lightning.extensions.inlineReplace
+import acr.browser.lightning.extensions.inlineTrim
+import acr.browser.lightning.extensions.stringEquals
+import acr.browser.lightning.extensions.substringToBuilder
 import android.app.Application
 import android.util.Log
 import io.reactivex.Completable
@@ -114,31 +117,31 @@ class AssetsAdBlocker @Inject internal constructor(
 
         @JvmStatic
         internal fun parseString(lineBuilder: StringBuilder, parsedList: MutableList<String>) {
-            if (!StringBuilderUtils.isEmpty(lineBuilder) && !StringBuilderUtils.startsWith(lineBuilder, COMMENT)) {
-                StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4, EMPTY)
-                StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY)
-                StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V6, EMPTY)
-                StringBuilderUtils.replace(lineBuilder, TAB, EMPTY)
+            if (lineBuilder.isNotEmpty() && !lineBuilder.startsWith(COMMENT)) {
+                lineBuilder.inlineReplace(LOCAL_IP_V4, EMPTY)
+                lineBuilder.inlineReplace(LOCAL_IP_V4_ALT, EMPTY)
+                lineBuilder.inlineReplace(LOCAL_IP_V6, EMPTY)
+                lineBuilder.inlineReplace(TAB, EMPTY)
 
                 val comment = lineBuilder.indexOf(COMMENT)
                 if (comment >= 0) {
                     lineBuilder.replace(comment, lineBuilder.length, EMPTY)
                 }
 
-                StringBuilderUtils.trim(lineBuilder)
+                lineBuilder.inlineTrim()
 
-                if (!StringBuilderUtils.isEmpty(lineBuilder) && !StringBuilderUtils.equals(lineBuilder, LOCALHOST)) {
-                    while (StringBuilderUtils.contains(lineBuilder, SPACE)) {
+                if (lineBuilder.isNotEmpty() && !lineBuilder.stringEquals(LOCALHOST)) {
+                    while (lineBuilder.contains(SPACE)) {
                         val space = lineBuilder.indexOf(SPACE)
-                        val partial = StringBuilderUtils.substring(lineBuilder, 0, space)
-                        StringBuilderUtils.trim(partial)
+                        val partial = lineBuilder.substringToBuilder(0, space)
+                        partial.inlineTrim()
 
                         val partialLine = partial.toString()
 
                         // Add string to list
                         parsedList.add(partialLine)
-                        StringBuilderUtils.replace(lineBuilder, partialLine, EMPTY)
-                        StringBuilderUtils.trim(lineBuilder)
+                        lineBuilder.inlineReplace(partialLine, EMPTY)
+                        lineBuilder.inlineTrim()
                     }
                     if (lineBuilder.isNotEmpty()) {
                         // Add string to list.
