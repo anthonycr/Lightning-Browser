@@ -70,10 +70,12 @@ dexcount {
 }
 
 dependencies {
+    // test dependencies
     testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.8.0'
 
     // support libraries
-    def supportLibVersion = '26.0.2'
+    final def supportLibVersion = '26.0.2'
     compile "com.android.support:palette-v7:$supportLibVersion"
     compile "com.android.support:appcompat-v7:$supportLibVersion"
     compile "com.android.support:design:$supportLibVersion"
@@ -84,15 +86,15 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.3'
 
     // dependency injection
-    def daggerVersion = '2.11'
+    final def daggerVersion = '2.11'
     compile "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    def butterknifeVersion = '8.8.1'
-    compile "com.jakewharton:butterknife:$butterknifeVersion"
-    kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    final def butterKnifeVersion = '8.8.1'
+    compile "com.jakewharton:butterknife:$butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
@@ -103,7 +105,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // file reading
-    def mezzanineVersion = '1.0.0'
+    final def mezzanineVersion = '1.0.0'
     compile "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
@@ -112,16 +114,16 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.4'
 
     // tor proxy
-    def netcipherVersion = '2.0.0-alpha1'
-    compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
-    compile "info.guardianproject.netcipher:netcipher-webkit:$netcipherVersion"
+    final def netCipherVersion = '2.0.0-alpha1'
+    compile "info.guardianproject.netcipher:netcipher:$netCipherVersion"
+    compile "info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion"
 
     compile 'com.anthonycr.bonsai:bonsai:1.1.0'
 
     compile 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
-    def leakCanaryVersion = '1.5.4'
+    final def leakCanaryVersion = '1.5.4'
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
