@@ -5,12 +5,10 @@ package acr.browser.lightning.html.download
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.downloads.DownloadItem
 import acr.browser.lightning.database.downloads.DownloadsModel
 import acr.browser.lightning.preference.PreferenceManager
 import android.app.Application
 import com.anthonycr.bonsai.Single
-import com.anthonycr.bonsai.SingleOnSubscribe
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -36,17 +34,15 @@ class DownloadsPage {
 
     private fun buildDownloadsPage() {
         manager.getAllDownloads()
-                .subscribe(object : SingleOnSubscribe<List<DownloadItem>>() {
-                    override fun onItem(list: List<DownloadItem>?) {
-                        val directory = preferenceManager.downloadDirectory
+                .subscribe { list ->
+                    val directory = preferenceManager.downloadDirectory
 
-                        val downloadPageBuilder = DownloadPageBuilder(app, directory)
+                    val downloadPageBuilder = DownloadPageBuilder(app, directory)
 
-                        FileWriter(getDownloadsPageFile(app), false).use {
-                            it.write(downloadPageBuilder.buildPage(requireNotNull(list)))
-                        }
+                    FileWriter(getDownloadsPageFile(app), false).use {
+                        it.write(downloadPageBuilder.buildPage(requireNotNull(list)))
                     }
-                })
+                }
     }
 
     companion object {

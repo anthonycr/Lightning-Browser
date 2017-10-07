@@ -1,9 +1,9 @@
 package acr.browser.lightning.database.downloads
 
 import android.support.annotation.WorkerThread
-
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Single
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 
 /**
  * The interface that should be used to communicate with the download database.
@@ -26,7 +26,7 @@ interface DownloadsModel {
      * @param url the URL to look for.
      * @return an observable that will emit either the download associated with the URL or null.
      */
-    fun findDownloadForUrl(url: String): Single<DownloadItem>
+    fun findDownloadForUrl(url: String): Maybe<DownloadItem>
 
     /**
      * Adds a download if one does not already exist with the same URL.

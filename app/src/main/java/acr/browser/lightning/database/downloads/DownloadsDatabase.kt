@@ -7,9 +7,9 @@ import android.database.Cursor
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Single
-import com.anthonycr.bonsai.SingleAction
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,75 +45,61 @@ class DownloadsDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun findDownloadForUrl(url: String): Single<DownloadItem> =
-            Single.create { subscriber ->
-                database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1").use {
-                    if (it.moveToFirst()) {
-                        subscriber.onItem(it.bindToDownloadItem())
-                    } else {
-                        subscriber.onItem(null)
-                    }
-                }
-                subscriber.onComplete()
+    override fun findDownloadForUrl(url: String): Maybe<DownloadItem> = Maybe.fromCallable {
+        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1").use {
+            if (it.moveToFirst()) {
+                return@fromCallable it.bindToDownloadItem()
+            } else {
+                return@fromCallable null
             }
-
-    override fun isDownload(url: String): Single<Boolean> = Single.create { subscriber ->
-        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1").use {
-            subscriber.onItem(it.moveToFirst())
         }
-        subscriber.onComplete()
     }
 
-    override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> =
-            Single.create(SingleAction { subscriber ->
-                database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1").use {
-                    if (it.moveToFirst()) {
-                        subscriber.onItem(false)
-                        subscriber.onComplete()
-                        return@SingleAction
-                    }
-                }
+    override fun isDownload(url: String): Single<Boolean> = Single.fromCallable {
+        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1").use {
+            return@fromCallable it.moveToFirst()
+        }
+    }
 
-                val id = database.insert(TABLE_DOWNLOADS, null, item.toContentValues())
-
-                subscriber.onItem(id != -1L)
-                subscriber.onComplete()
-            })
-
-    override fun addDownloadsList(downloadItems: List<DownloadItem>): Completable =
-            Completable.create { subscriber ->
-                database.beginTransaction()
-
-                for (item in downloadItems) {
-                    addDownloadIfNotExists(item).subscribe()
-                }
-
-                database.setTransactionSuccessful()
-                database.endTransaction()
-
-                subscriber.onComplete()
+    override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> = Single.fromCallable {
+        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1").use {
+            if (it.moveToFirst()) {
+                return@fromCallable false
             }
+        }
 
-    override fun deleteDownload(url: String): Single<Boolean> = Single.create { subscriber ->
+        val id = database.insert(TABLE_DOWNLOADS, null, item.toContentValues())
+
+        return@fromCallable id != -1L
+    }
+
+    override fun addDownloadsList(downloadItems: List<DownloadItem>) = Completable.fromAction {
+        database.beginTransaction()
+
+        for (item in downloadItems) {
+            addDownloadIfNotExists(item).subscribe()
+        }
+
+        database.setTransactionSuccessful()
+        database.endTransaction()
+    }
+
+    override fun deleteDownload(url: String): Single<Boolean> = Single.fromCallable {
         val rows = database.delete(TABLE_DOWNLOADS, "$KEY_URL=?", arrayOf(url))
 
-        subscriber.onItem(rows > 0)
-        subscriber.onComplete()
+        return@fromCallable rows > 0
     }
 
-    override fun deleteAllDownloads(): Completable = Completable.create { subscriber ->
+    override fun deleteAllDownloads(): Completable = Completable.fromAction {
         database.run {
             delete(TABLE_DOWNLOADS, null, null)
             close()
         }
-
-        subscriber.onComplete()
     }
 
-    override fun getAllDownloads(): Single<List<DownloadItem>> = Single.create { subscriber ->
+    override fun getAllDownloads(): Single<List<DownloadItem>> = Single.fromCallable {
         database.query(TABLE_DOWNLOADS, null, null, null, null, null, null).use {
-            subscriber.onItem(it.bindToDownloadItemList())
-            subscriber.onComplete()
+            return@fromCallable it.bindToDownloadItemList()
         }
     }
 

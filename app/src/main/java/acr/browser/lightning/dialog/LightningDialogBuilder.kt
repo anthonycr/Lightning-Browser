@@ -128,11 +128,9 @@ class LightningDialogBuilder @Inject constructor() {
             BrowserDialog.show(activity, R.string.action_downloads,
                     DialogItem(R.string.dialog_delete_all_downloads) {
                         downloadsModel.deleteAllDownloads()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.main())
-                                .subscribe(object : CompletableOnSubscribe() {
-                                    override fun onComplete() = uiController.handleDownloadDeleted()
-                                })
+                                .subscribeOn(IoSchedulers.database)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(uiController::handleDownloadDeleted)
                     })
 
     private fun showEditBookmarkDialog(activity: Activity,

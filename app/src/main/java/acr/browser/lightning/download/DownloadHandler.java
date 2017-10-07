@@ -23,26 +23,26 @@ import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
-import com.anthonycr.bonsai.SingleOnSubscribe;
-
 import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.BuildConfig;
-import acr.browser.lightning.R;
-import acr.browser.lightning.MainActivity;
 import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.BuildConfig;
+import acr.browser.lightning.MainActivity;
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsModel;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.rx.IoSchedulers;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
+import io.reactivex.functions.Consumer;
 
 /**
  * Handle download requests
@@ -267,11 +267,13 @@ public class DownloadHandler {
 
         if (view != null && !view.isIncognito()) {
             downloadsModel.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
-                .subscribe(new SingleOnSubscribe<Boolean>() {
+                .subscribeOn(IoSchedulers.getDatabase())
+                .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void onItem(@Nullable Boolean item) {
-                        if (item != null && !item)
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean != null && !aBoolean) {
                             Log.i(TAG, "error saving download to database");
+                        }
                     }
                 });
         }
