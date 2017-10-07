@@ -3,8 +3,8 @@ package acr.browser.lightning.adblock
 import acr.browser.lightning.utils.StringBuilderUtils
 import android.app.Application
 import android.util.Log
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Schedulers
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URI
@@ -56,7 +56,7 @@ class AssetsAdBlocker @Inject internal constructor(
      *
      * @return a Completable that will load the hosts file into memory.
      */
-    private fun loadHostsFile(): Completable = Completable.create({
+    private fun loadHostsFile() = Completable.fromAction {
         val asset = application.assets
         val reader = BufferedReader(InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)))
         val lineBuilder = StringBuilder()
@@ -75,7 +75,7 @@ class AssetsAdBlocker @Inject internal constructor(
 
         blockedDomainsList.addAll(domains)
         Log.d(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
-    })
+    }
 
     companion object {
 
@@ -113,7 +113,7 @@ class AssetsAdBlocker @Inject internal constructor(
         }
 
         @JvmStatic
-        private fun parseString(lineBuilder: StringBuilder, parsedList: MutableList<String>) {
+        internal fun parseString(lineBuilder: StringBuilder, parsedList: MutableList<String>) {
             if (!StringBuilderUtils.isEmpty(lineBuilder) && !StringBuilderUtils.startsWith(lineBuilder, COMMENT)) {
                 StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4, EMPTY)
                 StringBuilderUtils.replace(lineBuilder, LOCAL_IP_V4_ALT, EMPTY)
