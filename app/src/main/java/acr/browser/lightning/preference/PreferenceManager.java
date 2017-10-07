@@ -16,7 +16,7 @@ import acr.browser.lightning.utils.FileUtils;
 @Singleton
 public class PreferenceManager {
 
-    private static class Name {
+    private static final class Name {
         static final String ADOBE_FLASH_SUPPORT = "enableflash";
         static final String BLOCK_ADS = "AdBlock";
         static final String BLOCK_IMAGES = "blockimages";

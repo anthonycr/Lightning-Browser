@@ -25,7 +25,7 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Utils;
 
 @Deprecated
-public class LegacyBookmarkManager {
+public final class LegacyBookmarkManager {
 
     private static final String TAG = "LegacyBookmarkManager";
 
@@ -34,6 +34,8 @@ public class LegacyBookmarkManager {
     private static final String FOLDER = "folder";
     private static final String ORDER = "order";
     private static final String FILE_BOOKMARKS = "bookmarks.dat";
+
+    private LegacyBookmarkManager() {}
 
     /**
      * Gets all bookmarks from the old bookmark file

@@ -38,7 +38,7 @@ import acr.browser.lightning.utils.Utils;
  * <p>
  * Created by anthonycr on 5/7/17.
  */
-public class BookmarkExporter {
+public final class BookmarkExporter {
 
     private static final String TAG = "BookmarkExporter";
 
@@ -46,6 +46,8 @@ public class BookmarkExporter {
     private static final String KEY_TITLE = "title";
     private static final String KEY_FOLDER = "folder";
     private static final String KEY_ORDER = "order";
+
+    private BookmarkExporter() {}
 
     /**
      * Retrieves all the default bookmarks stored

@@ -32,7 +32,7 @@ import acr.browser.lightning.html.homepage.StartPage;
 /**
  * Utility methods for Url manipulation
  */
-public class UrlUtils {
+public final class UrlUtils {
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
         "(?i)" + // switch on case insensitive matching
             '(' +    // begin group for schema
