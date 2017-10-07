@@ -11,13 +11,12 @@ import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.dialog.LightningDialogBuilder
+import acr.browser.lightning.extensions.safeDispose
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.rx.IoSchedulers
-import acr.browser.lightning.utils.SubscriptionUtils
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.extensions.safeDispose
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
@@ -406,8 +405,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
                     val url = web.url
 
-                    val oldSubscription = faviconFetchSubscriptions[url]
-                    SubscriptionUtils.safeUnsubscribe(oldSubscription)
+                    faviconFetchSubscriptions[url]?.unsubscribe()
+                    faviconFetchSubscriptions.remove(url)
 
                     val faviconSubscription = faviconModel.faviconForUrl(url, web.title)
                             .subscribeOn(Schedulers.io())
