@@ -62,6 +62,8 @@ class LightningWebClient(
     private val textReflowJs = MezzanineGenerator.TextReflow()
     private val invertPageJs = MezzanineGenerator.InvertPage()
 
+    private var currentUrl: String = ""
+
     var sslState: SSLState = SSLState.None()
         set(value) {
             sslStateObservable.onNext(value)
@@ -93,7 +95,8 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-        if (isAd(view.url, request.url.toString())) {
+        val pageUrl = currentUrl
+        if (isAd(pageUrl, request.url.toString())) {
             val empty = ByteArrayInputStream("".toByteArray())
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
@@ -102,7 +105,8 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-        if (isAd(view.url, url)) {
+        val pageUrl = currentUrl
+        if (isAd(pageUrl, url)) {
             val empty = ByteArrayInputStream("".toByteArray())
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
@@ -129,6 +133,7 @@ class LightningWebClient(
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+        currentUrl = url
         sslState = if (URLUtil.isHttpsUrl(view.url)) {
             SSLState.Valid()
         } else {
