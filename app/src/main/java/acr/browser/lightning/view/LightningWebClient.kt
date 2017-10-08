@@ -8,6 +8,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.ssl.SslWarningPreferences
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.ProxyUtils
@@ -57,11 +58,21 @@ class LightningWebClient(
     private val textReflowJs = MezzanineGenerator.TextReflow()
     private val invertPageJs = MezzanineGenerator.InvertPage()
 
+    var sslState: SSLState = SSLState.None()
+        set(value) {
+            sslStateObservable.onNext(value)
+            field = value
+        }
+
+    private val sslStateObservable: PublishSubject<SSLState> = PublishSubject.create()
+
     init {
         BrowserApp.appComponent.inject(this)
         uiController = activity as UIController
         adBlock = chooseAdBlocker()
     }
+
+    fun sslStateObservable(): Observable<SSLState> = sslStateObservable
 
     fun updatePreferences() {
         adBlock = chooseAdBlocker()
@@ -111,6 +122,11 @@ class LightningWebClient(
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+        sslState = if (UrlUtils.isSslUrl(view.url)) {
+            SSLState.Valid()
+        } else {
+            SSLState.None()
+        }
         lightningView.titleInfo.setFavicon(null)
         if (lightningView.isShown) {
             uiController.updateUrl(url, true)
@@ -146,8 +162,8 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
-        if (view.isShown && lightningView.preferences.textReflowEnabled &&
-                Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+        if (view.isShown && lightningView.preferences.textReflowEnabled
+                && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (isRunning)
                 return
             val changeInPercent = Math.abs(100 - 100 / zoomScale * newScale)
@@ -162,6 +178,8 @@ class LightningWebClient(
     }
 
     override fun onReceivedSslError(webView: WebView, handler: SslErrorHandler, error: SslError) {
+        sslState = SSLState.Invalid(error)
+
         when (sslWarningPreferences.recallBehaviorForDomain(webView.url)) {
             SslWarningPreferences.Behavior.PROCEED -> return handler.proceed()
             SslWarningPreferences.Behavior.CANCEL -> return handler.cancel()
