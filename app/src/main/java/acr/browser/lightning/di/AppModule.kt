@@ -7,7 +7,6 @@ import acr.browser.lightning.database.downloads.DownloadsDatabase
 import acr.browser.lightning.database.downloads.DownloadsModel
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.database.history.HistoryModel
-import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
 import android.app.Application
@@ -41,10 +40,6 @@ class AppModule(private val app: BrowserApp) {
     @Provides
     @Singleton
     fun providesSslWarningPreferences(): SslWarningPreferences = SessionSslWarningPreferences()
-
-    @Provides
-    @Singleton
-    fun provideDownloadHandler(): DownloadHandler = DownloadHandler()
 
     @Provides
     @Singleton

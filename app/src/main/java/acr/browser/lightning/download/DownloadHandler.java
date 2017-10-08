@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.BuildConfig;
@@ -47,6 +48,7 @@ import io.reactivex.functions.Consumer;
 /**
  * Handle download requests
  */
+@Singleton
 public class DownloadHandler {
 
     private static final String TAG = "DownloadHandler";
