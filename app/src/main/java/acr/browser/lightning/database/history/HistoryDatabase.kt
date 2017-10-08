@@ -21,9 +21,7 @@ import javax.inject.Singleton
 
 
 /**
- * The disk backed download database.
- * See [HistoryModel] for method
- * documentation.
+ * The disk backed download database. See [HistoryModel] for function documentation.
  */
 @Singleton
 @WorkerThread
@@ -87,7 +85,7 @@ class HistoryDatabase @Inject constructor(
                 val search = "%$query%"
 
                 database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                        arrayOf(search, search), null, null, KEY_TIME_VISITED + " DESC", "5").use {
+                        arrayOf(search, search), null, null, "$KEY_TIME_VISITED DESC", "5").use {
                     while (it.moveToNext()) {
                         itemList.add(it.bindToHistoryItem())
                     }
@@ -99,7 +97,7 @@ class HistoryDatabase @Inject constructor(
     override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
             Single.fromCallable {
                 val itemList = ArrayList<HistoryItem>(100)
-                database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC", "100").use {
+                database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC", "100").use {
                     while (it.moveToNext()) {
                         itemList.add(it.bindToHistoryItem())
                     }
@@ -130,7 +128,7 @@ class HistoryDatabase @Inject constructor(
     internal fun getAllHistoryItems(): List<HistoryItem> {
         val itemList = ArrayList<HistoryItem>()
 
-        database.query(TABLE_HISTORY, null, null, null, null, null, KEY_TIME_VISITED + " DESC").use {
+        database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC").use {
             while (it.moveToNext()) {
                 itemList.add(it.bindToHistoryItem())
             }
@@ -141,28 +139,24 @@ class HistoryDatabase @Inject constructor(
 
     internal fun getHistoryItemsCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
 
-    private fun Cursor.bindToHistoryItem(): HistoryItem {
-        val historyItem = HistoryItem()
-        historyItem.setUrl(this.getString(1))
-        historyItem.setTitle(this.getString(2))
-        historyItem.imageId = R.drawable.ic_history
-
-        return historyItem
+    private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
+        setUrl(getString(1))
+        setTitle(getString(2))
+        imageId = R.drawable.ic_history
     }
 
     companion object {
 
-        // All Static variables
-        // Database Version
+        // Database version
         private const val DATABASE_VERSION = 2
 
-        // Database Name
+        // Database name
         private const val DATABASE_NAME = "historyManager"
 
-        // HistoryItems table name
+        // HistoryItem table name
         private const val TABLE_HISTORY = "history"
 
-        // HistoryItems Table Columns names
+        // HistoryItem table columns names
         private const val KEY_ID = "id"
         private const val KEY_URL = "url"
         private const val KEY_TITLE = "title"

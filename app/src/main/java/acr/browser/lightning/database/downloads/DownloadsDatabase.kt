@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The disk backed download database. See [DownloadsModel] for method documentation.
+ * The disk backed download database. See [DownloadsModel] for function documentation.
  */
 @Singleton
 class DownloadsDatabase @Inject constructor(
@@ -120,14 +120,10 @@ class DownloadsDatabase @Inject constructor(
     /**
      * Binds a [Cursor] to a single [DownloadItem].
      */
-    private fun Cursor.bindToDownloadItem(): DownloadItem {
-        val download = DownloadItem()
-
-        download.setUrl(getString(getColumnIndex(KEY_URL)))
-        download.setTitle(getString(getColumnIndex(KEY_TITLE)))
-        download.setContentSize(getString(getColumnIndex(KEY_SIZE)))
-
-        return download
+    private fun Cursor.bindToDownloadItem() = DownloadItem().apply {
+        setUrl(getString(getColumnIndex(KEY_URL)))
+        setTitle(getString(getColumnIndex(KEY_TITLE)))
+        setContentSize(getString(getColumnIndex(KEY_SIZE)))
     }
 
     /**
@@ -145,16 +141,16 @@ class DownloadsDatabase @Inject constructor(
 
     companion object {
 
-        // Database Version
+        // Database version
         private const val DATABASE_VERSION = 1
 
-        // Database Name
+        // Database name
         private const val DATABASE_NAME = "downloadManager"
 
-        // HistoryItems table name
+        // DownloadItem table name
         private const val TABLE_DOWNLOADS = "download"
 
-        // HistoryItems Table Columns names
+        // DownloadItem table columns names
         private const val KEY_ID = "id"
         private const val KEY_URL = "url"
         private const val KEY_TITLE = "title"

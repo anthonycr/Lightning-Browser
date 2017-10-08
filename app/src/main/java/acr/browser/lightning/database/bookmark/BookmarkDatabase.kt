@@ -19,10 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The disk backed bookmark database.
- * See [BookmarkModel] for method
- * documentation.
- *
+ * The disk backed bookmark database. See [BookmarkModel] for function documentation.
  *
  * Created by anthonycr on 5/6/17.
  */
@@ -270,16 +267,12 @@ class BookmarkDatabase @Inject constructor(
      *
      * @return a valid item containing all the pertinent information.
      */
-    private fun Cursor.bindToHistoryItem(): HistoryItem {
-        val bookmark = HistoryItem()
-
-        bookmark.imageId = R.drawable.ic_bookmark
-        bookmark.setUrl(getString(getColumnIndex(KEY_URL)))
-        bookmark.setTitle(getString(getColumnIndex(KEY_TITLE)))
-        bookmark.setFolder(getString(getColumnIndex(KEY_FOLDER)))
-        bookmark.position = getInt(getColumnIndex(KEY_POSITION))
-
-        return bookmark
+    private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
+        imageId = R.drawable.ic_bookmark
+        setUrl(getString(getColumnIndex(KEY_URL)))
+        setTitle(getString(getColumnIndex(KEY_TITLE)))
+        setFolder(getString(getColumnIndex(KEY_FOLDER)))
+        position = getInt(getColumnIndex(KEY_POSITION))
     }
 
     /**
@@ -316,16 +309,16 @@ class BookmarkDatabase @Inject constructor(
 
     companion object {
 
-        // Database Version
+        // Database version
         private const val DATABASE_VERSION = 1
 
-        // Database Name
+        // Database name
         private const val DATABASE_NAME = "bookmarkManager"
 
-        // HistoryItems table name
+        // HistoryItem table name
         private const val TABLE_BOOKMARK = "bookmark"
 
-        // HistoryItems Table Columns names
+        // HistoryItem table columns names
         private const val KEY_ID = "id"
         private const val KEY_URL = "url"
         private const val KEY_TITLE = "title"
