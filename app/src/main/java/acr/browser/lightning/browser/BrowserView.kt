@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser
 
+import acr.browser.lightning.ssl.SSLState
 import android.support.annotation.StringRes
 import android.view.View
 
@@ -14,6 +15,8 @@ interface BrowserView {
     fun updateProgress(progress: Int)
 
     fun updateTabNumber(number: Int)
+
+    fun updateSslState(sslState: SSLState)
 
     fun closeBrowser()
 

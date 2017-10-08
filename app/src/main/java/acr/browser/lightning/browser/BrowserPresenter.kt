@@ -20,6 +20,8 @@ import android.util.Log
 import android.webkit.URLUtil
 import com.anthonycr.bonsai.CompletableOnSubscribe
 import com.anthonycr.bonsai.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 /**
@@ -33,6 +35,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     private val tabsModel: TabsManager
     private var currentTab: LightningView? = null
     private var shouldClose: Boolean = false
+    private var sslStateSubscription: Disposable? = null
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -72,6 +75,12 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     private fun onTabChanged(newTab: LightningView?) {
         Log.d(TAG, "On tab changed")
+
+        sslStateSubscription?.dispose()
+        sslStateSubscription = newTab
+                ?.sslStateObservable()
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe(view::updateSslState)
 
         val webView = newTab?.webView
 
@@ -242,6 +251,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     fun shutdown() {
         onTabChanged(null)
         tabsModel.cancelPendingWork()
+        sslStateSubscription?.dispose()
     }
 
     /**

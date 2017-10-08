@@ -126,7 +126,7 @@ public final class ThemeUtils {
     }
 
     @NonNull
-    private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
+    public static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
 
         Preconditions.checkNonNull(drawable);

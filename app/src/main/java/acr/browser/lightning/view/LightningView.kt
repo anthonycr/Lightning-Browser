@@ -16,6 +16,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.utils.Utils
@@ -39,6 +40,7 @@ import android.webkit.WebView
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.Single
 import com.anthonycr.bonsai.SingleOnSubscribe
+import io.reactivex.Observable
 import java.io.File
 import java.lang.ref.WeakReference
 import javax.inject.Inject
@@ -215,6 +217,10 @@ class LightningView(private val activity: Activity,
             loadHomepage()
         }
     }
+
+    fun currentSslState(): SSLState = lightningWebClient.sslState
+
+    fun sslStateObservable(): Observable<SSLState> = lightningWebClient.sslStateObservable()
 
     /**
      * This method loads the homepage for the browser. Either it loads the URL stored as the

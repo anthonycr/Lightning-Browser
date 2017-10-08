@@ -31,6 +31,7 @@ import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
+import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.Handlers
 import acr.browser.lightning.view.LightningView
@@ -44,6 +45,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -149,6 +151,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var refreshIconDrawable: Drawable? = null
     private var clearIconDrawable: Drawable? = null
     private var iconDrawable: Drawable? = null
+    private var sslDrawable: Drawable? = null
 
     private var presenter: BrowserPresenter? = null
     private var tabsView: TabsView? = null
@@ -364,7 +367,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             setTextColor(if (isDarkTheme) Color.WHITE else Color.BLACK)
             iconDrawable = refreshIconDrawable
             compoundDrawablePadding = Utils.dpToPx(3f)
-            setCompoundDrawables(null, null, refreshIconDrawable, null)
+            setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, refreshIconDrawable, null)
 
             val searchListener = SearchListenerClass()
             setOnKeyListener(searchListener)
@@ -472,7 +475,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 // Hack to make sure the text gets selected
                 (v as SearchView).selectAll()
                 iconDrawable = clearIconDrawable
-                searchView?.setCompoundDrawables(null, null, clearIconDrawable, null)
+                searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, clearIconDrawable, null)
             }
 
             if (!hasFocus) {
@@ -946,6 +949,28 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun notifyTabViewInitialized() {
         Log.d(TAG, "Notify Tabs Initialized")
         tabsView?.tabsInitialized()
+    }
+
+    override fun updateSslState(sslState: SSLState) {
+        sslDrawable = when (sslState) {
+            is SSLState.None -> null
+            is SSLState.Valid -> {
+                val securedDrawable = ThemeUtils.getVectorDrawable(this, R.drawable.ic_secured)
+                securedDrawable.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.ssl_secured), PorterDuff.Mode.SRC_IN)
+                securedDrawable.mutate()
+                securedDrawable
+            }
+            is SSLState.Invalid -> {
+                val unsecuredDrawable = ThemeUtils.getVectorDrawable(this, R.drawable.ic_unsecured)
+                unsecuredDrawable.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.ssl_unsecured), PorterDuff.Mode.SRC_IN)
+                unsecuredDrawable.mutate()
+                unsecuredDrawable
+            }
+        }
+
+        println("YOLO: $sslDrawable $sslState")
+
+        searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, iconDrawable, null)
     }
 
     override fun tabChanged(tab: LightningView) {
@@ -1945,7 +1970,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun setIsLoading(isLoading: Boolean) {
         if (searchView?.hasFocus() == false) {
             iconDrawable = if (isLoading) deleteIconDrawable else refreshIconDrawable
-            searchView?.setCompoundDrawables(null, null, iconDrawable, null)
+            searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, iconDrawable, null)
         }
     }
 
