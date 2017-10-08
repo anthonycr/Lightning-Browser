@@ -73,7 +73,7 @@ class DownloadsDatabase @Inject constructor(
         return@fromCallable id != -1L
     }
 
-    override fun addDownloadsList(downloadItems: List<DownloadItem>) = Completable.fromAction {
+    override fun addDownloadsList(downloadItems: List<DownloadItem>): Completable = Completable.fromAction {
         database.beginTransaction()
 
         for (item in downloadItems) {
