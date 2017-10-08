@@ -1,12 +1,16 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
+import acr.browser.lightning.adblock.whitelist.SessionWhitelistModel
+import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.database.bookmark.BookmarkDatabase
 import acr.browser.lightning.database.bookmark.BookmarkModel
 import acr.browser.lightning.database.downloads.DownloadsDatabase
 import acr.browser.lightning.database.downloads.DownloadsModel
 import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.database.history.HistoryModel
+import acr.browser.lightning.database.whitelist.AdBlockWhitelistDatabase
+import acr.browser.lightning.database.whitelist.AdBlockWhitelistModel
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
 import android.app.Application
@@ -36,6 +40,14 @@ class AppModule(private val app: BrowserApp) {
     @Provides
     @Singleton
     fun providesHistoryModel(): HistoryModel = HistoryDatabase(app)
+
+    @Provides
+    @Singleton
+    fun providesAdBlockWhitelistModel(): AdBlockWhitelistModel = AdBlockWhitelistDatabase(app)
+
+    @Provides
+    @Singleton
+    fun providesWhitelistModel(): WhitelistModel = SessionWhitelistModel(providesAdBlockWhitelistModel())
 
     @Provides
     @Singleton

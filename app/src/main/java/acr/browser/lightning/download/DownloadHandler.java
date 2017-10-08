@@ -57,6 +57,7 @@ public class DownloadHandler {
 
     @Inject DownloadsModel downloadsModel;
 
+    @Inject
     public DownloadHandler() {
         BrowserApp.getAppComponent().inject(this);
     }

@@ -4,6 +4,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
+import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.resizeAndShow
@@ -32,6 +33,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import com.anthonycr.mezzanine.MezzanineGenerator
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.net.URISyntaxException
@@ -49,6 +52,7 @@ class LightningWebClient(
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject internal lateinit var preferences: PreferenceManager
     @Inject internal lateinit var sslWarningPreferences: SslWarningPreferences
+    @Inject internal lateinit var whitelistModel: WhitelistModel
 
     private var adBlock: AdBlocker
 
@@ -84,9 +88,12 @@ class LightningWebClient(
         BrowserApp.appComponent.provideNoOpAdBlocker()
     }
 
+    private fun isAd(pageUrl: String, requestUrl: String) =
+            !whitelistModel.isUrlWhitelisted(pageUrl) && adBlock.isAd(requestUrl)
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-        if (adBlock.isAd(request.url.toString())) {
+        if (isAd(view.url, request.url.toString())) {
             val empty = ByteArrayInputStream("".toByteArray())
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
@@ -95,7 +102,7 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-        if (adBlock.isAd(url)) {
+        if (isAd(view.url, url)) {
             val empty = ByteArrayInputStream("".toByteArray())
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
