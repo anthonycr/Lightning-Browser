@@ -169,6 +169,7 @@ public final class Utils {
 
     /**
      * Extracts the domain name from a URL.
+     * NOTE: Should be used for display only.
      *
      * @param url the URL to extract the domain from.
      * @return the domain name, or the URL if the domain

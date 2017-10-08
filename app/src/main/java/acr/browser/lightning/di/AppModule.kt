@@ -11,13 +11,16 @@ import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.database.history.HistoryModel
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistDatabase
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistModel
+import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
 import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import io.reactivex.Scheduler
 import net.i2p.android.ui.I2PAndroidHelper
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -47,11 +50,16 @@ class AppModule(private val app: BrowserApp) {
 
     @Provides
     @Singleton
-    fun providesWhitelistModel(): WhitelistModel = SessionWhitelistModel(providesAdBlockWhitelistModel())
+    fun providesWhitelistModel(): WhitelistModel = SessionWhitelistModel(providesAdBlockWhitelistModel(), providesIoThread())
 
     @Provides
     @Singleton
     fun providesSslWarningPreferences(): SslWarningPreferences = SessionSslWarningPreferences()
+
+    @Provides
+    @Named("io")
+    @Singleton
+    fun providesIoThread(): Scheduler = IoSchedulers.database
 
     @Provides
     @Singleton

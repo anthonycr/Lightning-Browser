@@ -4,7 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.favicon.safeUri
+import acr.browser.lightning.utils.safeUri
 import android.app.Application
 import com.anthonycr.mezzanine.MezzanineGenerator
 import org.jsoup.Jsoup
