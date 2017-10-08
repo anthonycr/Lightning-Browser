@@ -54,6 +54,8 @@ public final class Utils {
 
     private static final String TAG = "Utils";
 
+    private Utils() {}
+
     public static boolean doesSupportHeaders() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
