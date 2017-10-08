@@ -87,16 +87,6 @@ public final class UrlUtils {
     }
 
     /**
-     * Returns true if the URL starts with https.
-     *
-     * @param url the URL to test.
-     * @return true if the URL is an SSL URL, false otherwise.
-     */
-    public static boolean isSslUrl(@Nullable String url) {
-        return url != null && url.startsWith(Constants.HTTPS);
-    }
-
-    /**
      * Returns whether the given url is the bookmarks/history page or a normal website
      */
     public static boolean isSpecialUrl(@Nullable String url) {

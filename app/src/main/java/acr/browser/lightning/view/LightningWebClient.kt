@@ -129,7 +129,7 @@ class LightningWebClient(
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-        sslState = if (UrlUtils.isSslUrl(view.url)) {
+        sslState = if (URLUtil.isHttpsUrl(view.url)) {
             SSLState.Valid()
         } else {
             SSLState.None()
