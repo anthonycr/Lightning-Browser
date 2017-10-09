@@ -11,6 +11,7 @@ import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.view.LightningView
 import android.app.Activity
@@ -75,6 +76,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     private fun onTabChanged(newTab: LightningView?) {
         Log.d(TAG, "On tab changed")
+        view.updateSslState(newTab?.currentSslState() ?: SSLState.None())
 
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab
