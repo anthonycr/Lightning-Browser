@@ -22,4 +22,4 @@ fun safeUri(url: String): Uri? {
 /**
  * Returns the domain name represented by the [url] or `null` if it is not a valid URL.
  */
-fun domainForUrl(url: String?): String? = safeUri(url ?: "")?.host
+fun domainForUrl(url: String?): String? = Uri.parse(url ?: "")?.host
