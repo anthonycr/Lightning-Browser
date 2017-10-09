@@ -17,7 +17,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Unit tests for [SessionWhitelistModel]
+ * Unit tests for [SessionWhitelistModel].
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
