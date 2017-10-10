@@ -34,27 +34,27 @@ class AppModule(private val app: BrowserApp) {
 
     @Provides
     @Singleton
-    fun provideBookmarkModel(): BookmarkRepository = BookmarkDatabase(app)
+    fun provideBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository = bookmarkDatabase
 
     @Provides
     @Singleton
-    fun provideDownloadsModel(): DownloadsRepository = DownloadsDatabase(app)
+    fun provideDownloadsModel(downloadsDatabase: DownloadsDatabase): DownloadsRepository = downloadsDatabase
 
     @Provides
     @Singleton
-    fun providesHistoryModel(): HistoryRepository = HistoryDatabase(app)
+    fun providesHistoryModel(historyDatabase: HistoryDatabase): HistoryRepository = historyDatabase
 
     @Provides
     @Singleton
-    fun providesAdBlockWhitelistModel(): AdBlockWhitelistRepository = AdBlockWhitelistDatabase(app)
+    fun providesAdBlockWhitelistModel(adBlockWhitelistDatabase: AdBlockWhitelistDatabase): AdBlockWhitelistRepository = adBlockWhitelistDatabase
 
     @Provides
     @Singleton
-    fun providesWhitelistModel(): WhitelistModel = SessionWhitelistModel(providesAdBlockWhitelistModel(), providesIoThread())
+    fun providesWhitelistModel(sessionWhitelistModel: SessionWhitelistModel): WhitelistModel = sessionWhitelistModel
 
     @Provides
     @Singleton
-    fun providesSslWarningPreferences(): SslWarningPreferences = SessionSslWarningPreferences()
+    fun providesSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences = sessionSslWarningPreferences
 
     @Provides
     @Named("io")
@@ -63,6 +63,6 @@ class AppModule(private val app: BrowserApp) {
 
     @Provides
     @Singleton
-    fun provideI2PAndroidHelper(): I2PAndroidHelper = I2PAndroidHelper(app.applicationContext)
+    fun provideI2PAndroidHelper(): I2PAndroidHelper = I2PAndroidHelper(app)
 
 }

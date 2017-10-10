@@ -1,6 +1,7 @@
 package acr.browser.lightning.ssl
 
 import acr.browser.lightning.utils.domainForUrl
+import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
@@ -8,7 +9,7 @@ import javax.inject.Singleton
  * persist them past an app restart.
  */
 @Singleton
-class SessionSslWarningPreferences : SslWarningPreferences {
+class SessionSslWarningPreferences @Inject constructor() : SslWarningPreferences {
 
     private val ignoredSslWarnings = hashMapOf<String, SslWarningPreferences.Behavior>()
 
