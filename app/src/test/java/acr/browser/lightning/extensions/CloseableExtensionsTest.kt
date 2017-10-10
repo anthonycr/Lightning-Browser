@@ -18,7 +18,7 @@ import java.io.Closeable
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
-class CloseableExtensionsKtTest {
+class CloseableExtensionsTest {
 
     @Rule
     @JvmField
