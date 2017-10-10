@@ -14,14 +14,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The disk backed ad block whitelist database. See [AdBlockWhitelistModel] for function
+ * The disk backed ad block whitelist database. See [AdBlockWhitelistRepository] for function
  * documentation.s
  */
 @Singleton
 @WorkerThread
 class AdBlockWhitelistDatabase @Inject constructor(
         application: Application
-) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), AdBlockWhitelistModel {
+) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), AdBlockWhitelistRepository {
 
     private val lazyDatabase = LazyDatabase(this)
 

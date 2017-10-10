@@ -9,7 +9,7 @@ import acr.browser.lightning.browser.bookmark.BookmarkUiModel
 import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.bookmark.BookmarkModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.safeDispose
 import acr.browser.lightning.favicon.FaviconModel
@@ -46,7 +46,7 @@ import javax.inject.Inject
 class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickListener, BookmarksView {
 
     // Managers
-    @Inject internal lateinit var bookmarkModel: BookmarkModel
+    @Inject internal lateinit var bookmarkModel: BookmarkRepository
 
     // Dialog builder
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder

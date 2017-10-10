@@ -36,7 +36,7 @@ import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkExporter;
-import acr.browser.lightning.database.bookmark.BookmarkModel;
+import acr.browser.lightning.database.bookmark.BookmarkRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.rx.IoSchedulers;
 import acr.browser.lightning.utils.Preconditions;
@@ -56,7 +56,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     @Nullable private Activity mActivity;
 
-    @Inject BookmarkModel mBookmarkManager;
+    @Inject BookmarkRepository mBookmarkManager;
     @Inject Application mApplication;
 
     private File[] mFileList;

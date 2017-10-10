@@ -7,7 +7,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.bookmark.BookmarkModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class BookmarkPage(activity: Activity) {
 
     @Inject internal lateinit var app: Application
-    @Inject internal lateinit var bookmarkModel: BookmarkModel
+    @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject internal lateinit var faviconModel: FaviconModel
 
     private val folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)

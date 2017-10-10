@@ -21,13 +21,13 @@ import javax.inject.Singleton
 
 
 /**
- * The disk backed download database. See [HistoryModel] for function documentation.
+ * The disk backed download database. See [HistoryRepository] for function documentation.
  */
 @Singleton
 @WorkerThread
 class HistoryDatabase @Inject constructor(
         application: Application
-) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), HistoryModel {
+) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), HistoryRepository {
 
     private val lazyDatabase = LazyDatabase(this)
 

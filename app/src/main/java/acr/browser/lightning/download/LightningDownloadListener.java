@@ -14,16 +14,16 @@ import android.util.Log;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
-import acr.browser.lightning.R;
-import acr.browser.lightning.BrowserApp;
-import acr.browser.lightning.database.downloads.DownloadsModel;
-import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
-
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
 import javax.inject.Inject;
+
+import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.R;
+import acr.browser.lightning.database.downloads.DownloadsRepository;
+import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 
 public class LightningDownloadListener implements DownloadListener {
 
@@ -33,7 +33,7 @@ public class LightningDownloadListener implements DownloadListener {
 
     @Inject PreferenceManager mPreferenceManager;
     @Inject DownloadHandler mDownloadHandler;
-    @Inject DownloadsModel downloadsModel;
+    @Inject DownloadsRepository downloadsRespository;
 
     public LightningDownloadListener(Activity context) {
         BrowserApp.getAppComponent().inject(this);

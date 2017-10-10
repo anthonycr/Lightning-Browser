@@ -10,7 +10,7 @@ import io.reactivex.Single
  *
  * Created by df1e on 29/5/17.
  */
-interface DownloadsModel {
+interface DownloadsRepository {
 
     /**
      * Determines if a URL is associated with a download.

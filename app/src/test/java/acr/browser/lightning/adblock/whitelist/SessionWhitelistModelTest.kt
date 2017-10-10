@@ -1,7 +1,7 @@
 package acr.browser.lightning.adblock.whitelist
 
 import acr.browser.lightning.BuildConfig
-import acr.browser.lightning.database.whitelist.AdBlockWhitelistModel
+import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.database.whitelist.WhitelistItem
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config
 @Config(constants = BuildConfig::class)
 class SessionWhitelistModelTest {
 
-    private val adBlockWhitelistModel = mock<AdBlockWhitelistModel>()
+    private val adBlockWhitelistModel = mock<AdBlockWhitelistRepository>()
 
     @Test
     fun `isUrlWhitelisted checks domain`() {

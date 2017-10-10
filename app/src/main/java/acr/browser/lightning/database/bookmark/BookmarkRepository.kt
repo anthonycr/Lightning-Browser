@@ -11,7 +11,7 @@ import io.reactivex.Single
  *
  * Created by anthonycr on 5/6/17.
  */
-interface BookmarkModel {
+interface BookmarkRepository {
 
     /**
      * Gets the bookmark associated with the URL.

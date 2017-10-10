@@ -9,7 +9,7 @@ import io.reactivex.Single
  *
  * Created by anthonycr on 6/9/17.
  */
-interface HistoryModel {
+interface HistoryRepository {
 
     /**
      * An observable that deletes browser history.

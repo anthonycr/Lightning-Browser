@@ -4,13 +4,13 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.adblock.whitelist.SessionWhitelistModel
 import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.database.bookmark.BookmarkDatabase
-import acr.browser.lightning.database.bookmark.BookmarkModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadsDatabase
-import acr.browser.lightning.database.downloads.DownloadsModel
+import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryDatabase
-import acr.browser.lightning.database.history.HistoryModel
+import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistDatabase
-import acr.browser.lightning.database.whitelist.AdBlockWhitelistModel
+import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
@@ -34,19 +34,19 @@ class AppModule(private val app: BrowserApp) {
 
     @Provides
     @Singleton
-    fun provideBookmarkModel(): BookmarkModel = BookmarkDatabase(app)
+    fun provideBookmarkModel(): BookmarkRepository = BookmarkDatabase(app)
 
     @Provides
     @Singleton
-    fun provideDownloadsModel(): DownloadsModel = DownloadsDatabase(app)
+    fun provideDownloadsModel(): DownloadsRepository = DownloadsDatabase(app)
 
     @Provides
     @Singleton
-    fun providesHistoryModel(): HistoryModel = HistoryDatabase(app)
+    fun providesHistoryModel(): HistoryRepository = HistoryDatabase(app)
 
     @Provides
     @Singleton
-    fun providesAdBlockWhitelistModel(): AdBlockWhitelistModel = AdBlockWhitelistDatabase(app)
+    fun providesAdBlockWhitelistModel(): AdBlockWhitelistRepository = AdBlockWhitelistDatabase(app)
 
     @Provides
     @Singleton

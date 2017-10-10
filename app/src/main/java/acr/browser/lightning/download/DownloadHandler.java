@@ -36,7 +36,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadItem;
-import acr.browser.lightning.database.downloads.DownloadsModel;
+import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.rx.IoSchedulers;
@@ -55,7 +55,7 @@ public class DownloadHandler {
 
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
-    @Inject DownloadsModel downloadsModel;
+    @Inject DownloadsRepository downloadsRepository;
 
     @Inject
     public DownloadHandler() {
@@ -269,7 +269,7 @@ public class DownloadHandler {
         LightningView view = browserActivity.getTabModel().getCurrentTab();
 
         if (view != null && !view.isIncognito()) {
-            downloadsModel.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
+            downloadsRepository.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
                 .subscribeOn(IoSchedulers.getDatabase())
                 .subscribe(new Consumer<Boolean>() {
                     @Override

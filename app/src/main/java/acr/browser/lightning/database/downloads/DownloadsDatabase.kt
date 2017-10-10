@@ -14,12 +14,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The disk backed download database. See [DownloadsModel] for function documentation.
+ * The disk backed download database. See [DownloadsRepository] for function documentation.
  */
 @Singleton
 class DownloadsDatabase @Inject constructor(
         application: Application
-) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), DownloadsModel {
+) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), DownloadsRepository {
 
     private val lazy = LazyDatabase(this)
     private val database: SQLiteDatabase

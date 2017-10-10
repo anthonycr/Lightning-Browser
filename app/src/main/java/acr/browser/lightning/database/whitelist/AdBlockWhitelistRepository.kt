@@ -7,7 +7,7 @@ import io.reactivex.Single
 /**
  * The interface used to communicate with the ad block whitelist interface.
  */
-interface AdBlockWhitelistModel {
+interface AdBlockWhitelistRepository {
 
     /**
      * Returns a [Single] that emits a list of all [WhitelistItem] in the database.

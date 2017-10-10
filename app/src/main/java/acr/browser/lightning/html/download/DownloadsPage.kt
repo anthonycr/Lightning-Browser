@@ -5,7 +5,7 @@ package acr.browser.lightning.html.download
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.downloads.DownloadsModel
+import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.preference.PreferenceManager
 import android.app.Application
 import com.anthonycr.bonsai.Single
@@ -17,7 +17,7 @@ class DownloadsPage {
 
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var preferenceManager: PreferenceManager
-    @Inject internal lateinit var manager: DownloadsModel
+    @Inject internal lateinit var manager: DownloadsRepository
 
     init {
         BrowserApp.appComponent.inject(this)

@@ -13,8 +13,8 @@ import acr.browser.lightning.browser.fragment.TabsFragment
 import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.bookmark.BookmarkModel
-import acr.browser.lightning.database.history.HistoryModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -135,8 +135,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var cameraPhotoPath: String? = null
 
     // The singleton BookmarkManager
-    @Inject internal lateinit var bookmarkManager: BookmarkModel
-    @Inject internal lateinit var historyModel: HistoryModel
+    @Inject internal lateinit var bookmarkManager: BookmarkRepository
+    @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var searchBoxModel: SearchBoxModel
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider

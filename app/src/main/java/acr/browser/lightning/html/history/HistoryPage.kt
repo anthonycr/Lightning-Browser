@@ -5,7 +5,7 @@ package acr.browser.lightning.html.history
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.history.HistoryModel
+import acr.browser.lightning.database.history.HistoryRepository
 import android.app.Application
 import com.anthonycr.bonsai.Completable
 import com.anthonycr.bonsai.Single
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class HistoryPage {
 
     @Inject internal lateinit var app: Application
-    @Inject internal lateinit var historyModel: HistoryModel
+    @Inject internal lateinit var historyModel: HistoryRepository
 
     init {
         BrowserApp.appComponent.inject(this)

@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.BrowserApp;
-import acr.browser.lightning.database.history.HistoryModel;
+import acr.browser.lightning.database.history.HistoryRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
@@ -47,7 +47,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_DONOTTRACK = "do_not_track";
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
-    @Inject HistoryModel mHistoryModel;
+    @Inject HistoryRepository mHistoryRepository;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -196,7 +196,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                 Activity activity = getActivity();
                 if (activity != null) {
                     // TODO: 6/9/17 clearHistory is not synchronous
-                    WebUtils.clearHistory(activity, mHistoryModel);
+                    WebUtils.clearHistory(activity, mHistoryRepository);
                     subscriber.onComplete();
                 }
                 subscriber.onError(new RuntimeException("Activity was null in clearHistory"));

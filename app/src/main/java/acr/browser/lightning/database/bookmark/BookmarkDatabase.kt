@@ -19,14 +19,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * The disk backed bookmark database. See [BookmarkModel] for function documentation.
+ * The disk backed bookmark database. See [BookmarkRepository] for function documentation.
  *
  * Created by anthonycr on 5/6/17.
  */
 @Singleton
 class BookmarkDatabase @Inject constructor(
         application: Application
-) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), BookmarkModel {
+) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), BookmarkRepository {
 
     private val defaultBookmarkTitle: String = application.getString(R.string.untitled)
     private val lazy = LazyDatabase(this)

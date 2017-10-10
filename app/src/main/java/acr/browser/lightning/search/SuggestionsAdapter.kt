@@ -3,8 +3,8 @@ package acr.browser.lightning.search
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.bookmark.BookmarkModel
-import acr.browser.lightning.database.history.HistoryModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
@@ -40,9 +40,9 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
 
     private val filterComparator = SuggestionsComparator()
 
-    @Inject internal lateinit var bookmarkManager: BookmarkModel
+    @Inject internal lateinit var bookmarkManager: BookmarkRepository
     @Inject internal lateinit var preferenceManager: PreferenceManager
-    @Inject internal lateinit var historyModel: HistoryModel
+    @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var application: Application
 
     private val allBookmarks = ArrayList<HistoryItem>(5)
@@ -237,7 +237,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             !isIncognito && suggestionChoice != PreferenceManager.Suggestion.SUGGESTION_NONE
 
     private class SearchFilter internal constructor(private val suggestionsAdapter: SuggestionsAdapter,
-                                                    private val historyModel: HistoryModel) : Filter() {
+                                                    private val historyModel: HistoryRepository) : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
             val results = Filter.FilterResults()

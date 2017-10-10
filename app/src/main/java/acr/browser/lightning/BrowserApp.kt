@@ -1,7 +1,7 @@
 package acr.browser.lightning
 
 import acr.browser.lightning.database.bookmark.BookmarkExporter
-import acr.browser.lightning.database.bookmark.BookmarkModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager
 import acr.browser.lightning.di.AppComponent
 import acr.browser.lightning.di.AppModule
@@ -28,7 +28,7 @@ import javax.inject.Inject
 class BrowserApp : Application() {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
-    @Inject internal lateinit var bookmarkModel: BookmarkModel
+    @Inject internal lateinit var bookmarkModel: BookmarkRepository
 
     override fun onCreate() {
         super.onCreate()

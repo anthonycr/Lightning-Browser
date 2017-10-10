@@ -7,9 +7,9 @@ import acr.browser.lightning.constant.FOLDER
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.bookmark.BookmarkModel
-import acr.browser.lightning.database.downloads.DownloadsModel
-import acr.browser.lightning.database.history.HistoryModel
+import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.database.downloads.DownloadsRepository
+import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.preference.PreferenceManager
@@ -38,9 +38,9 @@ class LightningDialogBuilder @Inject constructor() {
         INCOGNITO
     }
 
-    @Inject internal lateinit var bookmarkManager: BookmarkModel
-    @Inject internal lateinit var downloadsModel: DownloadsModel
-    @Inject internal lateinit var historyModel: HistoryModel
+    @Inject internal lateinit var bookmarkManager: BookmarkRepository
+    @Inject internal lateinit var downloadsModel: DownloadsRepository
+    @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var downloadHandler: DownloadHandler
 
