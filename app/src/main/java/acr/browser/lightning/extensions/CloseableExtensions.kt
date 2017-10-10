@@ -4,7 +4,7 @@ import android.util.Log
 import java.io.Closeable
 
 /**
- * Close a [Closeable] and absorb any exceptions, logging them when they occur.
+ * Close a [Closeable] and absorb any exceptions within [block], logging them when they occur.
  */
 fun <T : Closeable> T.safeUse(block: (T) -> Unit) {
     try {
