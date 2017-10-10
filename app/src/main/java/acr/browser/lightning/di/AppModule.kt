@@ -11,7 +11,6 @@ import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistDatabase
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
-import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.ssl.SessionSslWarningPreferences
 import acr.browser.lightning.ssl.SslWarningPreferences
 import android.app.Application
@@ -19,7 +18,9 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import net.i2p.android.ui.I2PAndroidHelper
+import java.util.concurrent.Executors
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -57,9 +58,9 @@ class AppModule(private val app: BrowserApp) {
     fun providesSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences = sessionSslWarningPreferences
 
     @Provides
-    @Named("io")
+    @Named("database")
     @Singleton
-    fun providesIoThread(): Scheduler = IoSchedulers.database
+    fun providesIoThread(): Scheduler = Schedulers.from(Executors.newFixedThreadPool(2))
 
     @Provides
     @Singleton

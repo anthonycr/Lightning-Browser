@@ -6,7 +6,6 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.content.Context
@@ -17,11 +16,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.anthonycr.bonsai.*
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FilenameFilter
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito: Boolean) : BaseAdapter(), Filterable {
 
@@ -44,6 +45,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
     @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var application: Application
+    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val allBookmarks = ArrayList<HistoryItem>(5)
 
@@ -74,7 +76,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
 
     fun refreshBookmarks() {
         bookmarkManager.getAllBookmarks()
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .subscribe { list ->
                     allBookmarks.clear()
                     allBookmarks.addAll(list)
@@ -136,7 +138,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         return finalView
     }
 
-    override fun getFilter(): Filter = SearchFilter(this, historyModel)
+    override fun getFilter(): Filter = SearchFilter(this, historyModel, databaseScheduler)
 
     @Synchronized private fun publishResults(list: List<HistoryItem>) {
         if (list != filteredList) {
@@ -237,7 +239,8 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             !isIncognito && suggestionChoice != PreferenceManager.Suggestion.SUGGESTION_NONE
 
     private class SearchFilter internal constructor(private val suggestionsAdapter: SuggestionsAdapter,
-                                                    private val historyModel: HistoryRepository) : Filter() {
+                                                    private val historyModel: HistoryRepository,
+                                                    private val databaseScheduler: Scheduler) : Filter() {
 
         override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
             val results = Filter.FilterResults()
@@ -266,7 +269,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                     })
 
             historyModel.findHistoryItemsContaining(query)
-                    .subscribeOn(IoSchedulers.database)
+                    .subscribeOn(databaseScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { list ->
                         suggestionsAdapter.combineResults(null, list, null)

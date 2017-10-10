@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
@@ -38,10 +39,10 @@ import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkExporter;
 import acr.browser.lightning.database.bookmark.BookmarkRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.rx.IoSchedulers;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.SubscriptionUtils;
 import acr.browser.lightning.utils.Utils;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
@@ -58,6 +59,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
     @Inject BookmarkRepository mBookmarkManager;
     @Inject Application mApplication;
+    @Inject @Named("database") Scheduler databaseScheduler;
 
     private File[] mFileList;
     private String[] mFileNameList;
@@ -127,7 +129,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
                         @Override
                         public void onGranted() {
                             mBookmarkManager.getAllBookmarks()
-                                .subscribeOn(IoSchedulers.getDatabase())
+                                .subscribeOn(databaseScheduler)
                                 .subscribe(new Consumer<List<HistoryItem>>() {
                                     @Override
                                     public void accept(List<HistoryItem> list) throws Exception {
@@ -215,7 +217,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mBookmarkManager.deleteAllBookmarks().subscribeOn(IoSchedulers.getDatabase()).subscribe();
+                mBookmarkManager.deleteAllBookmarks().subscribeOn(databaseScheduler).subscribe();
             }
         });
         Dialog dialog = builder.show();
@@ -307,7 +309,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
 
                                 Preconditions.checkNonNull(importList);
                                 mBookmarkManager.addBookmarkList(importList)
-                                    .subscribeOn(IoSchedulers.getDatabase())
+                                    .subscribeOn(databaseScheduler)
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new Action() {
                                         @Override

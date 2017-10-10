@@ -21,15 +21,17 @@ import com.anthonycr.bonsai.CompletableSubscriber;
 import com.anthonycr.bonsai.Schedulers;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import acr.browser.lightning.R;
 import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.R;
 import acr.browser.lightning.database.history.HistoryRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
 import acr.browser.lightning.view.LightningView;
+import io.reactivex.Scheduler;
 
 public class PrivacySettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
@@ -48,6 +50,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
     @Inject HistoryRepository mHistoryRepository;
+    @Inject @Named("database") Scheduler databaseScheduler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -196,7 +199,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                 Activity activity = getActivity();
                 if (activity != null) {
                     // TODO: 6/9/17 clearHistory is not synchronous
-                    WebUtils.clearHistory(activity, mHistoryRepository);
+                    WebUtils.clearHistory(activity, mHistoryRepository, databaseScheduler);
                     subscriber.onComplete();
                 }
                 subscriber.onError(new RuntimeException("Activity was null in clearHistory"));

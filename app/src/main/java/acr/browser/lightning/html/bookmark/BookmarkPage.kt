@@ -8,26 +8,28 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.rx.IoSchedulers
-import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.extensions.safeUse
+import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.utils.ThemeUtils
 import android.app.Activity
 import android.app.Application
 import android.graphics.Bitmap
 import android.text.TextUtils
 import com.anthonycr.bonsai.Single
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
 import javax.inject.Inject
+import javax.inject.Named
 
 class BookmarkPage(activity: Activity) {
 
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject internal lateinit var faviconModel: FaviconModel
+    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)
 
@@ -61,7 +63,7 @@ class BookmarkPage(activity: Activity) {
                     }
                 }).toList()
                 .map { it.flatMap { it }.toMutableList() }
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { bookmarksAndFolders ->
                     bookmarksAndFolders.sort()

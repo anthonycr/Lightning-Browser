@@ -14,7 +14,6 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.reading.activity.ReadingActivity
-import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.graphics.Bitmap
@@ -34,6 +33,7 @@ import android.widget.TextView
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.bonsai.Subscription
+import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -41,6 +41,7 @@ import kotlinx.android.synthetic.main.bookmark_drawer.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import javax.inject.Named
 
 class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickListener, BookmarksView {
 
@@ -53,6 +54,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
     @Inject internal lateinit var faviconModel: FaviconModel
+
+    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private lateinit var uiController: UIController
 
@@ -182,7 +185,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     private fun updateBookmarkIndicator(url: String) {
         bookmarkUpdateSubscription?.dispose()
         bookmarkUpdateSubscription = bookmarkModel.isBookmark(url)
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { boolean ->
                     bookmarkUpdateSubscription = null
@@ -219,7 +222,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     }
                 }).toList()
                 .map { it.flatMap { it }.toMutableList() }
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { bookmarksAndFolders ->
                     uiModel.currentFolder = folder

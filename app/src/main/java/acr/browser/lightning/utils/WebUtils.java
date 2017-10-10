@@ -12,7 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
 import acr.browser.lightning.database.history.HistoryRepository;
-import acr.browser.lightning.rx.IoSchedulers;
+import io.reactivex.Scheduler;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino
@@ -37,9 +37,11 @@ public final class WebUtils {
         WebStorage.getInstance().deleteAllData();
     }
 
-    public static void clearHistory(@NonNull Context context, @NonNull HistoryRepository historyRepository) {
+    public static void clearHistory(@NonNull Context context,
+                                    @NonNull HistoryRepository historyRepository,
+                                    @NonNull Scheduler databaseScheduler) {
         historyRepository.deleteHistory()
-                .subscribeOn(IoSchedulers.getDatabase())
+                .subscribeOn(databaseScheduler)
                 .subscribe();
         WebViewDatabase m = WebViewDatabase.getInstance(context);
         m.clearFormData();

@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class SessionWhitelistModel @Inject constructor(
         private val adBlockWhitelistModel: AdBlockWhitelistRepository,
-        @Named("io") private val ioScheduler: Scheduler
+        @Named("database") private val ioScheduler: Scheduler
 ) : WhitelistModel {
 
     private var whitelistSet = hashSetOf<String>()

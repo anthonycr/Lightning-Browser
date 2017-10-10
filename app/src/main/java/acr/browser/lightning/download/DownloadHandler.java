@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.BrowserApp;
@@ -39,10 +40,10 @@ import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.rx.IoSchedulers;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
+import io.reactivex.Scheduler;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -56,6 +57,7 @@ public class DownloadHandler {
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     @Inject DownloadsRepository downloadsRepository;
+    @Inject @Named("database") Scheduler databaseScheduler;
 
     @Inject
     public DownloadHandler() {
@@ -270,7 +272,7 @@ public class DownloadHandler {
 
         if (view != null && !view.isIncognito()) {
             downloadsRepository.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
-                .subscribeOn(IoSchedulers.getDatabase())
+                .subscribeOn(databaseScheduler)
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean aBoolean) throws Exception {

@@ -27,7 +27,6 @@ import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkObservable
 import acr.browser.lightning.notifications.IncognitoNotification
 import acr.browser.lightning.reading.activity.ReadingActivity
-import acr.browser.lightning.rx.IoSchedulers
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
@@ -85,6 +84,7 @@ import com.anthonycr.bonsai.Completable
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.grant.PermissionsManager
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
@@ -93,6 +93,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Named
 
 abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIController, OnClickListener {
 
@@ -141,6 +142,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var searchBoxModel: SearchBoxModel
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject internal lateinit var networkObservable: NetworkObservable
+    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val tabsManager: TabsManager = TabsManager()
 
@@ -826,7 +828,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         val item = HistoryItem(url, title)
         bookmarkManager.addBookmarkIfNotExists(item)
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { boolean ->
                     if (boolean) {
@@ -841,7 +843,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val item = HistoryItem(url, title)
 
         bookmarkManager.deleteBookmark(item)
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { boolean ->
                     if (boolean) {
@@ -1075,7 +1077,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         if (!UrlUtils.isSpecialUrl(url)) {
             bookmarkManager.isBookmark(url)
-                    .subscribeOn(IoSchedulers.database)
+                    .subscribeOn(databaseScheduler)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { boolean ->
                         if (boolean) {
@@ -1134,7 +1136,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             Log.d(TAG, "Cache Cleared")
         }
         if (preferences.clearHistoryExitEnabled && !isIncognito) {
-            WebUtils.clearHistory(this, historyModel)
+            WebUtils.clearHistory(this, historyModel, databaseScheduler)
             Log.d(TAG, "History Cleared")
         }
         if (preferences.clearCookiesExitEnabled && !isIncognito) {
@@ -1404,7 +1406,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         historyModel.visitHistoryItem(url, title)
-                .subscribeOn(IoSchedulers.database)
+                .subscribeOn(databaseScheduler)
                 .subscribe()
     }
 
