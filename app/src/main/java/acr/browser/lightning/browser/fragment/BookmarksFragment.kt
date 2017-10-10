@@ -11,7 +11,6 @@ import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.extensions.safeDispose
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.reading.activity.ReadingActivity
@@ -154,8 +153,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     override fun onDestroyView() {
         super.onDestroyView()
 
-        bookmarksSubscription.safeDispose()
-        bookmarkUpdateSubscription.safeDispose()
+        bookmarksSubscription?.dispose()
+        bookmarkUpdateSubscription?.dispose()
 
         bookmarkAdapter?.cleanupSubscriptions()
     }
@@ -163,8 +162,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     override fun onDestroy() {
         super.onDestroy()
 
-        bookmarksSubscription.safeDispose()
-        bookmarkUpdateSubscription.safeDispose()
+        bookmarksSubscription?.dispose()
+        bookmarkUpdateSubscription?.dispose()
 
         bookmarkAdapter?.cleanupSubscriptions()
     }
@@ -181,7 +180,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     }
 
     private fun updateBookmarkIndicator(url: String) {
-        bookmarkUpdateSubscription.safeDispose()
+        bookmarkUpdateSubscription?.dispose()
         bookmarkUpdateSubscription = bookmarkModel.isBookmark(url)
                 .subscribeOn(IoSchedulers.database)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -210,7 +209,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     }
 
     private fun setBookmarksShown(folder: String?, animate: Boolean) {
-        bookmarksSubscription.safeDispose()
+        bookmarksSubscription?.dispose()
         bookmarksSubscription = bookmarkModel.getBookmarksFromFolderSorted(folder)
                 .concatWith(Single.defer {
                     if (folder == null) {
