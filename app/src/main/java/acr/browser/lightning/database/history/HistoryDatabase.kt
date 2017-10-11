@@ -116,14 +116,13 @@ class HistoryDatabase @Inject constructor(
     }
 
     @WorkerThread
-    @Synchronized internal fun getHistoryItem(url: String): String? {
-        database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
-                "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
-            it.moveToFirst()
+    @Synchronized internal fun getHistoryItem(url: String): String? =
+            database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
+                    "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
+                it.moveToFirst()
 
-            return it.getString(0)
-        }
-    }
+                return it.getString(0)
+            }
 
     internal fun getAllHistoryItems(): List<HistoryItem> {
         val itemList = ArrayList<HistoryItem>()

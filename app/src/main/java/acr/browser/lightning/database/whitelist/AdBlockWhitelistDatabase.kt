@@ -46,12 +46,10 @@ class AdBlockWhitelistDatabase @Inject constructor(
         onCreate(db)
     }
 
-    private fun Cursor.bindToWhitelistItem(): WhitelistItem {
-        return WhitelistItem(
-                url = getString(1),
-                timeCreated = getLong(2)
-        )
-    }
+    private fun Cursor.bindToWhitelistItem() = WhitelistItem(
+            url = getString(1),
+            timeCreated = getLong(2)
+    )
 
     override fun allWhitelistItems(): Single<List<WhitelistItem>> = Single.fromCallable {
         val whitelistItems = mutableListOf<WhitelistItem>()

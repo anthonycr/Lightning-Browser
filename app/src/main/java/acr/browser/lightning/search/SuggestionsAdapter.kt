@@ -200,9 +200,8 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         }).subscribeOn(filterScheduler)
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                    override fun onItem(item: List<HistoryItem>?) {
-                        publishResults(requireNotNull(item))
-                    }
+                    override fun onItem(item: List<HistoryItem>?) =
+                            publishResults(requireNotNull(item))
                 })
     }
 
