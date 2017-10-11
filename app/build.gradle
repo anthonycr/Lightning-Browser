@@ -89,7 +89,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.3'
 
     // dependency injection
-    final def daggerVersion = '2.11'
+    final def daggerVersion = '2.12'
     compile "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
