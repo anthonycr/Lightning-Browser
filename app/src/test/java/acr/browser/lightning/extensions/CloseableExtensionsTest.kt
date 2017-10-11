@@ -1,6 +1,7 @@
 package acr.browser.lightning.extensions
 
 import acr.browser.lightning.BuildConfig
+import acr.browser.lightning.TestApplication
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
@@ -17,7 +18,7 @@ import java.io.Closeable
  * Unit tests for [Closeable] extensions.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class)
+@Config(constants = BuildConfig::class, application = TestApplication::class)
 class CloseableExtensionsTest {
 
     @Rule

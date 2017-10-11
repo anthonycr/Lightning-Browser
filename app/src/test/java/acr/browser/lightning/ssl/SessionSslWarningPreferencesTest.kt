@@ -1,6 +1,7 @@
 package acr.browser.lightning.ssl
 
 import acr.browser.lightning.BuildConfig
+import acr.browser.lightning.TestApplication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -11,7 +12,7 @@ import org.robolectric.annotation.Config
  * Unit tests for [SessionSslWarningPreferences]
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class)
+@Config(constants = BuildConfig::class, application = TestApplication::class)
 class SessionSslWarningPreferencesTest {
 
     @Test
