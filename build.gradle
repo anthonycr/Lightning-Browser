@@ -21,7 +21,7 @@ allprojects {
 ext {
     minSdkVersion = 14
     targetSdkVersion = 26
-    buildToolsVersion = '26.0.1'
+    buildToolsVersion = '26.0.2'
 
     versionName = '4.5.1'
     versionCode_lite = 98
