@@ -21,6 +21,9 @@ import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import net.i2p.android.ui.I2PAndroidHelper
 import java.util.concurrent.Executors
+import java.util.concurrent.LinkedBlockingDeque
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -60,7 +63,12 @@ class AppModule(private val app: BrowserApp) {
     @Provides
     @Named("database")
     @Singleton
-    fun providesIoThread(): Scheduler = Schedulers.from(Executors.newFixedThreadPool(2))
+    fun providesIoThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
+
+    @Provides
+    @Named("network")
+    @Singleton
+    fun providesNetworkThread(): Scheduler = Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))
 
     @Provides
     @Singleton
