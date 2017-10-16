@@ -68,10 +68,8 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      *
      * @param tab the tab that changed, may be null.
      */
-    fun tabChangeOccurred(tab: LightningView?) {
-        tab?.let {
-            view.notifyTabViewChanged(tabsModel.indexOfTab(it))
-        }
+    fun tabChangeOccurred(tab: LightningView?) = tab?.let {
+        view.notifyTabViewChanged(tabsModel.indexOfTab(it))
     }
 
     private fun onTabChanged(newTab: LightningView?) {
@@ -157,7 +155,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      * @param position the position at which to delete the tab.
      */
     fun deleteTab(position: Int) {
-        Log.d(TAG, "delete Tab")
+        Log.d(TAG, "deleting tab...")
         val tabToDelete = tabsModel.getTabAtPosition(position) ?: return
 
         if (!UrlUtils.isSpecialUrl(tabToDelete.url) && !isIncognito) {
@@ -167,9 +165,10 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         val isShown = tabToDelete.isShown
         val shouldClose = shouldClose && isShown && tabToDelete.isNewTab
         val currentTab = tabsModel.currentTab
-        if (tabsModel.size() == 1 && currentTab != null &&
-                URLUtil.isFileUrl(currentTab.url) &&
-                currentTab.url == mapHomepageToCurrentUrl()) {
+        if (tabsModel.size() == 1
+                && currentTab != null
+                && URLUtil.isFileUrl(currentTab.url)
+                && currentTab.url == mapHomepageToCurrentUrl()) {
             view.closeActivity()
             return
         } else {
@@ -199,7 +198,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
         view.updateTabNumber(tabsModel.size())
 
-        Log.d(TAG, "deleted tab")
+        Log.d(TAG, "...deleted tab")
     }
 
     /**
@@ -209,27 +208,21 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun onNewIntent(intent: Intent?) = tabsModel.doAfterInitialization {
         val url = intent?.dataString
-        var tabHashCode = 0
-        if (intent != null && intent.extras != null) {
-            tabHashCode = intent.extras.getInt(INTENT_ORIGIN)
-        }
+        val tabHashCode = intent?.extras?.getInt(INTENT_ORIGIN, 0) ?: 0
 
         if (tabHashCode != 0 && url != null) {
-            val tab = tabsModel.getTabForHashCode(tabHashCode)
-            tab?.loadUrl(url)
+            tabsModel.getTabForHashCode(tabHashCode)?.loadUrl(url)
         } else if (url != null) {
             if (URLUtil.isFileUrl(url)) {
                 view.showBlockedLocalFileDialog {
                     newTab(url, true)
                     shouldClose = true
-                    val tab = tabsModel.lastTab()
-                    tab?.isNewTab = true
+                    tabsModel.lastTab()?.isNewTab = true
                 }
             } else {
                 newTab(url, true)
                 shouldClose = true
-                val tab = tabsModel.lastTab()
-                tab?.isNewTab = true
+                tabsModel.lastTab()?.isNewTab = true
             }
         }
     }
@@ -240,10 +233,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      * @param url the URL to load, must not be null.
      */
     fun loadUrlInCurrentView(url: String) {
-        val currentTab = tabsModel.currentTab ?: // This is a problem, probably an assert will be better than a return
-                return
-
-        currentTab.loadUrl(url)
+        tabsModel.currentTab?.loadUrl(url)
     }
 
     /**
@@ -264,12 +254,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     @Synchronized
     fun tabChanged(position: Int) {
-        Log.d(TAG, "tabChanged: " + position)
         if (position < 0 || position >= tabsModel.size()) {
+            Log.d(TAG, "tabChanged invalid position: $position")
             return
         }
-        val tab = tabsModel.switchToTab(position)
-        onTabChanged(tab)
+
+        Log.d(TAG, "tabChanged: $position")
+        onTabChanged(tabsModel.switchToTab(position))
     }
 
     /**
@@ -288,7 +279,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
             return false
         }
 
-        Log.d(TAG, "New tab, show: " + show)
+        Log.d(TAG, "New tab, show: $show")
 
         val startingTab = tabsModel.newTab(view as Activity, url, isIncognito)
         if (tabsModel.size() == 1) {
@@ -299,8 +290,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         view.updateTabNumber(tabsModel.size())
 
         if (show) {
-            val tab = tabsModel.switchToTab(tabsModel.last())
-            onTabChanged(tab)
+            onTabChanged(tabsModel.switchToTab(tabsModel.last()))
         }
 
         return true
