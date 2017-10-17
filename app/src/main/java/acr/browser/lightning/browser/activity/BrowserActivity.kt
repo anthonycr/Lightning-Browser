@@ -585,8 +585,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun initializePreferences() {
         val currentView = tabsManager.currentTab
         isFullScreen = preferences.fullScreenEnabled
-        var colorMode = preferences.colorModeEnabled
-        colorMode = colorMode and !isDarkTheme
+        val colorMode = preferences.colorModeEnabled && !isDarkTheme
 
         webPageBitmap?.let { webBitmap ->
             if (!isIncognito && !colorMode && !isDarkTheme) {
@@ -1325,7 +1324,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
         Palette.from(favicon).generate { palette ->
             // OR with opaque black to remove transparency glitches
-            val color = -0x1000000 or palette.getVibrantColor(defaultColor)
+            val color = Color.BLACK or palette.getVibrantColor(defaultColor)
 
             // Lighten up the dark color if it is too dark
             val finalColor = if (!shouldShowTabsInDrawer || Utils.isColorTooDark(color)) {
