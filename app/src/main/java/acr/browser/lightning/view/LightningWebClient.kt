@@ -48,6 +48,7 @@ class LightningWebClient(
 
     private val uiController: UIController
     private val intentUtils = IntentUtils(activity)
+    private val emptyResponseByteArray: ByteArray = byteArrayOf()
 
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject internal lateinit var preferences: PreferenceManager
@@ -97,7 +98,7 @@ class LightningWebClient(
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
         val pageUrl = currentUrl
         if (isAd(pageUrl, request.url.toString())) {
-            val empty = ByteArrayInputStream("".toByteArray())
+            val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
         return super.shouldInterceptRequest(view, request)
@@ -107,7 +108,7 @@ class LightningWebClient(
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
         val pageUrl = currentUrl
         if (isAd(pageUrl, url)) {
-            val empty = ByteArrayInputStream("".toByteArray())
+            val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
         return null
