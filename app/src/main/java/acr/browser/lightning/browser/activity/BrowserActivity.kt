@@ -44,7 +44,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -956,15 +956,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         sslDrawable = when (sslState) {
             is SSLState.None -> null
             is SSLState.Valid -> {
-                val securedDrawable = ThemeUtils.getVectorDrawable(this, R.drawable.ic_secured)
-                securedDrawable.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.ssl_secured), PorterDuff.Mode.SRC_IN)
-                securedDrawable.mutate()
+                val bitmap = DrawableUtils.getImageInsetInRoundedSquare(this, R.drawable.ic_secured, R.color.ssl_secured)
+                val securedDrawable = BitmapDrawable(resources, bitmap)
                 securedDrawable
             }
             is SSLState.Invalid -> {
-                val unsecuredDrawable = ThemeUtils.getVectorDrawable(this, R.drawable.ic_unsecured)
-                unsecuredDrawable.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.ssl_unsecured), PorterDuff.Mode.SRC_IN)
-                unsecuredDrawable.mutate()
+                val bitmap = DrawableUtils.getImageInsetInRoundedSquare(this, R.drawable.ic_unsecured, R.color.ssl_unsecured)
+                val unsecuredDrawable = BitmapDrawable(resources, bitmap)
                 unsecuredDrawable
             }
         }

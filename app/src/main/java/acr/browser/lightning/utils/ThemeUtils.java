@@ -139,7 +139,7 @@ public final class ThemeUtils {
 
     // http://stackoverflow.com/a/38244327/1499541
     @NonNull
-    private static Bitmap getBitmapFromVectorDrawable(@NonNull Context context, int drawableId) {
+    public static Bitmap getBitmapFromVectorDrawable(@NonNull Context context, int drawableId) {
         Drawable drawable = getVectorDrawable(context, drawableId);
 
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
