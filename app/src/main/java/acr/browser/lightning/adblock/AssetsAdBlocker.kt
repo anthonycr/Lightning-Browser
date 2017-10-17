@@ -8,7 +8,6 @@ import android.app.Application
 import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URI
 import java.net.URISyntaxException
@@ -61,7 +60,7 @@ class AssetsAdBlocker @Inject internal constructor(
      */
     private fun loadHostsFile() = Completable.fromAction {
         val asset = application.assets
-        val reader = BufferedReader(InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME)))
+        val reader = InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
         val lineBuilder = StringBuilder()
         val time = System.currentTimeMillis()
 
