@@ -477,7 +477,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 // Hack to make sure the text gets selected
                 (v as SearchView).selectAll()
                 iconDrawable = clearIconDrawable
-                searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, clearIconDrawable, null)
+                searchView?.setCompoundDrawablesWithIntrinsicBounds(null, null, clearIconDrawable, null)
             }
 
             if (!hasFocus) {
