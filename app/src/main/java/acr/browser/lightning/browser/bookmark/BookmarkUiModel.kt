@@ -19,7 +19,6 @@ class BookmarkUiModel {
      *
      * @return true if the current folder is the root, false otherwise.
      */
-    val isRootFolder: Boolean
-        get() = currentFolder == null
+    fun isCurrentFolderRoot(): Boolean = currentFolder == null
 
 }

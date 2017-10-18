@@ -129,7 +129,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         bookmark_back_button_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
         val backView = view.findViewById<View>(R.id.bookmark_back_button)
         backView.setOnClickListener {
-            if (!uiModel.isRootFolder) {
+            if (!uiModel.isCurrentFolderRoot()) {
                 setBookmarksShown(null, true)
                 bookmark_list_view?.layoutManager?.scrollToPosition(scrollIndex)
             }
@@ -233,7 +233,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     private fun setBookmarkDataSet(items: List<HistoryItem>, animate: Boolean) {
         bookmarkAdapter?.updateItems(items)
-        val resource = if (uiModel.isRootFolder) {
+        val resource = if (uiModel.isCurrentFolderRoot()) {
             R.drawable.ic_action_star
         } else {
             R.drawable.ic_action_back
@@ -290,7 +290,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     override fun onLongClick(v: View) = false
 
     override fun navigateBack() {
-        if (uiModel.isRootFolder) {
+        if (uiModel.isCurrentFolderRoot()) {
             uiController.closeBookmarksDrawer()
         } else {
             setBookmarksShown(null, true)
