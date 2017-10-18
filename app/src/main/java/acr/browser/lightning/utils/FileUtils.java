@@ -10,14 +10,13 @@ import android.util.Log;
 
 import com.anthonycr.bonsai.Schedulers;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 /**
@@ -29,7 +28,7 @@ public final class FileUtils {
     private static final String TAG = "FileUtils";
 
     public static final String DEFAULT_DOWNLOAD_PATH =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
 
     private FileUtils() {}
 
@@ -144,15 +143,16 @@ public final class FileUtils {
     }
 
     @NonNull
-    public static String readStringFromStream(@NonNull InputStream inputStream,
-                                              @NonNull String encoding) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, encoding));
-        StringBuilder result = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            result.append(line);
+    public static String readStringFromStream(@NonNull final InputStream inputStream,
+                                              @NonNull final String encoding) throws IOException {
+        final ByteArrayOutputStream result = new ByteArrayOutputStream();
+        final byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
         }
-        return result.toString();
+
+        return result.toString(encoding);
     }
 
     /**

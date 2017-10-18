@@ -6,7 +6,6 @@ import acr.browser.lightning.database.HistoryItem
 import android.app.Application
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
-import java.io.BufferedInputStream
 import java.io.InputStream
 
 /**
@@ -20,22 +19,20 @@ class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(ap
             "https://suggestqueries.google.com/complete/search?output=toolbar&hl=$language&q=$query"
 
     @Throws(Exception::class)
-    override fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>) {
-        val bufferedInput = BufferedInputStream(inputStream)
+    override fun parseResults(inputStream: InputStream): List<HistoryItem> {
+        parser.setInput(inputStream, UTF8)
 
-        parser.setInput(bufferedInput, UTF8)
-
+        val mutableList = mutableListOf<HistoryItem>()
         var eventType = parser.eventType
-        var counter = 0
-        while (eventType != XmlPullParser.END_DOCUMENT && counter < BaseSuggestionsModel.MAX_RESULTS) {
+        while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG && "suggestion" == parser.name) {
                 val suggestion = parser.getAttributeValue(null, "data")
-                results.add(HistoryItem(searchSubtitle + " \"$suggestion\"",
-                        suggestion, R.drawable.ic_search))
-                counter++
+                mutableList.add(HistoryItem("$searchSubtitle \"$suggestion\"", suggestion, R.drawable.ic_search))
             }
             eventType = parser.next()
         }
+
+        return mutableList
     }
 
     companion object {

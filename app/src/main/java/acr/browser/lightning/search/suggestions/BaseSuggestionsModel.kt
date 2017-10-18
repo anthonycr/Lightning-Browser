@@ -1,8 +1,8 @@
 package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.extensions.safeUse
+import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.text.TextUtils
 import android.util.Log
@@ -47,7 +47,7 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
      * @throws Exception throw an exception if anything goes wrong.
      */
     @Throws(Exception::class)
-    protected abstract fun parseResults(inputStream: InputStream, results: MutableList<HistoryItem>)
+    protected abstract fun parseResults(inputStream: InputStream): List<HistoryItem>
 
     init {
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
@@ -78,7 +78,7 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
         val inputStream = downloadSuggestionsForQuery(query, language) ?: return filter
 
         inputStream.safeUse {
-            parseResults(it, filter)
+            filter += parseResults(it).take(MAX_RESULTS)
         }
 
         return filter
@@ -120,7 +120,7 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
 
         private const val TAG = "BaseSuggestionsModel"
 
-        internal const val MAX_RESULTS = 5
+        private const val MAX_RESULTS = 5
         private val INTERVAL_DAY = TimeUnit.DAYS.toSeconds(1)
         private const val DEFAULT_LANGUAGE = "en"
 
