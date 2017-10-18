@@ -20,6 +20,6 @@ sealed class SSLState {
     /**
      * Broken SSL connection.
      */
-    class Invalid(sslError: SslError) : SSLState()
+    class Invalid(val sslError: SslError) : SSLState()
 
 }
