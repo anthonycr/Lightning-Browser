@@ -9,7 +9,7 @@ import org.junit.Test
 class AssetsAdBlockerTest {
 
     @Test
-    fun parseString() {
+    fun `line parsing is valid`() {
         val testInput = """
             127.0.0.1 localhost #comment comment
             ::1 localhost #comment comment

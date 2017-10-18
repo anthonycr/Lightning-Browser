@@ -11,10 +11,10 @@ import org.junit.Test
 class SubscriptionUtilsTest {
 
     @Test
-    fun safeUnsubscribe_NullSubscription_Succeeds() = SubscriptionUtils.safeUnsubscribe(null)
+    fun `safeUnsubscribe succeeds with null subscription`() = SubscriptionUtils.safeUnsubscribe(null)
 
     @Test
-    fun safeUnsubscribe_NonNullSubscription_SuccessfullyUnsubscribes() {
+    fun `safeUnsubscribe unsubscribes successfully with valid description`() {
         val subscription = object : Subscription {
 
             internal var isUnsubscribed = false
