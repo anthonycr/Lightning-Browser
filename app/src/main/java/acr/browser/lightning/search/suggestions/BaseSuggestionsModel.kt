@@ -75,10 +75,8 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
             return filter
         }
 
-        val inputStream = downloadSuggestionsForQuery(query, language) ?: return filter
-
-        inputStream.safeUse {
-            filter += parseResults(it).take(MAX_RESULTS)
+        downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
+            filter += parseResults(it.byteStream()).take(MAX_RESULTS)
         }
 
         return filter
@@ -87,12 +85,12 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
     /**
      * This method downloads the search suggestions for the specific query.
      * NOTE: This is a blocking operation, do not fetchResults on the UI thread.
-
+     *
      * @param query the query to get suggestions for
-     * *
+     *
      * @return the cache file containing the suggestions
      */
-    private fun downloadSuggestionsForQuery(query: String, language: String): InputStream? {
+    private fun downloadSuggestionsForQuery(query: String, language: String): Response? {
         val queryUrl = createQueryUrl(query, language)
 
         try {
@@ -104,11 +102,7 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
                     .cacheControl(cacheControl)
                     .build()
 
-            val suggestionsResponse = httpClient.newCall(suggestionsRequest).execute()
-
-            val responseBody = suggestionsResponse.body()
-
-            return responseBody?.byteStream()
+            return httpClient.newCall(suggestionsRequest).execute()
         } catch (exception: IOException) {
             Log.e(TAG, "Problem getting search suggestions", exception)
         }
