@@ -449,7 +449,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         override fun onEditorAction(arg0: TextView, actionId: Int, arg2: KeyEvent?): Boolean {
             // hide the keyboard and search the web when the enter key
             // button is pressed
-            if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE
+            if (actionId == EditorInfo.IME_ACTION_GO
+                    || actionId == EditorInfo.IME_ACTION_DONE
                     || actionId == EditorInfo.IME_ACTION_NEXT
                     || actionId == EditorInfo.IME_ACTION_SEND
                     || actionId == EditorInfo.IME_ACTION_SEARCH
@@ -742,22 +743,22 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_back -> {
-                if (currentView != null && currentView.canGoBack()) {
+                if (currentView?.canGoBack() == true) {
                     currentView.goBack()
                 }
                 return true
             }
             R.id.action_forward -> {
-                if (currentView != null && currentView.canGoForward()) {
+                if (currentView?.canGoForward() == true) {
                     currentView.goForward()
                 }
                 return true
             }
             R.id.action_add_to_homescreen -> {
                 if (currentView != null) {
-                    val shortcut = HistoryItem(currentView.url, currentView.title)
-                    shortcut.bitmap = currentView.favicon
-                    Utils.createShortcut(this, shortcut)
+                    Utils.createShortcut(this, HistoryItem(currentView.url, currentView.title).apply {
+                        bitmap = currentView.favicon
+                    })
                 }
                 return true
             }
@@ -781,8 +782,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             R.id.action_copy -> {
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText("label", currentUrl)
-                    clipboard.primaryClip = clip
+                    clipboard.primaryClip = ClipData.newPlainText("label", currentUrl)
                     Utils.showSnackbar(this, R.string.message_link_copied)
                 }
                 return true
@@ -823,9 +823,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     // By using a manager, adds a bookmark and notifies third parties about that
     private fun addBookmark(title: String, url: String) {
-
-        val item = HistoryItem(url, title)
-        bookmarkManager.addBookmarkIfNotExists(item)
+        bookmarkManager.addBookmarkIfNotExists(HistoryItem(url, title))
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { boolean ->
@@ -838,9 +836,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun deleteBookmark(title: String, url: String) {
-        val item = HistoryItem(url, title)
-
-        bookmarkManager.deleteBookmark(item)
+        bookmarkManager.deleteBookmark(HistoryItem(url, title))
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { boolean ->
@@ -852,10 +848,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun putToolbarInRoot() {
-        if (toolbar_layout.parent !== ui_layout) {
-            if (toolbar_layout.parent != null) {
-                (toolbar_layout.parent as ViewGroup).removeView(toolbar_layout)
-            }
+        if (toolbar_layout.parent != ui_layout) {
+            (toolbar_layout.parent as ViewGroup?)?.removeView(toolbar_layout)
 
             ui_layout.addView(toolbar_layout, 0)
             ui_layout.requestLayout()
@@ -864,10 +858,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun overlayToolbarOnWebView() {
-        if (toolbar_layout.parent !== content_frame) {
-            if (toolbar_layout.parent != null) {
-                (toolbar_layout.parent as ViewGroup).removeView(toolbar_layout)
-            }
+        if (toolbar_layout.parent != content_frame) {
+            (toolbar_layout.parent as ViewGroup?)?.removeView(toolbar_layout)
 
             content_frame.addView(toolbar_layout)
             content_frame.requestLayout()
@@ -876,9 +868,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun setWebViewTranslation(translation: Float) {
-        if (isFullScreen && currentTabView != null) {
+        if (isFullScreen) {
             currentTabView?.translationY = translation
-        } else if (currentTabView != null) {
+        } else {
             currentTabView?.translationY = 0f
         }
     }
@@ -902,17 +894,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun showFindInPageControls(text: String) {
         search_bar.visibility = View.VISIBLE
 
-        val tw = findViewById<TextView>(R.id.search_query)
-        tw.text = "'$text'"
-
-        val up = findViewById<ImageButton>(R.id.button_next)
-        up.setOnClickListener(this)
-
-        val down = findViewById<ImageButton>(R.id.button_back)
-        down.setOnClickListener(this)
-
-        val quit = findViewById<ImageButton>(R.id.button_quit)
-        quit.setOnClickListener(this)
+        findViewById<TextView>(R.id.search_query).apply { this.text = "'$text'" }
+        findViewById<ImageButton>(R.id.button_next).apply { setOnClickListener(this@BrowserActivity) }
+        findViewById<ImageButton>(R.id.button_back).apply { setOnClickListener(this@BrowserActivity) }
+        findViewById<ImageButton>(R.id.button_quit).apply { setOnClickListener(this@BrowserActivity) }
     }
 
     override fun getTabModel(): TabsManager = tabsManager
@@ -992,7 +977,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun setTabView(view: View) {
-        if (currentTabView === view) {
+        if (currentTabView == view) {
             return
         }
 
@@ -1054,9 +1039,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun newTabButtonLongClicked() {
-        val url = preferences.savedUrl
-        if (url != null) {
-            newTab(url, true)
+        preferences.savedUrl?.let {
+            newTab(it, true)
 
             Utils.showSnackbar(this, R.string.deleted_tab)
         }
@@ -1087,8 +1071,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun bookmarkItemClicked(item: HistoryItem) {
         presenter?.loadUrlInCurrentView(item.url)
-        // keep any jank from happening when the drawer is closed after the
-        // URL starts to load
+        // keep any jank from happening when the drawer is closed after the URL starts to load
         Handlers.MAIN.postDelayed({ closeDrawers(null) }, 150)
     }
 
@@ -1109,10 +1092,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         presenter?.onNewIntent(intent)
     }
 
-    override fun closeEmptyTab() =// Currently do nothing
-            // Possibly closing the current tab might close the browser
-            // and mess stuff up
-            Unit
+    // Currently do nothing
+    // Possibly closing the current tab might close the browser and mess stuff up
+    override fun closeEmptyTab() = Unit
 
     override fun onTrimMemory(level: Int) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
@@ -1122,8 +1104,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     // TODO move to presenter
-    @Synchronized private fun newTab(url: String?, show: Boolean): Boolean =
-            presenter?.newTab(url, show) != false
+    private fun newTab(url: String?, show: Boolean): Boolean = presenter?.newTab(url, show) != false
 
     protected fun performExitCleanUp() {
         val currentTab = tabsManager.currentTab
@@ -1159,12 +1140,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             setWebViewTranslation(toolbar_layout.height.toFloat())
         }
 
-        supportInvalidateOptionsMenu()
+        invalidateOptionsMenu()
         initializeToolbarHeight(newConfig)
     }
 
-    private fun initializeToolbarHeight(configuration: Configuration) =// TODO externalize the dimensions
+    private fun initializeToolbarHeight(configuration: Configuration) =
             ui_layout.doOnLayout {
+                // TODO externalize the dimensions
                 val toolbarSize = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     // In portrait toolbar should be 56 dp tall
                     Utils.dpToPx(56f)
@@ -1212,7 +1194,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     if (customView != null || customViewCallback != null) {
                         onHideCustomView()
                     } else {
-                        tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
+                        presenter?.deleteTab(tabsManager.positionOf(currentTab))
                     }
                 }
             } else {
@@ -1279,8 +1261,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         tabsManager.resumeAll(this)
         initializePreferences()
 
-        supportInvalidateOptionsMenu()
-
         networkObservable.beginListening(networkListener)
 
         if (isFullScreen) {
@@ -1299,7 +1279,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (query.isEmpty()) {
             return
         }
-        val searchUrl = searchText + UrlUtils.QUERY_PLACE_HOLDER
+        val searchUrl = "$searchText${UrlUtils.QUERY_PLACE_HOLDER}"
         if (currentTab != null) {
             currentTab.stopLoading()
             presenter?.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query.trim(), true, searchUrl))
@@ -1434,8 +1414,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
             getUrl.setText(url)
             searchTheWeb(url)
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(getUrl.windowToken, 0)
+            with(getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager) {
+                hideSoftInputFromWindow(getUrl.windowToken, 0)
+            }
             presenter?.onAutoCompleteItemPressed()
         }
 
@@ -1447,26 +1428,28 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * function that opens the HTML history page in the browser
      */
     private fun openHistory() {
-        HistoryPage().createHistoryPage()
+        HistoryPage()
+                .createHistoryPage()
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { item ->
                     tabsManager.let {
-                        for (i in 0 until it.size()) {
-                            val lightningView = it.getTabAtPosition(i)
-                            val url = lightningView?.url
-                            if (UrlUtils.isHistoryUrl(url)) {
-                                presenter?.tabChanged(i)
-                                return@subscribe
-                            }
-                        }
+                        it.allTabs.map(LightningView::url)
+                                .withIndex()
+                                .find { UrlUtils.isHistoryUrl(it.value) }
+                                ?.let {
+                                    presenter?.tabChanged(it.index)
+                                    return@subscribe
+                                }
+
                         newTab(requireNotNull(item), true)
                     }
                 }
     }
 
     private fun openDownloads() {
-        DownloadsPage().getDownloadsPage()
+        DownloadsPage()
+                .getDownloadsPage()
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { url ->
@@ -1535,10 +1518,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        backMenuItem = menu.findItem(R.id.action_back)
-        forwardMenuItem = menu.findItem(R.id.action_forward)
-        backMenuItem?.icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-        forwardMenuItem?.icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+        backMenuItem = menu.findItem(R.id.action_back)?.apply {
+            icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+        }
+        forwardMenuItem = menu.findItem(R.id.action_forward)?.apply {
+            icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -1549,10 +1534,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     override fun openFileChooser(uploadMsg: ValueCallback<Uri>) {
         uploadMessageCallback = uploadMsg
-        val i = Intent(Intent.ACTION_GET_CONTENT)
-        i.addCategory(Intent.CATEGORY_OPENABLE)
-        i.type = "*/*"
-        startActivityForResult(Intent.createChooser(i, getString(R.string.title_file_chooser)), 1)
+        startActivityForResult(Intent.createChooser(Intent(Intent.ACTION_GET_CONTENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+        }, getString(R.string.title_file_chooser)), 1)
     }
 
     /**
@@ -1617,22 +1602,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             takePictureIntent = null
         }
 
-        val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
-        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
-        contentSelectionIntent.type = "*/*"
-
         val intentArray = if (takePictureIntent != null) {
             arrayOf(takePictureIntent)
         } else {
             arrayOf()
         }
 
-        val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-
-        startActivityForResult(chooserIntent, 1)
+        startActivityForResult(Intent(Intent.ACTION_CHOOSER).apply {
+            putExtra(Intent.EXTRA_INTENT, Intent(Intent.ACTION_GET_CONTENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+            })
+            putExtra(Intent.EXTRA_TITLE, "Image Chooser")
+            putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
+        }, 1)
     }
 
     @Synchronized override fun onShowCustomView(view: View, callback: CustomViewCallback) {
@@ -1720,21 +1703,19 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         fullscreenContainerView = null
         customView = null
-        if (videoView != null) {
-            Log.d(TAG, "VideoView is being stopped")
-            videoView?.stopPlayback()
-            videoView?.setOnErrorListener(null)
-            videoView?.setOnCompletionListener(null)
-            videoView = null
-        }
-        if (customViewCallback != null) {
-            try {
-                customViewCallback?.onCustomViewHidden()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error hiding custom view", e)
-            }
 
+        Log.d(TAG, "VideoView is being stopped")
+        videoView?.stopPlayback()
+        videoView?.setOnErrorListener(null)
+        videoView?.setOnCompletionListener(null)
+        videoView = null
+
+        try {
+            customViewCallback?.onCustomViewHidden()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error hiding custom view", e)
         }
+
         customViewCallback = null
         requestedOrientation = originalOrientation
     }
@@ -1757,32 +1738,25 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onBackButtonPressed() {
         val currentTab = tabsManager.currentTab
-        if (currentTab != null) {
-            if (currentTab.canGoBack()) {
-                currentTab.goBack()
-                closeDrawers(null)
-            } else {
-                tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
-            }
+        if (currentTab?.canGoBack() == true) {
+            currentTab.goBack()
+            closeDrawers(null)
+        } else if (currentTab != null) {
+            tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
         }
     }
 
     override fun onForwardButtonPressed() {
         val currentTab = tabsManager.currentTab
-        if (currentTab != null) {
-            if (currentTab.canGoForward()) {
-                currentTab.goForward()
-                closeDrawers(null)
-            }
+        if (currentTab?.canGoForward() == true) {
+            currentTab.goForward()
+            closeDrawers(null)
         }
     }
 
     override fun onHomeButtonPressed() {
-        val currentTab = tabsManager.currentTab
-        if (currentTab != null) {
-            currentTab.loadHomepage()
-            closeDrawers(null)
-        }
+        tabsManager.currentTab?.loadHomepage()
+        closeDrawers(null)
     }
 
     /**
@@ -1830,17 +1804,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     @Synchronized override fun onCreateWindow(resultMsg: Message) {
         if (newTab("", true)) {
-            tabsManager.let {
-                val newTab = it.getTabAtPosition(it.size() - 1)
-                if (newTab != null) {
-                    val webView = newTab.webView
-                    if (webView != null) {
+            tabsManager.getTabAtPosition(tabsManager.size() - 1)
+                    ?.let(LightningView::webView)
+                    ?.let {
                         val transport = resultMsg.obj as WebView.WebViewTransport
-                        transport.webView = webView
+                        transport.webView = it
                         resultMsg.sendToTarget()
                     }
-                }
-            }
         }
     }
 
@@ -1853,7 +1823,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param view the LightningView to close, delete it.
      */
     override fun onCloseWindow(view: LightningView) {
-        tabsManager.let { presenter?.deleteTab(it.positionOf(view)) }
+        presenter?.deleteTab(tabsManager.positionOf(view))
     }
 
     /**
