@@ -12,12 +12,16 @@ import javax.inject.Inject
 
 
 /**
- * An observable that emits changes in network connectivity to listeners.
+ * A model that supplies network connectivity status updates.
  */
 class NetworkConnectivityModel @Inject constructor(private val application: Application) {
 
     private val connectivityManager = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
+    /**
+     * An infinite observable that emits a boolean value whenever the network condition changes.
+     * Emitted value is true when the network is in the connected state, and it is false otherwise.
+     */
     fun connectivity(): Observable<Boolean> = Observable.create {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -27,11 +31,11 @@ class NetworkConnectivityModel @Inject constructor(private val application: Appl
             }
         }
 
+        it.setDisposable(DisposableBroadcastReceiver(application, receiver))
+
         application.registerReceiver(receiver, IntentFilter().apply {
             addAction(NETWORK_BROADCAST_ACTION)
         })
-
-        it.setDisposable(DisposableBroadcastReceiver(application, receiver))
     }
 
     companion object {
