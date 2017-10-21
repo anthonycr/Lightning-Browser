@@ -247,13 +247,11 @@ class LightningView(private val activity: Activity,
      * URL in the WebView on the UI thread.
      */
     private fun loadStartpage() {
-        StartPage().createHomePage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) =
-                            loadUrl(requireNotNull(item) { "HomePage url must not be null" })
-                })
+        StartPage()
+                .createHomePage()
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::loadUrl)
     }
 
     /**
@@ -261,7 +259,8 @@ class LightningView(private val activity: Activity,
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
     fun loadBookmarkpage() {
-        BookmarkPage(activity).createBookmarkPage()
+        BookmarkPage(activity)
+                .createBookmarkPage()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
                 .subscribe(object : SingleOnSubscribe<String>() {
@@ -279,9 +278,7 @@ class LightningView(private val activity: Activity,
                 .getDownloadsPage()
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { url ->
-                    loadUrl(url)
-                }
+                .subscribe(this::loadUrl)
     }
 
     /**

@@ -146,25 +146,17 @@ class TabsManager {
                                         .getDownloadsPage()
                                         .subscribeOn(databaseScheduler)
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe { localUrl ->
-                                            tab.loadUrl(localUrl)
-                                        }
-                                UrlUtils.isStartPageUrl(url) -> StartPage().createHomePage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(object : SingleOnSubscribe<String>() {
-                                            override fun onItem(string: String?) {
-                                                val localUrl = requireNotNull(string)
-                                                tab.loadUrl(localUrl)
-                                            }
-                                        })
+                                        .subscribe(tab::loadUrl)
+                                UrlUtils.isStartPageUrl(url) -> StartPage()
+                                        .createHomePage()
+                                        .subscribeOn(databaseScheduler)
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(tab::loadUrl)
                                 UrlUtils.isHistoryUrl(url) -> HistoryPage()
                                         .createHistoryPage()
                                         .subscribeOn(databaseScheduler)
                                         .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe { localUrl ->
-                                            tab.loadUrl(localUrl)
-                                        }
+                                        .subscribe(tab::loadUrl)
                             }
                         } else {
                             tab.webView?.restoreState(item)

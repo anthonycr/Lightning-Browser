@@ -7,7 +7,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
-import com.anthonycr.bonsai.Single
+import io.reactivex.Single
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class StartPage {
         BrowserApp.appComponent.inject(this)
     }
 
-    fun createHomePage(): Single<String> = Single.create { subscriber ->
+    fun createHomePage(): Single<String> = Single.fromCallable {
         val homePageBuilder = HomePageBuilder(app, searchEngineProvider)
 
         val homepage = getStartPageFile(app)
@@ -30,7 +30,7 @@ class StartPage {
             it.write(homePageBuilder.buildPage())
         }
 
-        subscriber.onItem("$FILE$homepage")
+        return@fromCallable "$FILE$homepage"
     }
 
     companion object {
