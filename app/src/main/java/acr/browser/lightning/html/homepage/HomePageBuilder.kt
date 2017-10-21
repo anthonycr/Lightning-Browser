@@ -6,7 +6,6 @@ import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
 import com.anthonycr.mezzanine.MezzanineGenerator
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 
 /**
  * A builder for the home page.
@@ -40,5 +39,3 @@ internal class HomePageBuilder(private val app: Application,
         return document.outerHtml()
     }
 }
-
-private fun ArrayList<Element>.id(id: String): Element? = this.find { it.id() == id }
