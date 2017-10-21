@@ -7,18 +7,17 @@ import android.os.Build
 import android.view.Menu
 import android.webkit.CookieManager
 import android.webkit.CookieSyncManager
-import com.anthonycr.bonsai.Completable
+import io.reactivex.Completable
 
 class IncognitoActivity : BrowserActivity() {
 
     @Suppress("DEPRECATION")
-    public override fun updateCookiePreference(): Completable = Completable.create { subscriber ->
+    public override fun updateCookiePreference(): Completable = Completable.fromAction {
         val cookieManager = CookieManager.getInstance()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this@IncognitoActivity)
         }
         cookieManager.setAcceptCookie(preferences.incognitoCookiesEnabled)
-        subscriber.onComplete()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

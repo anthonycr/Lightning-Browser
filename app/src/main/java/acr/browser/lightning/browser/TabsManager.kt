@@ -2,6 +2,7 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
@@ -9,7 +10,6 @@ import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.UrlUtils
-import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.view.LightningView
 import android.app.Activity
 import android.app.Application
@@ -21,8 +21,11 @@ import android.text.TextUtils
 import android.util.Log
 import android.webkit.URLUtil
 import com.anthonycr.bonsai.*
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * A manager singleton that holds all the [LightningView] and tracks the current tab. It handles
@@ -46,6 +49,7 @@ class TabsManager {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var app: Application
+    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -138,15 +142,13 @@ class TabsManager {
                                                 tab.loadUrl(localUrl)
                                             }
                                         })
-                                UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(object : SingleOnSubscribe<String>() {
-                                            override fun onItem(string: String?) {
-                                                val localUrl = requireNotNull(string)
-                                                tab.loadUrl(localUrl)
-                                            }
-                                        })
+                                UrlUtils.isDownloadsUrl(url) -> DownloadsPage()
+                                        .getDownloadsPage()
+                                        .subscribeOn(databaseScheduler)
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe { localUrl ->
+                                            tab.loadUrl(localUrl)
+                                        }
                                 UrlUtils.isStartPageUrl(url) -> StartPage().createHomePage()
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(Schedulers.main())
@@ -156,15 +158,13 @@ class TabsManager {
                                                 tab.loadUrl(localUrl)
                                             }
                                         })
-                                UrlUtils.isHistoryUrl(url) -> HistoryPage().createHistoryPage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(object : SingleOnSubscribe<String>() {
-                                            override fun onItem(string: String?) {
-                                                val localUrl = requireNotNull(string)
-                                                tab.loadUrl(localUrl)
-                                            }
-                                        })
+                                UrlUtils.isHistoryUrl(url) -> HistoryPage()
+                                        .createHistoryPage()
+                                        .subscribeOn(databaseScheduler)
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe { localUrl ->
+                                            tab.loadUrl(localUrl)
+                                        }
                             }
                         } else {
                             tab.webView?.restoreState(item)

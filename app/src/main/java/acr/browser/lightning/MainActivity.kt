@@ -7,18 +7,17 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.webkit.CookieManager
 import android.webkit.CookieSyncManager
-import com.anthonycr.bonsai.Completable
+import io.reactivex.Completable
 
 class MainActivity : BrowserActivity() {
 
     @Suppress("DEPRECATION")
-    public override fun updateCookiePreference(): Completable = Completable.create { subscriber ->
+    public override fun updateCookiePreference(): Completable = Completable.fromAction {
         val cookieManager = CookieManager.getInstance()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this@MainActivity)
         }
         cookieManager.setAcceptCookie(preferences.cookiesEnabled)
-        subscriber.onComplete()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

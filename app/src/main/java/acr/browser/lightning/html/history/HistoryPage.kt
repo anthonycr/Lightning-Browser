@@ -8,7 +8,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.history.HistoryRepository
 import android.app.Application
 import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Single
+import io.reactivex.Single
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -22,23 +22,21 @@ class HistoryPage {
         BrowserApp.appComponent.inject(this)
     }
 
-    fun createHistoryPage(): Single<String> = Single.create { subscriber ->
-        historyModel.lastHundredVisitedHistoryItems()
-                .subscribe { list ->
-                    val newList = list.toMutableList()
+    fun createHistoryPage(): Single<String> = historyModel
+            .lastHundredVisitedHistoryItems()
+            .map { list ->
+                val newList = list.toMutableList()
 
-                    val historyPageBuilder = HistoryPageBuilder(app)
+                val historyPageBuilder = HistoryPageBuilder(app)
 
-                    val historyWebPage = getHistoryPageFile(app)
+                val historyWebPage = getHistoryPageFile(app)
 
-                    FileWriter(historyWebPage, false).use {
-                        it.write(historyPageBuilder.buildPage(newList))
-                    }
-
-                    subscriber.onItem("$FILE$historyWebPage")
-                    subscriber.onComplete()
+                FileWriter(historyWebPage, false).use {
+                    it.write(historyPageBuilder.buildPage(newList))
                 }
-    }
+
+                return@map "$FILE$historyWebPage"
+            }
 
     companion object {
 

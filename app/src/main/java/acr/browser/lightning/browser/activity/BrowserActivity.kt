@@ -80,12 +80,11 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView.OnEditorActionListener
 import butterknife.ButterKnife
-import com.anthonycr.bonsai.Completable
-import com.anthonycr.bonsai.Schedulers
-import com.anthonycr.bonsai.SingleOnSubscribe
 import com.anthonycr.grant.PermissionsManager
+import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
 import kotlinx.android.synthetic.main.search_interface.*
@@ -611,7 +610,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val currentSearchEngine = searchEngineProvider.getCurrentSearchEngine()
         searchText = currentSearchEngine.queryUrl
 
-        updateCookiePreference().subscribeOn(Schedulers.worker()).subscribe()
+        updateCookiePreference().subscribeOn(Schedulers.computation()).subscribe()
         proxyUtils.updateProxySettings(this)
     }
 
@@ -1449,35 +1448,30 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun openHistory() {
         HistoryPage().createHistoryPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) {
-                        tabsManager.let {
-                            for (i in 0 until it.size()) {
-                                val lightningView = it.getTabAtPosition(i)
-                                val url = lightningView?.url
-                                if (UrlUtils.isHistoryUrl(url)) {
-                                    presenter?.tabChanged(i)
-                                    return
-                                }
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { item ->
+                    tabsManager.let {
+                        for (i in 0 until it.size()) {
+                            val lightningView = it.getTabAtPosition(i)
+                            val url = lightningView?.url
+                            if (UrlUtils.isHistoryUrl(url)) {
+                                presenter?.tabChanged(i)
+                                return@subscribe
                             }
-                            newTab(requireNotNull(item), true)
                         }
+                        newTab(requireNotNull(item), true)
                     }
-                })
+                }
     }
 
     private fun openDownloads() {
         DownloadsPage().getDownloadsPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) {
-                        val url = requireNotNull(item)
-                        tabsManager.currentTab?.loadUrl(url)
-                    }
-                })
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { url ->
+                    tabsManager.currentTab?.loadUrl(url)
+                }
     }
 
     /**

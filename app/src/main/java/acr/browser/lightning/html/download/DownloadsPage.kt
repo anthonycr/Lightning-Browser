@@ -8,7 +8,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.preference.PreferenceManager
 import android.app.Application
-import com.anthonycr.bonsai.Single
+import io.reactivex.Single
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -23,27 +23,21 @@ class DownloadsPage {
         BrowserApp.appComponent.inject(this)
     }
 
-    fun getDownloadsPage(): Single<String> = Single.create { subscriber ->
-        buildDownloadsPage()
+    fun getDownloadsPage(): Single<String> = manager
+            .getAllDownloads()
+            .map { list ->
+                val directory = preferenceManager.downloadDirectory
 
-        val downloadsWebPage = getDownloadsPageFile(app)
+                val downloadPageBuilder = DownloadPageBuilder(app, directory)
 
-        subscriber.onItem("$FILE$downloadsWebPage")
-        subscriber.onComplete()
-    }
-
-    private fun buildDownloadsPage() {
-        manager.getAllDownloads()
-                .subscribe { list ->
-                    val directory = preferenceManager.downloadDirectory
-
-                    val downloadPageBuilder = DownloadPageBuilder(app, directory)
-
-                    FileWriter(getDownloadsPageFile(app), false).use {
-                        it.write(downloadPageBuilder.buildPage(requireNotNull(list)))
-                    }
+                val fileName = getDownloadsPageFile(app)
+                FileWriter(fileName, false).use {
+                    it.write(downloadPageBuilder.buildPage(requireNotNull(list)))
                 }
-    }
+
+                return@map fileName
+            }
+            .map { "$FILE$it" }
 
     companion object {
 

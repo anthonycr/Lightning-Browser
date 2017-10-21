@@ -129,8 +129,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param url     the URL to cache the favicon for.
      * @return an observable that notifies the consumer when it is complete.
      */
-    fun cacheFaviconForUrl(favicon: Bitmap,
-                           url: String): Completable =
+    fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable =
             Completable.create(CompletableAction { subscriber ->
                 val uri = safeUri(url)
 
@@ -139,7 +138,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
                     return@CompletableAction
                 }
 
-                Log.d(TAG, "Caching icon for " + uri.host)
+                Log.d(TAG, "Caching icon for ${uri.host}")
                 val image = getFaviconCacheFile(application, uri)
                 FileOutputStream(image).safeUse {
                     favicon.compress(Bitmap.CompressFormat.PNG, 100, it)

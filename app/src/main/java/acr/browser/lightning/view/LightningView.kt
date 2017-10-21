@@ -41,9 +41,12 @@ import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.bonsai.Single
 import com.anthonycr.bonsai.SingleOnSubscribe
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.lang.ref.WeakReference
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * [LightningView] acts as a tab for the browser, handling WebView creation and handling logic, as
@@ -114,6 +117,7 @@ class LightningView(private val activity: Activity,
     @Inject internal lateinit var preferences: PreferenceManager
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils
+    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val lightningWebClient: LightningWebClient
 
@@ -271,13 +275,13 @@ class LightningView(private val activity: Activity,
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
     fun loadDownloadspage() {
-        DownloadsPage().getDownloadsPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) =
-                            loadUrl(requireNotNull(item) { "DownloadsPage url must not be null" })
-                })
+        DownloadsPage()
+                .getDownloadsPage()
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { url ->
+                    loadUrl(url)
+                }
     }
 
     /**
