@@ -24,7 +24,7 @@ import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
-import acr.browser.lightning.network.NetworkObservable
+import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
@@ -84,6 +84,7 @@ import com.anthonycr.grant.PermissionsManager
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
@@ -140,10 +141,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var searchBoxModel: SearchBoxModel
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject internal lateinit var networkObservable: NetworkObservable
+    @Inject internal lateinit var networkConnectivityModel: NetworkConnectivityModel
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val tabsManager: TabsManager = TabsManager()
+
+    // Subscriptions
+    private var networkDisposable: Disposable? = null
 
     // Image
     private var webPageBitmap: Bitmap? = null
@@ -193,19 +197,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var backMenuItem: MenuItem? = null
     private var forwardMenuItem: MenuItem? = null
 
-
-    /**
-     * This EventListener notifies each of the WebViews in the browser whether
-     * the network is currently connected or not. This is important because some
-     * JavaScript properties rely on the WebView knowing the current network state.
-     * It is used to help the browser be compliant with the HTML5 spec, sec. 5.7.7
-     */
-    private val networkListener = object : NetworkObservable.EventListener {
-        override fun onNetworkConnectionChange(connected: Boolean) {
-            Log.d(TAG, "Network Connected: " + connected)
-            tabsManager.notifyConnectionStatus(connected)
-        }
-    }
 
     abstract override fun closeActivity()
 
@@ -1209,7 +1200,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         Log.d(TAG, "onPause")
         tabsManager.pauseAll()
 
-        networkObservable.stopListening(networkListener)
+        networkDisposable?.dispose()
 
         if (isIncognito && isFinishing) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out)
@@ -1261,7 +1252,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         tabsManager.resumeAll(this)
         initializePreferences()
 
-        networkObservable.beginListening(networkListener)
+        networkDisposable = networkConnectivityModel
+                .connectivity()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe { connected ->
+                    Log.d(TAG, "Network connected: " + connected)
+                    tabsManager.notifyConnectionStatus(connected)
+                }
 
         if (isFullScreen) {
             overlayToolbarOnWebView()

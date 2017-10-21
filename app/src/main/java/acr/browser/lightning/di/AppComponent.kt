@@ -17,7 +17,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.html.homepage.StartPage
-import acr.browser.lightning.network.NetworkObservable
+import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
@@ -90,7 +90,7 @@ interface AppComponent {
 
     fun inject(generalSettingsFragment: GeneralSettingsFragment)
 
-    fun inject(networkObservable: NetworkObservable)
+    fun inject(networkConnectivityModel: NetworkConnectivityModel)
 
     fun provideAssetsAdBlocker(): AssetsAdBlocker
 
