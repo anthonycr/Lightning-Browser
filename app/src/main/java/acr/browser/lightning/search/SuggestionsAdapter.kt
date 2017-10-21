@@ -247,7 +247,7 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                 suggestionsAdapter.clearSuggestions()
                 return results
             }
-            val query = constraint.toString().toLowerCase(Locale.getDefault()).trim { it <= ' ' }
+            val query = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
             if (suggestionsAdapter.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress) {
                 suggestionsAdapter.getSuggestionsForQuery(query)

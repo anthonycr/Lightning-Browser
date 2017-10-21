@@ -165,7 +165,7 @@ class LightningWebClient(
                 setPositiveButton(R.string.title_sign_in) { _, _ ->
                     val user = name.text.toString()
                     val pass = password.text.toString()
-                    handler.proceed(user.trim { it <= ' ' }, pass.trim { it <= ' ' })
+                    handler.proceed(user.trim(), pass.trim())
                     Log.d(TAG, "Attempting HTTP Authentication")
                 }
                 setNegativeButton(R.string.action_cancel) { _, _ ->
