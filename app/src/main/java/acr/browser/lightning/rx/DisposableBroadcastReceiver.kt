@@ -21,7 +21,6 @@ class DisposableBroadcastReceiver(
 
     override fun dispose() {
         if (!disposed.getAndSet(true)) {
-            println("YOLO unregistering")
             context.unregisterReceiver(broadcastReceiver)
         }
     }
