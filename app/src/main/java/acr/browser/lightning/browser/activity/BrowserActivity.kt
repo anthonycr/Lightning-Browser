@@ -1941,11 +1941,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun handleNewTab(newTabType: LightningDialogBuilder.NewTab, url: String) {
-        drawer_layout.closeDrawers()
         when (newTabType) {
             LightningDialogBuilder.NewTab.FOREGROUND -> newTab(url, true)
             LightningDialogBuilder.NewTab.BACKGROUND -> newTab(url, false)
             LightningDialogBuilder.NewTab.INCOGNITO -> {
+                drawer_layout.closeDrawers()
                 val intent = IncognitoActivity.createIntent(this).apply { data = Uri.parse(url) }
                 startActivity(intent)
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale)
