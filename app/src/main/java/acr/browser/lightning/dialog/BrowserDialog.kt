@@ -30,11 +30,6 @@ import android.widget.*
 
 object BrowserDialog {
 
-    // TODO convert to method reference
-    interface EditorListener {
-        fun onClick(text: String)
-    }
-
     @JvmStatic
     fun show(activity: Activity, @StringRes title: Int, vararg items: DialogItem) =
             show(activity, activity.getString(title), *items)
@@ -79,8 +74,8 @@ object BrowserDialog {
                      @StringRes title: Int,
                      @StringRes hint: Int,
                      @StringRes action: Int,
-                     listener: EditorListener) =
-            showEditText(activity, title, hint, null, action, listener)
+                     textInputListener: (String) -> Unit) =
+            showEditText(activity, title, hint, null, action, textInputListener)
 
     @JvmStatic
     fun showEditText(activity: Activity,
@@ -88,7 +83,7 @@ object BrowserDialog {
                      @StringRes hint: Int,
                      currentText: String?,
                      @StringRes action: Int,
-                     listener: EditorListener) {
+                     textInputListener: (String) -> Unit) {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null)
         val editText = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
 
@@ -101,7 +96,7 @@ object BrowserDialog {
                 .setTitle(title)
                 .setView(dialogView)
                 .setPositiveButton(action
-                ) { _, _ -> listener.onClick(editText.text.toString()) }
+                ) { _, _ -> textInputListener(editText.text.toString()) }
 
         val dialog = editorDialog.show()
         setDialogSize(activity, dialog)

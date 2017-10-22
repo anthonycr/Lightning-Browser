@@ -4,7 +4,6 @@ import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.utils.ThemeUtils
 import android.annotation.TargetApi
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -54,9 +53,8 @@ class IncognitoNotification(val context: Context) {
                 .setContentText(context.getString(R.string.notification_incognito_running_message))
                 .setAutoCancel(false)
                 .setColor(ThemeUtils.getAccentColor(context))
+                .setOngoing(true)
                 .build()
-
-        incognitoNotification.flags = Notification.FLAG_ONGOING_EVENT
 
         notificationManager.notify(incognitoNotificationId, incognitoNotification)
     }

@@ -36,7 +36,7 @@ class IncognitoActivity : BrowserActivity() {
     override fun updateHistory(title: String?, url: String) =// addItemToHistory(title, url);
             Unit
 
-    override val isIncognito = true
+    override fun isIncognito() = true
 
     override fun closeActivity() = closeDrawers(this::closeBrowser)
 

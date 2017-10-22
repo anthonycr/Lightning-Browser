@@ -54,7 +54,6 @@ import android.os.Bundle
 import android.os.Message
 import android.provider.MediaStore
 import android.support.annotation.ColorInt
-import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -63,7 +62,6 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.DrawerLayout.DrawerListener
 import android.support.v7.app.AlertDialog
 import android.support.v7.graphics.Palette
-import android.text.TextUtils
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -162,46 +160,38 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var tabsView: TabsView? = null
     private var bookmarksView: BookmarksView? = null
 
+    // Menu
+    private var backMenuItem: MenuItem? = null
+    private var forwardMenuItem: MenuItem? = null
+
+    private val longPressBackRunnable = Runnable {
+        showCloseDialog(tabsManager.positionOf(tabsManager.currentTab))
+    }
+
     // Proxy
     @Inject internal lateinit var proxyUtils: ProxyUtils
 
     /**
      * Determines if the current browser instance is in incognito mode or not.
      */
-    protected abstract val isIncognito: Boolean
+    protected abstract fun isIncognito(): Boolean
 
-    private val bookmarksFragmentViewId: Int
-        @IdRes
-        get() = if (swapBookmarksAndTabs) R.id.left_drawer else R.id.right_drawer
-
-    private val tabsFragmentViewId: Int
-        get() = if (shouldShowTabsInDrawer) {
-            if (swapBookmarksAndTabs) R.id.right_drawer else R.id.left_drawer
-        } else {
-            R.id.tabs_toolbar_container
-        }
-
-    private val longPressBackRunnable = Runnable {
-        tabsManager.let {
-            val currentTab = it.currentTab
-            showCloseDialog(it.positionOf(currentTab))
-        }
-    }
-
-    private val bookmarkDrawer: View
-        get() = if (swapBookmarksAndTabs) left_drawer else right_drawer
-
-    private val tabDrawer: View
-        get() = if (swapBookmarksAndTabs) right_drawer else left_drawer
-
-    private var backMenuItem: MenuItem? = null
-    private var forwardMenuItem: MenuItem? = null
-
-
+    /**
+     * Choose the behavior when the controller closes the view.
+     */
     abstract override fun closeActivity()
 
+    /**
+     * Choose what to do when the browser visits a website.
+     *
+     * @param title the title of the site visited.
+     * @param url the url of the site visited.
+     */
     abstract override fun updateHistory(title: String?, url: String)
 
+    /**
+     * An observable which asynchronously updates the user's cookie preferences.
+     */
     protected abstract fun updateCookiePreference(): Completable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -212,7 +202,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         val incognitoNotification = IncognitoNotification(this)
         tabsManager.addTabNumberChangedListener {
-            if (isIncognito) {
+            if (isIncognito()) {
                 if (it == 0) {
                     incognitoNotification.hide()
                 } else {
@@ -221,7 +211,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        presenter = BrowserPresenter(this, isIncognito)
+        presenter = BrowserPresenter(this, isIncognito())
 
         initialize(savedInstanceState)
     }
@@ -233,7 +223,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val actionBar = requireNotNull(supportActionBar)
 
         //TODO make sure dark theme flag gets set correctly
-        isDarkTheme = preferences.useTheme != 0 || isIncognito
+        isDarkTheme = preferences.useTheme != 0 || isIncognito()
         iconColor = if (isDarkTheme) ThemeUtils.getIconDarkThemeColor(this) else ThemeUtils.getIconLightThemeColor(this)
         disabledIconColor = if (isDarkTheme) {
             ContextCompat.getColor(this, R.color.icon_dark_theme_disabled)
@@ -287,20 +277,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             fragmentManager.beginTransaction().remove(tabsFragment).commit()
         }
 
-        tabsView = tabsFragment ?: TabsFragment.createTabsFragment(isIncognito, shouldShowTabsInDrawer)
+        tabsView = tabsFragment ?: TabsFragment.createTabsFragment(isIncognito(), shouldShowTabsInDrawer)
 
         if (bookmarksFragment != null) {
             fragmentManager.beginTransaction().remove(bookmarksFragment).commit()
         }
 
-        bookmarksView = bookmarksFragment ?: BookmarksFragment.createFragment(isIncognito)
+        bookmarksView = bookmarksFragment ?: BookmarksFragment.createFragment(isIncognito())
 
         fragmentManager.executePendingTransactions()
 
         fragmentManager
                 .beginTransaction()
-                .replace(tabsFragmentViewId, tabsView as Fragment, TAG_TABS_FRAGMENT)
-                .replace(bookmarksFragmentViewId, bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
+                .replace(getTabsFragmentViewId(), tabsView as Fragment, TAG_TABS_FRAGMENT)
+                .replace(getBookmarksFragmentViewId(), bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
                 .commit()
         if (shouldShowTabsInDrawer) {
             toolbar_layout.removeView(findViewById(R.id.tabs_toolbar_container))
@@ -326,18 +316,18 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 updateTabNumber(0)
 
                 // Post drawer locking in case the activity is being recreated
-                Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, tabDrawer) }
+                Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getTabDrawer()) }
             } else {
 
                 // Post drawer locking in case the activity is being recreated
-                Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, tabDrawer) }
+                Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer()) }
                 it.setImageResource(R.drawable.ic_action_home)
                 it.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
             }
         }
 
         // Post drawer locking in case the activity is being recreated
-        Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, bookmarkDrawer) }
+        Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getBookmarkDrawer()) }
 
         customView.findViewById<FrameLayout>(R.id.arrow_button).setOnClickListener(this)
 
@@ -400,13 +390,35 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
     }
 
+    private fun getBookmarksFragmentViewId(): Int = if (swapBookmarksAndTabs) {
+        R.id.left_drawer
+    } else {
+        R.id.right_drawer
+    }
+
+    private fun getTabsFragmentViewId(): Int = if (shouldShowTabsInDrawer) {
+        if (swapBookmarksAndTabs) R.id.right_drawer else R.id.left_drawer
+    } else {
+        R.id.tabs_toolbar_container
+    }
+
+    private fun getBookmarkDrawer(): View = if (swapBookmarksAndTabs) {
+        left_drawer
+    } else {
+        right_drawer
+    }
+
+    private fun getTabDrawer(): View = if (swapBookmarksAndTabs) {
+        right_drawer
+    } else {
+        left_drawer
+    }
+
     protected fun panicClean() {
         Log.d(TAG, "Closing browser")
-        tabsManager.let {
-            it.newTab(this, "", false)
-            it.switchToTab(0)
-            it.clearSavedState()
-        }
+        tabsManager.newTab(this, "", false)
+        tabsManager.switchToTab(0)
+        tabsManager.clearSavedState()
 
         HistoryPage.deleteHistoryPage(application).subscribe()
         closeBrowser()
@@ -514,8 +526,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private inner class DrawerLocker : DrawerListener {
 
         override fun onDrawerClosed(v: View) {
-            val tabsDrawer = tabDrawer
-            val bookmarksDrawer = bookmarkDrawer
+            val tabsDrawer = getTabDrawer()
+            val bookmarksDrawer = getBookmarkDrawer()
 
             if (v === tabsDrawer) {
                 drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, bookmarksDrawer)
@@ -525,8 +537,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         override fun onDrawerOpened(v: View) {
-            val tabsDrawer = tabDrawer
-            val bookmarksDrawer = bookmarkDrawer
+            val tabsDrawer = getTabDrawer()
+            val bookmarksDrawer = getBookmarkDrawer()
 
             if (v === tabsDrawer) {
                 drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, bookmarksDrawer)
@@ -579,11 +591,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val colorMode = preferences.colorModeEnabled && !isDarkTheme
 
         webPageBitmap?.let { webBitmap ->
-            if (!isIncognito && !colorMode && !isDarkTheme) {
+            if (!isIncognito() && !colorMode && !isDarkTheme) {
                 changeToolbarBackground(webBitmap, null)
-            } else if (!isIncognito && currentView != null && !isDarkTheme) {
+            } else if (!isIncognito() && currentView != null && !isDarkTheme) {
                 changeToolbarBackground(currentView.favicon, null)
-            } else if (!isIncognito && !isDarkTheme) {
+            } else if (!isIncognito() && !isDarkTheme) {
                 changeToolbarBackground(webBitmap, null)
             }
         }
@@ -728,8 +740,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Handle action buttons
         when (item.itemId) {
             android.R.id.home -> {
-                if (drawer_layout.isDrawerOpen(bookmarkDrawer)) {
-                    drawer_layout.closeDrawer(bookmarkDrawer)
+                if (drawer_layout.isDrawerOpen(getBookmarkDrawer())) {
+                    drawer_layout.closeDrawer(getBookmarkDrawer())
                 }
                 return true
             }
@@ -873,14 +885,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun findInPage() = BrowserDialog.showEditText(this,
             R.string.action_find,
             R.string.search_hint,
-            R.string.search_hint, object : BrowserDialog.EditorListener {
-        override fun onClick(text: String) {
-            if (!TextUtils.isEmpty(text)) {
-                presenter?.findInPage(text)
-                showFindInPageControls(text)
-            }
+            R.string.search_hint) { text ->
+        if (text.isNotEmpty()) {
+            presenter?.findInPage(text)
+            showFindInPageControls(text)
         }
-    })
+    }
 
     private fun showFindInPageControls(text: String) {
         search_bar.visibility = View.VISIBLE
@@ -1099,22 +1109,22 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun performExitCleanUp() {
         val currentTab = tabsManager.currentTab
-        if (preferences.clearCacheExit && currentTab != null && !isIncognito) {
+        if (preferences.clearCacheExit && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.webView)
             Log.d(TAG, "Cache Cleared")
         }
-        if (preferences.clearHistoryExitEnabled && !isIncognito) {
+        if (preferences.clearHistoryExitEnabled && !isIncognito()) {
             WebUtils.clearHistory(this, historyModel, databaseScheduler)
             Log.d(TAG, "History Cleared")
         }
-        if (preferences.clearCookiesExitEnabled && !isIncognito) {
+        if (preferences.clearCookiesExitEnabled && !isIncognito()) {
             WebUtils.clearCookies(this)
             Log.d(TAG, "Cookies Cleared")
         }
-        if (preferences.clearWebStorageExitEnabled && !isIncognito) {
+        if (preferences.clearWebStorageExitEnabled && !isIncognito()) {
             WebUtils.clearWebStorage()
             Log.d(TAG, "WebStorage Cleared")
-        } else if (isIncognito) {
+        } else if (isIncognito()) {
             WebUtils.clearWebStorage()     // We want to make sure incognito mode is secure
         }
         suggestionsAdapter?.clearCache()
@@ -1166,9 +1176,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     @Synchronized override fun onBackPressed() {
         val currentTab = tabsManager.currentTab
-        if (drawer_layout.isDrawerOpen(tabDrawer)) {
-            drawer_layout.closeDrawer(tabDrawer)
-        } else if (drawer_layout.isDrawerOpen(bookmarkDrawer)) {
+        if (drawer_layout.isDrawerOpen(getTabDrawer())) {
+            drawer_layout.closeDrawer(getTabDrawer())
+        } else if (drawer_layout.isDrawerOpen(getBookmarkDrawer())) {
             bookmarksView?.navigateBack()
         } else {
             if (currentTab != null) {
@@ -1202,7 +1212,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         networkDisposable?.dispose()
 
-        if (isIncognito && isFinishing) {
+        if (isIncognito() && isFinishing) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out)
         }
     }
@@ -1359,7 +1369,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun updateTabNumber(number: Int) {
         if (shouldShowTabsInDrawer) {
-            if (isIncognito) {
+            if (isIncognito()) {
                 arrowImageView?.setImageDrawable(ThemeUtils.getThemedDrawable(this, R.drawable.incognito_mode, true))
             } else {
                 arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
@@ -1389,7 +1399,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun initializeSearchSuggestions(getUrl: AutoCompleteTextView) {
 
-        suggestionsAdapter = SuggestionsAdapter(this, isDarkTheme, isIncognito)
+        suggestionsAdapter = SuggestionsAdapter(this, isDarkTheme, isIncognito())
 
         getUrl.threshold = 1
         getUrl.dropDownWidth = -1
@@ -1458,18 +1468,16 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * helper function that opens the bookmark drawer
      */
     private fun openBookmarks() {
-        if (drawer_layout.isDrawerOpen(tabDrawer)) {
+        if (drawer_layout.isDrawerOpen(getTabDrawer())) {
             drawer_layout.closeDrawers()
         }
-        drawer_layout.openDrawer(bookmarkDrawer)
+        drawer_layout.openDrawer(getBookmarkDrawer())
     }
 
     /**
-     * This method closes any open drawer and executes
-     * the runnable after the drawers are completely closed.
+     * This method closes any open drawer and executes the runnable after the drawers are closed.
      *
-     * @param runnable an optional runnable to run after
-     * the drawers are closed.
+     * @param runnable an optional runnable to run after the drawers are closed.
      */
     protected fun closeDrawers(runnable: (() -> Unit)?) {
         if (!drawer_layout.isDrawerOpen(left_drawer) && !drawer_layout.isDrawerOpen(right_drawer)) {
@@ -1667,7 +1675,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         currentTab?.setVisibility(View.INVISIBLE)
     }
 
-    override fun closeBookmarksDrawer() = drawer_layout.closeDrawer(bookmarkDrawer)
+    override fun closeBookmarksDrawer() = drawer_layout.closeDrawer(getBookmarkDrawer())
 
     override fun onHideCustomView() {
         val currentTab = tabsManager.currentTab
@@ -1960,7 +1968,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         when (v.id) {
             R.id.arrow_button -> when {
                 searchView?.hasFocus() == true -> currentTab.requestFocus()
-                shouldShowTabsInDrawer -> drawer_layout.openDrawer(tabDrawer)
+                shouldShowTabsInDrawer -> drawer_layout.openDrawer(getTabDrawer())
                 else -> currentTab.loadHomepage()
             }
             R.id.button_next -> currentTab.findNext()

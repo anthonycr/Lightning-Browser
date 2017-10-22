@@ -39,6 +39,8 @@ import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import static acr.browser.lightning.preference.PreferenceManager.Suggestion;
 
@@ -196,11 +198,12 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             R.string.search_engine_custom,
             mPreferenceManager.getSearchUrl(),
             R.string.action_ok,
-            new BrowserDialog.EditorListener() {
+            new Function1<String, Unit>() {
                 @Override
-                public void onClick(@NonNull String text) {
-                    mPreferenceManager.setSearchUrl(text);
+                public Unit invoke(String s) {
+                    mPreferenceManager.setSearchUrl(s);
                     setSearchEngineSummary(customSearch);
+                    return Unit.INSTANCE;
                 }
             });
 
@@ -470,11 +473,12 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             R.string.title_custom_homepage,
             currentHomepage,
             R.string.action_ok,
-            new BrowserDialog.EditorListener() {
+            new Function1<String, Unit>() {
                 @Override
-                public void onClick(@NonNull String text) {
-                    mPreferenceManager.setHomepage(text);
-                    home.setSummary(text);
+                public Unit invoke(String s) {
+                    mPreferenceManager.setHomepage(s);
+                    home.setSummary(s);
+                    return Unit.INSTANCE;
                 }
             });
     }
@@ -548,11 +552,12 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             R.string.title_user_agent,
             mPreferenceManager.getUserAgentString(""),
             R.string.action_ok,
-            new BrowserDialog.EditorListener() {
+            new Function1<String, Unit>() {
                 @Override
-                public void onClick(@NonNull String text) {
-                    mPreferenceManager.setUserAgentString(text);
+                public Unit invoke(String s) {
+                    mPreferenceManager.setUserAgentString(s);
                     useragent.setSummary(mActivity.getString(R.string.agent_custom));
+                    return Unit.INSTANCE;
                 }
             });
     }

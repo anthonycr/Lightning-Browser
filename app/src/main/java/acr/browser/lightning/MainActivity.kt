@@ -39,7 +39,7 @@ class MainActivity : BrowserActivity() {
 
     override fun updateHistory(title: String?, url: String) = addItemToHistory(title, url)
 
-    override val isIncognito = false
+    override fun isIncognito() = false
 
     override fun closeActivity() = closeDrawers {
         performExitCleanUp()
