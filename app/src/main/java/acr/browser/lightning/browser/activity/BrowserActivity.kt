@@ -1093,10 +1093,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         presenter?.onNewIntent(intent)
     }
 
-    // Currently do nothing
-    // Possibly closing the current tab might close the browser and mess stuff up
-    override fun closeEmptyTab() = Unit
-
     override fun onTrimMemory(level: Int) {
         if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Log.d(TAG, "Low Memory, Free Memory")
@@ -1298,7 +1294,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * the color of the tab background, for use when the tabs are displayed on the top
      * of the screen.
      *
-     * @param favicon       the Bitmap to extract the color from
+     * @param favicon the Bitmap to extract the color from
      * @param drawable the optional LinearLayout to color
      */
     override fun changeToolbarBackground(favicon: Bitmap, drawable: Drawable?) {
@@ -1331,7 +1327,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     if (shouldShowTabsInDrawer) {
                         backgroundDrawable.color = animatedColor
                         Handlers.MAIN.post { window.setBackgroundDrawable(backgroundDrawable) }
-                    } else drawable?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
+                    } else {
+                        drawable?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
+                    }
                     currentUiColor = animatedColor
                     toolbar_layout.setBackgroundColor(animatedColor)
                     searchBackground?.background?.setColorFilter(DrawableUtils.mixColor(interpolatedTime,
