@@ -216,7 +216,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         initialize(savedInstanceState)
     }
 
-    @Synchronized
     private fun initialize(savedInstanceState: Bundle?) {
         initializeToolbarHeight(resources.configuration)
         setSupportActionBar(toolbar)
@@ -1085,7 +1084,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param position the position of the tab to display
      */
     // TODO move to presenter
-    @Synchronized private fun showTab(position: Int) {
+    private fun showTab(position: Int) {
         presenter?.tabChanged(position)
     }
 
@@ -1170,7 +1169,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         finish()
     }
 
-    @Synchronized override fun onBackPressed() {
+    override fun onBackPressed() {
         val currentTab = tabsManager.currentTab
         if (drawer_layout.isDrawerOpen(getTabDrawer())) {
             drawer_layout.closeDrawer(getTabDrawer())
@@ -1621,13 +1620,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }, 1)
     }
 
-    @Synchronized override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+    override fun onShowCustomView(view: View, callback: CustomViewCallback) {
         originalOrientation = requestedOrientation
         val requestedOrientation = originalOrientation
         onShowCustomView(view, callback, requestedOrientation)
     }
 
-    @Synchronized override fun onShowCustomView(view: View, callback: CustomViewCallback, requestedOrientation: Int) {
+    override fun onShowCustomView(view: View, callback: CustomViewCallback, requestedOrientation: Int) {
         val currentTab = tabsManager.currentTab
         if (customView != null) {
             try {
@@ -1805,7 +1804,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param resultMsg the transport message used to send the URL to
      * the newly created WebView.
      */
-    @Synchronized override fun onCreateWindow(resultMsg: Message) {
+    override fun onCreateWindow(resultMsg: Message) {
         if (newTab("", true)) {
             tabsManager.getTabAtPosition(tabsManager.size() - 1)
                     ?.let(LightningView::webView)
