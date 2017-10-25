@@ -291,7 +291,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     override fun navigateBack() {
         if (uiModel.isCurrentFolderRoot()) {
-            uiController.closeBookmarksDrawer()
+            uiController.onBackButtonPressed()
         } else {
             setBookmarksShown(null, true)
             bookmark_list_view?.layoutManager?.scrollToPosition(scrollIndex)

@@ -156,11 +156,6 @@ interface UIController {
     fun bookmarkItemClicked(item: HistoryItem)
 
     /**
-     * Notify the controller that it should close the bookmark drawer.
-     */
-    fun closeBookmarksDrawer()
-
-    /**
      * Notify the UI that the forward button should be [enabled] for interaction.
      */
     fun setForwardButtonEnabled(enabled: Boolean)

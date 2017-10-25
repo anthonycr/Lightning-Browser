@@ -1672,8 +1672,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         currentTab?.setVisibility(View.INVISIBLE)
     }
 
-    override fun closeBookmarksDrawer() = drawer_layout.closeDrawer(getBookmarkDrawer())
-
     override fun onHideCustomView() {
         val currentTab = tabsManager.currentTab
         if (customView == null || customViewCallback == null || currentTab == null) {
@@ -1739,12 +1737,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onBackButtonPressed() {
-        val currentTab = tabsManager.currentTab
-        if (currentTab?.canGoBack() == true) {
-            currentTab.goBack()
-            closeDrawers(null)
-        } else if (currentTab != null) {
-            tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
+        if (!drawer_layout.closeDrawerIfOpen(left_drawer) && !drawer_layout.closeDrawerIfOpen(right_drawer)) {
+            val currentTab = tabsManager.currentTab
+            if (currentTab?.canGoBack() == true) {
+                currentTab.goBack()
+                closeDrawers(null)
+            } else if (currentTab != null) {
+                tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
+            }
         }
     }
 
@@ -2000,6 +2000,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults)
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
+    /**
+     * If the [drawer] is open, close it and return true. Return false otherwise.
+     */
+    fun DrawerLayout.closeDrawerIfOpen(drawer: View): Boolean =
+            if (isDrawerOpen(drawer)) {
+                closeDrawer(drawer)
+                true
+            } else {
+                false
+            }
 
     companion object {
 
