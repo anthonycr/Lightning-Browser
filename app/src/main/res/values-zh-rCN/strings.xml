@@ -5,6 +5,7 @@
     <string name="action_share">分享页面</string>
     <string name="action_history">历史记录</string>
     <string name="action_bookmarks">书签列表</string>
+    <string name="action_downloads">下载内容</string>
     <string name="action_add_bookmark">添加书签</string>
     <string name="action_copy">复制链接</string>
     <string name="action_forward">前进</string>
