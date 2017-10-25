@@ -16,8 +16,8 @@
 package acr.browser.lightning.dialog
 
 import acr.browser.lightning.R
+import acr.browser.lightning.extensions.dimen
 import acr.browser.lightning.utils.DeviceUtils
-import acr.browser.lightning.utils.ResourceUtils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
@@ -104,8 +104,8 @@ object BrowserDialog {
 
     @JvmStatic
     fun setDialogSize(context: Context, dialog: Dialog) {
-        var maxWidth = ResourceUtils.dimen(context, R.dimen.dialog_max_size)
-        val padding = ResourceUtils.dimen(context, R.dimen.dialog_padding)
+        var maxWidth = context.dimen(R.dimen.dialog_max_size)
+        val padding = context.dimen(R.dimen.dialog_padding)
         val screenSize = DeviceUtils.getScreenWidth(context)
         if (maxWidth > screenSize - 2 * padding) {
             maxWidth = screenSize - 2 * padding
