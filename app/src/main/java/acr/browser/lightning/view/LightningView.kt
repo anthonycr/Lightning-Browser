@@ -1005,7 +1005,7 @@ class LightningView(private val activity: Activity,
      * reference to the WebView and therefore will not
      * leak it if the WebView is garbage collected.
      */
-    private class WebViewHandler internal constructor(view: LightningView) : Handler() {
+    private class WebViewHandler(view: LightningView) : Handler() {
 
         private val reference: WeakReference<LightningView> = WeakReference(view)
 
