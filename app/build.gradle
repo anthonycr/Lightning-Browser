@@ -34,14 +34,18 @@ android {
         }
     }
 
+    flavorDimensions "capabilities"
+
     productFlavors {
         lightningPlus {
+            dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
             versionCode project.versionCode_plus
         }
 
         lightningLite {
+            dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
             versionCode project.versionCode_lite
@@ -71,65 +75,65 @@ dexcount {
 
 dependencies {
     // test dependencies
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:3.8.0'
-    testCompile 'org.mockito:mockito-core:2.10.0'
-    testCompile 'com.nhaarman:mockito-kotlin:1.5.0', { exclude group: 'org.jetbrains.kotlin' }
-    testCompile 'org.robolectric:robolectric:3.4.2'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.8.0'
+    testImplementation 'org.mockito:mockito-core:2.10.0'
+    testImplementation 'com.nhaarman:mockito-kotlin:1.5.0', { exclude group: 'org.jetbrains.kotlin' }
+    testImplementation 'org.robolectric:robolectric:3.4.2'
 
     // support libraries
-    final def supportLibVersion = '26.0.2'
-    compile "com.android.support:palette-v7:$supportLibVersion"
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile "com.android.support:design:$supportLibVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibVersion"
-    compile "com.android.support:support-v4:$supportLibVersion"
+    final def supportLibVersion = '26.1.0'
+    implementation "com.android.support:palette-v7:$supportLibVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
 
     // html parsing for reading mode
-    compile 'org.jsoup:jsoup:1.10.3'
+    implementation 'org.jsoup:jsoup:1.10.3'
 
     // dependency injection
     final def daggerVersion = '2.12'
-    compile "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    provided 'javax.annotation:jsr250-api:1.0'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // view binding
     final def butterKnifeVersion = '8.8.1'
-    compile "com.jakewharton:butterknife:$butterKnifeVersion"
+    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
     // permissions
-    compile 'com.anthonycr.grant:permissions:1.1.2'
+    implementation 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
-    compile 'net.i2p.android:client:0.8'
+    implementation 'net.i2p.android:client:0.8'
 
-    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // file reading
     final def mezzanineVersion = '1.0.0'
-    compile "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
+    implementation "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
     // rx
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.4'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.4'
 
     // tor proxy
     final def netCipherVersion = '2.0.0-alpha1'
-    compile "info.guardianproject.netcipher:netcipher:$netCipherVersion"
-    compile "info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion"
+    implementation "info.guardianproject.netcipher:netcipher:$netCipherVersion"
+    implementation "info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion"
 
-    compile 'com.anthonycr.bonsai:bonsai:1.1.0'
+    implementation 'com.anthonycr.bonsai:bonsai:1.1.0'
 
-    compile 'com.anthonycr.progress:animated-progress:1.0'
+    implementation 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
     final def leakCanaryVersion = '1.5.4'
-    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     // kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
 }

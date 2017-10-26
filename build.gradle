@@ -1,20 +1,21 @@
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.kotlinVersion = '1.1.51'
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
         mavenCentral()
-        maven { url "https://maven.google.com" }
     }
 }
 
