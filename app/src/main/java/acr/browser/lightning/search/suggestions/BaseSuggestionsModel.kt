@@ -17,9 +17,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- * The base search suggestions API. Provides common
- * fetching and caching functionality for each potential
- * suggestions provider.
+ * The base search suggestions API. Provides common fetching and caching functionality for each
+ * potential suggestions provider.
  */
 abstract class BaseSuggestionsModel internal constructor(application: Application, private val encoding: String) {
 
@@ -28,23 +27,17 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
 
     /**
      * Create a URL for the given query in the given language.
-
+     *
      * @param query    the query that was made.
-     * *
      * @param language the locale of the user.
-     * *
      * @return should return a URL that can be fetched using a GET.
      */
     protected abstract fun createQueryUrl(query: String, language: String): String
 
     /**
      * Parse the results of an input stream into a list of [HistoryItem].
-
+     *
      * @param inputStream the raw input to parse.
-     * *
-     * @param results     the list to populate.
-     * *
-     * @throws Exception throw an exception if anything goes wrong.
      */
     @Throws(Exception::class)
     protected abstract fun parseResults(inputStream: InputStream): List<HistoryItem>
@@ -59,9 +52,8 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
 
     /**
      * Retrieves the results for a query.
-
+     *
      * @param rawQuery the raw query to retrieve the results for.
-     * *
      * @return a list of history items for the query.
      */
     fun fetchResults(rawQuery: String): List<HistoryItem> {
