@@ -82,7 +82,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.4.2'
 
     // support libraries
-    final def supportLibVersion = '26.1.0'
+    final def supportLibVersion = '27.0.0'
     implementation "com.android.support:palette-v7:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
