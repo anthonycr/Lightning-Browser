@@ -15,6 +15,7 @@ import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.utils.ThemeUtils
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
@@ -84,8 +85,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         super.onCreate(savedInstanceState)
         BrowserApp.appComponent.inject(this)
 
+        val context = requireNotNull(context) { "Context should never be null in onCreate" }
+
         uiController = context as UIController
-        isIncognito = arguments.getBoolean(INCOGNITO_MODE, false)
+        isIncognito = arguments?.getBoolean(INCOGNITO_MODE, false) == true
         val darkTheme = preferenceManager.useTheme != 0 || isIncognito
         webPageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme)
         folderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme)
@@ -257,11 +260,14 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         buttonImage.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
     }
 
-    private fun handleLongPress(item: HistoryItem) = if (item.isFolder) {
-        bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(activity, uiController, item)
-    } else {
-        bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, item)
+    private fun handleLongPress(item: HistoryItem) = (context as Activity?)?.let {
+        if (item.isFolder) {
+            bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(it, uiController, item)
+        } else {
+            bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(it, uiController, item)
+        }
     }
+
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -276,8 +282,9 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
             }
             R.id.action_toggle_desktop -> {
                 val current = tabsManager.currentTab
-                if (current != null) {
-                    current.toggleDesktopUA(activity)
+                val context = context
+                if (current != null && context != null) {
+                    current.toggleDesktopUA(context)
                     current.reload()
                     // TODO add back drawer closing
                 }

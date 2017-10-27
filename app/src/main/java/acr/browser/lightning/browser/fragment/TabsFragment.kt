@@ -63,21 +63,24 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val arguments = arguments
-        val context = context
+        val context = requireNotNull(context) { "Context should never be null in onCreate" }
         uiController = activity as UIController
-        isIncognito = arguments.getBoolean(IS_INCOGNITO, false)
-        showInNavigationDrawer = arguments.getBoolean(VERTICAL_MODE, true)
+        isIncognito = arguments?.getBoolean(IS_INCOGNITO, false) == true
+        showInNavigationDrawer = arguments?.getBoolean(VERTICAL_MODE, true) == true
         darkTheme = preferences.useTheme != 0 || isIncognito
         colorMode = preferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
-        iconColor = if (darkTheme)
+
+        iconColor = if (darkTheme) {
             ThemeUtils.getIconDarkThemeColor(context)
-        else
+        } else {
             ThemeUtils.getIconLightThemeColor(context)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View
+        val context = inflater.context
         if (showInNavigationDrawer) {
             view = inflater.inflate(R.layout.tab_drawer, container, false)
             setupFrameLayoutButton(view, R.id.tab_header_button, R.id.plusIcon)
@@ -88,14 +91,14 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false)
             val newTab = view.findViewById<ImageView>(R.id.new_tab_button)
-            newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(activity))
+            newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(context))
             newTab.setOnClickListener { uiController.newTabButtonClicked() }
         }
 
         return view
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = if (showInNavigationDrawer) {
@@ -200,9 +203,11 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     private fun toViewModels(tabs: List<LightningView>) = tabs.map(::TabViewState)
 
-    private inner class LightningViewAdapter internal constructor(private val mDrawerTabs: Boolean) : RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder>() {
+    private inner class LightningViewAdapter internal constructor(
+            private val drawerTabs: Boolean
+    ) : RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder>() {
 
-        private val layoutResourceId: Int = if (mDrawerTabs) R.layout.tab_list_item else R.layout.tab_list_item_horizontal
+        private val layoutResourceId: Int = if (drawerTabs) R.layout.tab_list_item else R.layout.tab_list_item_horizontal
         private val backgroundTabDrawable: Drawable?
         private val foregroundTabBitmap: Bitmap?
         private val colorMatrix: ColorMatrix = ColorMatrix()
@@ -213,10 +218,11 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
         init {
 
-            if (mDrawerTabs) {
+            if (drawerTabs) {
                 backgroundTabDrawable = null
                 foregroundTabBitmap = null
             } else {
+                val context = requireNotNull(context) { "Adapter cannot be initialized when fragment is detached" }
                 val backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f)
                 val backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888)
                 Utils.drawTrapezoid(Canvas(backgroundTabBitmap), backgroundColor, true)
@@ -257,7 +263,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): LightningViewHolder {
             val inflater = LayoutInflater.from(viewGroup.context)
             val view = inflater.inflate(layoutResourceId, viewGroup, false)
-            if (mDrawerTabs) {
+            if (drawerTabs) {
                 DrawableUtils.setBackground(view, BackgroundDrawable(view.context))
             }
             return LightningViewHolder(view)
@@ -288,7 +294,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
                 }
 
         private fun updateViewHolderBackground(viewHolder: LightningViewHolder, isForeground: Boolean) {
-            if (mDrawerTabs) {
+            if (drawerTabs) {
                 val verticalBackground = viewHolder.layout.background as BackgroundDrawable
                 verticalBackground.isCrossFadeEnabled = false
                 if (isForeground) {
@@ -302,14 +308,14 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         private fun updateViewHolderAppearance(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) {
             if (isForeground) {
                 var foregroundDrawable: Drawable? = null
-                if (!mDrawerTabs) {
+                if (!drawerTabs) {
                     foregroundDrawable = BitmapDrawable(resources, foregroundTabBitmap)
                     if (!isIncognito && colorMode) {
                         foregroundDrawable.setColorFilter(uiController.getUiColor(), PorterDuff.Mode.SRC_IN)
                     }
                 }
                 TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.boldText)
-                if (!mDrawerTabs) {
+                if (!drawerTabs) {
                     DrawableUtils.setBackground(viewHolder.layout, foregroundDrawable)
                 }
                 if (!isIncognito && colorMode) {
@@ -317,7 +323,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
                 }
             } else {
                 TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.normalText)
-                if (!mDrawerTabs) {
+                if (!drawerTabs) {
                     DrawableUtils.setBackground(viewHolder.layout, backgroundTabDrawable)
                 }
             }
