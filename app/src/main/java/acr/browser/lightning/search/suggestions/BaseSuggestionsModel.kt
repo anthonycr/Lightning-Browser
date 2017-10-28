@@ -6,6 +6,7 @@ import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.text.TextUtils
 import android.util.Log
+import io.reactivex.Single
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -51,12 +52,12 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
     }
 
     /**
-     * Retrieves the results for a query.
+     * A [Single] that fetches the search suggestion results for the provided query.
      *
      * @param rawQuery the raw query to retrieve the results for.
-     * @return a list of history items for the query.
+     * @return a [Single] that emits the list of results for the query.
      */
-    fun fetchResults(rawQuery: String): List<HistoryItem> {
+    fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>> = Single.fromCallable {
         val filter = ArrayList<HistoryItem>(5)
 
         val query = try {
@@ -64,14 +65,14 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
         } catch (e: UnsupportedEncodingException) {
             Log.e(TAG, "Unable to encode the URL", e)
 
-            return filter
+            return@fromCallable filter
         }
 
         downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
             filter += parseResults(it.byteStream()).take(MAX_RESULTS)
         }
 
-        return filter
+        return@fromCallable filter
     }
 
     /**

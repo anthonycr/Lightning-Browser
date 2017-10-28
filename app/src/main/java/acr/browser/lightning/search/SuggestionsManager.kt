@@ -18,7 +18,7 @@ internal object SuggestionsManager {
     fun createGoogleQueryObservable(query: String, application: Application) =
             Single.create(SingleAction<List<HistoryItem>> { subscriber ->
                 isRequestInProgress = true
-                val results = GoogleSuggestionsModel(application).fetchResults(query)
+                val results = GoogleSuggestionsModel(application).resultsForSearch(query).blockingGet()
                 subscriber.onItem(results)
                 subscriber.onComplete()
                 isRequestInProgress = false
@@ -28,7 +28,7 @@ internal object SuggestionsManager {
     fun createBaiduQueryObservable(query: String, application: Application) =
             Single.create(SingleAction<List<HistoryItem>> { subscriber ->
                 isRequestInProgress = true
-                val results = BaiduSuggestionsModel(application).fetchResults(query)
+                val results = BaiduSuggestionsModel(application).resultsForSearch(query).blockingGet()
                 subscriber.onItem(results)
                 subscriber.onComplete()
                 isRequestInProgress = false
@@ -38,7 +38,7 @@ internal object SuggestionsManager {
     fun createDuckQueryObservable(query: String, application: Application) =
             Single.create(SingleAction<List<HistoryItem>> { subscriber ->
                 isRequestInProgress = true
-                val results = DuckSuggestionsModel(application).fetchResults(query)
+                val results = DuckSuggestionsModel(application).resultsForSearch(query).blockingGet()
                 subscriber.onItem(results)
                 subscriber.onComplete()
                 isRequestInProgress = false
