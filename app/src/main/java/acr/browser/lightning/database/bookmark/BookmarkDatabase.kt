@@ -249,14 +249,11 @@ class BookmarkDatabase @Inject constructor(
      * @return a valid values object that can be inserted
      * into the database.
      */
-    private fun bindBookmarkToContentValues(bookmarkItem: HistoryItem): ContentValues {
-        val contentValues = ContentValues(4)
-        contentValues.put(KEY_TITLE, bookmarkItem.title)
-        contentValues.put(KEY_URL, bookmarkItem.url)
-        contentValues.put(KEY_FOLDER, bookmarkItem.folder)
-        contentValues.put(KEY_POSITION, bookmarkItem.position)
-
-        return contentValues
+    private fun bindBookmarkToContentValues(bookmarkItem: HistoryItem) = ContentValues(4).apply {
+        put(KEY_TITLE, bookmarkItem.title)
+        put(KEY_URL, bookmarkItem.url)
+        put(KEY_FOLDER, bookmarkItem.folder)
+        put(KEY_POSITION, bookmarkItem.position)
     }
 
     /**
