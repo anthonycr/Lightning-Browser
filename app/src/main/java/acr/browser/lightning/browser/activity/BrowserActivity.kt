@@ -869,13 +869,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setWebViewTranslation(toolbar_layout.height.toFloat())
     }
 
-    private fun setWebViewTranslation(translation: Float) {
-        if (isFullScreen) {
-            currentTabView?.translationY = translation
-        } else {
-            currentTabView?.translationY = 0f
-        }
-    }
+    private fun setWebViewTranslation(translation: Float) =
+            if (isFullScreen) {
+                currentTabView?.translationY = translation
+            } else {
+                currentTabView?.translationY = 0f
+            }
 
     /**
      * method that shows a dialog asking what string the user wishes to search
@@ -1294,9 +1293,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * of the screen.
      *
      * @param favicon the Bitmap to extract the color from
-     * @param drawable the optional LinearLayout to color
+     * @param tabBackground the optional LinearLayout to color
      */
-    override fun changeToolbarBackground(favicon: Bitmap, drawable: Drawable?) {
+    override fun changeToolbarBackground(favicon: Bitmap, tabBackground: Drawable?) {
         val defaultColor = ContextCompat.getColor(this, R.color.primary_color)
         if (currentUiColor == Color.BLACK) {
             currentUiColor = defaultColor
@@ -1327,7 +1326,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                         backgroundDrawable.color = animatedColor
                         Handlers.MAIN.post { window.setBackgroundDrawable(backgroundDrawable) }
                     } else {
-                        drawable?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
+                        tabBackground?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
                     }
                     currentUiColor = animatedColor
                     toolbar_layout.setBackgroundColor(animatedColor)

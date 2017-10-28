@@ -60,9 +60,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     private lateinit var uiController: UIController
 
-    private val tabsManager: TabsManager
-        get() = uiController.getTabModel()
-
     // Adapter
     private var bookmarkAdapter: BookmarkListAdapter? = null
 
@@ -174,6 +171,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         bookmarkAdapter?.cleanupSubscriptions()
     }
 
+    private fun getTabsManager(): TabsManager = uiController.getTabModel()
+
     fun reinitializePreferences() {
         val activity = activity ?: return
         val darkTheme = preferenceManager.useTheme != 0 || isIncognito
@@ -273,7 +272,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         when (v.id) {
             R.id.action_add_bookmark -> uiController.bookmarkButtonClicked()
             R.id.action_reading -> {
-                val currentTab = tabsManager.currentTab
+                val currentTab = getTabsManager().currentTab
                 if (currentTab != null) {
                     val read = Intent(activity, ReadingActivity::class.java)
                     read.putExtra(LOAD_READING_URL, currentTab.url)
@@ -281,7 +280,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                 }
             }
             R.id.action_toggle_desktop -> {
-                val current = tabsManager.currentTab
+                val current = getTabsManager().currentTab
                 val context = context
                 if (current != null && context != null) {
                     current.toggleDesktopUA(context)

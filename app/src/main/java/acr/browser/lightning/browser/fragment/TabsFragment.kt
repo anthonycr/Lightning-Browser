@@ -53,9 +53,6 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     @Inject internal lateinit var preferences: PreferenceManager
 
-    private val tabsManager: TabsManager
-        get() = uiController.getTabModel()
-
     init {
         BrowserApp.appComponent.inject(this)
     }
@@ -135,6 +132,8 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         tabsAdapter = null
     }
 
+    private fun getTabsManager(): TabsManager = uiController.getTabModel()
+
     private fun setupFrameLayoutButton(root: View, @IdRes buttonId: Int,
                                        @IdRes imageId: Int) {
         val frameButton = root.findViewById<View>(buttonId)
@@ -168,7 +167,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     }
 
     override fun onClick(v: View) = when (v.id) {
-        R.id.tab_header_button -> uiController.showCloseDialog(tabsManager.indexOfCurrentTab())
+        R.id.tab_header_button -> uiController.showCloseDialog(getTabsManager().indexOfCurrentTab())
         R.id.new_tab_button -> uiController.newTabButtonClicked()
         R.id.action_back -> uiController.onBackButtonPressed()
         R.id.action_forward -> uiController.onForwardButtonPressed()
@@ -188,17 +187,17 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     override fun tabAdded() {
         tabsAdapter?.let {
-            it.showTabs(toViewModels(tabsManager.allTabs))
+            it.showTabs(toViewModels(getTabsManager().allTabs))
             tabs_list.postDelayed({ tabs_list.smoothScrollToPosition(it.itemCount - 1) }, 500)
         }
     }
 
     override fun tabRemoved(position: Int) {
-        tabsAdapter?.showTabs(toViewModels(tabsManager.allTabs))
+        tabsAdapter?.showTabs(toViewModels(getTabsManager().allTabs))
     }
 
     override fun tabChanged(position: Int) {
-        tabsAdapter?.showTabs(toViewModels(tabsManager.allTabs))
+        tabsAdapter?.showTabs(toViewModels(getTabsManager().allTabs))
     }
 
     private fun toViewModels(tabs: List<LightningView>) = tabs.map(::TabViewState)
