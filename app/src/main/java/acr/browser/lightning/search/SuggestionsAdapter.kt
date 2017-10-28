@@ -6,6 +6,7 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.search.suggestions.*
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.content.Context
@@ -18,6 +19,7 @@ import android.widget.*
 import com.anthonycr.bonsai.*
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import java.io.File
 import java.io.FilenameFilter
 import java.util.*
@@ -46,19 +48,31 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var application: Application
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
 
     private val allBookmarks = ArrayList<HistoryItem>(5)
 
     private val darkTheme: Boolean
     private var isIncognito = true
-    private var suggestionChoice: PreferenceManager.Suggestion? = null
+
+    private val searchFilter: SearchFilter
 
     init {
         BrowserApp.appComponent.inject(this)
         darkTheme = dark || incognito
         isIncognito = incognito
 
-        refreshPreferences()
+        val suggestionsRepository = if (isIncognito) {
+            NoOpSuggestionsRepository()
+        } else {
+            suggestionsRepositoryForPreference()
+        }
+
+        searchFilter = SearchFilter(suggestionsRepository,
+                this,
+                historyModel,
+                databaseScheduler,
+                networkScheduler)
 
         refreshBookmarks()
 
@@ -67,12 +81,24 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         historyDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, darkTheme)
     }
 
+    private fun suggestionsRepositoryForPreference(): SuggestionsRepository =
+            when (preferenceManager.searchSuggestionChoice) {
+                PreferenceManager.Suggestion.SUGGESTION_GOOGLE ->
+                    GoogleSuggestionsModel(application)
+                PreferenceManager.Suggestion.SUGGESTION_DUCK ->
+                    DuckSuggestionsModel(application)
+                PreferenceManager.Suggestion.SUGGESTION_BAIDU ->
+                    BaiduSuggestionsModel(application)
+                PreferenceManager.Suggestion.SUGGESTION_NONE ->
+                    NoOpSuggestionsRepository()
+            }
+
     fun refreshPreferences() {
-        suggestionChoice = preferenceManager.searchSuggestionChoice
+        searchFilter.suggestionsRepository = suggestionsRepositoryForPreference()
     }
 
-    fun clearCache() = // We don't need these cache files anymore
-            Schedulers.io().execute(ClearCacheRunnable(application))
+    // We don't need these cache files anymore
+    fun clearCache() = Schedulers.io().execute(ClearCacheRunnable(application))
 
     fun refreshBookmarks() {
         bookmarkManager.getAllBookmarks()
@@ -138,9 +164,9 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
         return finalView
     }
 
-    override fun getFilter(): Filter = SearchFilter(this, historyModel, databaseScheduler)
+    override fun getFilter(): Filter = searchFilter
 
-    @Synchronized private fun publishResults(list: List<HistoryItem>) {
+    private fun publishResults(list: List<HistoryItem>) {
         if (list != filteredList) {
             filteredList.clear()
             filteredList.addAll(list)
@@ -226,20 +252,15 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
                 subscriber.onComplete()
             })
 
-    private fun getSuggestionsForQuery(query: String): Single<List<HistoryItem>> =
-            when (suggestionChoice) {
-                PreferenceManager.Suggestion.SUGGESTION_GOOGLE -> SuggestionsManager.createGoogleQueryObservable(query, application)
-                PreferenceManager.Suggestion.SUGGESTION_DUCK -> SuggestionsManager.createDuckQueryObservable(query, application)
-                PreferenceManager.Suggestion.SUGGESTION_BAIDU -> SuggestionsManager.createBaiduQueryObservable(query, application)
-                else -> Single.empty<List<HistoryItem>>()
-            }
+    private class SearchFilter internal constructor(
+            var suggestionsRepository: SuggestionsRepository,
+            private val suggestionsAdapter: SuggestionsAdapter,
+            private val historyModel: HistoryRepository,
+            private val databaseScheduler: Scheduler,
+            private val networkScheduler: Scheduler
+    ) : Filter() {
 
-    private fun shouldRequestNetwork(): Boolean =
-            !isIncognito && suggestionChoice != PreferenceManager.Suggestion.SUGGESTION_NONE
-
-    private class SearchFilter internal constructor(private val suggestionsAdapter: SuggestionsAdapter,
-                                                    private val historyModel: HistoryRepository,
-                                                    private val databaseScheduler: Scheduler) : Filter() {
+        private var disposable: Disposable? = null
 
         override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
             val results = Filter.FilterResults()
@@ -249,14 +270,13 @@ class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito:
             }
             val query = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
-            if (suggestionsAdapter.shouldRequestNetwork() && !SuggestionsManager.isRequestInProgress) {
-                suggestionsAdapter.getSuggestionsForQuery(query)
-                        .subscribeOn(Schedulers.worker())
-                        .observeOn(Schedulers.main())
-                        .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                            override fun onItem(item: List<HistoryItem>?) =
-                                    suggestionsAdapter.combineResults(null, null, item)
-                        })
+            if (disposable?.isDisposed != false) {
+                disposable = suggestionsRepository.resultsForSearch(query)
+                        .subscribeOn(networkScheduler)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { item ->
+                            suggestionsAdapter.combineResults(null, null, item)
+                        }
             }
 
             suggestionsAdapter.getBookmarksForQuery(query)

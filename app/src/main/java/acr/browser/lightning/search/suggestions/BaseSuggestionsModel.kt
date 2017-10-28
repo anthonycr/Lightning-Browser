@@ -21,7 +21,9 @@ import java.util.concurrent.TimeUnit
  * The base search suggestions API. Provides common fetching and caching functionality for each
  * potential suggestions provider.
  */
-abstract class BaseSuggestionsModel internal constructor(application: Application, private val encoding: String) {
+abstract class BaseSuggestionsModel internal constructor(
+        application: Application, private val encoding: String
+) : SuggestionsRepository {
 
     private val httpClient: OkHttpClient
     private val cacheControl = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
@@ -51,13 +53,7 @@ abstract class BaseSuggestionsModel internal constructor(application: Applicatio
                 .build()
     }
 
-    /**
-     * A [Single] that fetches the search suggestion results for the provided query.
-     *
-     * @param rawQuery the raw query to retrieve the results for.
-     * @return a [Single] that emits the list of results for the query.
-     */
-    fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>> = Single.fromCallable {
+    override fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>> = Single.fromCallable {
         val filter = ArrayList<HistoryItem>(5)
 
         val query = try {
