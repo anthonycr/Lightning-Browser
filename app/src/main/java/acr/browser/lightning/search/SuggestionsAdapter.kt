@@ -26,7 +26,11 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
-class SuggestionsAdapter(private val context: Context, dark: Boolean, incognito: Boolean) : BaseAdapter(), Filterable {
+class SuggestionsAdapter(
+        private val context: Context,
+        dark: Boolean,
+        incognito: Boolean
+) : BaseAdapter(), Filterable {
 
     private val filterScheduler = Schedulers.newSingleThreadedScheduler()
     private val maxSuggestions = 5

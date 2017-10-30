@@ -89,7 +89,8 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
             view = inflater.inflate(R.layout.tab_strip, container, false)
             val newTab = view.findViewById<ImageView>(R.id.new_tab_button)
             newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(context))
-            newTab.setOnClickListener { uiController.newTabButtonClicked() }
+            newTab.setOnClickListener(this)
+            newTab.setOnLongClickListener(this)
         }
 
         return view
@@ -178,7 +179,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     override fun onLongClick(v: View): Boolean {
         when (v.id) {
-            R.id.action_new_tab -> uiController.newTabButtonLongClicked()
+            R.id.new_tab_button -> uiController.newTabButtonLongClicked()
             else -> {
             }
         }

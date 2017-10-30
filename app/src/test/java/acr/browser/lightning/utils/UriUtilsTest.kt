@@ -48,7 +48,6 @@ class UriUtilsTest {
 
     @Test
     fun `domainForUrl returns null for url without domain`() {
-        println("YOLO: ${domainForUrl("http://")}")
         assertThat(domainForUrl("http://")).isNull()
     }
 
