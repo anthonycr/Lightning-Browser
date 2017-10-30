@@ -191,7 +191,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
             view.notifyTabViewChanged(tabsModel.indexOfCurrentTab())
         }
 
-        if (shouldClose) {
+        if (shouldClose && !isIncognito) {
             this.shouldClose = false
             view.closeActivity()
         }
