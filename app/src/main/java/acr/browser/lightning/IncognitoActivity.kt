@@ -26,8 +26,10 @@ class IncognitoActivity : BrowserActivity() {
     }
 
     @Suppress("RedundantOverride")
-    override fun onNewIntent(intent: Intent) =// handleNewIntent(intent);
-            super.onNewIntent(intent)
+    override fun onNewIntent(intent: Intent) {
+        handleNewIntent(intent)
+        super.onNewIntent(intent)
+    }
 
     @Suppress("RedundantOverride")
     override fun onPause() = super.onPause()

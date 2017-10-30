@@ -289,7 +289,6 @@ class LightningView(private val activity: Activity,
      * UserAgent for the WebView.
      */
     @SuppressLint("NewApi", "SetJavaScriptEnabled")
-    @Synchronized
     fun initializePreferences(context: Context) {
         val settings = webView?.settings ?: return
 

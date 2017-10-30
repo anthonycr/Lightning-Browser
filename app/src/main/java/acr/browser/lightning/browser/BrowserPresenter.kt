@@ -252,7 +252,6 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      *
      * @param position the position of the tab to switch to.
      */
-    @Synchronized
     fun tabChanged(position: Int) {
         if (position < 0 || position >= tabsModel.size()) {
             Log.d(TAG, "tabChanged invalid position: $position")
@@ -271,7 +270,6 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      * @param show whether or not to switch to this tab after opening it.
      * @return true if we successfully created the tab, false if we have hit max tabs.
      */
-    @Synchronized
     fun newTab(url: String?, show: Boolean): Boolean {
         // Limit number of tabs for limited version of app
         if (!BuildConfig.FULL_VERSION && tabsModel.size() >= 10) {

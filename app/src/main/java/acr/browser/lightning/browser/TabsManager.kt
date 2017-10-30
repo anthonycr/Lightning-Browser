@@ -61,7 +61,6 @@ class TabsManager {
 
     fun cancelPendingWork() = postInitializationWorkList.clear()
 
-    @Synchronized
     fun doAfterInitialization(runnable: () -> Unit) {
         if (isInitialized) {
             runnable()
@@ -70,7 +69,7 @@ class TabsManager {
         }
     }
 
-    @Synchronized private fun finishInitialization() {
+    private fun finishInitialization() {
         isInitialized = true
         for (runnable in postInitializationWorkList) {
             runnable()
@@ -85,7 +84,6 @@ class TabsManager {
      * @param intent    the intent that started the browser activity.
      * @param incognito whether or not we are in incognito mode.
      */
-    @Synchronized
     fun initializeTabs(activity: Activity,
                        intent: Intent?,
                        incognito: Boolean): Completable =
@@ -101,6 +99,7 @@ class TabsManager {
                 // If incognito, only create one tab
                 if (incognito) {
                     newTab(activity, url, true)
+                    finishInitialization()
                     subscriber.onComplete()
                     return@CompletableAction
                 }
@@ -122,7 +121,6 @@ class TabsManager {
 
     private fun restoreLostTabs(newTabUrl: String?, activity: Activity,
                                 subscriber: CompletableSubscriber) {
-
         restoreState()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.main())
@@ -232,7 +230,6 @@ class TabsManager {
      * @param position the index in tabs list
      * @return the corespondent [LightningView], or null if the index is invalid
      */
-    @Synchronized
     fun getTabAtPosition(position: Int): LightningView? =
             if (position < 0 || position >= tabList.size) {
                 null
@@ -245,7 +242,6 @@ class TabsManager {
      * Frees memory for each tab in the manager. Note: this will only work on API < KITKAT as on
      * KITKAT onward the WebViews manage their own memory correctly.
      */
-    @Synchronized
     fun freeMemory() {
         for (tab in tabList) {
             tab.freeMemory()
@@ -256,7 +252,6 @@ class TabsManager {
      * Shutdown the manager. This destroys all tabs and clears the references to those tabs. Current
      * tab is also released for garbage collection.
      */
-    @Synchronized
     fun shutdown() {
         tabList.indices.forEach { deleteTab(0) }
         isInitialized = false
@@ -268,7 +263,6 @@ class TabsManager {
      *
      * @param isConnected whether there is a network connection or not.
      */
-    @Synchronized
     fun notifyConnectionStatus(isConnected: Boolean) = tabList.map(LightningView::webView)
             .forEach { it?.setNetworkAvailable(isConnected) }
 
@@ -277,7 +271,6 @@ class TabsManager {
      *
      * @return the number of tabs in the list.
      */
-    @Synchronized
     fun size(): Int = tabList.size
 
     /**
@@ -285,7 +278,6 @@ class TabsManager {
      *
      * @return the last tab in the list or -1 if there are no tabs.
      */
-    @Synchronized
     fun last(): Int = tabList.size - 1
 
 
@@ -294,10 +286,12 @@ class TabsManager {
      *
      * @return the last tab, or null if there are no tabs.
      */
-    @Synchronized
-    fun lastTab(): LightningView? = if (last() < 0) {
-        null
-    } else tabList[last()]
+    fun lastTab(): LightningView? =
+            if (last() < 0) {
+                null
+            } else {
+                tabList[last()]
+            }
 
     /**
      * Create and return a new tab. The tab is automatically added to the tabs list.
@@ -307,7 +301,6 @@ class TabsManager {
      * @param isIncognito whether the tab is an incognito tab or not.
      * @return a valid initialized tab.
      */
-    @Synchronized
     fun newTab(activity: Activity,
                url: String?,
                isIncognito: Boolean): LightningView {
@@ -324,7 +317,6 @@ class TabsManager {
      *
      * @param position The position of the tab to remove.
      */
-    @Synchronized
     private fun removeTab(position: Int) {
         if (position >= tabList.size) {
             return
@@ -343,7 +335,6 @@ class TabsManager {
      * @param position the position of the tab to delete.
      * @return returns true if the current tab was deleted, false otherwise.
      */
-    @Synchronized
     fun deleteTab(position: Int): Boolean {
         Log.d(TAG, "Delete tab: " + position)
         val currentTab = currentTab
@@ -368,7 +359,6 @@ class TabsManager {
      * @param tab the tab to look for.
      * @return the position of the tab or -1 if the tab is not in the list.
      */
-    @Synchronized
     fun positionOf(tab: LightningView?): Int = tabList.indexOf(tab)
 
     /**
@@ -424,7 +414,6 @@ class TabsManager {
      *
      * @return Return the index of the current tab, or -1 if the current tab is null.
      */
-    @Synchronized
     fun indexOfCurrentTab(): Int = tabList.indexOf(currentTab)
 
     /**
@@ -432,7 +421,6 @@ class TabsManager {
      *
      * @return Return the index of the tab, or -1 if the tab isn't in the list.
      */
-    @Synchronized
     fun indexOfTab(tab: LightningView): Int = tabList.indexOf(tab)
 
     /**
@@ -441,7 +429,6 @@ class TabsManager {
      * @param hashCode the hashcode.
      * @return the tab with an identical hash, or null.
      */
-    @Synchronized
     fun getTabForHashCode(hashCode: Int): LightningView? =
             tabList.firstOrNull { it.webView?.let { it.hashCode() == hashCode } == true }
 
@@ -451,7 +438,6 @@ class TabsManager {
      *
      * @return the selected tab or null if position is out of tabs range.
      */
-    @Synchronized
     fun switchToTab(position: Int): LightningView? {
         Log.d(TAG, "switch to tab: " + position)
         return if (position < 0 || position >= tabList.size) {

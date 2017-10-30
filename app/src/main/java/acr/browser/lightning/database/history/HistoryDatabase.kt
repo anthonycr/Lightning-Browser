@@ -107,7 +107,8 @@ class HistoryDatabase @Inject constructor(
             }
 
     @WorkerThread
-    @Synchronized private fun addHistoryItem(item: HistoryItem) {
+    @Synchronized
+    private fun addHistoryItem(item: HistoryItem) {
         val values = ContentValues()
         values.put(KEY_URL, item.url)
         values.put(KEY_TITLE, item.title)

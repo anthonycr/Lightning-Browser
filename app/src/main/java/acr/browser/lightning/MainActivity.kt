@@ -25,12 +25,13 @@ class MainActivity : BrowserActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onNewIntent(intent: Intent) = if (isPanicTrigger(intent)) {
-        panicClean()
-    } else {
-        handleNewIntent(intent)
-        super.onNewIntent(intent)
-    }
+    override fun onNewIntent(intent: Intent) =
+            if (isPanicTrigger(intent)) {
+                panicClean()
+            } else {
+                handleNewIntent(intent)
+                super.onNewIntent(intent)
+            }
 
     override fun onPause() {
         super.onPause()
