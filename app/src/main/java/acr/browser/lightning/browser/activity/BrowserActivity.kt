@@ -62,6 +62,12 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.DrawerLayout.DrawerListener
 import android.support.v7.app.AlertDialog
 import android.support.v7.graphics.Palette
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.style.CharacterStyle
+import android.text.style.MetricAffectingSpan
+import android.text.style.ParagraphStyle
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -356,6 +362,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             setOnEditorActionListener(searchListener)
             setOnTouchListener(searchListener)
             onPreFocusListener = searchListener
+            addTextChangedListener(searchListener)
 
             initializeSearchSuggestions(this)
         }
@@ -427,7 +434,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         System.exit(1)
     }
 
-    private inner class SearchListenerClass : OnKeyListener, OnEditorActionListener, OnFocusChangeListener, OnTouchListener, SearchView.PreFocusListener {
+    private inner class SearchListenerClass : OnKeyListener,
+            OnEditorActionListener,
+            OnFocusChangeListener,
+            OnTouchListener,
+            SearchView.PreFocusListener,
+            TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
+
+        override fun afterTextChanged(e: Editable) {
+            e.getSpans(0, e.length, CharacterStyle::class.java).forEach(e::removeSpan)
+            e.getSpans(0, e.length, ParagraphStyle::class.java).forEach(e::removeSpan)
+        }
 
         override fun onKey(view: View, keyCode: Int, keyEvent: KeyEvent): Boolean {
 
