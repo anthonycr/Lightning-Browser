@@ -98,7 +98,11 @@ class SuggestionsAdapter(
             }
 
     fun refreshPreferences() {
-        searchFilter.suggestionsRepository = suggestionsRepositoryForPreference()
+        searchFilter.suggestionsRepository = if (isIncognito) {
+            NoOpSuggestionsRepository()
+        } else {
+            suggestionsRepositoryForPreference()
+        }
     }
 
     // We don't need these cache files anymore
