@@ -79,7 +79,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.8.0'
     testImplementation 'org.mockito:mockito-core:2.10.0'
     testImplementation 'com.nhaarman:mockito-kotlin:1.5.0', { exclude group: 'org.jetbrains.kotlin' }
-    testImplementation 'org.robolectric:robolectric:3.4.2'
+    testImplementation 'org.robolectric:robolectric:3.5.1'
 
     // support libraries
     final def supportLibVersion = '27.0.0'
