@@ -21,18 +21,6 @@
     public static *** i(...);
 }
 
--keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
--keep class **$$ViewBinder { *; }
-
--keepclasseswithmembernames class * {
-    @butterknife.* <fields>;
-}
-
--keepclasseswithmembernames class * {
-    @butterknife.* <methods>;
-}
-
 # this will fix a force close in ReadingActivity
 -keep public class org.jsoup.** {
     public *;
