@@ -113,7 +113,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // file reading
-    final def mezzanineVersion = '1.0.0'
+    final def mezzanineVersion = '1.0.1'
     implementation "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
