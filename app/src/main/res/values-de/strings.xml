@@ -22,6 +22,7 @@
     <string name="action_share">Teilen</string>
     <string name="action_history">Verlauf</string>
     <string name="action_bookmarks">Lesezeichen</string>
+    <string name="action_downloads">Downloads</string>
     <string name="action_add_bookmark">Lesezeichen hinzufügen</string>
     <string name="action_copy">Link kopieren</string>
     <string name="action_forward">Weiter</string>
@@ -40,7 +41,7 @@
     <string name="cache">Cache beim Beenden löschen</string>
     <string name="reflow">Textfluss anpassen</string>
     <string name="block">Bilder blockieren</string>
-    <string name="window">Seiten erlauben ein neues Fenster zu öffnen</string>
+    <string name="window">Seiten erlauben einen neuen Tab zu öffnen</string>
     <string name="cookies">Cookies erlauben</string>
     <string name="size">Textgröße</string>
     <string name="recommended">(Empfohlen)</string>
@@ -68,7 +69,7 @@
     <string name="agent_default">Standard</string>
     <string name="agent_desktop">Desktop</string>
     <string name="agent_mobile">Mobile</string>
-    <string name="agent_custom">Andere</string>
+    <string name="agent_custom">Benutzerdefiniert</string>
     <string name="title_search_engine">Suchmaschine</string>
     <string name="action_ok">Ok</string>
     <string name="dialog_download">Möchten Sie diese Datei herunterladen? (%1$s)</string>
@@ -93,7 +94,7 @@
     <string name="size_small">Klein</string>
     <string name="size_smallest">Sehr klein</string>
     <string name="title_error">Fehler</string>
-    <string name="dialog_import_error">Kein Browser zum Importieren der Lesezeichen vorhanden!</string>
+    <string name="dialog_import_error">Kein Browser zum Importieren der Lesezeichen vorhanden.</string>
     <string name="hint_title">Titel</string>
     <string name="hint_url">URL</string>
     <string name="title_edit_bookmark">Lesezeichen bearbeiten</string>
@@ -103,13 +104,13 @@
     <string name="action_back">Zurück</string>
     <string name="action_find">Auf Seite suchen</string>
     <string name="download_pending">Herunterladen läuft\u2026</string>
-    <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
+    <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich</string>
     <string name="problem_download">Ungültige URL, Download nicht möglich</string>
     <string name="problem_location_download">Download in dieses Verzeichns nicht möglich</string>
     <string name="download_no_sdcard_dlg_title">Keine SD-Karte</string>
-    <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
+    <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig</string>
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar</string>
-    <string name="download_sdcard_busy_dlg_msg">Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
+    <string name="download_sdcard_busy_dlg_msg">Speicher in Benutzung. Um das Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuell</string>
@@ -125,13 +126,13 @@
     <string name="message_text_copied">Text in Zwischenablage kopiert</string>
     <string name="message_link_copied">Link in Zwischenablage kopiert</string>
     <string name="message_blocked_local">Lokale Datei wurde beim Laden blockiert</string>
-    <string name="licenses">Open Source-Lizenzen</string>
+    <string name="licenses">Open Source Lizenzen</string>
     <string name="suggestion">Suche nach</string>
     <string name="block_ads">Werbung blockieren</string>
 
     <string name="ssl_warning_dont_ask_again">Während dieser Sitzung nicht mehr nachfragen</string>
-    <string name="message_insecure_connection">Verbindung zu dieser Seite nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
-    <string name="message_certificate_date_invalid">Das Datum des Zertifikats ist ungültig</string>
+    <string name="message_insecure_connection">Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
+    <string name="message_certificate_date_invalid">Datum des Zertifikats ungültig</string>
     <string name="message_certificate_expired">Zertifikat abgelaufen</string>
     <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der Seite überein</string>
     <string name="message_certificate_invalid">Zertifikat ungültig</string>
@@ -154,7 +155,7 @@
     <string name="search_suggestions_off">Keine Suchvorschläge</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
-        <item>Kein</item>
+        <item>Kein (Standard)</item>
         <item>Orbot</item>
         <item>I2P</item>
         <item>Manuell</item>
@@ -164,9 +165,9 @@
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
     <string name="use_i2p_prompt">I2P ist installiert. Soll I2P verwendet werden?</string>	
-    <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>
-    <string name="i2p_not_running">I2P ist nicht gestartet.</string>
-    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
+    <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein.</string>
+    <string name="i2p_not_running">I2P ist nicht gestartet</string>
+    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="clear_cookies_exit">Cookies beim Beenden löschen</string>
@@ -189,19 +190,19 @@
     <string name="title_file_chooser">Dateiauswahl</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
-    <string name="export_bookmarks">Exportiere Lesezeichen</string>
-    <string name="import_backup">Importiere Lesezeichen</string>
+    <string name="export_bookmarks">Lesezeichen exportieren</string>
+    <string name="import_backup">Lesezeichen importieren </string>
     <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
-    <string name="bookmark_export_failure">Lesezeichen konnten nicht exportiert werden!</string>
+    <string name="bookmark_export_failure">Lesezeichen konnten nicht exportiert werden</string>
     <string name="bookmark_settings">Lesezeichen</string>
-    <string name="import_bookmark_error">Lesezeichen konnten nicht importiert werden!</string>
+    <string name="import_bookmark_error">Lesezeichen konnten nicht importiert werden</string>
     <string name="message_bookmark_added">Lesezeichen gespeichert</string>
     <string name="title_chooser">Wähle Datei aus</string>
     <string name="settings_general">Allgemein</string>
-    <string name="settings_display">Aussehen</string>
+    <string name="settings_display">Darstellung</string>
     <string name="settings_privacy">Privatsphäre</string>
     <string name="settings_about">Über</string>
-    <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
+    <string name="settings_about_explain">Details über Version, Autor und Lizenzen</string>
     <string name="close_tab">Aktuellen Tab schließen</string>
     <string name="close_all_tabs">Alle Tabs schließen</string>
     <string name="close_other_tabs">Andere Tabs schließen</string>
@@ -209,12 +210,12 @@
     <string name="color_mode">Farbmodus aktivieren</string>
     <string name="reading_mode">Lesemodus</string>
     <string name="loading">Lade&#8230;</string>
-    <string name="loading_failed">Es konnte nichts von der Seite geladen werden.</string>
+    <string name="loading_failed">Es konnte nichts von der Seite geladen werden</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT Lizenz</string>
     <string name="url_contents">URL-Box Inhalt</string>
-    <string name="text_encoding">Text Encoding</string>
+    <string name="text_encoding">Text Enkodierung</string>
     <string-array name="url_content_array">
         <item>Domain (Standard)</item>
         <item>URL</item>
@@ -241,18 +242,18 @@
     <string name="swap_bookmarks_and_tabs">Lesezeichen und Tab-Drawer wechseln</string>
     <string name="do_not_track">\"Nicht verfolgen\"-Funktion anfordern</string>
     <string name="remove_identifying_headers">Identifizierbare Header entfernen</string>
-    <string name="action_add_to_homescreen">Verknüpfung zum Startbildschirm hinzufügen</string>
-    <string name="message_added_to_homescreen">Verknüpfung wurde hinzugefügt</string>
-    <string name="shortcut_message_failed_to_add">Dein Launcher unterstützt keine Verknüpfungen!</string>
+    <string name="action_add_to_homescreen">Auf Startbildschirm legen</string>
+    <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
+    <string name="shortcut_message_failed_to_add">Dein Launcher unterstützt keine Verknüpfungen</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="flash_not_supported">Flash Player wird von deinem System nicht untertützt!</string>
+    <string name="flash_not_supported">Flash Player wird von deinem System nicht untertützt.</string>
     <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren.</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
 	
     <string name="faq">FAQ</string>
-    <string name="faq_description">Häufige Fragen</string>
+    <string name="faq_description">Häufig gestellte Fragen</string>
 
-    <!-- debug strings -->
+    <!-- Debug strings -->
     <string name="debug_title">Debug Einstellungen</string>
     <string name="debug_leak_canary">LeakCanary</string>
     <string name="app_restart">Bitte schließen Sie die App um die Änderungen anzuwenden.</string>
@@ -290,6 +291,6 @@
         <item quantity="one">%1$d Inkognito-Tab geöffnet</item>
         <item quantity="other">%1$d Inkognito-Tabs geöffnet</item>
     </plurals>
-    <string name="notification_incognito_running_message">Zum Öffnen berühren</string>
+    <string name="notification_incognito_running_message">Incognito-Tab anzeigen</string>
     <string name="notification_incognito_running_description">Dauerhafte Inkognito-Benachrichtigung</string>
 </resources>
