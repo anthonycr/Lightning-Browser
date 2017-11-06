@@ -131,13 +131,13 @@
     <string name="block_ads">Werbung blockieren</string>
 
     <string name="ssl_warning_dont_ask_again">Während dieser Sitzung nicht mehr nachfragen</string>
-    <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nMöchten Sie trotzdem fortfahren?</string>
+    <string name="message_insecure_connection">Verbindung zu dieser Seite nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
     <string name="message_certificate_date_invalid">Das Datum des Zertifikats ist ungültig</string>
-    <string name="message_certificate_expired">Das Zertifikat ist abgelaufen</string>
-    <string name="message_certificate_domain_mismatch">Die Domain des Zertifikats stimmt nicht mit der Domain der Seite überein</string>
-    <string name="message_certificate_invalid">Das Zertifikat ist ungültig</string>
-    <string name="message_certificate_not_yet_valid">Das Zertifikat ist noch nicht gültig</string>
-    <string name="message_certificate_untrusted">Das Zertifikat ist nicht vertrauenswürdig</string>
+    <string name="message_certificate_expired">Zertifikat abgelaufen</string>
+    <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der Seite überein</string>
+    <string name="message_certificate_invalid">Zertifikat ungültig</string>
+    <string name="message_certificate_not_yet_valid">Zertifikat noch nicht gültig</string>
+    <string name="message_certificate_untrusted">Zertifikat nicht vertrauenswürdig</string>
 
     <string name="title_form_resubmission">Formularneuzustellung</string>
     <string name="message_form_resubmission">Daten erneut senden?</string>
