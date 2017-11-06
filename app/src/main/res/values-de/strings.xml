@@ -124,7 +124,6 @@
     <string name="max_tabs">Maximale Tab-Anzahl erreicht!</string>
     <string name="message_text_copied">Text in Zwischenablage kopiert</string>
     <string name="message_link_copied">Link in Zwischenablage kopiert</string>
-    <string name="search_engine_custom">Benutzerdefinierte URL</string>
     <string name="message_blocked_local">Lokale Datei wurde beim Laden blockiert</string>
     <string name="licenses">Open Source-Lizenzen</string>
     <string name="suggestion">Suche nach</string>
