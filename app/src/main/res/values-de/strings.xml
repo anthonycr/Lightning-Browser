@@ -52,8 +52,8 @@
     <string name="restore">Tab beim Start wiederherstellen</string>
     <string name="supported_browsers_title">Unterstützte Browser</string>
     <string name="stock_browser">Standardbrowser</string>
-    <string name="stock_browser_unavailable">Kein unterstützter Standardbrowser gefunden</string>
-    <string name="stock_browser_available">Unterstützter Standardbrowser gefunden</string>
+    <string name="stock_browser_unavailable">(Kein unterstützter Standardbrowser gefunden)</string>
+    <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
     <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
     <string name="clear_cookies">Cookies löschen</string>
     <string name="clear_history">Verlauf löschen</string>
@@ -94,7 +94,7 @@
     <string name="size_small">Klein</string>
     <string name="size_smallest">Sehr klein</string>
     <string name="title_error">Fehler</string>
-    <string name="dialog_import_error">Kein Browser zum Importieren der Lesezeichen vorhanden.</string>
+    <string name="dialog_import_error">Kein Browser zum Importieren der Lesezeichen vorhanden!</string>
     <string name="hint_title">Titel</string>
     <string name="hint_url">URL</string>
     <string name="title_edit_bookmark">Lesezeichen bearbeiten</string>
@@ -104,11 +104,11 @@
     <string name="action_back">Zurück</string>
     <string name="action_find">Auf Seite suchen</string>
     <string name="download_pending">Herunterladen läuft\u2026</string>
-    <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich</string>
-    <string name="problem_download">Ungültige URL, Download nicht möglich</string>
-    <string name="problem_location_download">Download in dieses Verzeichns nicht möglich</string>
+    <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
+    <string name="problem_download">Ungültige URL, Download nicht möglich!</string>
+    <string name="problem_location_download">Download in dieses Verzeichns nicht möglich!</string>
     <string name="download_no_sdcard_dlg_title">Keine SD-Karte</string>
-    <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig</string>
+    <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar</string>
     <string name="download_sdcard_busy_dlg_msg">Speicher in Benutzung. Um das Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
@@ -134,7 +134,7 @@
     <string name="message_insecure_connection">Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
     <string name="message_certificate_date_invalid">Datum des Zertifikats ungültig</string>
     <string name="message_certificate_expired">Zertifikat abgelaufen</string>
-    <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der Seite überein</string>
+    <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der aktuellen Seite überein</string>
     <string name="message_certificate_invalid">Zertifikat ungültig</string>
     <string name="message_certificate_not_yet_valid">Zertifikat noch nicht gültig</string>
     <string name="message_certificate_untrusted">Zertifikat nicht vertrauenswürdig</string>
@@ -166,8 +166,8 @@
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
     <string name="use_i2p_prompt">I2P ist installiert. Soll I2P verwendet werden?</string>	
     <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein.</string>
-    <string name="i2p_not_running">I2P ist nicht gestartet</string>
-    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit</string>
+    <string name="i2p_not_running">I2P ist nicht gestartet.</string>
+    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="clear_cookies_exit">Cookies beim Beenden löschen</string>
@@ -190,8 +190,8 @@
     <string name="title_file_chooser">Dateiauswahl</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
-    <string name="export_bookmarks">Lesezeichen exportieren</string>
-    <string name="import_backup">Lesezeichen importieren </string>
+    <string name="export_bookmarks">Exportiere Lesezeichen</string>
+    <string name="import_backup">Importiere Lesezeichen</string>
     <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
     <string name="bookmark_export_failure">Lesezeichen konnten nicht exportiert werden</string>
     <string name="bookmark_settings">Lesezeichen</string>
@@ -202,7 +202,7 @@
     <string name="settings_display">Darstellung</string>
     <string name="settings_privacy">Privatsphäre</string>
     <string name="settings_about">Über</string>
-    <string name="settings_about_explain">Details über Version, Autor und Lizenzen</string>
+    <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
     <string name="close_tab">Aktuellen Tab schließen</string>
     <string name="close_all_tabs">Alle Tabs schließen</string>
     <string name="close_other_tabs">Andere Tabs schließen</string>
@@ -210,7 +210,7 @@
     <string name="color_mode">Farbmodus aktivieren</string>
     <string name="reading_mode">Lesemodus</string>
     <string name="loading">Lade&#8230;</string>
-    <string name="loading_failed">Es konnte nichts von der Seite geladen werden</string>
+    <string name="loading_failed">Es konnte nichts von der Seite geladen werden.</string>
     <string name="snacktory">Snacktory</string>
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT Lizenz</string>
@@ -246,8 +246,8 @@
     <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
     <string name="shortcut_message_failed_to_add">Dein Launcher unterstützt keine Verknüpfungen</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="flash_not_supported">Flash Player wird von deinem System nicht untertützt.</string>
-    <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren.</string>
+    <string name="flash_not_supported">Flash Player wird von deinem System nicht untertützt!</string>
+    <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren!</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
 	
     <string name="faq">FAQ</string>
