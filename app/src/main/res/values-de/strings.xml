@@ -131,7 +131,7 @@
     <string name="block_ads">Werbung blockieren</string>
 
     <string name="ssl_warning_dont_ask_again">Während dieser Sitzung nicht mehr nachfragen</string>
-    <string name="message_insecure_connection">Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
+    <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
     <string name="message_certificate_date_invalid">Datum des Zertifikats ungültig</string>
     <string name="message_certificate_expired">Zertifikat abgelaufen</string>
     <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der aktuellen Seite überein</string>
@@ -165,7 +165,7 @@
     <string name="port">Port:</string>
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
     <string name="use_i2p_prompt">I2P ist installiert. Soll I2P verwendet werden?</string>	
-    <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein.</string>
+    <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>
     <string name="i2p_not_running">I2P ist nicht gestartet.</string>
     <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
     <string name="yes">Ja</string>
