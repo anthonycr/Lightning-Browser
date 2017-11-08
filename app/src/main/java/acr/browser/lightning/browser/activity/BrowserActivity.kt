@@ -36,6 +36,7 @@ import acr.browser.lightning.view.Handlers
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.SearchView
 import android.app.Activity
+import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -383,7 +384,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         val launchedFromHistory = intent != null && intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0
 
-        if (isPanicTrigger(intent)) {
+        if (intent?.action == INTENT_PANIC_TRIGGER) {
             setIntent(null)
             panicClean()
         } else {
@@ -2035,7 +2036,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         private const val TAG = "BrowserActivity"
 
-        private const val INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER"
+        const val INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER"
 
         private const val TAG_BOOKMARK_FRAGMENT = "TAG_BOOKMARK_FRAGMENT"
         private const val TAG_TABS_FRAGMENT = "TAG_TABS_FRAGMENT"
@@ -2044,17 +2045,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         private val API = android.os.Build.VERSION.SDK_INT
         private val MATCH_PARENT = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         private val COVER_SCREEN_PARAMS = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-
-        /**
-         * Determines if an intent is originating
-         * from a panic trigger.
-         *
-         * @param intent the intent to check.
-         * @return true if the panic trigger sent
-         * the intent, false otherwise.
-         */
-        fun isPanicTrigger(intent: Intent?): Boolean =
-                intent != null && INTENT_PANIC_TRIGGER == intent.action
 
     }
 

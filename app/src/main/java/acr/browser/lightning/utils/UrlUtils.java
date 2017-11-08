@@ -58,7 +58,9 @@ public final class UrlUtils {
      * @return Original or modified URL
      */
     @NonNull
-    public static String smartUrlFilter(@NonNull String url, boolean canBeSearch, String searchUrl) {
+    public static String smartUrlFilter(@NonNull String url,
+                                        boolean canBeSearch,
+                                        @NonNull String searchUrl) {
         String inUrl = url.trim();
         boolean hasSpace = inUrl.indexOf(' ') != -1;
         Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);

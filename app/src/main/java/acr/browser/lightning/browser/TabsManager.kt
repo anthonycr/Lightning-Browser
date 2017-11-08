@@ -8,11 +8,13 @@ import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.view.LightningView
 import android.app.Activity
 import android.app.Application
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -49,6 +51,7 @@ class TabsManager {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var app: Application
+    @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     init {
@@ -91,9 +94,10 @@ class TabsManager {
                 // Make sure we start with a clean tab list
                 shutdown()
 
-                var url: String? = null
-                if (intent != null) {
-                    url = intent.dataString
+                val url: String? = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
+                    extractSearchFromIntent(intent)
+                } else {
+                    intent?.dataString
                 }
 
                 // If incognito, only create one tab
@@ -104,7 +108,7 @@ class TabsManager {
                     return@CompletableAction
                 }
 
-                Log.d(TAG, "URL from intent: " + url)
+                Log.d(TAG, "URL from intent: $url")
                 currentTab = null
                 if (preferenceManager.restoreLostTabsEnabled) {
                     restoreLostTabs(url, activity, subscriber)
@@ -118,6 +122,17 @@ class TabsManager {
                     subscriber.onComplete()
                 }
             })
+
+    fun extractSearchFromIntent(intent: Intent): String? {
+        val query = intent.getStringExtra(SearchManager.QUERY)
+        val searchUrl = "${searchEngineProvider.getCurrentSearchEngine().queryUrl}${UrlUtils.QUERY_PLACE_HOLDER}"
+
+        return if (query?.isNotBlank() == true) {
+            UrlUtils.smartUrlFilter(query, true, searchUrl)
+        } else {
+            null
+        }
+    }
 
     private fun restoreLostTabs(newTabUrl: String?, activity: Activity,
                                 subscriber: CompletableSubscriber) {

@@ -26,7 +26,7 @@ class MainActivity : BrowserActivity() {
     }
 
     override fun onNewIntent(intent: Intent) =
-            if (isPanicTrigger(intent)) {
+            if (intent.action == INTENT_PANIC_TRIGGER) {
                 panicClean()
             } else {
                 handleNewIntent(intent)

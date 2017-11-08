@@ -207,7 +207,12 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      * @param intent the intent to handle, may be null.
      */
     fun onNewIntent(intent: Intent?) = tabsModel.doAfterInitialization {
-        val url = intent?.dataString
+        val url = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
+            tabsModel.extractSearchFromIntent(intent)
+        } else {
+            intent?.dataString
+        }
+
         val tabHashCode = intent?.extras?.getInt(INTENT_ORIGIN, 0) ?: 0
 
         if (tabHashCode != 0 && url != null) {

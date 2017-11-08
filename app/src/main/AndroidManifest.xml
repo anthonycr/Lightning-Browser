@@ -118,6 +118,11 @@
                 <data android:scheme="https"/>
             </intent-filter>
             <intent-filter>
+                <action android:name="android.intent.action.WEB_SEARCH"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
