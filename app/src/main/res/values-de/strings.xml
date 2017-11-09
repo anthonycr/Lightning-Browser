@@ -22,6 +22,7 @@
     <string name="action_share">Teilen</string>
     <string name="action_history">Verlauf</string>
     <string name="action_bookmarks">Lesezeichen</string>
+    <string name="action_downloads">Downloads</string>
     <string name="action_add_bookmark">Lesezeichen hinzufügen</string>
     <string name="action_copy">Link kopieren</string>
     <string name="action_forward">Weiter</string>
@@ -37,10 +38,10 @@
     <string name="settings_advanced">Erweitert</string>
     <string name="apache">Apache License 2.0</string>
     <string name="version">Programmversion</string>
-    <string name="cache">Cache beim Beenden leeren</string>
-    <string name="reflow">Textfluß anpassen</string>
+    <string name="cache">Cache beim Beenden löschen</string>
+    <string name="reflow">Textfluss anpassen</string>
     <string name="block">Bilder blockieren</string>
-    <string name="window">Seiten erlauben ein neues Fenster zu öffnen</string>
+    <string name="window">Seiten erlauben einen neuen Tab zu öffnen</string>
     <string name="cookies">Cookies erlauben</string>
     <string name="size">Textgröße</string>
     <string name="recommended">(Empfohlen)</string>
@@ -49,6 +50,8 @@
     <string name="wideViewPort">Breiten Anzeigebereich verwenden</string>
     <string name="overViewMode">Seiten in der Übersicht öffnen</string>
     <string name="restore">Tab beim Start wiederherstellen</string>
+    <string name="supported_browsers_title">Unterstützte Browser</string>
+    <string name="stock_browser">Standardbrowser</string>
     <string name="stock_browser_unavailable">(Kein unterstützter Standardbrowser gefunden)</string>
     <string name="stock_browser_available">(Unterstützter Standardbrowser gefunden)</string>
     <string name="fullScreenOption">Statusleiste beim Surfen ausblenden</string>
@@ -59,16 +62,18 @@
     <string name="action_open">Öffnen</string>
     <string name="dialog_link">Was möchten Sie mit diesem Link tun?</string>
     <string name="dialog_title_share">Diese Webseite teilen</string>
+    <string name="dialog_history_long_press">Was möchten Sie mit diesem Verlaufs-Eintrag tun?</string>
     <string name="dialog_bookmark">Was möchten Sie mit diesem Lesezeichen tun?</string>
     <string name="action_delete">Löschen</string>
     <string name="action_blank">Leere Seite</string>
     <string name="agent_default">Standard</string>
     <string name="agent_desktop">Desktop</string>
     <string name="agent_mobile">Mobile</string>
-    <string name="agent_custom">Andere</string>
+    <string name="agent_custom">Benutzerdefiniert</string>
     <string name="title_search_engine">Suchmaschine</string>
     <string name="action_ok">Ok</string>
     <string name="dialog_download">Möchten Sie diese Datei herunterladen? (%1$s)</string>
+    <string name="unknown_size">Unbekannte Größe</string>
     <string name="action_cancel">Abbrechen</string>
     <string name="title_warning">Warnung</string>
     <string name="dialog_adobe_not_installed">Adobe Flash Player wurde nicht erkannt.\nBitte installieren Sie den Flash Player.</string>
@@ -100,41 +105,69 @@
     <string name="action_find">Auf Seite suchen</string>
     <string name="download_pending">Herunterladen läuft\u2026</string>
     <string name="cannot_download">Herunterladen nur bei \"http\" oder \"https\" URLs möglich!</string>
+    <string name="problem_download">Ungültige URL, Download nicht möglich!</string>
+    <string name="problem_location_download">Download in dieses Verzeichns nicht möglich!</string>
     <string name="download_no_sdcard_dlg_title">Keine SD-Karte</string>
     <string name="download_no_sdcard_dlg_msg">USB-Speicher ist für das Herunterladen der Datei notwendig!</string>
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar</string>
-    <string name="download_sdcard_busy_dlg_msg">Speicher aktiv. Um ein Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
+    <string name="download_sdcard_busy_dlg_msg">Speicher in Benutzung. Um das Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuell</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Kontakt</string>
-    <string name="url_twitter">twitter.com/ACRDevelopment</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">Cache löschen</string>
     <string name="message_cache_cleared">Cache gelöscht</string>
     <string name="message_import">Lesezeichen wurden importiert</string>
     <string name="message_clear_history">Verlauf gelöscht</string>
     <string name="message_cookies_cleared">Cookies gelöscht</string>
-    <string name="max_tabs">Maximale Reiteranzahl erreicht!</string>
+    <string name="max_tabs">Maximale Tab-Anzahl erreicht!</string>
     <string name="message_text_copied">Text in Zwischenablage kopiert</string>
     <string name="message_link_copied">Link in Zwischenablage kopiert</string>
-    <string name="search_engine_custom">Benutzerdefinierte URL</string>
     <string name="message_blocked_local">Lokale Datei wurde beim Laden blockiert</string>
-    <string name="licenses">Open Source-Lizenzen</string>
+    <string name="licenses">Open Source Lizenzen</string>
     <string name="suggestion">Suche nach</string>
     <string name="block_ads">Werbung blockieren</string>
+
+    <string name="ssl_warning_dont_ask_again">Während dieser Sitzung nicht mehr nachfragen</string>
+    <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
+    <string name="message_certificate_date_invalid">Datum des Zertifikats ungültig</string>
+    <string name="message_certificate_expired">Zertifikat abgelaufen</string>
+    <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der aktuellen Seite überein</string>
+    <string name="message_certificate_invalid">Zertifikat ungültig</string>
+    <string name="message_certificate_not_yet_valid">Zertifikat noch nicht gültig</string>
+    <string name="message_certificate_untrusted">Zertifikat nicht vertrauenswürdig</string>
+
     <string name="title_form_resubmission">Formularneuzustellung</string>
     <string name="message_form_resubmission">Daten erneut senden?</string>
     <string name="message_location">\nMeine Position verwenden?</string>
     <string name="action_allow">Erlauben</string>
     <string name="action_dont_allow">Nicht erlauben</string>
     <string name="title_sign_in">Anmelden</string>
+    <string name="label_realm">Server Nachricht: %s</string>
     <string name="hint_username">Benutzername</string>
     <string name="hint_password">Passwort</string>
     <string name="search_suggestions">Suchvorschläge</string>
     <string name="powered_by_google">Unterstützt durch Google</string>
+    <string name="powered_by_duck">Unterstützt durch DuckDuckGo</string>
+    <string name="powered_by_baidu">Unterstützt durch Baidu</string>
+    <string name="search_suggestions_off">Keine Suchvorschläge</string>
+    <string name="http_proxy">HTTP Proxy</string>
+    <string-array name="proxy_choices_array">
+        <item>Kein (Standard)</item>
+        <item>Orbot</item>
+        <item>I2P</item>
+        <item>Manuell</item>
+    </string-array>
+    <string name="manual_proxy">Manueller Proxy</string>
+    <string name="host">Host:</string>
+    <string name="port">Port:</string>
     <string name="use_tor_prompt">Orbot ist installiert. Soll Tor verwendet werden?</string>
+    <string name="use_i2p_prompt">I2P ist installiert. Soll I2P verwendet werden?</string>	
     <string name="install_orbot">Um Tor verwenden zu können, muss Orbot installiert sein!</string>
+    <string name="i2p_not_running">I2P ist nicht gestartet.</string>
+    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="clear_cookies_exit">Cookies beim Beenden löschen</string>
@@ -151,24 +184,28 @@
     <string name="name_inverted">Invertiert</string>
     <string name="name_grayscale">Graustufen</string>
     <string name="name_inverted_grayscale">Invertierte Graustufen</string>
+    <string name="name_increase_contrast">Erhöhter Kontrast</string>
     <string name="name_normal">Normal</string>
     <string name="sync_history">Verlauf mit Google synchronisieren</string>
     <string name="title_file_chooser">Dateiauswahl</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
-    <string name="export_bookmarks">Exportiere Datensicherung</string>
-    <string name="import_backup">Importiere Lesezeichen aus Datensicherung</string>
+    <string name="export_bookmarks">Exportiere Lesezeichen</string>
+    <string name="import_backup">Importiere Lesezeichen</string>
     <string name="bookmark_export_path">Lesezeichen exportiert nach</string>
+    <string name="bookmark_export_failure">Lesezeichen konnten nicht exportiert werden</string>
     <string name="bookmark_settings">Lesezeichen</string>
     <string name="import_bookmark_error">Lesezeichen konnten nicht importiert werden</string>
+    <string name="message_bookmark_added">Lesezeichen gespeichert</string>
     <string name="title_chooser">Wähle Datei aus</string>
     <string name="settings_general">Allgemein</string>
+    <string name="settings_display">Darstellung</string>
     <string name="settings_privacy">Privatsphäre</string>
     <string name="settings_about">Über</string>
     <string name="settings_about_explain">Details über Version, Autor und Lizenz</string>
-    <string name="close_other_tabs">Andere Tabs schließen</string>
     <string name="close_tab">Aktuellen Tab schließen</string>
     <string name="close_all_tabs">Alle Tabs schließen</string>
+    <string name="close_other_tabs">Andere Tabs schließen</string>
     <string name="third_party">Drittanbieter Cookies blockieren</string>
     <string name="color_mode">Farbmodus aktivieren</string>
     <string name="reading_mode">Lesemodus</string>
@@ -178,72 +215,82 @@
     <string name="jsoup">jsoup: Java HTML Parser</string>
     <string name="mit_license">MIT Lizenz</string>
     <string name="url_contents">URL-Box Inhalt</string>
+    <string name="text_encoding">Text Enkodierung</string>
     <string-array name="url_content_array">
         <item>Domain (Standard)</item>
         <item>URL</item>
         <item>Titel</item>
     </string-array>
-    <string name="action_folder">Ordner</string>
-    <string name="action_rename">Umbenennen</string>
-    <string name="black_theme">Schwarzes Design (AMOLED)</string>
-    <string name="clear_web_storage">Webinhalte leeren</string>
-    <string name="clear_web_storage_exit">Webinhalte beim Beenden leeren</string>
-    <string name="dark_theme">Dunkles Design</string>
-    <string name="dialog_folder">Was möchten Sie mit diesem Ordner tun?</string>
-    <string name="dialog_history_long_press">Was möchten Sie mit diesem Verlaufs-Eintrag tun?</string>
-    <string name="folder">Ordnername</string>
     <string name="invert_color">Farben invertieren</string>
-    <string name="light_theme">Helles Design</string>
-    <string name="manual_proxy">Manueller Proxy</string>
-    <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
-    <string name="message_web_storage_cleared">Webinhalte geleert</string>
-    <string name="port">Port:</string>
+    <string name="dark_theme">Dunkles Design</string>
+    <string name="settings_black_status_bar">Schwarze Statusleiste</string>
     <string name="tabs">Tabs</string>
     <string name="theme">App-Design</string>
+    <string name="light_theme">Helles Design</string>
+    <string name="black_theme">Schwarzes Design (AMOLED)</string>
+    <string name="folder">Ordnername</string>
+    <string name="action_folder">Ordner</string>
+    <string name="action_rename">Umbenennen</string>
     <string name="title_rename_folder">Ordner umbenennen</string>
-    <string name="action_add_to_homescreen">Auf Startbildschirm legen</string>
-    <string name="message_added_to_homescreen">Verknüpfung auf dem Startbildschirm abgelegt</string>
-    <string name="http_proxy">HTTP-Proxy</string>
-    <string name="i2p_not_running">I2P läuft nicht.</string>
-    <string name="i2p_tunnels_not_ready">I2P Tunnel sind noch nicht bereit.</string>
-    <string name="message_certificate_date_invalid">Zertifikats-Datum ungültig</string>
-    <string name="message_certificate_domain_mismatch">Domain in Zertifikat stimmt nicht mit aktueller Domain überein</string>
-    <string name="message_certificate_expired">Zertifikat abgelaufen</string>
-    <string name="message_certificate_invalid">Zertifikat ungültig</string>
-    <string name="message_certificate_not_yet_valid">Zertifikat noch nicht gültig</string>
-    <string name="message_certificate_untrusted">Zertifikat wird nicht vertraut</string>
-    <string name="problem_download">Ungültige Adresse gefunden. Kann nicht herunterladen</string>
-    <string name="problem_location_download">Kann nicht an den eingestellten Ort herunterladen</string>
-    <string name="use_i2p_prompt">Es sieht aus, als ob I2P installiert wäre. Möchten Sie es verwenden?</string>
-    <string name="text_encoding">Textcodierung</string>
-    <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
-    <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="app_restart">Bitte schließen Sie die App um die Änderungen anzuwenden.</string>
-    <string name="dialog_remove_folder">Ordner löschen</string>
-    <string name="dialog_remove_bookmark">Lesezeichen löschen</string>
-    <string name="dialog_open_new_tab">In neuem Tab öffnen</string>
-    <string name="dialog_open_incognito_tab">In Inkognito-Tab öffnen</string>
-    <string name="dialog_edit_bookmark">Lesezeichen bearbeiten</string>
-    <string name="debug_title">Debug Einstellungen</string>
-    <string name="dialog_copy_link">Link kopieren</string>
-    <string name="dialog_download_image">Bild herunterladen</string>
-    <string name="dialog_open_background_tab">In Hintergrund-Tab öffnen</string>
-    <string name="dialog_remove_from_history">Aus dem Verlauf entfernen</string>
-    <string name="dialog_rename_folder">Ordner umbenennen</string>
-    <string name="dialog_title_close_browser">Browser schließen</string>
-    <string name="do_not_track">\"Nicht verfolgen\"-Funktion anfordern</string>
-    <string name="faq">FAQ</string>
-    <string name="faq_description">Häufige Fragen</string>
-    <string name="name_increase_contrast">Kontrast erhöhen</string>
-    <string name="powered_by_duck">Unterstützt durch DuckDuckGo</string>
-    <string name="remove_identifying_headers">Identifizierbare Header entfernen</string>
-    <string name="search_suggestions_off">Keine Suchvorschläge</string>
-    <string name="settings_adblock">Werbeblocker</string>
-    <string name="supported_browsers_title">Unterstützte Browser</string>
-    <string name="swap_bookmarks_and_tabs">Lesezeichen und Tab-Drawer wechseln</string>
-    <string name="stock_browser">Standardbrowser</string>
-    <string name="host">Host:</string>
+    <string name="dialog_folder">Was möchten Sie mit diesem Ordner tun?</string>
+    <string name="clear_web_storage">Webinhalte löschen</string>
+    <string name="clear_web_storage_exit">Webinhalte beim Beenden löschen</string>
+    <string name="message_web_storage_cleared">Webinhalte gelöscht</string>
     <string name="hosts_source">Quelle für Werbeblocker</string>
-    <string name="settings_display">Anzeige</string>
+    <string name="settings_adblock">Werbeblocker</string>
+    <string name="tabs_in_drawer">Tabs in Drawer anzeigen</string>
+    <string name="swap_bookmarks_and_tabs">Lesezeichen und Tab-Drawer wechseln</string>
+    <string name="do_not_track">\"Nicht verfolgen\"-Funktion anfordern</string>
+    <string name="remove_identifying_headers">Identifizierbare Header entfernen</string>
+    <string name="action_add_to_homescreen">Auf Startbildschirm legen</string>
+    <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
+    <string name="shortcut_message_failed_to_add">Dein Launcher unterstützt keine Verknüpfungen</string>
+    <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
+    <string name="flash_not_supported">Flash Player wird von deinem System nicht untertützt!</string>
+    <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren!</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
+	
+    <string name="faq">FAQ</string>
+    <string name="faq_description">Häufig gestellte Fragen</string>
+
+    <!-- Debug strings -->
+    <string name="debug_title">Debug Einstellungen</string>
+    <string name="debug_leak_canary">LeakCanary</string>
+    <string name="app_restart">Bitte schließen Sie die App um die Änderungen anzuwenden.</string>
+
+	<!-- Dialogs -->
+    <string name="dialog_open_new_tab">In neuem Tab öffnen</string>
+    <string name="dialog_open_background_tab">In Hintergrund-Tab öffnen</string>
+    <string name="dialog_open_incognito_tab">In Inkognito-Tab öffnen</string>
+    <string name="dialog_remove_bookmark">Lesezeichen löschen</string>
+    <string name="dialog_edit_bookmark">Lesezeichen bearbeiten</string>
+    <string name="dialog_remove_from_history">Aus dem Verlauf entfernen</string>
+    <string name="dialog_download_image">Bild herunterladen</string>
+    <string name="dialog_copy_link">Link kopieren</string>
+    <string name="dialog_rename_folder">Ordner umbenennen</string>
+    <string name="dialog_remove_folder">Ordner löschen</string>
+    <string name="dialog_title_close_browser">Browser schließen</string>
+    <string name="dialog_delete_download">Download löschen</string>
+    <string name="dialog_delete_all_downloads">Alle Downloads löschen</string>
+	
+    <!-- Search Engines -->
+    <string name="search_engine_custom">Benutzerdefinierte URL</string>
+    <string name="search_engine_google">Google</string>
+    <string name="search_engine_ask">Ask</string>
+    <string name="search_engine_bing">Bing</string>
+    <string name="search_engine_yahoo">Yahoo</string>
+    <string name="search_engine_startpage">StartPage</string>
+    <string name="search_engine_startpage_mobile">StartPage Mobile</string>
+    <string name="search_engine_duckduckgo">DuckDuckGo</string>
+    <string name="search_engine_duckduckgo_lite">DuckDuckGo Lite</string>
+    <string name="search_engine_baidu">Baidu</string>
+    <string name="search_engine_yandex">Yandex</string>
+	
+	<!-- Notifications -->
+    <plurals name="notification_incognito_running_title">
+        <item quantity="one">%1$d Inkognito-Tab geöffnet</item>
+        <item quantity="other">%1$d Inkognito-Tabs geöffnet</item>
+    </plurals>
+    <string name="notification_incognito_running_message">Incognito-Tab anzeigen</string>
+    <string name="notification_incognito_running_description">Dauerhafte Inkognito-Benachrichtigung</string>
 </resources>
