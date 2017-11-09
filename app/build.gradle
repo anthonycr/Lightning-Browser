@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion project.targetSdkVersion
@@ -25,12 +26,23 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles 'proguard-project.txt'
+            testCoverageEnabled true
         }
 
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles 'proguard-project.txt'
+            testCoverageEnabled false
+        }
+    }
+
+    testOptions {
+        unitTests.all {
+            jacoco {
+                // This option needs to be included for robolectric tests
+                includeNoLocationClasses = true
+            }
         }
     }
 
@@ -65,6 +77,10 @@ android {
     }
 }
 
+jacoco {
+    toolVersion = '0.7.9' // See http://www.eclemma.org/jacoco/
+}
+
 dexcount {
     includeClasses = false
     includeFieldCount = false
@@ -78,7 +94,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:3.8.0'
     testImplementation 'org.mockito:mockito-core:2.10.0'
-    testImplementation 'com.nhaarman:mockito-kotlin:1.5.0', { exclude group: 'org.jetbrains.kotlin' }
+    testImplementation 'com.nhaarman:mockito-kotlin:1.5.0', {
+        exclude group: 'org.jetbrains.kotlin'
+    }
     testImplementation 'org.robolectric:robolectric:3.5.1'
 
     // support libraries
@@ -137,4 +155,24 @@ dependencies {
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testLightningPlusDebugUnitTest', 'createLightningPlusDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    final def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    final def debugTree = fileTree(dir: "$buildDir/intermediates/classes/lightningPlus/debug", excludes: fileFilter)
+    final def kotlinDebugTree = fileTree(dir: "$buildDir/tmp/kotlin-classes/lightningPlusDebug", excludes: fileFilter)
+    final def mainSrc = "${project.projectDir}/src/test/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree], [kotlinDebugTree])
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testLightningPlusDebugUnitTest.exec",
+            "outputs/code-coverage/connected/*coverage.ec"
+    ])
 }
