@@ -18,6 +18,6 @@ install:
 script:
   - ./gradlew :app:assembleDebug --stacktrace
   - ./gradlew :app:test --stacktrace
-  - ./gradlew jacocoTestReport --stacktrace
+  - ./gradlew clean :app:testLightningPlusDebug jacocoTestLightningPlusDebugUnitTestReport --stacktrace
 after_success:
   - bash <(curl -s https://codecov.io/bash)
