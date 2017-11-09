@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'jacoco-android'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion project.targetSdkVersion
@@ -155,4 +155,24 @@ dependencies {
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testLightningPlusDebugUnitTest', 'createLightningPlusDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    final def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    final def debugTree = fileTree(dir: "$buildDir/intermediates/classes/lightningPlus/debug", excludes: fileFilter)
+    final def kotlinDebugTree = fileTree(dir: "$buildDir/tmp/kotlin-classes/lightningPlusDebug", excludes: fileFilter)
+    final def mainSrc = "${project.projectDir}/src/test/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree], [kotlinDebugTree])
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testLightningPlusDebugUnitTest.exec",
+            "outputs/code-coverage/connected/*coverage.ec"
+    ])
 }
