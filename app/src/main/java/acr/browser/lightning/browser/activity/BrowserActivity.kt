@@ -358,11 +358,18 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             setOnKeyListener(searchListener)
             onFocusChangeListener = searchListener
             setOnEditorActionListener(searchListener)
-            setOnTouchListener(searchListener)
             onPreFocusListener = searchListener
             addTextChangedListener(searchListener)
 
             initializeSearchSuggestions(this)
+        }
+
+        searchView?.onRightDrawableClickListener = {
+            if (it.hasFocus()) {
+                it.setText("")
+            } else {
+                refreshOrStop()
+            }
         }
 
         searchBackground = customView.findViewById<View>(R.id.search_container).apply {
@@ -435,7 +442,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private inner class SearchListenerClass : OnKeyListener,
             OnEditorActionListener,
             OnFocusChangeListener,
-            OnTouchListener,
             SearchView.PreFocusListener,
             TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -506,27 +512,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     imm.hideSoftInputFromWindow(it.windowToken, 0)
                 }
             }
-        }
-
-        override fun onTouch(v: View, event: MotionEvent): Boolean {
-            searchView?.let {
-                if (it.compoundDrawables[2] != null) {
-                    val iconWidth = iconDrawable?.intrinsicWidth ?: 0
-                    val tappedX = event.x > (it.width - it.paddingRight - iconWidth)
-                    if (tappedX) {
-                        if (event.action == MotionEvent.ACTION_UP) {
-                            if (it.hasFocus()) {
-                                it.setText("")
-                            } else {
-                                refreshOrStop()
-                            }
-                        }
-                        return true
-                    }
-                }
-            }
-
-            return false
         }
 
         override fun onPreFocus() {
