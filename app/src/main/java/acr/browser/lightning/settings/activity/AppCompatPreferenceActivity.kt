@@ -37,9 +37,7 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate.onPostCreate(savedInstanceState)
     }
 
-    fun setSupportActionbar(toolbar: Toolbar?) {
-        delegate.setSupportActionBar(toolbar)
-    }
+    fun setSupportActionbar(toolbar: Toolbar?) = delegate.setSupportActionBar(toolbar)
 
     fun getSupportActionBar(): ActionBar? = delegate.supportActionBar
 

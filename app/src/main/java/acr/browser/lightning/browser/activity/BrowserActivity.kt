@@ -36,7 +36,6 @@ import acr.browser.lightning.view.Handlers
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.SearchView
 import android.app.Activity
-import android.app.SearchManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -66,9 +65,7 @@ import android.support.v7.graphics.Palette
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.style.CharacterStyle
-import android.text.style.MetricAffectingSpan
 import android.text.style.ParagraphStyle
-import android.text.style.StyleSpan
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -2024,7 +2021,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     /**
      * If the [drawer] is open, close it and return true. Return false otherwise.
      */
-    fun DrawerLayout.closeDrawerIfOpen(drawer: View): Boolean =
+    private fun DrawerLayout.closeDrawerIfOpen(drawer: View): Boolean =
             if (isDrawerOpen(drawer)) {
                 closeDrawer(drawer)
                 true

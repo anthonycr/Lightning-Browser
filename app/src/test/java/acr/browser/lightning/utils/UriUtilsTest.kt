@@ -19,21 +19,14 @@ import org.robolectric.annotation.Config
 @Config(constants = BuildConfig::class, application = TestApplication::class, sdk = intArrayOf(SDK_VERSION))
 class UriUtilsTest {
 
+    @Test
+    fun `safeUri returns null for empty url`() = assertThat(safeUri("")).isNull()
 
     @Test
-    fun `safeUri returns null for empty url`() {
-        assertThat(safeUri("")).isNull()
-    }
+    fun `safeUri returns null for url without scheme`() = assertThat(safeUri("test.com")).isNull()
 
     @Test
-    fun `safeUri returns null for url without scheme`() {
-        assertThat(safeUri("test.com")).isNull()
-    }
-
-    @Test
-    fun `safeUri returns null for url without host`() {
-        assertThat(safeUri("http://")).isNull()
-    }
+    fun `safeUri returns null for url without host`() = assertThat(safeUri("http://")).isNull()
 
     @Test
     fun `safeUri returns valid Uri for full url`() {
@@ -42,14 +35,11 @@ class UriUtilsTest {
     }
 
     @Test
-    fun `domainForUrl returns null for null url`() {
-        assertThat(domainForUrl(null)).isNull()
-    }
+    fun `domainForUrl returns null for null url`() = assertThat(domainForUrl(null)).isNull()
 
     @Test
-    fun `domainForUrl returns null for url without domain`() {
-        assertThat(domainForUrl("http://")).isNull()
-    }
+    fun `domainForUrl returns null for url without domain`() =
+            assertThat(domainForUrl("http://")).isNull()
 
     @Test
     fun `domainForUrl returns domain for valid url`() {
