@@ -18,7 +18,7 @@ fun View?.removeFromParent() = this?.let {
  *
  * @param runnable the runnable to run when the view is laid out.
  */
-fun View?.doOnLayout(runnable: () -> Unit) = this?.let {
+inline fun View?.doOnLayout(crossinline runnable: () -> Unit) = this?.let {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
