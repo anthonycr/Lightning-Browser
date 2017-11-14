@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.utils.UrlUtils
@@ -11,17 +10,12 @@ import javax.inject.Inject
 /**
  * A UI model for the search box.
  */
-class SearchBoxModel @Inject constructor() {
+class SearchBoxModel @Inject constructor(
+        private val preferences: PreferenceManager,
+        application: Application
+) {
 
-    @Inject internal lateinit var mPreferences: PreferenceManager
-    @Inject internal lateinit var mApplication: Application
-
-    private val mUntitledTitle: String
-
-    init {
-        BrowserApp.appComponent.inject(this)
-        mUntitledTitle = mApplication.getString(R.string.untitled)
-    }
+    private val untitledTitle: String = application.getString(R.string.untitled)
 
     /**
      * Returns the contents of the search box based on a variety of factors.
@@ -45,7 +39,7 @@ class SearchBoxModel @Inject constructor() {
         when {
             UrlUtils.isSpecialUrl(url) -> return ""
             isLoading -> return url
-            else -> when (mPreferences.urlBoxContentChoice) {
+            else -> when (preferences.urlBoxContentChoice) {
                 1 -> {
                     // URL, show the entire URL
                     return url
@@ -55,7 +49,7 @@ class SearchBoxModel @Inject constructor() {
                     return if (title?.isEmpty() == false) {
                         title
                     } else {
-                        mUntitledTitle
+                        untitledTitle
                     }
                 }
                 0 -> {
