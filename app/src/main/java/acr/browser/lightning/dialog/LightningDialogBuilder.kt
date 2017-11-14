@@ -31,23 +31,19 @@ import javax.inject.Named
 /**
  * A builder of various dialogs.
  */
-class LightningDialogBuilder @Inject constructor() {
+class LightningDialogBuilder @Inject constructor(
+        private val bookmarkManager: BookmarkRepository,
+        private val downloadsModel: DownloadsRepository,
+        private val historyModel: HistoryRepository,
+        private val preferenceManager: PreferenceManager,
+        private val downloadHandler: DownloadHandler,
+        @Named("database") private val databaseScheduler: Scheduler
+) {
 
     enum class NewTab {
         FOREGROUND,
         BACKGROUND,
         INCOGNITO
-    }
-
-    @Inject internal lateinit var bookmarkManager: BookmarkRepository
-    @Inject internal lateinit var downloadsModel: DownloadsRepository
-    @Inject internal lateinit var historyModel: HistoryRepository
-    @Inject internal lateinit var preferenceManager: PreferenceManager
-    @Inject internal lateinit var downloadHandler: DownloadHandler
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
-
-    init {
-        BrowserApp.appComponent.inject(this)
     }
 
     /**
