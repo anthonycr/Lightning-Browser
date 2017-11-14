@@ -125,6 +125,10 @@
     <string name="message_certificate_untrusted">Certificate is not trusted</string>
     <!--  -->
 
+    <!-- permissions request -->
+    <string name="title_permission_request">Permission request</string>
+    <string name="message_permission_request">%1$s\n\nwould like to use:\n\n%2$s</string>
+
     <string name="title_form_resubmission">Form resubmission</string>
     <string name="message_form_resubmission">Would you like to resend the data?</string>
     <string name="message_location">\nWould like to use your location</string>
