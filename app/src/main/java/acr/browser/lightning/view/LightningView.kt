@@ -53,9 +53,11 @@ import javax.inject.Named
  * well as properly initialing it. All interactions with the WebView should be made through this
  * class.
  */
-class LightningView(private val activity: Activity,
-                    url: String?,
-                    val isIncognito: Boolean) {
+class LightningView(
+        private val activity: Activity,
+        url: String?,
+        val isIncognito: Boolean
+) {
 
     /**
      * Getter for the [LightningViewTitle] of the current LightningView instance.
