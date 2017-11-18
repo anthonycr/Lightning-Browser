@@ -15,8 +15,8 @@ import android.app.Activity
 import android.app.Application
 import android.graphics.Bitmap
 import android.text.TextUtils
-import com.anthonycr.bonsai.Single
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FileOutputStream
@@ -37,15 +37,14 @@ class BookmarkPage(activity: Activity) {
         BrowserApp.appComponent.inject(this)
     }
 
-    fun createBookmarkPage(): Single<String> = Single.create { subscriber ->
+    fun createBookmarkPage(): Single<String> = Single.fromCallable {
         cacheIcon(folderIcon, getFaviconFile(app))
         cacheIcon(faviconModel.getDefaultBitmapForString(null), getDefaultIconFile(app))
         buildBookmarkPage(null)
 
         val bookmarkWebPage = getBookmarkPage(app, null)
 
-        subscriber.onItem("$FILE$bookmarkWebPage")
-        subscriber.onComplete()
+        "$FILE$bookmarkWebPage"
     }
 
     private fun cacheIcon(icon: Bitmap, file: File) = FileOutputStream(file).safeUse {

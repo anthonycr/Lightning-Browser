@@ -146,15 +146,14 @@ class TabsManager {
                         val url = item.getString(URL_KEY)
                         if (url != null && tab.webView != null) {
                             when {
-                                UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity).createBookmarkPage()
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(Schedulers.main())
-                                        .subscribe(object : SingleOnSubscribe<String>() {
-                                            override fun onItem(string: String?) {
-                                                val localUrl = requireNotNull(string)
-                                                tab.loadUrl(localUrl)
-                                            }
-                                        })
+                                UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity)
+                                        .createBookmarkPage()
+                                        .subscribeOn(databaseScheduler)
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe { filePath ->
+                                            val localUrl = requireNotNull(filePath)
+                                            tab.loadUrl(localUrl)
+                                        }
                                 UrlUtils.isDownloadsUrl(url) -> DownloadsPage()
                                         .getDownloadsPage()
                                         .subscribeOn(databaseScheduler)
