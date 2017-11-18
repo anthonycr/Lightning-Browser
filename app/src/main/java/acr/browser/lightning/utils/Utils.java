@@ -192,7 +192,7 @@ public final class Utils {
             uri = new URI(url);
             domain = uri.getHost();
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to parse URI", e);
             domain = null;
         }
 
@@ -320,12 +320,13 @@ public final class Utils {
      * @param closeable the object to close
      */
     public static void close(@Nullable Closeable closeable) {
-        if (closeable == null)
+        if (closeable == null) {
             return;
+        }
         try {
             closeable.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to close closeable", e);
         }
     }
 
