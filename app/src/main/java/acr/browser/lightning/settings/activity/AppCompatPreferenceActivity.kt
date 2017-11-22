@@ -16,7 +16,6 @@ import android.view.ViewGroup
  * A [android.preference.PreferenceActivity] which implements and proxies the necessary calls
  * to be used with AppCompat.
  *
- *
  * This technique can be used with an [android.app.Activity] class, not just
  * [android.preference.PreferenceActivity].
  */
@@ -43,11 +42,9 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
 
     override fun getMenuInflater(): MenuInflater = delegate.menuInflater
 
-    override fun setContentView(@LayoutRes layoutResID: Int) =
-            delegate.setContentView(layoutResID)
+    override fun setContentView(@LayoutRes layoutResID: Int) = delegate.setContentView(layoutResID)
 
-    override fun setContentView(view: View) =
-            delegate.setContentView(view)
+    override fun setContentView(view: View) = delegate.setContentView(view)
 
     override fun setContentView(view: View, params: ViewGroup.LayoutParams) =
             delegate.setContentView(view, params)
@@ -87,6 +84,5 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
         delegate.onDestroy()
     }
 
-    override fun invalidateOptionsMenu() =
-            delegate.invalidateOptionsMenu()
+    override fun invalidateOptionsMenu() = delegate.invalidateOptionsMenu()
 }

@@ -3,21 +3,25 @@ package acr.browser.lightning.view
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
-import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
+import acr.browser.lightning.view.webrtc.WebRtcPermissionsView
 import android.Manifest
+import android.annotation.TargetApi
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Message
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import android.webkit.GeolocationPermissions
-import android.webkit.ValueCallback
-import android.webkit.WebChromeClient
-import android.webkit.WebView
+import android.webkit.*
 import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
@@ -26,11 +30,13 @@ import javax.inject.Inject
 class LightningChromeClient(
         private val activity: Activity,
         private val lightningView: LightningView
-) : WebChromeClient() {
+) : WebChromeClient(), WebRtcPermissionsView {
 
-    private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val uiController: UIController
     @Inject internal lateinit var faviconModel: FaviconModel
+    @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var webRtcPermissionsModel: WebRtcPermissionsModel
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -77,9 +83,54 @@ class LightningChromeClient(
         }
     }
 
+    override fun requestPermissions(permissions: Set<String>, onGrant: (Boolean) -> Unit) {
+        val missingPermissions = permissions
+                .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
+
+        if (missingPermissions.isEmpty()) {
+            onGrant(true)
+        } else {
+            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
+                    activity,
+                    missingPermissions.toTypedArray(),
+                    object : PermissionsResultAction() {
+                        override fun onGranted() = onGrant(true)
+
+                        override fun onDenied(permission: String?) = onGrant(false)
+                    }
+            )
+        }
+    }
+
+    override fun requestResources(source: String,
+                                  resources: Array<String>,
+                                  onGrant: (Boolean) -> Unit) {
+        activity.runOnUiThread {
+            val resourcesString = resources.joinToString(separator = "\n")
+            BrowserDialog.showPositiveNegativeDialog(
+                    activity = activity,
+                    title = R.string.title_permission_request,
+                    message = R.string.message_permission_request,
+                    arguments = arrayOf(source, resourcesString),
+                    positiveButton = DialogItem(R.string.action_allow) { onGrant(true) },
+                    negativeButton = DialogItem(R.string.action_dont_allow) { onGrant(false) },
+                    onCancel = { onGrant(false) }
+            )
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun onPermissionRequest(request: PermissionRequest) {
+        if (preferences.webRtcEnabled) {
+            webRtcPermissionsModel.requestPermission(request, this)
+        } else {
+            request.deny()
+        }
+    }
+
     override fun onGeolocationPermissionsShowPrompt(origin: String,
                                                     callback: GeolocationPermissions.Callback) =
-            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, permissions, object : PermissionsResultAction() {
+            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, geoLocationPermissions, object : PermissionsResultAction() {
                 override fun onGranted() {
                     val remember = true
                     AlertDialog.Builder(activity).apply {

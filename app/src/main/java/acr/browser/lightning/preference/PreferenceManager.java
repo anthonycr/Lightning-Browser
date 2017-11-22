@@ -58,6 +58,7 @@ public class PreferenceManager {
         static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
         static final String BLACK_STATUS_BAR = "blackStatusBar";
+        static final String WEB_RTC = "webRtc";
 
         static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
@@ -83,6 +84,14 @@ public class PreferenceManager {
     @Inject
     PreferenceManager(@NonNull final Context context) {
         mPrefs = context.getSharedPreferences(PREFERENCES, 0);
+    }
+
+    public void setWebRtcEnabled(boolean enabled) {
+        putBoolean(Name.WEB_RTC, enabled);
+    }
+
+    public boolean getWebRtcEnabled() {
+        return mPrefs.getBoolean(Name.WEB_RTC, false);
     }
 
     @NonNull

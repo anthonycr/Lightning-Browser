@@ -70,6 +70,30 @@ object BrowserDialog {
     }
 
     @JvmStatic
+    fun showPositiveNegativeDialog(activity: Activity,
+                                   @StringRes title: Int,
+                                   @StringRes message: Int,
+                                   arguments: Array<Any>? = null,
+                                   positiveButton: DialogItem,
+                                   negativeButton: DialogItem,
+                                   onCancel: () -> Unit) {
+        val messageValue = if (arguments != null) {
+            activity.getString(message, *arguments)
+        } else {
+            activity.getString(message)
+        }
+        val dialog = AlertDialog.Builder(activity).apply {
+            setTitle(title)
+            setMessage(messageValue)
+            setOnCancelListener { onCancel() }
+            setPositiveButton(positiveButton.title) { _, _ -> positiveButton.onClick() }
+            setNegativeButton(negativeButton.title) { _, _ -> negativeButton.onClick() }
+        }.show()
+
+        setDialogSize(activity, dialog)
+    }
+
+    @JvmStatic
     fun showEditText(activity: Activity,
                      @StringRes title: Int,
                      @StringRes hint: Int,
