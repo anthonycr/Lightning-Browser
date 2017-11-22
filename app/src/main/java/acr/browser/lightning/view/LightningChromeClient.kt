@@ -30,7 +30,7 @@ class LightningChromeClient(
         private val lightningView: LightningView
 ) : WebChromeClient() {
 
-    private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val uiController: UIController
     @Inject internal lateinit var faviconModel: FaviconModel
     @Inject internal lateinit var preferences: PreferenceManager
@@ -84,20 +84,26 @@ class LightningChromeClient(
     override fun onPermissionRequest(request: PermissionRequest?) {
         val source = request?.origin?.host
         if (preferences.webRtcEnabled && source != null) {
+            val requiredResources = request.resources
+            val requiredPermissions = request
+                    .requiredPermissions()
+                    .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
+                    .toTypedArray()
+
             activity.runOnUiThread {
-                val resourcesString = request.resources.joinToString(separator = "\n")
+                val resourcesString = requiredResources.joinToString(separator = "\n")
                 BrowserDialog.showPositiveNegativeDialog(
                         activity = activity,
                         title = R.string.title_permission_request,
                         message = R.string.message_permission_request,
                         arguments = arrayOf(source, resourcesString),
                         positiveButton = DialogItem(title = R.string.action_allow) {
-                            if (permissions.isEmpty()) {
+                            if (requiredPermissions.isEmpty()) {
                                 request.grant(request.resources)
                             } else {
                                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
                                         activity,
-                                        request.requiredPermissions().toTypedArray(),
+                                        requiredPermissions,
                                         object : PermissionsResultAction() {
                                             override fun onGranted() {
                                                 request.grant(request.resources)
@@ -106,7 +112,6 @@ class LightningChromeClient(
                                             override fun onDenied(permission: String?) {
                                                 request.deny()
                                             }
-
                                         }
                                 )
                             }
@@ -122,7 +127,7 @@ class LightningChromeClient(
 
     override fun onGeolocationPermissionsShowPrompt(origin: String,
                                                     callback: GeolocationPermissions.Callback) =
-            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, permissions, object : PermissionsResultAction() {
+            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, geoLocationPermissions, object : PermissionsResultAction() {
                 override fun onGranted() {
                     val remember = true
                     AlertDialog.Builder(activity).apply {
