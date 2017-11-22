@@ -232,6 +232,7 @@
     <string name="swap_bookmarks_and_tabs">Swap bookmark and tab drawers</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
     <string name="remove_identifying_headers">Remove identifying headers</string>
+    <string name="webrtc_support">WebRTC Support</string>
     <string name="action_add_to_homescreen">Add to home screen</string>
     <string name="message_added_to_homescreen">Shortcut added to home screen</string>
     <string name="shortcut_message_failed_to_add">Sorry, your launcher does not support shortcuts.</string>

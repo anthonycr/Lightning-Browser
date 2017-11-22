@@ -7,6 +7,7 @@ import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
+import acr.browser.lightning.preference.PreferenceManager
 import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
@@ -32,6 +33,7 @@ class LightningChromeClient(
     private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val uiController: UIController
     @Inject internal lateinit var faviconModel: FaviconModel
+    @Inject internal lateinit var preferences: PreferenceManager
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -80,37 +82,41 @@ class LightningChromeClient(
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onPermissionRequest(request: PermissionRequest?) {
-        activity.runOnUiThread {
-            request?.let {
-                val resourcesString = it.resources.joinToString(separator = "\n")
+        val source = request?.origin?.host
+        if (preferences.webRtcEnabled && source != null) {
+            activity.runOnUiThread {
+                val resourcesString = request.resources.joinToString(separator = "\n")
                 BrowserDialog.showPositiveNegativeDialog(
                         activity = activity,
                         title = R.string.title_permission_request,
                         message = R.string.message_permission_request,
-                        arguments = arrayOf(it.origin.host, resourcesString),
+                        arguments = arrayOf(source, resourcesString),
                         positiveButton = DialogItem(title = R.string.action_allow) {
                             if (permissions.isEmpty()) {
-                                it.grant(it.resources)
+                                request.grant(request.resources)
                             } else {
                                 PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
                                         activity,
-                                        it.requiredPermissions().toTypedArray(),
+                                        request.requiredPermissions().toTypedArray(),
                                         object : PermissionsResultAction() {
                                             override fun onGranted() {
-                                                it.grant(it.resources)
+                                                request.grant(request.resources)
                                             }
 
                                             override fun onDenied(permission: String?) {
-                                                it.deny()
+                                                request.deny()
                                             }
 
                                         }
                                 )
                             }
                         },
-                        negativeButton = DialogItem(R.string.action_dont_allow, onClick = it::deny)
+                        negativeButton = DialogItem(R.string.action_dont_allow, onClick = request::deny),
+                        onCancel = request::deny
                 )
             }
+        } else {
+            request?.deny()
         }
     }
 

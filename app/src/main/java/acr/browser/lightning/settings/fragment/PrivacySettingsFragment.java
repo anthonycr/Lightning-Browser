@@ -27,6 +27,7 @@ import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.history.HistoryRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.utils.ApiUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
@@ -47,6 +48,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
     private static final String SETTINGS_CLEARWEBSTORAGE = "clear_webstorage";
     private static final String SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit";
     private static final String SETTINGS_DONOTTRACK = "do_not_track";
+    private static final String SETTINGS_WEBRTC = "webrtc_support";
     private static final String SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers";
 
     @Inject HistoryRepository mHistoryRepository;
@@ -76,6 +78,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         CheckBoxPreference cbcookiesexit = (CheckBoxPreference) findPreference(SETTINGS_COOKIEEXIT);
         CheckBoxPreference cbwebstorageexit = (CheckBoxPreference) findPreference(SETTINGS_WEBSTORAGEEXIT);
         CheckBoxPreference cbDoNotTrack = (CheckBoxPreference) findPreference(SETTINGS_DONOTTRACK);
+        CheckBoxPreference cbWebRtc = (CheckBoxPreference) findPreference(SETTINGS_WEBRTC);
         CheckBoxPreference cbIdentifyingHeaders = (CheckBoxPreference) findPreference(SETTINGS_IDENTIFYINGHEADERS);
 
         clearcache.setOnPreferenceClickListener(this);
@@ -91,6 +94,7 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbcookiesexit.setOnPreferenceChangeListener(this);
         cbwebstorageexit.setOnPreferenceChangeListener(this);
         cbDoNotTrack.setOnPreferenceChangeListener(this);
+        cbWebRtc.setOnPreferenceChangeListener(this);
         cbIdentifyingHeaders.setOnPreferenceChangeListener(this);
 
         cblocation.setChecked(mPreferenceManager.getLocationEnabled());
@@ -100,9 +104,11 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
         cbcookiesexit.setChecked(mPreferenceManager.getClearCookiesExitEnabled());
         cb3cookies.setChecked(mPreferenceManager.getBlockThirdPartyCookiesEnabled());
         cbwebstorageexit.setChecked(mPreferenceManager.getClearWebStorageExitEnabled());
+        cbWebRtc.setChecked(mPreferenceManager.getWebRtcEnabled() && ApiUtils.doesSupportWebRtc());
         cbDoNotTrack.setChecked(mPreferenceManager.getDoNotTrackEnabled() && Utils.doesSupportHeaders());
         cbIdentifyingHeaders.setChecked(mPreferenceManager.getRemoveIdentifyingHeadersEnabled() && Utils.doesSupportHeaders());
 
+        cbWebRtc.setEnabled(ApiUtils.doesSupportWebRtc());
         cbDoNotTrack.setEnabled(Utils.doesSupportHeaders());
         cbIdentifyingHeaders.setEnabled(Utils.doesSupportHeaders());
 
@@ -250,6 +256,9 @@ public class PrivacySettingsFragment extends LightningPreferenceFragment impleme
                 return true;
             case SETTINGS_WEBSTORAGEEXIT:
                 mPreferenceManager.setClearWebStorageExitEnabled((Boolean) newValue);
+                return true;
+            case SETTINGS_WEBRTC:
+                mPreferenceManager.setWebRtcEnabled((Boolean) newValue);
                 return true;
             case SETTINGS_DONOTTRACK:
                 mPreferenceManager.setDoNotTrackEnabled((Boolean) newValue);

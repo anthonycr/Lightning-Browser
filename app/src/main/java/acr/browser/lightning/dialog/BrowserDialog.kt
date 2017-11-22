@@ -75,7 +75,8 @@ object BrowserDialog {
                                    @StringRes message: Int,
                                    arguments: Array<Any>? = null,
                                    positiveButton: DialogItem,
-                                   negativeButton: DialogItem) {
+                                   negativeButton: DialogItem,
+                                   onCancel: () -> Unit) {
         val messageValue = if (arguments != null) {
             activity.getString(message, *arguments)
         } else {
@@ -84,6 +85,7 @@ object BrowserDialog {
         val dialog = AlertDialog.Builder(activity).apply {
             setTitle(title)
             setMessage(messageValue)
+            setOnCancelListener { onCancel() }
             setPositiveButton(positiveButton.title) { _, _ -> positiveButton.onClick() }
             setNegativeButton(negativeButton.title) { _, _ -> negativeButton.onClick() }
         }.show()
