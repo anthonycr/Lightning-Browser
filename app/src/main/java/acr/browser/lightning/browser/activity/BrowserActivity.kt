@@ -7,6 +7,7 @@ package acr.browser.lightning.browser.activity
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
+import acr.browser.lightning.R.id.toolbar_layout
 import acr.browser.lightning.browser.*
 import acr.browser.lightning.browser.fragment.BookmarksFragment
 import acr.browser.lightning.browser.fragment.TabsFragment
@@ -1759,7 +1760,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onHomeButtonPressed() {
-        tabsManager.currentTab?.loadHomepage()
+        tabsManager.currentTab?.loadHomePage()
         closeDrawers(null)
     }
 
@@ -1824,10 +1825,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * is especially helpful when a page creates a redirect and does
      * not need the tab to stay open any longer.
      *
-     * @param view the LightningView to close, delete it.
+     * @param tab the LightningView to close, delete it.
      */
-    override fun onCloseWindow(view: LightningView) {
-        presenter?.deleteTab(tabsManager.positionOf(view))
+    override fun onCloseWindow(tab: LightningView) {
+        presenter?.deleteTab(tabsManager.positionOf(tab))
     }
 
     /**
@@ -1892,7 +1893,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun handleBookmarksChange() {
         val currentTab = tabsManager.currentTab
         if (currentTab != null && UrlUtils.isBookmarkUrl(currentTab.url)) {
-            currentTab.loadBookmarkpage()
+            currentTab.loadBookmarkPage()
         }
         if (currentTab != null) {
             bookmarksView?.handleUpdatedUrl(currentTab.url)
@@ -1902,7 +1903,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun handleDownloadDeleted() {
         val currentTab = tabsManager.currentTab
         if (currentTab != null && UrlUtils.isDownloadsUrl(currentTab.url)) {
-            currentTab.loadDownloadspage()
+            currentTab.loadDownloadsPage()
         }
         if (currentTab != null) {
             bookmarksView?.handleUpdatedUrl(currentTab.url)
@@ -1968,7 +1969,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             R.id.arrow_button -> when {
                 searchView?.hasFocus() == true -> currentTab.requestFocus()
                 shouldShowTabsInDrawer -> drawer_layout.openDrawer(getTabDrawer())
-                else -> currentTab.loadHomepage()
+                else -> currentTab.loadHomePage()
             }
             R.id.button_next -> currentTab.findNext()
             R.id.button_back -> currentTab.findPrevious()

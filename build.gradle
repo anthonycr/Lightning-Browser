@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
@@ -22,7 +22,7 @@ allprojects {
 ext {
     minSdkVersion = 14
     targetSdkVersion = 27
-    buildToolsVersion = '27.0.0'
+    buildToolsVersion = '27.0.1'
 
     versionName = '4.5.1'
     versionCode_lite = 98

@@ -110,7 +110,7 @@ public final class FileUtils {
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Unable to read bundle from storage");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to read bundle from storage", e);
         } finally {
             //noinspection ResultOfMethodCallIgnored
             inputFile.delete();

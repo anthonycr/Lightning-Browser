@@ -234,7 +234,7 @@ public class BookmarkSettingsFragment extends PreferenceFragment implements Pref
         try {
             file.mkdirs();
         } catch (SecurityException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to make directory", e);
         }
         if (file.exists()) {
             mFileList = file.listFiles();

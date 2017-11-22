@@ -37,13 +37,10 @@ import android.webkit.WebSettings
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebSettings.PluginState
 import android.webkit.WebView
-import com.anthonycr.bonsai.Schedulers
-import com.anthonycr.bonsai.Single
-import com.anthonycr.bonsai.SingleOnSubscribe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import java.io.File
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Named
@@ -53,9 +50,11 @@ import javax.inject.Named
  * well as properly initialing it. All interactions with the WebView should be made through this
  * class.
  */
-class LightningView(private val activity: Activity,
-                    url: String?,
-                    val isIncognito: Boolean) {
+class LightningView(
+        private val activity: Activity,
+        url: String?,
+        val isIncognito: Boolean
+) {
 
     /**
      * Getter for the [LightningViewTitle] of the current LightningView instance.
@@ -218,7 +217,7 @@ class LightningView(private val activity: Activity,
                 // don't load anything, the user is looking for a blank tab
             }
         } else {
-            loadHomepage()
+            loadHomePage()
         }
     }
 
@@ -230,14 +229,14 @@ class LightningView(private val activity: Activity,
      * This method loads the homepage for the browser. Either it loads the URL stored as the
      * homepage, or loads the startpage or bookmark page if either of those are set as the homepage.
      */
-    fun loadHomepage() {
+    fun loadHomePage() {
         if (webView == null) {
             return
         }
 
         when (requireNotNull(homepage)) {
-            SCHEME_HOMEPAGE -> loadStartpage()
-            SCHEME_BOOKMARKS -> loadBookmarkpage()
+            SCHEME_HOMEPAGE -> loadStartPage()
+            SCHEME_BOOKMARKS -> loadBookmarkPage()
             else -> webView?.loadUrl(homepage, requestHeaders)
         }
     }
@@ -246,7 +245,7 @@ class LightningView(private val activity: Activity,
      * This method gets the HomePage URL from the [StartPage] class asynchronously and loads the
      * URL in the WebView on the UI thread.
      */
-    private fun loadStartpage() {
+    private fun loadStartPage() {
         StartPage()
                 .createHomePage()
                 .subscribeOn(databaseScheduler)
@@ -258,22 +257,19 @@ class LightningView(private val activity: Activity,
      * This method gets the bookmark page URL from the [BookmarkPage] class asynchronously and loads
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
-    fun loadBookmarkpage() {
+    fun loadBookmarkPage() {
         BookmarkPage(activity)
                 .createBookmarkPage()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<String>() {
-                    override fun onItem(item: String?) =
-                            loadUrl(requireNotNull(item) { "BookmarkPage url must not be null" })
-                })
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::loadUrl)
     }
 
     /**
      * This method gets the bookmark page URL from the [BookmarkPage] class asynchronously and loads
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
-    fun loadDownloadspage() {
+    fun loadDownloadsPage() {
         DownloadsPage()
                 .getDownloadsPage()
                 .subscribeOn(databaseScheduler)
@@ -439,40 +435,36 @@ class LightningView(private val activity: Activity,
             settings.allowUniversalAccessFromFileURLs = false
         }
 
-        getPathObservable("appcache").subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<File>() {
-                    override fun onItem(item: File?) =
-                            settings.setAppCachePath(requireNotNull(item).path)
-                })
+        getPathObservable("appcache")
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { file ->
+                    settings.setAppCachePath(requireNotNull(file).path)
+                }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            getPathObservable("geolocation").subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(object : SingleOnSubscribe<File>() {
-                        override fun onItem(item: File?) =
-                                settings.setGeolocationDatabasePath(requireNotNull(item).path)
-                    })
+            getPathObservable("geolocation")
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { file ->
+                        settings.setGeolocationDatabasePath(requireNotNull(file).path)
+                    }
         }
 
-        getPathObservable("databases").subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<File>() {
-                    override fun onItem(item: File?) {
-                        if (API < Build.VERSION_CODES.KITKAT) {
-                            settings.databasePath = requireNotNull(item).path
-                        }
-                    }
 
-                    override fun onComplete() = Unit
-                })
+        if (API < Build.VERSION_CODES.KITKAT) {
+            getPathObservable("databases")
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { file ->
+                        settings.databasePath = requireNotNull(file).path
+                    }
+        }
 
     }
 
-    private fun getPathObservable(subFolder: String): Single<File> = Single.create { subscriber ->
-        val file = activity.getDir(subFolder, 0)
-        subscriber.onItem(file)
-        subscriber.onComplete()
+    private fun getPathObservable(subFolder: String) = Single.fromCallable {
+        activity.getDir(subFolder, 0)
     }
 
     /**

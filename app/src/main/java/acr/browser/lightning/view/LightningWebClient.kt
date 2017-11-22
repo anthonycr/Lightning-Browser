@@ -104,6 +104,7 @@ class LightningWebClient(
         return super.shouldInterceptRequest(view, request)
     }
 
+    @Suppress("OverridingDeprecatedMember")
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
         val pageUrl = currentUrl
