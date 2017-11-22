@@ -8,6 +8,8 @@ import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
+import acr.browser.lightning.view.webrtc.WebRtcPermissionsView
 import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
@@ -28,12 +30,13 @@ import javax.inject.Inject
 class LightningChromeClient(
         private val activity: Activity,
         private val lightningView: LightningView
-) : WebChromeClient() {
+) : WebChromeClient(), WebRtcPermissionsView {
 
     private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val uiController: UIController
     @Inject internal lateinit var faviconModel: FaviconModel
     @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var webRtcPermissionsModel: WebRtcPermissionsModel
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -80,48 +83,48 @@ class LightningChromeClient(
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onPermissionRequest(request: PermissionRequest?) {
-        val source = request?.origin?.host
-        if (preferences.webRtcEnabled && source != null) {
-            val requiredResources = request.resources
-            val requiredPermissions = request
-                    .requiredPermissions()
-                    .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
-                    .toTypedArray()
+    override fun requestPermissions(permissions: Set<String>, onGrant: (Boolean) -> Unit) {
+        val missingPermissions = permissions
+                .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
 
-            activity.runOnUiThread {
-                val resourcesString = requiredResources.joinToString(separator = "\n")
-                BrowserDialog.showPositiveNegativeDialog(
-                        activity = activity,
-                        title = R.string.title_permission_request,
-                        message = R.string.message_permission_request,
-                        arguments = arrayOf(source, resourcesString),
-                        positiveButton = DialogItem(title = R.string.action_allow) {
-                            if (requiredPermissions.isEmpty()) {
-                                request.grant(request.resources)
-                            } else {
-                                PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
-                                        activity,
-                                        requiredPermissions,
-                                        object : PermissionsResultAction() {
-                                            override fun onGranted() {
-                                                request.grant(request.resources)
-                                            }
-
-                                            override fun onDenied(permission: String?) {
-                                                request.deny()
-                                            }
-                                        }
-                                )
-                            }
-                        },
-                        negativeButton = DialogItem(R.string.action_dont_allow, onClick = request::deny),
-                        onCancel = request::deny
-                )
-            }
+        if (missingPermissions.isEmpty()) {
+            onGrant(true)
         } else {
-            request?.deny()
+            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
+                    activity,
+                    missingPermissions.toTypedArray(),
+                    object : PermissionsResultAction() {
+                        override fun onGranted() = onGrant(true)
+
+                        override fun onDenied(permission: String?) = onGrant(false)
+                    }
+            )
+        }
+    }
+
+    override fun requestResources(source: String,
+                                  resources: Array<String>,
+                                  onGrant: (Boolean) -> Unit) {
+        activity.runOnUiThread {
+            val resourcesString = resources.joinToString(separator = "\n")
+            BrowserDialog.showPositiveNegativeDialog(
+                    activity = activity,
+                    title = R.string.title_permission_request,
+                    message = R.string.message_permission_request,
+                    arguments = arrayOf(source, resourcesString),
+                    positiveButton = DialogItem(R.string.action_allow) { onGrant(true) },
+                    negativeButton = DialogItem(R.string.action_dont_allow) { onGrant(false) },
+                    onCancel = { onGrant(false) }
+            )
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun onPermissionRequest(request: PermissionRequest) {
+        if (preferences.webRtcEnabled) {
+            webRtcPermissionsModel.requestPermission(request, this)
+        } else {
+            request.deny()
         }
     }
 

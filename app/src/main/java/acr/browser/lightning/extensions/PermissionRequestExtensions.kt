@@ -1,4 +1,4 @@
-package acr.browser.lightning.view
+package acr.browser.lightning.extensions
 
 import android.Manifest
 import android.annotation.TargetApi
@@ -10,7 +10,7 @@ import android.webkit.PermissionRequest
  * resources. If none of the resources require a permission, the list will be empty.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-fun PermissionRequest.requiredPermissions(): List<String> {
+fun PermissionRequest.requiredPermissions(): Set<String> {
     return resources.flatMap {
         when (it) {
             PermissionRequest.RESOURCE_AUDIO_CAPTURE -> listOf(
@@ -24,5 +24,5 @@ fun PermissionRequest.requiredPermissions(): List<String> {
             )
             else -> listOf()
         }
-    }
+    }.toHashSet()
 }
