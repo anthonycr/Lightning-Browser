@@ -73,12 +73,12 @@ object BrowserDialog {
     fun showPositiveNegativeDialog(activity: Activity,
                                    @StringRes title: Int,
                                    @StringRes message: Int,
-                                   arguments: Array<Any>? = null,
+                                   messageArguments: Array<Any>? = null,
                                    positiveButton: DialogItem,
                                    negativeButton: DialogItem,
                                    onCancel: () -> Unit) {
-        val messageValue = if (arguments != null) {
-            activity.getString(message, *arguments)
+        val messageValue = if (messageArguments != null) {
+            activity.getString(message, *messageArguments)
         } else {
             activity.getString(message)
         }

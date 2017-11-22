@@ -19,4 +19,10 @@ object ApiUtils {
     @JvmStatic
     fun doesSupportWebRtc(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 
+    /**
+     * Returns true if the Android version supports blocking third party cookies in the WebView.
+     */
+    @JvmStatic
+    fun doesSupportThirdPartyCookieBlocking(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+
 }
