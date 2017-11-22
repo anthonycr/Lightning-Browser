@@ -1,6 +1,5 @@
 package acr.browser.lightning.search
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.search.engine.*
 import javax.inject.Inject
@@ -9,13 +8,9 @@ import javax.inject.Inject
  * The model that provides the search engine based
  * on the user's preference.
  */
-class SearchEngineProvider @Inject constructor() {
-
-    @Inject internal lateinit var preferenceManager: PreferenceManager
-
-    init {
-        BrowserApp.appComponent.inject(this)
-    }
+class SearchEngineProvider @Inject constructor(
+        private val preferenceManager: PreferenceManager
+) {
 
     fun getCurrentSearchEngine(): BaseSearchEngine =
             when (preferenceManager.searchChoice) {

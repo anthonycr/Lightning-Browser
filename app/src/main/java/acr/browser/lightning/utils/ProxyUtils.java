@@ -168,7 +168,7 @@ public final class ProxyUtils {
             try {
                 WebkitProxy.resetProxy(BrowserApp.class.getName(), activity.getApplicationContext());
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Unable to reset proxy", e);
             }
 
             sI2PProxyInitialized = false;
