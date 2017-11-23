@@ -90,6 +90,8 @@ interface AppComponent {
 
     fun inject(generalSettingsFragment: GeneralSettingsFragment)
 
+    fun inject(displaySettingsFragment: DisplaySettingsFragment)
+
     fun inject(networkConnectivityModel: NetworkConnectivityModel)
 
     fun provideAssetsAdBlocker(): AssetsAdBlocker
