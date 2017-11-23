@@ -45,10 +45,6 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         super.onCreate(savedInstanceState)
         BrowserApp.appComponent.inject(this)
 
-        initPrefs()
-    }
-
-    private fun initPrefs() {
         clickablePreference(preference = SETTINGS_CLEARCACHE, onClick = this::clearCache)
         clickablePreference(preference = SETTINGS_CLEARHISTORY, onClick = this::clearHistoryDialog)
         clickablePreference(preference = SETTINGS_CLEARCOOKIES, onClick = this::clearCookiesDialog)
