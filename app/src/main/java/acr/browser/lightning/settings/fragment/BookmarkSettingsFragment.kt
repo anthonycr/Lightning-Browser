@@ -93,10 +93,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                                                 override fun onComplete() {
                                                     exportSubscription = null
 
-                                                    val activity = activity
-                                                    if (activity != null) {
-                                                        Utils.showSnackbar(activity, activity.getString(R.string.bookmark_export_path)
-                                                                + ' ' + exportFile.path)
+                                                    activity?.let {
+                                                        Utils.showSnackbar(it, "${it.getString(R.string.bookmark_export_path)} ${exportFile.path}")
                                                     }
                                                 }
 
