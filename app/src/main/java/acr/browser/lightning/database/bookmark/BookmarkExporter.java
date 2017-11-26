@@ -6,13 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
-import com.anthonycr.bonsai.Completable;
-import com.anthonycr.bonsai.CompletableAction;
-import com.anthonycr.bonsai.CompletableSubscriber;
-import com.anthonycr.bonsai.Single;
-import com.anthonycr.bonsai.SingleAction;
-import com.anthonycr.bonsai.SingleSubscriber;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,11 +19,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.functions.Action;
 
 /**
  * The class responsible for importing and exporting
@@ -103,9 +100,9 @@ public final class BookmarkExporter {
     @NonNull
     public static Completable exportBookmarksToFile(@NonNull final List<HistoryItem> bookmarkList,
                                                     @NonNull final File file) {
-        return Completable.create(new CompletableAction() {
+        return Completable.fromAction(new Action() {
             @Override
-            public void onSubscribe(@NonNull final CompletableSubscriber subscriber) {
+            public void run() throws Exception {
                 Preconditions.checkNonNull(bookmarkList);
                 BufferedWriter bookmarkWriter = null;
                 try {
@@ -121,9 +118,6 @@ public final class BookmarkExporter {
                         bookmarkWriter.write(object.toString());
                         bookmarkWriter.newLine();
                     }
-                    subscriber.onComplete();
-                } catch (@NonNull IOException | JSONException e) {
-                    subscriber.onError(e);
                 } finally {
                     Utils.close(bookmarkWriter);
                 }
@@ -143,9 +137,9 @@ public final class BookmarkExporter {
      */
     @NonNull
     public static Single<List<HistoryItem>> importBookmarksFromFile(@NonNull final File file) {
-        return Single.create(new SingleAction<List<HistoryItem>>() {
+        return Single.fromCallable(new Callable<List<HistoryItem>>() {
             @Override
-            public void onSubscribe(@NonNull SingleSubscriber<List<HistoryItem>> subscriber) {
+            public List<HistoryItem> call() throws Exception {
                 BufferedReader bookmarksReader = null;
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed
@@ -163,10 +157,7 @@ public final class BookmarkExporter {
                         bookmarks.add(item);
                     }
 
-                    subscriber.onItem(bookmarks);
-                    subscriber.onComplete();
-                } catch (@NonNull IOException | JSONException e) {
-                    subscriber.onError(e);
+                    return bookmarks;
                 } finally {
                     Utils.close(bookmarksReader);
                 }

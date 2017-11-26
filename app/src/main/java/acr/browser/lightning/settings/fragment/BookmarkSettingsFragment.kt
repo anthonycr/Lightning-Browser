@@ -5,12 +5,10 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.utils.SubscriptionUtils
 import acr.browser.lightning.utils.Utils
 import android.Manifest
 import android.app.Application
@@ -19,15 +17,12 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.util.Log
-import com.anthonycr.bonsai.CompletableOnSubscribe
-import com.anthonycr.bonsai.Schedulers
-import com.anthonycr.bonsai.SingleOnSubscribe
-import com.anthonycr.bonsai.Subscription
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -39,8 +34,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var application: Application
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
-    private var importSubscription: Subscription? = null
-    private var exportSubscription: Subscription? = null
+    private var importSubscription: Disposable? = null
+    private var exportSubscription: Disposable? = null
 
     override fun providePreferencesResource() = R.xml.preference_bookmarks
 
@@ -62,15 +57,15 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
 
-        exportSubscription?.unsubscribe()
-        importSubscription?.unsubscribe()
+        exportSubscription?.dispose()
+        importSubscription?.dispose()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        exportSubscription?.unsubscribe()
-        importSubscription?.unsubscribe()
+        exportSubscription?.dispose()
+        importSubscription?.dispose()
     }
 
     private fun exportBookmarks() {
@@ -79,38 +74,33 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                     override fun onGranted() {
                         bookmarkRepository.getAllBookmarks()
                                 .subscribeOn(databaseScheduler)
-                                .subscribe(Consumer { list ->
+                                .subscribe { list ->
                                     if (!isAdded) {
-                                        return@Consumer
+                                        return@subscribe
                                     }
 
                                     val exportFile = BookmarkExporter.createNewExportFile()
-                                    SubscriptionUtils.safeUnsubscribe(exportSubscription)
+                                    exportSubscription?.dispose()
                                     exportSubscription = BookmarkExporter.exportBookmarksToFile(list, exportFile)
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(Schedulers.main())
-                                            .subscribe(object : CompletableOnSubscribe() {
-                                                override fun onComplete() {
-                                                    exportSubscription = null
-
-                                                    activity?.let {
-                                                        Utils.showSnackbar(it, "${it.getString(R.string.bookmark_export_path)} ${exportFile.path}")
+                                            .subscribeOn(databaseScheduler)
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribeBy(
+                                                    onComplete = {
+                                                        activity?.let {
+                                                            Utils.showSnackbar(it, "${it.getString(R.string.bookmark_export_path)} ${exportFile.path}")
+                                                        }
+                                                    },
+                                                    onError = { throwable ->
+                                                        Log.e(TAG, "onError: exporting bookmarks", throwable)
+                                                        val activity = activity
+                                                        if (activity != null && !activity.isFinishing && isAdded) {
+                                                            Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
+                                                        } else {
+                                                            Utils.showToast(application, R.string.bookmark_export_failure)
+                                                        }
                                                     }
-                                                }
-
-                                                override fun onError(throwable: Throwable) {
-                                                    exportSubscription = null
-
-                                                    Log.e(TAG, "onError: exporting bookmarks", throwable)
-                                                    val activity = activity
-                                                    if (activity != null && !activity.isFinishing && isAdded) {
-                                                        Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
-                                                    } else {
-                                                        Utils.showToast(application, R.string.bookmark_export_failure)
-                                                    }
-                                                }
-                                            })
-                                })
+                                            )
+                                }
                     }
 
                     override fun onDenied(permission: String) {
@@ -205,38 +195,33 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
             if (fileList[which].isDirectory) {
                 showImportBookmarkDialog(fileList[which])
             } else {
-                SubscriptionUtils.safeUnsubscribe(importSubscription)
-                importSubscription = BookmarkExporter.importBookmarksFromFile(fileList[which])
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.main())
-                        .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                            override fun onItem(importList: List<HistoryItem>?) {
-                                importSubscription = null
-
-                                val importedBookmarks = requireNotNull(importList)
-                                bookmarkRepository.addBookmarkList(importedBookmarks)
-                                        .subscribeOn(databaseScheduler)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe {
-                                            activity?.let {
-                                                val message = it.getString(R.string.message_import)
-                                                Utils.showSnackbar(it, importedBookmarks.size.toString() + " " + message)
+                importSubscription = BookmarkExporter
+                        .importBookmarksFromFile(fileList[which])
+                        .subscribeOn(databaseScheduler)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(
+                                onSuccess = { importList ->
+                                    val importedBookmarks = requireNotNull(importList)
+                                    bookmarkRepository.addBookmarkList(importedBookmarks)
+                                            .subscribeOn(databaseScheduler)
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe {
+                                                activity?.let {
+                                                    val message = it.getString(R.string.message_import)
+                                                    Utils.showSnackbar(it, importedBookmarks.size.toString() + " " + message)
+                                                }
                                             }
-                                        }
-                            }
-
-                            override fun onError(throwable: Throwable) {
-                                importSubscription = null
-
-                                Log.e(TAG, "onError: importing bookmarks", throwable)
-                                val activity = activity
-                                if (activity != null && !activity.isFinishing && isAdded) {
-                                    Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error)
-                                } else {
-                                    Utils.showToast(application, R.string.import_bookmark_error)
+                                },
+                                onError = { throwable ->
+                                    Log.e(TAG, "onError: importing bookmarks", throwable)
+                                    val activity = activity
+                                    if (activity != null && !activity.isFinishing && isAdded) {
+                                        Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error)
+                                    } else {
+                                        Utils.showToast(application, R.string.import_bookmark_error)
+                                    }
                                 }
-                            }
-                        })
+                        )
             }
         }
         val dialog = builder.show()
