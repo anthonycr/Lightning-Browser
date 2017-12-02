@@ -39,7 +39,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
-    override fun providePreferencesResource() = R.xml.preference_privacy
+    override fun providePreferencesXmlResource() = R.xml.preference_privacy
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

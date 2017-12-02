@@ -37,7 +37,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     private var importSubscription: Disposable? = null
     private var exportSubscription: Disposable? = null
 
-    override fun providePreferencesResource() = R.xml.preference_bookmarks
+    override fun providePreferencesXmlResource() = R.xml.preference_bookmarks
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

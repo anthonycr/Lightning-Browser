@@ -9,7 +9,7 @@ import android.os.Bundle
 
 class AboutSettingsFragment : AbstractSettingsFragment() {
 
-    override fun providePreferencesResource() = R.xml.preference_about
+    override fun providePreferencesXmlResource() = R.xml.preference_about
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +17,7 @@ class AboutSettingsFragment : AbstractSettingsFragment() {
         clickablePreference(
                 preference = SETTINGS_VERSION,
                 summary = BuildConfig.VERSION_NAME,
-                onClick = { _ -> }
+                onClick = { }
         )
     }
 

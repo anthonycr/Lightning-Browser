@@ -23,7 +23,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
-    override fun providePreferencesResource() = R.xml.preference_display
+    override fun providePreferencesXmlResource() = R.xml.preference_display
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         // preferences storage
         themeOptions = this.resources.getStringArray(R.array.themes)
 
-        clickablePreference(
+        clickableDynamicPreference(
                 preference = SETTINGS_THEME,
                 summary = themeOptions[preferenceManager.useTheme],
                 onClick = this::showThemePicker
