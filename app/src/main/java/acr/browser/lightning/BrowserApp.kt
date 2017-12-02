@@ -2,7 +2,6 @@ package acr.browser.lightning
 
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.database.bookmark.legacy.LegacyBookmarkManager
 import acr.browser.lightning.di.AppComponent
 import acr.browser.lightning.di.AppModule
 import acr.browser.lightning.di.DaggerAppComponent
@@ -70,12 +69,7 @@ class BrowserApp : Application() {
         appComponent.inject(this)
 
         Schedulers.worker().execute {
-            val oldBookmarks = LegacyBookmarkManager.destructiveGetBookmarks(this@BrowserApp)
-
-            if (!oldBookmarks.isEmpty()) {
-                // If there are old bookmarks, import them
-                bookmarkModel.addBookmarkList(oldBookmarks).subscribeOn(databaseScheduler).subscribe()
-            } else if (bookmarkModel.count() == 0L) {
+            if (bookmarkModel.count() == 0L) {
                 // If the database is empty, fill it from the assets list
                 val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
                 bookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(databaseScheduler).subscribe()
