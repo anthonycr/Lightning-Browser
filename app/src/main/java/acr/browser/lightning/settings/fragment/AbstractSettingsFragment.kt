@@ -72,9 +72,7 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
                 preference = preference,
                 isEnabled = isEnabled,
                 summary = summary,
-                onClick = object : Function1<SummaryUpdater, Unit> {
-                    override fun invoke(p1: SummaryUpdater) = onClick()
-                }
+                onClick = { onClick() }
         )
     }
 
