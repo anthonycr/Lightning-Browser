@@ -8,7 +8,6 @@ import acr.browser.lightning.preference.PreferenceManager
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v7.app.AlertDialog
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -117,8 +116,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             val dialog = AlertDialog.Builder(it).apply {
                 setTitle(resources.getString(R.string.text_encoding))
 
-                val textEncodingList = Arrays.asList<String>(*TEXT_ENCODINGS)
-                val currentChoice = textEncodingList.indexOf(preferenceManager.textEncoding)
+                val currentChoice = TEXT_ENCODINGS.indexOf(preferenceManager.textEncoding)
 
                 setSingleChoiceItems(TEXT_ENCODINGS, currentChoice, { _, which ->
                     preferenceManager.textEncoding = TEXT_ENCODINGS[which]
