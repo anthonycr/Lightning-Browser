@@ -33,7 +33,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         // preferences storage
         themeOptions = this.resources.getStringArray(R.array.themes)
 
-        clickablePreference(
+        clickableDynamicPreference(
                 preference = SETTINGS_THEME,
                 summary = themeOptions[preferenceManager.useTheme],
                 onClick = this::showThemePicker

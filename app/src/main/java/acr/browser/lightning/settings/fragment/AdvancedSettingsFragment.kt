@@ -33,19 +33,19 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         BrowserApp.appComponent.inject(this)
 
-        clickablePreference(
+        clickableDynamicPreference(
                 preference = SETTINGS_RENDERING_MODE,
                 summary = getString(renderingModePreferenceToString(preferenceManager.renderingMode)),
                 onClick = this::showRenderingDialogPicker
         )
 
-        clickablePreference(
+        clickableDynamicPreference(
                 preference = SETTINGS_TEXT_ENCODING,
                 summary = preferenceManager.textEncoding,
                 onClick = this::showTextEncodingDialogPicker
         )
 
-        clickablePreference(
+        clickableDynamicPreference(
                 preference = SETTINGS_URL_CONTENT,
                 summary = urlBoxPreferenceToString(preferenceManager.urlBoxContentChoice),
                 onClick = this::showUrlBoxDialogPicker
