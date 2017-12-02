@@ -9,17 +9,22 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 
-public class AdvancedSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+public class AdvancedSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_NEWWINDOW = "allow_new_window";
     private static final String SETTINGS_ENABLECOOKIES = "allow_cookies";
@@ -34,11 +39,15 @@ public class AdvancedSettingsFragment extends LightningPreferenceFragment implem
     private Preference renderingmode, urlcontent, textEncoding;
     private CharSequence[] mUrlOptions;
 
+    @Inject PreferenceManager mPreferenceManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preference_advanced);
+
+        BrowserApp.getAppComponent().inject(this);
 
         mActivity = getActivity();
 

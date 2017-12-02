@@ -48,7 +48,7 @@ interface AppComponent {
 
     fun inject(activity: ThemableBrowserActivity)
 
-    fun inject(fragment: LightningPreferenceFragment)
+    fun inject(advancedSettingsFragment: AdvancedSettingsFragment)
 
     fun inject(app: BrowserApp)
 

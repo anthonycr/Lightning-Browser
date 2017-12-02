@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.search.SearchEngineProvider;
 import acr.browser.lightning.search.engine.BaseSearchEngine;
 import acr.browser.lightning.search.engine.CustomSearch;
@@ -44,7 +46,7 @@ import kotlin.jvm.functions.Function1;
 
 import static acr.browser.lightning.preference.PreferenceManager.Suggestion;
 
-public class GeneralSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+public class GeneralSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_PROXY = "proxy";
     private static final String SETTINGS_FLASH = "cb_flash";
@@ -66,6 +68,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
     private String mHomepage;
 
     @Inject SearchEngineProvider mSearchEngineProvider;
+    @Inject PreferenceManager mPreferenceManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
