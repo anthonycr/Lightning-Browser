@@ -23,7 +23,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
-    override fun providePreferencesResource() = R.xml.preference_display
+    override fun providePreferencesXmlResource() = R.xml.preference_display
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

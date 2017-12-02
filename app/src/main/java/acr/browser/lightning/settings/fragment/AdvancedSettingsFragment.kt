@@ -25,7 +25,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
-    override fun providePreferencesResource() = R.xml.preference_advanced
+    override fun providePreferencesXmlResource() = R.xml.preference_advanced
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +86,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             val dialog = AlertDialog.Builder(it).apply {
                 setTitle(resources.getString(R.string.rendering_mode))
 
-                val choices = arrayOf<CharSequence>(
+                val choices = arrayOf(
                         it.getString(R.string.name_normal),
                         it.getString(R.string.name_inverted),
                         it.getString(R.string.name_grayscale),
@@ -124,6 +124,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
                 })
                 setPositiveButton(resources.getString(R.string.action_ok), null)
             }.show()
+
             BrowserDialog.setDialogSize(it, dialog)
         }
     }

@@ -11,7 +11,7 @@ class DebugSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
-    override fun providePreferencesResource() = R.xml.preference_debug
+    override fun providePreferencesXmlResource() = R.xml.preference_debug
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -16,13 +16,12 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
      * Provide the XML resource which holds the preferences.
      */
     @XmlRes
-    protected abstract fun providePreferencesResource(): Int
+    protected abstract fun providePreferencesXmlResource(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(providePreferencesResource())
+        addPreferencesFromResource(providePreferencesXmlResource())
     }
 
     /**
