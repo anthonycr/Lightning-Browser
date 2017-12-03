@@ -145,7 +145,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var searchBoxModel: SearchBoxModel
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject internal lateinit var networkConnectivityModel: NetworkConnectivityModel
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject
+    @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val tabsManager: TabsManager = TabsManager()
 
@@ -1146,12 +1147,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun initializeToolbarHeight(configuration: Configuration) =
             ui_layout.doOnLayout {
                 // TODO externalize the dimensions
-                val toolbarSize = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    // In portrait toolbar should be 56 dp tall
-                    Utils.dpToPx(56f)
+                val toolbarSize = if (isTablet) {
+                    // On tablets, toolbar should be 64 dp tall
+                    Utils.dpToPx(64f)
                 } else {
-                    // In landscape toolbar should be 48 dp tall
-                    Utils.dpToPx(52f)
+                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        // In portrait toolbar should be 56 dp tall
+                        Utils.dpToPx(56f)
+                    } else {
+                        // In landscape toolbar should be 48 dp tall
+                        Utils.dpToPx(48f)
+                    }
                 }
                 toolbar.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
                 toolbar.minimumHeight = toolbarSize
