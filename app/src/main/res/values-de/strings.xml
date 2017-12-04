@@ -134,10 +134,14 @@
     <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
     <string name="message_certificate_date_invalid">Datum des Zertifikats ungültig</string>
     <string name="message_certificate_expired">Zertifikat abgelaufen</string>
-    <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit Domain der aktuellen Seite überein</string>
+    <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit der Domain der aktuellen Seite überein</string>
     <string name="message_certificate_invalid">Zertifikat ungültig</string>
     <string name="message_certificate_not_yet_valid">Zertifikat noch nicht gültig</string>
     <string name="message_certificate_untrusted">Zertifikat nicht vertrauenswürdig</string>
+
+    <!-- permissions request -->
+    <string name="title_permission_request">Berechtigungs-Anfrage</string>
+    <string name="message_permission_request">%1$s\n\nwürde gerne benutzen:\n\n%2$s</string>
 
     <string name="title_form_resubmission">Formularneuzustellung</string>
     <string name="message_form_resubmission">Daten erneut senden?</string>
@@ -242,11 +246,12 @@
     <string name="swap_bookmarks_and_tabs">Lesezeichen und Tab-Drawer wechseln</string>
     <string name="do_not_track">\"Nicht verfolgen\"-Funktion anfordern</string>
     <string name="remove_identifying_headers">Identifizierbare Header entfernen</string>
+    <string name="webrtc_support">WebRTC Unterstützung</string>
     <string name="action_add_to_homescreen">Auf Startbildschirm legen</string>
     <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
-    <string name="shortcut_message_failed_to_add">Dein Launcher unterstützt keine Verknüpfungen</string>
+    <string name="shortcut_message_failed_to_add">Ihr Launcher unterstützt keine Verknüpfungen!</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="flash_not_supported">Flash Player wird von deinem System nicht untertützt!</string>
+    <string name="flash_not_supported">Flash Player wird von Ihrem System nicht unterstützt!</string>
     <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren!</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
 	
@@ -291,6 +296,6 @@
         <item quantity="one">%1$d Inkognito-Tab geöffnet</item>
         <item quantity="other">%1$d Inkognito-Tabs geöffnet</item>
     </plurals>
-    <string name="notification_incognito_running_message">Incognito-Tab anzeigen</string>
+    <string name="notification_incognito_running_message">Inkognito-Tab anzeigen</string>
     <string name="notification_incognito_running_description">Dauerhafte Inkognito-Benachrichtigung</string>
 </resources>
