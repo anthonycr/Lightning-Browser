@@ -44,7 +44,7 @@
     <string name="window">Autoriser les sites à ouvrir de nouvelles fenêtres</string>
     <string name="cookies">Activer les cookies</string>
     <string name="size">Taille du texte</string>
-    <string name="recommended">Recommendé</string>
+    <string name="recommended">Recommandé</string>
     <string name="search">Moteur de recherche</string>
     <string name="search_hint">Rechercher</string>
     <string name="wideViewPort">Utiliser large fenêtre d\'affichage</string>
