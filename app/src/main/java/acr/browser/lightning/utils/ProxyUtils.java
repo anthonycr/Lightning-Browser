@@ -195,7 +195,7 @@ public final class ProxyUtils {
     }
 
     @Proxy
-    public static int setProxyChoice(int choice, @NonNull Activity activity) {
+    public static int sanitizeProxyChoice(int choice, @NonNull Activity activity) {
         switch (choice) {
             case Constants.PROXY_ORBOT:
                 if (!OrbotHelper.isOrbotInstalled(activity)) {

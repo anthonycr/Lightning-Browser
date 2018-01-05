@@ -138,4 +138,17 @@ object BrowserDialog {
         window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
+    /**
+     * Show the custom dialog with the custom builder arguments applied.
+     */
+    fun showCustomDialog(activity: Activity?, block: AlertDialog.Builder.(Activity) -> Unit) {
+        activity?.let {
+            AlertDialog.Builder(activity).apply {
+                block(it)
+                val dialog = show()
+                setDialogSize(it, dialog)
+            }
+        }
+    }
+
 }
