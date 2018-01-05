@@ -44,7 +44,7 @@
     <string name="window">Autoriser les sites à ouvrir de nouvelles fenêtres</string>
     <string name="cookies">Activer les cookies</string>
     <string name="size">Taille du texte</string>
-    <string name="recommended">Recommendé</string>
+    <string name="recommended">Recommandé</string>
     <string name="search">Moteur de recherche</string>
     <string name="search_hint">Rechercher</string>
     <string name="wideViewPort">Utiliser large fenêtre d\'affichage</string>
@@ -216,6 +216,7 @@
     </string-array>
     <string name="invert_color">Inverser les couleurs</string>
     <string name="dark_theme">Thème sombre</string>
+    <string name="settings_black_status_bar">Barre de statut noire</string>
     <string name="tabs">Onglets</string>
     <string name="theme">Thème</string>
     <string name="light_theme">Thème clair</string>
