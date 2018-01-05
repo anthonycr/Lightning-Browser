@@ -16,7 +16,6 @@ class DebugSettingsFragment : AbstractSettingsFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         BrowserApp.appComponent.inject(this)
-        addPreferencesFromResource(R.xml.preference_debug)
 
         togglePreference(
                 preference = LEAK_CANARY,
