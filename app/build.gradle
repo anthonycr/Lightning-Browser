@@ -131,7 +131,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // file reading
-    final def mezzanineVersion = '1.0.2'
+    final def mezzanineVersion = '1.1.0'
     implementation "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
@@ -156,6 +156,12 @@ dependencies {
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+}
+
+kapt {
+    arguments {
+        arg("mezzanine.projectPath", project.rootDir)
+    }
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testLightningPlusDebugUnitTest', 'createLightningPlusDebugCoverageReport']) {
