@@ -8,6 +8,7 @@ import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
 import acr.browser.lightning.view.webrtc.WebRtcPermissionsView
 import android.Manifest
@@ -36,6 +37,7 @@ class LightningChromeClient(
     private val uiController: UIController
     @Inject internal lateinit var faviconModel: FaviconModel
     @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var webRtcPermissionsModel: WebRtcPermissionsModel
 
     init {
@@ -121,7 +123,7 @@ class LightningChromeClient(
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onPermissionRequest(request: PermissionRequest) {
-        if (preferences.webRtcEnabled) {
+        if (userPreferences.webRtcEnabled) {
             webRtcPermissionsModel.requestPermission(request, this)
         } else {
             request.deny()

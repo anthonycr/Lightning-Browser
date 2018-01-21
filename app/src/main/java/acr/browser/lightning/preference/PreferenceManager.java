@@ -16,7 +16,7 @@ import acr.browser.lightning.utils.FileUtils;
 @Singleton
 public class PreferenceManager {
 
-    private static final class Name {
+     static final class Name {
         static final String ADOBE_FLASH_SUPPORT = "enableflash";
         static final String BLOCK_ADS = "AdBlock";
         static final String BLOCK_IMAGES = "blockimages";
@@ -84,14 +84,6 @@ public class PreferenceManager {
     @Inject
     PreferenceManager(@NonNull final Context context) {
         mPrefs = context.getSharedPreferences(PREFERENCES, 0);
-    }
-
-    public void setWebRtcEnabled(boolean enabled) {
-        putBoolean(Name.WEB_RTC, enabled);
-    }
-
-    public boolean getWebRtcEnabled() {
-        return mPrefs.getBoolean(Name.WEB_RTC, false);
     }
 
     @NonNull

@@ -6,6 +6,7 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ApiUtils
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.WebUtils
@@ -37,6 +38,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
@@ -102,9 +104,9 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_WEBRTC,
-                isChecked = preferenceManager.webRtcEnabled && ApiUtils.doesSupportWebRtc(),
+                isChecked = userPreferences.webRtcEnabled && ApiUtils.doesSupportWebRtc(),
                 isEnabled = ApiUtils.doesSupportWebRtc(),
-                onCheckChange = preferenceManager::setWebRtcEnabled
+                onCheckChange = { userPreferences.webRtcEnabled = it }
         )
 
         checkBoxPreference(
