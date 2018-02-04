@@ -20,4 +20,4 @@ interface Preference<T> {
 /**
  * Create a [PreferenceDelegate] from the [Preference].
  */
-fun <T> Preference<T>.delegate() = PreferenceDelegate(this)
+internal fun <T> Preference<T>.delegate() = PreferenceDelegate(this)

@@ -7,6 +7,7 @@ import acr.browser.lightning.constant.*
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.BaseSearchEngine
 import acr.browser.lightning.search.engine.CustomSearch
@@ -35,6 +36,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     @Inject lateinit var searchEngineProvider: SearchEngineProvider
     @Inject lateinit var preferenceManager: PreferenceManager
+    @Inject lateinit var userPreferences: UserPreferences
 
     private lateinit var proxyChoices: Array<String>
 
@@ -114,8 +116,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 } else {
                     getString(R.string.upsell_plus_version)
                 },
-                isChecked = BuildConfig.FULL_VERSION && preferenceManager.adBlockEnabled,
-                onCheckChange = preferenceManager::setAdBlockEnabled
+                isChecked = BuildConfig.FULL_VERSION && userPreferences.adBlockEnabled,
+                onCheckChange = { userPreferences.adBlockEnabled = it }
         )
 
         checkBoxPreference(

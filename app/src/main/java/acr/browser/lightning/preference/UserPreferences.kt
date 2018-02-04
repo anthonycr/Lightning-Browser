@@ -12,5 +12,10 @@ class UserPreferences @Inject constructor(application: Application) {
 
     private val preferences = application.getSharedPreferences("settings", 0)
 
-    var webRtcEnabled by BooleanPreference(PreferenceManager.Name.WEB_RTC, false, preferences).delegate()
+    var webRtcEnabled by BooleanPreference(WEB_RTC, false, preferences).delegate()
+
+    var adBlockEnabled by BooleanPreference(BLOCK_ADS, false, preferences).delegate()
 }
+
+private const val WEB_RTC = "webRtc"
+private const val BLOCK_ADS = "AdBlock"
