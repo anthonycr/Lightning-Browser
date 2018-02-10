@@ -5,6 +5,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v7.app.AlertDialog
@@ -23,6 +24,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
     private val SETTINGS_URL_CONTENT = "url_contents"
     private val SETTINGS_TEXT_ENCODING = "text_encoding"
 
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var preferenceManager: PreferenceManager
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
@@ -58,8 +60,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_ENABLE_COOKIES,
-                isChecked = preferenceManager.cookiesEnabled,
-                onCheckChange = preferenceManager::setCookiesEnabled
+                isChecked = userPreferences.cookiesEnabled,
+                onCheckChange = { userPreferences.cookiesEnabled = it }
         )
 
         checkBoxPreference(

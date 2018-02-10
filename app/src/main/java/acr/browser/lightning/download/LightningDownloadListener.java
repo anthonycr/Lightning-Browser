@@ -24,6 +24,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.preference.UserPreferences;
 
 public class LightningDownloadListener implements DownloadListener {
 
@@ -32,6 +33,7 @@ public class LightningDownloadListener implements DownloadListener {
     private final Activity mActivity;
 
     @Inject PreferenceManager mPreferenceManager;
+    @Inject UserPreferences mUserPreferences;
     @Inject DownloadHandler mDownloadHandler;
     @Inject DownloadsRepository downloadsRespository;
 
@@ -62,7 +64,7 @@ public class LightningDownloadListener implements DownloadListener {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    mDownloadHandler.onDownloadStart(mActivity, mPreferenceManager, url, userAgent, contentDisposition, mimetype, downloadSize);
+                                    mDownloadHandler.onDownloadStart(mActivity, mUserPreferences, url, userAgent, contentDisposition, mimetype, downloadSize);
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     break;

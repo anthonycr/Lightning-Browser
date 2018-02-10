@@ -63,7 +63,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_DOWNLOAD,
-                summary = preferenceManager.downloadDirectory,
+                summary = userPreferences.downloadDirectory,
                 onClick = this::showDownloadLocationDialog
         )
 
@@ -93,16 +93,16 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 } else {
                     getString(R.string.flash_not_supported)
                 },
-                isChecked = preferenceManager.flashSupport > 0,
+                isChecked = userPreferences.flashSupport > 0,
                 onCheckChange = { checked ->
                     if (!Utils.isFlashInstalled(activity) && checked) {
                         Utils.createInformativeDialog(activity, R.string.title_warning, R.string.dialog_adobe_not_installed)
-                        preferenceManager.flashSupport = 0
+                        userPreferences.flashSupport = 0
                     } else {
                         if (checked) {
                             showFlashChoiceDialog()
                         } else {
-                            preferenceManager.flashSupport = 0
+                            userPreferences.flashSupport = 0
                         }
                     }
                 }
@@ -122,8 +122,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_IMAGES,
-                isChecked = preferenceManager.blockImagesEnabled,
-                onCheckChange = preferenceManager::setBlockImagesEnabled
+                isChecked = userPreferences.blockImagesEnabled,
+                onCheckChange = { userPreferences.blockImagesEnabled = it }
         )
 
         checkBoxPreference(
@@ -147,13 +147,13 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     message = R.string.flash,
                     positiveButton = DialogItem(
                             title = R.string.action_manual,
-                            onClick = { preferenceManager.flashSupport = 1 }
+                            onClick = { userPreferences.flashSupport = 1 }
                     ),
                     negativeButton = DialogItem(
                             title = R.string.action_auto,
-                            onClick = { preferenceManager.flashSupport = 2 }
+                            onClick = { userPreferences.flashSupport = 2 }
                     ),
-                    onCancel = { preferenceManager.flashSupport = 0 }
+                    onCancel = { userPreferences.flashSupport = 0 }
             )
         }
     }
@@ -264,7 +264,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showDownloadLocationDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_download_location))
-            val n: Int = if (preferenceManager.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
+            val n: Int = if (userPreferences.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
                 0
             } else {
                 1
@@ -273,7 +273,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setSingleChoiceItems(R.array.download_folder, n) { _, which ->
                 when (which) {
                     0 -> {
-                        preferenceManager.downloadDirectory = FileUtils.DEFAULT_DOWNLOAD_PATH
+                        userPreferences.downloadDirectory = FileUtils.DEFAULT_DOWNLOAD_PATH
                         summaryUpdater.updateSummary(FileUtils.DEFAULT_DOWNLOAD_PATH)
                     }
                     1 -> {
@@ -295,7 +295,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             val regularColor = ThemeUtils.getTextColor(it)
             getDownload.setTextColor(regularColor)
             getDownload.addTextChangedListener(DownloadLocationTextWatcher(getDownload, errorColor, regularColor))
-            getDownload.setText(preferenceManager.downloadDirectory)
+            getDownload.setText(userPreferences.downloadDirectory)
 
             BrowserDialog.showCustomDialog(it) {
                 setTitle(R.string.title_download_location)
@@ -303,7 +303,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 setPositiveButton(R.string.action_ok) { _, _ ->
                     var text = getDownload.text.toString()
                     text = FileUtils.addNecessarySlashes(text)
-                    preferenceManager.downloadDirectory = text
+                    userPreferences.downloadDirectory = text
                     summaryUpdater.updateSummary(text)
                 }
             }

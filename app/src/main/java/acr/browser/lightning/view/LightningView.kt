@@ -16,6 +16,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.UrlUtils
@@ -114,6 +115,7 @@ class LightningView(
     private val maxFling: Float
 
     @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
@@ -314,7 +316,7 @@ class LightningView(
             settings.setGeolocationEnabled(false)
         }
         if (API < Build.VERSION_CODES.KITKAT) {
-            when (preferences.flashSupport) {
+            when (userPreferences.flashSupport) {
                 0 -> settings.pluginState = PluginState.OFF
                 1 -> settings.pluginState = PluginState.ON_DEMAND
                 2 -> settings.pluginState = PluginState.ON
@@ -361,7 +363,7 @@ class LightningView(
             settings.layoutAlgorithm = LayoutAlgorithm.NORMAL
         }
 
-        settings.blockNetworkImage = preferences.blockImagesEnabled
+        settings.blockNetworkImage = userPreferences.blockImagesEnabled
         if (!isIncognito) {
             settings.setSupportMultipleWindows(preferences.popupsEnabled)
         } else {

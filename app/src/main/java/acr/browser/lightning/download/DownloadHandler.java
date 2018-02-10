@@ -39,7 +39,7 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
@@ -75,7 +75,7 @@ public class DownloadHandler {
      * @param mimetype           The mimetype of the content reported by the server
      * @param contentSize        The size of the content
      */
-    public void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, @NonNull String url, String userAgent,
+    public void onDownloadStart(@NonNull Activity context, @NonNull UserPreferences manager, @NonNull String url, String userAgent,
                                 @Nullable String contentDisposition, String mimetype, @NonNull String contentSize) {
 
         Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
@@ -162,7 +162,7 @@ public class DownloadHandler {
      * @param contentSize        The size of the content
      */
     /* package */
-    private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
+    private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull UserPreferences preferences,
                                          @NonNull String url, String userAgent,
                                          String contentDisposition, @Nullable String mimetype, @NonNull String contentSize) {
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);

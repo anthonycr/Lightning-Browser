@@ -27,6 +27,7 @@ import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
@@ -139,6 +140,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var cameraPhotoPath: String? = null
 
     // The singleton BookmarkManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var bookmarkManager: BookmarkRepository
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
@@ -590,7 +592,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     private fun initializePreferences() {
         val currentView = tabsManager.currentTab
-        isFullScreen = preferences.fullScreenEnabled
+        isFullScreen = userPreferences.fullScreenEnabled
         val colorMode = preferences.colorModeEnabled && !isDarkTheme
 
         webPageBitmap?.let { webBitmap ->
@@ -1107,7 +1109,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun performExitCleanUp() {
         val currentTab = tabsManager.currentTab
-        if (preferences.clearCacheExit && currentTab != null && !isIncognito()) {
+        if (userPreferences.clearCacheExit && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.webView)
             Log.d(TAG, "Cache Cleared")
         }

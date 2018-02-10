@@ -73,8 +73,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_CACHEEXIT,
-                isChecked = preferenceManager.clearCacheExit,
-                onCheckChange = preferenceManager::setClearCacheExit
+                isChecked = userPreferences.clearCacheExit,
+                onCheckChange = { userPreferences.clearCacheExit = it }
         )
 
         checkBoxPreference(

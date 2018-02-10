@@ -11,18 +11,11 @@ import javax.inject.Singleton;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.search.engine.GoogleSearch;
-import acr.browser.lightning.utils.FileUtils;
 
 @Singleton
 public class PreferenceManager {
 
      static final class Name {
-        static final String ADOBE_FLASH_SUPPORT = "enableflash";
-        static final String BLOCK_IMAGES = "blockimages";
-        static final String CLEAR_CACHE_EXIT = "cache";
-        static final String COOKIES = "cookies";
-        static final String DOWNLOAD_DIRECTORY = "downloadLocation";
-        static final String FULL_SCREEN = "fullscreen";
         static final String HIDE_STATUS_BAR = "hidestatus";
         static final String HOMEPAGE = "home";
         static final String INCOGNITO_COOKIES = "incognitocookies";
@@ -105,10 +98,6 @@ public class PreferenceManager {
         putBoolean(Name.SWAP_BOOKMARKS_AND_TABS, swap);
     }
 
-    public boolean getBlockImagesEnabled() {
-        return mPrefs.getBoolean(Name.BLOCK_IMAGES, false);
-    }
-
     public boolean getBlockThirdPartyCookiesEnabled() {
         return mPrefs.getBoolean(Name.BLOCK_THIRD_PARTY, false);
     }
@@ -119,10 +108,6 @@ public class PreferenceManager {
 
     public boolean getCheckedForI2P() {
         return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
-    }
-
-    public boolean getClearCacheExit() {
-        return mPrefs.getBoolean(Name.CLEAR_CACHE_EXIT, false);
     }
 
     public boolean getClearCookiesExitEnabled() {
@@ -139,23 +124,6 @@ public class PreferenceManager {
 
     public boolean getColorModeEnabled() {
         return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, true);
-    }
-
-    public boolean getCookiesEnabled() {
-        return mPrefs.getBoolean(Name.COOKIES, true);
-    }
-
-    @NonNull
-    public String getDownloadDirectory() {
-        return mPrefs.getString(Name.DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH);
-    }
-
-    public int getFlashSupport() {
-        return mPrefs.getInt(Name.ADOBE_FLASH_SUPPORT, 0);
-    }
-
-    public boolean getFullScreenEnabled() {
-        return mPrefs.getBoolean(Name.FULL_SCREEN, true);
     }
 
     public boolean getHideStatusBarEnabled() {
@@ -330,10 +298,6 @@ public class PreferenceManager {
         putString(Name.TEXT_ENCODING, encoding);
     }
 
-    public void setBlockImagesEnabled(boolean enable) {
-        putBoolean(Name.BLOCK_IMAGES, enable);
-    }
-
     public void setBlockThirdPartyCookiesEnabled(boolean enable) {
         putBoolean(Name.BLOCK_THIRD_PARTY, enable);
     }
@@ -344,10 +308,6 @@ public class PreferenceManager {
 
     public void setCheckedForI2P(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
-    }
-
-    public void setClearCacheExit(boolean enable) {
-        putBoolean(Name.CLEAR_CACHE_EXIT, enable);
     }
 
     public void setClearCookiesExitEnabled(boolean enable) {
@@ -364,22 +324,6 @@ public class PreferenceManager {
 
     public void setColorModeEnabled(boolean enable) {
         putBoolean(Name.ENABLE_COLOR_MODE, enable);
-    }
-
-    public void setCookiesEnabled(boolean enable) {
-        putBoolean(Name.COOKIES, enable);
-    }
-
-    public void setDownloadDirectory(@NonNull String directory) {
-        putString(Name.DOWNLOAD_DIRECTORY, directory);
-    }
-
-    public void setFlashSupport(int n) {
-        putInt(Name.ADOBE_FLASH_SUPPORT, n);
-    }
-
-    public void setFullScreenEnabled(boolean enable) {
-        putBoolean(Name.FULL_SCREEN, enable);
     }
 
     public void setHideStatusBarEnabled(boolean enable) {
