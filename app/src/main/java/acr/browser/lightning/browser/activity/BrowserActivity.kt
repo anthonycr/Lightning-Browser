@@ -614,7 +614,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // TODO layout transition causing memory leak
         //        content_frame.setLayoutTransition(new LayoutTransition());
 
-        setFullscreen(preferences.hideStatusBarEnabled, false)
+        setFullscreen(userPreferences.hideStatusBarEnabled, false)
 
         val currentSearchEngine = searchEngineProvider.getCurrentSearchEngine()
         searchText = currentSearchEngine.queryUrl
@@ -1699,7 +1699,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             Log.e(TAG, "WebView is not allowed to keep the screen on")
         }
 
-        setFullscreen(preferences.hideStatusBarEnabled, false)
+        setFullscreen(userPreferences.hideStatusBarEnabled, false)
         if (fullscreenContainerView != null) {
             val parent = fullscreenContainerView?.parent as ViewGroup
             parent.removeView(fullscreenContainerView)

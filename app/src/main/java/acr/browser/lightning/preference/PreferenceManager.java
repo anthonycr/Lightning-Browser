@@ -16,10 +16,6 @@ import acr.browser.lightning.search.engine.GoogleSearch;
 public class PreferenceManager {
 
      static final class Name {
-        static final String HIDE_STATUS_BAR = "hidestatus";
-        static final String HOMEPAGE = "home";
-        static final String INCOGNITO_COOKIES = "incognitocookies";
-        static final String JAVASCRIPT = "java";
         static final String LOCATION = "location";
         static final String OVERVIEW_MODE = "overviewmode";
         static final String POPUPS = "newwindows";
@@ -126,25 +122,8 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, true);
     }
 
-    public boolean getHideStatusBarEnabled() {
-        return mPrefs.getBoolean(Name.HIDE_STATUS_BAR, false);
-    }
-
-    @NonNull
-    public String getHomepage() {
-        return mPrefs.getString(Name.HOMEPAGE, Constants.SCHEME_HOMEPAGE);
-    }
-
-    public boolean getIncognitoCookiesEnabled() {
-        return mPrefs.getBoolean(Name.INCOGNITO_COOKIES, false);
-    }
-
     public boolean getInvertColors() {
         return mPrefs.getBoolean(Name.INVERT_COLORS, false);
-    }
-
-    public boolean getJavaScriptEnabled() {
-        return mPrefs.getBoolean(Name.JAVASCRIPT, true);
     }
 
     public boolean getLocationEnabled() {
@@ -326,24 +305,8 @@ public class PreferenceManager {
         putBoolean(Name.ENABLE_COLOR_MODE, enable);
     }
 
-    public void setHideStatusBarEnabled(boolean enable) {
-        putBoolean(Name.HIDE_STATUS_BAR, enable);
-    }
-
-    public void setHomepage(@NonNull String homepage) {
-        putString(Name.HOMEPAGE, homepage);
-    }
-
-    public void setIncognitoCookiesEnabled(boolean enable) {
-        putBoolean(Name.INCOGNITO_COOKIES, enable);
-    }
-
     public void setInvertColors(boolean enable) {
         putBoolean(Name.INVERT_COLORS, enable);
-    }
-
-    public void setJavaScriptEnabled(boolean enable) {
-        putBoolean(Name.JAVASCRIPT, enable);
     }
 
     public void setLocationEnabled(boolean enable) {

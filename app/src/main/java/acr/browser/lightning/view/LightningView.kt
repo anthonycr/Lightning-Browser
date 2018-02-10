@@ -179,7 +179,7 @@ class LightningView(
         uiController = activity as UIController
         val tab = WebView(activity).also { webView = it }
 
-        homepage = preferences.homepage
+        homepage = userPreferences.homepage
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             tab.id = View.generateViewId()
@@ -307,7 +307,7 @@ class LightningView(
         }
 
         settings.defaultTextEncodingName = preferences.textEncoding
-        homepage = preferences.homepage
+        homepage = userPreferences.homepage
         setColorMode(preferences.renderingMode)
 
         if (!isIncognito) {
@@ -339,7 +339,7 @@ class LightningView(
             settings.saveFormData = false
         }
 
-        if (preferences.javaScriptEnabled) {
+        if (userPreferences.javaScriptEnabled) {
             settings.javaScriptEnabled = true
             settings.javaScriptCanOpenWindowsAutomatically = true
         } else {

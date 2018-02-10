@@ -69,7 +69,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_HOME,
-                summary = homePageUrlToDisplayTitle(preferenceManager.homepage),
+                summary = homePageUrlToDisplayTitle(userPreferences.homepage),
                 onClick = this::showHomePageDialog
         )
 
@@ -128,8 +128,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_JAVASCRIPT,
-                isChecked = preferenceManager.javaScriptEnabled,
-                onCheckChange = preferenceManager::setJavaScriptEnabled
+                isChecked = userPreferences.javaScriptEnabled,
+                onCheckChange = { userPreferences.javaScriptEnabled = it }
         )
 
         checkBoxPreference(
@@ -339,7 +339,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showHomePageDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.home)
-            val n = when (preferenceManager.homepage) {
+            val n = when (userPreferences.homepage) {
                 SCHEME_HOMEPAGE -> 0
                 SCHEME_BLANK -> 1
                 SCHEME_BOOKMARKS -> 2
@@ -349,15 +349,15 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setSingleChoiceItems(R.array.homepage, n) { _, which ->
                 when (which) {
                     0 -> {
-                        preferenceManager.homepage = SCHEME_HOMEPAGE
+                        userPreferences.homepage = SCHEME_HOMEPAGE
                         summaryUpdater.updateSummary(resources.getString(R.string.action_homepage))
                     }
                     1 -> {
-                        preferenceManager.homepage = SCHEME_BLANK
+                        userPreferences.homepage = SCHEME_BLANK
                         summaryUpdater.updateSummary(resources.getString(R.string.action_blank))
                     }
                     2 -> {
-                        preferenceManager.homepage = SCHEME_BOOKMARKS
+                        userPreferences.homepage = SCHEME_BOOKMARKS
                         summaryUpdater.updateSummary(resources.getString(R.string.action_bookmarks))
                     }
                     3 -> {
@@ -370,8 +370,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showCustomHomePagePicker(summaryUpdater: SummaryUpdater) {
-        val currentHomepage: String = if (!URLUtil.isAboutUrl(preferenceManager.homepage)) {
-            preferenceManager.homepage
+        val currentHomepage: String = if (!URLUtil.isAboutUrl(userPreferences.homepage)) {
+            userPreferences.homepage
         } else {
             "https://www.google.com"
         }
@@ -382,7 +382,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     R.string.title_custom_homepage,
                     currentHomepage,
                     R.string.action_ok) { url ->
-                preferenceManager.homepage = url
+                userPreferences.homepage = url
                 summaryUpdater.updateSummary(url)
             }
         }

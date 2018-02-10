@@ -17,7 +17,7 @@ class IncognitoActivity : BrowserActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this@IncognitoActivity)
         }
-        cookieManager.setAcceptCookie(preferences.incognitoCookiesEnabled)
+        cookieManager.setAcceptCookie(userPreferences.incognitoCookiesEnabled)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

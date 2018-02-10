@@ -48,8 +48,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_HIDESTATUSBAR,
-                isChecked = preferenceManager.hideStatusBarEnabled,
-                onCheckChange = preferenceManager::setHideStatusBarEnabled
+                isChecked = userPreferences.hideStatusBarEnabled,
+                onCheckChange = { userPreferences.hideStatusBarEnabled = it }
         )
 
         checkBoxPreference(

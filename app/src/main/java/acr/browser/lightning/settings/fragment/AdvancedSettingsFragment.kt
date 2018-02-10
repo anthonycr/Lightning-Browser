@@ -66,8 +66,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_COOKIES_INCOGNITO,
-                isChecked = preferenceManager.incognitoCookiesEnabled,
-                onCheckChange = preferenceManager::setIncognitoCookiesEnabled
+                isChecked = userPreferences.incognitoCookiesEnabled,
+                onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
         )
 
         checkBoxPreference(

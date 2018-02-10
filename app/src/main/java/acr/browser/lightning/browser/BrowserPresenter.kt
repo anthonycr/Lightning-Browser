@@ -11,6 +11,7 @@ import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.view.LightningView
@@ -33,6 +34,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     @Inject internal lateinit var application: Application
     @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     private val tabsModel: TabsManager
     private var currentTab: LightningView? = null
     private var shouldClose: Boolean = false
@@ -140,7 +142,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     }
 
     private fun mapHomepageToCurrentUrl(): String {
-        val homepage = preferences.homepage
+        val homepage = userPreferences.homepage
 
         return when (homepage) {
             SCHEME_HOMEPAGE -> "$FILE${StartPage.getStartPageFile(application)}"
