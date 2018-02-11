@@ -13,6 +13,6 @@ class StringPreference(
 
     override fun edit(value: String) = preferences.edit().putString(name, value).apply()
 
-    override fun value(): String = preferences.getString(name, defaultValue)
+    override fun value(): String = preferences.getString(name, defaultValue) ?: defaultValue
 
 }

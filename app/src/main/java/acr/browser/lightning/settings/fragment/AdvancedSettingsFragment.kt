@@ -36,7 +36,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_RENDERING_MODE,
-                summary = getString(renderingModePreferenceToString(preferenceManager.renderingMode)),
+                summary = getString(renderingModePreferenceToString(userPreferences.renderingMode)),
                 onClick = this::showRenderingDialogPicker
         )
 
@@ -54,8 +54,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_NEW_WINDOW,
-                isChecked = preferenceManager.popupsEnabled,
-                onCheckChange = preferenceManager::setPopupsEnabled
+                isChecked = userPreferences.popupsEnabled,
+                onCheckChange = { userPreferences.popupsEnabled = it }
         )
 
         checkBoxPreference(
@@ -72,8 +72,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_RESTORE_TABS,
-                isChecked = preferenceManager.restoreLostTabsEnabled,
-                onCheckChange = preferenceManager::setRestoreLostTabsEnabled
+                isChecked = userPreferences.restoreLostTabsEnabled,
+                onCheckChange = { userPreferences.restoreLostTabsEnabled = it }
         )
     }
 
@@ -96,8 +96,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
                         it.getString(R.string.name_increase_contrast)
                 )
 
-                setSingleChoiceItems(choices, preferenceManager.renderingMode) { _, which ->
-                    preferenceManager.renderingMode = which
+                setSingleChoiceItems(choices, userPreferences.renderingMode) { _, which ->
+                    userPreferences.renderingMode = which
                     summaryUpdater.updateSummary(getString(renderingModePreferenceToString(which)))
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)

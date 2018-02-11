@@ -60,20 +60,20 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_VIEWPORT,
-                isChecked = preferenceManager.useWideViewportEnabled,
-                onCheckChange = preferenceManager::setUseWideViewportEnabled
+                isChecked = userPreferences.useWideViewportEnabled,
+                onCheckChange = { userPreferences.useWideViewportEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_OVERVIEWMODE,
-                isChecked = preferenceManager.overviewModeEnabled,
-                onCheckChange = preferenceManager::setOverviewModeEnabled
+                isChecked = userPreferences.overviewModeEnabled,
+                onCheckChange = { userPreferences.overviewModeEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_REFLOW,
-                isChecked = preferenceManager.textReflowEnabled,
-                onCheckChange = preferenceManager::setTextReflowEnabled
+                isChecked = userPreferences.textReflowEnabled,
+                onCheckChange = { userPreferences.textReflowEnabled = it }
         )
 
         checkBoxPreference(
@@ -109,14 +109,14 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                 findViewById<SeekBar>(R.id.text_size_seekbar).apply {
                     setOnSeekBarChangeListener(TextSeekBarListener(text))
                     max = maxValue
-                    progress = maxValue - preferenceManager.textSize
+                    progress = maxValue - userPreferences.textSize
                 }
             }
             setView(customView)
             setTitle(R.string.title_text_size)
             setPositiveButton(android.R.string.ok) { _, _ ->
                 val seekBar = customView.findViewById<SeekBar>(R.id.text_size_seekbar)
-                preferenceManager.textSize = maxValue - seekBar.progress
+                userPreferences.textSize = maxValue - seekBar.progress
             }
         }.show()
 

@@ -178,7 +178,7 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
-        if (view.isShown && lightningView.preferences.textReflowEnabled
+        if (view.isShown && lightningView.userPreferences.textReflowEnabled
                 && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (isRunning)
                 return

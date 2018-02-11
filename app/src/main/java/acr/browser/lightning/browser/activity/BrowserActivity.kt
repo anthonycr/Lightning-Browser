@@ -593,7 +593,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun initializePreferences() {
         val currentView = tabsManager.currentTab
         isFullScreen = userPreferences.fullScreenEnabled
-        val colorMode = preferences.colorModeEnabled && !isDarkTheme
+        val colorMode = userPreferences.colorModeEnabled && !isDarkTheme
 
         webPageBitmap?.let { webBitmap ->
             if (!isIncognito() && !colorMode && !isDarkTheme) {
@@ -1044,12 +1044,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun newTabButtonLongClicked() {
-        preferences.savedUrl?.let {
-            newTab(it, true)
+        val savedUrl = userPreferences.savedUrl
+
+        if (savedUrl != "") {
+            newTab(savedUrl, true)
 
             Utils.showSnackbar(this, R.string.deleted_tab)
         }
-        preferences.savedUrl = null
+
+        userPreferences.savedUrl = ""
     }
 
     override fun bookmarkButtonClicked() {
@@ -1113,11 +1116,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             WebUtils.clearCache(currentTab.webView)
             Log.d(TAG, "Cache Cleared")
         }
-        if (preferences.clearHistoryExitEnabled && !isIncognito()) {
+        if (userPreferences.clearHistoryExitEnabled && !isIncognito()) {
             WebUtils.clearHistory(this, historyModel, databaseScheduler)
             Log.d(TAG, "History Cleared")
         }
-        if (preferences.clearCookiesExitEnabled && !isIncognito()) {
+        if (userPreferences.clearCookiesExitEnabled && !isIncognito()) {
             WebUtils.clearCookies(this)
             Log.d(TAG, "Cookies Cleared")
         }
@@ -1218,7 +1221,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     protected fun saveOpenTabs() {
-        if (preferences.restoreLostTabsEnabled) {
+        if (userPreferences.restoreLostTabsEnabled) {
             tabsManager.saveState()
         }
     }

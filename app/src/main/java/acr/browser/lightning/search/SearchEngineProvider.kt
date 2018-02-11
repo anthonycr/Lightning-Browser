@@ -1,6 +1,6 @@
 package acr.browser.lightning.search
 
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*
 import javax.inject.Inject
 
@@ -9,12 +9,12 @@ import javax.inject.Inject
  * on the user's preference.
  */
 class SearchEngineProvider @Inject constructor(
-        private val preferenceManager: PreferenceManager
+        private val userPreferences: UserPreferences
 ) {
 
     fun getCurrentSearchEngine(): BaseSearchEngine =
-            when (preferenceManager.searchChoice) {
-                0 -> CustomSearch(preferenceManager.searchUrl)
+            when (userPreferences.searchChoice) {
+                0 -> CustomSearch(userPreferences.searchUrl)
                 1 -> GoogleSearch()
                 2 -> AskSearch()
                 3 -> BingSearch()
@@ -45,7 +45,7 @@ class SearchEngineProvider @Inject constructor(
             }
 
     fun getAllSearchEngines(): List<BaseSearchEngine> = listOf(
-            CustomSearch(preferenceManager.searchUrl),
+            CustomSearch(userPreferences.searchUrl),
             GoogleSearch(),
             AskSearch(),
             BingSearch(),

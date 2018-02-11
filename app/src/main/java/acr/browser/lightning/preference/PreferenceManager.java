@@ -10,30 +10,29 @@ import javax.inject.Singleton;
 
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
-import acr.browser.lightning.search.engine.GoogleSearch;
 
 @Singleton
 public class PreferenceManager {
 
      static final class Name {
-        static final String LOCATION = "location";
-        static final String OVERVIEW_MODE = "overviewmode";
-        static final String POPUPS = "newwindows";
-        static final String RESTORE_LOST_TABS = "restoreclosed";
-        static final String SAVE_PASSWORDS = "passwords";
-        static final String SEARCH = "search";
-        static final String SEARCH_URL = "searchurl";
-        static final String TEXT_REFLOW = "textreflow";
-        static final String TEXT_SIZE = "textsize";
-        static final String USE_WIDE_VIEWPORT = "wideviewport";
-        static final String USER_AGENT = "agentchoose";
-        static final String USER_AGENT_STRING = "userAgentString";
-        static final String CLEAR_HISTORY_EXIT = "clearHistoryExit";
-        static final String CLEAR_COOKIES_EXIT = "clearCookiesExit";
-        static final String SAVE_URL = "saveUrl";
-        static final String RENDERING_MODE = "renderMode";
-        static final String BLOCK_THIRD_PARTY = "thirdParty";
-        static final String ENABLE_COLOR_MODE = "colorMode";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         static final String URL_BOX_CONTENTS = "urlContent";
         static final String INVERT_COLORS = "invertColors";
         static final String READING_TEXT_SIZE = "readingTextSize";
@@ -94,10 +93,6 @@ public class PreferenceManager {
         putBoolean(Name.SWAP_BOOKMARKS_AND_TABS, swap);
     }
 
-    public boolean getBlockThirdPartyCookiesEnabled() {
-        return mPrefs.getBoolean(Name.BLOCK_THIRD_PARTY, false);
-    }
-
     public boolean getCheckedForTor() {
         return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_TOR, false);
     }
@@ -106,36 +101,12 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
     }
 
-    public boolean getClearCookiesExitEnabled() {
-        return mPrefs.getBoolean(Name.CLEAR_COOKIES_EXIT, false);
-    }
-
     public boolean getClearWebStorageExitEnabled() {
         return mPrefs.getBoolean(Name.CLEAR_WEBSTORAGE_EXIT, false);
     }
 
-    public boolean getClearHistoryExitEnabled() {
-        return mPrefs.getBoolean(Name.CLEAR_HISTORY_EXIT, false);
-    }
-
-    public boolean getColorModeEnabled() {
-        return mPrefs.getBoolean(Name.ENABLE_COLOR_MODE, true);
-    }
-
     public boolean getInvertColors() {
         return mPrefs.getBoolean(Name.INVERT_COLORS, false);
-    }
-
-    public boolean getLocationEnabled() {
-        return mPrefs.getBoolean(Name.LOCATION, false);
-    }
-
-    public boolean getOverviewModeEnabled() {
-        return mPrefs.getBoolean(Name.OVERVIEW_MODE, true);
-    }
-
-    public boolean getPopupsEnabled() {
-        return mPrefs.getBoolean(Name.POPUPS, true);
     }
 
     @NonNull
@@ -149,40 +120,6 @@ public class PreferenceManager {
 
     public int getReadingTextSize() {
         return mPrefs.getInt(Name.READING_TEXT_SIZE, 2);
-    }
-
-    public int getRenderingMode() {
-        return mPrefs.getInt(Name.RENDERING_MODE, 0);
-    }
-
-    public boolean getRestoreLostTabsEnabled() {
-        return mPrefs.getBoolean(Name.RESTORE_LOST_TABS, true);
-    }
-
-    @Nullable
-    public String getSavedUrl() {
-        return mPrefs.getString(Name.SAVE_URL, null);
-    }
-
-    public boolean getSavePasswordsEnabled() {
-        return mPrefs.getBoolean(Name.SAVE_PASSWORDS, true);
-    }
-
-    public int getSearchChoice() {
-        return mPrefs.getInt(Name.SEARCH, 1);
-    }
-
-    @NonNull
-    public String getSearchUrl() {
-        return mPrefs.getString(Name.SEARCH_URL, new GoogleSearch().getQueryUrl());
-    }
-
-    public boolean getTextReflowEnabled() {
-        return mPrefs.getBoolean(Name.TEXT_REFLOW, false);
-    }
-
-    public int getTextSize() {
-        return mPrefs.getInt(Name.TEXT_SIZE, 3);
     }
 
     public int getUrlBoxContentChoice() {
@@ -209,19 +146,6 @@ public class PreferenceManager {
             default:
                 return Constants.NO_PROXY;
         }
-    }
-
-    public int getUserAgentChoice() {
-        return mPrefs.getInt(Name.USER_AGENT, 1);
-    }
-
-    @Nullable
-    public String getUserAgentString(@Nullable String def) {
-        return mPrefs.getString(Name.USER_AGENT_STRING, def);
-    }
-
-    public boolean getUseWideViewportEnabled() {
-        return mPrefs.getBoolean(Name.USE_WIDE_VIEWPORT, true);
     }
 
     @NonNull
@@ -277,10 +201,6 @@ public class PreferenceManager {
         putString(Name.TEXT_ENCODING, encoding);
     }
 
-    public void setBlockThirdPartyCookiesEnabled(boolean enable) {
-        putBoolean(Name.BLOCK_THIRD_PARTY, enable);
-    }
-
     public void setCheckedForTor(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_TOR, check);
     }
@@ -289,72 +209,16 @@ public class PreferenceManager {
         putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
     }
 
-    public void setClearCookiesExitEnabled(boolean enable) {
-        putBoolean(Name.CLEAR_COOKIES_EXIT, enable);
-    }
-
     public void setClearWebStorageExitEnabled(boolean enable) {
         putBoolean(Name.CLEAR_WEBSTORAGE_EXIT, enable);
-    }
-
-    public void setClearHistoryExitEnabled(boolean enable) {
-        putBoolean(Name.CLEAR_HISTORY_EXIT, enable);
-    }
-
-    public void setColorModeEnabled(boolean enable) {
-        putBoolean(Name.ENABLE_COLOR_MODE, enable);
     }
 
     public void setInvertColors(boolean enable) {
         putBoolean(Name.INVERT_COLORS, enable);
     }
 
-    public void setLocationEnabled(boolean enable) {
-        putBoolean(Name.LOCATION, enable);
-    }
-
-    public void setOverviewModeEnabled(boolean enable) {
-        putBoolean(Name.OVERVIEW_MODE, enable);
-    }
-
-    public void setPopupsEnabled(boolean enable) {
-        putBoolean(Name.POPUPS, enable);
-    }
-
     public void setReadingTextSize(int size) {
         putInt(Name.READING_TEXT_SIZE, size);
-    }
-
-    public void setRenderingMode(int mode) {
-        putInt(Name.RENDERING_MODE, mode);
-    }
-
-    public void setRestoreLostTabsEnabled(boolean enable) {
-        putBoolean(Name.RESTORE_LOST_TABS, enable);
-    }
-
-    public void setSavedUrl(@Nullable String url) {
-        putString(Name.SAVE_URL, url);
-    }
-
-    public void setSavePasswordsEnabled(boolean enable) {
-        putBoolean(Name.SAVE_PASSWORDS, enable);
-    }
-
-    public void setSearchChoice(int choice) {
-        putInt(Name.SEARCH, choice);
-    }
-
-    public void setSearchUrl(@NonNull String url) {
-        putString(Name.SEARCH_URL, url);
-    }
-
-    public void setTextReflowEnabled(boolean enable) {
-        putBoolean(Name.TEXT_REFLOW, enable);
-    }
-
-    public void setTextSize(int size) {
-        putInt(Name.TEXT_SIZE, size);
     }
 
     public void setUrlBoxContentChoice(int choice) {
@@ -396,15 +260,4 @@ public class PreferenceManager {
         putInt(Name.USE_PROXY_PORT, proxyPort);
     }
 
-    public void setUserAgentChoice(int choice) {
-        putInt(Name.USER_AGENT, choice);
-    }
-
-    public void setUserAgentString(@Nullable String agent) {
-        putString(Name.USER_AGENT_STRING, agent);
-    }
-
-    public void setUseWideViewportEnabled(boolean enable) {
-        putBoolean(Name.USE_WIDE_VIEWPORT, enable);
-    }
 }

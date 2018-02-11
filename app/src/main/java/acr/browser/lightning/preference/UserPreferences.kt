@@ -1,6 +1,7 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
+import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import javax.inject.Inject
@@ -37,6 +38,42 @@ class UserPreferences @Inject constructor(application: Application) {
     var incognitoCookiesEnabled by BooleanPreference(INCOGNITO_COOKIES, false, preferences).delegate()
 
     var javaScriptEnabled by BooleanPreference(JAVASCRIPT, true, preferences).delegate()
+
+    var locationEnabled by BooleanPreference(LOCATION, false, preferences).delegate()
+
+    var overviewModeEnabled by BooleanPreference(OVERVIEW_MODE, true, preferences).delegate()
+
+    var popupsEnabled by BooleanPreference(POPUPS, true, preferences).delegate()
+
+    var restoreLostTabsEnabled by BooleanPreference(RESTORE_LOST_TABS, true, preferences).delegate()
+
+    var savePasswordsEnabled by BooleanPreference(SAVE_PASSWORDS, true, preferences).delegate()
+
+    var searchChoice by IntPreference(SEARCH, 1, preferences).delegate()
+
+    var searchUrl by StringPreference(SEARCH_URL, GoogleSearch().queryUrl, preferences).delegate()
+
+    var textReflowEnabled by BooleanPreference(TEXT_REFLOW, false, preferences).delegate()
+
+    var textSize by IntPreference(TEXT_SIZE, 3, preferences).delegate()
+
+    var useWideViewportEnabled by BooleanPreference(USE_WIDE_VIEWPORT, true, preferences).delegate()
+
+    var userAgentChoice by IntPreference(USER_AGENT, 1, preferences).delegate()
+
+    var userAgentString by StringPreference(USER_AGENT_STRING, "", preferences).delegate()
+
+    var clearHistoryExitEnabled by BooleanPreference(CLEAR_HISTORY_EXIT, false, preferences).delegate()
+
+    var clearCookiesExitEnabled by BooleanPreference(CLEAR_COOKIES_EXIT, false, preferences).delegate()
+
+    var savedUrl by StringPreference(SAVE_URL, "", preferences).delegate()
+
+    var renderingMode by IntPreference(RENDERING_MODE, 0, preferences).delegate()
+
+    var blockThirdPartyCookiesEnabled by BooleanPreference(BLOCK_THIRD_PARTY, false, preferences).delegate()
+
+    var colorModeEnabled by BooleanPreference(ENABLE_COLOR_MODE, true, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -51,3 +88,21 @@ private const val HIDE_STATUS_BAR = "hidestatus"
 private const val HOMEPAGE = "home"
 private const val INCOGNITO_COOKIES = "incognitocookies"
 private const val JAVASCRIPT = "java"
+private const val LOCATION = "location"
+private const val OVERVIEW_MODE = "overviewmode"
+private const val POPUPS = "newwindows"
+private const val RESTORE_LOST_TABS = "restoreclosed"
+private const val SAVE_PASSWORDS = "passwords"
+private const val SEARCH = "search"
+private const val SEARCH_URL = "searchurl"
+private const val TEXT_REFLOW = "textreflow"
+private const val TEXT_SIZE = "textsize"
+private const val USE_WIDE_VIEWPORT = "wideviewport"
+private const val USER_AGENT = "agentchoose"
+private const val USER_AGENT_STRING = "userAgentString"
+private const val CLEAR_HISTORY_EXIT = "clearHistoryExit"
+private const val CLEAR_COOKIES_EXIT = "clearCookiesExit"
+private const val SAVE_URL = "saveUrl"
+private const val RENDERING_MODE = "renderMode"
+private const val BLOCK_THIRD_PARTY = "thirdParty"
+private const val ENABLE_COLOR_MODE = "colorMode"

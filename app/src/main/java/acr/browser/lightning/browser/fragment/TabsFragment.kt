@@ -8,6 +8,7 @@ import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
 import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.Utils
@@ -52,6 +53,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     private lateinit var uiController: UIController
 
     @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -65,7 +67,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         isIncognito = arguments?.getBoolean(IS_INCOGNITO, false) == true
         showInNavigationDrawer = arguments?.getBoolean(VERTICAL_MODE, true) == true
         darkTheme = preferences.useTheme != 0 || isIncognito
-        colorMode = preferences.colorModeEnabled
+        colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
 
         iconColor = if (darkTheme) {
@@ -157,7 +159,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     fun reinitializePreferences() {
         val activity = activity ?: return
         darkTheme = preferences.useTheme != 0 || isIncognito
-        colorMode = preferences.colorModeEnabled
+        colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
         iconColor = if (darkTheme) {
             ThemeUtils.getIconDarkThemeColor(activity)

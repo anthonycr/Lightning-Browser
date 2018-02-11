@@ -161,7 +161,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         val tabToDelete = tabsModel.getTabAtPosition(position) ?: return
 
         if (!UrlUtils.isSpecialUrl(tabToDelete.url) && !isIncognito) {
-            preferences.savedUrl = tabToDelete.url
+            userPreferences.savedUrl = tabToDelete.url
         }
 
         val isShown = tabToDelete.isShown

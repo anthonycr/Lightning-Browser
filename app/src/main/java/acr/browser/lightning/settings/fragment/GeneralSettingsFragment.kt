@@ -57,7 +57,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_USER_AGENT,
-                summary = choiceToUserAgent(preferenceManager.userAgentChoice),
+                summary = choiceToUserAgent(userPreferences.userAgentChoice),
                 onClick = this::showUserAgentChooserDialog
         )
 
@@ -134,8 +134,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_COLOR_MODE,
-                isChecked = preferenceManager.colorModeEnabled,
-                onCheckChange = preferenceManager::setColorModeEnabled
+                isChecked = userPreferences.colorModeEnabled,
+                onCheckChange = { userPreferences.colorModeEnabled = it }
         )
     }
 
@@ -233,9 +233,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showUserAgentChooserDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_user_agent))
-            setSingleChoiceItems(R.array.user_agent, preferenceManager.userAgentChoice - 1) { _, which ->
-                preferenceManager.userAgentChoice = which + 1
-                summaryUpdater.updateSummary(choiceToUserAgent(preferenceManager.userAgentChoice))
+            setSingleChoiceItems(R.array.user_agent, userPreferences.userAgentChoice - 1) { _, which ->
+                userPreferences.userAgentChoice = which + 1
+                summaryUpdater.updateSummary(choiceToUserAgent(userPreferences.userAgentChoice))
                 when (which) {
                     in 0..2 -> Unit
                     3 -> {
@@ -253,9 +253,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             BrowserDialog.showEditText(it,
                     R.string.title_user_agent,
                     R.string.title_user_agent,
-                    preferenceManager.getUserAgentString(""),
+                    userPreferences.userAgentString,
                     R.string.action_ok) { s ->
-                preferenceManager.setUserAgentString(s)
+                userPreferences.userAgentString = s
                 summaryUpdater.updateSummary(it.getString(R.string.agent_custom))
             }
         }
@@ -407,14 +407,14 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
             val chars = convertSearchEngineToString(searchEngineList)
 
-            val n = preferenceManager.searchChoice
+            val n = userPreferences.searchChoice
 
             setSingleChoiceItems(chars, n) { _, which ->
                 val searchEngine = searchEngineList[which]
 
                 // Store the search engine preference
                 val preferencesIndex = searchEngineProvider.mapSearchEngineToPreferenceIndex(searchEngine)
-                preferenceManager.searchChoice = preferencesIndex
+                userPreferences.searchChoice = preferencesIndex
 
                 if (searchEngine is CustomSearch) {
                     // Show the URL picker
@@ -434,10 +434,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     it,
                     R.string.search_engine_custom,
                     R.string.search_engine_custom,
-                    preferenceManager.searchUrl,
+                    userPreferences.searchUrl,
                     R.string.action_ok
             ) { searchUrl ->
-                preferenceManager.searchUrl = searchUrl
+                userPreferences.searchUrl = searchUrl
                 summaryUpdater.updateSummary(getSearchEngineSummary(customSearch))
             }
 

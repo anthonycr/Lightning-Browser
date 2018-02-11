@@ -54,21 +54,21 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_LOCATION,
-                isChecked = preferenceManager.locationEnabled,
-                onCheckChange = preferenceManager::setLocationEnabled
+                isChecked = userPreferences.locationEnabled,
+                onCheckChange = { userPreferences.locationEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_THIRDPCOOKIES,
-                isChecked = preferenceManager.blockThirdPartyCookiesEnabled,
+                isChecked = userPreferences.blockThirdPartyCookiesEnabled,
                 isEnabled = ApiUtils.doesSupportThirdPartyCookieBlocking(),
-                onCheckChange = preferenceManager::setBlockThirdPartyCookiesEnabled
+                onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_SAVEPASSWORD,
-                isChecked = preferenceManager.savePasswordsEnabled,
-                onCheckChange = preferenceManager::setSavePasswordsEnabled
+                isChecked = userPreferences.savePasswordsEnabled,
+                onCheckChange = { userPreferences.savePasswordsEnabled = it }
         )
 
         checkBoxPreference(
@@ -79,14 +79,14 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_HISTORYEXIT,
-                isChecked = preferenceManager.clearHistoryExitEnabled,
-                onCheckChange = preferenceManager::setClearHistoryExitEnabled
+                isChecked = userPreferences.clearHistoryExitEnabled,
+                onCheckChange = { userPreferences.clearHistoryExitEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_COOKIEEXIT,
-                isChecked = preferenceManager.clearCookiesExitEnabled,
-                onCheckChange = preferenceManager::setClearCookiesExitEnabled
+                isChecked = userPreferences.clearCookiesExitEnabled,
+                onCheckChange = { userPreferences.clearCookiesExitEnabled = it }
         )
 
         checkBoxPreference(
