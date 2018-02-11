@@ -66,7 +66,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         uiController = activity as UIController
         isIncognito = arguments?.getBoolean(IS_INCOGNITO, false) == true
         showInNavigationDrawer = arguments?.getBoolean(VERTICAL_MODE, true) == true
-        darkTheme = preferences.useTheme != 0 || isIncognito
+        darkTheme = userPreferences.useTheme != 0 || isIncognito
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
 
@@ -158,7 +158,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     fun reinitializePreferences() {
         val activity = activity ?: return
-        darkTheme = preferences.useTheme != 0 || isIncognito
+        darkTheme = userPreferences.useTheme != 0 || isIncognito
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
         iconColor = if (darkTheme) {

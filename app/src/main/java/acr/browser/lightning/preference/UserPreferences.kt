@@ -1,5 +1,6 @@
 package acr.browser.lightning.preference
 
+import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
@@ -74,6 +75,18 @@ class UserPreferences @Inject constructor(application: Application) {
     var blockThirdPartyCookiesEnabled by BooleanPreference(BLOCK_THIRD_PARTY, false, preferences).delegate()
 
     var colorModeEnabled by BooleanPreference(ENABLE_COLOR_MODE, true, preferences).delegate()
+
+    var urlBoxContentChoice by IntPreference(URL_BOX_CONTENTS, 0, preferences).delegate()
+
+    var invertColors by BooleanPreference(INVERT_COLORS, false, preferences).delegate()
+
+    var readingTextSize by IntPreference(READING_TEXT_SIZE, 2, preferences).delegate()
+
+    var useTheme by IntPreference(THEME, 0, preferences).delegate()
+
+    var textEncoding by StringPreference(TEXT_ENCODING, DEFAULT_ENCODING, preferences).delegate()
+
+    var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEBSTORAGE_EXIT, false, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -106,3 +119,9 @@ private const val SAVE_URL = "saveUrl"
 private const val RENDERING_MODE = "renderMode"
 private const val BLOCK_THIRD_PARTY = "thirdParty"
 private const val ENABLE_COLOR_MODE = "colorMode"
+private const val URL_BOX_CONTENTS = "urlContent"
+private const val INVERT_COLORS = "invertColors"
+private const val READING_TEXT_SIZE = "readingTextSize"
+private const val THEME = "Theme"
+private const val TEXT_ENCODING = "textEncoding"
+private const val CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit"

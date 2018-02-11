@@ -140,7 +140,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var cameraPhotoPath: String? = null
 
     // The singleton BookmarkManager
-    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var bookmarkManager: BookmarkRepository
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
@@ -229,7 +228,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val actionBar = requireNotNull(supportActionBar)
 
         //TODO make sure dark theme flag gets set correctly
-        isDarkTheme = preferences.useTheme != 0 || isIncognito()
+        isDarkTheme = userPreferences.useTheme != 0 || isIncognito()
         iconColor = if (isDarkTheme) ThemeUtils.getIconDarkThemeColor(this) else ThemeUtils.getIconLightThemeColor(this)
         disabledIconColor = if (isDarkTheme) {
             ContextCompat.getColor(this, R.color.icon_dark_theme_disabled)
@@ -1124,7 +1123,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             WebUtils.clearCookies(this)
             Log.d(TAG, "Cookies Cleared")
         }
-        if (preferences.clearWebStorageExitEnabled && !isIncognito()) {
+        if (userPreferences.clearWebStorageExitEnabled && !isIncognito()) {
             WebUtils.clearWebStorage()
             Log.d(TAG, "WebStorage Cleared")
         } else if (isIncognito()) {

@@ -13,6 +13,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Activity
@@ -53,6 +54,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
 
     @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
 
     @Inject internal lateinit var faviconModel: FaviconModel
 
@@ -86,7 +88,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
         uiController = context as UIController
         isIncognito = arguments?.getBoolean(INCOGNITO_MODE, false) == true
-        val darkTheme = preferenceManager.useTheme != 0 || isIncognito
+        val darkTheme = userPreferences.useTheme != 0 || isIncognito
         webPageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme)
         folderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme)
         iconColor = if (darkTheme) {
@@ -175,7 +177,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     fun reinitializePreferences() {
         val activity = activity ?: return
-        val darkTheme = preferenceManager.useTheme != 0 || isIncognito
+        val darkTheme = userPreferences.useTheme != 0 || isIncognito
         webPageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme)
         folderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme)
         iconColor = if (darkTheme)

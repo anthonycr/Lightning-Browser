@@ -42,13 +42,13 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_TEXT_ENCODING,
-                summary = preferenceManager.textEncoding,
+                summary = userPreferences.textEncoding,
                 onClick = this::showTextEncodingDialogPicker
         )
 
         clickableDynamicPreference(
                 preference = SETTINGS_URL_CONTENT,
-                summary = urlBoxPreferenceToString(preferenceManager.urlBoxContentChoice),
+                summary = urlBoxPreferenceToString(userPreferences.urlBoxContentChoice),
                 onClick = this::showUrlBoxDialogPicker
         )
 
@@ -118,10 +118,10 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             val dialog = AlertDialog.Builder(it).apply {
                 setTitle(resources.getString(R.string.text_encoding))
 
-                val currentChoice = TEXT_ENCODINGS.indexOf(preferenceManager.textEncoding)
+                val currentChoice = TEXT_ENCODINGS.indexOf(userPreferences.textEncoding)
 
                 setSingleChoiceItems(TEXT_ENCODINGS, currentChoice, { _, which ->
-                    preferenceManager.textEncoding = TEXT_ENCODINGS[which]
+                    userPreferences.textEncoding = TEXT_ENCODINGS[which]
                     summaryUpdater.updateSummary(TEXT_ENCODINGS[which])
                 })
                 setPositiveButton(resources.getString(R.string.action_ok), null)
@@ -143,8 +143,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
                 val array = resources.getStringArray(R.array.url_content_array)
 
-                setSingleChoiceItems(array, preferenceManager.urlBoxContentChoice) { _, which ->
-                    preferenceManager.urlBoxContentChoice = which
+                setSingleChoiceItems(array, userPreferences.urlBoxContentChoice) { _, which ->
+                    userPreferences.urlBoxContentChoice = which
                     summaryUpdater.updateSummary(urlBoxPreferenceToString(which))
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)

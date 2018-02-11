@@ -91,8 +91,8 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_WEBSTORAGEEXIT,
-                isChecked = preferenceManager.clearWebStorageExitEnabled,
-                onCheckChange = preferenceManager::setClearWebStorageExitEnabled
+                isChecked = userPreferences.clearWebStorageExitEnabled,
+                onCheckChange = { userPreferences.clearWebStorageExitEnabled = it }
         )
 
         checkBoxPreference(

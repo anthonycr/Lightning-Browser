@@ -37,7 +37,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_THEME,
-                summary = themeOptions[preferenceManager.useTheme],
+                summary = themeOptions[userPreferences.useTheme],
                 onClick = this::showThemePicker
         )
 
@@ -124,23 +124,23 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
-        val currentTheme = preferenceManager.useTheme
+        val currentTheme = userPreferences.useTheme
 
         val dialog = AlertDialog.Builder(activity).apply {
             setTitle(resources.getString(R.string.theme))
             setSingleChoiceItems(themeOptions, currentTheme) { _, which ->
-                preferenceManager.useTheme = which
+                userPreferences.useTheme = which
                 if (which < themeOptions.size) {
                     summaryUpdater.updateSummary(themeOptions[which])
                 }
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
-                if (currentTheme != preferenceManager.useTheme) {
+                if (currentTheme != userPreferences.useTheme) {
                     activity.onBackPressed()
                 }
             }
             setOnCancelListener {
-                if (currentTheme != preferenceManager.useTheme) {
+                if (currentTheme != userPreferences.useTheme) {
                     activity.onBackPressed()
                 }
             }

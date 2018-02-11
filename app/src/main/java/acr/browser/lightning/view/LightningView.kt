@@ -306,7 +306,7 @@ class LightningView(
             requestHeaders.remove(HEADER_WAP_PROFILE)
         }
 
-        settings.defaultTextEncodingName = preferences.textEncoding
+        settings.defaultTextEncodingName = userPreferences.textEncoding
         homepage = userPreferences.homepage
         setColorMode(userPreferences.renderingMode)
 

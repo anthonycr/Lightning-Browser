@@ -3,6 +3,7 @@ package acr.browser.lightning.browser.activity
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.content.res.Configuration
@@ -16,6 +17,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     // TODO reduce protected visibility
     @Inject protected lateinit var preferences: PreferenceManager
+    @Inject protected lateinit var userPreferences: UserPreferences
 
     private var themeId: Int = 0
     private var showTabsInDrawer: Boolean = false
@@ -23,7 +25,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BrowserApp.appComponent.inject(this)
-        themeId = preferences.useTheme
+        themeId = userPreferences.useTheme
         showTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
 
         // set the theme
@@ -67,7 +69,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         super.onResume()
         resetPreferences()
         shouldRunOnResumeActions = true
-        val themePreference = preferences.useTheme
+        val themePreference = userPreferences.useTheme
         val drawerTabs = preferences.getShowTabsInDrawer(!isTablet)
         if (themeId != themePreference || showTabsInDrawer != drawerTabs) {
             restart()

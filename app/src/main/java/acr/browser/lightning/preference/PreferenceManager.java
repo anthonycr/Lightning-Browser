@@ -33,12 +33,12 @@ public class PreferenceManager {
 
 
 
-        static final String URL_BOX_CONTENTS = "urlContent";
-        static final String INVERT_COLORS = "invertColors";
-        static final String READING_TEXT_SIZE = "readingTextSize";
-        static final String THEME = "Theme";
-        static final String TEXT_ENCODING = "textEncoding";
-        static final String CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit";
+
+
+
+
+
+
         static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
         static final String DO_NOT_TRACK = "doNotTrack";
         static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
@@ -101,14 +101,6 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
     }
 
-    public boolean getClearWebStorageExitEnabled() {
-        return mPrefs.getBoolean(Name.CLEAR_WEBSTORAGE_EXIT, false);
-    }
-
-    public boolean getInvertColors() {
-        return mPrefs.getBoolean(Name.INVERT_COLORS, false);
-    }
-
     @NonNull
     public String getProxyHost() {
         return mPrefs.getString(Name.USE_PROXY_HOST, "localhost");
@@ -116,18 +108,6 @@ public class PreferenceManager {
 
     public int getProxyPort() {
         return mPrefs.getInt(Name.USE_PROXY_PORT, 8118);
-    }
-
-    public int getReadingTextSize() {
-        return mPrefs.getInt(Name.READING_TEXT_SIZE, 2);
-    }
-
-    public int getUrlBoxContentChoice() {
-        return mPrefs.getInt(Name.URL_BOX_CONTENTS, 0);
-    }
-
-    public int getUseTheme() {
-        return mPrefs.getInt(Name.THEME, 0);
     }
 
     public boolean getUseProxy() {
@@ -146,11 +126,6 @@ public class PreferenceManager {
             default:
                 return Constants.NO_PROXY;
         }
-    }
-
-    @NonNull
-    public String getTextEncoding() {
-        return mPrefs.getString(Name.TEXT_ENCODING, Constants.DEFAULT_ENCODING);
     }
 
     public boolean getShowTabsInDrawer(boolean defaultValue) {
@@ -197,36 +172,12 @@ public class PreferenceManager {
         putBoolean(Name.SHOW_TABS_IN_DRAWER, show);
     }
 
-    public void setTextEncoding(@NonNull String encoding) {
-        putString(Name.TEXT_ENCODING, encoding);
-    }
-
     public void setCheckedForTor(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_TOR, check);
     }
 
     public void setCheckedForI2P(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
-    }
-
-    public void setClearWebStorageExitEnabled(boolean enable) {
-        putBoolean(Name.CLEAR_WEBSTORAGE_EXIT, enable);
-    }
-
-    public void setInvertColors(boolean enable) {
-        putBoolean(Name.INVERT_COLORS, enable);
-    }
-
-    public void setReadingTextSize(int size) {
-        putInt(Name.READING_TEXT_SIZE, size);
-    }
-
-    public void setUrlBoxContentChoice(int choice) {
-        putInt(Name.URL_BOX_CONTENTS, choice);
-    }
-
-    public void setUseTheme(int theme) {
-        putInt(Name.THEME, theme);
     }
 
     public void setUseLeakCanary(boolean useLeakCanary) {
