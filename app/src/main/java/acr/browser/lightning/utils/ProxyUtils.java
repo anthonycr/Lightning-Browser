@@ -43,7 +43,7 @@ public final class ProxyUtils {
      * proxying for this session
      */
     public void checkForProxy(@NonNull final Activity activity) {
-        boolean useProxy = mPreferences.getUseProxy();
+        int proxyChoice = mPreferences.getProxyChoice();
 
         final boolean orbotInstalled = OrbotHelper.isOrbotInstalled(activity);
         boolean orbotChecked = mPreferences.getCheckedForTor();
@@ -54,7 +54,7 @@ public final class ProxyUtils {
         boolean i2p = i2pInstalled && !i2pChecked;
 
         // TODO Is the idea to show this per-session, or only once?
-        if (!useProxy && (orbot || i2p)) {
+        if (proxyChoice != Constants.NO_PROXY && (orbot || i2p)) {
             if (orbot) mPreferences.setCheckedForTor(true);
             if (i2p) mPreferences.setCheckedForI2P(true);
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -73,8 +73,9 @@ public final class ProxyUtils {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (mPreferences.getUseProxy())
+                                if (mPreferences.getProxyChoice() != Constants.NO_PROXY) {
                                     initializeProxy(activity);
+                                }
                             }
                         });
             } else {
@@ -162,7 +163,7 @@ public final class ProxyUtils {
     }
 
     public void updateProxySettings(@NonNull Activity activity) {
-        if (mPreferences.getUseProxy()) {
+        if (mPreferences.getProxyChoice() != Constants.NO_PROXY) {
             initializeProxy(activity);
         } else {
             try {

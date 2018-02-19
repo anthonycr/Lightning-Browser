@@ -46,7 +46,6 @@ public class PreferenceManager {
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
 
 
-        static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
         static final String USE_PROXY_HOST = "useProxyHost";
         static final String USE_PROXY_PORT = "useProxyPort";
@@ -102,10 +101,6 @@ public class PreferenceManager {
         return mPrefs.getInt(Name.USE_PROXY_PORT, 8118);
     }
 
-    public boolean getUseProxy() {
-        return mPrefs.getBoolean(Name.USE_PROXY, false);
-    }
-
     @Proxy
     public int getProxyChoice() {
         @Proxy int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
@@ -151,7 +146,6 @@ public class PreferenceManager {
      * @param choice the proxy to use.
      */
     public void setProxyChoice(@Proxy int choice) {
-        putBoolean(Name.USE_PROXY, choice != Constants.NO_PROXY);
         putInt(Name.PROXY_CHOICE, choice);
     }
 
