@@ -78,8 +78,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_BLACK_STATUS,
-                isChecked = preferenceManager.useBlackStatusBar,
-                onCheckChange = preferenceManager::setUseBlackStatusBar
+                isChecked = userPreferences.useBlackStatusBar,
+                onCheckChange = { userPreferences.useBlackStatusBar = it }
         )
 
         checkBoxPreference(

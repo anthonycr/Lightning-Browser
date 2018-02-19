@@ -96,6 +96,8 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
     var removeIdentifyingHeadersEnabled by BooleanPreference(IDENTIFYING_HEADERS, false, preferences).delegate()
 
     var bookmarksAndTabsSwapped by BooleanPreference(SWAP_BOOKMARKS_AND_TABS, false, preferences).delegate()
+
+    var useBlackStatusBar by BooleanPreference(BLACK_STATUS_BAR, false, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -138,3 +140,5 @@ private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
 private const val DO_NOT_TRACK = "doNotTrack"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
 private const val SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs"
+private const val BLACK_STATUS_BAR = "blackStatusBar"
+private const val LEAK_CANARY = "leakCanary"

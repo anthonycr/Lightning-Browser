@@ -5,7 +5,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.AppComponent
 import acr.browser.lightning.di.AppModule
 import acr.browser.lightning.di.DaggerAppComponent
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
@@ -27,7 +27,7 @@ import javax.inject.Named
 
 class BrowserApp : Application() {
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var developerPreferences: DeveloperPreferences
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
@@ -76,7 +76,7 @@ class BrowserApp : Application() {
             }
         }
 
-        if (preferenceManager.useLeakCanary && !isRelease) {
+        if (developerPreferences.useLeakCanary && !isRelease) {
             LeakCanary.install(this)
         }
         if (!isRelease && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

@@ -44,7 +44,7 @@ public class PreferenceManager {
 
 
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
-        static final String BLACK_STATUS_BAR = "blackStatusBar";
+
 
         static final String USE_PROXY = "useProxy";
         static final String PROXY_CHOICE = "proxyChoice";
@@ -53,7 +53,7 @@ public class PreferenceManager {
         static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
         static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
 
-        static final String LEAK_CANARY = "leakCanary";
+
     }
 
     public enum Suggestion {
@@ -120,10 +120,6 @@ public class PreferenceManager {
         }
     }
 
-    public boolean getUseBlackStatusBar() {
-        return mPrefs.getBoolean(Name.BLACK_STATUS_BAR, false);
-    }
-
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -136,24 +132,12 @@ public class PreferenceManager {
         mPrefs.edit().putString(name, value).apply();
     }
 
-    public void setUseBlackStatusBar(boolean enabled) {
-        putBoolean(Name.BLACK_STATUS_BAR, enabled);
-    }
-
     public void setCheckedForTor(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_TOR, check);
     }
 
     public void setCheckedForI2P(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
-    }
-
-    public void setUseLeakCanary(boolean useLeakCanary) {
-        putBoolean(Name.LEAK_CANARY, useLeakCanary);
-    }
-
-    public boolean getUseLeakCanary() {
-        return mPrefs.getBoolean(Name.LEAK_CANARY, false);
     }
 
     /**

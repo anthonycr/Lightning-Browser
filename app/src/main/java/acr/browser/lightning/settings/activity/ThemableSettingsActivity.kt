@@ -44,7 +44,7 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
     private fun resetPreferences() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (preferences.useBlackStatusBar) {
+            if (userPreferences.useBlackStatusBar) {
                 window.statusBarColor = Color.BLACK
             } else {
                 window.statusBarColor = ThemeUtils.getStatusBarColor(this)
