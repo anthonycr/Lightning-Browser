@@ -44,8 +44,7 @@ public class PreferenceManager {
 
 
 
-        static final String USE_PROXY_HOST = "useProxyHost";
-        static final String USE_PROXY_PORT = "useProxyPort";
+
         static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
         static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
 
@@ -89,15 +88,6 @@ public class PreferenceManager {
         return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
     }
 
-    @NonNull
-    public String getProxyHost() {
-        return mPrefs.getString(Name.USE_PROXY_HOST, "localhost");
-    }
-
-    public int getProxyPort() {
-        return mPrefs.getInt(Name.USE_PROXY_PORT, 8118);
-    }
-
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -116,14 +106,6 @@ public class PreferenceManager {
 
     public void setCheckedForI2P(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
-    }
-
-    public void setProxyHost(@NonNull String proxyHost) {
-        putString(Name.USE_PROXY_HOST, proxyHost);
-    }
-
-    public void setProxyPort(int proxyPort) {
-        putInt(Name.USE_PROXY_PORT, proxyPort);
     }
 
 }

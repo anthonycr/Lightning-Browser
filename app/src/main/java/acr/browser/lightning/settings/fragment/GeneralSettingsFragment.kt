@@ -159,7 +159,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun proxyChoiceToSummary(choice: Int) = when (choice) {
-        PROXY_MANUAL -> "${preferenceManager.proxyHost}:${preferenceManager.proxyPort}"
+        PROXY_MANUAL -> "${userPreferences.proxyHost}:${userPreferences.proxyPort}"
         NO_PROXY,
         PROXY_ORBOT,
         PROXY_I2P -> proxyChoices[choice]
@@ -202,8 +202,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         val maxCharacters = Integer.toString(Integer.MAX_VALUE).length
         eProxyPort.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxCharacters - 1))
 
-        eProxyHost.text = preferenceManager.proxyHost
-        eProxyPort.text = Integer.toString(preferenceManager.proxyPort)
+        eProxyHost.text = userPreferences.proxyHost
+        eProxyPort.text = Integer.toString(userPreferences.proxyPort)
 
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.manual_proxy)
@@ -215,11 +215,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     // larger than max integer
                     Integer.parseInt(eProxyPort.text.toString())
                 } catch (ignored: NumberFormatException) {
-                    preferenceManager.proxyPort
+                    userPreferences.proxyPort
                 }
 
-                preferenceManager.proxyHost = proxyHost
-                preferenceManager.proxyPort = proxyPort
+                userPreferences.proxyHost = proxyHost
+                userPreferences.proxyPort = proxyPort
                 summaryUpdater.updateSummary("$proxyHost:$proxyPort")
             }
         }

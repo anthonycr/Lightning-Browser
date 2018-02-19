@@ -133,12 +133,12 @@ public final class ProxyUtils {
                 port = 4444;
                 break;
             default:
-                host = mPreferences.getProxyHost();
-                port = mPreferences.getProxyPort();
+                host = mUserPreferences.getProxyHost();
+                port = mUserPreferences.getProxyPort();
                 break;
             case Constants.PROXY_MANUAL:
-                host = mPreferences.getProxyHost();
-                port = mPreferences.getProxyPort();
+                host = mUserPreferences.getProxyHost();
+                port = mUserPreferences.getProxyPort();
                 break;
         }
 

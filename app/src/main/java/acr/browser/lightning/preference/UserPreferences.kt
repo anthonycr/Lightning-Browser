@@ -101,6 +101,10 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
     var useBlackStatusBar by BooleanPreference(BLACK_STATUS_BAR, false, preferences).delegate()
 
     var proxyChoice by IntPreference(PROXY_CHOICE, NO_PROXY, preferences).delegate()
+
+    var proxyHost by StringPreference(USE_PROXY_HOST, "localhost", preferences).delegate()
+
+    var proxyPort by IntPreference(USE_PROXY_PORT, 8118, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -145,3 +149,5 @@ private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
 private const val SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs"
 private const val BLACK_STATUS_BAR = "blackStatusBar"
 private const val PROXY_CHOICE = "proxyChoice"
+private const val USE_PROXY_HOST = "useProxyHost"
+private const val USE_PROXY_PORT = "useProxyPort"
