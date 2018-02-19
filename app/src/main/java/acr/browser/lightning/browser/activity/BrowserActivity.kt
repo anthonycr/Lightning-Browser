@@ -236,7 +236,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             ContextCompat.getColor(this, R.color.icon_light_theme_disabled)
         }
         shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
-        swapBookmarksAndTabs = preferences.bookmarksAndTabsSwapped
+        swapBookmarksAndTabs = userPreferences.bookmarksAndTabsSwapped
 
         // initialize background ColorDrawable
         val primaryColor = ThemeUtils.getPrimaryColor(this)
@@ -1253,7 +1253,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-        if (swapBookmarksAndTabs != preferences.bookmarksAndTabsSwapped) {
+        if (swapBookmarksAndTabs != userPreferences.bookmarksAndTabsSwapped) {
             restart()
         }
 

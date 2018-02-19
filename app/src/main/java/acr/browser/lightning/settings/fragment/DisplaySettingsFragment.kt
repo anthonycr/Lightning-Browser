@@ -90,8 +90,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_SWAPTABS,
-                isChecked = preferenceManager.bookmarksAndTabsSwapped,
-                onCheckChange = preferenceManager::setBookmarkAndTabsSwapped
+                isChecked = userPreferences.bookmarksAndTabsSwapped,
+                onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
         )
     }
 

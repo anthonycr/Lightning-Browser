@@ -40,9 +40,9 @@ public class PreferenceManager {
 
 
 
-        static final String DO_NOT_TRACK = "doNotTrack";
-        static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
-        static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
+
+
+
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
         static final String BLACK_STATUS_BAR = "blackStatusBar";
 
@@ -85,14 +85,6 @@ public class PreferenceManager {
         putString(Name.SEARCH_SUGGESTIONS, suggestion.name());
     }
 
-    public boolean getBookmarksAndTabsSwapped() {
-        return mPrefs.getBoolean(Name.SWAP_BOOKMARKS_AND_TABS, false);
-    }
-
-    public void setBookmarkAndTabsSwapped(boolean swap) {
-        putBoolean(Name.SWAP_BOOKMARKS_AND_TABS, swap);
-    }
-
     public boolean getCheckedForTor() {
         return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_TOR, false);
     }
@@ -128,14 +120,6 @@ public class PreferenceManager {
         }
     }
 
-    public boolean getDoNotTrackEnabled() {
-        return mPrefs.getBoolean(Name.DO_NOT_TRACK, false);
-    }
-
-    public boolean getRemoveIdentifyingHeadersEnabled() {
-        return mPrefs.getBoolean(Name.IDENTIFYING_HEADERS, false);
-    }
-
     public boolean getUseBlackStatusBar() {
         return mPrefs.getBoolean(Name.BLACK_STATUS_BAR, false);
     }
@@ -154,14 +138,6 @@ public class PreferenceManager {
 
     public void setUseBlackStatusBar(boolean enabled) {
         putBoolean(Name.BLACK_STATUS_BAR, enabled);
-    }
-
-    public void setRemoveIdentifyingHeadersEnabled(boolean enabled) {
-        putBoolean(Name.IDENTIFYING_HEADERS, enabled);
-    }
-
-    public void setDoNotTrackEnabled(boolean doNotTrack) {
-        putBoolean(Name.DO_NOT_TRACK, doNotTrack);
     }
 
     public void setCheckedForTor(boolean check) {

@@ -90,6 +90,12 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
     var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEBSTORAGE_EXIT, false, preferences).delegate()
 
     var showTabsInDrawer by BooleanPreference(SHOW_TABS_IN_DRAWER, screenSize.isTablet(), preferences).delegate()
+
+    var doNotTrackEnabled by BooleanPreference(DO_NOT_TRACK, false, preferences).delegate()
+
+    var removeIdentifyingHeadersEnabled by BooleanPreference(IDENTIFYING_HEADERS, false, preferences).delegate()
+
+    var bookmarksAndTabsSwapped by BooleanPreference(SWAP_BOOKMARKS_AND_TABS, false, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -129,3 +135,6 @@ private const val THEME = "Theme"
 private const val TEXT_ENCODING = "textEncoding"
 private const val CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit"
 private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
+private const val DO_NOT_TRACK = "doNotTrack"
+private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
+private const val SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs"

@@ -97,9 +97,9 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_DONOTTRACK,
-                isChecked = preferenceManager.doNotTrackEnabled && ApiUtils.doesSupportWebViewHeaders(),
+                isChecked = userPreferences.doNotTrackEnabled && ApiUtils.doesSupportWebViewHeaders(),
                 isEnabled = ApiUtils.doesSupportWebViewHeaders(),
-                onCheckChange = preferenceManager::setDoNotTrackEnabled
+                onCheckChange = { userPreferences.doNotTrackEnabled = it }
         )
 
         checkBoxPreference(
@@ -111,10 +111,10 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_IDENTIFYINGHEADERS,
-                isChecked = preferenceManager.removeIdentifyingHeadersEnabled && ApiUtils.doesSupportWebViewHeaders(),
+                isChecked = userPreferences.removeIdentifyingHeadersEnabled && ApiUtils.doesSupportWebViewHeaders(),
                 isEnabled = ApiUtils.doesSupportWebViewHeaders(),
                 summary = "${LightningView.HEADER_REQUESTED_WITH}, ${LightningView.HEADER_WAP_PROFILE}",
-                onCheckChange = preferenceManager::setRemoveIdentifyingHeadersEnabled
+                onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
         )
 
     }

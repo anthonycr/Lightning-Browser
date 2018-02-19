@@ -292,13 +292,13 @@ class LightningView(
 
         lightningWebClient.updatePreferences()
 
-        if (preferences.doNotTrackEnabled) {
+        if (userPreferences.doNotTrackEnabled) {
             requestHeaders[HEADER_DNT] = "1"
         } else {
             requestHeaders.remove(HEADER_DNT)
         }
 
-        if (preferences.removeIdentifyingHeadersEnabled) {
+        if (userPreferences.removeIdentifyingHeadersEnabled) {
             requestHeaders[HEADER_REQUESTED_WITH] = ""
             requestHeaders[HEADER_WAP_PROFILE] = ""
         } else {
