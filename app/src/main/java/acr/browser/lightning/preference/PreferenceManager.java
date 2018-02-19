@@ -45,8 +45,8 @@ public class PreferenceManager {
 
 
 
-        static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
-        static final String INITIAL_CHECK_FOR_I2P = "checkForI2P";
+
+
 
 
     }
@@ -80,14 +80,6 @@ public class PreferenceManager {
         putString(Name.SEARCH_SUGGESTIONS, suggestion.name());
     }
 
-    public boolean getCheckedForTor() {
-        return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_TOR, false);
-    }
-
-    public boolean getCheckedForI2P() {
-        return mPrefs.getBoolean(Name.INITIAL_CHECK_FOR_I2P, false);
-    }
-
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -98,14 +90,6 @@ public class PreferenceManager {
 
     private void putString(@NonNull String name, @Nullable String value) {
         mPrefs.edit().putString(name, value).apply();
-    }
-
-    public void setCheckedForTor(boolean check) {
-        putBoolean(Name.INITIAL_CHECK_FOR_TOR, check);
-    }
-
-    public void setCheckedForI2P(boolean check) {
-        putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
     }
 
 }

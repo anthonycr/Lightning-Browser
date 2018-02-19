@@ -17,6 +17,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.preference.DeveloperPreferences;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.preference.UserPreferences;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
@@ -32,6 +33,7 @@ public final class ProxyUtils {
     private static boolean sI2PProxyInitialized;
 
     @Inject UserPreferences mUserPreferences;
+    @Inject DeveloperPreferences mDeveloperPreferences;
     @Inject PreferenceManager mPreferences;
     @Inject I2PAndroidHelper mI2PHelper;
 
@@ -48,17 +50,21 @@ public final class ProxyUtils {
         int proxyChoice = mUserPreferences.getProxyChoice();
 
         final boolean orbotInstalled = OrbotHelper.isOrbotInstalled(activity);
-        boolean orbotChecked = mPreferences.getCheckedForTor();
+        boolean orbotChecked = mDeveloperPreferences.getCheckedForTor();
         boolean orbot = orbotInstalled && !orbotChecked;
 
         boolean i2pInstalled = mI2PHelper.isI2PAndroidInstalled();
-        boolean i2pChecked = mPreferences.getCheckedForI2P();
+        boolean i2pChecked = mDeveloperPreferences.getCheckedForI2P();
         boolean i2p = i2pInstalled && !i2pChecked;
 
         // TODO Is the idea to show this per-session, or only once?
         if (proxyChoice != Constants.NO_PROXY && (orbot || i2p)) {
-            if (orbot) mPreferences.setCheckedForTor(true);
-            if (i2p) mPreferences.setCheckedForI2P(true);
+            if (orbot) {
+                mDeveloperPreferences.setCheckedForTor(true);
+            }
+            if (i2p) {
+                mDeveloperPreferences.setCheckedForI2P(true);
+            }
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
             if (orbotInstalled && i2pInstalled) {
