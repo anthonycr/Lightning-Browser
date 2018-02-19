@@ -235,7 +235,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         } else {
             ContextCompat.getColor(this, R.color.icon_light_theme_disabled)
         }
-        shouldShowTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
+        shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
         swapBookmarksAndTabs = preferences.bookmarksAndTabsSwapped
 
         // initialize background ColorDrawable

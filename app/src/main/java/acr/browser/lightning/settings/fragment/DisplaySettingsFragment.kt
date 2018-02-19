@@ -84,8 +84,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_DRAWERTABS,
-                isChecked = preferenceManager.getShowTabsInDrawer(true),
-                onCheckChange = preferenceManager::setShowTabsInDrawer
+                isChecked = userPreferences.showTabsInDrawer,
+                onCheckChange = { userPreferences.showTabsInDrawer = it }
         )
 
         checkBoxPreference(

@@ -26,7 +26,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         BrowserApp.appComponent.inject(this)
         themeId = userPreferences.useTheme
-        showTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
+        showTabsInDrawer = userPreferences.showTabsInDrawer
 
         // set the theme
         if (themeId == 1) {
@@ -70,7 +70,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         resetPreferences()
         shouldRunOnResumeActions = true
         val themePreference = userPreferences.useTheme
-        val drawerTabs = preferences.getShowTabsInDrawer(!isTablet)
+        val drawerTabs = userPreferences.showTabsInDrawer
         if (themeId != themePreference || showTabsInDrawer != drawerTabs) {
             restart()
         }

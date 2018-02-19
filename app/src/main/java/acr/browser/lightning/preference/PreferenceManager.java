@@ -39,7 +39,7 @@ public class PreferenceManager {
 
 
 
-        static final String SHOW_TABS_IN_DRAWER = "showTabsInDrawer";
+
         static final String DO_NOT_TRACK = "doNotTrack";
         static final String IDENTIFYING_HEADERS = "removeIdentifyingHeaders";
         static final String SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs";
@@ -128,10 +128,6 @@ public class PreferenceManager {
         }
     }
 
-    public boolean getShowTabsInDrawer(boolean defaultValue) {
-        return mPrefs.getBoolean(Name.SHOW_TABS_IN_DRAWER, defaultValue);
-    }
-
     public boolean getDoNotTrackEnabled() {
         return mPrefs.getBoolean(Name.DO_NOT_TRACK, false);
     }
@@ -166,10 +162,6 @@ public class PreferenceManager {
 
     public void setDoNotTrackEnabled(boolean doNotTrack) {
         putBoolean(Name.DO_NOT_TRACK, doNotTrack);
-    }
-
-    public void setShowTabsInDrawer(boolean show) {
-        putBoolean(Name.SHOW_TABS_IN_DRAWER, show);
     }
 
     public void setCheckedForTor(boolean check) {

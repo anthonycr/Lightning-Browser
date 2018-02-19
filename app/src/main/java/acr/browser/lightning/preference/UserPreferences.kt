@@ -2,6 +2,7 @@ package acr.browser.lightning.preference
 
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
+import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -12,7 +13,7 @@ import javax.inject.Singleton
  * The user's preferences.
  */
 @Singleton
-class UserPreferences @Inject constructor(application: Application) {
+class UserPreferences @Inject constructor(application: Application, screenSize: ScreenSize) {
 
     private val preferences = application.getSharedPreferences("settings", 0)
 
@@ -87,6 +88,8 @@ class UserPreferences @Inject constructor(application: Application) {
     var textEncoding by StringPreference(TEXT_ENCODING, DEFAULT_ENCODING, preferences).delegate()
 
     var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEBSTORAGE_EXIT, false, preferences).delegate()
+
+    var showTabsInDrawer by BooleanPreference(SHOW_TABS_IN_DRAWER, screenSize.isTablet(), preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -125,3 +128,4 @@ private const val READING_TEXT_SIZE = "readingTextSize"
 private const val THEME = "Theme"
 private const val TEXT_ENCODING = "textEncoding"
 private const val CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit"
+private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
