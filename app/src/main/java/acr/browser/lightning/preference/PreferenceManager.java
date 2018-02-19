@@ -8,9 +8,6 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.constant.Proxy;
-
 @Singleton
 public class PreferenceManager {
 
@@ -46,7 +43,7 @@ public class PreferenceManager {
         static final String SEARCH_SUGGESTIONS = "searchSuggestions";
 
 
-        static final String PROXY_CHOICE = "proxyChoice";
+
         static final String USE_PROXY_HOST = "useProxyHost";
         static final String USE_PROXY_PORT = "useProxyPort";
         static final String INITIAL_CHECK_FOR_TOR = "checkForTor";
@@ -101,20 +98,6 @@ public class PreferenceManager {
         return mPrefs.getInt(Name.USE_PROXY_PORT, 8118);
     }
 
-    @Proxy
-    public int getProxyChoice() {
-        @Proxy int proxy = mPrefs.getInt(Name.PROXY_CHOICE, Constants.NO_PROXY);
-        switch (proxy) {
-            case Constants.NO_PROXY:
-            case Constants.PROXY_ORBOT:
-            case Constants.PROXY_I2P:
-            case Constants.PROXY_MANUAL:
-                return proxy;
-            default:
-                return Constants.NO_PROXY;
-        }
-    }
-
     private void putBoolean(@NonNull String name, boolean value) {
         mPrefs.edit().putBoolean(name, value).apply();
     }
@@ -133,20 +116,6 @@ public class PreferenceManager {
 
     public void setCheckedForI2P(boolean check) {
         putBoolean(Name.INITIAL_CHECK_FOR_I2P, check);
-    }
-
-    /**
-     * Valid choices:
-     * <ul>
-     * <li>{@link Constants#NO_PROXY}</li>
-     * <li>{@link Constants#PROXY_ORBOT}</li>
-     * <li>{@link Constants#PROXY_I2P}</li>
-     * </ul>
-     *
-     * @param choice the proxy to use.
-     */
-    public void setProxyChoice(@Proxy int choice) {
-        putInt(Name.PROXY_CHOICE, choice);
     }
 
     public void setProxyHost(@NonNull String proxyHost) {

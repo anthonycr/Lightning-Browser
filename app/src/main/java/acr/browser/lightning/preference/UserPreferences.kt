@@ -1,6 +1,7 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.constant.DEFAULT_ENCODING
+import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.search.engine.GoogleSearch
@@ -98,6 +99,8 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
     var bookmarksAndTabsSwapped by BooleanPreference(SWAP_BOOKMARKS_AND_TABS, false, preferences).delegate()
 
     var useBlackStatusBar by BooleanPreference(BLACK_STATUS_BAR, false, preferences).delegate()
+
+    var proxyChoice by IntPreference(PROXY_CHOICE, NO_PROXY, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -141,4 +144,4 @@ private const val DO_NOT_TRACK = "doNotTrack"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
 private const val SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs"
 private const val BLACK_STATUS_BAR = "blackStatusBar"
-private const val LEAK_CANARY = "leakCanary"
+private const val PROXY_CHOICE = "proxyChoice"

@@ -51,7 +51,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_PROXY,
-                summary = proxyChoiceToSummary(preferenceManager.proxyChoice),
+                summary = proxyChoiceToSummary(userPreferences.proxyChoice),
                 onClick = this::showProxyPicker
         )
 
@@ -160,13 +160,16 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     private fun proxyChoiceToSummary(choice: Int) = when (choice) {
         PROXY_MANUAL -> "${preferenceManager.proxyHost}:${preferenceManager.proxyPort}"
-        else -> proxyChoices[choice]
+        NO_PROXY,
+        PROXY_ORBOT,
+        PROXY_I2P -> proxyChoices[choice]
+        else -> proxyChoices[NO_PROXY]
     }
 
     private fun showProxyPicker(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.http_proxy)
-            setSingleChoiceItems(proxyChoices, preferenceManager.proxyChoice) { _, which ->
+            setSingleChoiceItems(proxyChoices, userPreferences.proxyChoice) { _, which ->
                 updateProxyChoice(which, it, summaryUpdater)
             }
             setPositiveButton(R.string.action_ok, null)
@@ -182,7 +185,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             PROXY_MANUAL -> showManualProxyPicker(activity, summaryUpdater)
         }
 
-        preferenceManager.proxyChoice = sanitizedChoice
+        userPreferences.proxyChoice = sanitizedChoice
         if (sanitizedChoice < proxyChoices.size) {
             summaryUpdater.updateSummary(proxyChoices[sanitizedChoice])
         }
