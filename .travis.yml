@@ -11,6 +11,7 @@ android:
     - 'android-sdk-license-.+'
     - '.*intel.+'
 before_install:
+  - yes | sdkmanager "platforms;android-27"
   - chmod +x gradlew
   - git submodule update --init --recursive
 install:
