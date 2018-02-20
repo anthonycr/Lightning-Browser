@@ -90,7 +90,7 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
 
     var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEBSTORAGE_EXIT, false, preferences).delegate()
 
-    var showTabsInDrawer by BooleanPreference(SHOW_TABS_IN_DRAWER, screenSize.isTablet(), preferences).delegate()
+    var showTabsInDrawer by BooleanPreference(SHOW_TABS_IN_DRAWER, !screenSize.isTablet(), preferences).delegate()
 
     var doNotTrackEnabled by BooleanPreference(DO_NOT_TRACK, false, preferences).delegate()
 
