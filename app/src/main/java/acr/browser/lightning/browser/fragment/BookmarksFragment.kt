@@ -12,7 +12,6 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.utils.ThemeUtils
@@ -53,7 +52,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     // Dialog builder
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
 
     @Inject internal lateinit var faviconModel: FaviconModel

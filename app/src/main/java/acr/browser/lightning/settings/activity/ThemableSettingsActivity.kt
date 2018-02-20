@@ -2,7 +2,6 @@ package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.graphics.Color
@@ -15,7 +14,6 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
     private var themeId: Int = 0
 
-    @Inject internal lateinit var preferences: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {

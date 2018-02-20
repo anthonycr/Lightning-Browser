@@ -105,6 +105,8 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
     var proxyHost by StringPreference(USE_PROXY_HOST, "localhost", preferences).delegate()
 
     var proxyPort by IntPreference(USE_PROXY_PORT, 8118, preferences).delegate()
+
+    var searchSuggestionChoice by IntPreference(SEARCH_SUGGESTIONS, 1, preferences).delegate()
 }
 
 private const val WEB_RTC = "webRtc"
@@ -151,3 +153,4 @@ private const val BLACK_STATUS_BAR = "blackStatusBar"
 private const val PROXY_CHOICE = "proxyChoice"
 private const val USE_PROXY_HOST = "useProxyHost"
 private const val USE_PROXY_PORT = "useProxyPort"
+private const val SEARCH_SUGGESTIONS = "searchSuggestionsChoice"

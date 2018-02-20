@@ -7,7 +7,6 @@ import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.html.homepage.StartPage
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
@@ -50,7 +49,6 @@ class TabsManager {
     private var isInitialized = false
     private val postInitializationWorkList = ArrayList<() -> Unit>()
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider

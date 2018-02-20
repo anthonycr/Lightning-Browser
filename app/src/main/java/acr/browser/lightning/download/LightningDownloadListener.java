@@ -23,7 +23,6 @@ import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.preference.UserPreferences;
 
 public class LightningDownloadListener implements DownloadListener {
@@ -32,7 +31,6 @@ public class LightningDownloadListener implements DownloadListener {
 
     private final Activity mActivity;
 
-    @Inject PreferenceManager mPreferenceManager;
     @Inject UserPreferences mUserPreferences;
     @Inject DownloadHandler mDownloadHandler;
     @Inject DownloadsRepository downloadsRespository;

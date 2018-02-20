@@ -18,7 +18,6 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.DeveloperPreferences;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.preference.UserPreferences;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.webkit.WebkitProxy;
@@ -34,7 +33,6 @@ public final class ProxyUtils {
 
     @Inject UserPreferences mUserPreferences;
     @Inject DeveloperPreferences mDeveloperPreferences;
-    @Inject PreferenceManager mPreferences;
     @Inject I2PAndroidHelper mI2PHelper;
 
     @Inject

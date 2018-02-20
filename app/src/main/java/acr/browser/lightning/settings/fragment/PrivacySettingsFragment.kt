@@ -5,7 +5,6 @@ import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ApiUtils
 import acr.browser.lightning.utils.Utils
@@ -37,7 +36,6 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     private val SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers"
 
     @Inject internal lateinit var historyRepository: HistoryRepository
-    @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 

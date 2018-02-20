@@ -15,7 +15,6 @@ import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.homepage.StartPage
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
@@ -114,7 +113,6 @@ class LightningView(
     private var homepage: String
     private val maxFling: Float
 
-    @Inject internal lateinit var preferences: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils

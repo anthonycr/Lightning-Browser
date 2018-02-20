@@ -6,9 +6,9 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.*
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.BaseSearchEngine
 import acr.browser.lightning.search.engine.CustomSearch
 import acr.browser.lightning.utils.FileUtils
@@ -35,7 +35,6 @@ import javax.inject.Inject
 class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     @Inject lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject lateinit var preferenceManager: PreferenceManager
     @Inject lateinit var userPreferences: UserPreferences
 
     private lateinit var proxyChoices: Array<String>
@@ -81,7 +80,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_SUGGESTIONS,
-                summary = searchSuggestionChoiceToTitle(preferenceManager.searchSuggestionChoice),
+                summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferences.searchSuggestionChoice)),
                 onClick = this::showSearchSuggestionsDialog
         )
 
@@ -447,34 +446,34 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         }
     }
 
-    private fun searchSuggestionChoiceToTitle(choice: PreferenceManager.Suggestion): String =
+    private fun searchSuggestionChoiceToTitle(choice: Suggestions): String =
             when (choice) {
-                PreferenceManager.Suggestion.SUGGESTION_GOOGLE -> getString(R.string.powered_by_google)
-                PreferenceManager.Suggestion.SUGGESTION_DUCK -> getString(R.string.powered_by_duck)
-                PreferenceManager.Suggestion.SUGGESTION_BAIDU -> getString(R.string.powered_by_baidu)
-                PreferenceManager.Suggestion.SUGGESTION_NONE -> getString(R.string.search_suggestions_off)
+                Suggestions.NONE -> getString(R.string.search_suggestions_off)
+                Suggestions.GOOGLE -> getString(R.string.powered_by_google)
+                Suggestions.DUCK -> getString(R.string.powered_by_duck)
+                Suggestions.BAIDU -> getString(R.string.powered_by_baidu)
             }
 
     private fun showSearchSuggestionsDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.search_suggestions))
 
-            val currentChoice = when (preferenceManager.searchSuggestionChoice) {
-                PreferenceManager.Suggestion.SUGGESTION_GOOGLE -> 0
-                PreferenceManager.Suggestion.SUGGESTION_DUCK -> 1
-                PreferenceManager.Suggestion.SUGGESTION_BAIDU -> 2
-                PreferenceManager.Suggestion.SUGGESTION_NONE -> 3
+            val currentChoice = when (Suggestions.from(userPreferences.searchSuggestionChoice)) {
+                Suggestions.GOOGLE -> 0
+                Suggestions.DUCK -> 1
+                Suggestions.BAIDU -> 2
+                Suggestions.NONE -> 3
             }
 
             setSingleChoiceItems(R.array.suggestions, currentChoice) { _, which ->
                 val suggestionsProvider = when (which) {
-                    0 -> PreferenceManager.Suggestion.SUGGESTION_GOOGLE
-                    1 -> PreferenceManager.Suggestion.SUGGESTION_DUCK
-                    2 -> PreferenceManager.Suggestion.SUGGESTION_BAIDU
-                    3 -> PreferenceManager.Suggestion.SUGGESTION_NONE
-                    else -> PreferenceManager.Suggestion.SUGGESTION_NONE
+                    0 -> Suggestions.GOOGLE
+                    1 -> Suggestions.DUCK
+                    2 -> Suggestions.BAIDU
+                    3 -> Suggestions.NONE
+                    else -> Suggestions.GOOGLE
                 }
-                preferenceManager.searchSuggestionChoice = suggestionsProvider
+                userPreferences.searchSuggestionChoice = suggestionsProvider.index
                 summaryUpdater.updateSummary(searchSuggestionChoiceToTitle(suggestionsProvider))
             }
             setPositiveButton(resources.getString(R.string.action_ok), null)

@@ -7,7 +7,6 @@ import acr.browser.lightning.browser.TabsView
 import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
 import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThemeUtils
@@ -52,7 +51,6 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     private var tabsAdapter: LightningViewAdapter? = null
     private lateinit var uiController: UIController
 
-    @Inject internal lateinit var preferences: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
 
     init {

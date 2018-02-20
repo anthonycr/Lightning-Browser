@@ -36,7 +36,6 @@ import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
@@ -52,7 +51,6 @@ public class ReadingActivity extends AppCompatActivity {
     @BindView(R.id.textViewTitle) TextView mTitle;
     @BindView(R.id.textViewBody) TextView mBody;
 
-    @Inject PreferenceManager mPreferences;
     @Inject UserPreferences mUserPreferences;
 
     private boolean mInvert;

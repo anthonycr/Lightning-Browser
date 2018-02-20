@@ -6,7 +6,6 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -22,7 +21,6 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private lateinit var themeOptions: Array<String>
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
     @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_display

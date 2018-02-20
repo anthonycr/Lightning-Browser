@@ -4,7 +4,6 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.support.annotation.StringRes
@@ -25,7 +24,6 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
     private val SETTINGS_TEXT_ENCODING = "text_encoding"
 
     @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject internal lateinit var preferenceManager: PreferenceManager
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
 

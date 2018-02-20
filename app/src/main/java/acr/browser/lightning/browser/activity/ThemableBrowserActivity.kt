@@ -2,7 +2,6 @@ package acr.browser.lightning.browser.activity
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.PreferenceManager
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
@@ -16,7 +15,6 @@ import javax.inject.Inject
 abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     // TODO reduce protected visibility
-    @Inject protected lateinit var preferences: PreferenceManager
     @Inject protected lateinit var userPreferences: UserPreferences
 
     private var themeId: Int = 0
