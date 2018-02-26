@@ -6,7 +6,7 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.Gravity
@@ -21,7 +21,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private lateinit var themeOptions: Array<String>
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_display
 
@@ -35,7 +35,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_THEME,
-                summary = themeOptions[preferenceManager.useTheme],
+                summary = themeOptions[userPreferences.useTheme],
                 onClick = this::showThemePicker
         )
 
@@ -46,50 +46,50 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
                 preference = SETTINGS_HIDESTATUSBAR,
-                isChecked = preferenceManager.hideStatusBarEnabled,
-                onCheckChange = preferenceManager::setHideStatusBarEnabled
+                isChecked = userPreferences.hideStatusBarEnabled,
+                onCheckChange = { userPreferences.hideStatusBarEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_FULLSCREEN,
-                isChecked = preferenceManager.fullScreenEnabled,
-                onCheckChange = preferenceManager::setFullScreenEnabled
+                isChecked = userPreferences.fullScreenEnabled,
+                onCheckChange = { userPreferences.fullScreenEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_VIEWPORT,
-                isChecked = preferenceManager.useWideViewportEnabled,
-                onCheckChange = preferenceManager::setUseWideViewportEnabled
+                isChecked = userPreferences.useWideViewportEnabled,
+                onCheckChange = { userPreferences.useWideViewportEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_OVERVIEWMODE,
-                isChecked = preferenceManager.overviewModeEnabled,
-                onCheckChange = preferenceManager::setOverviewModeEnabled
+                isChecked = userPreferences.overviewModeEnabled,
+                onCheckChange = { userPreferences.overviewModeEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_REFLOW,
-                isChecked = preferenceManager.textReflowEnabled,
-                onCheckChange = preferenceManager::setTextReflowEnabled
+                isChecked = userPreferences.textReflowEnabled,
+                onCheckChange = { userPreferences.textReflowEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_BLACK_STATUS,
-                isChecked = preferenceManager.useBlackStatusBar,
-                onCheckChange = preferenceManager::setUseBlackStatusBar
+                isChecked = userPreferences.useBlackStatusBar,
+                onCheckChange = { userPreferences.useBlackStatusBar = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_DRAWERTABS,
-                isChecked = preferenceManager.getShowTabsInDrawer(true),
-                onCheckChange = preferenceManager::setShowTabsInDrawer
+                isChecked = userPreferences.showTabsInDrawer,
+                onCheckChange = { userPreferences.showTabsInDrawer = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_SWAPTABS,
-                isChecked = preferenceManager.bookmarksAndTabsSwapped,
-                onCheckChange = preferenceManager::setBookmarkAndTabsSwapped
+                isChecked = userPreferences.bookmarksAndTabsSwapped,
+                onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
         )
     }
 
@@ -107,14 +107,14 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                 findViewById<SeekBar>(R.id.text_size_seekbar).apply {
                     setOnSeekBarChangeListener(TextSeekBarListener(text))
                     max = maxValue
-                    progress = maxValue - preferenceManager.textSize
+                    progress = maxValue - userPreferences.textSize
                 }
             }
             setView(customView)
             setTitle(R.string.title_text_size)
             setPositiveButton(android.R.string.ok) { _, _ ->
                 val seekBar = customView.findViewById<SeekBar>(R.id.text_size_seekbar)
-                preferenceManager.textSize = maxValue - seekBar.progress
+                userPreferences.textSize = maxValue - seekBar.progress
             }
         }.show()
 
@@ -122,23 +122,23 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
-        val currentTheme = preferenceManager.useTheme
+        val currentTheme = userPreferences.useTheme
 
         val dialog = AlertDialog.Builder(activity).apply {
             setTitle(resources.getString(R.string.theme))
             setSingleChoiceItems(themeOptions, currentTheme) { _, which ->
-                preferenceManager.useTheme = which
+                userPreferences.useTheme = which
                 if (which < themeOptions.size) {
                     summaryUpdater.updateSummary(themeOptions[which])
                 }
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
-                if (currentTheme != preferenceManager.useTheme) {
+                if (currentTheme != userPreferences.useTheme) {
                     activity.onBackPressed()
                 }
             }
             setOnCancelListener {
-                if (currentTheme != preferenceManager.useTheme) {
+                if (currentTheme != userPreferences.useTheme) {
                     activity.onBackPressed()
                 }
             }

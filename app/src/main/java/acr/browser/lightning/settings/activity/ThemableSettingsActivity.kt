@@ -2,7 +2,7 @@ package acr.browser.lightning.settings.activity
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,11 +14,11 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
     private var themeId: Int = 0
 
-    @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BrowserApp.appComponent.inject(this)
-        themeId = preferences.useTheme
+        themeId = userPreferences.useTheme
 
         // set the theme
         when (themeId) {
@@ -42,7 +42,7 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
     private fun resetPreferences() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (preferences.useBlackStatusBar) {
+            if (userPreferences.useBlackStatusBar) {
                 window.statusBarColor = Color.BLACK
             } else {
                 window.statusBarColor = ThemeUtils.getStatusBarColor(this)
@@ -53,7 +53,7 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
     override fun onResume() {
         super.onResume()
         resetPreferences()
-        if (preferences.useTheme != themeId) {
+        if (userPreferences.useTheme != themeId) {
             recreate()
         }
     }

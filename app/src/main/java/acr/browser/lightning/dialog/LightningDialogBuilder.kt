@@ -12,7 +12,7 @@ import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.html.bookmark.BookmarkPage
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
@@ -35,7 +35,7 @@ class LightningDialogBuilder @Inject constructor(
         private val bookmarkManager: BookmarkRepository,
         private val downloadsModel: DownloadsRepository,
         private val historyModel: HistoryRepository,
-        private val preferenceManager: PreferenceManager,
+        private val userPreferences: UserPreferences,
         private val downloadHandler: DownloadHandler,
         @Named("database") private val databaseScheduler: Scheduler
 ) {
@@ -250,7 +250,7 @@ class LightningDialogBuilder @Inject constructor(
                         BrowserApp.copyToClipboard(activity, url)
                     },
                     DialogItem(R.string.dialog_download_image) {
-                        downloadHandler.onDownloadStart(activity, preferenceManager, url, userAgent, "attachment", null, "")
+                        downloadHandler.onDownloadStart(activity, userPreferences, url, userAgent, "attachment", null, "")
                     })
 
     fun showLongPressLinkDialog(activity: Activity,

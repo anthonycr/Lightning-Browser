@@ -5,7 +5,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.suggestions.*
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
@@ -48,7 +48,7 @@ class SuggestionsAdapter(
     private val filterComparator = SuggestionsComparator()
 
     @Inject internal lateinit var bookmarkManager: BookmarkRepository
-    @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var application: Application
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
@@ -86,15 +86,12 @@ class SuggestionsAdapter(
     }
 
     private fun suggestionsRepositoryForPreference(): SuggestionsRepository =
-            when (preferenceManager.searchSuggestionChoice) {
-                PreferenceManager.Suggestion.SUGGESTION_GOOGLE ->
-                    GoogleSuggestionsModel(application)
-                PreferenceManager.Suggestion.SUGGESTION_DUCK ->
-                    DuckSuggestionsModel(application)
-                PreferenceManager.Suggestion.SUGGESTION_BAIDU ->
-                    BaiduSuggestionsModel(application)
-                PreferenceManager.Suggestion.SUGGESTION_NONE ->
-                    NoOpSuggestionsRepository()
+            when (userPreferences.searchSuggestionChoice) {
+                0 -> NoOpSuggestionsRepository()
+                1 -> GoogleSuggestionsModel(application)
+                2 -> DuckSuggestionsModel(application)
+                3 -> BaiduSuggestionsModel(application)
+                else -> GoogleSuggestionsModel(application)
             }
 
     fun refreshPreferences() {
@@ -248,7 +245,7 @@ class SuggestionsAdapter(
                         break
                     }
                     if (allBookmarks[n].title.toLowerCase(Locale.getDefault())
-                            .startsWith(query)) {
+                                    .startsWith(query)) {
                         bookmarks.add(allBookmarks[n])
                         counter++
                     } else if (allBookmarks[n].url.contains(query)) {

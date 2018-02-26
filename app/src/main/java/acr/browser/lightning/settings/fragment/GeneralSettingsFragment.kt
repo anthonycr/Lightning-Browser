@@ -6,8 +6,9 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.*
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.Suggestions
 import acr.browser.lightning.search.engine.BaseSearchEngine
 import acr.browser.lightning.search.engine.CustomSearch
 import acr.browser.lightning.utils.FileUtils
@@ -34,7 +35,7 @@ import javax.inject.Inject
 class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     @Inject lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject lateinit var preferenceManager: PreferenceManager
+    @Inject lateinit var userPreferences: UserPreferences
 
     private lateinit var proxyChoices: Array<String>
 
@@ -49,25 +50,25 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_PROXY,
-                summary = proxyChoiceToSummary(preferenceManager.proxyChoice),
+                summary = proxyChoiceToSummary(userPreferences.proxyChoice),
                 onClick = this::showProxyPicker
         )
 
         clickableDynamicPreference(
                 preference = SETTINGS_USER_AGENT,
-                summary = choiceToUserAgent(preferenceManager.userAgentChoice),
+                summary = choiceToUserAgent(userPreferences.userAgentChoice),
                 onClick = this::showUserAgentChooserDialog
         )
 
         clickableDynamicPreference(
                 preference = SETTINGS_DOWNLOAD,
-                summary = preferenceManager.downloadDirectory,
+                summary = userPreferences.downloadDirectory,
                 onClick = this::showDownloadLocationDialog
         )
 
         clickableDynamicPreference(
                 preference = SETTINGS_HOME,
-                summary = homePageUrlToDisplayTitle(preferenceManager.homepage),
+                summary = homePageUrlToDisplayTitle(userPreferences.homepage),
                 onClick = this::showHomePageDialog
         )
 
@@ -79,7 +80,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_SUGGESTIONS,
-                summary = searchSuggestionChoiceToTitle(preferenceManager.searchSuggestionChoice),
+                summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferences.searchSuggestionChoice)),
                 onClick = this::showSearchSuggestionsDialog
         )
 
@@ -91,16 +92,16 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 } else {
                     getString(R.string.flash_not_supported)
                 },
-                isChecked = preferenceManager.flashSupport > 0,
+                isChecked = userPreferences.flashSupport > 0,
                 onCheckChange = { checked ->
                     if (!Utils.isFlashInstalled(activity) && checked) {
                         Utils.createInformativeDialog(activity, R.string.title_warning, R.string.dialog_adobe_not_installed)
-                        preferenceManager.flashSupport = 0
+                        userPreferences.flashSupport = 0
                     } else {
                         if (checked) {
                             showFlashChoiceDialog()
                         } else {
-                            preferenceManager.flashSupport = 0
+                            userPreferences.flashSupport = 0
                         }
                     }
                 }
@@ -114,26 +115,26 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 } else {
                     getString(R.string.upsell_plus_version)
                 },
-                isChecked = BuildConfig.FULL_VERSION && preferenceManager.adBlockEnabled,
-                onCheckChange = preferenceManager::setAdBlockEnabled
+                isChecked = BuildConfig.FULL_VERSION && userPreferences.adBlockEnabled,
+                onCheckChange = { userPreferences.adBlockEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_IMAGES,
-                isChecked = preferenceManager.blockImagesEnabled,
-                onCheckChange = preferenceManager::setBlockImagesEnabled
+                isChecked = userPreferences.blockImagesEnabled,
+                onCheckChange = { userPreferences.blockImagesEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_JAVASCRIPT,
-                isChecked = preferenceManager.javaScriptEnabled,
-                onCheckChange = preferenceManager::setJavaScriptEnabled
+                isChecked = userPreferences.javaScriptEnabled,
+                onCheckChange = { userPreferences.javaScriptEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_COLOR_MODE,
-                isChecked = preferenceManager.colorModeEnabled,
-                onCheckChange = preferenceManager::setColorModeEnabled
+                isChecked = userPreferences.colorModeEnabled,
+                onCheckChange = { userPreferences.colorModeEnabled = it }
         )
     }
 
@@ -145,26 +146,29 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     message = R.string.flash,
                     positiveButton = DialogItem(
                             title = R.string.action_manual,
-                            onClick = { preferenceManager.flashSupport = 1 }
+                            onClick = { userPreferences.flashSupport = 1 }
                     ),
                     negativeButton = DialogItem(
                             title = R.string.action_auto,
-                            onClick = { preferenceManager.flashSupport = 2 }
+                            onClick = { userPreferences.flashSupport = 2 }
                     ),
-                    onCancel = { preferenceManager.flashSupport = 0 }
+                    onCancel = { userPreferences.flashSupport = 0 }
             )
         }
     }
 
     private fun proxyChoiceToSummary(choice: Int) = when (choice) {
-        PROXY_MANUAL -> "${preferenceManager.proxyHost}:${preferenceManager.proxyPort}"
-        else -> proxyChoices[choice]
+        PROXY_MANUAL -> "${userPreferences.proxyHost}:${userPreferences.proxyPort}"
+        NO_PROXY,
+        PROXY_ORBOT,
+        PROXY_I2P -> proxyChoices[choice]
+        else -> proxyChoices[NO_PROXY]
     }
 
     private fun showProxyPicker(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.http_proxy)
-            setSingleChoiceItems(proxyChoices, preferenceManager.proxyChoice) { _, which ->
+            setSingleChoiceItems(proxyChoices, userPreferences.proxyChoice) { _, which ->
                 updateProxyChoice(which, it, summaryUpdater)
             }
             setPositiveButton(R.string.action_ok, null)
@@ -180,7 +184,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             PROXY_MANUAL -> showManualProxyPicker(activity, summaryUpdater)
         }
 
-        preferenceManager.proxyChoice = sanitizedChoice
+        userPreferences.proxyChoice = sanitizedChoice
         if (sanitizedChoice < proxyChoices.size) {
             summaryUpdater.updateSummary(proxyChoices[sanitizedChoice])
         }
@@ -197,8 +201,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         val maxCharacters = Integer.toString(Integer.MAX_VALUE).length
         eProxyPort.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxCharacters - 1))
 
-        eProxyHost.text = preferenceManager.proxyHost
-        eProxyPort.text = Integer.toString(preferenceManager.proxyPort)
+        eProxyHost.text = userPreferences.proxyHost
+        eProxyPort.text = Integer.toString(userPreferences.proxyPort)
 
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.manual_proxy)
@@ -210,11 +214,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     // larger than max integer
                     Integer.parseInt(eProxyPort.text.toString())
                 } catch (ignored: NumberFormatException) {
-                    preferenceManager.proxyPort
+                    userPreferences.proxyPort
                 }
 
-                preferenceManager.proxyHost = proxyHost
-                preferenceManager.proxyPort = proxyPort
+                userPreferences.proxyHost = proxyHost
+                userPreferences.proxyPort = proxyPort
                 summaryUpdater.updateSummary("$proxyHost:$proxyPort")
             }
         }
@@ -231,9 +235,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showUserAgentChooserDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_user_agent))
-            setSingleChoiceItems(R.array.user_agent, preferenceManager.userAgentChoice - 1) { _, which ->
-                preferenceManager.userAgentChoice = which + 1
-                summaryUpdater.updateSummary(choiceToUserAgent(preferenceManager.userAgentChoice))
+            setSingleChoiceItems(R.array.user_agent, userPreferences.userAgentChoice - 1) { _, which ->
+                userPreferences.userAgentChoice = which + 1
+                summaryUpdater.updateSummary(choiceToUserAgent(userPreferences.userAgentChoice))
                 when (which) {
                     in 0..2 -> Unit
                     3 -> {
@@ -251,9 +255,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             BrowserDialog.showEditText(it,
                     R.string.title_user_agent,
                     R.string.title_user_agent,
-                    preferenceManager.getUserAgentString(""),
+                    userPreferences.userAgentString,
                     R.string.action_ok) { s ->
-                preferenceManager.setUserAgentString(s)
+                userPreferences.userAgentString = s
                 summaryUpdater.updateSummary(it.getString(R.string.agent_custom))
             }
         }
@@ -262,7 +266,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showDownloadLocationDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_download_location))
-            val n: Int = if (preferenceManager.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
+            val n: Int = if (userPreferences.downloadDirectory.contains(Environment.DIRECTORY_DOWNLOADS)) {
                 0
             } else {
                 1
@@ -271,7 +275,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setSingleChoiceItems(R.array.download_folder, n) { _, which ->
                 when (which) {
                     0 -> {
-                        preferenceManager.downloadDirectory = FileUtils.DEFAULT_DOWNLOAD_PATH
+                        userPreferences.downloadDirectory = FileUtils.DEFAULT_DOWNLOAD_PATH
                         summaryUpdater.updateSummary(FileUtils.DEFAULT_DOWNLOAD_PATH)
                     }
                     1 -> {
@@ -293,7 +297,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             val regularColor = ThemeUtils.getTextColor(it)
             getDownload.setTextColor(regularColor)
             getDownload.addTextChangedListener(DownloadLocationTextWatcher(getDownload, errorColor, regularColor))
-            getDownload.setText(preferenceManager.downloadDirectory)
+            getDownload.setText(userPreferences.downloadDirectory)
 
             BrowserDialog.showCustomDialog(it) {
                 setTitle(R.string.title_download_location)
@@ -301,7 +305,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 setPositiveButton(R.string.action_ok) { _, _ ->
                     var text = getDownload.text.toString()
                     text = FileUtils.addNecessarySlashes(text)
-                    preferenceManager.downloadDirectory = text
+                    userPreferences.downloadDirectory = text
                     summaryUpdater.updateSummary(text)
                 }
             }
@@ -337,7 +341,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showHomePageDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.home)
-            val n = when (preferenceManager.homepage) {
+            val n = when (userPreferences.homepage) {
                 SCHEME_HOMEPAGE -> 0
                 SCHEME_BLANK -> 1
                 SCHEME_BOOKMARKS -> 2
@@ -347,15 +351,15 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             setSingleChoiceItems(R.array.homepage, n) { _, which ->
                 when (which) {
                     0 -> {
-                        preferenceManager.homepage = SCHEME_HOMEPAGE
+                        userPreferences.homepage = SCHEME_HOMEPAGE
                         summaryUpdater.updateSummary(resources.getString(R.string.action_homepage))
                     }
                     1 -> {
-                        preferenceManager.homepage = SCHEME_BLANK
+                        userPreferences.homepage = SCHEME_BLANK
                         summaryUpdater.updateSummary(resources.getString(R.string.action_blank))
                     }
                     2 -> {
-                        preferenceManager.homepage = SCHEME_BOOKMARKS
+                        userPreferences.homepage = SCHEME_BOOKMARKS
                         summaryUpdater.updateSummary(resources.getString(R.string.action_bookmarks))
                     }
                     3 -> {
@@ -368,8 +372,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun showCustomHomePagePicker(summaryUpdater: SummaryUpdater) {
-        val currentHomepage: String = if (!URLUtil.isAboutUrl(preferenceManager.homepage)) {
-            preferenceManager.homepage
+        val currentHomepage: String = if (!URLUtil.isAboutUrl(userPreferences.homepage)) {
+            userPreferences.homepage
         } else {
             "https://www.google.com"
         }
@@ -380,7 +384,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     R.string.title_custom_homepage,
                     currentHomepage,
                     R.string.action_ok) { url ->
-                preferenceManager.homepage = url
+                userPreferences.homepage = url
                 summaryUpdater.updateSummary(url)
             }
         }
@@ -405,14 +409,14 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
             val chars = convertSearchEngineToString(searchEngineList)
 
-            val n = preferenceManager.searchChoice
+            val n = userPreferences.searchChoice
 
             setSingleChoiceItems(chars, n) { _, which ->
                 val searchEngine = searchEngineList[which]
 
                 // Store the search engine preference
                 val preferencesIndex = searchEngineProvider.mapSearchEngineToPreferenceIndex(searchEngine)
-                preferenceManager.searchChoice = preferencesIndex
+                userPreferences.searchChoice = preferencesIndex
 
                 if (searchEngine is CustomSearch) {
                     // Show the URL picker
@@ -432,44 +436,44 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     it,
                     R.string.search_engine_custom,
                     R.string.search_engine_custom,
-                    preferenceManager.searchUrl,
+                    userPreferences.searchUrl,
                     R.string.action_ok
             ) { searchUrl ->
-                preferenceManager.searchUrl = searchUrl
+                userPreferences.searchUrl = searchUrl
                 summaryUpdater.updateSummary(getSearchEngineSummary(customSearch))
             }
 
         }
     }
 
-    private fun searchSuggestionChoiceToTitle(choice: PreferenceManager.Suggestion): String =
+    private fun searchSuggestionChoiceToTitle(choice: Suggestions): String =
             when (choice) {
-                PreferenceManager.Suggestion.SUGGESTION_GOOGLE -> getString(R.string.powered_by_google)
-                PreferenceManager.Suggestion.SUGGESTION_DUCK -> getString(R.string.powered_by_duck)
-                PreferenceManager.Suggestion.SUGGESTION_BAIDU -> getString(R.string.powered_by_baidu)
-                PreferenceManager.Suggestion.SUGGESTION_NONE -> getString(R.string.search_suggestions_off)
+                Suggestions.NONE -> getString(R.string.search_suggestions_off)
+                Suggestions.GOOGLE -> getString(R.string.powered_by_google)
+                Suggestions.DUCK -> getString(R.string.powered_by_duck)
+                Suggestions.BAIDU -> getString(R.string.powered_by_baidu)
             }
 
     private fun showSearchSuggestionsDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.search_suggestions))
 
-            val currentChoice = when (preferenceManager.searchSuggestionChoice) {
-                PreferenceManager.Suggestion.SUGGESTION_GOOGLE -> 0
-                PreferenceManager.Suggestion.SUGGESTION_DUCK -> 1
-                PreferenceManager.Suggestion.SUGGESTION_BAIDU -> 2
-                PreferenceManager.Suggestion.SUGGESTION_NONE -> 3
+            val currentChoice = when (Suggestions.from(userPreferences.searchSuggestionChoice)) {
+                Suggestions.GOOGLE -> 0
+                Suggestions.DUCK -> 1
+                Suggestions.BAIDU -> 2
+                Suggestions.NONE -> 3
             }
 
             setSingleChoiceItems(R.array.suggestions, currentChoice) { _, which ->
                 val suggestionsProvider = when (which) {
-                    0 -> PreferenceManager.Suggestion.SUGGESTION_GOOGLE
-                    1 -> PreferenceManager.Suggestion.SUGGESTION_DUCK
-                    2 -> PreferenceManager.Suggestion.SUGGESTION_BAIDU
-                    3 -> PreferenceManager.Suggestion.SUGGESTION_NONE
-                    else -> PreferenceManager.Suggestion.SUGGESTION_NONE
+                    0 -> Suggestions.GOOGLE
+                    1 -> Suggestions.DUCK
+                    2 -> Suggestions.BAIDU
+                    3 -> Suggestions.NONE
+                    else -> Suggestions.GOOGLE
                 }
-                preferenceManager.searchSuggestionChoice = suggestionsProvider
+                userPreferences.searchSuggestionChoice = suggestionsProvider.index
                 summaryUpdater.updateSummary(searchSuggestionChoiceToTitle(suggestionsProvider))
             }
             setPositiveButton(resources.getString(R.string.action_ok), null)

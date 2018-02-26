@@ -2,7 +2,7 @@ package acr.browser.lightning.browser.activity
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
 import android.content.res.Configuration
@@ -15,7 +15,7 @@ import javax.inject.Inject
 abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     // TODO reduce protected visibility
-    @Inject protected lateinit var preferences: PreferenceManager
+    @Inject protected lateinit var userPreferences: UserPreferences
 
     private var themeId: Int = 0
     private var showTabsInDrawer: Boolean = false
@@ -23,8 +23,8 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BrowserApp.appComponent.inject(this)
-        themeId = preferences.useTheme
-        showTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
+        themeId = userPreferences.useTheme
+        showTabsInDrawer = userPreferences.showTabsInDrawer
 
         // set the theme
         if (themeId == 1) {
@@ -39,7 +39,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
 
     private fun resetPreferences() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (preferences.useBlackStatusBar) {
+            if (userPreferences.useBlackStatusBar) {
                 window.statusBarColor = Color.BLACK
             } else {
                 window.statusBarColor = ThemeUtils.getStatusBarColor(this)
@@ -67,8 +67,8 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         super.onResume()
         resetPreferences()
         shouldRunOnResumeActions = true
-        val themePreference = preferences.useTheme
-        val drawerTabs = preferences.getShowTabsInDrawer(!isTablet)
+        val themePreference = userPreferences.useTheme
+        val drawerTabs = userPreferences.showTabsInDrawer
         if (themeId != themePreference || showTabsInDrawer != drawerTabs) {
             restart()
         }

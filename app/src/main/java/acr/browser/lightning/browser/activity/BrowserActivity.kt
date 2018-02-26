@@ -27,6 +27,7 @@ import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
@@ -227,15 +228,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val actionBar = requireNotNull(supportActionBar)
 
         //TODO make sure dark theme flag gets set correctly
-        isDarkTheme = preferences.useTheme != 0 || isIncognito()
+        isDarkTheme = userPreferences.useTheme != 0 || isIncognito()
         iconColor = if (isDarkTheme) ThemeUtils.getIconDarkThemeColor(this) else ThemeUtils.getIconLightThemeColor(this)
         disabledIconColor = if (isDarkTheme) {
             ContextCompat.getColor(this, R.color.icon_dark_theme_disabled)
         } else {
             ContextCompat.getColor(this, R.color.icon_light_theme_disabled)
         }
-        shouldShowTabsInDrawer = preferences.getShowTabsInDrawer(!isTablet)
-        swapBookmarksAndTabs = preferences.bookmarksAndTabsSwapped
+        shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
+        swapBookmarksAndTabs = userPreferences.bookmarksAndTabsSwapped
 
         // initialize background ColorDrawable
         val primaryColor = ThemeUtils.getPrimaryColor(this)
@@ -590,8 +591,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     private fun initializePreferences() {
         val currentView = tabsManager.currentTab
-        isFullScreen = preferences.fullScreenEnabled
-        val colorMode = preferences.colorModeEnabled && !isDarkTheme
+        isFullScreen = userPreferences.fullScreenEnabled
+        val colorMode = userPreferences.colorModeEnabled && !isDarkTheme
 
         webPageBitmap?.let { webBitmap ->
             if (!isIncognito() && !colorMode && !isDarkTheme) {
@@ -612,7 +613,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // TODO layout transition causing memory leak
         //        content_frame.setLayoutTransition(new LayoutTransition());
 
-        setFullscreen(preferences.hideStatusBarEnabled, false)
+        setFullscreen(userPreferences.hideStatusBarEnabled, false)
 
         val currentSearchEngine = searchEngineProvider.getCurrentSearchEngine()
         searchText = currentSearchEngine.queryUrl
@@ -1042,12 +1043,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun newTabButtonLongClicked() {
-        preferences.savedUrl?.let {
-            newTab(it, true)
+        val savedUrl = userPreferences.savedUrl
+
+        if (savedUrl != "") {
+            newTab(savedUrl, true)
 
             Utils.showSnackbar(this, R.string.deleted_tab)
         }
-        preferences.savedUrl = null
+
+        userPreferences.savedUrl = ""
     }
 
     override fun bookmarkButtonClicked() {
@@ -1107,19 +1111,19 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun performExitCleanUp() {
         val currentTab = tabsManager.currentTab
-        if (preferences.clearCacheExit && currentTab != null && !isIncognito()) {
+        if (userPreferences.clearCacheExit && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.webView)
             Log.d(TAG, "Cache Cleared")
         }
-        if (preferences.clearHistoryExitEnabled && !isIncognito()) {
+        if (userPreferences.clearHistoryExitEnabled && !isIncognito()) {
             WebUtils.clearHistory(this, historyModel, databaseScheduler)
             Log.d(TAG, "History Cleared")
         }
-        if (preferences.clearCookiesExitEnabled && !isIncognito()) {
+        if (userPreferences.clearCookiesExitEnabled && !isIncognito()) {
             WebUtils.clearCookies(this)
             Log.d(TAG, "Cookies Cleared")
         }
-        if (preferences.clearWebStorageExitEnabled && !isIncognito()) {
+        if (userPreferences.clearWebStorageExitEnabled && !isIncognito()) {
             WebUtils.clearWebStorage()
             Log.d(TAG, "WebStorage Cleared")
         } else if (isIncognito()) {
@@ -1216,7 +1220,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     protected fun saveOpenTabs() {
-        if (preferences.restoreLostTabsEnabled) {
+        if (userPreferences.restoreLostTabsEnabled) {
             tabsManager.saveState()
         }
     }
@@ -1249,7 +1253,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-        if (swapBookmarksAndTabs != preferences.bookmarksAndTabsSwapped) {
+        if (swapBookmarksAndTabs != userPreferences.bookmarksAndTabsSwapped) {
             restart()
         }
 
@@ -1697,7 +1701,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             Log.e(TAG, "WebView is not allowed to keep the screen on")
         }
 
-        setFullscreen(preferences.hideStatusBarEnabled, false)
+        setFullscreen(userPreferences.hideStatusBarEnabled, false)
         if (fullscreenContainerView != null) {
             val parent = fullscreenContainerView?.parent as ViewGroup
             parent.removeView(fullscreenContainerView)

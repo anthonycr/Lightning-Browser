@@ -4,7 +4,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v7.app.AlertDialog
@@ -23,7 +23,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
     private val SETTINGS_URL_CONTENT = "url_contents"
     private val SETTINGS_TEXT_ENCODING = "text_encoding"
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
 
@@ -34,44 +34,44 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
                 preference = SETTINGS_RENDERING_MODE,
-                summary = getString(renderingModePreferenceToString(preferenceManager.renderingMode)),
+                summary = getString(renderingModePreferenceToString(userPreferences.renderingMode)),
                 onClick = this::showRenderingDialogPicker
         )
 
         clickableDynamicPreference(
                 preference = SETTINGS_TEXT_ENCODING,
-                summary = preferenceManager.textEncoding,
+                summary = userPreferences.textEncoding,
                 onClick = this::showTextEncodingDialogPicker
         )
 
         clickableDynamicPreference(
                 preference = SETTINGS_URL_CONTENT,
-                summary = urlBoxPreferenceToString(preferenceManager.urlBoxContentChoice),
+                summary = urlBoxPreferenceToString(userPreferences.urlBoxContentChoice),
                 onClick = this::showUrlBoxDialogPicker
         )
 
         checkBoxPreference(
                 preference = SETTINGS_NEW_WINDOW,
-                isChecked = preferenceManager.popupsEnabled,
-                onCheckChange = preferenceManager::setPopupsEnabled
+                isChecked = userPreferences.popupsEnabled,
+                onCheckChange = { userPreferences.popupsEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_ENABLE_COOKIES,
-                isChecked = preferenceManager.cookiesEnabled,
-                onCheckChange = preferenceManager::setCookiesEnabled
+                isChecked = userPreferences.cookiesEnabled,
+                onCheckChange = { userPreferences.cookiesEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_COOKIES_INCOGNITO,
-                isChecked = preferenceManager.incognitoCookiesEnabled,
-                onCheckChange = preferenceManager::setIncognitoCookiesEnabled
+                isChecked = userPreferences.incognitoCookiesEnabled,
+                onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
         )
 
         checkBoxPreference(
                 preference = SETTINGS_RESTORE_TABS,
-                isChecked = preferenceManager.restoreLostTabsEnabled,
-                onCheckChange = preferenceManager::setRestoreLostTabsEnabled
+                isChecked = userPreferences.restoreLostTabsEnabled,
+                onCheckChange = { userPreferences.restoreLostTabsEnabled = it }
         )
     }
 
@@ -94,8 +94,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
                         it.getString(R.string.name_increase_contrast)
                 )
 
-                setSingleChoiceItems(choices, preferenceManager.renderingMode) { _, which ->
-                    preferenceManager.renderingMode = which
+                setSingleChoiceItems(choices, userPreferences.renderingMode) { _, which ->
+                    userPreferences.renderingMode = which
                     summaryUpdater.updateSummary(getString(renderingModePreferenceToString(which)))
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)
@@ -116,10 +116,10 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             val dialog = AlertDialog.Builder(it).apply {
                 setTitle(resources.getString(R.string.text_encoding))
 
-                val currentChoice = TEXT_ENCODINGS.indexOf(preferenceManager.textEncoding)
+                val currentChoice = TEXT_ENCODINGS.indexOf(userPreferences.textEncoding)
 
                 setSingleChoiceItems(TEXT_ENCODINGS, currentChoice, { _, which ->
-                    preferenceManager.textEncoding = TEXT_ENCODINGS[which]
+                    userPreferences.textEncoding = TEXT_ENCODINGS[which]
                     summaryUpdater.updateSummary(TEXT_ENCODINGS[which])
                 })
                 setPositiveButton(resources.getString(R.string.action_ok), null)
@@ -141,8 +141,8 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
                 val array = resources.getStringArray(R.array.url_content_array)
 
-                setSingleChoiceItems(array, preferenceManager.urlBoxContentChoice) { _, which ->
-                    preferenceManager.urlBoxContentChoice = which
+                setSingleChoiceItems(array, userPreferences.urlBoxContentChoice) { _, which ->
+                    userPreferences.urlBoxContentChoice = which
                     summaryUpdater.updateSummary(urlBoxPreferenceToString(which))
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)

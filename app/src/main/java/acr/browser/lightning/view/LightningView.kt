@@ -15,7 +15,7 @@ import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.homepage.StartPage
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.UrlUtils
@@ -113,7 +113,7 @@ class LightningView(
     private var homepage: String
     private val maxFling: Float
 
-    @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
@@ -177,7 +177,7 @@ class LightningView(
         uiController = activity as UIController
         val tab = WebView(activity).also { webView = it }
 
-        homepage = preferences.homepage
+        homepage = userPreferences.homepage
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
             tab.id = View.generateViewId()
@@ -290,31 +290,31 @@ class LightningView(
 
         lightningWebClient.updatePreferences()
 
-        if (preferences.doNotTrackEnabled) {
-            requestHeaders.put(HEADER_DNT, "1")
+        if (userPreferences.doNotTrackEnabled) {
+            requestHeaders[HEADER_DNT] = "1"
         } else {
             requestHeaders.remove(HEADER_DNT)
         }
 
-        if (preferences.removeIdentifyingHeadersEnabled) {
-            requestHeaders.put(HEADER_REQUESTED_WITH, "")
-            requestHeaders.put(HEADER_WAP_PROFILE, "")
+        if (userPreferences.removeIdentifyingHeadersEnabled) {
+            requestHeaders[HEADER_REQUESTED_WITH] = ""
+            requestHeaders[HEADER_WAP_PROFILE] = ""
         } else {
             requestHeaders.remove(HEADER_REQUESTED_WITH)
             requestHeaders.remove(HEADER_WAP_PROFILE)
         }
 
-        settings.defaultTextEncodingName = preferences.textEncoding
-        homepage = preferences.homepage
-        setColorMode(preferences.renderingMode)
+        settings.defaultTextEncodingName = userPreferences.textEncoding
+        homepage = userPreferences.homepage
+        setColorMode(userPreferences.renderingMode)
 
         if (!isIncognito) {
-            settings.setGeolocationEnabled(preferences.locationEnabled)
+            settings.setGeolocationEnabled(userPreferences.locationEnabled)
         } else {
             settings.setGeolocationEnabled(false)
         }
         if (API < Build.VERSION_CODES.KITKAT) {
-            when (preferences.flashSupport) {
+            when (userPreferences.flashSupport) {
                 0 -> settings.pluginState = PluginState.OFF
                 1 -> settings.pluginState = PluginState.ON_DEMAND
                 2 -> settings.pluginState = PluginState.ON
@@ -323,9 +323,9 @@ class LightningView(
             }
         }
 
-        setUserAgent(context, preferences.userAgentChoice)
+        setUserAgent(context, userPreferences.userAgentChoice)
 
-        if (preferences.savePasswordsEnabled && !isIncognito) {
+        if (userPreferences.savePasswordsEnabled && !isIncognito) {
             if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 settings.savePassword = true
             }
@@ -337,7 +337,7 @@ class LightningView(
             settings.saveFormData = false
         }
 
-        if (preferences.javaScriptEnabled) {
+        if (userPreferences.javaScriptEnabled) {
             settings.javaScriptEnabled = true
             settings.javaScriptCanOpenWindowsAutomatically = true
         } else {
@@ -345,7 +345,7 @@ class LightningView(
             settings.javaScriptCanOpenWindowsAutomatically = false
         }
 
-        if (preferences.textReflowEnabled) {
+        if (userPreferences.textReflowEnabled) {
             settings.layoutAlgorithm = LayoutAlgorithm.NARROW_COLUMNS
             if (API >= android.os.Build.VERSION_CODES.KITKAT) {
                 try {
@@ -361,27 +361,28 @@ class LightningView(
             settings.layoutAlgorithm = LayoutAlgorithm.NORMAL
         }
 
-        settings.blockNetworkImage = preferences.blockImagesEnabled
+        settings.blockNetworkImage = userPreferences.blockImagesEnabled
         if (!isIncognito) {
-            settings.setSupportMultipleWindows(preferences.popupsEnabled)
+            settings.setSupportMultipleWindows(userPreferences.popupsEnabled)
         } else {
             settings.setSupportMultipleWindows(false)
         }
 
-        settings.useWideViewPort = preferences.useWideViewportEnabled
-        settings.loadWithOverviewMode = preferences.overviewModeEnabled
-        when (preferences.textSize) {
-            0 -> settings.textZoom = 200
-            1 -> settings.textZoom = 150
-            2 -> settings.textZoom = 125
-            3 -> settings.textZoom = 100
-            4 -> settings.textZoom = 75
-            5 -> settings.textZoom = 50
+        settings.useWideViewPort = userPreferences.useWideViewportEnabled
+        settings.loadWithOverviewMode = userPreferences.overviewModeEnabled
+        settings.textZoom = when (userPreferences.textSize) {
+            0 -> 200
+            1 -> 150
+            2 -> 125
+            3 -> 100
+            4 -> 75
+            5 -> 50
+            else -> throw IllegalArgumentException("Unsupported text size")
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,
-                    !preferences.blockThirdPartyCookiesEnabled)
+                    !userPreferences.blockThirdPartyCookiesEnabled)
         }
     }
 
@@ -477,7 +478,7 @@ class LightningView(
         if (!toggleDesktop) {
             webView?.settings?.userAgentString = DESKTOP_USER_AGENT
         } else {
-            setUserAgent(context, preferences.userAgentChoice)
+            setUserAgent(context, userPreferences.userAgentChoice)
         }
 
         toggleDesktop = !toggleDesktop
@@ -507,8 +508,8 @@ class LightningView(
             2 -> settings.userAgentString = DESKTOP_USER_AGENT
             3 -> settings.userAgentString = MOBILE_USER_AGENT
             4 -> {
-                var ua = preferences.getUserAgentString(defaultUserAgent)
-                if (ua.isNullOrEmpty()) {
+                var ua = userPreferences.userAgentString
+                if (ua.isEmpty()) {
                     ua = " "
                 }
                 settings.userAgentString = ua

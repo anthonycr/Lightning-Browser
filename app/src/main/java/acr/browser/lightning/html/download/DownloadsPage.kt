@@ -6,7 +6,7 @@ package acr.browser.lightning.html.download
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.downloads.DownloadsRepository
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
 import io.reactivex.Single
 import java.io.File
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class DownloadsPage {
 
     @Inject internal lateinit var app: Application
-    @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var manager: DownloadsRepository
 
     init {
@@ -26,7 +26,7 @@ class DownloadsPage {
     fun getDownloadsPage(): Single<String> = manager
             .getAllDownloads()
             .map { list ->
-                val directory = preferenceManager.downloadDirectory
+                val directory = userPreferences.downloadDirectory
 
                 val downloadPageBuilder = DownloadPageBuilder(app, directory)
 

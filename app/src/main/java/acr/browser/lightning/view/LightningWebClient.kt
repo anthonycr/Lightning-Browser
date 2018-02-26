@@ -8,7 +8,7 @@ import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.ssl.SslWarningPreferences
 import acr.browser.lightning.utils.IntentUtils
@@ -51,7 +51,7 @@ class LightningWebClient(
     private val emptyResponseByteArray: ByteArray = byteArrayOf()
 
     @Inject internal lateinit var proxyUtils: ProxyUtils
-    @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var sslWarningPreferences: SslWarningPreferences
     @Inject internal lateinit var whitelistModel: WhitelistModel
 
@@ -85,7 +85,7 @@ class LightningWebClient(
         adBlock = chooseAdBlocker()
     }
 
-    private fun chooseAdBlocker(): AdBlocker = if (preferences.adBlockEnabled) {
+    private fun chooseAdBlocker(): AdBlocker = if (userPreferences.adBlockEnabled) {
         BrowserApp.appComponent.provideAssetsAdBlocker()
     } else {
         BrowserApp.appComponent.provideNoOpAdBlocker()
@@ -176,7 +176,7 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
-        if (view.isShown && lightningView.preferences.textReflowEnabled
+        if (view.isShown && lightningView.userPreferences.textReflowEnabled
                 && Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             if (isRunning)
                 return

@@ -17,7 +17,7 @@ class MainActivity : BrowserActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this@MainActivity)
         }
-        cookieManager.setAcceptCookie(preferences.cookiesEnabled)
+        cookieManager.setAcceptCookie(userPreferences.cookiesEnabled)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

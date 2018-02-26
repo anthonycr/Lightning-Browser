@@ -36,7 +36,7 @@ import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.reading.HtmlFetcher;
 import acr.browser.lightning.reading.JResult;
 import acr.browser.lightning.utils.ThemeUtils;
@@ -51,7 +51,7 @@ public class ReadingActivity extends AppCompatActivity {
     @BindView(R.id.textViewTitle) TextView mTitle;
     @BindView(R.id.textViewBody) TextView mBody;
 
-    @Inject PreferenceManager mPreferences;
+    @Inject UserPreferences mUserPreferences;
 
     private boolean mInvert;
     @Nullable private String mUrl = null;
@@ -71,7 +71,7 @@ public class ReadingActivity extends AppCompatActivity {
         BrowserApp.getAppComponent().inject(this);
 
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
-        mInvert = mPreferences.getInvertColors();
+        mInvert = mUserPreferences.getInvertColors();
         final int color;
         if (mInvert) {
             setTheme(R.style.Theme_SettingsTheme_Dark);
@@ -92,7 +92,7 @@ public class ReadingActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mTextSize = mPreferences.getReadingTextSize();
+        mTextSize = mUserPreferences.getReadingTextSize();
         mBody.setTextSize(getTextSize(mTextSize));
         mTitle.setText(getString(R.string.untitled));
         mBody.setText(getString(R.string.loading));
@@ -287,7 +287,7 @@ public class ReadingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.invert_item:
-                mPreferences.setInvertColors(!mInvert);
+                mUserPreferences.setInvertColors(!mInvert);
                 Intent read = new Intent(this, ReadingActivity.class);
                 read.putExtra(Constants.LOAD_READING_URL, mUrl);
                 startActivity(read);
@@ -325,7 +325,7 @@ public class ReadingActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int arg1) {
                             mTextSize = bar.getProgress();
                             mBody.setTextSize(getTextSize(mTextSize));
-                            mPreferences.setReadingTextSize(bar.getProgress());
+                            mUserPreferences.setReadingTextSize(bar.getProgress());
                         }
 
                     });
