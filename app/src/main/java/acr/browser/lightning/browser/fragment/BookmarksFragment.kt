@@ -393,7 +393,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
             faviconFetchSubscriptions.clear()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkViewHolder? {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val itemView = inflater.inflate(R.layout.bookmark_list_item, parent, false)
 
