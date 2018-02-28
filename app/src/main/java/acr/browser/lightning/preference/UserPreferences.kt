@@ -88,7 +88,7 @@ class UserPreferences @Inject constructor(application: Application, screenSize: 
 
     var textEncoding by StringPreference(TEXT_ENCODING, DEFAULT_ENCODING, preferences).delegate()
 
-    var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEBSTORAGE_EXIT, false, preferences).delegate()
+    var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEB_STORAGE_EXIT, false, preferences).delegate()
 
     var showTabsInDrawer by BooleanPreference(SHOW_TABS_IN_DRAWER, !screenSize.isTablet(), preferences).delegate()
 
@@ -144,7 +144,7 @@ private const val INVERT_COLORS = "invertColors"
 private const val READING_TEXT_SIZE = "readingTextSize"
 private const val THEME = "Theme"
 private const val TEXT_ENCODING = "textEncoding"
-private const val CLEAR_WEBSTORAGE_EXIT = "clearWebStorageExit"
+private const val CLEAR_WEB_STORAGE_EXIT = "clearWebStorageExit"
 private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
 private const val DO_NOT_TRACK = "doNotTrack"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
