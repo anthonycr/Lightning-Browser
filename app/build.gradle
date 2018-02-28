@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'jacoco'
+apply plugin: 'com.github.ben-manes.versions'
 
 android {
     compileSdkVersion project.targetSdkVersion
