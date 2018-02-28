@@ -93,12 +93,12 @@ dexcount {
 dependencies {
     // test dependencies
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.assertj:assertj-core:3.9.0'
-    testImplementation 'org.mockito:mockito-core:2.13.0'
+    testImplementation 'org.assertj:assertj-core:3.9.1'
+    testImplementation 'org.mockito:mockito-core:2.15.0'
     testImplementation 'com.nhaarman:mockito-kotlin:1.5.0', {
         exclude group: 'org.jetbrains.kotlin'
     }
-    testImplementation 'org.robolectric:robolectric:3.6.1'
+    testImplementation 'org.robolectric:robolectric:3.7.1'
 
     // support libraries
     final def supportLibVersion = '27.0.2'
@@ -110,7 +110,7 @@ dependencies {
     implementation "com.android.support:support-fragment:$supportLibVersion"
 
     // html parsing for reading mode
-    implementation 'org.jsoup:jsoup:1.10.3'
+    implementation 'org.jsoup:jsoup:1.11.2'
 
     // dependency injection
     final def daggerVersion = '2.14.1'
@@ -129,7 +129,7 @@ dependencies {
     // proxy support
     implementation 'net.i2p.android:client:0.8'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
     // file reading
     final def mezzanineVersion = '1.1.0'
@@ -137,8 +137,8 @@ dependencies {
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
     // rx
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     // tor proxy
