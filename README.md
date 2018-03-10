@@ -49,7 +49,7 @@ alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/det
 
 #### The Code
 * Please contribute code back if you can. The code isn't perfect.
-* Please add translations/translation fixes as you see need
+* Please add translations/translation fixes as you need
 
 #### Contributing
 * [The Trello Board](https://trello.com/b/Gwjx8MC3/lightning-browser)
