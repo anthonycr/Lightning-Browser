@@ -25,7 +25,7 @@
     <string name="cache">結束時清除快取</string>
     <string name="reflow">啟用文字重排</string>
     <string name="block">封鎖圖片</string>
-    <string name="window">允許網站網站開啟新視窗</string>
+    <string name="window">允許網站開啟新視窗</string>
     <string name="cookies">啟用 Cookies</string>
     <string name="size">文字大小</string>
     <string name="recommended">建議</string>
