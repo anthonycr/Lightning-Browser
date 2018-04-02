@@ -5,9 +5,9 @@
     <string name="action_new_tab">新分頁</string>
     <string name="action_share">分享</string>
     <string name="action_history">歷史記錄</string>
-    <string name="action_bookmarks">書簽</string>
+    <string name="action_bookmarks">書籤</string>
     <string name="action_downloads">下載</string>
-    <string name="action_add_bookmark">新增書簽</string>
+    <string name="action_add_bookmark">新增書籤</string>
     <string name="action_copy">複製連結</string>
     <string name="action_forward">前進</string>
     <string name="settings">設定</string>
@@ -35,9 +35,9 @@
     <string name="overViewMode">使用概觀模式載入頁面</string>
     <string name="restore">啟動時還原遺失的分頁</string>
     <string name="supported_browsers_title">支援的瀏覽器</string>    
-    <string name="stock_browser">Stock browser</string>
-    <string name="stock_browser_unavailable">尚未檢測出 Stock browser</string>
-    <string name="stock_browser_available">檢測出 Stock browser</string>
+    <string name="stock_browser">原生瀏覽器</string>
+    <string name="stock_browser_unavailable">尚未偵測出原生瀏覽器</string>
+    <string name="stock_browser_available">偵測出原生瀏覽器</string>
     <string name="fullScreenOption">瀏覽時隱藏狀態列</string>
     <string name="clear_cookies">清除瀏覽器 Cookies</string>
     <string name="clear_history">清除瀏覽歷史</string>
@@ -47,7 +47,7 @@
     <string name="dialog_link">您想如何處理此連結？</string>
     <string name="dialog_title_share">分享此頁面</string>
     <string name="dialog_history_long_press">您想如何處理此歷史記錄項？</string>
-    <string name="dialog_bookmark">您想如何處理此書簽？</string>
+    <string name="dialog_bookmark">您想如何處理此書籤？</string>
     <string name="action_delete">刪除</string>
     <string name="action_blank">空白頁面</string>
     <string name="agent_default">預設</string>
@@ -60,10 +60,10 @@
     <string name="unknown_size">未知大小</string>
     <string name="action_cancel">取消</string>
     <string name="title_warning">警告</string>
-    <string name="dialog_adobe_not_installed">未檢測出 Adobe Flash Player，請安裝。</string>
+    <string name="dialog_adobe_not_installed">未偵測出 Adobe Flash Player，請安裝。</string>
     <string name="title_user_agent">使用者代理</string>
     <string name="title_download_location">下載位置</string>
-    <string name="title_custom_homepage">自訂主頁</string>
+    <string name="title_custom_homepage">自訂首頁</string>
     <string name="action_webpage">網頁</string>
     <string name="title_clear_history">清除歷史記錄</string>
     <string name="title_clear_cookies">清除 cookies</string>
@@ -78,22 +78,22 @@
     <string name="size_small">較小</string>
     <string name="size_smallest">最小</string>
     <string name="title_error">錯誤</string>
-    <string name="dialog_import_error">尚未檢測出可以匯入書籤的瀏覽器。</string>
+    <string name="dialog_import_error">尚未偵測出可以匯入書籤的瀏覽器。</string>
     <string name="hint_title">標題</string>
     <string name="hint_url">網址</string>
-    <string name="title_edit_bookmark">編輯書簽</string>
+    <string name="title_edit_bookmark">編輯書籤</string>
     <string name="action_edit">編輯</string>
     <string name="action_incognito">新增無痕式分頁</string>
     <string name="action_homepage">預設</string>
     <string name="action_back">返回</string>
-    <string name="action_find">頁內尋找</string>
+    <string name="action_find">網頁內尋找</string>
     <string name="download_pending">正在開始下載\u2026</string>
     <string name="cannot_download">僅可下載以 \"http\" 或 \"https\" 開頭的網址</string>
     <string name="problem_download">遇到無效的 URL，無法下載</string>
     <string name="problem_location_download">無法下載無法至指定的位置</string>
     <string name="download_no_sdcard_dlg_title">無 SD 卡</string>
     <string name="download_no_sdcard_dlg_msg">下載此檔案需要 USB 儲存裝置。</string>
-    <string name="download_sdcard_busy_dlg_title">USB 儲存裝置不可用</string>
+    <string name="download_sdcard_busy_dlg_title">USB 儲存裝置無法使用</string>
     <string name="download_sdcard_busy_dlg_msg">此儲存裝置處於忙碌中，若允許下載，請輕觸通知中的「關閉 USB 儲存裝置」。</string>
     <string name="incognito_cookies">在無痕模式中啟用 Cookies</string>
     <string name="title_flash">Adobe Flash</string>
@@ -103,7 +103,7 @@
     <string name="url_twitter">twitter.com/ACRDevelopment</string>
     <string name="clear_cache">清除快取</string>
     <string name="message_cache_cleared">快取已清除</string>
-    <string name="message_import">書簽已匯入</string>
+    <string name="message_import">書籤已匯入</string>
     <string name="message_clear_history">歷史記錄已清除</string>
     <string name="message_cookies_cleared">cookies 已清除</string>
     <string name="max_tabs">已達最高分頁數量</string>
@@ -114,7 +114,7 @@
     <string name="suggestion">搜尋目標</string>
     <string name="block_ads">封鎖廣告</string>
     
-    <!--  -->
+    <!-- certificate -->
     <string name="ssl_warning_dont_ask_again">不要再詢問此瀏覽工作階段。</string>
     <string name="message_insecure_connection">此網站的連線不安全：\n%1$s\n是否仍要繼續？</string>
     <string name="message_certificate_date_invalid">憑證日期無效</string>
@@ -123,7 +123,7 @@
     <string name="message_certificate_invalid">憑證無效</string>
     <string name="message_certificate_not_yet_valid">憑證尚未生效</string>
     <string name="message_certificate_untrusted">不受信任的憑證</string>
-    <!--  -->
+    <!-- certificate -->
 
     <!-- permissions request -->
     <string name="title_permission_request">權限要求</string>
@@ -131,7 +131,7 @@
    
     <string name="title_form_resubmission">重新送出表單</string>
     <string name="message_form_resubmission">您想重新傳送資料嗎？</string>
-    <string name="message_location">\n您想使用您您的位置嗎？</string>
+    <string name="message_location">\n您想使用您的位置嗎？</string>
     <string name="action_allow">允許</string>
     <string name="action_dont_allow">不允許</string>
     <string name="title_sign_in">登入</string>
@@ -141,7 +141,7 @@
     <string name="search_suggestions">搜尋建議</string>
     <string name="powered_by_google">技術提供：Google </string>
     <string name="powered_by_duck">技術提供：DuckDuckGo</string>
-    <string name="powered_by_baidu">技術提供：百度</string>
+    <string name="powered_by_baidu">技術提供：百度 Baidu</string>
     <string name="search_suggestions_off">關閉搜尋建議</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
@@ -152,7 +152,7 @@
     </string-array>
     <string name="manual_proxy">手動 Proxy</string>
     <string name="host">主機：</string>
-    <string name="port">埠：</string>
+    <string name="port">埠 (Port)：</string>
     <string name="use_tor_prompt">看起來你已經安裝了 Orbot，您想使用 Tor 嗎？</string>
     <string name="use_i2p_prompt">看上去你已經安裝 I2P。您想使用 I2P 嗎？</string>
     <string name="install_orbot">請安裝 Orbot 以便透過 Tor 使用 Proxy。</string>
@@ -169,7 +169,7 @@
     <string name="freeware">免費軟體</string>
     <string name="android_open_source_project">Android 開放原始碼計畫 (AOSP)</string>
     <string name="hphosts_ad_server_list">hpHosts 廣告伺服器清單</string>    
-    <string name="deleted_tab">重開舊分頁</string>
+    <string name="deleted_tab">還原舊分頁</string>
     <string name="rendering_mode">轉換模式</string>
     <string name="name_inverted">反轉</string>
     <string name="name_grayscale">灰階</string>
@@ -180,12 +180,12 @@
     <string name="title_file_chooser">檔案選擇器</string>
     <string name="library_netcipher">NetCipher</string>
     <string name="license_gnu">GNU Lesser General Public License</string>
-    <string name="export_bookmarks">匯出書簽至備份檔</string>    
-    <string name="import_backup">自備份檔匯入書簽</string>
-    <string name="bookmark_export_path">書簽已匯出至</string>
+    <string name="export_bookmarks">匯出書籤至備份檔</string>    
+    <string name="import_backup">自備份檔匯入書籤</string>
+    <string name="bookmark_export_path">書籤已匯出至</string>
     <string name="bookmark_export_failure">很抱歉，無法匯出書籤！</string>
-    <string name="bookmark_settings">書簽設定</string>
-    <string name="import_bookmark_error">無法自檔案中匯入書簽</string>
+    <string name="bookmark_settings">書籤設定</string>
+    <string name="import_bookmark_error">無法自檔案中匯入書籤</string>
     <string name="message_bookmark_added">書籤已新增。</string>
     <string name="title_chooser">選擇一個檔案</string>
     <string name="settings_general">一般設定</string>
@@ -226,17 +226,17 @@
     <string name="clear_web_storage">清除 Web 儲存</string>
     <string name="clear_web_storage_exit">結束時清除 Web 儲存</string>
     <string name="message_web_storage_cleared">Web 儲存已清除</string>
-    <string name="hosts_source">HOSTS檔案廣告封鎖來源</string>
+    <string name="hosts_source">HOSTS 檔案廣告封鎖來源</string>
     <string name="settings_adblock">廣告封鎖設定</string>
     <string name="tabs_in_drawer">在側滑選單顯示分頁</string>
-    <string name="swap_bookmarks_and_tabs">書簽與分頁側滑選單交換位置</string>
+    <string name="swap_bookmarks_and_tabs">書籤與分頁側滑選單交換位置</string>
     <string name="do_not_track">要求 \'Do Not Track\'</string>
     <string name="remove_identifying_headers">移除識別標頭</string>
     <string name="webrtc_support">WebRTC 支援</string>
     <string name="action_add_to_homescreen">新增至主畫面</string>
     <string name="message_added_to_homescreen">捷徑已新增至主畫面</string>
     <string name="shortcut_message_failed_to_add">很抱歉，您的啟動器不支援捷徑。</string>
-    <string name="action_delete_all_bookmarks">刪除所有書簽</string>
+    <string name="action_delete_all_bookmarks">刪除所有書籤</string>
     <string name="flash_not_supported">Flash Player 不支援您的系統</string>
     <string name="upsell_plus_version">升級至 Lightning Plus 以封鎖廣告</string>
     <string name="message_open_download_fail">此檔案已不存在</string>
@@ -253,8 +253,8 @@
     <string name="dialog_open_new_tab">在新分頁開啟</string>
     <string name="dialog_open_background_tab">在背景分頁開啟</string>
     <string name="dialog_open_incognito_tab">在無痕式分頁開啟</string>
-    <string name="dialog_remove_bookmark">移除書簽</string>
-    <string name="dialog_edit_bookmark">編輯書簽</string>
+    <string name="dialog_remove_bookmark">移除書籤</string>
+    <string name="dialog_edit_bookmark">編輯書籤</string>
     <string name="dialog_remove_from_history">自歷史記錄移除</string>
     <string name="dialog_download_image">下載圖片</string>
     <string name="dialog_copy_link">複製連結</string>
@@ -274,7 +274,7 @@
     <string name="search_engine_startpage_mobile">StartPage 行動版</string>
     <string name="search_engine_duckduckgo">DuckDuckGo</string>
     <string name="search_engine_duckduckgo_lite">DuckDuckGo 輕量版</string>
-    <string name="search_engine_baidu">百度</string>
+    <string name="search_engine_baidu">百度 Baidu</string>
     <string name="search_engine_yandex">Yandex</string>
 
     <!-- Notifications -->
