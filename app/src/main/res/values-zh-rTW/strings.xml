@@ -139,9 +139,9 @@
     <string name="hint_username">使用者名稱</string>
     <string name="hint_password">密碼</string>
     <string name="search_suggestions">搜尋建議</string>
-    <string name="powered_by_google">技術提供： Google </string>
-    <string name="powered_by_duck">技術提供： DuckDuckGo</string>
-    <string name="powered_by_baidu">技術提供： 百度</string>
+    <string name="powered_by_google">技術提供：Google </string>
+    <string name="powered_by_duck">技術提供：DuckDuckGo</string>
+    <string name="powered_by_baidu">技術提供：百度</string>
     <string name="search_suggestions_off">關閉搜尋建議</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
@@ -262,7 +262,7 @@
     <string name="dialog_remove_folder">移除資料夾</string>
     <string name="dialog_title_close_browser">關閉瀏覽器</string>
     <string name="dialog_delete_download">刪除下載</string>
-<!--翻譯到這裡--><string name="dialog_delete_all_downloads">刪除所有下載</string>
+    <string name="dialog_delete_all_downloads">刪除所有下載</string>
 
     <!-- Search Engines -->
     <string name="search_engine_custom">自訂網址</string>
