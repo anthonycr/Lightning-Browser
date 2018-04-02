@@ -31,7 +31,7 @@
     <string name="recommended">建議</string>
     <string name="search">搜尋引擎</string>
     <string name="search_hint">搜尋</string>
-    <string name="wideViewPort">使用寬視圖 (wide viewport)</string>
+    <string name="wideViewPort">使用寬螢幕</string>
     <string name="overViewMode">使用概觀模式載入頁面</string>
     <string name="restore">啟動時還原遺失的分頁</string>
     <string name="supported_browsers_title">支援的瀏覽器</string>    
@@ -46,14 +46,14 @@
     <string name="action_open">開啟</string>
     <string name="dialog_link">您想如何處理此連結？</string>
     <string name="dialog_title_share">分享此頁面</string>
-    <string name="dialog_history_long_press">您想如何處理此歷史項目？</string>
+    <string name="dialog_history_long_press">您想如何處理此歷史記錄項？</string>
     <string name="dialog_bookmark">您想如何處理此書簽？</string>
     <string name="action_delete">刪除</string>
     <string name="action_blank">空白頁面</string>
-    <string name="agent_default">預設模式</string>
-    <string name="agent_desktop">桌面模式</string>
-    <string name="agent_mobile">行動模式</string>
-    <string name="agent_custom">自訂模式</string>
+    <string name="agent_default">預設</string>
+    <string name="agent_desktop">桌上型電腦</string>
+    <string name="agent_mobile">行動裝置</string>
+    <string name="agent_custom">自訂</string>
     <string name="title_search_engine">搜尋引擎</string>
     <string name="action_ok">確認</string>
     <string name="dialog_download">您是否想下載此檔？ (%1$s)</string>
@@ -104,7 +104,7 @@
     <string name="clear_cache">清除快取</string>
     <string name="message_cache_cleared">快取已清除</string>
     <string name="message_import">書簽已匯入</string>
-    <string name="message_clear_history">歷史已清除</string>
+    <string name="message_clear_history">歷史記錄已清除</string>
     <string name="message_cookies_cleared">cookies 已清除</string>
     <string name="max_tabs">已達最高分頁數量</string>
     <string name="message_text_copied">文字已複製至剪貼簿</string>
@@ -161,7 +161,7 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="clear_cookies_exit">結束時清除 Cookies</string>
-    <string name="clear_history_exit">結束時清除歷史</string>
+    <string name="clear_history_exit">結束時清除歷史記錄</string>
     <string name="folder_default">預設</string>
     <string name="folder_custom">自訂</string>
     <string name="untitled">無標題</string>
@@ -265,23 +265,23 @@
 <!--翻譯到這裡--><string name="dialog_delete_all_downloads">刪除所有下載</string>
 
     <!-- Search Engines -->
-    <string name="search_engine_custom">Custom URL</string>
+    <string name="search_engine_custom">自訂網址</string>
     <string name="search_engine_google">Google</string>
     <string name="search_engine_ask">Ask</string>
     <string name="search_engine_bing">Bing</string>
     <string name="search_engine_yahoo">Yahoo</string>
     <string name="search_engine_startpage">StartPage</string>
-    <string name="search_engine_startpage_mobile">StartPage Mobile</string>
+    <string name="search_engine_startpage_mobile">StartPage 行動版</string>
     <string name="search_engine_duckduckgo">DuckDuckGo</string>
-    <string name="search_engine_duckduckgo_lite">DuckDuckGo Lite</string>
-    <string name="search_engine_baidu">Baidu</string>
+    <string name="search_engine_duckduckgo_lite">DuckDuckGo 輕量版</string>
+    <string name="search_engine_baidu">百度</string>
     <string name="search_engine_yandex">Yandex</string>
 
     <!-- Notifications -->
     <plurals name="notification_incognito_running_title">
-        <item quantity="one">%1$d incognito tab open</item>
-        <item quantity="other">%1$d incognito tabs open</item>
+        <item quantity="one">%1$d 無痕式分頁開啟</item>
+        <item quantity="other">%1$d 無痕式分頁開啟</item>
     </plurals>
-    <string name="notification_incognito_running_message">Touch to open</string>
-    <string name="notification_incognito_running_description">Ongoing incognito notification</string>
+    <string name="notification_incognito_running_message">輕觸開啟</string>
+    <string name="notification_incognito_running_description">正在進行無痕通知</string>
 </resources>
