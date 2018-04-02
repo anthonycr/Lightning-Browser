@@ -141,7 +141,7 @@
     <string name="search_suggestions">搜尋建議</string>
     <string name="powered_by_google">技術提供：Google </string>
     <string name="powered_by_duck">技術提供：DuckDuckGo</string>
-    <string name="powered_by_baidu">技術提供：百度 Baidu</string>
+    <string name="powered_by_baidu">技術提供：百度</string>
     <string name="search_suggestions_off">關閉搜尋建議</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
@@ -152,7 +152,7 @@
     </string-array>
     <string name="manual_proxy">手動 Proxy</string>
     <string name="host">主機：</string>
-    <string name="port">埠 (Port)：</string>
+    <string name="port">埠：</string>
     <string name="use_tor_prompt">看起來你已經安裝了 Orbot，您想使用 Tor 嗎？</string>
     <string name="use_i2p_prompt">看上去你已經安裝 I2P。您想使用 I2P 嗎？</string>
     <string name="install_orbot">請安裝 Orbot 以便透過 Tor 使用 Proxy。</string>
@@ -274,7 +274,7 @@
     <string name="search_engine_startpage_mobile">StartPage 行動版</string>
     <string name="search_engine_duckduckgo">DuckDuckGo</string>
     <string name="search_engine_duckduckgo_lite">DuckDuckGo 輕量版</string>
-    <string name="search_engine_baidu">百度 Baidu</string>
+    <string name="search_engine_baidu">百度</string>
     <string name="search_engine_yandex">Yandex</string>
 
     <!-- Notifications -->
