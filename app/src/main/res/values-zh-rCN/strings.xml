@@ -22,7 +22,7 @@
     <string name="settings_advanced">高级设置</string>
     <string name="apache">Apache License 2.0</string>
     <string name="version">应用程序版本</string>
-    <string name="cache">结束时清理缓存</string>
+    <string name="cache">退出时清理缓存</string>
     <string name="reflow">启用文本重排</string>
     <string name="block">阻止图片</string>
     <string name="window">允许网站打开新窗口</string>
