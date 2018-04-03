@@ -283,5 +283,5 @@
         <item quantity="other">%1$d 無痕式分頁開啟</item>
     </plurals>
     <string name="notification_incognito_running_message">輕觸開啟</string>
-    <string name="notification_incognito_running_description">正在進行無痕通知</string>
+    <string name="notification_incognito_running_description">正在進行無痕的通知</string>
 </resources>
