@@ -49,7 +49,7 @@
     <string name="dialog_history_long_press">您想对本历史记录项目进行什么操作？</string>
     <string name="dialog_bookmark">您想对本书签进行什么操作？</string>
     <string name="action_delete">删除</string>
-    <string name="action_blank">空页面</string>
+    <string name="action_blank">空白页</string>
     <string name="agent_default">默认</string>
     <string name="agent_desktop">桌面电脑</string>
     <string name="agent_mobile">移动设备</string>
