@@ -66,7 +66,7 @@
     <string name="title_custom_homepage">自訂首頁</string>
     <string name="action_webpage">網頁</string>
     <string name="title_clear_history">清除歷史記錄</string>
-    <string name="title_clear_cookies">清除 cookies</string>
+    <string name="title_clear_cookies">清除 Cookies</string>
     <string name="dialog_history">您是否想清除所有瀏覽器歷史記錄？</string>
     <string name="dialog_cookies">您是否想清除所有瀏覽器 Cookies？</string>
     <string name="action_yes">是</string>
@@ -139,7 +139,7 @@
     <string name="hint_username">使用者名稱</string>
     <string name="hint_password">密碼</string>
     <string name="search_suggestions">搜尋建議</string>
-    <string name="powered_by_google">技術提供：Google </string>
+    <string name="powered_by_google">技術提供：Google</string>
     <string name="powered_by_duck">技術提供：DuckDuckGo</string>
     <string name="powered_by_baidu">技術提供：百度</string>
     <string name="search_suggestions_off">關閉搜尋建議</string>
