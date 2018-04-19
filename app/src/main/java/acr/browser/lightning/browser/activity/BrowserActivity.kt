@@ -7,7 +7,6 @@ package acr.browser.lightning.browser.activity
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
-import acr.browser.lightning.R.id.toolbar_layout
 import acr.browser.lightning.browser.*
 import acr.browser.lightning.browser.fragment.BookmarksFragment
 import acr.browser.lightning.browser.fragment.TabsFragment
@@ -27,7 +26,6 @@ import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
@@ -229,7 +227,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         //TODO make sure dark theme flag gets set correctly
         isDarkTheme = userPreferences.useTheme != 0 || isIncognito()
-        iconColor = if (isDarkTheme) ThemeUtils.getIconDarkThemeColor(this) else ThemeUtils.getIconLightThemeColor(this)
+        iconColor = if (isDarkTheme) {
+            ThemeUtils.getIconDarkThemeColor(this)
+        } else {
+            ThemeUtils.getIconLightThemeColor(this)
+        }
         disabledIconColor = if (isDarkTheme) {
             ContextCompat.getColor(this, R.color.icon_dark_theme_disabled)
         } else {
@@ -308,10 +310,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         actionBar.setCustomView(R.layout.toolbar_content)
 
         val customView = actionBar.customView
-        val lp = customView.layoutParams
-        lp.width = LayoutParams.MATCH_PARENT
-        lp.height = LayoutParams.MATCH_PARENT
-        customView.layoutParams = lp
+        customView.layoutParams = customView.layoutParams.apply {
+            width = LayoutParams.MATCH_PARENT
+            height = LayoutParams.MATCH_PARENT
+        }
 
         arrowImageView = customView.findViewById<ImageView>(R.id.arrow).also {
             if (shouldShowTabsInDrawer) {
@@ -386,7 +388,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             WebIconDatabase.getInstance().open(getDir("icons", Context.MODE_PRIVATE).path)
         }
 
-        var intent: Intent? = if (savedInstanceState == null) intent else null
+        var intent: Intent? = if (savedInstanceState == null) {
+            intent
+        } else {
+            null
+        }
 
         val launchedFromHistory = intent != null && intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0
 
@@ -410,7 +416,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun getTabsFragmentViewId(): Int = if (shouldShowTabsInDrawer) {
-        if (swapBookmarksAndTabs) R.id.right_drawer else R.id.left_drawer
+        if (swapBookmarksAndTabs) {
+            R.id.right_drawer
+        } else {
+            R.id.left_drawer
+        }
     } else {
         R.id.tabs_toolbar_container
     }
@@ -565,24 +575,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             Utils.dpToPx(300f)
         }
         if (width > maxWidth) {
-            val params = left_drawer
-                    .layoutParams as android.support.v4.widget.DrawerLayout.LayoutParams
+            val params = left_drawer.layoutParams as DrawerLayout.LayoutParams
             params.width = maxWidth
             left_drawer.layoutParams = params
             left_drawer.requestLayout()
-            val paramsRight = right_drawer
-                    .layoutParams as android.support.v4.widget.DrawerLayout.LayoutParams
+            val paramsRight = right_drawer.layoutParams as DrawerLayout.LayoutParams
             paramsRight.width = maxWidth
             right_drawer.layoutParams = paramsRight
             right_drawer.requestLayout()
         } else {
-            val params = left_drawer
-                    .layoutParams as android.support.v4.widget.DrawerLayout.LayoutParams
+            val params = left_drawer.layoutParams as DrawerLayout.LayoutParams
             params.width = width
             left_drawer.layoutParams = params
             left_drawer.requestLayout()
-            val paramsRight = right_drawer
-                    .layoutParams as android.support.v4.widget.DrawerLayout.LayoutParams
+            val paramsRight = right_drawer.layoutParams as DrawerLayout.LayoutParams
             paramsRight.width = width
             right_drawer.layoutParams = paramsRight
             right_drawer.requestLayout()
@@ -605,10 +611,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         val manager = supportFragmentManager
-        val tabsFragment = manager.findFragmentByTag(TAG_TABS_FRAGMENT)
-        (tabsFragment as? TabsFragment)?.reinitializePreferences()
-        val bookmarksFragment = manager.findFragmentByTag(TAG_BOOKMARK_FRAGMENT)
-        (bookmarksFragment as? BookmarksFragment)?.reinitializePreferences()
+        val tabsFragment = manager.findFragmentByTag(TAG_TABS_FRAGMENT) as? TabsFragment
+        tabsFragment?.reinitializePreferences()
+        val bookmarksFragment = manager.findFragmentByTag(TAG_BOOKMARK_FRAGMENT)as? BookmarksFragment
+        bookmarksFragment?.reinitializePreferences()
 
         // TODO layout transition causing memory leak
         //        content_frame.setLayoutTransition(new LayoutTransition());
@@ -885,10 +891,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * method that shows a dialog asking what string the user wishes to search
      * for. It highlights the text entered.
      */
-    private fun findInPage() = BrowserDialog.showEditText(this,
+    private fun findInPage() = BrowserDialog.showEditText(
+            this,
             R.string.action_find,
             R.string.search_hint,
-            R.string.search_hint) { text ->
+            R.string.search_hint
+    ) { text ->
         if (text.isNotEmpty()) {
             presenter?.findInPage(text)
             showFindInPageControls(text)
@@ -921,7 +929,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun notifyTabViewRemoved(position: Int) {
-        Log.d(TAG, "Notify Tab Removed: " + position)
+        Log.d(TAG, "Notify Tab Removed: $position")
         tabsView?.tabRemoved(position)
     }
 
@@ -1444,17 +1452,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { item ->
-                    tabsManager.let {
-                        it.allTabs.map(LightningView::url)
-                                .withIndex()
-                                .find { UrlUtils.isHistoryUrl(it.value) }
-                                ?.let {
-                                    presenter?.tabChanged(it.index)
-                                    return@subscribe
-                                }
+                    tabsManager
+                            .allTabs
+                            .map(LightningView::url)
+                            .withIndex()
+                            .find { UrlUtils.isHistoryUrl(it.value) }
+                            ?.let {
+                                presenter?.tabChanged(it.index)
+                                return@subscribe
+                            }
 
-                        newTab(requireNotNull(item), true)
-                    }
+                    newTab(requireNotNull(item), true)
                 }
     }
 
