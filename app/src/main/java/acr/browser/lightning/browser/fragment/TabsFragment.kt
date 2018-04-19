@@ -395,7 +395,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
          * Arguments boolean to tell the fragment it is displayed in the drawner or on the tab strip
          * If true, the fragment is in the left drawner in the strip otherwise.
          */
-        private const val VERTICAL_MODE = TAG + ".VERTICAL_MODE"
-        private const val IS_INCOGNITO = TAG + ".IS_INCOGNITO"
+        private const val VERTICAL_MODE = "$TAG.VERTICAL_MODE"
+        private const val IS_INCOGNITO = "$TAG.IS_INCOGNITO"
     }
 }

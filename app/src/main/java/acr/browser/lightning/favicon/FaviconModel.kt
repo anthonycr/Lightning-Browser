@@ -164,7 +164,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
 
             val hash = uri.host.hashCode().toString()
 
-            return File(app.cacheDir, hash + ".png")
+            return File(app.cacheDir, "$hash.png")
         }
     }
 

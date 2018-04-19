@@ -96,7 +96,11 @@ class BookmarkPage(activity: Activity) {
 
         @JvmStatic
         fun getBookmarkPage(application: Application, folder: String?): File {
-            val prefix = if (!TextUtils.isEmpty(folder)) folder + '-' else ""
+            val prefix = if (!TextUtils.isEmpty(folder)) {
+                "$folder-"
+            } else {
+                ""
+            }
             return File(application.filesDir, prefix + FILENAME)
         }
 

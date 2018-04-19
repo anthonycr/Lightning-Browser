@@ -431,7 +431,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                                 }
                             })
 
-                    faviconFetchSubscriptions.put(url, faviconSubscription)
+                    faviconFetchSubscriptions[url] = faviconSubscription
                 }
                 else -> holder.favicon.setImageBitmap(web.bitmap)
             }

@@ -176,7 +176,7 @@ public final class Utils {
      * could not be extracted. The domain name may include
      * HTTPS if the URL is an SSL supported URL.
      */
-    @Nullable
+    @NonNull
     public static String getDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 

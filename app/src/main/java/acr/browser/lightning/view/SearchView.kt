@@ -48,8 +48,8 @@ class SearchView @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
-    private fun isLongPress(actionDownTime: Long): Boolean
-            = System.currentTimeMillis() - actionDownTime >= ViewConfiguration.getLongPressTimeout()
+    private fun isLongPress(actionDownTime: Long): Boolean =
+            System.currentTimeMillis() - actionDownTime >= ViewConfiguration.getLongPressTimeout()
 
 
 }

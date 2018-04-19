@@ -939,7 +939,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun notifyTabViewChanged(position: Int) {
-        Log.d(TAG, "Notify Tab Changed: " + position)
+        Log.d(TAG, "Notify Tab Changed: $position")
         tabsView?.tabChanged(position)
     }
 
@@ -1276,7 +1276,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 .connectivity()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe { connected ->
-                    Log.d(TAG, "Network connected: " + connected)
+                    Log.d(TAG, "Network connected: $connected")
                     tabsManager.notifyConnectionStatus(connected)
                 }
 

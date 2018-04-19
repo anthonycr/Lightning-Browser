@@ -7,7 +7,6 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,7 @@ class SettingsActivity : ThemableSettingsActivity() {
         root.addView(toolbarContainer)
 
         // now we can set the Toolbar using AppCompatPreferenceActivity
-        setSupportActionbar(toolbarContainer.findViewById<Toolbar>(R.id.toolbar))
+        setSupportActionbar(toolbarContainer.findViewById(R.id.toolbar))
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
     }
 

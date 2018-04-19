@@ -272,8 +272,4 @@ class LightningDialogBuilder @Inject constructor(
                 BrowserApp.copyToClipboard(activity, url)
             })
 
-    companion object {
-        private const val TAG = "LightningDialogBuilder"
-    }
-
 }
