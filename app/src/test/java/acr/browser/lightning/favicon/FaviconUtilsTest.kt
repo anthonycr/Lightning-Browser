@@ -15,7 +15,7 @@ import org.robolectric.annotation.Config
  * Unit tests for FaviconUtils.kt
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = intArrayOf(SDK_VERSION))
+@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
 class FaviconUtilsTest {
 
     @Test(expected = RuntimeException::class)

@@ -22,6 +22,6 @@ class AboutSettingsFragment : AbstractSettingsFragment() {
     }
 
     companion object {
-        private val SETTINGS_VERSION = "pref_version"
+        private const val SETTINGS_VERSION = "pref_version"
     }
 }

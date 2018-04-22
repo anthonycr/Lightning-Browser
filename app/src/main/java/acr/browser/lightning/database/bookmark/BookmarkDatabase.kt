@@ -219,7 +219,7 @@ class BookmarkDatabase @Inject constructor(
                 folders.add(folder)
             }
 
-            Collections.sort(folders)
+            folders.sort()
             return@fromCallable folders
         }
     }
@@ -301,7 +301,7 @@ class BookmarkDatabase @Inject constructor(
     private fun alternateSlashUrl(url: String): String = if (url.endsWith("/")) {
         url.substring(0, url.length - 1)
     } else {
-        url + '/'
+        "$url/"
     }
 
     companion object {

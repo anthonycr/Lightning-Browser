@@ -163,16 +163,16 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     companion object {
 
-        private val SETTINGS_HIDESTATUSBAR = "fullScreenOption"
-        private val SETTINGS_FULLSCREEN = "fullscreen"
-        private val SETTINGS_VIEWPORT = "wideViewPort"
-        private val SETTINGS_OVERVIEWMODE = "overViewMode"
-        private val SETTINGS_REFLOW = "text_reflow"
-        private val SETTINGS_THEME = "app_theme"
-        private val SETTINGS_TEXTSIZE = "text_size"
-        private val SETTINGS_DRAWERTABS = "cb_drawertabs"
-        private val SETTINGS_SWAPTABS = "cb_swapdrawers"
-        private val SETTINGS_BLACK_STATUS = "black_status_bar"
+        private const val SETTINGS_HIDESTATUSBAR = "fullScreenOption"
+        private const val SETTINGS_FULLSCREEN = "fullscreen"
+        private const val SETTINGS_VIEWPORT = "wideViewPort"
+        private const val SETTINGS_OVERVIEWMODE = "overViewMode"
+        private const val SETTINGS_REFLOW = "text_reflow"
+        private const val SETTINGS_THEME = "app_theme"
+        private const val SETTINGS_TEXTSIZE = "text_size"
+        private const val SETTINGS_DRAWERTABS = "cb_drawertabs"
+        private const val SETTINGS_SWAPTABS = "cb_swapdrawers"
+        private const val SETTINGS_BLACK_STATUS = "black_status_bar"
 
         private const val XX_LARGE = 30.0f
         private const val X_LARGE = 26.0f

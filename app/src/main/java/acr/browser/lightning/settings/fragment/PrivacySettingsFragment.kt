@@ -20,21 +20,6 @@ import javax.inject.Named
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
-    private val SETTINGS_LOCATION = "location"
-    private val SETTINGS_THIRDPCOOKIES = "third_party"
-    private val SETTINGS_SAVEPASSWORD = "password"
-    private val SETTINGS_CACHEEXIT = "clear_cache_exit"
-    private val SETTINGS_HISTORYEXIT = "clear_history_exit"
-    private val SETTINGS_COOKIEEXIT = "clear_cookies_exit"
-    private val SETTINGS_CLEARCACHE = "clear_cache"
-    private val SETTINGS_CLEARHISTORY = "clear_history"
-    private val SETTINGS_CLEARCOOKIES = "clear_cookies"
-    private val SETTINGS_CLEARWEBSTORAGE = "clear_webstorage"
-    private val SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit"
-    private val SETTINGS_DONOTTRACK = "do_not_track"
-    private val SETTINGS_WEBRTC = "webrtc_support"
-    private val SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers"
-
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
@@ -183,6 +168,23 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
     private fun clearWebStorage() {
         WebUtils.clearWebStorage()
         Utils.showSnackbar(activity, R.string.message_web_storage_cleared)
+    }
+
+    companion object {
+        private const val SETTINGS_LOCATION = "location"
+        private const val SETTINGS_THIRDPCOOKIES = "third_party"
+        private const val SETTINGS_SAVEPASSWORD = "password"
+        private const val SETTINGS_CACHEEXIT = "clear_cache_exit"
+        private const val SETTINGS_HISTORYEXIT = "clear_history_exit"
+        private const val SETTINGS_COOKIEEXIT = "clear_cookies_exit"
+        private const val SETTINGS_CLEARCACHE = "clear_cache"
+        private const val SETTINGS_CLEARHISTORY = "clear_history"
+        private const val SETTINGS_CLEARCOOKIES = "clear_cookies"
+        private const val SETTINGS_CLEARWEBSTORAGE = "clear_webstorage"
+        private const val SETTINGS_WEBSTORAGEEXIT = "clear_webstorage_exit"
+        private const val SETTINGS_DONOTTRACK = "do_not_track"
+        private const val SETTINGS_WEBRTC = "webrtc_support"
+        private const val SETTINGS_IDENTIFYINGHEADERS = "remove_identifying_headers"
     }
 
 }

@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config
  * Created by anthonycr on 10/27/17.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = intArrayOf(SDK_VERSION))
+@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
 class UriUtilsTest {
 
     @Test

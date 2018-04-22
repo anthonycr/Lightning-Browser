@@ -96,7 +96,7 @@ public class HtmlFetcher {
     private final AtomicInteger cacheCounter = new AtomicInteger(0);
     private int maxTextLength = -1;
     private ArticleTextExtractor extractor = new ArticleTextExtractor();
-    @NonNull private Set<String> furtherResolveNecessary = new LinkedHashSet<String>() {
+    @NonNull private final Set<String> furtherResolveNecessary = new LinkedHashSet<String>() {
         {
             add("bit.ly");
             add("cli.gs");
@@ -333,7 +333,7 @@ public class HtmlFetcher {
         }
     }
 
-    @Nullable
+    @NonNull
     private String lessText(@Nullable String text) {
         if (text == null)
             return "";

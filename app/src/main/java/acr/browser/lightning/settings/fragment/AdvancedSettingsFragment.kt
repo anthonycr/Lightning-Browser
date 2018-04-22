@@ -15,14 +15,6 @@ import javax.inject.Inject
  */
 class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
-    private val SETTINGS_NEW_WINDOW = "allow_new_window"
-    private val SETTINGS_ENABLE_COOKIES = "allow_cookies"
-    private val SETTINGS_COOKIES_INCOGNITO = "incognito_cookies"
-    private val SETTINGS_RESTORE_TABS = "restore_tabs"
-    private val SETTINGS_RENDERING_MODE = "rendering_mode"
-    private val SETTINGS_URL_CONTENT = "url_contents"
-    private val SETTINGS_TEXT_ENCODING = "text_encoding"
-
     @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_advanced
@@ -173,6 +165,16 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
         val stringArray = resources.getStringArray(R.array.url_content_array)
 
         return stringArray[preference]
+    }
+
+    companion object {
+        private const val SETTINGS_NEW_WINDOW = "allow_new_window"
+        private const val SETTINGS_ENABLE_COOKIES = "allow_cookies"
+        private const val SETTINGS_COOKIES_INCOGNITO = "incognito_cookies"
+        private const val SETTINGS_RESTORE_TABS = "restore_tabs"
+        private const val SETTINGS_RENDERING_MODE = "rendering_mode"
+        private const val SETTINGS_URL_CONTENT = "url_contents"
+        private const val SETTINGS_TEXT_ENCODING = "text_encoding"
     }
 
 }

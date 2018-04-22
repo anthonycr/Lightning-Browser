@@ -208,7 +208,7 @@ public final class FileUtils {
      * @param directory the directory to find the first existent parent
      * @return the first existent parent
      */
-    @Nullable
+    @NonNull
     private static String getFirstRealParentDirectory(@Nullable String directory) {
         while (true) {
             if (directory == null || directory.isEmpty()) {

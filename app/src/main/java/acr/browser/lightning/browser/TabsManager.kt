@@ -350,7 +350,7 @@ class TabsManager {
      * @return returns true if the current tab was deleted, false otherwise.
      */
     fun deleteTab(position: Int): Boolean {
-        Log.d(TAG, "Delete tab: " + position)
+        Log.d(TAG, "Delete tab: $position")
         val currentTab = currentTab
         val current = positionOf(currentTab)
 
@@ -453,9 +453,9 @@ class TabsManager {
      * @return the selected tab or null if position is out of tabs range.
      */
     fun switchToTab(position: Int): LightningView? {
-        Log.d(TAG, "switch to tab: " + position)
+        Log.d(TAG, "switch to tab: $position")
         return if (position < 0 || position >= tabList.size) {
-            Log.e(TAG, "Returning a null LightningView requested for position: " + position)
+            Log.e(TAG, "Returning a null LightningView requested for position: $position")
             null
         } else {
             val tab = tabList[position]
