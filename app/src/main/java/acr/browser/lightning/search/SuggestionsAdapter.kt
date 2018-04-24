@@ -16,12 +16,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.anthonycr.bonsai.*
+import io.reactivex.Completable
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import java.io.File
-import java.io.FilenameFilter
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -32,7 +32,7 @@ class SuggestionsAdapter(
         incognito: Boolean
 ) : BaseAdapter(), Filterable {
 
-    private val filterScheduler = Schedulers.newSingleThreadedScheduler()
+    private val filterScheduler = Schedulers.newThread()
     private val maxSuggestions = 5
 
     private val filteredList = ArrayList<HistoryItem>(5)
@@ -101,9 +101,6 @@ class SuggestionsAdapter(
             suggestionsRepositoryForPreference()
         }
     }
-
-    // We don't need these cache files anymore
-    fun clearCache() = Schedulers.io().execute(ClearCacheRunnable(application))
 
     fun refreshBookmarks() {
         bookmarkManager.getAllBookmarks()
@@ -180,64 +177,63 @@ class SuggestionsAdapter(
     }
 
     private fun clearSuggestions() {
-        Completable.create({ subscriber ->
-            bookmarks.clear()
-            history.clear()
-            suggestions.clear()
-            subscriber.onComplete()
-        }).subscribeOn(filterScheduler)
-                .observeOn(Schedulers.main())
+        Completable
+                .fromAction {
+                    bookmarks.clear()
+                    history.clear()
+                    suggestions.clear()
+                }
+                .subscribeOn(filterScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
     }
 
     private fun combineResults(bookmarkList: List<HistoryItem>?,
                                historyList: List<HistoryItem>?,
                                suggestionList: List<HistoryItem>?) {
-        Single.create(SingleAction<List<HistoryItem>> { subscriber ->
-            val list = ArrayList<HistoryItem>(5)
-            if (bookmarkList != null) {
-                bookmarks.clear()
-                bookmarks.addAll(bookmarkList)
-            }
-            if (historyList != null) {
-                history.clear()
-                history.addAll(historyList)
-            }
-            if (suggestionList != null) {
-                suggestions.clear()
-                suggestions.addAll(suggestionList)
-            }
-            val bookmark = bookmarks.iterator()
-            val history = history.iterator()
-            val suggestion = suggestions.listIterator()
-            while (list.size < maxSuggestions) {
-                if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
-                    break
-                }
-                if (bookmark.hasNext()) {
-                    list.add(bookmark.next())
-                }
-                if (suggestion.hasNext() && list.size < maxSuggestions) {
-                    list.add(suggestion.next())
-                }
-                if (history.hasNext() && list.size < maxSuggestions) {
-                    list.add(history.next())
-                }
-            }
+        Single
+                .create<List<HistoryItem>> {
+                    val list = ArrayList<HistoryItem>(5)
+                    if (bookmarkList != null) {
+                        bookmarks.clear()
+                        bookmarks.addAll(bookmarkList)
+                    }
+                    if (historyList != null) {
+                        history.clear()
+                        history.addAll(historyList)
+                    }
+                    if (suggestionList != null) {
+                        suggestions.clear()
+                        suggestions.addAll(suggestionList)
+                    }
+                    val bookmark = bookmarks.iterator()
+                    val history = history.iterator()
+                    val suggestion = suggestions.listIterator()
+                    while (list.size < maxSuggestions) {
+                        if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
+                            break
+                        }
+                        if (bookmark.hasNext()) {
+                            list.add(bookmark.next())
+                        }
+                        if (suggestion.hasNext() && list.size < maxSuggestions) {
+                            list.add(suggestion.next())
+                        }
+                        if (history.hasNext() && list.size < maxSuggestions) {
+                            list.add(history.next())
+                        }
+                    }
 
-            Collections.sort(list, filterComparator)
-            subscriber.onItem(list)
-            subscriber.onComplete()
-        }).subscribeOn(filterScheduler)
-                .observeOn(Schedulers.main())
-                .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                    override fun onItem(item: List<HistoryItem>?) =
-                            publishResults(requireNotNull(item))
-                })
+                    Collections.sort(list, filterComparator)
+                    it.onSuccess(list)
+                }
+                .subscribeOn(filterScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::publishResults)
     }
 
     private fun getBookmarksForQuery(query: String): Single<List<HistoryItem>> =
-            Single.create({ subscriber ->
+            Single.create {
                 val bookmarks = ArrayList<HistoryItem>(5)
                 var counter = 0
                 for (n in allBookmarks.indices) {
@@ -253,9 +249,8 @@ class SuggestionsAdapter(
                         counter++
                     }
                 }
-                subscriber.onItem(bookmarks)
-                subscriber.onComplete()
-            })
+                it.onSuccess(bookmarks)
+            }
 
     private class SearchFilter internal constructor(
             var suggestionsRepository: SuggestionsRepository,
@@ -286,12 +281,11 @@ class SuggestionsAdapter(
             }
 
             suggestionsAdapter.getBookmarksForQuery(query)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.main())
-                    .subscribe(object : SingleOnSubscribe<List<HistoryItem>>() {
-                        override fun onItem(item: List<HistoryItem>?) =
-                                suggestionsAdapter.combineResults(item, null, null)
-                    })
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { list ->
+                        suggestionsAdapter.combineResults(list, null, null)
+                    }
 
             if (historyDisposable?.isDisposed != false) {
                 historyDisposable = historyModel.findHistoryItemsContaining(query)
@@ -310,23 +304,6 @@ class SuggestionsAdapter(
 
         override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) =
                 suggestionsAdapter.combineResults(null, null, null)
-    }
-
-    private class ClearCacheRunnable internal constructor(private val app: Application) : Runnable {
-
-        override fun run() {
-            val dir = File(app.cacheDir.toString())
-            val fileList = dir.list(NameFilter())
-            fileList.map { File(dir.path + it) }
-                    .forEach { it.delete() }
-        }
-
-        private class NameFilter : FilenameFilter {
-
-            private val cacheFileType = ".sgg"
-
-            override fun accept(dir: File, filename: String) = filename.endsWith(cacheFileType)
-        }
     }
 
     private class SuggestionsComparator : Comparator<HistoryItem> {

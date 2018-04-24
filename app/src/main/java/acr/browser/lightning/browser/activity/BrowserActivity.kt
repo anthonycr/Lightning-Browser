@@ -1137,7 +1137,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         } else if (isIncognito()) {
             WebUtils.clearWebStorage()     // We want to make sure incognito mode is secure
         }
-        suggestionsAdapter?.clearCache()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
