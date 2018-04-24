@@ -7,7 +7,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.history.HistoryRepository
 import android.app.Application
-import com.anthonycr.bonsai.Completable
+import io.reactivex.Completable
 import io.reactivex.Single
 import java.io.File
 import java.io.FileWriter
@@ -61,15 +61,12 @@ class HistoryPage {
          * when subscribed.
          */
         @JvmStatic
-        fun deleteHistoryPage(application: Application): Completable =
-                Completable.create { subscriber ->
-                    val historyWebPage = getHistoryPageFile(application)
-                    if (historyWebPage.exists()) {
-                        historyWebPage.delete()
-                    }
-
-                    subscriber.onComplete()
-                }
+        fun deleteHistoryPage(application: Application): Completable = Completable.fromAction {
+            val historyWebPage = getHistoryPageFile(application)
+            if (historyWebPage.exists()) {
+                historyWebPage.delete()
+            }
+        }
     }
 
 }
