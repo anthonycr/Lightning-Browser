@@ -1,8 +1,8 @@
 package acr.browser.lightning.view
 
 import acr.browser.lightning.R
+import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.utils.Utils
 import android.content.Context
 import android.graphics.Bitmap
 
@@ -22,10 +22,8 @@ class LightningViewTitle(private val context: Context) {
      *
      * @param favicon the potentially null favicon to set.
      */
-    fun setFavicon(favicon: Bitmap?) = if (favicon == null) {
-        this.favicon = null
-    } else {
-        this.favicon = Utils.padFavicon(favicon)
+    fun setFavicon(favicon: Bitmap?) {
+        this.favicon = favicon?.pad()
     }
 
     /**

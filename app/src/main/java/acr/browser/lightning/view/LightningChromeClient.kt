@@ -22,9 +22,9 @@ import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.webkit.*
-import com.anthonycr.bonsai.Schedulers
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
+import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class LightningChromeClient(
@@ -66,7 +66,7 @@ class LightningChromeClient(
         }
 
         faviconModel.cacheFaviconForUrl(icon, url)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe()
     }
 

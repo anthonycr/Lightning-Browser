@@ -31,13 +31,11 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import com.anthonycr.bonsai.Schedulers
-import com.anthonycr.bonsai.SingleOnSubscribe
-import com.anthonycr.bonsai.Subscription
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.bookmark_drawer.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -354,7 +352,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     ) : RecyclerView.Adapter<BookmarkViewHolder>() {
 
         private var bookmarks: List<HistoryItem> = ArrayList()
-        private val faviconFetchSubscriptions = ConcurrentHashMap<String, Subscription>()
+        private val faviconFetchSubscriptions = ConcurrentHashMap<String, Disposable>()
 
         var onItemLongCLickListener: OnItemLongClickListener? = null
         var onItemClickListener: OnItemClickListener? = null
@@ -388,7 +386,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
         internal fun cleanupSubscriptions() {
             for (subscription in faviconFetchSubscriptions.values) {
-                subscription.unsubscribe()
+                subscription.dispose()
             }
             faviconFetchSubscriptions.clear()
         }
@@ -413,23 +411,21 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
                     val url = web.url
 
-                    faviconFetchSubscriptions[url]?.unsubscribe()
+                    faviconFetchSubscriptions[url]?.dispose()
                     faviconFetchSubscriptions.remove(url)
 
                     val faviconSubscription = faviconModel.faviconForUrl(url, web.title)
                             .subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.main())
-                            .subscribe(object : SingleOnSubscribe<Bitmap>() {
-                                override fun onItem(item: Bitmap?) {
-                                    faviconFetchSubscriptions.remove(url)
-                                    val tag = holder.favicon.tag
-                                    if (tag != null && tag == url.hashCode()) {
-                                        holder.favicon.setImageBitmap(item)
-                                    }
-
-                                    web.bitmap = item
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe { bitmap ->
+                                faviconFetchSubscriptions.remove(url)
+                                val tag = holder.favicon.tag
+                                if (tag != null && tag == url.hashCode()) {
+                                    holder.favicon.setImageBitmap(bitmap)
                                 }
-                            })
+
+                                web.bitmap = bitmap
+                            }
 
                     faviconFetchSubscriptions[url] = faviconSubscription
                 }
