@@ -23,6 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -32,7 +33,7 @@ class SuggestionsAdapter(
         incognito: Boolean
 ) : BaseAdapter(), Filterable {
 
-    private val filterScheduler = Schedulers.newThread()
+    private val filterScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
     private val maxSuggestions = 5
 
     private val filteredList = ArrayList<HistoryItem>(5)
