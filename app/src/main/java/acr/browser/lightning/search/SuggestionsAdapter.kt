@@ -262,6 +262,7 @@ class SuggestionsAdapter(
 
         private var networkDisposable: Disposable? = null
         private var historyDisposable: Disposable? = null
+        private var bookmarkDisposable: Disposable? = null
 
         override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
             val results = Filter.FilterResults()
@@ -280,12 +281,14 @@ class SuggestionsAdapter(
                         }
             }
 
-            suggestionsAdapter.getBookmarksForQuery(query)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { list ->
-                        suggestionsAdapter.combineResults(list, null, null)
-                    }
+            if (bookmarkDisposable?.isDisposed != false) {
+                bookmarkDisposable = suggestionsAdapter.getBookmarksForQuery(query)
+                        .subscribeOn(databaseScheduler)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { list ->
+                            suggestionsAdapter.combineResults(list, null, null)
+                        }
+            }
 
             if (historyDisposable?.isDisposed != false) {
                 historyDisposable = historyModel.findHistoryItemsContaining(query)
