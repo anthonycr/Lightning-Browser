@@ -23,13 +23,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.anthonycr.bonsai.Schedulers;
-import com.anthonycr.bonsai.Single;
-import com.anthonycr.bonsai.SingleAction;
-import com.anthonycr.bonsai.SingleOnSubscribe;
-import com.anthonycr.bonsai.SingleSubscriber;
-import com.anthonycr.bonsai.Subscription;
-
 import javax.inject.Inject;
 
 import acr.browser.lightning.BrowserApp;
@@ -43,6 +36,13 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class ReadingActivity extends AppCompatActivity {
 
@@ -57,7 +57,7 @@ public class ReadingActivity extends AppCompatActivity {
     @Nullable private String mUrl = null;
     private int mTextSize;
     @Nullable private ProgressDialog mProgressDialog;
-    private Subscription mPageLoaderSubscription;
+    private Disposable mPageLoaderSubscription;
 
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
@@ -152,68 +152,65 @@ public class ReadingActivity extends AppCompatActivity {
         if (mUrl == null) {
             return false;
         }
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
-        mPageLoaderSubscription = loadPage(mUrl).subscribeOn(Schedulers.worker())
-            .observeOn(Schedulers.main())
-            .subscribe(new SingleOnSubscribe<ReaderInfo>() {
-                @Override
-                public void onStart() {
-                    mProgressDialog = new ProgressDialog(ReadingActivity.this);
-                    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    mProgressDialog.setCancelable(false);
-                    mProgressDialog.setIndeterminate(true);
-                    mProgressDialog.setMessage(getString(R.string.loading));
-                    mProgressDialog.show();
-                    BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
-                }
+        }
 
+        mProgressDialog = new ProgressDialog(ReadingActivity.this);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setMessage(getString(R.string.loading));
+        mProgressDialog.show();
+        BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
+
+        mPageLoaderSubscription = loadPage(mUrl)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<ReaderInfo>() {
                 @Override
-                public void onItem(@Nullable ReaderInfo item) {
-                    if (item == null || item.getTitle().isEmpty() || item.getBody().isEmpty()) {
+                public void accept(@NonNull ReaderInfo readerInfo) {
+                    if (readerInfo.getTitle().isEmpty() || readerInfo.getBody().isEmpty()) {
                         setText(getString(R.string.untitled), getString(R.string.loading_failed));
                     } else {
-                        setText(item.getTitle(), item.getBody());
+                        setText(readerInfo.getTitle(), readerInfo.getBody());
                     }
+                    dismissProgressDialog();
                 }
-
+            }, new Consumer<Throwable>() {
                 @Override
-                public void onError(@NonNull Throwable throwable) {
+                public void accept(@NonNull Throwable throwable) {
                     setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                        mProgressDialog.dismiss();
-                        mProgressDialog = null;
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                        mProgressDialog.dismiss();
-                        mProgressDialog = null;
-                    }
+                    dismissProgressDialog();
                 }
             });
         return true;
     }
 
+    private void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
+    }
+
+    @NonNull
     private static Single<ReaderInfo> loadPage(@NonNull final String url) {
-        return Single.create(new SingleAction<ReaderInfo>() {
+        return Single.create(new SingleOnSubscribe<ReaderInfo>() {
             @Override
-            public void onSubscribe(@NonNull SingleSubscriber<ReaderInfo> subscriber) {
+            public void subscribe(SingleEmitter<ReaderInfo> emitter) {
                 HtmlFetcher fetcher = new HtmlFetcher();
                 try {
                     JResult result = fetcher.fetchAndExtract(url, 2500, true);
-                    subscriber.onItem(new ReaderInfo(result.getTitle(), result.getText()));
+                    emitter.onSuccess(new ReaderInfo(result.getTitle(), result.getText()));
                 } catch (Exception e) {
-                    subscriber.onError(new Throwable("Encountered exception"));
+                    emitter.onError(new Throwable("Encountered exception"));
                     Log.e(TAG, "Error parsing page", e);
                 } catch (OutOfMemoryError e) {
                     System.gc();
-                    subscriber.onError(new Throwable("Out of memory"));
+                    emitter.onError(new Throwable("Out of memory"));
                     Log.e(TAG, "Out of memory", e);
                 }
-                subscriber.onComplete();
             }
         });
     }
@@ -222,7 +219,7 @@ public class ReadingActivity extends AppCompatActivity {
         @NonNull private final String mTitleText;
         @NonNull private final String mBodyText;
 
-        public ReaderInfo(@NonNull String title, @NonNull String body) {
+        ReaderInfo(@NonNull String title, @NonNull String body) {
             mTitleText = title;
             mBodyText = body;
         }
@@ -266,7 +263,7 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mPageLoaderSubscription.unsubscribe();
+        mPageLoaderSubscription.dispose();
 
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
