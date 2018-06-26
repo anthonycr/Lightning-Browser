@@ -25,6 +25,7 @@ class SearchEngineProvider @Inject constructor(
                 8 -> DuckLiteSearch()
                 9 -> BaiduSearch()
                 10 -> YandexSearch()
+                11 -> NaverSearch()
                 else -> GoogleSearch()
             }
 
@@ -41,6 +42,7 @@ class SearchEngineProvider @Inject constructor(
                 is DuckLiteSearch -> 8
                 is BaiduSearch -> 9
                 is YandexSearch -> 10
+                is NaverSearch -> 11
                 else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
             }
 
@@ -55,7 +57,8 @@ class SearchEngineProvider @Inject constructor(
             DuckSearch(),
             DuckLiteSearch(),
             BaiduSearch(),
-            YandexSearch()
+            YandexSearch(),
+            NaverSearch()
     )
 
 }

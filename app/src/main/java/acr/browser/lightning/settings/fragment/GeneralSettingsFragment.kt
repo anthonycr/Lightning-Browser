@@ -452,6 +452,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 Suggestions.GOOGLE -> getString(R.string.powered_by_google)
                 Suggestions.DUCK -> getString(R.string.powered_by_duck)
                 Suggestions.BAIDU -> getString(R.string.powered_by_baidu)
+                Suggestions.NAVER -> getString(R.string.powered_by_naver)
             }
 
     private fun showSearchSuggestionsDialog(summaryUpdater: SummaryUpdater) {
@@ -462,6 +463,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                 Suggestions.GOOGLE -> 0
                 Suggestions.DUCK -> 1
                 Suggestions.BAIDU -> 2
+                Suggestions.NAVER -> 3
                 Suggestions.NONE -> 3
             }
 
@@ -470,7 +472,8 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
                     0 -> Suggestions.GOOGLE
                     1 -> Suggestions.DUCK
                     2 -> Suggestions.BAIDU
-                    3 -> Suggestions.NONE
+                    3 -> Suggestions.NAVER
+                    4 -> Suggestions.NONE
                     else -> Suggestions.GOOGLE
                 }
                 userPreferences.searchSuggestionChoice = suggestionsProvider.index

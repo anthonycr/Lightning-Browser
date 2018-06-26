@@ -170,4 +170,6 @@
     <string name="invert_color">색상 반전</string>
     <string name="dark_theme">어두운 테마 사용</string>
     <string name="tabs">탭</string>
+    <string name="search_engine_naver">네이버</string>
+    <string name="powered_by_naver">네이버 제공</string>
 </resources>

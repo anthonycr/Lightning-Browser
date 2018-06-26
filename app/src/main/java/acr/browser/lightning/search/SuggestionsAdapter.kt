@@ -92,6 +92,7 @@ class SuggestionsAdapter(
                 1 -> GoogleSuggestionsModel(application)
                 2 -> DuckSuggestionsModel(application)
                 3 -> BaiduSuggestionsModel(application)
+                4 -> NaverSuggestionsModel(application)
                 else -> GoogleSuggestionsModel(application)
             }
 
