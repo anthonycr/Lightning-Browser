@@ -19,8 +19,6 @@ import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.webkit.URLUtil
-import com.anthonycr.bonsai.CompletableOnSubscribe
-import com.anthonycr.bonsai.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -51,15 +49,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun setupTabs(intent: Intent?) {
         tabsModel.initializeTabs(view as Activity, intent, isIncognito)
-                .subscribeOn(Schedulers.main())
-                .subscribe(object : CompletableOnSubscribe() {
-                    override fun onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        view.notifyTabViewInitialized()
-                        view.updateTabNumber(tabsModel.size())
-                        tabChanged(tabsModel.last())
-                    }
-                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    // At this point we always have at least a tab in the tab manager
+                    view.notifyTabViewInitialized()
+                    view.updateTabNumber(tabsModel.size())
+                    tabChanged(tabsModel.last())
+                }
     }
 
     /**
