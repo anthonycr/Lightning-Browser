@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * Created by anthonycr on 10/21/17.
  */
-class DisposableBroadcastReceiver(
+class BroadcastReceiverDisposable(
         private val context: Context,
         private val broadcastReceiver: BroadcastReceiver
 ) : Disposable {

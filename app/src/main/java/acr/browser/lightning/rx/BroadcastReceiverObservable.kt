@@ -13,7 +13,7 @@ import io.reactivex.Observer
  *
  * Created by anthonycr on 3/30/18.
  */
-class ObservableBroadcastReceiver(
+class BroadcastReceiverObservable(
         private val action: String,
         private val application: Application
 ) : Observable<Intent>() {
@@ -31,7 +31,7 @@ class ObservableBroadcastReceiver(
             addAction(action)
         })
 
-        observer.onSubscribe(DisposableBroadcastReceiver(application, receiver))
+        observer.onSubscribe(BroadcastReceiverDisposable(application, receiver))
     }
 
 }

@@ -15,7 +15,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * Unit tests for [DisposableBroadcastReceiver].
+ * Unit tests for [BroadcastReceiverDisposable].
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
@@ -26,14 +26,14 @@ class DisposableBroadcastReceiverTest {
 
     @Test
     fun `isDisposed defaults to false`() {
-        val disposableBroadcastReceiver = DisposableBroadcastReceiver(context, broadcastReceiver)
+        val disposableBroadcastReceiver = BroadcastReceiverDisposable(context, broadcastReceiver)
 
         assertThat(disposableBroadcastReceiver.isDisposed).isFalse()
     }
 
     @Test
     fun `isDisposed returns true after dispose`() {
-        val disposableBroadcastReceiver = DisposableBroadcastReceiver(context, broadcastReceiver)
+        val disposableBroadcastReceiver = BroadcastReceiverDisposable(context, broadcastReceiver)
 
         disposableBroadcastReceiver.dispose()
 
@@ -42,7 +42,7 @@ class DisposableBroadcastReceiverTest {
 
     @Test
     fun `dispose unregisters receiver once`() {
-        val disposableBroadcastReceiver = DisposableBroadcastReceiver(context, broadcastReceiver)
+        val disposableBroadcastReceiver = BroadcastReceiverDisposable(context, broadcastReceiver)
 
         disposableBroadcastReceiver.dispose()
         disposableBroadcastReceiver.dispose()
