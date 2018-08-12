@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.anthonycr.bonsai.Schedulers;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +16,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+
+import io.reactivex.Completable;
+import io.reactivex.functions.Action;
 
 /**
  * A utility class containing helpful methods
@@ -41,8 +42,8 @@ public final class FileUtils {
      * @param bundle the bundle to store in persistent storage.
      * @param name   the name of the file to store the bundle in.
      */
-    public static void writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
-        Schedulers.io().execute(new Runnable() {
+    public static Completable writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
+        return Completable.fromAction(new Action() {
             @Override
             public void run() {
                 File outputFile = new File(app.getFilesDir(), name);

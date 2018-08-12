@@ -35,7 +35,6 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.bookmark_drawer.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -55,6 +54,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     @Inject internal lateinit var faviconModel: FaviconModel
 
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
 
     private lateinit var uiController: UIController
 
@@ -137,7 +137,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         setupNavigationButton(view, R.id.action_toggle_desktop, R.id.action_toggle_desktop_image)
 
 
-        bookmarkAdapter = BookmarkListAdapter(faviconModel, folderBitmap!!, webPageBitmap!!).apply {
+        bookmarkAdapter = BookmarkListAdapter(faviconModel, folderBitmap!!, webPageBitmap!!, networkScheduler).apply {
             onItemClickListener = itemClickListener
             onItemLongCLickListener = itemLongClickListener
         }
@@ -348,7 +348,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     private class BookmarkListAdapter(
             private val faviconModel: FaviconModel,
             private val folderBitmap: Bitmap,
-            private val webpageBitmap: Bitmap
+            private val webpageBitmap: Bitmap,
+            private val networkScheduler: Scheduler
     ) : RecyclerView.Adapter<BookmarkViewHolder>() {
 
         private var bookmarks: List<HistoryItem> = ArrayList()
@@ -415,7 +416,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     faviconFetchSubscriptions.remove(url)
 
                     val faviconSubscription = faviconModel.faviconForUrl(url, web.title)
-                            .subscribeOn(Schedulers.io())
+                            .subscribeOn(networkScheduler)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe { bitmap ->
                                 faviconFetchSubscriptions.remove(url)

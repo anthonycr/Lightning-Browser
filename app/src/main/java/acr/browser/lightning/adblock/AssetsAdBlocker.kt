@@ -66,8 +66,8 @@ class AssetsAdBlocker @Inject internal constructor(
 
         val domains = ArrayList<String>(1)
 
-        reader.use {
-            it.forEachLine {
+        reader.use { inputStreamReader ->
+            inputStreamReader.forEachLine {
                 lineBuilder.append(it)
 
                 parseString(lineBuilder, domains)

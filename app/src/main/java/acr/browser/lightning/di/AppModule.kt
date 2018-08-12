@@ -30,6 +30,11 @@ class AppModule(private val app: BrowserApp) {
     fun providesIoThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 
     @Provides
+    @Named("disk")
+    @Singleton
+    fun providesDiskThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
+
+    @Provides
     @Named("network")
     @Singleton
     fun providesNetworkThread(): Scheduler = Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))

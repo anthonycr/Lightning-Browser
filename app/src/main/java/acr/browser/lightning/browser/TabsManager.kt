@@ -26,7 +26,6 @@ import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -55,6 +54,7 @@ class TabsManager {
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -139,7 +139,7 @@ class TabsManager {
     private fun restoreLostTabs(newTabUrl: String?, activity: Activity,
                                 emitter: CompletableEmitter) {
         restoreState()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(diskScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = { bundle ->
@@ -402,6 +402,8 @@ class TabsManager {
             }
         }
         FileUtils.writeBundleToStorage(app, outState, BUNDLE_STORAGE)
+                .subscribeOn(diskScheduler)
+                .subscribe()
     }
 
     /**

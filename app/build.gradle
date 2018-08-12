@@ -146,8 +146,6 @@ dependencies {
     implementation "info.guardianproject.netcipher:netcipher:$netCipherVersion"
     implementation "info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion"
 
-    implementation 'com.anthonycr.bonsai:bonsai:1.1.0'
-
     implementation 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis

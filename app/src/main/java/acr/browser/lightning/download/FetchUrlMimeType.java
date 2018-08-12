@@ -12,14 +12,14 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 
-import com.anthonycr.bonsai.Schedulers;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import acr.browser.lightning.R;
 import acr.browser.lightning.utils.Utils;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 
 /**
  * This class is used to pull down the http headers of a given URL so that we
@@ -29,7 +29,7 @@ import acr.browser.lightning.utils.Utils;
  * just clicks on the link, we will do the same steps of correcting the mimetype
  * down in android.os.webkit.LoadListener rather than handling it here.
  */
-class FetchUrlMimeType extends Thread {
+class FetchUrlMimeType {
 
     private static final String TAG = "FetchUrlMimeType";
 
@@ -48,91 +48,83 @@ class FetchUrlMimeType extends Thread {
         mUserAgent = userAgent;
     }
 
-    @Override
-    public void run() {
-        // User agent is likely to be null, though the AndroidHttpClient
-        // seems ok with that.
-        String mimeType = null;
-        String contentDisposition = null;
-        HttpURLConnection connection = null;
-        try {
-            URL url = new URL(mUri);
-            connection = (HttpURLConnection) url.openConnection();
-            if (mCookies != null && !mCookies.isEmpty()) {
-                connection.addRequestProperty("Cookie", mCookies);
-                connection.setRequestProperty("User-Agent", mUserAgent);
-            }
-            connection.connect();
-            // We could get a redirect here, but if we do lets let
-            // the download manager take care of it, and thus trust that
-            // the server sends the right mimetype
-            if (connection.getResponseCode() == 200) {
-                String header = connection.getHeaderField("Content-Type");
-                if (header != null) {
-                    mimeType = header;
-                    final int semicolonIndex = mimeType.indexOf(';');
-                    if (semicolonIndex != -1) {
-                        mimeType = mimeType.substring(0, semicolonIndex);
-                    }
-                }
-                String contentDispositionHeader = connection.getHeaderField("Content-Disposition");
-                if (contentDispositionHeader != null) {
-                    contentDisposition = contentDispositionHeader;
-                }
-            }
-        } catch (@NonNull IllegalArgumentException | IOException ex) {
-            if (connection != null)
-                connection.disconnect();
-        } finally {
-            if (connection != null)
-                connection.disconnect();
-        }
-
-        String filename = "";
-        if (mimeType != null) {
-            if (mimeType.equalsIgnoreCase("text/plain")
-                || mimeType.equalsIgnoreCase("application/octet-stream")) {
-                String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    Utils.guessFileExtension(mUri));
-                if (newMimeType != null) {
-                    mRequest.setMimeType(newMimeType);
-                }
-            }
-            filename = URLUtil.guessFileName(mUri, contentDisposition, mimeType);
-            mRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-        }
-
-        // Start the download
-        DownloadManager manager = (DownloadManager) mContext
-            .getSystemService(Context.DOWNLOAD_SERVICE);
-        try {
-            manager.enqueue(mRequest);
-        } catch (IllegalArgumentException e) {
-            // Probably got a bad URL or something
-            Log.e(TAG, "Unable to enqueue request", e);
-            Schedulers.main().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.showSnackbar(mContext, R.string.cannot_download);
-                }
-            });
-        } catch (SecurityException e) {
-            // TODO write a download utility that downloads files rather than rely on the system
-            // because the system can only handle Environment.getExternal... as a path
-            Schedulers.main().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.showSnackbar(mContext, R.string.problem_location_download);
-                }
-            });
-        }
-
-        final String file = filename;
-        Schedulers.main().execute(new Runnable() {
+    public Single<Result> create() {
+        return Single.create(new SingleOnSubscribe<Result>() {
             @Override
-            public void run() {
-                Utils.showSnackbar(mContext, mContext.getString(R.string.download_pending) + ' ' + file);
+            public void subscribe(SingleEmitter<Result> emitter) {
+                // User agent is likely to be null, though the AndroidHttpClient
+                // seems ok with that.
+                String mimeType = null;
+                String contentDisposition = null;
+                HttpURLConnection connection = null;
+                try {
+                    URL url = new URL(mUri);
+                    connection = (HttpURLConnection) url.openConnection();
+                    if (mCookies != null && !mCookies.isEmpty()) {
+                        connection.addRequestProperty("Cookie", mCookies);
+                        connection.setRequestProperty("User-Agent", mUserAgent);
+                    }
+                    connection.connect();
+                    // We could get a redirect here, but if we do lets let
+                    // the download manager take care of it, and thus trust that
+                    // the server sends the right mimetype
+                    if (connection.getResponseCode() == 200) {
+                        String header = connection.getHeaderField("Content-Type");
+                        if (header != null) {
+                            mimeType = header;
+                            final int semicolonIndex = mimeType.indexOf(';');
+                            if (semicolonIndex != -1) {
+                                mimeType = mimeType.substring(0, semicolonIndex);
+                            }
+                        }
+                        String contentDispositionHeader = connection.getHeaderField("Content-Disposition");
+                        if (contentDispositionHeader != null) {
+                            contentDisposition = contentDispositionHeader;
+                        }
+                    }
+                } catch (@NonNull IllegalArgumentException | IOException ex) {
+                    if (connection != null)
+                        connection.disconnect();
+                } finally {
+                    if (connection != null)
+                        connection.disconnect();
+                }
+
+                if (mimeType != null) {
+                    if (mimeType.equalsIgnoreCase("text/plain")
+                        || mimeType.equalsIgnoreCase("application/octet-stream")) {
+                        String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                            Utils.guessFileExtension(mUri));
+                        if (newMimeType != null) {
+                            mRequest.setMimeType(newMimeType);
+                        }
+                    }
+                    final String filename = URLUtil.guessFileName(mUri, contentDisposition, mimeType);
+                    mRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                }
+
+                // Start the download
+                DownloadManager manager = (DownloadManager) mContext
+                    .getSystemService(Context.DOWNLOAD_SERVICE);
+                try {
+                    manager.enqueue(mRequest);
+                    emitter.onSuccess(Result.SUCCESS);
+                } catch (IllegalArgumentException e) {
+                    // Probably got a bad URL or something
+                    Log.e(TAG, "Unable to enqueue request", e);
+                    emitter.onSuccess(Result.FAILURE_ENQUEUE);
+                } catch (SecurityException e) {
+                    // TODO write a download utility that downloads files rather than rely on the system
+                    // because the system can only handle Environment.getExternal... as a path
+                    emitter.onSuccess(Result.FAILURE_LOCATION);
+                }
             }
         });
+    }
+
+    enum Result {
+        FAILURE_ENQUEUE,
+        FAILURE_LOCATION,
+        SUCCESS
     }
 }
