@@ -17,7 +17,6 @@ import android.graphics.Bitmap
 import android.text.TextUtils
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
@@ -65,7 +64,7 @@ class BookmarkPage(activity: Activity) {
                 .toList()
                 .map { it.flatten().sorted() }
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(diskScheduler)
                 .subscribe { bookmarksAndFolders ->
                     buildPageHtml(bookmarksAndFolders, folder)
                 }
