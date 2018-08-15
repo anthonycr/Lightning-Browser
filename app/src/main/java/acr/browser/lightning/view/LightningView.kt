@@ -211,7 +211,7 @@ class LightningView(
         initializePreferences(activity)
 
         if (url != null) {
-            if (!url.trim().isEmpty()) {
+            if (!url.isBlank()) {
                 tab.loadUrl(url, requestHeaders)
             } else {
                 // don't load anything, the user is looking for a blank tab

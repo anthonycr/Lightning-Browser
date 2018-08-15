@@ -220,13 +220,13 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     } else {
                         Single.just(listOf())
                     }
-                }).toList()
-                .map { it.flatMap { it }.toMutableList() }
+                })
+                .toList()
+                .map { it.flatten().sorted() }
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { bookmarksAndFolders ->
                     uiModel.currentFolder = folder
-                    bookmarksAndFolders.sort()
                     setBookmarkDataSet(bookmarksAndFolders, animate)
                 }
     }

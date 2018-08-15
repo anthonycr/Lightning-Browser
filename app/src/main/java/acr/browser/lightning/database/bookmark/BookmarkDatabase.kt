@@ -194,9 +194,7 @@ class BookmarkDatabase @Inject constructor(
     override fun getBookmarksFromFolderSorted(folder: String?): Single<List<HistoryItem>> = Single.fromCallable {
         val finalFolder = folder ?: ""
         database.query(TABLE_BOOKMARK, null, "$KEY_FOLDER=?", arrayOf(finalFolder), null, null, null).use {
-            val list = it.bindToHistoryItemList()
-            Collections.sort(list)
-            return@fromCallable list
+            return@fromCallable it.bindToHistoryItemList().sorted()
         }
     }
 
@@ -219,8 +217,7 @@ class BookmarkDatabase @Inject constructor(
                 folders.add(folder)
             }
 
-            folders.sort()
-            return@fromCallable folders
+            return@fromCallable folders.sorted()
         }
     }
 

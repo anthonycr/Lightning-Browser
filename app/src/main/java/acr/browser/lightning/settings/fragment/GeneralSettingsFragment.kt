@@ -289,17 +289,18 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
 
     private fun showCustomDownloadLocationPicker(summaryUpdater: SummaryUpdater) {
-        activity?.let {
-            val dialogView = LayoutInflater.from(it).inflate(R.layout.dialog_edit_text, null)
+        activity?.let { activity ->
+            val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null)
             val getDownload = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
 
-            val errorColor = ContextCompat.getColor(it, R.color.error_red)
-            val regularColor = ThemeUtils.getTextColor(it)
+            val errorColor = ContextCompat.getColor(activity
+                    , R.color.error_red)
+            val regularColor = ThemeUtils.getTextColor(activity)
             getDownload.setTextColor(regularColor)
             getDownload.addTextChangedListener(DownloadLocationTextWatcher(getDownload, errorColor, regularColor))
             getDownload.setText(userPreferences.downloadDirectory)
 
-            BrowserDialog.showCustomDialog(it) {
+            BrowserDialog.showCustomDialog(activity) {
                 setTitle(R.string.title_download_location)
                 setView(dialogView)
                 setPositiveButton(R.string.action_ok) { _, _ ->

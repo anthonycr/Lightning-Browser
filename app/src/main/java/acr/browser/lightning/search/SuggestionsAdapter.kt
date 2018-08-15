@@ -234,7 +234,7 @@ class SuggestionsAdapter(
     }
 
     private fun getBookmarksForQuery(query: String): Single<List<HistoryItem>> =
-            Single.create {
+            Single.fromCallable {
                 val bookmarks = ArrayList<HistoryItem>(5)
                 var counter = 0
                 for (n in allBookmarks.indices) {
@@ -250,7 +250,7 @@ class SuggestionsAdapter(
                         counter++
                     }
                 }
-                it.onSuccess(bookmarks)
+                return@fromCallable bookmarks
             }
 
     private class SearchFilter internal constructor(

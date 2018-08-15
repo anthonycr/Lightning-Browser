@@ -70,7 +70,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     private fun onTabChanged(newTab: LightningView?) {
         Log.d(TAG, "On tab changed")
-        view.updateSslState(newTab?.currentSslState() ?: SSLState.None())
+        view.updateSslState(newTab?.currentSslState() ?: SSLState.None)
 
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab

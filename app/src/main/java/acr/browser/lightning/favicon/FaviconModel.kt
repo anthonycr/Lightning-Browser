@@ -117,11 +117,11 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param url     the URL to cache the favicon for.
      * @return an observable that notifies the consumer when it is complete.
      */
-    fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create {
+    fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create { emitter ->
         val uri = safeUri(url)
 
         if (uri == null) {
-            it.onComplete()
+            emitter.onComplete()
             return@create
         }
 
@@ -129,6 +129,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
         FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
             favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
             it.flush()
+            emitter.onComplete()
         }
     }
 

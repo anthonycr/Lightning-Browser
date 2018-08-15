@@ -7,14 +7,18 @@ import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.utils.safeUri
 import android.app.Application
 import com.anthonycr.mezzanine.MezzanineGenerator
+import io.reactivex.Scheduler
 import org.jsoup.Jsoup
 import java.io.File
 
 /**
  * A builder for the bookmark page.
  */
-internal class BookmarkPageBuilder(private val faviconModel: FaviconModel,
-                                   private val app: Application) {
+internal class BookmarkPageBuilder(
+        private val faviconModel: FaviconModel,
+        private val app: Application,
+        private val diskScheduler: Scheduler
+) {
 
     private data class BookmarkViewModel(val title: String, val url: String, val iconUrl: String)
 
@@ -88,7 +92,9 @@ internal class BookmarkPageBuilder(private val faviconModel: FaviconModel,
             val faviconFile = FaviconModel.getFaviconCacheFile(app, bookmarkUri)
             if (!faviconFile.exists()) {
                 val defaultFavicon = faviconModel.getDefaultBitmapForString(historyItem.title)
-                faviconModel.cacheFaviconForUrl(defaultFavicon, historyItem.url).subscribe()
+                faviconModel.cacheFaviconForUrl(defaultFavicon, historyItem.url)
+                        .subscribeOn(diskScheduler)
+                        .subscribe()
             }
 
             "$FILE$faviconFile"

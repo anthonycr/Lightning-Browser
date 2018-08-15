@@ -64,6 +64,6 @@ class SearchBoxModel @Inject constructor(
         }
     }
 
-    private fun safeDomain(url: String) = Utils.getDomainName(url) ?: url
+    private fun safeDomain(url: String) = Utils.getDomainName(url)
 
 }

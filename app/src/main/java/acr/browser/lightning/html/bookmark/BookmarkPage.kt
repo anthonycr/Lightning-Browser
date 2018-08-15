@@ -30,6 +30,7 @@ class BookmarkPage(activity: Activity) {
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject internal lateinit var faviconModel: FaviconModel
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
 
     private val folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)
 
@@ -54,18 +55,18 @@ class BookmarkPage(activity: Activity) {
 
     private fun buildBookmarkPage(folder: String?) {
         bookmarkModel.getBookmarksFromFolderSorted(folder)
-                .concatWith(io.reactivex.Single.defer {
+                .concatWith(Single.defer {
                     if (folder == null) {
                         bookmarkModel.getFoldersSorted()
                     } else {
-                        io.reactivex.Single.just(listOf())
+                        Single.just(emptyList())
                     }
-                }).toList()
-                .map { it.flatMap { it }.toMutableList() }
+                })
+                .toList()
+                .map { it.flatten().sorted() }
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { bookmarksAndFolders ->
-                    bookmarksAndFolders.sort()
                     buildPageHtml(bookmarksAndFolders, folder)
                 }
     }
@@ -73,7 +74,7 @@ class BookmarkPage(activity: Activity) {
     private fun buildPageHtml(bookmarksAndFolders: List<HistoryItem>, folder: String?) {
         val bookmarkWebPage = getBookmarkPage(app, folder)
 
-        val builder = BookmarkPageBuilder(faviconModel, app)
+        val builder = BookmarkPageBuilder(faviconModel, app, diskScheduler)
 
         FileWriter(bookmarkWebPage, false).use {
             it.write(builder.buildPage(bookmarksAndFolders))

@@ -20,11 +20,11 @@ class DebugSettingsFragment : AbstractSettingsFragment() {
         togglePreference(
                 preference = LEAK_CANARY,
                 isChecked = developerPreferences.useLeakCanary,
-                onCheckChange = {
+                onCheckChange = { change ->
                     activity?.let {
                         Utils.showSnackbar(it, R.string.app_restart)
                     }
-                    developerPreferences.useLeakCanary = it
+                    developerPreferences.useLeakCanary = change
                 }
         )
     }

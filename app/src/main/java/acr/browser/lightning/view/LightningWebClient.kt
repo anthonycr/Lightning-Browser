@@ -65,7 +65,7 @@ class LightningWebClient(
 
     private var currentUrl: String = ""
 
-    var sslState: SSLState = SSLState.None()
+    var sslState: SSLState = SSLState.None
         set(value) {
             sslStateObservable.onNext(value)
             field = value
@@ -137,9 +137,9 @@ class LightningWebClient(
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         currentUrl = url
         sslState = if (URLUtil.isHttpsUrl(url)) {
-            SSLState.Valid()
+            SSLState.Valid
         } else {
-            SSLState.None()
+            SSLState.None
         }
         lightningView.titleInfo.setFavicon(null)
         if (lightningView.isShown) {

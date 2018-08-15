@@ -64,7 +64,7 @@ class HistoryDatabase @Inject constructor(
         database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
     }
 
-    override fun visitHistoryItem(url: String, title: String?): Completable = Completable.create {
+    override fun visitHistoryItem(url: String, title: String?): Completable = Completable.fromAction {
         val values = ContentValues()
         values.put(KEY_TITLE, title ?: "")
         values.put(KEY_TIME_VISITED, System.currentTimeMillis())
