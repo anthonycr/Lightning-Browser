@@ -4,6 +4,7 @@ import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.database.whitelist.WhitelistItem
 import acr.browser.lightning.utils.domainForUrl
 import android.util.Log
+import io.reactivex.Completable
 import io.reactivex.Scheduler
 import javax.inject.Inject
 import javax.inject.Named
@@ -23,10 +24,9 @@ class SessionWhitelistModel @Inject constructor(
     init {
         adBlockWhitelistModel
                 .allWhitelistItems()
+                .map { it.map(WhitelistItem::url).toHashSet() }
                 .subscribeOn(ioScheduler)
-                .subscribe { list ->
-                    whitelistSet = list.map(WhitelistItem::url).let { it }.toHashSet()
-                }
+                .subscribe { hashSet -> whitelistSet = hashSet }
     }
 
     override fun isUrlWhitelisted(url: String): Boolean = whitelistSet.contains(domainForUrl(url))
@@ -37,12 +37,15 @@ class SessionWhitelistModel @Inject constructor(
             adBlockWhitelistModel
                     .whitelistItemForUrl(domain)
                     .isEmpty
-                    .filter { it }
-                    .flatMapCompletable { adBlockWhitelistModel.addWhitelistItem(whitelistItem) }
-                    .subscribeOn(ioScheduler)
-                    .subscribe {
-                        Log.d(TAG, "whitelist item added to database")
+                    .flatMapCompletable {
+                        if (it) {
+                            adBlockWhitelistModel.addWhitelistItem(whitelistItem)
+                        } else {
+                            Completable.complete()
+                        }
                     }
+                    .subscribeOn(ioScheduler)
+                    .subscribe { Log.d(TAG, "whitelist item added to database") }
 
             whitelistSet.add(domain)
         }
@@ -50,7 +53,8 @@ class SessionWhitelistModel @Inject constructor(
 
     override fun removeUrlFromWhitelist(url: String) {
         domainForUrl(url)?.let { domain ->
-            adBlockWhitelistModel.whitelistItemForUrl(domain)
+            adBlockWhitelistModel
+                    .whitelistItemForUrl(domain)
                     .flatMapCompletable(adBlockWhitelistModel::removeWhitelistItem)
                     .subscribeOn(ioScheduler)
                     .subscribe { Log.d(TAG, "whitelist item removed from database") }

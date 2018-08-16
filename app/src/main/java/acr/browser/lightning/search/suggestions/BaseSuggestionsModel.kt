@@ -22,7 +22,8 @@ import java.util.concurrent.TimeUnit
  * potential suggestions provider.
  */
 abstract class BaseSuggestionsModel internal constructor(
-        application: Application, private val encoding: String
+        application: Application,
+        private val encoding: String
 ) : SuggestionsRepository {
 
     private val httpClient: OkHttpClient

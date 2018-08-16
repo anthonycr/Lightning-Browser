@@ -30,7 +30,7 @@ import javax.inject.Named
 class SuggestionsAdapter(
         private val context: Context,
         dark: Boolean,
-        incognito: Boolean
+        private val isIncognito: Boolean
 ) : BaseAdapter(), Filterable {
 
     private val filterScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
@@ -56,16 +56,12 @@ class SuggestionsAdapter(
     @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
 
     private val allBookmarks = ArrayList<HistoryItem>(5)
-
     private val darkTheme: Boolean
-    private var isIncognito = true
-
     private val searchFilter: SearchFilter
 
     init {
         BrowserApp.appComponent.inject(this)
-        darkTheme = dark || incognito
-        isIncognito = incognito
+        darkTheme = dark || isIncognito
 
         val suggestionsRepository = if (isIncognito) {
             NoOpSuggestionsRepository()
