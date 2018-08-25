@@ -5,7 +5,6 @@ import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.safeUri
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -81,7 +80,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param title The title for the web page.
      */
     fun faviconForUrl(url: String, title: String): Single<Bitmap> = Single.create {
-        val uri = safeUri(url)
+        val uri = url.toValidUri()
 
         if (uri == null) {
             it.onSuccess(getDefaultBitmapForString(title).pad())
@@ -118,7 +117,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @return an observable that notifies the consumer when it is complete.
      */
     fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create { emitter ->
-        val uri = safeUri(url)
+        val uri = url.toValidUri()
 
         if (uri == null) {
             emitter.onComplete()
@@ -147,7 +146,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
          */
         @WorkerThread
         fun getFaviconCacheFile(app: Application, uri: Uri): File {
-            requireUriSafe(uri)
+            uri.validateUri()
 
             val hash = uri.host.hashCode().toString()
 
