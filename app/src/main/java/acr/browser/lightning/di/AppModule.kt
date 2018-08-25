@@ -2,7 +2,16 @@ package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
 import android.app.Application
+import android.app.DownloadManager
+import android.app.NotificationManager
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.pm.ShortcutManager
+import android.net.ConnectivityManager
+import android.os.Build
+import android.support.annotation.RequiresApi
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
@@ -23,6 +32,28 @@ class AppModule(private val app: BrowserApp) {
 
     @Provides
     fun provideContext(): Context = app.applicationContext
+
+    @Provides
+    fun providesClipboardManager() = app.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    @Provides
+    fun providesInputMethodManager() = app.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+    @Provides
+    fun providesDownloadManager() = app.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+    @Provides
+    fun providesConnectivityManager() = app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    @Provides
+    fun providesNotificationManager() = app.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    @Provides
+    fun providesWindowManager() = app.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+    @RequiresApi(Build.VERSION_CODES.N_MR1)
+    @Provides
+    fun providesShortcutManager() = app.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
 
     @Provides
     @Named("database")
