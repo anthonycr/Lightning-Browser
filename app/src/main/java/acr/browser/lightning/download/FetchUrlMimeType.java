@@ -3,9 +3,7 @@
  */
 package acr.browser.lightning.download;
 
-import android.app.Activity;
 import android.app.DownloadManager;
-import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -33,16 +31,19 @@ class FetchUrlMimeType {
 
     private static final String TAG = "FetchUrlMimeType";
 
-    private final Activity mContext;
     private final DownloadManager.Request mRequest;
+    private final DownloadManager mDownloadManager;
     private final String mUri;
     private final String mCookies;
     private final String mUserAgent;
 
-    public FetchUrlMimeType(Activity context, DownloadManager.Request request, String uri,
-                            String cookies, String userAgent) {
-        mContext = context;
+    public FetchUrlMimeType(DownloadManager downloadManager,
+                            DownloadManager.Request request,
+                            String uri,
+                            String cookies,
+                            String userAgent) {
         mRequest = request;
+        mDownloadManager = downloadManager;
         mUri = uri;
         mCookies = cookies;
         mUserAgent = userAgent;
@@ -104,10 +105,8 @@ class FetchUrlMimeType {
                 }
 
                 // Start the download
-                DownloadManager manager = (DownloadManager) mContext
-                    .getSystemService(Context.DOWNLOAD_SERVICE);
                 try {
-                    manager.enqueue(mRequest);
+                    mDownloadManager.enqueue(mRequest);
                     emitter.onSuccess(Result.SUCCESS);
                 } catch (IllegalArgumentException e) {
                     // Probably got a bad URL or something

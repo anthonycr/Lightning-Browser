@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -59,6 +58,7 @@ public class DownloadHandler {
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     @Inject DownloadsRepository downloadsRepository;
+    @Inject DownloadManager downloadManager;
     @Inject @Named("database") Scheduler databaseScheduler;
     @Inject @Named("network") Scheduler networkScheduler;
 
@@ -250,7 +250,7 @@ public class DownloadHandler {
             }
             // We must have long pressed on a link or image to download it. We
             // are not sure of the mimetype in this case, so do a head request
-            final Disposable disposable = new FetchUrlMimeType(context, request, addressString, cookies, userAgent)
+            final Disposable disposable = new FetchUrlMimeType(downloadManager, request, addressString, cookies, userAgent)
                 .create()
                 .subscribeOn(networkScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -272,10 +272,8 @@ public class DownloadHandler {
                 });
         } else {
             Log.d(TAG, "Valid mimetype, attempting to download");
-            final DownloadManager manager = (DownloadManager) context
-                .getSystemService(Context.DOWNLOAD_SERVICE);
             try {
-                manager.enqueue(request);
+                downloadManager.enqueue(request);
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
                 Log.e(TAG, "Unable to enqueue request", e);

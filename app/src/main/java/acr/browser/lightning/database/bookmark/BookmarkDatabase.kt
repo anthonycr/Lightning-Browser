@@ -2,8 +2,8 @@ package acr.browser.lightning.database.bookmark
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FOLDER
+import acr.browser.lightning.database.DatabaseDelegate
 import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.LazyDatabase
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -29,9 +29,7 @@ class BookmarkDatabase @Inject constructor(
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), BookmarkRepository {
 
     private val defaultBookmarkTitle: String = application.getString(R.string.untitled)
-    private val lazy = LazyDatabase(this)
-    private val database: SQLiteDatabase
-        get() = lazy.db()
+    private val database: SQLiteDatabase by DatabaseDelegate()
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {

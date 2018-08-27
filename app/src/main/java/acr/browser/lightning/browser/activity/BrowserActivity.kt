@@ -36,6 +36,7 @@ import acr.browser.lightning.view.Handlers
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.SearchView
 import android.app.Activity
+import android.app.NotificationManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -144,6 +145,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var searchBoxModel: SearchBoxModel
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject internal lateinit var networkConnectivityModel: NetworkConnectivityModel
+    @Inject internal lateinit var inputMethodManager: InputMethodManager
+    @Inject internal lateinit var clipboardManager: ClipboardManager
+    @Inject internal lateinit var notificationManager: NotificationManager
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
 
     private val tabsManager: TabsManager = TabsManager()
@@ -204,7 +208,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 
-        val incognitoNotification = IncognitoNotification(this)
+        val incognitoNotification = IncognitoNotification(this, notificationManager)
         tabsManager.addTabNumberChangedListener {
             if (isIncognito()) {
                 if (it == 0) {
@@ -470,8 +474,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             when (keyCode) {
                 KeyEvent.KEYCODE_ENTER -> {
                     searchView?.let {
-                        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.hideSoftInputFromWindow(it.windowToken, 0)
+                        inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
                         searchTheWeb(it.text.toString())
                     }
 
@@ -494,8 +497,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     || actionId == EditorInfo.IME_ACTION_SEARCH
                     || arg2?.action == KeyEvent.KEYCODE_ENTER) {
                 searchView?.let {
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(it.windowToken, 0)
+                    inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
                     searchTheWeb(it.text.toString())
                 }
 
@@ -519,9 +521,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
 
             if (!hasFocus) {
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 searchView?.let {
-                    imm.hideSoftInputFromWindow(it.windowToken, 0)
+                    inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
                 }
             }
         }
@@ -794,8 +795,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
             R.id.action_copy -> {
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    clipboard.primaryClip = ClipData.newPlainText("label", currentUrl)
+                    clipboardManager.primaryClip = ClipData.newPlainText("label", currentUrl)
                     Utils.showSnackbar(this, R.string.message_link_copied)
                 }
                 return true
@@ -1432,9 +1432,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
             getUrl.setText(url)
             searchTheWeb(url)
-            with(getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager) {
-                hideSoftInputFromWindow(getUrl.windowToken, 0)
-            }
+            inputMethodManager.hideSoftInputFromWindow(getUrl.windowToken, 0)
             presenter?.onAutoCompleteItemPressed()
         }
 

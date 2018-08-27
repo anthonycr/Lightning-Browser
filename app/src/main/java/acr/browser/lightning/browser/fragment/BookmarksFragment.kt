@@ -218,7 +218,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     if (folder == null) {
                         bookmarkModel.getFoldersSorted()
                     } else {
-                        Single.just(listOf())
+                        Single.just(emptyList())
                     }
                 })
                 .toList()
