@@ -1,6 +1,6 @@
 package acr.browser.lightning.ssl
 
-import acr.browser.lightning.utils.domainForUrl
+import acr.browser.lightning.favicon.toValidUri
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,15 +14,10 @@ class SessionSslWarningPreferences @Inject constructor() : SslWarningPreferences
     private val ignoredSslWarnings = hashMapOf<String, SslWarningPreferences.Behavior>()
 
     override fun recallBehaviorForDomain(url: String?): SslWarningPreferences.Behavior? {
-        domainForUrl(url)?.let {
-            return ignoredSslWarnings[it]
-        }
-        return null
+        return url?.toValidUri()?.host?.let { ignoredSslWarnings[it] }
     }
 
     override fun rememberBehaviorForDomain(url: String, behavior: SslWarningPreferences.Behavior) {
-        domainForUrl(url)?.let {
-            ignoredSslWarnings.put(it, behavior)
-        }
+        url.toValidUri()?.host?.let { ignoredSslWarnings.put(it, behavior) }
     }
 }

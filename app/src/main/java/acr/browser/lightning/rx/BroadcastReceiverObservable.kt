@@ -14,8 +14,8 @@ import io.reactivex.Observer
  * Created by anthonycr on 3/30/18.
  */
 class BroadcastReceiverObservable(
-        private val action: String,
-        private val application: Application
+    private val action: String,
+    private val application: Application
 ) : Observable<Intent>() {
 
     override fun subscribeActual(observer: Observer<in Intent>) {
