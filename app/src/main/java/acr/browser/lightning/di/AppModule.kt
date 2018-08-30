@@ -6,6 +6,7 @@ import android.app.DownloadManager
 import android.app.NotificationManager
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.net.ConnectivityManager
 import android.os.Build
@@ -25,35 +26,43 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class AppModule(private val app: BrowserApp) {
+class AppModule(private val browserApp: BrowserApp) {
 
     @Provides
-    fun provideApplication(): Application = app
+    fun provideApplication(): Application = browserApp
 
     @Provides
-    fun provideContext(): Context = app.applicationContext
+    fun provideContext(): Context = browserApp.applicationContext
 
     @Provides
-    fun providesClipboardManager() = app.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    @Named(Name.SETTINGS)
+    fun provideDebugPreferences(): SharedPreferences = browserApp.getSharedPreferences("settings", 0)
 
     @Provides
-    fun providesInputMethodManager() = app.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    @Named(Name.DEVELOPER_SETTINGS)
+    fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
 
     @Provides
-    fun providesDownloadManager() = app.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    fun providesClipboardManager() = browserApp.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
     @Provides
-    fun providesConnectivityManager() = app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun providesInputMethodManager() = browserApp.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
     @Provides
-    fun providesNotificationManager() = app.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    fun providesDownloadManager() = browserApp.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
     @Provides
-    fun providesWindowManager() = app.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    fun providesConnectivityManager() = browserApp.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    @Provides
+    fun providesNotificationManager() = browserApp.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    @Provides
+    fun providesWindowManager() = browserApp.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
     @Provides
-    fun providesShortcutManager() = app.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
+    fun providesShortcutManager() = browserApp.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
 
     @Provides
     @Named("database")
@@ -72,6 +81,15 @@ class AppModule(private val app: BrowserApp) {
 
     @Provides
     @Singleton
-    fun provideI2PAndroidHelper(): I2PAndroidHelper = I2PAndroidHelper(app)
+    fun provideI2PAndroidHelper(): I2PAndroidHelper = I2PAndroidHelper(browserApp)
 
+}
+
+object Name {
+    const val DEVELOPER_SETTINGS = "developer_settings"
+    const val SETTINGS = "settings"
+
+    const val DATABASE = "database"
+    const val DISK = "disk"
+    const val NETWORK = "network"
 }

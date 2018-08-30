@@ -4,22 +4,25 @@ import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
+import acr.browser.lightning.di.Name
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
-import android.app.Application
+import android.content.SharedPreferences
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
  * The user's preferences.
  */
 @Singleton
-class UserPreferences @Inject constructor(application: Application, screenSize: ScreenSize) {
-
-    private val preferences = application.getSharedPreferences("settings", 0)
+class UserPreferences @Inject constructor(
+    @Named(Name.SETTINGS) preferences: SharedPreferences,
+    screenSize: ScreenSize
+) {
 
     var webRtcEnabled by preferences.booleanPreference(WEB_RTC, false)
 

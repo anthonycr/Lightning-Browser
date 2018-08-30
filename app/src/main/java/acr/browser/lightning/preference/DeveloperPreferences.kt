@@ -1,8 +1,10 @@
 package acr.browser.lightning.preference
 
+import acr.browser.lightning.di.Name
 import acr.browser.lightning.preference.delegates.booleanPreference
-import android.app.Application
+import android.content.SharedPreferences
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -11,9 +13,9 @@ import javax.inject.Singleton
  * Created by anthonycr on 2/19/18.
  */
 @Singleton
-class DeveloperPreferences @Inject constructor(application: Application) {
-
-    private val preferences = application.getSharedPreferences("developer_settings", 0)
+class DeveloperPreferences @Inject constructor(
+    @Named(Name.DEVELOPER_SETTINGS) preferences: SharedPreferences
+) {
 
     var useLeakCanary by preferences.booleanPreference(LEAK_CANARY, false)
 
