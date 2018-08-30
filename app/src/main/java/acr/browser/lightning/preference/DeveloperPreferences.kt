@@ -1,5 +1,6 @@
 package acr.browser.lightning.preference
 
+import acr.browser.lightning.preference.delegates.booleanPreference
 import android.app.Application
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,11 +15,11 @@ class DeveloperPreferences @Inject constructor(application: Application) {
 
     private val preferences = application.getSharedPreferences("developer_settings", 0)
 
-    var useLeakCanary by BooleanPreference(LEAK_CANARY, false, preferences).delegate()
+    var useLeakCanary by preferences.booleanPreference(LEAK_CANARY, false)
 
-    var checkedForTor by BooleanPreference(INITIAL_CHECK_FOR_TOR, false, preferences).delegate()
+    var checkedForTor by preferences.booleanPreference(INITIAL_CHECK_FOR_TOR, false)
 
-    var checkedForI2P by BooleanPreference(INITIAL_CHECK_FOR_I2P, false, preferences).delegate()
+    var checkedForI2P by preferences.booleanPreference(INITIAL_CHECK_FOR_I2P, false)
 }
 
 private const val LEAK_CANARY = "leakCanary"
