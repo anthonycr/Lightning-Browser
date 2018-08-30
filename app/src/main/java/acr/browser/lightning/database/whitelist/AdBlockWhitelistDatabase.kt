@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.whitelist
 
-import acr.browser.lightning.database.DatabaseDelegate
+import acr.browser.lightning.database.databaseDelegate
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -23,7 +23,7 @@ class AdBlockWhitelistDatabase @Inject constructor(
         application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), AdBlockWhitelistRepository {
 
-    private val database: SQLiteDatabase by DatabaseDelegate()
+    private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {

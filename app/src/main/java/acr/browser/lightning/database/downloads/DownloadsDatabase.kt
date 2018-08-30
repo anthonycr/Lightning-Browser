@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.downloads
 
-import acr.browser.lightning.database.DatabaseDelegate
+import acr.browser.lightning.database.databaseDelegate
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -21,7 +21,7 @@ class DownloadsDatabase @Inject constructor(
         application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), DownloadsRepository {
 
-    private val database: SQLiteDatabase by DatabaseDelegate()
+    private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {

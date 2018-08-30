@@ -4,8 +4,8 @@
 package acr.browser.lightning.database.history
 
 import acr.browser.lightning.R
-import acr.browser.lightning.database.DatabaseDelegate
 import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.databaseDelegate
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -29,7 +29,7 @@ class HistoryDatabase @Inject constructor(
         application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), HistoryRepository {
 
-    private val database: SQLiteDatabase by DatabaseDelegate()
+    private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
