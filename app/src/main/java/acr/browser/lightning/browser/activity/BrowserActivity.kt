@@ -299,10 +299,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         fragmentManager.executePendingTransactions()
 
         fragmentManager
-                .beginTransaction()
-                .replace(getTabsFragmentViewId(), tabsView as Fragment, TAG_TABS_FRAGMENT)
-                .replace(getBookmarksFragmentViewId(), bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
-                .commit()
+            .beginTransaction()
+            .replace(getTabsFragmentViewId(), tabsView as Fragment, TAG_TABS_FRAGMENT)
+            .replace(getBookmarksFragmentViewId(), bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
+            .commit()
         if (shouldShowTabsInDrawer) {
             toolbar_layout.removeView(findViewById(R.id.tabs_toolbar_container))
         }
@@ -456,10 +456,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private inner class SearchListenerClass : OnKeyListener,
-            OnEditorActionListener,
-            OnFocusChangeListener,
-            SearchView.PreFocusListener,
-            TextWatcher {
+        OnEditorActionListener,
+        OnFocusChangeListener,
+        SearchView.PreFocusListener,
+        TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -491,11 +491,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             // hide the keyboard and search the web when the enter key
             // button is pressed
             if (actionId == EditorInfo.IME_ACTION_GO
-                    || actionId == EditorInfo.IME_ACTION_DONE
-                    || actionId == EditorInfo.IME_ACTION_NEXT
-                    || actionId == EditorInfo.IME_ACTION_SEND
-                    || actionId == EditorInfo.IME_ACTION_SEARCH
-                    || arg2?.action == KeyEvent.KEYCODE_ENTER) {
+                || actionId == EditorInfo.IME_ACTION_DONE
+                || actionId == EditorInfo.IME_ACTION_NEXT
+                || actionId == EditorInfo.IME_ACTION_SEND
+                || actionId == EditorInfo.IME_ACTION_SEARCH
+                || arg2?.action == KeyEvent.KEYCODE_ENTER) {
                 searchView?.let {
                     inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
                     searchTheWeb(it.text.toString())
@@ -641,8 +641,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 searchView?.let { searchTheWeb(it.text.toString()) }
             }
         } else if (keyCode == KeyEvent.KEYCODE_MENU
-                && Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN
-                && Build.MANUFACTURER.compareTo("LGE") == 0) {
+            && Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN
+            && Build.MANUFACTURER.compareTo("LGE") == 0) {
             // Workaround for stupid LG devices that crash
             return true
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -654,8 +654,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU
-                && Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN
-                && Build.MANUFACTURER.compareTo("LGE") == 0) {
+            && Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN
+            && Build.MANUFACTURER.compareTo("LGE") == 0) {
             // Workaround for stupid LG devices that crash
             openOptionsMenu()
             return true
@@ -837,27 +837,27 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     // By using a manager, adds a bookmark and notifies third parties about that
     private fun addBookmark(title: String, url: String) {
         bookmarkManager.addBookmarkIfNotExists(HistoryItem(url, title))
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { boolean ->
-                    if (boolean) {
-                        suggestionsAdapter?.refreshBookmarks()
-                        bookmarksView?.handleUpdatedUrl(url)
-                        Utils.showToast(this@BrowserActivity, R.string.message_bookmark_added)
-                    }
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { boolean ->
+                if (boolean) {
+                    suggestionsAdapter?.refreshBookmarks()
+                    bookmarksView?.handleUpdatedUrl(url)
+                    Utils.showToast(this@BrowserActivity, R.string.message_bookmark_added)
                 }
+            }
     }
 
     private fun deleteBookmark(title: String, url: String) {
         bookmarkManager.deleteBookmark(HistoryItem(url, title))
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { boolean ->
-                    if (boolean) {
-                        suggestionsAdapter?.refreshBookmarks()
-                        bookmarksView?.handleUpdatedUrl(url)
-                    }
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { boolean ->
+                if (boolean) {
+                    suggestionsAdapter?.refreshBookmarks()
+                    bookmarksView?.handleUpdatedUrl(url)
                 }
+            }
     }
 
     private fun putToolbarInRoot() {
@@ -881,21 +881,21 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun setWebViewTranslation(translation: Float) =
-            if (isFullScreen) {
-                currentTabView?.translationY = translation
-            } else {
-                currentTabView?.translationY = 0f
-            }
+        if (isFullScreen) {
+            currentTabView?.translationY = translation
+        } else {
+            currentTabView?.translationY = 0f
+        }
 
     /**
      * method that shows a dialog asking what string the user wishes to search
      * for. It highlights the text entered.
      */
     private fun findInPage() = BrowserDialog.showEditText(
-            this,
-            R.string.action_find,
-            R.string.search_hint,
-            R.string.search_hint
+        this,
+        R.string.action_find,
+        R.string.search_hint,
+        R.string.search_hint
     ) { text ->
         if (text.isNotEmpty()) {
             presenter?.findInPage(text)
@@ -919,13 +919,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             return
         }
         BrowserDialog.show(this, R.string.dialog_title_close_browser,
-                DialogItem(R.string.close_tab) {
-                    presenter?.deleteTab(position)
-                },
-                DialogItem(R.string.close_other_tabs) {
-                    presenter?.closeAllOtherTabs()
-                },
-                DialogItem(title = R.string.close_all_tabs, onClick = this::closeBrowser))
+            DialogItem(R.string.close_tab) {
+                presenter?.deleteTab(position)
+            },
+            DialogItem(R.string.close_other_tabs) {
+                presenter?.closeAllOtherTabs()
+            },
+            DialogItem(title = R.string.close_all_tabs, onClick = this::closeBrowser))
     }
 
     override fun notifyTabViewRemoved(position: Int) {
@@ -1030,13 +1030,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun showBlockedLocalFileDialog(onPositiveClick: Function0<Unit>) =
-            AlertDialog.Builder(this).apply {
-                setCancelable(true)
-                setTitle(R.string.title_warning)
-                setMessage(R.string.message_blocked_local)
-                setNegativeButton(android.R.string.cancel, null)
-                setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
-            }.resizeAndShow()
+        AlertDialog.Builder(this).apply {
+            setCancelable(true)
+            setTitle(R.string.title_warning)
+            setMessage(R.string.message_blocked_local)
+            setNegativeButton(android.R.string.cancel, null)
+            setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
+        }.resizeAndShow()
 
     override fun showSnackbar(@StringRes resource: Int) = Utils.showSnackbar(this, resource)
 
@@ -1072,15 +1072,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         if (!UrlUtils.isSpecialUrl(url)) {
             bookmarkManager.isBookmark(url)
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { boolean ->
-                        if (boolean) {
-                            deleteBookmark(title, url)
-                        } else {
-                            addBookmark(title, url)
-                        }
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { boolean ->
+                    if (boolean) {
+                        deleteBookmark(title, url)
+                    } else {
+                        addBookmark(title, url)
                     }
+                }
         }
     }
 
@@ -1155,20 +1155,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun initializeToolbarHeight(configuration: Configuration) =
-            ui_layout.doOnLayout {
-                // TODO externalize the dimensions
-                val toolbarSize = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    // In portrait toolbar should be 56 dp tall
-                    Utils.dpToPx(56f)
-                } else {
-                    // In landscape toolbar should be 48 dp tall
-                    Utils.dpToPx(52f)
-                }
-                toolbar.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
-                toolbar.minimumHeight = toolbarSize
-                toolbar.doOnLayout { setWebViewTranslation(toolbar_layout.height.toFloat()) }
-                toolbar.requestLayout()
+        ui_layout.doOnLayout {
+            // TODO externalize the dimensions
+            val toolbarSize = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                // In portrait toolbar should be 56 dp tall
+                Utils.dpToPx(56f)
+            } else {
+                // In landscape toolbar should be 48 dp tall
+                Utils.dpToPx(52f)
             }
+            toolbar.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
+            toolbar.minimumHeight = toolbarSize
+            toolbar.doOnLayout { setWebViewTranslation(toolbar_layout.height.toFloat()) }
+            toolbar.requestLayout()
+        }
 
     override fun closeBrowser() {
         content_frame.setBackgroundColor(backgroundColor)
@@ -1272,12 +1272,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         initializePreferences()
 
         networkDisposable = networkConnectivityModel
-                .connectivity()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe { connected ->
-                    Log.d(TAG, "Network connected: $connected")
-                    tabsManager.notifyConnectionStatus(connected)
-                }
+            .connectivity()
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe { connected ->
+                Log.d(TAG, "Network connected: $connected")
+                tabsManager.notifyConnectionStatus(connected)
+            }
 
         if (isFullScreen) {
             overlayToolbarOnWebView()
@@ -1346,7 +1346,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     currentUiColor = animatedColor
                     toolbar_layout.setBackgroundColor(animatedColor)
                     searchBackground?.background?.setColorFilter(DrawableUtils.mixColor(interpolatedTime,
-                            startSearchColor, finalSearchColor), PorterDuff.Mode.SRC_IN)
+                        startSearchColor, finalSearchColor), PorterDuff.Mode.SRC_IN)
                 }
             }
             animation.duration = 300
@@ -1355,11 +1355,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun getSearchBarColor(requestedColor: Int, defaultColor: Int): Int =
-            if (requestedColor == defaultColor) {
-                if (isDarkTheme) DrawableUtils.mixColor(0.25f, defaultColor, Color.WHITE) else Color.WHITE
-            } else {
-                DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE)
-            }
+        if (requestedColor == defaultColor) {
+            if (isDarkTheme) DrawableUtils.mixColor(0.25f, defaultColor, Color.WHITE) else Color.WHITE
+        } else {
+            DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE)
+        }
 
     override fun getUseDarkTheme(): Boolean = isDarkTheme
 
@@ -1384,7 +1384,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 arrowImageView?.setImageDrawable(ThemeUtils.getThemedDrawable(this, R.drawable.incognito_mode, true))
             } else {
                 arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
-                        Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
+                    Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
             }
         }
     }
@@ -1400,8 +1400,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         historyModel.visitHistoryItem(url, title)
-                .subscribeOn(databaseScheduler)
-                .subscribe()
+            .subscribeOn(databaseScheduler)
+            .subscribe()
     }
 
     /**
@@ -1445,32 +1445,32 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun openHistory() {
         HistoryPage()
-                .createHistoryPage()
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { item ->
-                    tabsManager
-                            .allTabs
-                            .map(LightningView::url)
-                            .withIndex()
-                            .find { UrlUtils.isHistoryUrl(it.value) }
-                            ?.let {
-                                presenter?.tabChanged(it.index)
-                                return@subscribe
-                            }
+            .createHistoryPage()
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { item ->
+                tabsManager
+                    .allTabs
+                    .map(LightningView::url)
+                    .withIndex()
+                    .find { UrlUtils.isHistoryUrl(it.value) }
+                    ?.let {
+                        presenter?.tabChanged(it.index)
+                        return@subscribe
+                    }
 
-                    newTab(requireNotNull(item), true)
-                }
+                newTab(requireNotNull(item), true)
+            }
     }
 
     private fun openDownloads() {
         DownloadsPage()
-                .getDownloadsPage()
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { url ->
-                    tabsManager.currentTab?.loadUrl(url)
-                }
+            .getDownloadsPage()
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { url ->
+                tabsManager.currentTab?.loadUrl(url)
+            }
     }
 
     /**
@@ -1792,16 +1792,16 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (enabled) {
             if (immersive) {
                 decor.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
             } else {
                 decor.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
             }
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                WindowManager.LayoutParams.FLAG_FULLSCREEN)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             decor.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
@@ -1819,12 +1819,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onCreateWindow(resultMsg: Message) {
         if (newTab("", true)) {
             tabsManager.getTabAtPosition(tabsManager.size() - 1)
-                    ?.let(LightningView::webView)
-                    ?.let {
-                        val transport = resultMsg.obj as WebView.WebViewTransport
-                        transport.webView = it
-                        resultMsg.sendToTarget()
-                    }
+                ?.let(LightningView::webView)
+                ?.let {
+                    val transport = resultMsg.obj as WebView.WebViewTransport
+                    transport.webView = it
+                    resultMsg.sendToTarget()
+                }
         }
     }
 
@@ -2017,12 +2017,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * If the [drawer] is open, close it and return true. Return false otherwise.
      */
     private fun DrawerLayout.closeDrawerIfOpen(drawer: View): Boolean =
-            if (isDrawerOpen(drawer)) {
-                closeDrawer(drawer)
-                true
-            } else {
-                false
-            }
+        if (isDrawerOpen(drawer)) {
+            closeDrawer(drawer)
+            true
+        } else {
+            false
+        }
 
     companion object {
 
