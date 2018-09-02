@@ -82,6 +82,7 @@ import android.webkit.WebView
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView.OnEditorActionListener
+import androidx.core.net.toUri
 import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
 import io.reactivex.Completable
@@ -93,7 +94,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
 import kotlinx.android.synthetic.main.search_interface.*
 import kotlinx.android.synthetic.main.toolbar.*
-import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
@@ -1551,7 +1551,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         startActivityForResult(Intent.createChooser(Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
-        }, getString(R.string.title_file_chooser)), 1)
+        }, getString(R.string.title_file_chooser)), FILE_CHOOSER_REQUEST_CODE)
     }
 
     /**
@@ -1567,59 +1567,44 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        if (requestCode != 1 || filePathCallback == null) {
-            super.onActivityResult(requestCode, resultCode, intent)
-            return
-        }
-
-        var results: Array<Uri>? = null
-
-        // Check that the response is a good one
-        if (resultCode == Activity.RESULT_OK) {
-            if (intent == null) {
-                // If there is not data, then we may have taken a photo
-                if (cameraPhotoPath != null) {
-                    results = arrayOf(Uri.parse(cameraPhotoPath))
+        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            val results: Array<Uri>? = if (resultCode == Activity.RESULT_OK) {
+                if (intent == null) {
+                    // If there is not data, then we may have taken a photo
+                    cameraPhotoPath?.let { arrayOf(it.toUri()) }
+                } else {
+                    intent.dataString?.let { arrayOf(it.toUri()) }
                 }
             } else {
-                val dataString = intent.dataString
-                if (dataString != null) {
-                    results = arrayOf(Uri.parse(dataString))
-                }
+                null
             }
-        }
 
-        filePathCallback?.onReceiveValue(results)
-        filePathCallback = null
+            filePathCallback?.onReceiveValue(results)
+            filePathCallback = null
+        } else {
+            super.onActivityResult(requestCode, resultCode, intent)
+        }
     }
 
     override fun showFileChooser(filePathCallback: ValueCallback<Array<Uri>>) {
         this.filePathCallback?.onReceiveValue(null)
         this.filePathCallback = filePathCallback
 
-        var takePictureIntent: Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // Create the File where the photo should go
-        var photoFile: File? = null
-        try {
-            photoFile = Utils.createImageFile()
-            takePictureIntent?.putExtra("PhotoPath", cameraPhotoPath)
+        val intentArray: Array<Intent> = try {
+            arrayOf(Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra("PhotoPath", cameraPhotoPath)
+                putExtra(
+                    MediaStore.EXTRA_OUTPUT,
+                    Uri.fromFile(Utils.createImageFile().also { file ->
+                        cameraPhotoPath = "file:${file.absolutePath}"
+                    })
+                )
+            })
         } catch (ex: IOException) {
             // Error occurred while creating the File
             Log.e(TAG, "Unable to create Image File", ex)
-        }
-
-        // Continue only if the File was successfully created
-        if (photoFile != null) {
-            cameraPhotoPath = "file:" + photoFile.absolutePath
-            takePictureIntent?.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile))
-        } else {
-            takePictureIntent = null
-        }
-
-        val intentArray = if (takePictureIntent != null) {
-            arrayOf(takePictureIntent)
-        } else {
-            arrayOf()
+            emptyArray()
         }
 
         startActivityForResult(Intent(Intent.ACTION_CHOOSER).apply {
@@ -1629,7 +1614,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             })
             putExtra(Intent.EXTRA_TITLE, "Image Chooser")
             putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-        }, 1)
+        }, FILE_CHOOSER_REQUEST_CODE)
     }
 
     override fun onShowCustomView(view: View, callback: CustomViewCallback) {
@@ -1749,14 +1734,16 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onBackButtonPressed() {
-        if (!drawer_layout.closeDrawerIfOpen(left_drawer) && !drawer_layout.closeDrawerIfOpen(right_drawer)) {
+        if (drawer_layout.closeDrawerIfOpen(getTabDrawer())) {
             val currentTab = tabsManager.currentTab
             if (currentTab?.canGoBack() == true) {
                 currentTab.goBack()
-                closeDrawers(null)
             } else if (currentTab != null) {
                 tabsManager.let { presenter?.deleteTab(it.positionOf(currentTab)) }
             }
+        } else if (drawer_layout.closeDrawerIfOpen(getBookmarkDrawer())) {
+            // Don't do anything other than close the bookmarks drawer when the activity is being
+            // delegated to.
         }
     }
 
@@ -2032,6 +2019,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         private const val TAG_BOOKMARK_FRAGMENT = "TAG_BOOKMARK_FRAGMENT"
         private const val TAG_TABS_FRAGMENT = "TAG_TABS_FRAGMENT"
+
+        private const val FILE_CHOOSER_REQUEST_CODE = 1111
 
         // Constant
         private val API = android.os.Build.VERSION.SDK_INT
