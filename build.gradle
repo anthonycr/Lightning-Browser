@@ -22,7 +22,7 @@ allprojects {
 
 ext {
     minSdkVersion = 19
-    targetSdkVersion = 27
+    targetSdkVersion = 28
     buildToolsVersion = '27.0.3'
 
     versionName = '4.5.1'
