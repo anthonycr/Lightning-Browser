@@ -3,6 +3,7 @@ package acr.browser.lightning.favicon
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
+import androidx.core.net.toUri
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,16 +18,16 @@ import org.robolectric.annotation.Config
 class UriExtensionsKtTest {
 
     @Test
-    fun `safeUri returns null for empty url`() = assertThat("".toValidUri()).isNull()
+    fun `safeUri returns null for empty url`() = assertThat("".toUri().toValidUri()).isNull()
 
     @Test
-    fun `safeUri returns null for url without scheme`() = assertThat("test.com".toValidUri()).isNull()
+    fun `safeUri returns null for url without scheme`() = assertThat("test.com".toUri().toValidUri()).isNull()
 
     @Test
-    fun `safeUri returns null for url without host`() = assertThat("http://".toValidUri()).isNull()
+    fun `safeUri returns null for url without host`() = assertThat("http://".toUri().toValidUri()).isNull()
 
     @Test
     fun `safeUri returns valid Uri for full url`() {
-        assertThat("http://test.com".toValidUri()).isEqualTo(ValidUri("http", "test.com"))
+        assertThat("http://test.com".toUri().toValidUri()).isEqualTo(ValidUri("http", "test.com"))
     }
 }

@@ -13,6 +13,7 @@ import android.support.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import android.util.LruCache
+import androidx.core.net.toUri
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.io.File
@@ -79,7 +80,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param title The title for the web page.
      */
     fun faviconForUrl(url: String, title: String): Single<Bitmap> = Single.create {
-        val uri = url.toValidUri()
+        val uri = url.toUri().toValidUri()
 
         if (uri == null) {
             it.onSuccess(getDefaultBitmapForString(title).pad())
@@ -116,7 +117,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @return an observable that notifies the consumer when it is complete.
      */
     fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create { emitter ->
-        val uri = url.toValidUri()
+        val uri = url.toUri().toValidUri()
 
         if (uri == null) {
             emitter.onComplete()

@@ -6,6 +6,7 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri
 import android.app.Application
+import androidx.core.net.toUri
 import com.anthonycr.mezzanine.MezzanineGenerator
 import io.reactivex.Scheduler
 import org.jsoup.Jsoup
@@ -86,7 +87,7 @@ internal class BookmarkPageBuilder(
     }
 
     private fun createViewModelForBookmark(historyItem: HistoryItem): BookmarkViewModel {
-        val bookmarkUri = historyItem.url.toValidUri()
+        val bookmarkUri = historyItem.url.toUri().toValidUri()
 
         val iconUrl = if (bookmarkUri != null) {
             val faviconFile = FaviconModel.getFaviconCacheFile(app, bookmarkUri)
