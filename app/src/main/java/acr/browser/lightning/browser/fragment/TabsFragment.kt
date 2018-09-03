@@ -7,6 +7,7 @@ import acr.browser.lightning.browser.TabsView
 import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
 import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.extensions.color
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThemeUtils
@@ -68,11 +69,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
 
-        iconColor = if (darkTheme) {
-            ThemeUtils.getIconDarkThemeColor(context)
-        } else {
-            ThemeUtils.getIconLightThemeColor(context)
-        }
+        iconColor = ThemeUtils.getIconThemeColor(context, darkTheme)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -88,7 +85,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false)
             val newTab = view.findViewById<ImageView>(R.id.new_tab_button)
-            newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(context))
+            newTab.setColorFilter(context.color(R.color.icon_dark_theme))
             newTab.setOnClickListener(this)
             newTab.setOnLongClickListener(this)
         }
@@ -159,11 +156,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         darkTheme = userPreferences.useTheme != 0 || isIncognito
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
-        iconColor = if (darkTheme) {
-            ThemeUtils.getIconDarkThemeColor(activity)
-        } else {
-            ThemeUtils.getIconLightThemeColor(activity)
-        }
+        iconColor = ThemeUtils.getIconThemeColor(activity, darkTheme)
         tabsAdapter?.notifyDataSetChanged()
     }
 
@@ -204,7 +197,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     private fun toViewModels(tabs: List<LightningView>) = tabs.map(::TabViewState)
 
     private inner class LightningViewAdapter internal constructor(
-            private val drawerTabs: Boolean
+        private val drawerTabs: Boolean
     ) : RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder>() {
 
         private val layoutResourceId: Int = if (drawerTabs) R.layout.tab_list_item else R.layout.tab_list_item_horizontal
@@ -244,16 +237,16 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
                 override fun getNewListSize() = tabList.size
 
                 override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                        oldList[oldItemPosition] == tabList[newItemPosition]
+                    oldList[oldItemPosition] == tabList[newItemPosition]
 
                 override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                     val oldTab = oldList[oldItemPosition]
                     val newTab = tabList[newItemPosition]
 
                     return (oldTab.title == newTab.title
-                            && oldTab.favicon == newTab.favicon
-                            && oldTab.isForegroundTab == newTab.isForegroundTab
-                            && oldTab == newTab)
+                        && oldTab.favicon == newTab.favicon
+                        && oldTab.isForegroundTab == newTab.isForegroundTab
+                        && oldTab == newTab)
                 }
             })
 
@@ -287,11 +280,11 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         }
 
         private fun updateViewHolderFavicon(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) =
-                if (isForeground) {
-                    viewHolder.favicon.setImageBitmap(favicon)
-                } else {
-                    viewHolder.favicon.setImageBitmap(getDesaturatedBitmap(favicon))
-                }
+            if (isForeground) {
+                viewHolder.favicon.setImageBitmap(favicon)
+            } else {
+                viewHolder.favicon.setImageBitmap(getDesaturatedBitmap(favicon))
+            }
 
         private fun updateViewHolderBackground(viewHolder: LightningViewHolder, isForeground: Boolean) {
             if (drawerTabs) {
@@ -333,7 +326,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
         internal fun getDesaturatedBitmap(favicon: Bitmap): Bitmap {
             val grayscaleBitmap = Bitmap.createBitmap(favicon.width,
-                    favicon.height, Bitmap.Config.ARGB_8888)
+                favicon.height, Bitmap.Config.ARGB_8888)
 
             val c = Canvas(grayscaleBitmap)
             colorMatrix.setSaturation(DESATURATED)

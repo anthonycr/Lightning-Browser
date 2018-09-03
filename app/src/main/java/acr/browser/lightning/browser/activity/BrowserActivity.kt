@@ -229,11 +229,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         //TODO make sure dark theme flag gets set correctly
         isDarkTheme = userPreferences.useTheme != 0 || isIncognito()
-        iconColor = if (isDarkTheme) {
-            ThemeUtils.getIconDarkThemeColor(this)
-        } else {
-            ThemeUtils.getIconLightThemeColor(this)
-        }
+        iconColor = ThemeUtils.getIconThemeColor(this, isDarkTheme)
         disabledIconColor = if (isDarkTheme) {
             ContextCompat.getColor(this, R.color.icon_dark_theme_disabled)
         } else {
