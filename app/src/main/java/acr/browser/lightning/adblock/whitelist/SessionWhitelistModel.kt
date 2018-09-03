@@ -2,8 +2,8 @@ package acr.browser.lightning.adblock.whitelist
 
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.database.whitelist.WhitelistItem
-import acr.browser.lightning.favicon.toValidUri
 import android.util.Log
+import androidx.core.net.toUri
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import javax.inject.Inject
@@ -29,12 +29,11 @@ class SessionWhitelistModel @Inject constructor(
             .subscribe { hashSet -> whitelistSet = hashSet }
     }
 
-    override fun isUrlWhitelisted(url: String): Boolean = whitelistSet.contains(
-        url.toValidUri()?.host
-    )
+    override fun isUrlWhitelisted(url: String): Boolean =
+        url.toUri().host?.let(whitelistSet::contains) ?: false
 
     override fun addUrlToWhitelist(url: String) {
-        url.toValidUri()?.host?.let { host ->
+        url.toUri().host?.let { host ->
             adBlockWhitelistModel
                 .whitelistItemForUrl(host)
                 .isEmpty
@@ -55,7 +54,7 @@ class SessionWhitelistModel @Inject constructor(
     }
 
     override fun removeUrlFromWhitelist(url: String) {
-        url.toValidUri()?.host?.let { host ->
+        url.toUri().host?.let { host ->
             adBlockWhitelistModel
                 .whitelistItemForUrl(host)
                 .flatMapCompletable(adBlockWhitelistModel::removeWhitelistItem)

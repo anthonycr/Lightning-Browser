@@ -8,7 +8,6 @@ import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.support.annotation.ColorInt
 import android.support.annotation.WorkerThread
 import android.text.TextUtils
@@ -54,9 +53,9 @@ class FaviconModel @Inject constructor(private val application: Application) {
         @ColorInt val defaultFaviconColor = DrawableUtils.characterToColorHash(firstTitleCharacter, application)
 
         return DrawableUtils.getRoundedLetterImage(firstTitleCharacter,
-                bookmarkIconSize,
-                bookmarkIconSize,
-                defaultFaviconColor)
+            bookmarkIconSize,
+            bookmarkIconSize,
+            defaultFaviconColor)
     }
 
     /**
@@ -139,16 +138,13 @@ class FaviconModel @Inject constructor(private val application: Application) {
         /**
          * Creates the cache file for the favicon image. File name will be in the form of "hash of URI host".png
          *
-         * @param app the context needed to retrieve the
-         * cache directory.
-         * @param uri the URI to use as a unique identifier.
+         * @param app the context needed to retrieve the cache directory.
+         * @param validUri the URI to use as a unique identifier.
          * @return a valid cache file.
          */
         @WorkerThread
-        fun getFaviconCacheFile(app: Application, uri: Uri): File {
-            uri.validateUri()
-
-            val hash = uri.host.hashCode().toString()
+        fun getFaviconCacheFile(app: Application, validUri: ValidUri): File {
+            val hash = validUri.host.hashCode().toString()
 
             return File(app.cacheDir, "$hash.png")
         }

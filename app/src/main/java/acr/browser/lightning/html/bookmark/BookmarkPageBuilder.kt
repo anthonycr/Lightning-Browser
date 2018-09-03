@@ -15,9 +15,9 @@ import java.io.File
  * A builder for the bookmark page.
  */
 internal class BookmarkPageBuilder(
-        private val faviconModel: FaviconModel,
-        private val app: Application,
-        private val diskScheduler: Scheduler
+    private val faviconModel: FaviconModel,
+    private val app: Application,
+    private val diskScheduler: Scheduler
 ) {
 
     private data class BookmarkViewModel(val title: String, val url: String, val iconUrl: String)
@@ -36,10 +36,10 @@ internal class BookmarkPageBuilder(
     }
 
     private fun getFaviconFile(application: Application): File =
-            File(application.cacheDir, FOLDER_ICON)
+        File(application.cacheDir, FOLDER_ICON)
 
     private fun getDefaultIconFile(application: Application): File =
-            File(application.cacheDir, DEFAULT_ICON)
+        File(application.cacheDir, DEFAULT_ICON)
 
     fun buildPage(bookmarkList: List<HistoryItem>): String {
         val bookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
@@ -79,9 +79,9 @@ internal class BookmarkPageBuilder(
         val url = "$FILE$folderPage"
 
         return BookmarkViewModel(
-                title = historyItem.title,
-                url = url,
-                iconUrl = iconUrl
+            title = historyItem.title,
+            url = url,
+            iconUrl = iconUrl
         )
     }
 
@@ -93,8 +93,8 @@ internal class BookmarkPageBuilder(
             if (!faviconFile.exists()) {
                 val defaultFavicon = faviconModel.getDefaultBitmapForString(historyItem.title)
                 faviconModel.cacheFaviconForUrl(defaultFavicon, historyItem.url)
-                        .subscribeOn(diskScheduler)
-                        .subscribe()
+                    .subscribeOn(diskScheduler)
+                    .subscribe()
             }
 
             "$FILE$faviconFile"
@@ -103,9 +103,9 @@ internal class BookmarkPageBuilder(
         }
 
         return BookmarkViewModel(
-                title = historyItem.title,
-                url = historyItem.url,
-                iconUrl = iconUrl
+            title = historyItem.title,
+            url = historyItem.url,
+            iconUrl = iconUrl
         )
     }
 

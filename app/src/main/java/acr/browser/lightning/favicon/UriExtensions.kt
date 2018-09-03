@@ -3,23 +3,22 @@
 package acr.browser.lightning.favicon
 
 import android.net.Uri
+import androidx.core.net.toUri
 
 /**
- * Validates that a [Uri] be safe for use. The [Uri.getScheme] and [Uri.getHost] must not be `null`
- * or blank, otherwise an [IllegalArgumentException] will be thrown.
+ * Returns a valid [ValidUri] or `null` if the [String] provided was an invalid [ValidUri].
  */
-fun Uri.validateUri() {
-    if (!this.isValid()) {
-        throw IllegalArgumentException("Unsafe uri provided")
+fun String.toValidUri(): ValidUri? = toUri().let {
+    val scheme = it.scheme
+    val host = it.host
+    if (scheme?.isNotBlank() == true && host?.isNotBlank() == true) {
+        ValidUri(scheme, host)
+    } else {
+        null
     }
 }
 
 /**
- * Returns true if the [Uri] is valid, false otherwise.
+ * A [Uri] that has both a non-blank [scheme] and a non-blank [host].
  */
-fun Uri.isValid(): Boolean = scheme?.isNotBlank() == true && host?.isNotBlank() == true
-
-/**
- * Returns a valid [Uri] or `null` if the [String] provided was an invalid [Uri].
- */
-fun String.toValidUri(): Uri? = Uri.parse(this).takeIf(Uri::isValid)
+data class ValidUri(val scheme: String, val host: String)

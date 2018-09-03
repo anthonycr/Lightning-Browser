@@ -3,6 +3,7 @@ package acr.browser.lightning
 import acr.browser.lightning.browser.activity.BrowserActivity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.view.Menu
 import android.webkit.CookieManager
@@ -46,8 +47,9 @@ class IncognitoActivity : BrowserActivity() {
         /**
          * Creates the intent with which to launch the activity. Adds the reorder to front flag.
          */
-        fun createIntent(context: Context) = Intent(context, IncognitoActivity::class.java).apply {
+        fun createIntent(context: Context, uri: Uri? = null) = Intent(context, IncognitoActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            data = uri
         }
     }
 }

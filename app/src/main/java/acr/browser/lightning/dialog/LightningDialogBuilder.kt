@@ -16,13 +16,13 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
-import android.net.Uri
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import androidx.core.net.toUri
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
@@ -59,7 +59,7 @@ class LightningDialogBuilder @Inject constructor(
         val item: HistoryItem
         if (UrlUtils.isBookmarkUrl(url)) {
             // TODO hacky, make a better bookmark mechanism in the future
-            val uri = Uri.parse(url)
+            val uri = url.toUri()
             val filename = uri.lastPathSegment
             val folderTitle = filename.substring(0, filename.length - BookmarkPage.FILENAME.length - 1)
             item = HistoryItem()
