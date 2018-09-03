@@ -39,7 +39,6 @@ import android.app.Activity
 import android.app.NotificationManager
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -77,7 +76,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.CustomViewCallback
-import android.webkit.WebIconDatabase
 import android.webkit.WebView
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -388,10 +386,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         drawer_layout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END)
         drawer_layout.setDrawerShadow(R.drawable.drawer_left_shadow, GravityCompat.START)
 
-        if (API <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            WebIconDatabase.getInstance().open(getDir("icons", Context.MODE_PRIVATE).path)
-        }
-
         var intent: Intent? = if (savedInstanceState == null) {
             intent
         } else {
@@ -640,11 +634,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             if (searchView?.hasFocus() == true) {
                 searchView?.let { searchTheWeb(it.text.toString()) }
             }
-        } else if (keyCode == KeyEvent.KEYCODE_MENU
-            && Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN
-            && Build.MANUFACTURER.compareTo("LGE") == 0) {
-            // Workaround for stupid LG devices that crash
-            return true
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             keyDownStartTime = System.currentTimeMillis()
             Handlers.MAIN.postDelayed(longPressBackRunnable, ViewConfiguration.getLongPressTimeout().toLong())
@@ -653,13 +642,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_MENU
-            && Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN
-            && Build.MANUFACTURER.compareTo("LGE") == 0) {
-            // Workaround for stupid LG devices that crash
-            openOptionsMenu()
-            return true
-        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             Handlers.MAIN.removeCallbacks(longPressBackRunnable)
             if (System.currentTimeMillis() - keyDownStartTime > ViewConfiguration.getLongPressTimeout()) {
                 return true
@@ -1105,13 +1088,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun handleNewIntent(intent: Intent) {
         presenter?.onNewIntent(intent)
-    }
-
-    override fun onTrimMemory(level: Int) {
-        if (level > TRIM_MEMORY_MODERATE && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            Log.d(TAG, "Low Memory, Free Memory")
-            presenter?.onAppLowMemory()
-        }
     }
 
     // TODO move to presenter

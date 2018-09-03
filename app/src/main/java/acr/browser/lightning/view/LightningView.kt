@@ -35,7 +35,6 @@ import android.view.View.OnTouchListener
 import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebSettings.LayoutAlgorithm
-import android.webkit.WebSettings.PluginState
 import android.webkit.WebView
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -51,9 +50,9 @@ import javax.inject.Named
  * class.
  */
 class LightningView(
-        private val activity: Activity,
-        url: String?,
-        val isIncognito: Boolean
+    private val activity: Activity,
+    url: String?,
+    val isIncognito: Boolean
 ) {
 
     /**
@@ -74,7 +73,6 @@ class LightningView(
 
     private val uiController: UIController
     private val gestureDetector: GestureDetector
-    private val defaultUserAgent: String
     private val paint = Paint()
 
     /**
@@ -179,9 +177,7 @@ class LightningView(
 
         homepage = userPreferences.homepage
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            tab.id = View.generateViewId()
-        }
+        tab.id = View.generateViewId()
         titleInfo = LightningViewTitle(activity)
 
         maxFling = ViewConfiguration.get(activity).scaledMaximumFlingVelocity.toFloat()
@@ -206,7 +202,6 @@ class LightningView(
         tab.setDownloadListener(LightningDownloadListener(activity))
         gestureDetector = GestureDetector(activity, CustomGestureListener())
         tab.setOnTouchListener(TouchListener())
-        defaultUserAgent = tab.settings.userAgentString
         initializeSettings()
         initializePreferences(activity)
 
@@ -247,10 +242,10 @@ class LightningView(
      */
     private fun loadStartPage() {
         StartPage()
-                .createHomePage()
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::loadUrl)
+            .createHomePage()
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::loadUrl)
     }
 
     /**
@@ -259,10 +254,10 @@ class LightningView(
      */
     fun loadBookmarkPage() {
         BookmarkPage(activity)
-                .createBookmarkPage()
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::loadUrl)
+            .createBookmarkPage()
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::loadUrl)
     }
 
     /**
@@ -271,10 +266,10 @@ class LightningView(
      */
     fun loadDownloadsPage() {
         DownloadsPage()
-                .getDownloadsPage()
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::loadUrl)
+            .getDownloadsPage()
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::loadUrl)
     }
 
     /**
@@ -313,27 +308,12 @@ class LightningView(
         } else {
             settings.setGeolocationEnabled(false)
         }
-        if (API < Build.VERSION_CODES.KITKAT) {
-            when (userPreferences.flashSupport) {
-                0 -> settings.pluginState = PluginState.OFF
-                1 -> settings.pluginState = PluginState.ON_DEMAND
-                2 -> settings.pluginState = PluginState.ON
-                else -> {
-                }
-            }
-        }
 
         setUserAgent(context, userPreferences.userAgentChoice)
 
         if (userPreferences.savePasswordsEnabled && !isIncognito) {
-            if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                settings.savePassword = true
-            }
             settings.saveFormData = true
         } else {
-            if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                settings.savePassword = false
-            }
             settings.saveFormData = false
         }
 
@@ -347,15 +327,12 @@ class LightningView(
 
         if (userPreferences.textReflowEnabled) {
             settings.layoutAlgorithm = LayoutAlgorithm.NARROW_COLUMNS
-            if (API >= android.os.Build.VERSION_CODES.KITKAT) {
-                try {
-                    settings.layoutAlgorithm = LayoutAlgorithm.TEXT_AUTOSIZING
-                } catch (e: Exception) {
-                    // This shouldn't be necessary, but there are a number
-                    // of KitKat devices that crash trying to set this
-                    Log.e(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
-                }
-
+            try {
+                settings.layoutAlgorithm = LayoutAlgorithm.TEXT_AUTOSIZING
+            } catch (e: Exception) {
+                // This shouldn't be necessary, but there are a number
+                // of KitKat devices that crash trying to set this
+                Log.e(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
             }
         } else {
             settings.layoutAlgorithm = LayoutAlgorithm.NORMAL
@@ -382,7 +359,7 @@ class LightningView(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,
-                    !userPreferences.blockThirdPartyCookiesEnabled)
+                !userPreferences.blockThirdPartyCookiesEnabled)
         }
     }
 
@@ -394,17 +371,7 @@ class LightningView(
     private fun initializeSettings() {
         val settings = webView?.settings ?: return
 
-        if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            settings.setAppCacheMaxSize(java.lang.Long.MAX_VALUE)
-        }
-
-        if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            settings.setEnableSmoothTransition(true)
-        }
-
-        if (API > Build.VERSION_CODES.JELLY_BEAN) {
-            settings.mediaPlaybackRequiresUserGesture = true
-        }
+        settings.mediaPlaybackRequiresUserGesture = true
 
         if (API >= Build.VERSION_CODES.LOLLIPOP && !isIncognito) {
             settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
@@ -430,36 +397,23 @@ class LightningView(
         settings.displayZoomControls = false
         settings.allowContentAccess = true
         settings.allowFileAccess = true
-
-        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
-            settings.allowFileAccessFromFileURLs = false
-            settings.allowUniversalAccessFromFileURLs = false
-        }
+        settings.allowFileAccessFromFileURLs = false
+        settings.allowUniversalAccessFromFileURLs = false
 
         getPathObservable("appcache")
-                .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { file ->
-                    settings.setAppCachePath(requireNotNull(file).path)
-                }
+            .subscribeOn(databaseScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { file ->
+                settings.setAppCachePath(requireNotNull(file).path)
+            }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             getPathObservable("geolocation")
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { file ->
-                        settings.setGeolocationDatabasePath(requireNotNull(file).path)
-                    }
-        }
-
-
-        if (API < Build.VERSION_CODES.KITKAT) {
-            getPathObservable("databases")
-                    .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { file ->
-                        settings.databasePath = requireNotNull(file).path
-                    }
+                .subscribeOn(databaseScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { file ->
+                    settings.setGeolocationDatabasePath(requireNotNull(file).path)
+                }
         }
 
     }
@@ -500,11 +454,7 @@ class LightningView(
         val settings = webView?.settings ?: return
 
         when (choice) {
-            1 -> if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                settings.userAgentString = WebSettings.getDefaultUserAgent(context)
-            } else {
-                settings.userAgentString = defaultUserAgent
-            }
+            1 -> settings.userAgentString = WebSettings.getDefaultUserAgent(context)
             2 -> settings.userAgentString = DESKTOP_USER_AGENT
             3 -> settings.userAgentString = MOBILE_USER_AGENT
             4 -> {
@@ -542,9 +492,6 @@ class LightningView(
      */
     @Synchronized
     fun freeMemory() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            webView?.freeMemory()
-        }
     }
 
     /**
@@ -606,7 +553,7 @@ class LightningView(
             }
             1 -> {
                 val filterInvert = ColorMatrixColorFilter(
-                        sNegativeColorArray)
+                    sNegativeColorArray)
                 paint.colorFilter = filterInvert
                 setHardwareRendering()
 
@@ -712,11 +659,7 @@ class LightningView(
     @SuppressLint("NewApi")
     @Synchronized
     fun find(text: String) {
-        if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            webView?.findAllAsync(text)
-        } else {
-            webView?.findAll(text)
-        }
+        webView?.findAllAsync(text)
     }
 
     /**
@@ -746,10 +689,7 @@ class LightningView(
             tab.visibility = View.GONE
             tab.removeAllViews()
             tab.destroyDrawingCache()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                //this is causing the segfault occasionally below 4.2
-                tab.destroy()
-            }
+            tab.destroy()
 
             webView = null
         }
@@ -1021,14 +961,14 @@ class LightningView(
         private val SCROLL_UP_THRESHOLD = Utils.dpToPx(10f)
 
         private val sNegativeColorArray = floatArrayOf(-1.0f, 0f, 0f, 0f, 255f, // red
-                0f, -1.0f, 0f, 0f, 255f, // green
-                0f, 0f, -1.0f, 0f, 255f, // blue
-                0f, 0f, 0f, 1.0f, 0f // alpha
+            0f, -1.0f, 0f, 0f, 255f, // green
+            0f, 0f, -1.0f, 0f, 255f, // blue
+            0f, 0f, 0f, 1.0f, 0f // alpha
         )
         private val sIncreaseContrastColorArray = floatArrayOf(2.0f, 0f, 0f, 0f, -160f, // red
-                0f, 2.0f, 0f, 0f, -160f, // green
-                0f, 0f, 2.0f, 0f, -160f, // blue
-                0f, 0f, 0f, 1.0f, 0f // alpha
+            0f, 2.0f, 0f, 0f, -160f, // green
+            0f, 0f, 2.0f, 0f, -160f, // blue
+            0f, 0f, 0f, 1.0f, 0f // alpha
         )
     }
 }

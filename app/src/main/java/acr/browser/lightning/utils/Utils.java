@@ -55,10 +55,6 @@ public final class Utils {
 
     private Utils() {}
 
-    public static boolean doesSupportHeaders() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
     /**
      * Creates a new intent that can launch the email
      * app with a subject, address, body, and cc. It

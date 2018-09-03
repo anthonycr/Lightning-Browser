@@ -80,7 +80,7 @@ class BrowserApp : Application() {
         if (developerPreferences.useLeakCanary && !isRelease) {
             LeakCanary.install(this)
         }
-        if (!isRelease && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (!isRelease) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
 
@@ -97,7 +97,7 @@ class BrowserApp : Application() {
         private const val TAG = "BrowserApp"
 
         init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
         }
 
         @JvmStatic

@@ -11,7 +11,7 @@ object ApiUtils {
      * Returns true if the Android version supports custom headers in the WebView.
      */
     @JvmStatic
-    fun doesSupportWebViewHeaders(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+    fun doesSupportWebViewHeaders(): Boolean = true
 
     /**
      * Returns true if the Android version supports WebRTC in the WebView.

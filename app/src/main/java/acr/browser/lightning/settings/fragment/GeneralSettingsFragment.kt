@@ -5,7 +5,6 @@ import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.*
 import acr.browser.lightning.dialog.BrowserDialog
-import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
@@ -14,9 +13,7 @@ import acr.browser.lightning.search.engine.CustomSearch
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.ThemeUtils
-import acr.browser.lightning.utils.Utils
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.content.ContextCompat
@@ -49,112 +46,70 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         proxyChoices = resources.getStringArray(R.array.proxy_choices_array)
 
         clickableDynamicPreference(
-                preference = SETTINGS_PROXY,
-                summary = proxyChoiceToSummary(userPreferences.proxyChoice),
-                onClick = this::showProxyPicker
+            preference = SETTINGS_PROXY,
+            summary = proxyChoiceToSummary(userPreferences.proxyChoice),
+            onClick = this::showProxyPicker
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_USER_AGENT,
-                summary = choiceToUserAgent(userPreferences.userAgentChoice),
-                onClick = this::showUserAgentChooserDialog
+            preference = SETTINGS_USER_AGENT,
+            summary = choiceToUserAgent(userPreferences.userAgentChoice),
+            onClick = this::showUserAgentChooserDialog
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_DOWNLOAD,
-                summary = userPreferences.downloadDirectory,
-                onClick = this::showDownloadLocationDialog
+            preference = SETTINGS_DOWNLOAD,
+            summary = userPreferences.downloadDirectory,
+            onClick = this::showDownloadLocationDialog
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_HOME,
-                summary = homePageUrlToDisplayTitle(userPreferences.homepage),
-                onClick = this::showHomePageDialog
+            preference = SETTINGS_HOME,
+            summary = homePageUrlToDisplayTitle(userPreferences.homepage),
+            onClick = this::showHomePageDialog
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_SEARCH_ENGINE,
-                summary = getSearchEngineSummary(searchEngineProvider.getCurrentSearchEngine()),
-                onClick = this::showSearchProviderDialog
+            preference = SETTINGS_SEARCH_ENGINE,
+            summary = getSearchEngineSummary(searchEngineProvider.getCurrentSearchEngine()),
+            onClick = this::showSearchProviderDialog
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_SUGGESTIONS,
-                summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferences.searchSuggestionChoice)),
-                onClick = this::showSearchSuggestionsDialog
+            preference = SETTINGS_SUGGESTIONS,
+            summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferences.searchSuggestionChoice)),
+            onClick = this::showSearchSuggestionsDialog
         )
 
         checkBoxPreference(
-                preference = SETTINGS_FLASH,
-                isEnabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT,
-                summary = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                    null
-                } else {
-                    getString(R.string.flash_not_supported)
-                },
-                isChecked = userPreferences.flashSupport > 0,
-                onCheckChange = { checked ->
-                    if (!Utils.isFlashInstalled(activity) && checked) {
-                        Utils.createInformativeDialog(activity, R.string.title_warning, R.string.dialog_adobe_not_installed)
-                        userPreferences.flashSupport = 0
-                    } else {
-                        if (checked) {
-                            showFlashChoiceDialog()
-                        } else {
-                            userPreferences.flashSupport = 0
-                        }
-                    }
-                }
+            preference = SETTINGS_ADS,
+            isEnabled = BuildConfig.FULL_VERSION,
+            summary = if (BuildConfig.FULL_VERSION) {
+                null
+            } else {
+                getString(R.string.upsell_plus_version)
+            },
+            isChecked = BuildConfig.FULL_VERSION && userPreferences.adBlockEnabled,
+            onCheckChange = { userPreferences.adBlockEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_ADS,
-                isEnabled = BuildConfig.FULL_VERSION,
-                summary = if (BuildConfig.FULL_VERSION) {
-                    null
-                } else {
-                    getString(R.string.upsell_plus_version)
-                },
-                isChecked = BuildConfig.FULL_VERSION && userPreferences.adBlockEnabled,
-                onCheckChange = { userPreferences.adBlockEnabled = it }
+            preference = SETTINGS_IMAGES,
+            isChecked = userPreferences.blockImagesEnabled,
+            onCheckChange = { userPreferences.blockImagesEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_IMAGES,
-                isChecked = userPreferences.blockImagesEnabled,
-                onCheckChange = { userPreferences.blockImagesEnabled = it }
+            preference = SETTINGS_JAVASCRIPT,
+            isChecked = userPreferences.javaScriptEnabled,
+            onCheckChange = { userPreferences.javaScriptEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_JAVASCRIPT,
-                isChecked = userPreferences.javaScriptEnabled,
-                onCheckChange = { userPreferences.javaScriptEnabled = it }
+            preference = SETTINGS_COLOR_MODE,
+            isChecked = userPreferences.colorModeEnabled,
+            onCheckChange = { userPreferences.colorModeEnabled = it }
         )
-
-        checkBoxPreference(
-                preference = SETTINGS_COLOR_MODE,
-                isChecked = userPreferences.colorModeEnabled,
-                onCheckChange = { userPreferences.colorModeEnabled = it }
-        )
-    }
-
-    private fun showFlashChoiceDialog() {
-        activity?.let {
-            BrowserDialog.showPositiveNegativeDialog(
-                    activity = it,
-                    title = R.string.title_flash,
-                    message = R.string.flash,
-                    positiveButton = DialogItem(
-                            title = R.string.action_manual,
-                            onClick = { userPreferences.flashSupport = 1 }
-                    ),
-                    negativeButton = DialogItem(
-                            title = R.string.action_auto,
-                            onClick = { userPreferences.flashSupport = 2 }
-                    ),
-                    onCancel = { userPreferences.flashSupport = 0 }
-            )
-        }
     }
 
     private fun proxyChoiceToSummary(choice: Int) = when (choice) {
@@ -253,10 +208,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showCustomUserAgentPicker(summaryUpdater: SummaryUpdater) {
         activity?.let {
             BrowserDialog.showEditText(it,
-                    R.string.title_user_agent,
-                    R.string.title_user_agent,
-                    userPreferences.userAgentString,
-                    R.string.action_ok) { s ->
+                R.string.title_user_agent,
+                R.string.title_user_agent,
+                userPreferences.userAgentString,
+                R.string.action_ok) { s ->
                 userPreferences.userAgentString = s
                 summaryUpdater.updateSummary(it.getString(R.string.agent_custom))
             }
@@ -294,7 +249,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             val getDownload = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
 
             val errorColor = ContextCompat.getColor(activity
-                    , R.color.error_red)
+                , R.color.error_red)
             val regularColor = ThemeUtils.getTextColor(activity)
             getDownload.setTextColor(regularColor)
             getDownload.addTextChangedListener(DownloadLocationTextWatcher(getDownload, errorColor, regularColor))
@@ -314,9 +269,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private class DownloadLocationTextWatcher(
-            private val getDownload: EditText,
-            private val errorColor: Int,
-            private val regularColor: Int
+        private val getDownload: EditText,
+        private val errorColor: Int,
+        private val regularColor: Int
     ) : TextWatcher {
 
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -381,10 +336,10 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         activity?.let {
             BrowserDialog.showEditText(it,
-                    R.string.title_custom_homepage,
-                    R.string.title_custom_homepage,
-                    currentHomepage,
-                    R.string.action_ok) { url ->
+                R.string.title_custom_homepage,
+                R.string.title_custom_homepage,
+                currentHomepage,
+                R.string.action_ok) { url ->
                 userPreferences.homepage = url
                 summaryUpdater.updateSummary(url)
             }
@@ -400,7 +355,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun convertSearchEngineToString(searchEngines: List<BaseSearchEngine>): Array<CharSequence> =
-            searchEngines.map { getString(it.titleRes) }.toTypedArray()
+        searchEngines.map { getString(it.titleRes) }.toTypedArray()
 
     private fun showSearchProviderDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
@@ -434,11 +389,11 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     private fun showCustomSearchDialog(customSearch: CustomSearch, summaryUpdater: SummaryUpdater) {
         activity?.let {
             BrowserDialog.showEditText(
-                    it,
-                    R.string.search_engine_custom,
-                    R.string.search_engine_custom,
-                    userPreferences.searchUrl,
-                    R.string.action_ok
+                it,
+                R.string.search_engine_custom,
+                R.string.search_engine_custom,
+                userPreferences.searchUrl,
+                R.string.action_ok
             ) { searchUrl ->
                 userPreferences.searchUrl = searchUrl
                 summaryUpdater.updateSummary(getSearchEngineSummary(customSearch))
@@ -448,12 +403,12 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     }
 
     private fun searchSuggestionChoiceToTitle(choice: Suggestions): String =
-            when (choice) {
-                Suggestions.NONE -> getString(R.string.search_suggestions_off)
-                Suggestions.GOOGLE -> getString(R.string.powered_by_google)
-                Suggestions.DUCK -> getString(R.string.powered_by_duck)
-                Suggestions.BAIDU -> getString(R.string.powered_by_baidu)
-            }
+        when (choice) {
+            Suggestions.NONE -> getString(R.string.search_suggestions_off)
+            Suggestions.GOOGLE -> getString(R.string.powered_by_google)
+            Suggestions.DUCK -> getString(R.string.powered_by_duck)
+            Suggestions.BAIDU -> getString(R.string.powered_by_baidu)
+        }
 
     private fun showSearchSuggestionsDialog(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
@@ -483,7 +438,6 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
     companion object {
         private const val SETTINGS_PROXY = "proxy"
-        private const val SETTINGS_FLASH = "cb_flash"
         private const val SETTINGS_ADS = "cb_ads"
         private const val SETTINGS_IMAGES = "cb_images"
         private const val SETTINGS_JAVASCRIPT = "cb_javascript"

@@ -30,8 +30,6 @@ class UserPreferences @Inject constructor(
 
     var blockImagesEnabled by preferences.booleanPreference(BLOCK_IMAGES, false)
 
-    var flashSupport by preferences.intPreference(ADOBE_FLASH_SUPPORT, 0)
-
     var clearCacheExit by preferences.booleanPreference(CLEAR_CACHE_EXIT, false)
 
     var cookiesEnabled by preferences.booleanPreference(COOKIES, true)
@@ -118,7 +116,6 @@ class UserPreferences @Inject constructor(
 private const val WEB_RTC = "webRtc"
 private const val BLOCK_ADS = "AdBlock"
 private const val BLOCK_IMAGES = "blockimages"
-private const val ADOBE_FLASH_SUPPORT = "enableflash"
 private const val CLEAR_CACHE_EXIT = "cache"
 private const val COOKIES = "cookies"
 private const val DOWNLOAD_DIRECTORY = "downloadLocation"

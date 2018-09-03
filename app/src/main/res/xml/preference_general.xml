@@ -4,10 +4,6 @@
     <PreferenceCategory android:title="@string/settings_general">
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="cb_flash"
-            android:title="@string/flash" />
-        <CheckBoxPreference
-            android:defaultValue="false"
             android:key="cb_ads"
             android:title="@string/block_ads" />
         <CheckBoxPreference
