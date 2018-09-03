@@ -9,6 +9,7 @@ import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.desaturate
+import acr.browser.lightning.extensions.drawTrapezoid
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThemeUtils
@@ -217,14 +218,17 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
                 foregroundTabBitmap = null
             } else {
                 val context = requireNotNull(context) { "Adapter cannot be initialized when fragment is detached" }
+
                 val backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f)
-                val backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888)
-                Utils.drawTrapezoid(Canvas(backgroundTabBitmap), backgroundColor, true)
+                val backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888).also {
+                    Canvas(it).drawTrapezoid(backgroundColor, true)
+                }
                 backgroundTabDrawable = BitmapDrawable(resources, backgroundTabBitmap)
 
                 val foregroundColor = ThemeUtils.getPrimaryColor(context)
-                foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888)
-                Utils.drawTrapezoid(Canvas(foregroundTabBitmap), foregroundColor, false)
+                foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888).also {
+                    Canvas(it).drawTrapezoid(foregroundColor, false)
+                }
             }
         }
 

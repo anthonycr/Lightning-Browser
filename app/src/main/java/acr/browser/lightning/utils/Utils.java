@@ -14,12 +14,6 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Shader;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
@@ -302,45 +296,6 @@ public final class Utils {
         } catch (IOException e) {
             Log.e(TAG, "Unable to close closeable", e);
         }
-    }
-
-    /**
-     * Draws the trapezoid background for the horizontal tabs on a canvas object using
-     * the specified color.
-     *
-     * @param canvas the canvas to draw upon
-     * @param color  the color to use to draw the tab
-     */
-    public static void drawTrapezoid(@NonNull Canvas canvas, int color, boolean withShader) {
-
-        Paint paint = new Paint();
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
-//        paint.setFilterBitmap(true);
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        if (withShader) {
-            paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                0, canvas.getHeight(),
-                color, mixTwoColors(Color.BLACK, color, 0.5f),
-                Shader.TileMode.CLAMP));
-        } else {
-            paint.setShader(null);
-        }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        double radians = Math.PI / 3;
-        int base = (int) (height / Math.tan(radians));
-
-        Path wallpath = new Path();
-        wallpath.reset();
-        wallpath.moveTo(0, height);
-        wallpath.lineTo(width, height);
-        wallpath.lineTo(width - base, 0);
-        wallpath.lineTo(base, 0);
-        wallpath.close();
-
-        canvas.drawPath(wallpath, paint);
     }
 
     /**
