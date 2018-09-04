@@ -20,11 +20,15 @@ class BaiduSuggestionsModel(
     private val searchSubtitle = application.getString(R.string.suggestion)
     private val inputEncoding = "GBK"
 
-    // see http://unionsug.baidu.com/su?wd=encodeURIComponent(U)
-    // see http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
-    override fun createQueryUrl(query: String, language: String): HttpUrl? = HttpUrl.parse(
-        "http://suggestion.baidu.com/s?wd=$query&action=opensearch"
-    )
+    // see http://unionsug.baidu.com/su?wd={encodedQuery}
+    // see http://suggestion.baidu.com/s?wd={encodedQuery}&action=opensearch
+    override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
+        .scheme("http")
+        .host("suggestion.baidu.com")
+        .encodedPath("/s")
+        .addQueryParameter("wd", query)
+        .addQueryParameter("action", "opensearch")
+        .build()
 
 
     @Throws(Exception::class)

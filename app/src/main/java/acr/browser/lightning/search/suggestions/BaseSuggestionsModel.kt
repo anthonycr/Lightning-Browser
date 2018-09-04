@@ -34,7 +34,7 @@ abstract class BaseSuggestionsModel internal constructor(
      * @param language the locale of the user.
      * @return should return a [HttpUrl] that can be fetched using a GET.
      */
-    protected abstract fun createQueryUrl(query: String, language: String): HttpUrl?
+    protected abstract fun createQueryUrl(query: String, language: String): HttpUrl
 
     /**
      * Parse the results of an input stream into a list of [HistoryItem].
@@ -79,10 +79,7 @@ abstract class BaseSuggestionsModel internal constructor(
      * @return the cache file containing the suggestions
      */
     private fun downloadSuggestionsForQuery(query: String, language: String): Response? {
-        val queryUrl = createQueryUrl(query, language) ?: run {
-            Log.e(TAG, "Query resulted in null HttpUrl: $query")
-            return null
-        }
+        val queryUrl = createQueryUrl(query, language)
 
         return try {
             // OkHttp automatically gzips requests

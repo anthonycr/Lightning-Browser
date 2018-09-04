@@ -18,9 +18,13 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
-    override fun createQueryUrl(query: String, language: String): HttpUrl? = HttpUrl.parse(
-        "https://duckduckgo.com/ac/?q=$query"
-    )
+    // https://duckduckgo.com/ac/?q={query}
+    override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
+        .scheme("https")
+        .host("duckduckgo.com")
+        .encodedPath("/ac/")
+        .addQueryParameter("q", query)
+        .build()
 
     @Throws(Exception::class)
     override fun parseResults(inputStream: InputStream): List<HistoryItem> {
