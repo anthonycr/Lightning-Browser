@@ -21,14 +21,11 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import java.io.Closeable;
 import java.io.File;
@@ -42,6 +39,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.extensions.ActivityExtensions;
 
 public final class Utils {
 
@@ -93,56 +91,6 @@ public final class Utils {
         AlertDialog alert = builder.create();
         alert.show();
         BrowserDialog.setDialogSize(activity, alert);
-    }
-
-    /**
-     * Displays a snackbar to the user with a String resource.
-     * <p>
-     * NOTE: If there is an accessibility manager enabled on
-     * the device, such as LastPass, then the snackbar animations
-     * will not work.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param resource the string resource to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) {
-            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
-            return;
-        }
-        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Displays a snackbar to the user with a string message.
-     * <p>
-     * NOTE: If there is an accessibility manager enabled on
-     * the device, such as LastPass, then the snackbar animations
-     * will not work.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param message  the string message to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) {
-            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
-            return;
-        }
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Shows a toast to the user.
-     * Should only be used if an activity is
-     * not available to show a snackbar.
-     *
-     * @param context  the context needed to show the toast.
-     * @param resource the string shown by the toast to the user.
-     */
-    public static void showToast(@NonNull Context context, @StringRes int resource) {
-        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -325,7 +273,7 @@ public final class Utils {
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
             addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             activity.sendBroadcast(addIntent);
-            Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+            ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
         } else {
             ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
             if (shortcutManager.isRequestPinShortcutSupported()) {
@@ -337,9 +285,9 @@ public final class Utils {
                         .build();
 
                 shortcutManager.requestPinShortcut(pinShortcutInfo, null);
-                Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+                ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
             } else {
-                Utils.showSnackbar(activity, R.string.shortcut_message_failed_to_add);
+                ActivityExtensions.snackbar(activity, R.string.shortcut_message_failed_to_add);
             }
         }
     }

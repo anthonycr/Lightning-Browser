@@ -21,6 +21,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.doOnLayout
 import acr.browser.lightning.extensions.removeFromParent
 import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
@@ -776,7 +777,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             R.id.action_copy -> {
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     clipboardManager.primaryClip = ClipData.newPlainText("label", currentUrl)
-                    Utils.showSnackbar(this, R.string.message_link_copied)
+                    snackbar(R.string.message_link_copied)
                 }
                 return true
             }
@@ -1018,7 +1019,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
         }.resizeAndShow()
 
-    override fun showSnackbar(@StringRes resource: Int) = Utils.showSnackbar(this, resource)
+    override fun showSnackbar(@StringRes resource: Int) = snackbar(resource)
 
     override fun tabCloseClicked(position: Int) {
         presenter?.deleteTab(position)
@@ -1036,7 +1037,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (savedUrl != "") {
             newTab(savedUrl, true)
 
-            Utils.showSnackbar(this, R.string.deleted_tab)
+            snackbar(R.string.deleted_tab)
         }
 
         userPreferences.savedUrl = ""

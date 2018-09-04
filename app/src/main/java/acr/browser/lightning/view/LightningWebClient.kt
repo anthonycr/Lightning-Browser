@@ -8,6 +8,7 @@ import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.ssl.SslWarningPreferences
@@ -328,7 +329,7 @@ class LightningWebClient(
                 }
 
             } else {
-                Utils.showSnackbar(activity, R.string.message_open_download_fail)
+                activity.snackbar(R.string.message_open_download_fail)
             }
             return true
         }

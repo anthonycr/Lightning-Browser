@@ -9,6 +9,7 @@ import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
+import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.utils.Utils
 import android.Manifest
 import android.app.Application
@@ -84,8 +85,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribeBy(
                                     onComplete = {
-                                        activity?.let {
-                                            Utils.showSnackbar(it, "${it.getString(R.string.bookmark_export_path)} ${exportFile.path}")
+                                        activity?.apply {
+                                            snackbar("${getString(R.string.bookmark_export_path)} ${exportFile.path}")
                                         }
                                     },
                                     onError = { throwable ->
@@ -187,7 +188,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
         builder.setTitle(title + ": " + Environment.getExternalStorageDirectory())
 
         val fileList = loadFileList(path)
-        val fileNames = fileList.map { it.name }.toTypedArray()
+        val fileNames = fileList.map(File::getName).toTypedArray()
 
         builder.setItems(fileNames) { _, which ->
             if (fileList[which].isDirectory) {
@@ -204,9 +205,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                                 .subscribeOn(databaseScheduler)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe {
-                                    activity?.let {
-                                        val message = it.getString(R.string.message_import)
-                                        Utils.showSnackbar(it, importedBookmarks.size.toString() + " " + message)
+                                    activity?.apply {
+                                        snackbar("${importedBookmarks.size} ${getString(R.string.message_import)}")
                                     }
                                 }
                         },

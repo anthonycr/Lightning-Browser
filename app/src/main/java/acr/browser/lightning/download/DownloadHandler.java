@@ -37,6 +37,7 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
@@ -199,7 +200,7 @@ public class DownloadHandler {
             // This only happens for very bad urls, we want to catch the
             // exception here
             Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
-            Utils.showSnackbar(context, R.string.problem_download);
+            ActivityExtensions.snackbar(context, R.string.problem_download);
             return;
         }
 
@@ -209,7 +210,7 @@ public class DownloadHandler {
         try {
             request = new DownloadManager.Request(uri);
         } catch (IllegalArgumentException e) {
-            Utils.showSnackbar(context, R.string.cannot_download);
+            ActivityExtensions.snackbar(context, R.string.cannot_download);
             return;
         }
 
@@ -221,7 +222,7 @@ public class DownloadHandler {
         Uri downloadFolder = Uri.parse(location);
 
         if (!isWriteAccessAvailable(downloadFolder)) {
-            Utils.showSnackbar(context, R.string.problem_location_download);
+            ActivityExtensions.snackbar(context, R.string.problem_location_download);
             return;
         }
         String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
@@ -256,13 +257,13 @@ public class DownloadHandler {
                     public void accept(FetchUrlMimeType.Result result) {
                         switch (result) {
                             case FAILURE_ENQUEUE:
-                                Utils.showSnackbar(context, R.string.cannot_download);
+                                ActivityExtensions.snackbar(context, R.string.cannot_download);
                                 break;
                             case FAILURE_LOCATION:
-                                Utils.showSnackbar(context, R.string.problem_location_download);
+                                ActivityExtensions.snackbar(context, R.string.problem_location_download);
                                 break;
                             case SUCCESS:
-                                Utils.showSnackbar(context, R.string.download_pending);
+                                ActivityExtensions.snackbar(context, R.string.download_pending);
                                 break;
                         }
                     }
@@ -274,13 +275,13 @@ public class DownloadHandler {
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
                 Log.e(TAG, "Unable to enqueue request", e);
-                Utils.showSnackbar(context, R.string.cannot_download);
+                ActivityExtensions.snackbar(context, R.string.cannot_download);
             } catch (SecurityException e) {
                 // TODO write a download utility that downloads files rather than rely on the system
                 // because the system can only handle Environment.getExternal... as a path
-                Utils.showSnackbar(context, R.string.problem_location_download);
+                ActivityExtensions.snackbar(context, R.string.problem_location_download);
             }
-            Utils.showSnackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
+            ActivityExtensions.snackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
         }
 
         // save download in database
