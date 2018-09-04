@@ -54,20 +54,20 @@ class BookmarkPage(activity: Activity) {
 
     private fun buildBookmarkPage(folder: String?) {
         bookmarkModel.getBookmarksFromFolderSorted(folder)
-                .concatWith(Single.defer {
-                    if (folder == null) {
-                        bookmarkModel.getFoldersSorted()
-                    } else {
-                        Single.just(emptyList())
-                    }
-                })
-                .toList()
-                .map { it.flatten().sorted() }
-                .subscribeOn(databaseScheduler)
-                .observeOn(diskScheduler)
-                .subscribe { bookmarksAndFolders ->
-                    buildPageHtml(bookmarksAndFolders, folder)
+            .concatWith(Single.defer {
+                if (folder == null) {
+                    bookmarkModel.getFoldersSorted()
+                } else {
+                    Single.just(emptyList())
                 }
+            })
+            .toList()
+            .map { it.flatten().sorted() }
+            .subscribeOn(databaseScheduler)
+            .observeOn(diskScheduler)
+            .subscribe { bookmarksAndFolders ->
+                buildPageHtml(bookmarksAndFolders, folder)
+            }
     }
 
     private fun buildPageHtml(bookmarksAndFolders: List<HistoryItem>, folder: String?) {
@@ -80,8 +80,8 @@ class BookmarkPage(activity: Activity) {
         }
 
         bookmarksAndFolders
-                .filter { it.isFolder }
-                .forEach { buildBookmarkPage(it.title) }
+            .filter(HistoryItem::isFolder)
+            .forEach { buildBookmarkPage(it.title) }
     }
 
     companion object {
@@ -105,10 +105,10 @@ class BookmarkPage(activity: Activity) {
         }
 
         private fun getFaviconFile(application: Application): File =
-                File(application.cacheDir, FOLDER_ICON)
+            File(application.cacheDir, FOLDER_ICON)
 
         private fun getDefaultIconFile(application: Application): File =
-                File(application.cacheDir, DEFAULT_ICON)
+            File(application.cacheDir, DEFAULT_ICON)
     }
 
 }

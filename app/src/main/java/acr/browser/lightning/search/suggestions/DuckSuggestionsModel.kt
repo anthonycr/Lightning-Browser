@@ -6,6 +6,7 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.extensions.map
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
+import okhttp3.HttpUrl
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.InputStream
@@ -17,8 +18,9 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
-    override fun createQueryUrl(query: String, language: String): String =
-            "https://duckduckgo.com/ac/?q=$query"
+    override fun createQueryUrl(query: String, language: String): HttpUrl? = HttpUrl.parse(
+        "https://duckduckgo.com/ac/?q=$query"
+    )
 
     @Throws(Exception::class)
     override fun parseResults(inputStream: InputStream): List<HistoryItem> {
@@ -26,9 +28,9 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
         val jsonArray = JSONArray(content)
 
         return jsonArray
-                .map { it as JSONObject }
-                .map { it.getString("phrase") }
-                .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
+            .map { it as JSONObject }
+            .map { it.getString("phrase") }
+            .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
     }
 
 }
