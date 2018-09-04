@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import androidx.core.widget.toast
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler
@@ -93,7 +94,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                                         if (activity != null && !activity.isFinishing && isAdded) {
                                             Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
                                         } else {
-                                            Utils.showToast(application, R.string.bookmark_export_failure)
+                                            application.toast(R.string.bookmark_export_failure)
                                         }
                                     }
                                 )
@@ -105,7 +106,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                     if (activity != null && !activity.isFinishing && isAdded) {
                         Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
                     } else {
-                        Utils.showToast(application, R.string.bookmark_export_failure)
+                        application.toast(R.string.bookmark_export_failure)
                     }
                 }
             })
@@ -215,7 +216,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                             if (activity != null && !activity.isFinishing && isAdded) {
                                 Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error)
                             } else {
-                                Utils.showToast(application, R.string.import_bookmark_error)
+                                application.toast(R.string.import_bookmark_error)
                             }
                         }
                     )

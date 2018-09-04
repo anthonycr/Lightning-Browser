@@ -81,6 +81,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView.OnEditorActionListener
 import androidx.core.net.toUri
+import androidx.core.widget.toast
 import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
 import io.reactivex.Completable
@@ -822,7 +823,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 if (boolean) {
                     suggestionsAdapter?.refreshBookmarks()
                     bookmarksView?.handleUpdatedUrl(url)
-                    Utils.showToast(this@BrowserActivity, R.string.message_bookmark_added)
+                    toast(R.string.message_bookmark_added)
                 }
             }
     }
