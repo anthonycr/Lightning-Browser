@@ -45,12 +45,11 @@ class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(ap
 
     companion object {
 
-        private val parser by lazy {
-            val factory = XmlPullParserFactory.newInstance()
-            factory.isNamespaceAware = true
-
-            factory.newPullParser()
-        }
+        private val parser by lazy(
+            XmlPullParserFactory.newInstance().apply {
+                isNamespaceAware = true
+            }::newPullParser
+        )
 
     }
 }

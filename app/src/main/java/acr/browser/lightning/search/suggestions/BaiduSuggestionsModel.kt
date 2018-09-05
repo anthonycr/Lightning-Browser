@@ -32,10 +32,8 @@ class BaiduSuggestionsModel(
 
     @Throws(Exception::class)
     override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
-        val responseArray = JSONArray(responseBody.string())
-        val jsonArray = responseArray.getJSONArray(1)
-
-        return jsonArray
+        return JSONArray(responseBody.string())
+            .getJSONArray(1)
             .map { it as String }
             .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
     }

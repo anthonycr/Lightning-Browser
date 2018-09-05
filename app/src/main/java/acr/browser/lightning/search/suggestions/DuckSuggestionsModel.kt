@@ -27,9 +27,7 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
 
     @Throws(Exception::class)
     override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
-        val jsonArray = JSONArray(responseBody.string())
-
-        return jsonArray
+        return JSONArray(responseBody.string())
             .map { it as JSONObject }
             .map { it.getString("phrase") }
             .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
