@@ -173,11 +173,11 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     return@subscribe
                 }
                 if (boolean) {
-                    action_add_bookmark_image?.setImageResource(R.drawable.ic_action_star)
-                    action_add_bookmark_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-                } else {
                     action_add_bookmark_image?.setImageResource(R.drawable.ic_bookmark)
                     action_add_bookmark_image?.setColorFilter(ThemeUtils.getAccentColor(activity), PorterDuff.Mode.SRC_IN)
+                } else {
+                    action_add_bookmark_image?.setImageResource(R.drawable.ic_action_star)
+                    action_add_bookmark_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
                 }
             }
     }
