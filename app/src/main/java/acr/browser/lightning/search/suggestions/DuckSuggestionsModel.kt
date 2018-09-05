@@ -4,12 +4,11 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.extensions.map
-import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import okhttp3.HttpUrl
+import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.InputStream
 
 /**
  * The search suggestions provider for the DuckDuckGo search engine.
@@ -27,9 +26,8 @@ class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(appl
         .build()
 
     @Throws(Exception::class)
-    override fun parseResults(inputStream: InputStream): List<HistoryItem> {
-        val content = FileUtils.readStringFromStream(inputStream, UTF8)
-        val jsonArray = JSONArray(content)
+    override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
+        val jsonArray = JSONArray(responseBody.string())
 
         return jsonArray
             .map { it as JSONObject }

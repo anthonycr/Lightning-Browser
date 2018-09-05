@@ -5,9 +5,9 @@ import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import android.app.Application
 import okhttp3.HttpUrl
+import okhttp3.ResponseBody
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
-import java.io.InputStream
 
 /**
  * Search suggestions provider for Google search engine.
@@ -27,8 +27,8 @@ class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(ap
         .build()
 
     @Throws(Exception::class)
-    override fun parseResults(inputStream: InputStream): List<HistoryItem> {
-        parser.setInput(inputStream, UTF8)
+    override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
+        parser.setInput(responseBody.byteStream(), UTF8)
 
         val mutableList = mutableListOf<HistoryItem>()
         var eventType = parser.eventType

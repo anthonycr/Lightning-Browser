@@ -9,7 +9,6 @@ import io.reactivex.Single
 import okhttp3.*
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.*
@@ -39,10 +38,10 @@ abstract class BaseSuggestionsModel internal constructor(
     /**
      * Parse the results of an input stream into a list of [HistoryItem].
      *
-     * @param inputStream the raw input to parse.
+     * @param responseBody the raw [ResponseBody] to parse.
      */
     @Throws(Exception::class)
-    protected abstract fun parseResults(inputStream: InputStream): List<HistoryItem>
+    protected abstract fun parseResults(responseBody: ResponseBody): List<HistoryItem>
 
     init {
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
@@ -64,7 +63,7 @@ abstract class BaseSuggestionsModel internal constructor(
         var results = emptyList<HistoryItem>()
 
         downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
-            results += parseResults(it.byteStream()).take(MAX_RESULTS)
+            results += parseResults(it).take(MAX_RESULTS)
         }
 
         return@fromCallable results
