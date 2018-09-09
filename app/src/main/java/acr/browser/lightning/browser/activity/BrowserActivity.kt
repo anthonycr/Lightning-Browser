@@ -1425,10 +1425,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             .subscribe { item ->
                 tabsManager
                     .allTabs
-                    .map(LightningView::url)
                     .withIndex()
-                    .find { UrlUtils.isHistoryUrl(it.value) }
+                    .find { UrlUtils.isHistoryUrl(it.value.url) }
                     ?.let {
+                        it.value.reload()
                         presenter?.tabChanged(it.index)
                         return@subscribe
                     }
