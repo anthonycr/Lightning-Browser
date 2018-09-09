@@ -6,7 +6,7 @@ package acr.browser.lightning.database.history
 import acr.browser.lightning.R
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.databaseDelegate
-import acr.browser.lightning.extensions.map
+import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -67,7 +67,17 @@ class HistoryDatabase @Inject constructor(
             put(KEY_TIME_VISITED, System.currentTimeMillis())
         }
 
-        database.query(false, TABLE_HISTORY, arrayOf(KEY_URL), "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
+        database.query(
+            false,
+            TABLE_HISTORY,
+            arrayOf(KEY_URL),
+            "$KEY_URL = ?",
+            arrayOf(url),
+            null,
+            null,
+            null,
+            "1"
+        ).use {
             if (it.count > 0) {
                 database.update(TABLE_HISTORY, values, "$KEY_URL = ?", arrayOf(url))
             } else {
@@ -78,20 +88,31 @@ class HistoryDatabase @Inject constructor(
 
     override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
         Single.fromCallable {
-
             val search = "%$query%"
 
-            database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                arrayOf(search, search), null, null, "$KEY_TIME_VISITED DESC", "5").map { cursor ->
-                return@fromCallable cursor.map { it.bindToHistoryItem() }
-            }
+            return@fromCallable database.query(
+                TABLE_HISTORY,
+                null,
+                "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
+                arrayOf(search, search),
+                null,
+                null,
+                "$KEY_TIME_VISITED DESC", "5"
+            ).useMap { it.bindToHistoryItem() }
         }
 
     override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
         Single.fromCallable {
-            database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC", "100").use { cursor ->
-                return@fromCallable cursor.map { it.bindToHistoryItem() }
-            }
+            database.query(
+                TABLE_HISTORY,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "$KEY_TIME_VISITED DESC",
+                "100"
+            ).useMap { it.bindToHistoryItem() }
         }
 
     @WorkerThread
@@ -101,17 +122,31 @@ class HistoryDatabase @Inject constructor(
 
     @WorkerThread
     fun getHistoryItem(url: String): String? =
-        database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
-            "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
+        database.query(
+            TABLE_HISTORY,
+            arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
+            "$KEY_URL = ?",
+            arrayOf(url),
+            null,
+            null,
+            null,
+            "1"
+        ).use {
             it.moveToFirst()
 
             return it.getString(0)
         }
 
     fun getAllHistoryItems(): List<HistoryItem> {
-        database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC").use { cursor ->
-            return cursor.map { it.bindToHistoryItem() }
-        }
+        return database.query(
+            TABLE_HISTORY,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "$KEY_TIME_VISITED DESC"
+        ).useMap { it.bindToHistoryItem() }
     }
 
     fun getHistoryItemsCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)

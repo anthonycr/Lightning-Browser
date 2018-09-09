@@ -1,7 +1,7 @@
 package acr.browser.lightning.database.whitelist
 
 import acr.browser.lightning.database.databaseDelegate
-import acr.browser.lightning.extensions.map
+import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -50,14 +50,27 @@ class AdBlockWhitelistDatabase @Inject constructor(
     )
 
     override fun allWhitelistItems(): Single<List<WhitelistItem>> = Single.fromCallable {
-        database.query(TABLE_WHITELIST, null, null, null, null, null, "$KEY_CREATED DESC").use { cursor ->
-            return@use cursor.map { it.bindToWhitelistItem() }
-        }
+        database.query(
+            TABLE_WHITELIST,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "$KEY_CREATED DESC"
+        ).useMap { it.bindToWhitelistItem() }
     }
 
     override fun whitelistItemForUrl(url: String): Maybe<WhitelistItem> = Maybe.fromCallable {
-        database.query(TABLE_WHITELIST, null, "$KEY_URL=?",
-            arrayOf(url), null, null, "$KEY_CREATED DESC", "1").use {
+        database.query(
+            TABLE_WHITELIST,
+            null,
+            "$KEY_URL=?",
+            arrayOf(url), null,
+            null,
+            "$KEY_CREATED DESC",
+            "1"
+        ).use {
             if (it.moveToFirst()) {
                 return@fromCallable it.bindToWhitelistItem()
             }

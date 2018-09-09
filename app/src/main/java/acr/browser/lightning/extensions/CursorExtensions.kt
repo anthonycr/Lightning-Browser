@@ -12,3 +12,17 @@ inline fun <T> Cursor.map(block: (Cursor) -> T): List<T> {
     }
     return outputList
 }
+
+/**
+ * Map the cursor to a [List] of [T], passing the cursor back into the [block] for convenience, and
+ * then closing the cursor upon return.
+ */
+inline fun <T> Cursor.useMap(block: (Cursor) -> T): List<T> {
+    use {
+        val outputList = mutableListOf<T>()
+        while (moveToNext()) {
+            outputList.add(block(this))
+        }
+        return outputList
+    }
+}

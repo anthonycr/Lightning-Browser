@@ -1,7 +1,7 @@
 package acr.browser.lightning.database.downloads
 
 import acr.browser.lightning.database.databaseDelegate
-import acr.browser.lightning.extensions.map
+import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -44,7 +44,15 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun findDownloadForUrl(url: String): Maybe<DownloadItem> = Maybe.fromCallable {
-        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, "1").use {
+        database.query(
+            TABLE_DOWNLOADS,
+            null,
+            "$KEY_URL=?",
+            arrayOf(url),
+            null,
+            null,
+            "1"
+        ).use {
             if (it.moveToFirst()) {
                 return@fromCallable it.bindToDownloadItem()
             } else {
@@ -54,13 +62,30 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun isDownload(url: String): Single<Boolean> = Single.fromCallable {
-        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1").use {
+        database.query(
+            TABLE_DOWNLOADS,
+            null,
+            "$KEY_URL=?",
+            arrayOf(url),
+            null,
+            null,
+            null,
+            "1"
+        ).use {
             return@fromCallable it.moveToFirst()
         }
     }
 
     override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> = Single.fromCallable {
-        database.query(TABLE_DOWNLOADS, null, "$KEY_URL=?", arrayOf(item.url), null, null, "1").use {
+        database.query(
+            TABLE_DOWNLOADS,
+            null,
+            "$KEY_URL=?",
+            arrayOf(item.url),
+            null,
+            null,
+            "1"
+        ).use {
             if (it.moveToFirst()) {
                 return@fromCallable false
             }
@@ -94,7 +119,15 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun getAllDownloads(): Single<List<DownloadItem>> = Single.fromCallable {
-        database.query(TABLE_DOWNLOADS, null, null, null, null, null, null).use {
+        database.query(
+            TABLE_DOWNLOADS,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ).use {
             return@fromCallable it.bindToDownloadItemList()
         }
     }
@@ -122,9 +155,7 @@ class DownloadsDatabase @Inject constructor(
     /**
      * Binds a [Cursor] to a [List] of [DownloadItem].
      */
-    private fun Cursor.bindToDownloadItemList(): List<DownloadItem> = use { cursor ->
-        return@use cursor.map { it.bindToDownloadItem() }
-    }
+    private fun Cursor.bindToDownloadItemList(): List<DownloadItem> = useMap { it.bindToDownloadItem() }
 
     companion object {
 
