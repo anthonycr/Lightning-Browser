@@ -6,6 +6,7 @@ package acr.browser.lightning.database.history
 import acr.browser.lightning.R
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
@@ -131,11 +132,8 @@ class HistoryDatabase @Inject constructor(
             null,
             null,
             "1"
-        ).use {
-            it.moveToFirst()
+        ).firstOrNullMap { it.getString(0) }
 
-            return it.getString(0)
-        }
 
     fun getAllHistoryItems(): List<HistoryItem> {
         return database.query(

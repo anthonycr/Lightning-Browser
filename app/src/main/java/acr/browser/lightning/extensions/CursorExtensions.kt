@@ -26,3 +26,16 @@ inline fun <T> Cursor.useMap(block: (Cursor) -> T): List<T> {
         return outputList
     }
 }
+
+
+/**
+ * Return the first element returned by this cursor as [T] or null if there were no elements in the
+ * cursor.
+ */
+fun <T> Cursor.firstOrNullMap(block: (Cursor) -> T): T? {
+    return if (moveToFirst()) {
+        return block(this)
+    } else {
+        null
+    }
+}

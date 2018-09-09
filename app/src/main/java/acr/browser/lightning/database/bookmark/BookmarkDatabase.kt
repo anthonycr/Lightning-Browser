@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.FOLDER
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
@@ -119,13 +120,7 @@ class BookmarkDatabase @Inject constructor(
     }
 
     override fun findBookmarkForUrl(url: String): Maybe<HistoryItem> = Maybe.fromCallable {
-        val cursor = queryWithOptionalEndSlash(url)
-
-        if (cursor.moveToFirst()) {
-            return@fromCallable cursor.bindToHistoryItem()
-        } else {
-            return@fromCallable null
-        }
+        return@fromCallable queryWithOptionalEndSlash(url).firstOrNullMap { it.bindToHistoryItem() }
     }
 
     override fun isBookmark(url: String): Single<Boolean> = Single.fromCallable {
@@ -151,25 +146,26 @@ class BookmarkDatabase @Inject constructor(
     }
 
     override fun addBookmarkList(bookmarkItems: List<HistoryItem>): Completable = Completable.fromAction {
-        database.beginTransaction()
+        database.apply {
+            beginTransaction()
 
-        for (item in bookmarkItems) {
-            addBookmarkIfNotExists(item).subscribe()
+            for (item in bookmarkItems) {
+                addBookmarkIfNotExists(item).subscribe()
+            }
+
+            setTransactionSuccessful()
+            endTransaction()
         }
-
-        database.setTransactionSuccessful()
-        database.endTransaction()
     }
 
-    override fun deleteBookmark(bookmark: HistoryItem): Single<Boolean> = Single.defer {
-        val rows = deleteWithOptionalEndSlash(bookmark.url)
-
-        return@defer Single.just(rows > 0)
+    override fun deleteBookmark(bookmark: HistoryItem): Single<Boolean> = Single.fromCallable {
+        return@fromCallable deleteWithOptionalEndSlash(bookmark.url) > 0
     }
 
     override fun renameFolder(oldName: String, newName: String): Completable = Completable.fromAction {
-        val contentValues = ContentValues(1)
-        contentValues.put(KEY_FOLDER, newName)
+        val contentValues = ContentValues(1).apply {
+            put(KEY_FOLDER, newName)
+        }
 
         database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
     }
@@ -203,7 +199,7 @@ class BookmarkDatabase @Inject constructor(
             null,
             null,
             null
-        ).bindToHistoryItemList()
+        ).useMap { it.bindToHistoryItem() }
     }
 
     override fun getBookmarksFromFolderSorted(folder: String?): Single<List<HistoryItem>> = Single.fromCallable {
@@ -216,7 +212,8 @@ class BookmarkDatabase @Inject constructor(
             null,
             null,
             null
-        ).bindToHistoryItemList().sorted()
+        ).useMap { it.bindToHistoryItem() }
+            .sorted()
     }
 
     override fun getFoldersSorted(): Single<List<HistoryItem>> = Single.fromCallable {
@@ -289,14 +286,6 @@ class BookmarkDatabase @Inject constructor(
         setFolder(getString(getColumnIndex(KEY_FOLDER)))
         position = getInt(getColumnIndex(KEY_POSITION))
     }
-
-    /**
-     * Binds a cursor to a list of [HistoryItem].
-     * This operation consumes the cursor.
-     *
-     * @return a valid list of history items, may be empty.
-     */
-    private fun Cursor.bindToHistoryItemList(): List<HistoryItem> = useMap { it.bindToHistoryItem() }
 
     /**
      * URLs can represent the same thing with or without a trailing slash,

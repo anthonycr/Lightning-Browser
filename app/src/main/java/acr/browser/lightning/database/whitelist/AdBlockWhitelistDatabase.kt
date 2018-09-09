@@ -1,6 +1,7 @@
 package acr.browser.lightning.database.whitelist
 
 import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
@@ -70,13 +71,7 @@ class AdBlockWhitelistDatabase @Inject constructor(
             null,
             "$KEY_CREATED DESC",
             "1"
-        ).use {
-            if (it.moveToFirst()) {
-                return@fromCallable it.bindToWhitelistItem()
-            }
-        }
-
-        return@fromCallable null
+        ).firstOrNullMap { it.bindToWhitelistItem() }
     }
 
     override fun addWhitelistItem(whitelistItem: WhitelistItem): Completable = Completable.fromAction {

@@ -1,6 +1,7 @@
 package acr.browser.lightning.database.downloads
 
 import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
@@ -52,13 +53,7 @@ class DownloadsDatabase @Inject constructor(
             null,
             null,
             "1"
-        ).use {
-            if (it.moveToFirst()) {
-                return@fromCallable it.bindToDownloadItem()
-            } else {
-                return@fromCallable null
-            }
-        }
+        ).firstOrNullMap { it.bindToDownloadItem() }
     }
 
     override fun isDownload(url: String): Single<Boolean> = Single.fromCallable {
@@ -97,14 +92,16 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun addDownloadsList(downloadItems: List<DownloadItem>): Completable = Completable.fromAction {
-        database.beginTransaction()
+        database.apply {
+            beginTransaction()
+            setTransactionSuccessful()
 
-        for (item in downloadItems) {
-            addDownloadIfNotExists(item).subscribe()
+            for (item in downloadItems) {
+                addDownloadIfNotExists(item).subscribe()
+            }
+
+            endTransaction()
         }
-
-        database.setTransactionSuccessful()
-        database.endTransaction()
     }
 
     override fun deleteDownload(url: String): Single<Boolean> = Single.fromCallable {
@@ -119,7 +116,7 @@ class DownloadsDatabase @Inject constructor(
     }
 
     override fun getAllDownloads(): Single<List<DownloadItem>> = Single.fromCallable {
-        database.query(
+        return@fromCallable database.query(
             TABLE_DOWNLOADS,
             null,
             null,
@@ -127,9 +124,7 @@ class DownloadsDatabase @Inject constructor(
             null,
             null,
             null
-        ).use {
-            return@fromCallable it.bindToDownloadItemList()
-        }
+        ).useMap { it.bindToDownloadItem() }
     }
 
     override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_DOWNLOADS)
@@ -151,11 +146,6 @@ class DownloadsDatabase @Inject constructor(
         setTitle(getString(getColumnIndex(KEY_TITLE)))
         setContentSize(getString(getColumnIndex(KEY_SIZE)))
     }
-
-    /**
-     * Binds a [Cursor] to a [List] of [DownloadItem].
-     */
-    private fun Cursor.bindToDownloadItemList(): List<DownloadItem> = useMap { it.bindToDownloadItem() }
 
     companion object {
 
