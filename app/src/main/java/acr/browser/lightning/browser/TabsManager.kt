@@ -92,38 +92,38 @@ class TabsManager {
     fun initializeTabs(activity: Activity,
                        intent: Intent?,
                        incognito: Boolean): Completable =
-            Completable.create { emitter ->
-                // Make sure we start with a clean tab list
-                shutdown()
+        Completable.create { emitter ->
+            // Make sure we start with a clean tab list
+            shutdown()
 
-                val url: String? = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
-                    extractSearchFromIntent(intent)
-                } else {
-                    intent?.dataString
-                }
-
-                // If incognito, only create one tab
-                if (incognito) {
-                    newTab(activity, url, true)
-                    finishInitialization()
-                    emitter.onComplete()
-                    return@create
-                }
-
-                Log.d(TAG, "URL from intent: $url")
-                currentTab = null
-                if (userPreferences.restoreLostTabsEnabled) {
-                    restoreLostTabs(url, activity, emitter)
-                } else {
-                    if (!TextUtils.isEmpty(url)) {
-                        newTab(activity, url, false)
-                    } else {
-                        newTab(activity, null, false)
-                    }
-                    finishInitialization()
-                    emitter.onComplete()
-                }
+            val url: String? = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
+                extractSearchFromIntent(intent)
+            } else {
+                intent?.dataString
             }
+
+            // If incognito, only create one tab
+            if (incognito) {
+                newTab(activity, url, true)
+                finishInitialization()
+                emitter.onComplete()
+                return@create
+            }
+
+            Log.d(TAG, "URL from intent: $url")
+            currentTab = null
+            if (userPreferences.restoreLostTabsEnabled) {
+                restoreLostTabs(url, activity, emitter)
+            } else {
+                if (!TextUtils.isEmpty(url)) {
+                    newTab(activity, url, false)
+                } else {
+                    newTab(activity, null, false)
+                }
+                finishInitialization()
+                emitter.onComplete()
+            }
+        }
 
     fun extractSearchFromIntent(intent: Intent): String? {
         val query = intent.getStringExtra(SearchManager.QUERY)
@@ -139,76 +139,76 @@ class TabsManager {
     private fun restoreLostTabs(newTabUrl: String?, activity: Activity,
                                 emitter: CompletableEmitter) {
         restoreState()
-                .subscribeOn(diskScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onNext = { bundle ->
-                            val tab = newTab(activity, "", false)
-                            val item = requireNotNull(bundle)
-                            val url = item.getString(URL_KEY)
-                            if (url != null && tab.webView != null) {
-                                when {
-                                    UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity)
-                                            .createBookmarkPage()
-                                            .subscribeOn(databaseScheduler)
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe { filePath ->
-                                                val localUrl = requireNotNull(filePath)
-                                                tab.loadUrl(localUrl)
-                                            }
-                                    UrlUtils.isDownloadsUrl(url) -> DownloadsPage()
-                                            .getDownloadsPage()
-                                            .subscribeOn(databaseScheduler)
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(tab::loadUrl)
-                                    UrlUtils.isStartPageUrl(url) -> StartPage()
-                                            .createHomePage()
-                                            .subscribeOn(databaseScheduler)
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(tab::loadUrl)
-                                    UrlUtils.isHistoryUrl(url) -> HistoryPage()
-                                            .createHistoryPage()
-                                            .subscribeOn(databaseScheduler)
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(tab::loadUrl)
+            .subscribeOn(diskScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = { bundle ->
+                    val tab = newTab(activity, "", false)
+                    val item = requireNotNull(bundle)
+                    val url = item.getString(URL_KEY)
+                    if (url != null && tab.webView != null) {
+                        when {
+                            UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity)
+                                .createBookmarkPage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe { filePath ->
+                                    val localUrl = requireNotNull(filePath)
+                                    tab.loadUrl(localUrl)
                                 }
-                            } else {
-                                tab.webView?.restoreState(item)
-                            }
-                        },
-                        onComplete = {
-                            if (newTabUrl != null) {
-                                if (URLUtil.isFileUrl(newTabUrl)) {
-                                    AlertDialog.Builder(activity).apply {
-                                        setTitle(R.string.title_warning)
-                                        setMessage(R.string.message_blocked_local)
-                                        setOnDismissListener {
-                                            if (tabList.isEmpty()) {
-                                                newTab(activity, null, false)
-                                            }
-                                            finishInitialization()
-                                            emitter.onComplete()
-                                        }
-                                        setNegativeButton(android.R.string.cancel, null)
-                                        setPositiveButton(R.string.action_open) { _, _ -> newTab(activity, newTabUrl, false) }
-                                    }.resizeAndShow()
-                                } else {
-                                    newTab(activity, newTabUrl, false)
+                            UrlUtils.isDownloadsUrl(url) -> DownloadsPage()
+                                .getDownloadsPage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(tab::loadUrl)
+                            UrlUtils.isStartPageUrl(url) -> StartPage()
+                                .createHomePage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(tab::loadUrl)
+                            UrlUtils.isHistoryUrl(url) -> HistoryPage()
+                                .createHistoryPage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(tab::loadUrl)
+                        }
+                    } else {
+                        tab.webView?.restoreState(item)
+                    }
+                },
+                onComplete = {
+                    if (newTabUrl != null) {
+                        if (URLUtil.isFileUrl(newTabUrl)) {
+                            AlertDialog.Builder(activity).apply {
+                                setTitle(R.string.title_warning)
+                                setMessage(R.string.message_blocked_local)
+                                setOnDismissListener {
                                     if (tabList.isEmpty()) {
                                         newTab(activity, null, false)
                                     }
                                     finishInitialization()
                                     emitter.onComplete()
                                 }
-                            } else {
-                                if (tabList.isEmpty()) {
-                                    newTab(activity, null, false)
-                                }
-                                finishInitialization()
-                                emitter.onComplete()
+                                setNegativeButton(android.R.string.cancel, null)
+                                setPositiveButton(R.string.action_open) { _, _ -> newTab(activity, newTabUrl, false) }
+                            }.resizeAndShow()
+                        } else {
+                            newTab(activity, newTabUrl, false)
+                            if (tabList.isEmpty()) {
+                                newTab(activity, null, false)
                             }
+                            finishInitialization()
+                            emitter.onComplete()
                         }
-                )
+                    } else {
+                        if (tabList.isEmpty()) {
+                            newTab(activity, null, false)
+                        }
+                        finishInitialization()
+                        emitter.onComplete()
+                    }
+                }
+            )
     }
 
 
@@ -249,9 +249,9 @@ class TabsManager {
      * @return the corespondent [LightningView], or null if the index is invalid
      */
     fun getTabAtPosition(position: Int): LightningView? =
-            if (position < 0 || position >= tabList.size) {
-                null
-            } else tabList[position]
+        if (position < 0 || position >= tabList.size) {
+            null
+        } else tabList[position]
 
     val allTabs: List<LightningView>
         get() = tabList
@@ -282,7 +282,7 @@ class TabsManager {
      * @param isConnected whether there is a network connection or not.
      */
     fun notifyConnectionStatus(isConnected: Boolean) = tabList.map(LightningView::webView)
-            .forEach { it?.setNetworkAvailable(isConnected) }
+        .forEach { it?.setNetworkAvailable(isConnected) }
 
     /**
      * The current number of tabs in the manager.
@@ -305,11 +305,11 @@ class TabsManager {
      * @return the last tab, or null if there are no tabs.
      */
     fun lastTab(): LightningView? =
-            if (last() < 0) {
-                null
-            } else {
-                tabList[last()]
-            }
+        if (last() < 0) {
+            null
+        } else {
+            tabList[last()]
+        }
 
     /**
      * Create and return a new tab. The tab is automatically added to the tabs list.
@@ -402,8 +402,8 @@ class TabsManager {
             }
         }
         FileUtils.writeBundleToStorage(app, outState, BUNDLE_STORAGE)
-                .subscribeOn(diskScheduler)
-                .subscribe()
+            .subscribeOn(diskScheduler)
+            .subscribe()
     }
 
     /**
@@ -418,13 +418,13 @@ class TabsManager {
      * is complete.
      */
     private fun restoreState(): Observable<Bundle> = Maybe
-            .fromCallable { FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE) }
-            .flattenAsObservable { bundle ->
-                bundle.keySet()
-                        .filter { it.startsWith(BUNDLE_KEY) }
-                        .map(bundle::getBundle)
-            }
-            .doOnNext { Log.d(TAG, "Restoring previous WebView state now") }
+        .fromCallable { FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE) }
+        .flattenAsObservable { bundle ->
+            bundle.keySet()
+                .filter { it.startsWith(BUNDLE_KEY) }
+                .map(bundle::getBundle)
+        }
+        .doOnNext { Log.d(TAG, "Restoring previous WebView state now") }
 
     /**
      * Returns the index of the current tab.
@@ -447,7 +447,7 @@ class TabsManager {
      * @return the tab with an identical hash, or null.
      */
     fun getTabForHashCode(hashCode: Int): LightningView? =
-            tabList.firstOrNull { lightningView -> lightningView.webView?.let { it.hashCode() == hashCode } == true }
+        tabList.firstOrNull { lightningView -> lightningView.webView?.let { it.hashCode() == hashCode } == true }
 
     /**
      * Switch the current tab to the one at the given position. It returns the selected tab that has

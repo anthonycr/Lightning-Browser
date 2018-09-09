@@ -49,13 +49,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun setupTabs(intent: Intent?) {
         tabsModel.initializeTabs(view as Activity, intent, isIncognito)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    // At this point we always have at least a tab in the tab manager
-                    view.notifyTabViewInitialized()
-                    view.updateTabNumber(tabsModel.size())
-                    tabChanged(tabsModel.last())
-                }
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                // At this point we always have at least a tab in the tab manager
+                view.notifyTabViewInitialized()
+                view.updateTabNumber(tabsModel.size())
+                tabChanged(tabsModel.last())
+            }
     }
 
     /**
@@ -74,9 +74,9 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab
-                ?.sslStateObservable()
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe(view::updateSslState)
+            ?.sslStateObservable()
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(view::updateSslState)
 
         val webView = newTab?.webView
 
@@ -162,9 +162,9 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         val shouldClose = shouldClose && isShown && tabToDelete.isNewTab
         val currentTab = tabsModel.currentTab
         if (tabsModel.size() == 1
-                && currentTab != null
-                && URLUtil.isFileUrl(currentTab.url)
-                && currentTab.url == mapHomepageToCurrentUrl()) {
+            && currentTab != null
+            && URLUtil.isFileUrl(currentTab.url)
+            && currentTab.url == mapHomepageToCurrentUrl()) {
             view.closeActivity()
             return
         } else {
