@@ -95,19 +95,12 @@ class HistoryDatabase @Inject constructor(
         }
 
     @WorkerThread
-    @Synchronized
     private fun addHistoryItem(item: HistoryItem) {
-        val values = ContentValues().apply {
-            put(KEY_URL, item.url)
-            put(KEY_TITLE, item.title)
-            put(KEY_TIME_VISITED, System.currentTimeMillis())
-        }
-        database.insert(TABLE_HISTORY, null, values)
+        database.insert(TABLE_HISTORY, null, item.toContentValues())
     }
 
     @WorkerThread
-    @Synchronized
-    internal fun getHistoryItem(url: String): String? =
+    fun getHistoryItem(url: String): String? =
         database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
             "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
             it.moveToFirst()
@@ -115,21 +108,27 @@ class HistoryDatabase @Inject constructor(
             return it.getString(0)
         }
 
-    internal fun getAllHistoryItems(): List<HistoryItem> {
+    fun getAllHistoryItems(): List<HistoryItem> {
         database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC").use { cursor ->
             return cursor.map { it.bindToHistoryItem() }
         }
     }
 
-    internal fun getHistoryItemsCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
+    fun getHistoryItemsCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
+
+    private fun HistoryItem.toContentValues() = ContentValues().apply {
+        put(KEY_URL, url)
+        put(KEY_TITLE, title)
+        put(KEY_TIME_VISITED, System.currentTimeMillis())
+    }
+
+    private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
+        setUrl(getString(1))
+        setTitle(getString(2))
+        imageId = R.drawable.ic_history
+    }
 
     companion object {
-
-        private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
-            setUrl(getString(1))
-            setTitle(getString(2))
-            imageId = R.drawable.ic_history
-        }
 
         // Database version
         private const val DATABASE_VERSION = 2
