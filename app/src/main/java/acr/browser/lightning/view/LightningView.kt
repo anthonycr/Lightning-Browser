@@ -484,14 +484,6 @@ class LightningView(
     }
 
     /**
-     * Notify the LightningView that there is low memory and
-     * for the WebView to free memory. Only applicable on
-     * pre-Lollipop devices.
-     */
-    fun freeMemory() {
-    }
-
-    /**
      * Notify the WebView to stop the current load.
      */
     fun stopLoading() {

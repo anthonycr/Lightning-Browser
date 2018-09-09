@@ -220,8 +220,7 @@ class TabsManager {
      * @param context the context needed to initialize the LightningView preferences.
      */
     fun resumeAll(context: Context) {
-        val current = currentTab
-        current?.resumeTimers()
+        currentTab?.resumeTimers()
         for (tab in tabList) {
             tab.onResume()
             tab.initializePreferences(context)
@@ -234,11 +233,8 @@ class TabsManager {
      * onResume doesn't consistently resume it.
      */
     fun pauseAll() {
-        val current = currentTab
-        current?.pauseTimers()
-        for (tab in tabList) {
-            tab.onPause()
-        }
+        currentTab?.pauseTimers()
+        tabList.forEach(LightningView::onPause)
     }
 
     /**
@@ -251,20 +247,12 @@ class TabsManager {
     fun getTabAtPosition(position: Int): LightningView? =
         if (position < 0 || position >= tabList.size) {
             null
-        } else tabList[position]
+        } else {
+            tabList[position]
+        }
 
     val allTabs: List<LightningView>
         get() = tabList
-
-    /**
-     * Frees memory for each tab in the manager. Note: this will only work on API < KITKAT as on
-     * KITKAT onward the WebViews manage their own memory correctly.
-     */
-    fun freeMemory() {
-        for (tab in tabList) {
-            tab.freeMemory()
-        }
-    }
 
     /**
      * Shutdown the manager. This destroys all tabs and clears the references to those tabs. Current

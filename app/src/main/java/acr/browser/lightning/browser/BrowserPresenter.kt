@@ -303,8 +303,6 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         tabsModel.currentTab?.find(query)
     }
 
-    fun onAppLowMemory() = tabsModel.freeMemory()
-
     companion object {
         private const val TAG = "BrowserPresenter"
     }
