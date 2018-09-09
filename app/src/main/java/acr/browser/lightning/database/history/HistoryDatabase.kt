@@ -26,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 @WorkerThread
 class HistoryDatabase @Inject constructor(
-        application: Application
+    application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), HistoryRepository {
 
     private val database: SQLiteDatabase by databaseDelegate()
@@ -34,11 +34,11 @@ class HistoryDatabase @Inject constructor(
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
         val createHistoryTable = "CREATE TABLE $TABLE_HISTORY(" +
-                " $KEY_ID INTEGER PRIMARY KEY," +
-                " $KEY_URL TEXT," +
-                " $KEY_TITLE TEXT," +
-                " $KEY_TIME_VISITED INTEGER" +
-                ")"
+            " $KEY_ID INTEGER PRIMARY KEY," +
+            " $KEY_URL TEXT," +
+            " $KEY_TITLE TEXT," +
+            " $KEY_TIME_VISITED INTEGER" +
+            ")"
         db.execSQL(createHistoryTable)
     }
 
@@ -76,32 +76,32 @@ class HistoryDatabase @Inject constructor(
     }
 
     override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
-            Single.fromCallable {
-                val itemList = ArrayList<HistoryItem>(5)
+        Single.fromCallable {
+            val itemList = ArrayList<HistoryItem>(5)
 
-                val search = "%$query%"
+            val search = "%$query%"
 
-                database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                        arrayOf(search, search), null, null, "$KEY_TIME_VISITED DESC", "5").use {
-                    while (it.moveToNext()) {
-                        itemList.add(it.bindToHistoryItem())
-                    }
+            database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
+                arrayOf(search, search), null, null, "$KEY_TIME_VISITED DESC", "5").use {
+                while (it.moveToNext()) {
+                    itemList.add(it.bindToHistoryItem())
                 }
-
-                return@fromCallable itemList
             }
+
+            return@fromCallable itemList
+        }
 
     override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
-            Single.fromCallable {
-                val itemList = ArrayList<HistoryItem>(100)
-                database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC", "100").use {
-                    while (it.moveToNext()) {
-                        itemList.add(it.bindToHistoryItem())
-                    }
+        Single.fromCallable {
+            val itemList = ArrayList<HistoryItem>(100)
+            database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC", "100").use {
+                while (it.moveToNext()) {
+                    itemList.add(it.bindToHistoryItem())
                 }
-
-                return@fromCallable itemList
             }
+
+            return@fromCallable itemList
+        }
 
     @WorkerThread
     @Synchronized
@@ -116,12 +116,12 @@ class HistoryDatabase @Inject constructor(
     @WorkerThread
     @Synchronized
     internal fun getHistoryItem(url: String): String? =
-            database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
-                    "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
-                it.moveToFirst()
+        database.query(TABLE_HISTORY, arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
+            "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
+            it.moveToFirst()
 
-                return it.getString(0)
-            }
+            return it.getString(0)
+        }
 
     internal fun getAllHistoryItems(): List<HistoryItem> {
         val itemList = ArrayList<HistoryItem>()
