@@ -6,6 +6,7 @@ package acr.browser.lightning.database.history
 import acr.browser.lightning.R
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.map
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -15,7 +16,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.support.annotation.WorkerThread
 import io.reactivex.Completable
 import io.reactivex.Single
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -62,9 +62,10 @@ class HistoryDatabase @Inject constructor(
     }
 
     override fun visitHistoryItem(url: String, title: String?): Completable = Completable.fromAction {
-        val values = ContentValues()
-        values.put(KEY_TITLE, title ?: "")
-        values.put(KEY_TIME_VISITED, System.currentTimeMillis())
+        val values = ContentValues().apply {
+            put(KEY_TITLE, title ?: "")
+            put(KEY_TIME_VISITED, System.currentTimeMillis())
+        }
 
         database.query(false, TABLE_HISTORY, arrayOf(KEY_URL), "$KEY_URL = ?", arrayOf(url), null, null, null, "1").use {
             if (it.count > 0) {
@@ -77,39 +78,30 @@ class HistoryDatabase @Inject constructor(
 
     override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
         Single.fromCallable {
-            val itemList = ArrayList<HistoryItem>(5)
 
             val search = "%$query%"
 
             database.query(TABLE_HISTORY, null, "$KEY_TITLE LIKE ? OR $KEY_URL LIKE ?",
-                arrayOf(search, search), null, null, "$KEY_TIME_VISITED DESC", "5").use {
-                while (it.moveToNext()) {
-                    itemList.add(it.bindToHistoryItem())
-                }
+                arrayOf(search, search), null, null, "$KEY_TIME_VISITED DESC", "5").map { cursor ->
+                return@fromCallable cursor.map { it.bindToHistoryItem() }
             }
-
-            return@fromCallable itemList
         }
 
     override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
         Single.fromCallable {
-            val itemList = ArrayList<HistoryItem>(100)
-            database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC", "100").use {
-                while (it.moveToNext()) {
-                    itemList.add(it.bindToHistoryItem())
-                }
+            database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC", "100").use { cursor ->
+                return@fromCallable cursor.map { it.bindToHistoryItem() }
             }
-
-            return@fromCallable itemList
         }
 
     @WorkerThread
     @Synchronized
     private fun addHistoryItem(item: HistoryItem) {
-        val values = ContentValues()
-        values.put(KEY_URL, item.url)
-        values.put(KEY_TITLE, item.title)
-        values.put(KEY_TIME_VISITED, System.currentTimeMillis())
+        val values = ContentValues().apply {
+            put(KEY_URL, item.url)
+            put(KEY_TITLE, item.title)
+            put(KEY_TIME_VISITED, System.currentTimeMillis())
+        }
         database.insert(TABLE_HISTORY, null, values)
     }
 
@@ -124,26 +116,20 @@ class HistoryDatabase @Inject constructor(
         }
 
     internal fun getAllHistoryItems(): List<HistoryItem> {
-        val itemList = ArrayList<HistoryItem>()
-
-        database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC").use {
-            while (it.moveToNext()) {
-                itemList.add(it.bindToHistoryItem())
-            }
+        database.query(TABLE_HISTORY, null, null, null, null, null, "$KEY_TIME_VISITED DESC").use { cursor ->
+            return cursor.map { it.bindToHistoryItem() }
         }
-
-        return itemList
     }
 
     internal fun getHistoryItemsCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
 
-    private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
-        setUrl(getString(1))
-        setTitle(getString(2))
-        imageId = R.drawable.ic_history
-    }
-
     companion object {
+
+        private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
+            setUrl(getString(1))
+            setTitle(getString(2))
+            imageId = R.drawable.ic_history
+        }
 
         // Database version
         private const val DATABASE_VERSION = 2
