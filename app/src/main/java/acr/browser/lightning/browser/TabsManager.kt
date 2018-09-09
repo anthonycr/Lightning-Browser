@@ -269,8 +269,9 @@ class TabsManager {
      *
      * @param isConnected whether there is a network connection or not.
      */
-    fun notifyConnectionStatus(isConnected: Boolean) = tabList.map(LightningView::webView)
-        .forEach { it?.setNetworkAvailable(isConnected) }
+    fun notifyConnectionStatus(isConnected: Boolean) = tabList.forEach {
+        it.setNetworkAvailable(isConnected)
+    }
 
     /**
      * The current number of tabs in the manager.
@@ -292,12 +293,7 @@ class TabsManager {
      *
      * @return the last tab, or null if there are no tabs.
      */
-    fun lastTab(): LightningView? =
-        if (last() < 0) {
-            null
-        } else {
-            tabList[last()]
-        }
+    fun lastTab(): LightningView? = tabList.lastOrNull()
 
     /**
      * Create and return a new tab. The tab is automatically added to the tabs list.

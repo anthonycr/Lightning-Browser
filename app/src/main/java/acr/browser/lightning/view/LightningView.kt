@@ -311,11 +311,7 @@ class LightningView(
 
         setUserAgent(context, userPreferences.userAgentChoice)
 
-        if (userPreferences.savePasswordsEnabled && !isIncognito) {
-            settings.saveFormData = true
-        } else {
-            settings.saveFormData = false
-        }
+        settings.saveFormData = userPreferences.savePasswordsEnabled && !isIncognito
 
         if (userPreferences.javaScriptEnabled) {
             settings.javaScriptEnabled = true
@@ -721,6 +717,13 @@ class LightningView(
      */
     fun clearFindMatches() {
         webView?.clearMatches()
+    }
+
+    /**
+     * Notifies the [WebView] whether the network is available or not.
+     */
+    fun setNetworkAvailable(isAvailable: Boolean) {
+        webView?.setNetworkAvailable(isAvailable)
     }
 
     /**
