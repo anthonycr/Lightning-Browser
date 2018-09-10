@@ -42,7 +42,6 @@ class TabsManager {
      *
      * @return a [LightningView] or null if there is no current tab.
      */
-    @get:Synchronized
     var currentTab: LightningView? = null
         private set
     private var tabNumberListeners: Set<((Int) -> Unit)> = hashSetOf()

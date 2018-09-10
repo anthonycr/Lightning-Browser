@@ -67,7 +67,6 @@ class LightningView(
      *
      * @return the WebView instance of the tab, which can be null.
      */
-    @get:Synchronized
     var webView: WebView? = null
         private set
 
