@@ -51,7 +51,7 @@ import javax.inject.Named
  */
 class LightningView(
     private val activity: Activity,
-    url: String?,
+    tabInitializer: TabInitializer,
     val isIncognito: Boolean
 ) {
 
@@ -204,15 +204,7 @@ class LightningView(
         initializeSettings()
         initializePreferences(activity)
 
-        if (url != null) {
-            if (!url.isBlank()) {
-                tab.loadUrl(url, requestHeaders)
-            } else {
-                // don't load anything, the user is looking for a blank tab
-            }
-        } else {
-            loadHomePage()
-        }
+        tabInitializer.initialize(tab)
     }
 
     fun currentSslState(): SSLState = lightningWebClient.sslState

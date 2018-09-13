@@ -33,8 +33,7 @@ import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.*
-import acr.browser.lightning.view.Handlers
-import acr.browser.lightning.view.LightningView
+import acr.browser.lightning.view.*
 import acr.browser.lightning.view.SearchView
 import android.app.Activity
 import android.app.NotificationManager
@@ -77,7 +76,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.CustomViewCallback
-import android.webkit.WebView
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView.OnEditorActionListener
@@ -149,6 +147,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var clipboardManager: ClipboardManager
     @Inject internal lateinit var notificationManager: NotificationManager
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:Named("main") internal lateinit var mainScheduler: Scheduler
 
     private val tabsManager: TabsManager = TabsManager()
 
@@ -435,7 +434,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     protected fun panicClean() {
         Log.d(TAG, "Closing browser")
-        tabsManager.newTab(this, "", false)
+        tabsManager.newTab(this, NoOpInitializer(), false)
         tabsManager.switchToTab(0)
         tabsManager.clearSavedState()
 
@@ -661,7 +660,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     }
                     KeyEvent.KEYCODE_T -> {
                         // Open new tab
-                        newTab(null, true)
+                        presenter?.newTab(
+                            HomePageInitializer(userPreferences, this, databaseScheduler, mainScheduler),
+                            true
+                        )
                         return true
                     }
                     KeyEvent.KEYCODE_W -> {
@@ -758,7 +760,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_new_tab -> {
-                newTab(null, true)
+                presenter?.newTab(HomePageInitializer(userPreferences, this, databaseScheduler, mainScheduler), true)
                 return true
             }
             R.id.action_incognito -> {
@@ -1028,14 +1030,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun tabClicked(position: Int) = showTab(position)
 
     override fun newTabButtonClicked() {
-        presenter?.newTab(null, true)
+        presenter?.newTab(
+            HomePageInitializer(userPreferences, this, databaseScheduler, mainScheduler),
+            true
+        )
     }
 
     override fun newTabButtonLongClicked() {
         val savedUrl = userPreferences.savedUrl
 
         if (savedUrl != "") {
-            newTab(savedUrl, true)
+            presenter?.newTab(UrlInitializer(savedUrl), true)
 
             snackbar(R.string.deleted_tab)
         }
@@ -1087,9 +1092,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     protected fun handleNewIntent(intent: Intent) {
         presenter?.onNewIntent(intent)
     }
-
-    // TODO move to presenter
-    private fun newTab(url: String?, show: Boolean): Boolean = presenter?.newTab(url, show) != false
 
     protected fun performExitCleanUp() {
         val currentTab = tabsManager.currentTab
@@ -1418,33 +1420,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * function that opens the HTML history page in the browser
      */
     private fun openHistory() {
-        HistoryPage()
-            .createHistoryPage()
-            .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { item ->
-                tabsManager
-                    .allTabs
-                    .withIndex()
-                    .find { UrlUtils.isHistoryUrl(it.value.url) }
-                    ?.let {
-                        it.value.reload()
-                        presenter?.tabChanged(it.index)
-                        return@subscribe
-                    }
-
-                newTab(requireNotNull(item), true)
-            }
+        presenter?.newTab(
+            AsyncUrlInitializer(HistoryPage().createHistoryPage(), databaseScheduler, mainScheduler),
+            true
+        )
     }
 
     private fun openDownloads() {
-        DownloadsPage()
-            .getDownloadsPage()
-            .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { url ->
-                tabsManager.currentTab?.loadUrl(url)
-            }
+        presenter?.newTab(
+            AsyncUrlInitializer(DownloadsPage().getDownloadsPage(), databaseScheduler, mainScheduler),
+            true
+        )
     }
 
     /**
@@ -1778,15 +1764,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * the newly created WebView.
      */
     override fun onCreateWindow(resultMsg: Message) {
-        if (newTab("", true)) {
-            tabsManager.getTabAtPosition(tabsManager.size() - 1)
-                ?.let(LightningView::webView)
-                ?.let {
-                    val transport = resultMsg.obj as WebView.WebViewTransport
-                    transport.webView = it
-                    resultMsg.sendToTarget()
-                }
-        }
+        presenter?.newTab(ResultMsgInitializer(resultMsg), true)
     }
 
     /**
@@ -1886,9 +1864,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun handleNewTab(newTabType: LightningDialogBuilder.NewTab, url: String) {
+        val urlInitializer = UrlInitializer(url)
         when (newTabType) {
-            LightningDialogBuilder.NewTab.FOREGROUND -> newTab(url, true)
-            LightningDialogBuilder.NewTab.BACKGROUND -> newTab(url, false)
+            LightningDialogBuilder.NewTab.FOREGROUND -> presenter?.newTab(urlInitializer, true)
+            LightningDialogBuilder.NewTab.BACKGROUND -> presenter?.newTab(urlInitializer, false)
             LightningDialogBuilder.NewTab.INCOGNITO -> {
                 drawer_layout.closeDrawers()
                 val intent = IncognitoActivity.createIntent(this, url.toUri())
