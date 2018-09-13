@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.i2p.android.ui.I2PAndroidHelper
 import java.util.concurrent.Executors
@@ -78,6 +79,11 @@ class AppModule(private val browserApp: BrowserApp) {
     @Named("network")
     @Singleton
     fun providesNetworkThread(): Scheduler = Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))
+
+    @Provides
+    @Named("main")
+    @Singleton
+    fun providesMainThread(): Scheduler = AndroidSchedulers.mainThread()
 
     @Provides
     @Singleton
