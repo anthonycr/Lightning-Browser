@@ -16,9 +16,8 @@ import android.support.v4.app.NotificationCompat
  * A notification helper that displays the current number of tabs open in a notification as a
  * warning. When the notification is pressed, the incognito browser will open.
  */
-class IncognitoNotification(val context: Context) {
+class IncognitoNotification(val context: Context, val notificationManager: NotificationManager) {
 
-    private val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val incognitoNotificationId = 1
     private val channelId = "channel_incognito"
 

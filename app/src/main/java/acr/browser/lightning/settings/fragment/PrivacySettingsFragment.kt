@@ -5,9 +5,9 @@ import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
+import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ApiUtils
-import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.WebUtils
 import acr.browser.lightning.view.LightningView
 import android.os.Bundle
@@ -112,7 +112,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
                             .subscribeOn(databaseScheduler)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe {
-                                Utils.showSnackbar(activity, R.string.message_clear_history)
+                                activity.snackbar(R.string.message_clear_history)
                             }
                 },
                 negativeButton = DialogItem(R.string.action_no) {},
@@ -130,7 +130,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
                             .subscribeOn(databaseScheduler)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe {
-                                Utils.showSnackbar(activity, R.string.message_cookies_cleared)
+                                activity.snackbar(R.string.message_cookies_cleared)
                             }
                 },
                 negativeButton = DialogItem(R.string.action_no) {},
@@ -143,7 +143,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
             clearCache(true)
             destroy()
         }
-        Utils.showSnackbar(activity, R.string.message_cache_cleared)
+        activity.snackbar(R.string.message_cache_cleared)
     }
 
     private fun clearHistory(): Completable = Completable.fromAction {
@@ -167,7 +167,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     private fun clearWebStorage() {
         WebUtils.clearWebStorage()
-        Utils.showSnackbar(activity, R.string.message_web_storage_cleared)
+        activity.snackbar(R.string.message_web_storage_cleared)
     }
 
     companion object {

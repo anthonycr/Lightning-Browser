@@ -1,6 +1,8 @@
 package acr.browser.lightning.database.whitelist
 
-import acr.browser.lightning.database.LazyDatabase
+import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.firstOrNullMap
+import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
@@ -20,21 +22,18 @@ import javax.inject.Singleton
 @Singleton
 @WorkerThread
 class AdBlockWhitelistDatabase @Inject constructor(
-        application: Application
+    application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), AdBlockWhitelistRepository {
 
-    private val lazyDatabase = LazyDatabase(this)
-
-    private val database: SQLiteDatabase
-        get() = lazyDatabase.db()
+    private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
         val createWhitelistTable = "CREATE TABLE $TABLE_WHITELIST(" +
-                " $KEY_ID INTEGER PRIMARY KEY," +
-                " $KEY_URL TEXT," +
-                " $KEY_CREATED INTEGER" +
-                ")"
+            " $KEY_ID INTEGER PRIMARY KEY," +
+            " $KEY_URL TEXT," +
+            " $KEY_CREATED INTEGER" +
+            ")"
         db.execSQL(createWhitelistTable)
     }
 
@@ -47,30 +46,32 @@ class AdBlockWhitelistDatabase @Inject constructor(
     }
 
     private fun Cursor.bindToWhitelistItem() = WhitelistItem(
-            url = getString(1),
-            timeCreated = getLong(2)
+        url = getString(1),
+        timeCreated = getLong(2)
     )
 
     override fun allWhitelistItems(): Single<List<WhitelistItem>> = Single.fromCallable {
-        val whitelistItems = mutableListOf<WhitelistItem>()
-        database.query(TABLE_WHITELIST, null, null, null, null, null, "$KEY_CREATED DESC").use {
-            while (it.moveToNext()) {
-                whitelistItems.add(it.bindToWhitelistItem())
-            }
-        }
-
-        return@fromCallable whitelistItems
+        database.query(
+            TABLE_WHITELIST,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "$KEY_CREATED DESC"
+        ).useMap { it.bindToWhitelistItem() }
     }
 
     override fun whitelistItemForUrl(url: String): Maybe<WhitelistItem> = Maybe.fromCallable {
-        database.query(TABLE_WHITELIST, null, "$KEY_URL=?",
-                arrayOf(url), null, null, "$KEY_CREATED DESC", "1").use {
-            if (it.moveToFirst()) {
-                return@fromCallable it.bindToWhitelistItem()
-            }
-        }
-
-        return@fromCallable null
+        database.query(
+            TABLE_WHITELIST,
+            null,
+            "$KEY_URL=?",
+            arrayOf(url), null,
+            null,
+            "$KEY_CREATED DESC",
+            "1"
+        ).firstOrNullMap { it.bindToWhitelistItem() }
     }
 
     override fun addWhitelistItem(whitelistItem: WhitelistItem): Completable = Completable.fromAction {

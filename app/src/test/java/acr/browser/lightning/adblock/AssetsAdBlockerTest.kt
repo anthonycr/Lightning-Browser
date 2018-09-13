@@ -24,7 +24,7 @@ class AssetsAdBlockerTest {
             0.0.0.0 multiline1.com multiline2.com # comment
             """
 
-        val mutableList = arrayListOf<String>()
+        val mutableList = mutableListOf<String>()
 
         testInput.trimIndent().split("\n").forEach {
             AssetsAdBlocker.parseString(StringBuilder(it), mutableList)

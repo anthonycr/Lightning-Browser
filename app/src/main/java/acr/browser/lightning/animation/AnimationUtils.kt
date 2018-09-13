@@ -20,28 +20,27 @@ object AnimationUtils {
      * @return an animation that will change the image shown by the view.
      */
     @JvmStatic
-    fun createRotationTransitionAnimation(imageView: ImageView,
-                                          @DrawableRes drawableRes: Int): Animation {
-        val animation = object : Animation() {
+    fun createRotationTransitionAnimation(
+            imageView: ImageView,
+            @DrawableRes drawableRes: Int
+    ): Animation = object : Animation() {
 
-            private var setFinalDrawable: Boolean = false
+        private var setFinalDrawable: Boolean = false
 
-            override fun applyTransformation(interpolatedTime: Float, t: Transformation) =
-                    if (interpolatedTime < 0.5f) {
-                        imageView.rotationY = 90f * interpolatedTime * 2f
-                    } else {
-                        if (!setFinalDrawable) {
-                            setFinalDrawable = true
-                            imageView.setImageResource(drawableRes)
-                        }
-                        imageView.rotationY = -90 + 90f * (interpolatedTime - 0.5f) * 2f
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation) =
+                if (interpolatedTime < 0.5f) {
+                    imageView.rotationY = 90f * interpolatedTime * 2f
+                } else {
+                    if (!setFinalDrawable) {
+                        setFinalDrawable = true
+                        imageView.setImageResource(drawableRes)
                     }
-        }
+                    imageView.rotationY = -90 + 90f * (interpolatedTime - 0.5f) * 2f
+                }
 
-        animation.duration = 300
-        animation.interpolator = AccelerateDecelerateInterpolator()
-
-        return animation
+    }.apply {
+        duration = 300
+        interpolator = AccelerateDecelerateInterpolator()
     }
 
 }

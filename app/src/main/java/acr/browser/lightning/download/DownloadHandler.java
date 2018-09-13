@@ -7,12 +7,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,11 +37,14 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadItem;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -57,7 +58,9 @@ public class DownloadHandler {
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
     @Inject DownloadsRepository downloadsRepository;
+    @Inject DownloadManager downloadManager;
     @Inject @Named("database") Scheduler databaseScheduler;
+    @Inject @Named("network") Scheduler networkScheduler;
 
     @Inject
     public DownloadHandler() {
@@ -94,9 +97,7 @@ public class DownloadHandler {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_BROWSABLE);
             intent.setComponent(null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                intent.setSelector(null);
-            }
+            intent.setSelector(null);
             ResolveInfo info = context.getPackageManager().resolveActivity(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {
@@ -199,7 +200,7 @@ public class DownloadHandler {
             // This only happens for very bad urls, we want to catch the
             // exception here
             Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
-            Utils.showSnackbar(context, R.string.problem_download);
+            ActivityExtensions.snackbar(context, R.string.problem_download);
             return;
         }
 
@@ -209,7 +210,7 @@ public class DownloadHandler {
         try {
             request = new DownloadManager.Request(uri);
         } catch (IllegalArgumentException e) {
-            Utils.showSnackbar(context, R.string.cannot_download);
+            ActivityExtensions.snackbar(context, R.string.cannot_download);
             return;
         }
 
@@ -221,7 +222,7 @@ public class DownloadHandler {
         Uri downloadFolder = Uri.parse(location);
 
         if (!isWriteAccessAvailable(downloadFolder)) {
-            Utils.showSnackbar(context, R.string.problem_location_download);
+            ActivityExtensions.snackbar(context, R.string.problem_location_download);
             return;
         }
         String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
@@ -247,23 +248,40 @@ public class DownloadHandler {
             }
             // We must have long pressed on a link or image to download it. We
             // are not sure of the mimetype in this case, so do a head request
-            new FetchUrlMimeType(context, request, addressString, cookies, userAgent).start();
+            final Disposable disposable = new FetchUrlMimeType(downloadManager, request, addressString, cookies, userAgent)
+                .create()
+                .subscribeOn(networkScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<FetchUrlMimeType.Result>() {
+                    @Override
+                    public void accept(FetchUrlMimeType.Result result) {
+                        switch (result) {
+                            case FAILURE_ENQUEUE:
+                                ActivityExtensions.snackbar(context, R.string.cannot_download);
+                                break;
+                            case FAILURE_LOCATION:
+                                ActivityExtensions.snackbar(context, R.string.problem_location_download);
+                                break;
+                            case SUCCESS:
+                                ActivityExtensions.snackbar(context, R.string.download_pending);
+                                break;
+                        }
+                    }
+                });
         } else {
             Log.d(TAG, "Valid mimetype, attempting to download");
-            final DownloadManager manager = (DownloadManager) context
-                .getSystemService(Context.DOWNLOAD_SERVICE);
             try {
-                manager.enqueue(request);
+                downloadManager.enqueue(request);
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
                 Log.e(TAG, "Unable to enqueue request", e);
-                Utils.showSnackbar(context, R.string.cannot_download);
+                ActivityExtensions.snackbar(context, R.string.cannot_download);
             } catch (SecurityException e) {
                 // TODO write a download utility that downloads files rather than rely on the system
                 // because the system can only handle Environment.getExternal... as a path
-                Utils.showSnackbar(context, R.string.problem_location_download);
+                ActivityExtensions.snackbar(context, R.string.problem_location_download);
             }
-            Utils.showSnackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
+            ActivityExtensions.snackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
         }
 
         // save download in database

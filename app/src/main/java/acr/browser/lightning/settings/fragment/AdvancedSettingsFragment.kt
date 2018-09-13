@@ -110,10 +110,10 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
 
                 val currentChoice = TEXT_ENCODINGS.indexOf(userPreferences.textEncoding)
 
-                setSingleChoiceItems(TEXT_ENCODINGS, currentChoice, { _, which ->
+                setSingleChoiceItems(TEXT_ENCODINGS, currentChoice) { _, which ->
                     userPreferences.textEncoding = TEXT_ENCODINGS[which]
                     summaryUpdater.updateSummary(TEXT_ENCODINGS[which])
-                })
+                }
                 setPositiveButton(resources.getString(R.string.action_ok), null)
             }.show()
 

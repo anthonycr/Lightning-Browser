@@ -4,35 +4,38 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.extensions.map
-import acr.browser.lightning.utils.FileUtils
 import android.app.Application
+import okhttp3.HttpUrl
+import okhttp3.ResponseBody
 import org.json.JSONArray
-import java.io.InputStream
 
 /**
  * The search suggestions provider for the Baidu search engine.
  */
 class BaiduSuggestionsModel(
-        application: Application
+    application: Application
 ) : BaseSuggestionsModel(application, UTF8) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
     private val inputEncoding = "GBK"
 
-    // see http://unionsug.baidu.com/su?wd=encodeURIComponent(U)
-    // see http://suggestion.baidu.com/s?wd=encodeURIComponent(U)&action=opensearch
-    override fun createQueryUrl(query: String, language: String): String =
-            "http://suggestion.baidu.com/s?wd=$query&action=opensearch"
+    // see http://unionsug.baidu.com/su?wd={encodedQuery}
+    // see http://suggestion.baidu.com/s?wd={encodedQuery}&action=opensearch
+    override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
+        .scheme("http")
+        .host("suggestion.baidu.com")
+        .encodedPath("/s")
+        .addQueryParameter("wd", query)
+        .addQueryParameter("action", "opensearch")
+        .build()
+
 
     @Throws(Exception::class)
-    override fun parseResults(inputStream: InputStream): List<HistoryItem> {
-        val content = FileUtils.readStringFromStream(inputStream, inputEncoding)
-        val responseArray = JSONArray(content)
-        val jsonArray = responseArray.getJSONArray(1)
-
-        return jsonArray
-                .map { it as String }
-                .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
+    override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
+        return JSONArray(responseBody.string())
+            .getJSONArray(1)
+            .map { it as String }
+            .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
     }
 
 }

@@ -19,8 +19,6 @@ import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.webkit.URLUtil
-import com.anthonycr.bonsai.CompletableOnSubscribe
-import com.anthonycr.bonsai.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -51,15 +49,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun setupTabs(intent: Intent?) {
         tabsModel.initializeTabs(view as Activity, intent, isIncognito)
-                .subscribeOn(Schedulers.main())
-                .subscribe(object : CompletableOnSubscribe() {
-                    override fun onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        view.notifyTabViewInitialized()
-                        view.updateTabNumber(tabsModel.size())
-                        tabChanged(tabsModel.last())
-                    }
-                })
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                // At this point we always have at least a tab in the tab manager
+                view.notifyTabViewInitialized()
+                view.updateTabNumber(tabsModel.size())
+                tabChanged(tabsModel.last())
+            }
     }
 
     /**
@@ -74,13 +70,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     private fun onTabChanged(newTab: LightningView?) {
         Log.d(TAG, "On tab changed")
-        view.updateSslState(newTab?.currentSslState() ?: SSLState.None())
+        view.updateSslState(newTab?.currentSslState() ?: SSLState.None)
 
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab
-                ?.sslStateObservable()
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe(view::updateSslState)
+            ?.sslStateObservable()
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(view::updateSslState)
 
         val webView = newTab?.webView
 
@@ -166,9 +162,9 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         val shouldClose = shouldClose && isShown && tabToDelete.isNewTab
         val currentTab = tabsModel.currentTab
         if (tabsModel.size() == 1
-                && currentTab != null
-                && URLUtil.isFileUrl(currentTab.url)
-                && currentTab.url == mapHomepageToCurrentUrl()) {
+            && currentTab != null
+            && URLUtil.isFileUrl(currentTab.url)
+            && currentTab.url == mapHomepageToCurrentUrl()) {
             view.closeActivity()
             return
         } else {
@@ -306,8 +302,6 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     fun findInPage(query: String) {
         tabsModel.currentTab?.find(query)
     }
-
-    fun onAppLowMemory() = tabsModel.freeMemory()
 
     companion object {
         private const val TAG = "BrowserPresenter"

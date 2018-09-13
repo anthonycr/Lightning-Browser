@@ -17,6 +17,7 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.constant.Proxy;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.preference.DeveloperPreferences;
 import acr.browser.lightning.preference.UserPreferences;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
@@ -157,10 +158,10 @@ public final class ProxyUtils {
     public boolean isProxyReady(@NonNull Activity activity) {
         if (mUserPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             if (!mI2PHelper.isI2PAndroidRunning()) {
-                Utils.showSnackbar(activity, R.string.i2p_not_running);
+                ActivityExtensions.snackbar(activity, R.string.i2p_not_running);
                 return false;
             } else if (!mI2PHelper.areTunnelsActive()) {
-                Utils.showSnackbar(activity, R.string.i2p_tunnels_not_ready);
+                ActivityExtensions.snackbar(activity, R.string.i2p_tunnels_not_ready);
                 return false;
             }
         }
@@ -207,7 +208,7 @@ public final class ProxyUtils {
             case Constants.PROXY_ORBOT:
                 if (!OrbotHelper.isOrbotInstalled(activity)) {
                     choice = Constants.NO_PROXY;
-                    Utils.showSnackbar(activity, R.string.install_orbot);
+                    ActivityExtensions.snackbar(activity, R.string.install_orbot);
                 }
                 break;
             case Constants.PROXY_I2P:

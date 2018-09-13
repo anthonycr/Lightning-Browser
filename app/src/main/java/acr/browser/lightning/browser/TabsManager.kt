@@ -22,9 +22,10 @@ import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
 import android.webkit.URLUtil
-import com.anthonycr.bonsai.*
-import io.reactivex.Scheduler
+import io.reactivex.*
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -41,7 +42,6 @@ class TabsManager {
      *
      * @return a [LightningView] or null if there is no current tab.
      */
-    @get:Synchronized
     var currentTab: LightningView? = null
         private set
     private var tabNumberListeners: Set<((Int) -> Unit)> = hashSetOf()
@@ -53,6 +53,7 @@ class TabsManager {
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -90,38 +91,38 @@ class TabsManager {
     fun initializeTabs(activity: Activity,
                        intent: Intent?,
                        incognito: Boolean): Completable =
-            Completable.create(CompletableAction { subscriber ->
-                // Make sure we start with a clean tab list
-                shutdown()
+        Completable.create { emitter ->
+            // Make sure we start with a clean tab list
+            shutdown()
 
-                val url: String? = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
-                    extractSearchFromIntent(intent)
+            val url: String? = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
+                extractSearchFromIntent(intent)
+            } else {
+                intent?.dataString
+            }
+
+            // If incognito, only create one tab
+            if (incognito) {
+                newTab(activity, url, true)
+                finishInitialization()
+                emitter.onComplete()
+                return@create
+            }
+
+            Log.d(TAG, "URL from intent: $url")
+            currentTab = null
+            if (userPreferences.restoreLostTabsEnabled) {
+                restoreLostTabs(url, activity, emitter)
+            } else {
+                if (!TextUtils.isEmpty(url)) {
+                    newTab(activity, url, false)
                 } else {
-                    intent?.dataString
+                    newTab(activity, null, false)
                 }
-
-                // If incognito, only create one tab
-                if (incognito) {
-                    newTab(activity, url, true)
-                    finishInitialization()
-                    subscriber.onComplete()
-                    return@CompletableAction
-                }
-
-                Log.d(TAG, "URL from intent: $url")
-                currentTab = null
-                if (userPreferences.restoreLostTabsEnabled) {
-                    restoreLostTabs(url, activity, subscriber)
-                } else {
-                    if (!TextUtils.isEmpty(url)) {
-                        newTab(activity, url, false)
-                    } else {
-                        newTab(activity, null, false)
-                    }
-                    finishInitialization()
-                    subscriber.onComplete()
-                }
-            })
+                finishInitialization()
+                emitter.onComplete()
+            }
+        }
 
     fun extractSearchFromIntent(intent: Intent): String? {
         val query = intent.getStringExtra(SearchManager.QUERY)
@@ -135,47 +136,47 @@ class TabsManager {
     }
 
     private fun restoreLostTabs(newTabUrl: String?, activity: Activity,
-                                subscriber: CompletableSubscriber) {
+                                emitter: CompletableEmitter) {
         restoreState()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.main())
-                .subscribe(object : StreamOnSubscribe<Bundle>() {
-                    override fun onNext(bundle: Bundle?) {
-                        val tab = newTab(activity, "", false)
-                        val item = requireNotNull(bundle)
-                        val url = item.getString(URL_KEY)
-                        if (url != null && tab.webView != null) {
-                            when {
-                                UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity)
-                                        .createBookmarkPage()
-                                        .subscribeOn(databaseScheduler)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe { filePath ->
-                                            val localUrl = requireNotNull(filePath)
-                                            tab.loadUrl(localUrl)
-                                        }
-                                UrlUtils.isDownloadsUrl(url) -> DownloadsPage()
-                                        .getDownloadsPage()
-                                        .subscribeOn(databaseScheduler)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(tab::loadUrl)
-                                UrlUtils.isStartPageUrl(url) -> StartPage()
-                                        .createHomePage()
-                                        .subscribeOn(databaseScheduler)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(tab::loadUrl)
-                                UrlUtils.isHistoryUrl(url) -> HistoryPage()
-                                        .createHistoryPage()
-                                        .subscribeOn(databaseScheduler)
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(tab::loadUrl)
-                            }
-                        } else {
-                            tab.webView?.restoreState(item)
+            .subscribeOn(diskScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = { bundle ->
+                    val tab = newTab(activity, "", false)
+                    val item = requireNotNull(bundle)
+                    val url = item.getString(URL_KEY)
+                    if (url != null && tab.webView != null) {
+                        when {
+                            UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity)
+                                .createBookmarkPage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe { filePath ->
+                                    val localUrl = requireNotNull(filePath)
+                                    tab.loadUrl(localUrl)
+                                }
+                            UrlUtils.isDownloadsUrl(url) -> DownloadsPage()
+                                .getDownloadsPage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(tab::loadUrl)
+                            UrlUtils.isStartPageUrl(url) -> StartPage()
+                                .createHomePage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(tab::loadUrl)
+                            UrlUtils.isHistoryUrl(url) -> HistoryPage()
+                                .createHistoryPage()
+                                .subscribeOn(databaseScheduler)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(tab::loadUrl)
                         }
+                    } else {
+                        tab.webView?.restoreState(item)
                     }
-
-                    override fun onComplete() = if (newTabUrl != null) {
+                },
+                onComplete = {
+                    if (newTabUrl != null) {
                         if (URLUtil.isFileUrl(newTabUrl)) {
                             AlertDialog.Builder(activity).apply {
                                 setTitle(R.string.title_warning)
@@ -185,7 +186,7 @@ class TabsManager {
                                         newTab(activity, null, false)
                                     }
                                     finishInitialization()
-                                    subscriber.onComplete()
+                                    emitter.onComplete()
                                 }
                                 setNegativeButton(android.R.string.cancel, null)
                                 setPositiveButton(R.string.action_open) { _, _ -> newTab(activity, newTabUrl, false) }
@@ -196,17 +197,19 @@ class TabsManager {
                                 newTab(activity, null, false)
                             }
                             finishInitialization()
-                            subscriber.onComplete()
+                            emitter.onComplete()
                         }
                     } else {
                         if (tabList.isEmpty()) {
                             newTab(activity, null, false)
                         }
                         finishInitialization()
-                        subscriber.onComplete()
+                        emitter.onComplete()
                     }
-                })
+                }
+            )
     }
+
 
     /**
      * Method used to resume all the tabs in the browser. This is necessary because we cannot pause
@@ -216,8 +219,7 @@ class TabsManager {
      * @param context the context needed to initialize the LightningView preferences.
      */
     fun resumeAll(context: Context) {
-        val current = currentTab
-        current?.resumeTimers()
+        currentTab?.resumeTimers()
         for (tab in tabList) {
             tab.onResume()
             tab.initializePreferences(context)
@@ -230,11 +232,8 @@ class TabsManager {
      * onResume doesn't consistently resume it.
      */
     fun pauseAll() {
-        val current = currentTab
-        current?.pauseTimers()
-        for (tab in tabList) {
-            tab.onPause()
-        }
+        currentTab?.pauseTimers()
+        tabList.forEach(LightningView::onPause)
     }
 
     /**
@@ -245,22 +244,14 @@ class TabsManager {
      * @return the corespondent [LightningView], or null if the index is invalid
      */
     fun getTabAtPosition(position: Int): LightningView? =
-            if (position < 0 || position >= tabList.size) {
-                null
-            } else tabList[position]
+        if (position < 0 || position >= tabList.size) {
+            null
+        } else {
+            tabList[position]
+        }
 
     val allTabs: List<LightningView>
         get() = tabList
-
-    /**
-     * Frees memory for each tab in the manager. Note: this will only work on API < KITKAT as on
-     * KITKAT onward the WebViews manage their own memory correctly.
-     */
-    fun freeMemory() {
-        for (tab in tabList) {
-            tab.freeMemory()
-        }
-    }
 
     /**
      * Shutdown the manager. This destroys all tabs and clears the references to those tabs. Current
@@ -277,8 +268,9 @@ class TabsManager {
      *
      * @param isConnected whether there is a network connection or not.
      */
-    fun notifyConnectionStatus(isConnected: Boolean) = tabList.map(LightningView::webView)
-            .forEach { it?.setNetworkAvailable(isConnected) }
+    fun notifyConnectionStatus(isConnected: Boolean) = tabList.forEach {
+        it.setNetworkAvailable(isConnected)
+    }
 
     /**
      * The current number of tabs in the manager.
@@ -300,12 +292,7 @@ class TabsManager {
      *
      * @return the last tab, or null if there are no tabs.
      */
-    fun lastTab(): LightningView? =
-            if (last() < 0) {
-                null
-            } else {
-                tabList[last()]
-            }
+    fun lastTab(): LightningView? = tabList.lastOrNull()
 
     /**
      * Create and return a new tab. The tab is automatically added to the tabs list.
@@ -398,6 +385,8 @@ class TabsManager {
             }
         }
         FileUtils.writeBundleToStorage(app, outState, BUNDLE_STORAGE)
+            .subscribeOn(diskScheduler)
+            .subscribe()
     }
 
     /**
@@ -411,17 +400,14 @@ class TabsManager {
      * create new tabs for each tab saved and will delete the saved instance file when restoration
      * is complete.
      */
-    private fun restoreState(): Stream<Bundle> = Stream.create { subscriber ->
-        val savedState = FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE)
-        if (savedState != null) {
-            Log.d(TAG, "Restoring previous WebView state now")
-            savedState.keySet()
-                    .filter { it.startsWith(BUNDLE_KEY) }
-                    .forEach { subscriber.onNext(savedState.getBundle(it)) }
+    private fun restoreState(): Observable<Bundle> = Maybe
+        .fromCallable { FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE) }
+        .flattenAsObservable { bundle ->
+            bundle.keySet()
+                .filter { it.startsWith(BUNDLE_KEY) }
+                .map(bundle::getBundle)
         }
-        FileUtils.deleteBundleInStorage(app, BUNDLE_STORAGE)
-        subscriber.onComplete()
-    }
+        .doOnNext { Log.d(TAG, "Restoring previous WebView state now") }
 
     /**
      * Returns the index of the current tab.
@@ -444,7 +430,7 @@ class TabsManager {
      * @return the tab with an identical hash, or null.
      */
     fun getTabForHashCode(hashCode: Int): LightningView? =
-            tabList.firstOrNull { it.webView?.let { it.hashCode() == hashCode } == true }
+        tabList.firstOrNull { lightningView -> lightningView.webView?.let { it.hashCode() == hashCode } == true }
 
     /**
      * Switch the current tab to the one at the given position. It returns the selected tab that has

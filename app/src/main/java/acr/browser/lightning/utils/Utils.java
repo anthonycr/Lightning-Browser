@@ -14,12 +14,6 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Shader;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
@@ -27,14 +21,11 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import java.io.Closeable;
 import java.io.File;
@@ -48,16 +39,13 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.extensions.ActivityExtensions;
 
 public final class Utils {
 
     private static final String TAG = "Utils";
 
     private Utils() {}
-
-    public static boolean doesSupportHeaders() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
 
     /**
      * Creates a new intent that can launch the email
@@ -103,56 +91,6 @@ public final class Utils {
         AlertDialog alert = builder.create();
         alert.show();
         BrowserDialog.setDialogSize(activity, alert);
-    }
-
-    /**
-     * Displays a snackbar to the user with a String resource.
-     * <p>
-     * NOTE: If there is an accessibility manager enabled on
-     * the device, such as LastPass, then the snackbar animations
-     * will not work.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param resource the string resource to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) {
-            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
-            return;
-        }
-        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Displays a snackbar to the user with a string message.
-     * <p>
-     * NOTE: If there is an accessibility manager enabled on
-     * the device, such as LastPass, then the snackbar animations
-     * will not work.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param message  the string message to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) {
-            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
-            return;
-        }
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Shows a toast to the user.
-     * Should only be used if an activity is
-     * not available to show a snackbar.
-     *
-     * @param context  the context needed to show the toast.
-     * @param resource the string shown by the toast to the user.
-     */
-    public static void showToast(@NonNull Context context, @StringRes int resource) {
-        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -309,45 +247,6 @@ public final class Utils {
     }
 
     /**
-     * Draws the trapezoid background for the horizontal tabs on a canvas object using
-     * the specified color.
-     *
-     * @param canvas the canvas to draw upon
-     * @param color  the color to use to draw the tab
-     */
-    public static void drawTrapezoid(@NonNull Canvas canvas, int color, boolean withShader) {
-
-        Paint paint = new Paint();
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
-//        paint.setFilterBitmap(true);
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        if (withShader) {
-            paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                0, canvas.getHeight(),
-                color, mixTwoColors(Color.BLACK, color, 0.5f),
-                Shader.TileMode.CLAMP));
-        } else {
-            paint.setShader(null);
-        }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        double radians = Math.PI / 3;
-        int base = (int) (height / Math.tan(radians));
-
-        Path wallpath = new Path();
-        wallpath.reset();
-        wallpath.moveTo(0, height);
-        wallpath.lineTo(width, height);
-        wallpath.lineTo(width - base, 0);
-        wallpath.lineTo(base, 0);
-        wallpath.close();
-
-        canvas.drawPath(wallpath, paint);
-    }
-
-    /**
      * Creates a shortcut on the homescreen using the
      * {@link HistoryItem} information that opens the
      * browser. The icon, URL, and title are used in
@@ -374,7 +273,7 @@ public final class Utils {
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
             addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             activity.sendBroadcast(addIntent);
-            Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+            ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
         } else {
             ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
             if (shortcutManager.isRequestPinShortcutSupported()) {
@@ -386,9 +285,9 @@ public final class Utils {
                         .build();
 
                 shortcutManager.requestPinShortcut(pinShortcutInfo, null);
-                Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+                ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
             } else {
-                Utils.showSnackbar(activity, R.string.shortcut_message_failed_to_add);
+                ActivityExtensions.snackbar(activity, R.string.shortcut_message_failed_to_add);
             }
         }
     }

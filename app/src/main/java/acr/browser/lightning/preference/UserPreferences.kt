@@ -4,115 +4,118 @@ import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
+import acr.browser.lightning.di.Name
+import acr.browser.lightning.preference.delegates.booleanPreference
+import acr.browser.lightning.preference.delegates.intPreference
+import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
-import android.app.Application
+import android.content.SharedPreferences
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
  * The user's preferences.
  */
 @Singleton
-class UserPreferences @Inject constructor(application: Application, screenSize: ScreenSize) {
+class UserPreferences @Inject constructor(
+    @Named(Name.SETTINGS) preferences: SharedPreferences,
+    screenSize: ScreenSize
+) {
 
-    private val preferences = application.getSharedPreferences("settings", 0)
+    var webRtcEnabled by preferences.booleanPreference(WEB_RTC, false)
 
-    var webRtcEnabled by BooleanPreference(WEB_RTC, false, preferences).delegate()
+    var adBlockEnabled by preferences.booleanPreference(BLOCK_ADS, false)
 
-    var adBlockEnabled by BooleanPreference(BLOCK_ADS, false, preferences).delegate()
+    var blockImagesEnabled by preferences.booleanPreference(BLOCK_IMAGES, false)
 
-    var blockImagesEnabled by BooleanPreference(BLOCK_IMAGES, false, preferences).delegate()
+    var clearCacheExit by preferences.booleanPreference(CLEAR_CACHE_EXIT, false)
 
-    var flashSupport by IntPreference(ADOBE_FLASH_SUPPORT, 0, preferences).delegate()
+    var cookiesEnabled by preferences.booleanPreference(COOKIES, true)
 
-    var clearCacheExit by BooleanPreference(CLEAR_CACHE_EXIT, false, preferences).delegate()
+    var downloadDirectory by preferences.stringPreference(DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH)
 
-    var cookiesEnabled by BooleanPreference(COOKIES, true, preferences).delegate()
+    var fullScreenEnabled by preferences.booleanPreference(FULL_SCREEN, true)
 
-    var downloadDirectory by StringPreference(DOWNLOAD_DIRECTORY, FileUtils.DEFAULT_DOWNLOAD_PATH, preferences).delegate()
+    var hideStatusBarEnabled by preferences.booleanPreference(HIDE_STATUS_BAR, false)
 
-    var fullScreenEnabled by BooleanPreference(FULL_SCREEN, true, preferences).delegate()
+    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_HOMEPAGE)
 
-    var hideStatusBarEnabled by BooleanPreference(HIDE_STATUS_BAR, false, preferences).delegate()
+    var incognitoCookiesEnabled by preferences.booleanPreference(INCOGNITO_COOKIES, false)
 
-    var homepage by StringPreference(HOMEPAGE, SCHEME_HOMEPAGE, preferences).delegate()
+    var javaScriptEnabled by preferences.booleanPreference(JAVASCRIPT, true)
 
-    var incognitoCookiesEnabled by BooleanPreference(INCOGNITO_COOKIES, false, preferences).delegate()
+    var locationEnabled by preferences.booleanPreference(LOCATION, false)
 
-    var javaScriptEnabled by BooleanPreference(JAVASCRIPT, true, preferences).delegate()
+    var overviewModeEnabled by preferences.booleanPreference(OVERVIEW_MODE, true)
 
-    var locationEnabled by BooleanPreference(LOCATION, false, preferences).delegate()
+    var popupsEnabled by preferences.booleanPreference(POPUPS, true)
 
-    var overviewModeEnabled by BooleanPreference(OVERVIEW_MODE, true, preferences).delegate()
+    var restoreLostTabsEnabled by preferences.booleanPreference(RESTORE_LOST_TABS, true)
 
-    var popupsEnabled by BooleanPreference(POPUPS, true, preferences).delegate()
+    var savePasswordsEnabled by preferences.booleanPreference(SAVE_PASSWORDS, true)
 
-    var restoreLostTabsEnabled by BooleanPreference(RESTORE_LOST_TABS, true, preferences).delegate()
+    var searchChoice by preferences.intPreference(SEARCH, 1)
 
-    var savePasswordsEnabled by BooleanPreference(SAVE_PASSWORDS, true, preferences).delegate()
+    var searchUrl by preferences.stringPreference(SEARCH_URL, GoogleSearch().queryUrl)
 
-    var searchChoice by IntPreference(SEARCH, 1, preferences).delegate()
+    var textReflowEnabled by preferences.booleanPreference(TEXT_REFLOW, false)
 
-    var searchUrl by StringPreference(SEARCH_URL, GoogleSearch().queryUrl, preferences).delegate()
+    var textSize by preferences.intPreference(TEXT_SIZE, 3)
 
-    var textReflowEnabled by BooleanPreference(TEXT_REFLOW, false, preferences).delegate()
+    var useWideViewportEnabled by preferences.booleanPreference(USE_WIDE_VIEWPORT, true)
 
-    var textSize by IntPreference(TEXT_SIZE, 3, preferences).delegate()
+    var userAgentChoice by preferences.intPreference(USER_AGENT, 1)
 
-    var useWideViewportEnabled by BooleanPreference(USE_WIDE_VIEWPORT, true, preferences).delegate()
+    var userAgentString by preferences.stringPreference(USER_AGENT_STRING, "")
 
-    var userAgentChoice by IntPreference(USER_AGENT, 1, preferences).delegate()
+    var clearHistoryExitEnabled by preferences.booleanPreference(CLEAR_HISTORY_EXIT, false)
 
-    var userAgentString by StringPreference(USER_AGENT_STRING, "", preferences).delegate()
+    var clearCookiesExitEnabled by preferences.booleanPreference(CLEAR_COOKIES_EXIT, false)
 
-    var clearHistoryExitEnabled by BooleanPreference(CLEAR_HISTORY_EXIT, false, preferences).delegate()
+    var savedUrl by preferences.stringPreference(SAVE_URL, "")
 
-    var clearCookiesExitEnabled by BooleanPreference(CLEAR_COOKIES_EXIT, false, preferences).delegate()
+    var renderingMode by preferences.intPreference(RENDERING_MODE, 0)
 
-    var savedUrl by StringPreference(SAVE_URL, "", preferences).delegate()
+    var blockThirdPartyCookiesEnabled by preferences.booleanPreference(BLOCK_THIRD_PARTY, false)
 
-    var renderingMode by IntPreference(RENDERING_MODE, 0, preferences).delegate()
+    var colorModeEnabled by preferences.booleanPreference(ENABLE_COLOR_MODE, true)
 
-    var blockThirdPartyCookiesEnabled by BooleanPreference(BLOCK_THIRD_PARTY, false, preferences).delegate()
+    var urlBoxContentChoice by preferences.intPreference(URL_BOX_CONTENTS, 0)
 
-    var colorModeEnabled by BooleanPreference(ENABLE_COLOR_MODE, true, preferences).delegate()
+    var invertColors by preferences.booleanPreference(INVERT_COLORS, false)
 
-    var urlBoxContentChoice by IntPreference(URL_BOX_CONTENTS, 0, preferences).delegate()
+    var readingTextSize by preferences.intPreference(READING_TEXT_SIZE, 2)
 
-    var invertColors by BooleanPreference(INVERT_COLORS, false, preferences).delegate()
+    var useTheme by preferences.intPreference(THEME, 0)
 
-    var readingTextSize by IntPreference(READING_TEXT_SIZE, 2, preferences).delegate()
+    var textEncoding by preferences.stringPreference(TEXT_ENCODING, DEFAULT_ENCODING)
 
-    var useTheme by IntPreference(THEME, 0, preferences).delegate()
+    var clearWebStorageExitEnabled by preferences.booleanPreference(CLEAR_WEB_STORAGE_EXIT, false)
 
-    var textEncoding by StringPreference(TEXT_ENCODING, DEFAULT_ENCODING, preferences).delegate()
+    var showTabsInDrawer by preferences.booleanPreference(SHOW_TABS_IN_DRAWER, !screenSize.isTablet())
 
-    var clearWebStorageExitEnabled by BooleanPreference(CLEAR_WEB_STORAGE_EXIT, false, preferences).delegate()
+    var doNotTrackEnabled by preferences.booleanPreference(DO_NOT_TRACK, false)
 
-    var showTabsInDrawer by BooleanPreference(SHOW_TABS_IN_DRAWER, !screenSize.isTablet(), preferences).delegate()
+    var removeIdentifyingHeadersEnabled by preferences.booleanPreference(IDENTIFYING_HEADERS, false)
 
-    var doNotTrackEnabled by BooleanPreference(DO_NOT_TRACK, false, preferences).delegate()
+    var bookmarksAndTabsSwapped by preferences.booleanPreference(SWAP_BOOKMARKS_AND_TABS, false)
 
-    var removeIdentifyingHeadersEnabled by BooleanPreference(IDENTIFYING_HEADERS, false, preferences).delegate()
+    var useBlackStatusBar by preferences.booleanPreference(BLACK_STATUS_BAR, false)
 
-    var bookmarksAndTabsSwapped by BooleanPreference(SWAP_BOOKMARKS_AND_TABS, false, preferences).delegate()
+    var proxyChoice by preferences.intPreference(PROXY_CHOICE, NO_PROXY)
 
-    var useBlackStatusBar by BooleanPreference(BLACK_STATUS_BAR, false, preferences).delegate()
+    var proxyHost by preferences.stringPreference(USE_PROXY_HOST, "localhost")
 
-    var proxyChoice by IntPreference(PROXY_CHOICE, NO_PROXY, preferences).delegate()
+    var proxyPort by preferences.intPreference(USE_PROXY_PORT, 8118)
 
-    var proxyHost by StringPreference(USE_PROXY_HOST, "localhost", preferences).delegate()
-
-    var proxyPort by IntPreference(USE_PROXY_PORT, 8118, preferences).delegate()
-
-    var searchSuggestionChoice by IntPreference(SEARCH_SUGGESTIONS, 1, preferences).delegate()
+    var searchSuggestionChoice by preferences.intPreference(SEARCH_SUGGESTIONS, 1)
 }
 
 private const val WEB_RTC = "webRtc"
 private const val BLOCK_ADS = "AdBlock"
 private const val BLOCK_IMAGES = "blockimages"
-private const val ADOBE_FLASH_SUPPORT = "enableflash"
 private const val CLEAR_CACHE_EXIT = "cache"
 private const val COOKIES = "cookies"
 private const val DOWNLOAD_DIRECTORY = "downloadLocation"
