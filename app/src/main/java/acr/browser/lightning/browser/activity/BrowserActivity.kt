@@ -1764,7 +1764,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * the newly created WebView.
      */
     override fun onCreateWindow(resultMsg: Message) {
-        presenter?.newTab(ResultMsgInitializer(resultMsg), true)
+        presenter?.newTab(ResultMessageInitializer(resultMsg), true)
     }
 
     /**

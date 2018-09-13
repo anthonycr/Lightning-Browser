@@ -117,7 +117,7 @@ class AsyncUrlInitializer(
  * An initializer that sets the [WebView] as the target of the [resultMessage]. Used for
  * `target="_blank"` links.
  */
-class ResultMsgInitializer(private val resultMessage: Message) : TabInitializer {
+class ResultMessageInitializer(private val resultMessage: Message) : TabInitializer {
 
     override fun initialize(webView: WebView) {
         resultMessage.apply {
