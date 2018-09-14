@@ -36,8 +36,7 @@ class IncognitoActivity : BrowserActivity() {
     override fun onPause() = super.onPause()
     // saveOpenTabs();
 
-    override fun updateHistory(title: String?, url: String) =// addItemToHistory(title, url);
-            Unit
+    override fun updateHistory(title: String?, url: String) = Unit // addItemToHistory(title, url)
 
     override fun isIncognito() = true
 
