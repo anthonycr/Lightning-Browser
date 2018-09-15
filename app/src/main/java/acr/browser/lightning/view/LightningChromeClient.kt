@@ -24,8 +24,9 @@ import android.view.View
 import android.webkit.*
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import javax.inject.Inject
+import javax.inject.Named
 
 class LightningChromeClient(
         private val activity: Activity,
@@ -37,6 +38,7 @@ class LightningChromeClient(
     @Inject internal lateinit var faviconModel: FaviconModel
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var webRtcPermissionsModel: WebRtcPermissionsModel
+    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
 
     init {
         BrowserApp.appComponent.inject(this)
@@ -66,7 +68,7 @@ class LightningChromeClient(
         }
 
         faviconModel.cacheFaviconForUrl(icon, url)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(diskScheduler)
                 .subscribe()
     }
 

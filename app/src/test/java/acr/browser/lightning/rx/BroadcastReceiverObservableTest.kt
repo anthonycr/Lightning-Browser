@@ -11,19 +11,19 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 /**
- * Functional tests for [ObservableBroadcastReceiver].
+ * Functional tests for [BroadcastReceiverObservable].
  *
  * Created by anthonycr on 4/23/18.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
-class ObservableBroadcastReceiverTest {
+class BroadcastReceiverObservableTest {
 
     @Test
     fun `subscriber receives intents for action`() {
         val action = "test"
         val application = RuntimeEnvironment.application
-        val broadcastReceiver = ObservableBroadcastReceiver(action, application)
+        val broadcastReceiver = BroadcastReceiverObservable(action, application)
 
         val broadcastObservable = broadcastReceiver.test()
 
@@ -42,7 +42,7 @@ class ObservableBroadcastReceiverTest {
     fun `subscriber does not receive intents for different action`() {
         val action = "test"
         val application = RuntimeEnvironment.application
-        val broadcastReceiver = ObservableBroadcastReceiver(action, application)
+        val broadcastReceiver = BroadcastReceiverObservable(action, application)
 
         val broadcastObservable = broadcastReceiver.test()
 
@@ -62,7 +62,7 @@ class ObservableBroadcastReceiverTest {
     fun `subscriber does not receive intents after dispose`() {
         val action = "test"
         val application = RuntimeEnvironment.application
-        val broadcastReceiver = ObservableBroadcastReceiver(action, application)
+        val broadcastReceiver = BroadcastReceiverObservable(action, application)
 
         val broadcastObservable = broadcastReceiver.test()
 

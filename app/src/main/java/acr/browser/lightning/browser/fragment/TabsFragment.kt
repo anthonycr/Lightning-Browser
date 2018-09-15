@@ -7,13 +7,19 @@ import acr.browser.lightning.browser.TabsView
 import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
 import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.extensions.color
+import acr.browser.lightning.extensions.desaturate
+import acr.browser.lightning.extensions.drawTrapezoid
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.view.BackgroundDrawable
 import acr.browser.lightning.view.LightningView
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -68,11 +74,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
 
-        iconColor = if (darkTheme) {
-            ThemeUtils.getIconDarkThemeColor(context)
-        } else {
-            ThemeUtils.getIconLightThemeColor(context)
-        }
+        iconColor = ThemeUtils.getIconThemeColor(context, darkTheme)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,10 +89,11 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
             setupFrameLayoutButton(view, R.id.action_home, R.id.icon_home)
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false)
-            val newTab = view.findViewById<ImageView>(R.id.new_tab_button)
-            newTab.setColorFilter(ThemeUtils.getIconDarkThemeColor(context))
-            newTab.setOnClickListener(this)
-            newTab.setOnLongClickListener(this)
+            view.findViewById<ImageView>(R.id.new_tab_button).apply {
+                setColorFilter(context.color(R.color.icon_dark_theme))
+                setOnClickListener(this@TabsFragment)
+                setOnLongClickListener(this@TabsFragment)
+            }
         }
 
         return view
@@ -159,11 +162,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         darkTheme = userPreferences.useTheme != 0 || isIncognito
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
-        iconColor = if (darkTheme) {
-            ThemeUtils.getIconDarkThemeColor(activity)
-        } else {
-            ThemeUtils.getIconLightThemeColor(activity)
-        }
+        iconColor = ThemeUtils.getIconThemeColor(activity, darkTheme)
         tabsAdapter?.notifyDataSetChanged()
     }
 
@@ -203,17 +202,13 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     private fun toViewModels(tabs: List<LightningView>) = tabs.map(::TabViewState)
 
-    private inner class LightningViewAdapter internal constructor(
-            private val drawerTabs: Boolean
+    private inner class LightningViewAdapter(
+        private val drawerTabs: Boolean
     ) : RecyclerView.Adapter<LightningViewAdapter.LightningViewHolder>() {
 
         private val layoutResourceId: Int = if (drawerTabs) R.layout.tab_list_item else R.layout.tab_list_item_horizontal
         private val backgroundTabDrawable: Drawable?
         private val foregroundTabBitmap: Bitmap?
-        private val colorMatrix: ColorMatrix = ColorMatrix()
-        private val paint = Paint()
-        private var filter = ColorMatrixColorFilter(colorMatrix)
-
         private var tabList: List<TabViewState> = ArrayList()
 
         init {
@@ -223,14 +218,17 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
                 foregroundTabBitmap = null
             } else {
                 val context = requireNotNull(context) { "Adapter cannot be initialized when fragment is detached" }
+
                 val backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f)
-                val backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888)
-                Utils.drawTrapezoid(Canvas(backgroundTabBitmap), backgroundColor, true)
+                val backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888).also {
+                    Canvas(it).drawTrapezoid(backgroundColor, true)
+                }
                 backgroundTabDrawable = BitmapDrawable(resources, backgroundTabBitmap)
 
                 val foregroundColor = ThemeUtils.getPrimaryColor(context)
-                foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888)
-                Utils.drawTrapezoid(Canvas(foregroundTabBitmap), foregroundColor, false)
+                foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888).also {
+                    Canvas(it).drawTrapezoid(foregroundColor, false)
+                }
             }
         }
 
@@ -244,16 +242,16 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
                 override fun getNewListSize() = tabList.size
 
                 override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                        oldList[oldItemPosition] == tabList[newItemPosition]
+                    oldList[oldItemPosition] == tabList[newItemPosition]
 
                 override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                     val oldTab = oldList[oldItemPosition]
                     val newTab = tabList[newItemPosition]
 
                     return (oldTab.title == newTab.title
-                            && oldTab.favicon == newTab.favicon
-                            && oldTab.isForegroundTab == newTab.isForegroundTab
-                            && oldTab == newTab)
+                        && oldTab.favicon == newTab.favicon
+                        && oldTab.isForegroundTab == newTab.isForegroundTab
+                        && oldTab == newTab)
                 }
             })
 
@@ -287,11 +285,11 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         }
 
         private fun updateViewHolderFavicon(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) =
-                if (isForeground) {
-                    viewHolder.favicon.setImageBitmap(favicon)
-                } else {
-                    viewHolder.favicon.setImageBitmap(getDesaturatedBitmap(favicon))
-                }
+            if (isForeground) {
+                viewHolder.favicon.setImageBitmap(favicon)
+            } else {
+                viewHolder.favicon.setImageBitmap(favicon.desaturate())
+            }
 
         private fun updateViewHolderBackground(viewHolder: LightningViewHolder, isForeground: Boolean) {
             if (drawerTabs) {
@@ -331,18 +329,6 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
         override fun getItemCount() = tabList.size
 
-        internal fun getDesaturatedBitmap(favicon: Bitmap): Bitmap {
-            val grayscaleBitmap = Bitmap.createBitmap(favicon.width,
-                    favicon.height, Bitmap.Config.ARGB_8888)
-
-            val c = Canvas(grayscaleBitmap)
-            colorMatrix.setSaturation(DESATURATED)
-            paint.colorFilter = filter
-
-            c.drawBitmap(favicon, 0f, 0f, paint)
-            return grayscaleBitmap
-        }
-
         internal inner class LightningViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener, View.OnLongClickListener {
 
             val txtTitle: TextView = view.findViewById(R.id.textTab)
@@ -378,13 +364,12 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
         @JvmStatic
         fun createTabsFragment(isIncognito: Boolean, showTabsInDrawer: Boolean): TabsFragment {
-            val tabsFragment = TabsFragment()
-            val tabsFragmentArguments = Bundle()
-            tabsFragmentArguments.putBoolean(TabsFragment.IS_INCOGNITO, isIncognito)
-            tabsFragmentArguments.putBoolean(TabsFragment.VERTICAL_MODE, showTabsInDrawer)
-            tabsFragment.arguments = tabsFragmentArguments
-
-            return tabsFragment
+            return TabsFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(TabsFragment.IS_INCOGNITO, isIncognito)
+                    putBoolean(TabsFragment.VERTICAL_MODE, showTabsInDrawer)
+                }
+            }
         }
 
         private const val TAG = "TabsFragment"

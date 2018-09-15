@@ -39,7 +39,7 @@ class SessionWhitelistModelTest {
 
     @Test
     fun `addUrlToWhitelist updates immediately`() {
-        whenever(adBlockWhitelistModel.allWhitelistItems()).thenReturn(Single.just(listOf()))
+        whenever(adBlockWhitelistModel.allWhitelistItems()).thenReturn(Single.just(emptyList()))
         whenever(adBlockWhitelistModel.whitelistItemForUrl(any())).thenReturn(Maybe.empty())
         whenever(adBlockWhitelistModel.addWhitelistItem(any())).thenReturn(Completable.complete())
         val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())

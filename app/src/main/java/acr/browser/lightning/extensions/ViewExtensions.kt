@@ -1,6 +1,5 @@
 package acr.browser.lightning.extensions
 
-import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -21,12 +20,7 @@ fun View?.removeFromParent() = this?.let {
 inline fun View?.doOnLayout(crossinline runnable: () -> Unit) = this?.let {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                viewTreeObserver.removeOnGlobalLayoutListener(this)
-            } else {
-
-                viewTreeObserver.removeGlobalOnLayoutListener(this)
-            }
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
             runnable()
         }
     })

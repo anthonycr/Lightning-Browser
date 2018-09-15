@@ -4,15 +4,12 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
-import android.text.TextUtils
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
 import java.io.UnsupportedEncodingException
-import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -22,7 +19,8 @@ import java.util.concurrent.TimeUnit
  * potential suggestions provider.
  */
 abstract class BaseSuggestionsModel internal constructor(
-        application: Application, private val encoding: String
+    application: Application,
+    private val encoding: String
 ) : SuggestionsRepository {
 
     private val httpClient: OkHttpClient
@@ -33,42 +31,42 @@ abstract class BaseSuggestionsModel internal constructor(
      *
      * @param query    the query that was made.
      * @param language the locale of the user.
-     * @return should return a URL that can be fetched using a GET.
+     * @return should return a [HttpUrl] that can be fetched using a GET.
      */
-    protected abstract fun createQueryUrl(query: String, language: String): String
+    protected abstract fun createQueryUrl(query: String, language: String): HttpUrl
 
     /**
      * Parse the results of an input stream into a list of [HistoryItem].
      *
-     * @param inputStream the raw input to parse.
+     * @param responseBody the raw [ResponseBody] to parse.
      */
     @Throws(Exception::class)
-    protected abstract fun parseResults(inputStream: InputStream): List<HistoryItem>
+    protected abstract fun parseResults(responseBody: ResponseBody): List<HistoryItem>
 
     init {
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
         httpClient = OkHttpClient.Builder()
-                .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
-                .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
-                .build()
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+            .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
+            .build()
     }
 
     override fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>> = Single.fromCallable {
-        val filter = ArrayList<HistoryItem>(5)
-
         val query = try {
             URLEncoder.encode(rawQuery, encoding)
         } catch (e: UnsupportedEncodingException) {
             Log.e(TAG, "Unable to encode the URL", e)
 
-            return@fromCallable filter
+            return@fromCallable emptyList<HistoryItem>()
         }
+
+        var results = emptyList<HistoryItem>()
 
         downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
-            filter += parseResults(it.byteStream()).take(MAX_RESULTS)
+            results += parseResults(it).take(MAX_RESULTS)
         }
 
-        return@fromCallable filter
+        return@fromCallable results
     }
 
     /**
@@ -82,21 +80,18 @@ abstract class BaseSuggestionsModel internal constructor(
     private fun downloadSuggestionsForQuery(query: String, language: String): Response? {
         val queryUrl = createQueryUrl(query, language)
 
-        try {
-            val url = URL(queryUrl)
-
+        return try {
             // OkHttp automatically gzips requests
-            val suggestionsRequest = Request.Builder().url(url)
-                    .addHeader("Accept-Charset", encoding)
-                    .cacheControl(cacheControl)
-                    .build()
+            val suggestionsRequest = Request.Builder().url(queryUrl)
+                .addHeader("Accept-Charset", encoding)
+                .cacheControl(cacheControl)
+                .build()
 
-            return httpClient.newCall(suggestionsRequest).execute()
+            httpClient.newCall(suggestionsRequest).execute()
         } catch (exception: IOException) {
             Log.e(TAG, "Problem getting search suggestions", exception)
+            null
         }
-
-        return null
     }
 
     companion object {
@@ -108,19 +103,14 @@ abstract class BaseSuggestionsModel internal constructor(
         private const val DEFAULT_LANGUAGE = "en"
 
         private val language by lazy {
-            var lang = Locale.getDefault().language
-            if (TextUtils.isEmpty(lang)) {
-                lang = DEFAULT_LANGUAGE
-            }
-
-            lang
+            Locale.getDefault().language.takeIf(String::isNotEmpty) ?: DEFAULT_LANGUAGE
         }
 
         private val REWRITE_CACHE_CONTROL_INTERCEPTOR = Interceptor { chain ->
             val originalResponse = chain.proceed(chain.request())
             originalResponse.newBuilder()
-                    .header("cache-control", "max-age=$INTERVAL_DAY, max-stale=$INTERVAL_DAY")
-                    .build()
+                .header("cache-control", "max-age=$INTERVAL_DAY, max-stale=$INTERVAL_DAY")
+                .build()
         }
     }
 

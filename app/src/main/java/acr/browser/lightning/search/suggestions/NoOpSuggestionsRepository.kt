@@ -8,7 +8,7 @@ import io.reactivex.Single
  */
 class NoOpSuggestionsRepository : SuggestionsRepository {
 
-    private val emptySingle: Single<List<HistoryItem>> = Single.just(listOf())
+    private val emptySingle: Single<List<HistoryItem>> = Single.just(emptyList())
 
     override fun resultsForSearch(rawQuery: String) = emptySingle
 }

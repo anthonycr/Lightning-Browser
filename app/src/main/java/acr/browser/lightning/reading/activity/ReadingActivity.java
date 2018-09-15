@@ -24,6 +24,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
@@ -36,13 +37,13 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.Utils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class ReadingActivity extends AppCompatActivity {
 
@@ -52,6 +53,7 @@ public class ReadingActivity extends AppCompatActivity {
     @BindView(R.id.textViewBody) TextView mBody;
 
     @Inject UserPreferences mUserPreferences;
+    @Inject @Named("network") Scheduler mNetworkScheduler;
 
     private boolean mInvert;
     @Nullable private String mUrl = null;
@@ -165,7 +167,7 @@ public class ReadingActivity extends AppCompatActivity {
         BrowserDialog.setDialogSize(ReadingActivity.this, mProgressDialog);
 
         mPageLoaderSubscription = loadPage(mUrl)
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(mNetworkScheduler)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Consumer<ReaderInfo>() {
                 @Override

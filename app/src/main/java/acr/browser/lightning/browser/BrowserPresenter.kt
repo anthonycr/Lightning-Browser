@@ -14,13 +14,13 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.view.LightningView
+import acr.browser.lightning.view.TabInitializer
+import acr.browser.lightning.view.UrlInitializer
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.webkit.URLUtil
-import com.anthonycr.bonsai.CompletableOnSubscribe
-import com.anthonycr.bonsai.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -51,15 +51,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun setupTabs(intent: Intent?) {
         tabsModel.initializeTabs(view as Activity, intent, isIncognito)
-                .subscribeOn(Schedulers.main())
-                .subscribe(object : CompletableOnSubscribe() {
-                    override fun onComplete() {
-                        // At this point we always have at least a tab in the tab manager
-                        view.notifyTabViewInitialized()
-                        view.updateTabNumber(tabsModel.size())
-                        tabChanged(tabsModel.last())
-                    }
-                })
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                // At this point we always have at least a tab in the tab manager
+                view.notifyTabViewInitialized()
+                view.updateTabNumber(tabsModel.size())
+                tabChanged(tabsModel.last())
+            }
     }
 
     /**
@@ -74,13 +72,13 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     private fun onTabChanged(newTab: LightningView?) {
         Log.d(TAG, "On tab changed")
-        view.updateSslState(newTab?.currentSslState() ?: SSLState.None())
+        view.updateSslState(newTab?.currentSslState() ?: SSLState.None)
 
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab
-                ?.sslStateObservable()
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe(view::updateSslState)
+            ?.sslStateObservable()
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(view::updateSslState)
 
         val webView = newTab?.webView
 
@@ -166,9 +164,9 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         val shouldClose = shouldClose && isShown && tabToDelete.isNewTab
         val currentTab = tabsModel.currentTab
         if (tabsModel.size() == 1
-                && currentTab != null
-                && URLUtil.isFileUrl(currentTab.url)
-                && currentTab.url == mapHomepageToCurrentUrl()) {
+            && currentTab != null
+            && URLUtil.isFileUrl(currentTab.url)
+            && currentTab.url == mapHomepageToCurrentUrl()) {
             view.closeActivity()
             return
         } else {
@@ -220,12 +218,12 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         } else if (url != null) {
             if (URLUtil.isFileUrl(url)) {
                 view.showBlockedLocalFileDialog {
-                    newTab(url, true)
+                    newTab(UrlInitializer(url), true)
                     shouldClose = true
                     tabsModel.lastTab()?.isNewTab = true
                 }
             } else {
-                newTab(url, true)
+                newTab(UrlInitializer(url), true)
                 shouldClose = true
                 tabsModel.lastTab()?.isNewTab = true
             }
@@ -271,11 +269,11 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      * Open a new tab with the specified URL. You can choose to show the tab or load it in the
      * background.
      *
-     * @param url  the URL to load, may be null if you don't wish to load anything.
+     * @param tabInitializer the tab initializer to run after the tab as been created.
      * @param show whether or not to switch to this tab after opening it.
      * @return true if we successfully created the tab, false if we have hit max tabs.
      */
-    fun newTab(url: String?, show: Boolean): Boolean {
+    fun newTab(tabInitializer: TabInitializer, show: Boolean): Boolean {
         // Limit number of tabs for limited version of app
         if (!BuildConfig.FULL_VERSION && tabsModel.size() >= 10) {
             view.showSnackbar(R.string.max_tabs)
@@ -284,7 +282,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
         Log.d(TAG, "New tab, show: $show")
 
-        val startingTab = tabsModel.newTab(view as Activity, url, isIncognito)
+        val startingTab = tabsModel.newTab(view as Activity, tabInitializer, isIncognito)
         if (tabsModel.size() == 1) {
             startingTab.resumeTimers()
         }
@@ -306,8 +304,6 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
     fun findInPage(query: String) {
         tabsModel.currentTab?.find(query)
     }
-
-    fun onAppLowMemory() = tabsModel.freeMemory()
 
     companion object {
         private const val TAG = "BrowserPresenter"

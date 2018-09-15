@@ -17,12 +17,12 @@ fun PermissionRequest.requiredPermissions(): Set<String> {
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS
             )
-            PermissionRequest.RESOURCE_MIDI_SYSEX -> listOf()
-            PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID -> listOf()
+            PermissionRequest.RESOURCE_MIDI_SYSEX -> emptyList()
+            PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID -> emptyList()
             PermissionRequest.RESOURCE_VIDEO_CAPTURE -> listOf(
                     Manifest.permission.CAMERA
             )
-            else -> listOf()
+            else -> emptyList()
         }
     }.toHashSet()
 }

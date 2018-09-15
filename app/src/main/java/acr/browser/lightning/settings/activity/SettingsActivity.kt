@@ -35,24 +35,15 @@ class SettingsActivity : ThemableSettingsActivity() {
     override fun onBuildHeaders(target: MutableList<Header>) {
         loadHeadersFromResource(R.xml.preferences_headers, target)
         fragments.clear()
-        val headerIterator = target.iterator()
-        while (headerIterator.hasNext()) {
-            val header = headerIterator.next()
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                // Workaround for bug in the AppCompat support library
-                header.iconRes = R.drawable.empty
-            }
 
-            if (header.titleRes == R.string.debug_title) {
-                if (BrowserApp.isRelease) {
-                    headerIterator.remove()
-                } else {
-                    fragments.add(header.fragment)
-                }
-            } else {
-                fragments.add(header.fragment)
-            }
+        target.removeAll { it.titleRes == R.string.debug_title && BrowserApp.isRelease }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // Workaround for bug in the AppCompat support library
+            target.forEach { it.iconRes = R.drawable.empty }
         }
+
+        fragments.addAll(target.map(Header::fragment))
     }
 
     override fun isValidFragment(fragmentName: String): Boolean = fragments.contains(fragmentName)

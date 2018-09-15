@@ -96,7 +96,7 @@ public final class ThemeUtils {
      * @return the color of the icon.
      */
     @ColorInt
-    public static int getIconLightThemeColor(@NonNull Context context) {
+    private static int getIconLightThemeColor(@NonNull Context context) {
         return ContextCompat.getColor(context, R.color.icon_light_theme);
     }
 
@@ -107,7 +107,7 @@ public final class ThemeUtils {
      * @return the color of the icon.
      */
     @ColorInt
-    public static int getIconDarkThemeColor(@NonNull Context context) {
+    private static int getIconDarkThemeColor(@NonNull Context context) {
         return ContextCompat.getColor(context, R.color.icon_dark_theme);
     }
 
@@ -126,7 +126,7 @@ public final class ThemeUtils {
     }
 
     @NonNull
-    public static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
+    private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
 
         Preconditions.checkNonNull(drawable);

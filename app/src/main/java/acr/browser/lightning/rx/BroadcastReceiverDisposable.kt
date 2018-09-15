@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * Created by anthonycr on 10/21/17.
  */
-class DisposableBroadcastReceiver(
-        private val context: Context,
-        private val broadcastReceiver: BroadcastReceiver
+class BroadcastReceiverDisposable(
+    private val context: Context,
+    private val broadcastReceiver: BroadcastReceiver
 ) : Disposable {
 
     private val disposed = AtomicBoolean(false)

@@ -18,9 +18,9 @@ import android.os.StrictMode
 import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.webkit.WebView
-import com.anthonycr.bonsai.Schedulers
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
 import javax.inject.Named
@@ -68,18 +68,19 @@ class BrowserApp : Application() {
         appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
         appComponent.inject(this)
 
-        Schedulers.worker().execute {
-            if (bookmarkModel.count() == 0L) {
-                // If the database is empty, fill it from the assets list
-                val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
-                bookmarkModel.addBookmarkList(assetsBookmarks).subscribeOn(databaseScheduler).subscribe()
-            }
-        }
+        Single.fromCallable(bookmarkModel::count)
+                .filter { it == 0L }
+                .flatMapCompletable {
+                    val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
+                    bookmarkModel.addBookmarkList(assetsBookmarks)
+                }
+                .subscribeOn(databaseScheduler)
+                .subscribe()
 
         if (developerPreferences.useLeakCanary && !isRelease) {
             LeakCanary.install(this)
         }
-        if (!isRelease && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (!isRelease) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
 
@@ -96,7 +97,7 @@ class BrowserApp : Application() {
         private const val TAG = "BrowserApp"
 
         init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
         }
 
         @JvmStatic
