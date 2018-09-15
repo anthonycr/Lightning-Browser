@@ -142,6 +142,7 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="powered_by_duck">Powered by DuckDuckGo</string>
     <string name="powered_by_baidu">Powered by Baidu</string>
+    <string name="powered_by_naver">Powered by Naver</string>
     <string name="search_suggestions_off">No search suggestions</string>
     <string name="http_proxy">HTTP proxy</string>
     <string-array name="proxy_choices_array">
@@ -276,6 +277,7 @@
     <string name="search_engine_duckduckgo_lite">DuckDuckGo Lite</string>
     <string name="search_engine_baidu">Baidu</string>
     <string name="search_engine_yandex">Yandex</string>
+    <string name="search_engine_naver">Naver</string>
 
     <!-- Notifications -->
     <plurals name="notification_incognito_running_title">
