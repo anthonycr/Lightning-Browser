@@ -204,7 +204,7 @@ class LightningView(
         initializeSettings()
         initializePreferences(activity)
 
-        tabInitializer.initialize(tab)
+        tabInitializer.initialize(tab, requestHeaders)
     }
 
     fun currentSslState(): SSLState = lightningWebClient.sslState

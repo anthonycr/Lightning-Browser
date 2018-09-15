@@ -19,9 +19,10 @@ import io.reactivex.rxkotlin.subscribeBy
 interface TabInitializer {
 
     /**
-     * Initialize the [WebView] instance held by the [LightningView].
+     * Initialize the [WebView] instance held by the [LightningView]. If a url is loaded, the
+     * provided [headers] should be used to load the url.
      */
-    fun initialize(webView: WebView)
+    fun initialize(webView: WebView, headers: Map<String, String>)
 
 }
 
@@ -30,8 +31,8 @@ interface TabInitializer {
  */
 class UrlInitializer(private val url: String) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
-        webView.loadUrl(url)
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
+        webView.loadUrl(url, headers)
     }
 
 }
@@ -46,14 +47,14 @@ class HomePageInitializer(
     private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
         val homepage = userPreferences.homepage
 
         when (homepage) {
             SCHEME_HOMEPAGE -> StartPageInitializer(databaseScheduler, foregroundScheduler)
             SCHEME_BOOKMARKS -> BookmarkPageInitializer(activity, databaseScheduler, foregroundScheduler)
             else -> UrlInitializer(homepage)
-        }.initialize(webView)
+        }.initialize(webView, headers)
     }
 
 }
@@ -66,12 +67,12 @@ class StartPageInitializer(
     private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
         StartPage()
             .createHomePage()
             .subscribeOn(databaseScheduler)
             .observeOn(foregroundScheduler)
-            .subscribeBy(onSuccess = webView::loadUrl)
+            .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
     }
 
 }
@@ -85,12 +86,12 @@ class BookmarkPageInitializer(
     private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
         BookmarkPage(activity)
             .createBookmarkPage()
             .subscribeOn(databaseScheduler)
             .observeOn(foregroundScheduler)
-            .subscribeBy(onSuccess = webView::loadUrl)
+            .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
     }
 
 }
@@ -104,11 +105,11 @@ class AsyncUrlInitializer(
     private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
         asyncUrl
             .subscribeOn(backgroundScheduler)
             .observeOn(foregroundScheduler)
-            .subscribeBy(onSuccess = webView::loadUrl)
+            .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
     }
 
 }
@@ -119,7 +120,7 @@ class AsyncUrlInitializer(
  */
 class ResultMessageInitializer(private val resultMessage: Message) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
         resultMessage.apply {
             (obj as WebView.WebViewTransport).webView = webView
         }.sendToTarget()
@@ -132,7 +133,7 @@ class ResultMessageInitializer(private val resultMessage: Message) : TabInitiali
  */
 class BundleInitializer(private val bundle: Bundle) : TabInitializer {
 
-    override fun initialize(webView: WebView) {
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
         webView.restoreState(bundle)
     }
 
@@ -143,6 +144,6 @@ class BundleInitializer(private val bundle: Bundle) : TabInitializer {
  */
 class NoOpInitializer : TabInitializer {
 
-    override fun initialize(webView: WebView) = Unit
+    override fun initialize(webView: WebView, headers: Map<String, String>) = Unit
 
 }
