@@ -5,6 +5,7 @@ import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.HistoryItem
 import android.app.Application
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
@@ -12,7 +13,11 @@ import org.xmlpull.v1.XmlPullParserFactory
 /**
  * Search suggestions provider for Google search engine.
  */
-class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(application, UTF8) {
+class GoogleSuggestionsModel(
+    httpClient: OkHttpClient,
+    requestFactory: RequestFactory,
+    application: Application
+) : BaseSuggestionsModel(httpClient, requestFactory, UTF8) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 

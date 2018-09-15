@@ -1,6 +1,8 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
+import acr.browser.lightning.search.suggestions.RequestFactory
+import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.app.DownloadManager
 import android.app.NotificationManager
@@ -19,6 +21,8 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.i2p.android.ui.I2PAndroidHelper
+import okhttp3.*
+import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
@@ -84,6 +88,43 @@ class AppModule(private val browserApp: BrowserApp) {
     @Named("main")
     @Singleton
     fun providesMainThread(): Scheduler = AndroidSchedulers.mainThread()
+
+    @Singleton
+    @Provides
+    fun providesSuggestionsCacheControl() = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
+
+    @Singleton
+    @Provides
+    fun providesSuggestionsRequestFactory(cacheControl: CacheControl): RequestFactory = object : RequestFactory {
+
+        override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String): Request {
+            return Request.Builder().url(httpUrl)
+                .addHeader("Accept-Charset", encoding)
+                .cacheControl(cacheControl)
+                .build()
+        }
+
+    }
+
+    @Singleton
+    @Provides
+    fun providesSuggestionsHttpClient(): OkHttpClient {
+        val intervalDay = TimeUnit.DAYS.toSeconds(1)
+
+        val rewriteCacheControlInterceptor = Interceptor { chain ->
+            val originalResponse = chain.proceed(chain.request())
+            originalResponse.newBuilder()
+                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                .build()
+        }
+
+        val suggestionsCache = File(browserApp.cacheDir, "suggestion_responses")
+
+        return OkHttpClient.Builder()
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+            .addNetworkInterceptor(rewriteCacheControlInterceptor)
+            .build()
+    }
 
     @Provides
     @Singleton

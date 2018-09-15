@@ -6,7 +6,8 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.search.suggestions.*
+import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
+import acr.browser.lightning.search.suggestions.SuggestionsRepository
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.content.Context
@@ -54,6 +55,7 @@ class SuggestionsAdapter(
     @Inject internal lateinit var application: Application
     @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
     @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
+    @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
     private val allBookmarks = ArrayList<HistoryItem>(5)
     private val darkTheme: Boolean
@@ -66,7 +68,7 @@ class SuggestionsAdapter(
         val suggestionsRepository = if (isIncognito) {
             NoOpSuggestionsRepository()
         } else {
-            suggestionsRepositoryForPreference()
+            searchEngineProvider.provideSearchSuggestions()
         }
 
         searchFilter = SearchFilter(suggestionsRepository,
@@ -82,21 +84,11 @@ class SuggestionsAdapter(
         historyDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, darkTheme)
     }
 
-    private fun suggestionsRepositoryForPreference(): SuggestionsRepository =
-            when (userPreferences.searchSuggestionChoice) {
-                0 -> NoOpSuggestionsRepository()
-                1 -> GoogleSuggestionsModel(application)
-                2 -> DuckSuggestionsModel(application)
-                3 -> BaiduSuggestionsModel(application)
-                4 -> NaverSuggestionsModel(application)
-                else -> GoogleSuggestionsModel(application)
-            }
-
     fun refreshPreferences() {
         searchFilter.suggestionsRepository = if (isIncognito) {
             NoOpSuggestionsRepository()
         } else {
-            suggestionsRepositoryForPreference()
+            searchEngineProvider.provideSearchSuggestions()
         }
     }
 

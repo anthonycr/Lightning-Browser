@@ -2,12 +2,9 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.extensions.safeUse
-import acr.browser.lightning.utils.FileUtils
-import android.app.Application
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.*
-import java.io.File
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -19,12 +16,10 @@ import java.util.concurrent.TimeUnit
  * potential suggestions provider.
  */
 abstract class BaseSuggestionsModel internal constructor(
-    application: Application,
+    private val httpClient: OkHttpClient,
+    private val requestFactory: RequestFactory,
     private val encoding: String
 ) : SuggestionsRepository {
-
-    private val httpClient: OkHttpClient
-    private val cacheControl = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
 
     /**
      * Create a URL for the given query in the given language.
@@ -33,7 +28,7 @@ abstract class BaseSuggestionsModel internal constructor(
      * @param language the locale of the user.
      * @return should return a [HttpUrl] that can be fetched using a GET.
      */
-    protected abstract fun createQueryUrl(query: String, language: String): HttpUrl
+    abstract fun createQueryUrl(query: String, language: String): HttpUrl
 
     /**
      * Parse the results of an input stream into a list of [HistoryItem].
@@ -42,14 +37,6 @@ abstract class BaseSuggestionsModel internal constructor(
      */
     @Throws(Exception::class)
     protected abstract fun parseResults(responseBody: ResponseBody): List<HistoryItem>
-
-    init {
-        val suggestionsCache = File(application.cacheDir, "suggestion_responses")
-        httpClient = OkHttpClient.Builder()
-            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
-            .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
-            .build()
-    }
 
     override fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>> = Single.fromCallable {
         val query = try {
@@ -79,15 +66,9 @@ abstract class BaseSuggestionsModel internal constructor(
      */
     private fun downloadSuggestionsForQuery(query: String, language: String): Response? {
         val queryUrl = createQueryUrl(query, language)
-
+        val request = requestFactory.createSuggestionsRequest(queryUrl, encoding)
         return try {
-            // OkHttp automatically gzips requests
-            val suggestionsRequest = Request.Builder().url(queryUrl)
-                .addHeader("Accept-Charset", encoding)
-                .cacheControl(cacheControl)
-                .build()
-
-            httpClient.newCall(suggestionsRequest).execute()
+            httpClient.newCall(request).execute()
         } catch (exception: IOException) {
             Log.e(TAG, "Problem getting search suggestions", exception)
             null

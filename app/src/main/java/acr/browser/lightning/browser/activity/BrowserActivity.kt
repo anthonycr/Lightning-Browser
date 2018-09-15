@@ -613,7 +613,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         setFullscreen(userPreferences.hideStatusBarEnabled, false)
 
-        val currentSearchEngine = searchEngineProvider.getCurrentSearchEngine()
+        val currentSearchEngine = searchEngineProvider.provideSearchEngine()
         searchText = currentSearchEngine.queryUrl
 
         updateCookiePreference().subscribeOn(Schedulers.computation()).subscribe()

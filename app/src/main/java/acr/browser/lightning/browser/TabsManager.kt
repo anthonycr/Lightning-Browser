@@ -126,7 +126,7 @@ class TabsManager {
 
     fun extractSearchFromIntent(intent: Intent): String? {
         val query = intent.getStringExtra(SearchManager.QUERY)
-        val searchUrl = "${searchEngineProvider.getCurrentSearchEngine().queryUrl}${UrlUtils.QUERY_PLACE_HOLDER}"
+        val searchUrl = "${searchEngineProvider.provideSearchEngine().queryUrl}${UrlUtils.QUERY_PLACE_HOLDER}"
 
         return if (query?.isNotBlank() == true) {
             UrlUtils.smartUrlFilter(query, true, searchUrl)

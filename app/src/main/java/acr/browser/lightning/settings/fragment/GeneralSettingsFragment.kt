@@ -71,7 +71,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_SEARCH_ENGINE,
-            summary = getSearchEngineSummary(searchEngineProvider.getCurrentSearchEngine()),
+            summary = getSearchEngineSummary(searchEngineProvider.provideSearchEngine()),
             onClick = this::showSearchProviderDialog
         )
 
@@ -361,7 +361,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(resources.getString(R.string.title_search_engine))
 
-            val searchEngineList = searchEngineProvider.getAllSearchEngines()
+            val searchEngineList = searchEngineProvider.provideAllSearchEngines()
 
             val chars = convertSearchEngineToString(searchEngineList)
 

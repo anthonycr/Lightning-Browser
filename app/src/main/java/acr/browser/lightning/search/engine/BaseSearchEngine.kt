@@ -10,6 +10,8 @@ import android.support.annotation.StringRes
  *  - The query URL for the search engine, the query will be appended to the end.
  *  - The title string resource for the search engine.
  */
-open class BaseSearchEngine internal constructor(val iconUrl: String,
-                                                 val queryUrl: String,
-                                                 @StringRes val titleRes: Int)
+open class BaseSearchEngine internal constructor(
+    val iconUrl: String,
+    val queryUrl: String,
+    @StringRes val titleRes: Int
+)

@@ -6,6 +6,7 @@ import acr.browser.lightning.database.HistoryItem
 import acr.browser.lightning.extensions.map
 import android.app.Application
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.json.JSONArray
 
@@ -13,8 +14,10 @@ import org.json.JSONArray
  * The search suggestions provider for the Baidu search engine.
  */
 class BaiduSuggestionsModel(
+    httpClient: OkHttpClient,
+    requestFactory: RequestFactory,
     application: Application
-) : BaseSuggestionsModel(application, UTF8) {
+) : BaseSuggestionsModel(httpClient, requestFactory, UTF8) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
     private val inputEncoding = "GBK"
