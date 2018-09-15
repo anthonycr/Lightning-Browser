@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.anthonycr.grant.PermissionsManager
-import java.util.*
 
 class SettingsActivity : ThemableSettingsActivity() {
 
@@ -59,6 +58,6 @@ class SettingsActivity : ThemableSettingsActivity() {
     }
 
     companion object {
-        private val fragments = ArrayList<String>(7)
+        private val fragments = mutableListOf<String>()
     }
 }

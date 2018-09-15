@@ -1518,7 +1518,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * used to allow uploading into the browser
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (API < Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode == 1) {
                 val result = if (intent == null || resultCode != Activity.RESULT_OK) null else intent.data
                 uploadMessageCallback?.onReceiveValue(result)
@@ -1976,7 +1976,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         private const val FILE_CHOOSER_REQUEST_CODE = 1111
 
         // Constant
-        private val API = android.os.Build.VERSION.SDK_INT
         private val MATCH_PARENT = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         private val COVER_SCREEN_PARAMS = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
