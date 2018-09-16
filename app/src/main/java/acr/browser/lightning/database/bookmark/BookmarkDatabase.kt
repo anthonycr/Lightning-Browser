@@ -159,8 +159,8 @@ class BookmarkDatabase @Inject constructor(
         }
     }
 
-    override fun deleteBookmark(bookmark: Bookmark.Entry): Single<Boolean> = Single.fromCallable {
-        return@fromCallable deleteWithOptionalEndSlash(bookmark.url) > 0
+    override fun deleteBookmark(entry: Bookmark.Entry): Single<Boolean> = Single.fromCallable {
+        return@fromCallable deleteWithOptionalEndSlash(entry.url) > 0
     }
 
     override fun renameFolder(oldName: String, newName: String): Completable = Completable.fromAction {

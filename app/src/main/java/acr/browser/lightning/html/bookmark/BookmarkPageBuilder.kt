@@ -85,14 +85,14 @@ class BookmarkPageBuilder(
         )
     }
 
-    private fun createViewModelForBookmark(bookmark: Bookmark.Entry): BookmarkViewModel {
-        val bookmarkUri = bookmark.url.toUri().toValidUri()
+    private fun createViewModelForBookmark(entry: Bookmark.Entry): BookmarkViewModel {
+        val bookmarkUri = entry.url.toUri().toValidUri()
 
         val iconUrl = if (bookmarkUri != null) {
             val faviconFile = FaviconModel.getFaviconCacheFile(app, bookmarkUri)
             if (!faviconFile.exists()) {
-                val defaultFavicon = faviconModel.getDefaultBitmapForString(bookmark.title)
-                faviconModel.cacheFaviconForUrl(defaultFavicon, bookmark.url)
+                val defaultFavicon = faviconModel.getDefaultBitmapForString(entry.title)
+                faviconModel.cacheFaviconForUrl(defaultFavicon, entry.url)
                     .subscribeOn(diskScheduler)
                     .subscribe()
             }
@@ -103,8 +103,8 @@ class BookmarkPageBuilder(
         }
 
         return BookmarkViewModel(
-            title = bookmark.title,
-            url = bookmark.url,
+            title = entry.title,
+            url = entry.url,
             iconUrl = iconUrl
         )
     }

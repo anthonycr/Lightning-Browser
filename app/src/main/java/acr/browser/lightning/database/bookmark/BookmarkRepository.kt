@@ -48,10 +48,10 @@ interface BookmarkRepository {
     /**
      * Deletes a bookmark from the database.
      *
-     * @param bookmark the bookmark to delete.
-     * @return an observable that emits true when the bookmark is deleted, false otherwise.
+     * @param entry the bookmark to delete.
+     * @return an observable that emits true when the entry is deleted, false otherwise.
      */
-    fun deleteBookmark(bookmark: Bookmark.Entry): Single<Boolean>
+    fun deleteBookmark(entry: Bookmark.Entry): Single<Boolean>
 
     /**
      * Moves all bookmarks in the old folder to the new folder.

@@ -152,13 +152,13 @@ public final class BookmarkExporter {
                     while ((line = bookmarksReader.readLine()) != null) {
                         JSONObject object = new JSONObject(line);
                         final String folderName = object.getString(KEY_FOLDER);
-                        final Bookmark.Entry item = new Bookmark.Entry(
+                        final Bookmark.Entry entry = new Bookmark.Entry(
                             object.getString(KEY_TITLE),
                             object.getString(KEY_URL),
                             object.getInt(KEY_ORDER),
                             folderName != null ? WebPageKt.asFolder(folderName) : null
                         );
-                        bookmarks.add(item);
+                        bookmarks.add(entry);
                     }
 
                     return bookmarks;

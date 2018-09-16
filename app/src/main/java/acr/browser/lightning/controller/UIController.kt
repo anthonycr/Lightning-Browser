@@ -151,9 +151,9 @@ interface UIController {
     fun bookmarkButtonClicked()
 
     /**
-     * Notify the browser that the user clicked on the bookmark [item].
+     * Notify the browser that the user clicked on the bookmark [entry].
      */
-    fun bookmarkItemClicked(item: Bookmark.Entry)
+    fun bookmarkItemClicked(entry: Bookmark.Entry)
 
     /**
      * Notify the UI that the forward button should be [enabled] for interaction.
@@ -191,9 +191,9 @@ interface UIController {
     fun handleBookmarksChange()
 
     /**
-     * Notify the browser that the provided bookmark [item] has changed.
+     * Notify the browser that the provided bookmark [bookmark] has changed.
      */
-    fun handleBookmarkDeleted(item: Bookmark)
+    fun handleBookmarkDeleted(bookmark: Bookmark)
 
     /**
      * Notify the browser that the download list has changed.

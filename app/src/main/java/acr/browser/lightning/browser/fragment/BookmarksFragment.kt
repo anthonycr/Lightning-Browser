@@ -183,9 +183,9 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
             }
     }
 
-    override fun handleBookmarkDeleted(item: Bookmark) = when (item) {
+    override fun handleBookmarkDeleted(bookmark: Bookmark) = when (bookmark) {
         is Bookmark.Folder -> setBookmarksShown(null, false)
-        is Bookmark.Entry -> bookmarkAdapter?.deleteItem(BookmarkViewModel(item)) ?: Unit
+        is Bookmark.Entry -> bookmarkAdapter?.deleteItem(BookmarkViewModel(bookmark)) ?: Unit
     }
 
     private fun setBookmarksShown(folder: String?, animate: Boolean) {
@@ -234,22 +234,22 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         buttonImage.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
     }
 
-    private fun handleItemLongPress(item: Bookmark): Boolean {
+    private fun handleItemLongPress(bookmark: Bookmark): Boolean {
         (context as Activity?)?.let {
-            when (item) {
-                is Bookmark.Folder -> bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(it, uiController, item)
-                is Bookmark.Entry -> bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(it, uiController, item)
+            when (bookmark) {
+                is Bookmark.Folder -> bookmarksDialogBuilder.showBookmarkFolderLongPressedDialog(it, uiController, bookmark)
+                is Bookmark.Entry -> bookmarksDialogBuilder.showLongPressedDialogForBookmarkUrl(it, uiController, bookmark)
             }
         }
         return true
     }
 
-    private fun handleItemClick(item: Bookmark) = when (item) {
+    private fun handleItemClick(bookmark: Bookmark) = when (bookmark) {
         is Bookmark.Folder -> {
             scrollIndex = (bookmark_list_view.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            setBookmarksShown(item.title, true)
+            setBookmarksShown(bookmark.title, true)
         }
-        is Bookmark.Entry -> uiController.bookmarkItemClicked(item)
+        is Bookmark.Entry -> uiController.bookmarkItemClicked(bookmark)
     }
 
 

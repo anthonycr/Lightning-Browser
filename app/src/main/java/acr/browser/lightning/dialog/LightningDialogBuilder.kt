@@ -78,35 +78,35 @@ class LightningDialogBuilder @Inject constructor(
     fun showLongPressedDialogForBookmarkUrl(
         activity: Activity,
         uiController: UIController,
-        item: Bookmark.Entry
+        entry: Bookmark.Entry
     ) = BrowserDialog.show(activity, R.string.action_bookmarks,
         DialogItem(R.string.dialog_open_new_tab) {
-            uiController.handleNewTab(NewTab.FOREGROUND, item.url)
+            uiController.handleNewTab(NewTab.FOREGROUND, entry.url)
         },
         DialogItem(R.string.dialog_open_background_tab) {
-            uiController.handleNewTab(NewTab.BACKGROUND, item.url)
+            uiController.handleNewTab(NewTab.BACKGROUND, entry.url)
         },
         DialogItem(R.string.dialog_open_incognito_tab, activity is MainActivity) {
-            uiController.handleNewTab(NewTab.INCOGNITO, item.url)
+            uiController.handleNewTab(NewTab.INCOGNITO, entry.url)
         },
         DialogItem(R.string.action_share) {
-            IntentUtils(activity).shareUrl(item.url, item.title)
+            IntentUtils(activity).shareUrl(entry.url, entry.title)
         },
         DialogItem(R.string.dialog_copy_link) {
-            BrowserApp.copyToClipboard(activity, item.url)
+            BrowserApp.copyToClipboard(activity, entry.url)
         },
         DialogItem(R.string.dialog_remove_bookmark) {
-            bookmarkManager.deleteBookmark(item)
+            bookmarkManager.deleteBookmark(entry)
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { success ->
                     if (success) {
-                        uiController.handleBookmarkDeleted(item)
+                        uiController.handleBookmarkDeleted(entry)
                     }
                 }
         },
         DialogItem(R.string.dialog_edit_bookmark) {
-            showEditBookmarkDialog(activity, uiController, item)
+            showEditBookmarkDialog(activity, uiController, entry)
         })
 
     /**
@@ -131,18 +131,18 @@ class LightningDialogBuilder @Inject constructor(
     private fun showEditBookmarkDialog(
         activity: Activity,
         uiController: UIController,
-        item: Bookmark.Entry
+        entry: Bookmark.Entry
     ) {
         val editBookmarkDialog = AlertDialog.Builder(activity)
         editBookmarkDialog.setTitle(R.string.title_edit_bookmark)
         val dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null)
         val getTitle = dialogLayout.findViewById<EditText>(R.id.bookmark_title)
-        getTitle.setText(item.title)
+        getTitle.setText(entry.title)
         val getUrl = dialogLayout.findViewById<EditText>(R.id.bookmark_url)
-        getUrl.setText(item.url)
+        getUrl.setText(entry.url)
         val getFolder = dialogLayout.findViewById<AutoCompleteTextView>(R.id.bookmark_folder)
         getFolder.setHint(R.string.folder)
-        getFolder.setText(item.folder?.title)
+        getFolder.setText(entry.folder?.title)
 
         bookmarkManager.getFolderNames()
             .subscribeOn(databaseScheduler)
@@ -158,9 +158,9 @@ class LightningDialogBuilder @Inject constructor(
                         title = getTitle.text.toString(),
                         url = getUrl.text.toString(),
                         folder = getFolder.text.toString().asFolder(),
-                        position = item.position
+                        position = entry.position
                     )
-                    bookmarkManager.editBookmark(item, editedItem)
+                    bookmarkManager.editBookmark(entry, editedItem)
                         .subscribeOn(databaseScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(uiController::handleBookmarksChange)
@@ -173,31 +173,31 @@ class LightningDialogBuilder @Inject constructor(
     fun showBookmarkFolderLongPressedDialog(
         activity: Activity,
         uiController: UIController,
-        item: Bookmark.Folder
+        folder: Bookmark.Folder
     ) = BrowserDialog.show(activity, R.string.action_folder,
         DialogItem(R.string.dialog_rename_folder) {
-            showRenameFolderDialog(activity, uiController, item)
+            showRenameFolderDialog(activity, uiController, folder)
         },
         DialogItem(R.string.dialog_remove_folder) {
-            bookmarkManager.deleteFolder(item.title)
+            bookmarkManager.deleteFolder(folder.title)
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    uiController.handleBookmarkDeleted(item)
+                    uiController.handleBookmarkDeleted(folder)
                 }
         })
 
     private fun showRenameFolderDialog(
         activity: Activity,
         uiController: UIController,
-        item: Bookmark.Folder
+        folder: Bookmark.Folder
     ) = BrowserDialog.showEditText(activity,
         R.string.title_rename_folder,
         R.string.hint_title,
-        item.title,
+        folder.title,
         R.string.action_ok) { text ->
         if (!TextUtils.isEmpty(text)) {
-            val oldTitle = item.title
+            val oldTitle = folder.title
             bookmarkManager.renameFolder(oldTitle, text)
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())

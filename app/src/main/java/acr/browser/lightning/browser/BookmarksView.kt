@@ -8,6 +8,6 @@ interface BookmarksView {
 
     fun handleUpdatedUrl(url: String)
 
-    fun handleBookmarkDeleted(item: Bookmark)
+    fun handleBookmarkDeleted(bookmark: Bookmark)
 
 }

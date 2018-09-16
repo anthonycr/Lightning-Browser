@@ -35,17 +35,17 @@ class GoogleSuggestionsModel(
     override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
         parser.setInput(responseBody.byteStream(), UTF8)
 
-        val mutableList = mutableListOf<SearchSuggestion>()
+        val suggestions = mutableListOf<SearchSuggestion>()
         var eventType = parser.eventType
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG && "suggestion" == parser.name) {
                 val suggestion = parser.getAttributeValue(null, "data")
-                mutableList.add(SearchSuggestion("$searchSubtitle \"$suggestion\"", suggestion))
+                suggestions.add(SearchSuggestion("$searchSubtitle \"$suggestion\"", suggestion))
             }
             eventType = parser.next()
         }
 
-        return mutableList
+        return suggestions
     }
 
     companion object {

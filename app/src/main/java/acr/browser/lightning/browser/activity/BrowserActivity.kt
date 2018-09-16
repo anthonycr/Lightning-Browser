@@ -1070,8 +1070,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
     }
 
-    override fun bookmarkItemClicked(item: Bookmark.Entry) {
-        presenter?.loadUrlInCurrentView(item.url)
+    override fun bookmarkItemClicked(entry: Bookmark.Entry) {
+        presenter?.loadUrlInCurrentView(entry.url)
         // keep any jank from happening when the drawer is closed after the URL starts to load
         Handlers.MAIN.postDelayed({ closeDrawers(null) }, 150)
     }
@@ -1863,8 +1863,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
     }
 
-    override fun handleBookmarkDeleted(item: Bookmark) {
-        bookmarksView?.handleBookmarkDeleted(item)
+    override fun handleBookmarkDeleted(bookmark: Bookmark) {
+        bookmarksView?.handleBookmarkDeleted(bookmark)
         handleBookmarksChange()
     }
 
