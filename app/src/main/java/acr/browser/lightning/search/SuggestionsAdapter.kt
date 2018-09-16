@@ -29,9 +29,9 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class SuggestionsAdapter(
-        private val context: Context,
-        dark: Boolean,
-        private val isIncognito: Boolean
+    private val context: Context,
+    dark: Boolean,
+    private val isIncognito: Boolean
 ) : BaseAdapter(), Filterable {
 
     private val filterScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
@@ -72,10 +72,10 @@ class SuggestionsAdapter(
         }
 
         searchFilter = SearchFilter(suggestionsRepository,
-                this,
-                historyModel,
-                databaseScheduler,
-                networkScheduler)
+            this,
+            historyModel,
+            databaseScheduler,
+            networkScheduler)
 
         refreshBookmarks()
 
@@ -94,11 +94,11 @@ class SuggestionsAdapter(
 
     fun refreshBookmarks() {
         bookmarkManager.getAllBookmarks()
-                .subscribeOn(databaseScheduler)
-                .subscribe { list ->
-                    allBookmarks.clear()
-                    allBookmarks.addAll(list)
-                }
+            .subscribeOn(databaseScheduler)
+            .subscribe { list ->
+                allBookmarks.clear()
+                allBookmarks.addAll(list)
+            }
     }
 
     override fun getCount(): Int = filteredList.size
@@ -168,86 +168,86 @@ class SuggestionsAdapter(
 
     private fun clearSuggestions() {
         Completable
-                .fromAction {
-                    bookmarks.clear()
-                    history.clear()
-                    suggestions.clear()
-                }
-                .subscribeOn(filterScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe()
+            .fromAction {
+                bookmarks.clear()
+                history.clear()
+                suggestions.clear()
+            }
+            .subscribeOn(filterScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
     }
 
     private fun combineResults(bookmarkList: List<HistoryItem>?,
                                historyList: List<HistoryItem>?,
                                suggestionList: List<HistoryItem>?) {
         Single
-                .create<List<HistoryItem>> {
-                    val list = ArrayList<HistoryItem>(5)
-                    if (bookmarkList != null) {
-                        bookmarks.clear()
-                        bookmarks.addAll(bookmarkList)
-                    }
-                    if (historyList != null) {
-                        history.clear()
-                        history.addAll(historyList)
-                    }
-                    if (suggestionList != null) {
-                        suggestions.clear()
-                        suggestions.addAll(suggestionList)
-                    }
-                    val bookmark = bookmarks.iterator()
-                    val history = history.iterator()
-                    val suggestion = suggestions.listIterator()
-                    while (list.size < maxSuggestions) {
-                        if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
-                            break
-                        }
-                        if (bookmark.hasNext()) {
-                            list.add(bookmark.next())
-                        }
-                        if (suggestion.hasNext() && list.size < maxSuggestions) {
-                            list.add(suggestion.next())
-                        }
-                        if (history.hasNext() && list.size < maxSuggestions) {
-                            list.add(history.next())
-                        }
-                    }
-
-                    Collections.sort(list, filterComparator)
-                    it.onSuccess(list)
+            .create<List<HistoryItem>> {
+                val list = ArrayList<HistoryItem>(5)
+                if (bookmarkList != null) {
+                    bookmarks.clear()
+                    bookmarks.addAll(bookmarkList)
                 }
-                .subscribeOn(filterScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::publishResults)
+                if (historyList != null) {
+                    history.clear()
+                    history.addAll(historyList)
+                }
+                if (suggestionList != null) {
+                    suggestions.clear()
+                    suggestions.addAll(suggestionList)
+                }
+                val bookmark = bookmarks.iterator()
+                val history = history.iterator()
+                val suggestion = suggestions.listIterator()
+                while (list.size < maxSuggestions) {
+                    if (!bookmark.hasNext() && !suggestion.hasNext() && !history.hasNext()) {
+                        break
+                    }
+                    if (bookmark.hasNext()) {
+                        list.add(bookmark.next())
+                    }
+                    if (suggestion.hasNext() && list.size < maxSuggestions) {
+                        list.add(suggestion.next())
+                    }
+                    if (history.hasNext() && list.size < maxSuggestions) {
+                        list.add(history.next())
+                    }
+                }
+
+                Collections.sort(list, filterComparator)
+                it.onSuccess(list)
+            }
+            .subscribeOn(filterScheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::publishResults)
     }
 
     private fun getBookmarksForQuery(query: String): Single<List<HistoryItem>> =
-            Single.fromCallable {
-                val bookmarks = ArrayList<HistoryItem>(5)
-                var counter = 0
-                for (n in allBookmarks.indices) {
-                    if (counter >= 5) {
-                        break
-                    }
-                    if (allBookmarks[n].title.toLowerCase(Locale.getDefault())
-                                    .startsWith(query)) {
-                        bookmarks.add(allBookmarks[n])
-                        counter++
-                    } else if (allBookmarks[n].url.contains(query)) {
-                        bookmarks.add(allBookmarks[n])
-                        counter++
-                    }
+        Single.fromCallable {
+            val bookmarks = ArrayList<HistoryItem>(5)
+            var counter = 0
+            for (n in allBookmarks.indices) {
+                if (counter >= 5) {
+                    break
                 }
-                return@fromCallable bookmarks
+                if (allBookmarks[n].title.toLowerCase(Locale.getDefault())
+                        .startsWith(query)) {
+                    bookmarks.add(allBookmarks[n])
+                    counter++
+                } else if (allBookmarks[n].url.contains(query)) {
+                    bookmarks.add(allBookmarks[n])
+                    counter++
+                }
             }
+            return@fromCallable bookmarks
+        }
 
     private class SearchFilter internal constructor(
-            var suggestionsRepository: SuggestionsRepository,
-            private val suggestionsAdapter: SuggestionsAdapter,
-            private val historyModel: HistoryRepository,
-            private val databaseScheduler: Scheduler,
-            private val networkScheduler: Scheduler
+        var suggestionsRepository: SuggestionsRepository,
+        private val suggestionsAdapter: SuggestionsAdapter,
+        private val historyModel: HistoryRepository,
+        private val databaseScheduler: Scheduler,
+        private val networkScheduler: Scheduler
     ) : Filter() {
 
         private var networkDisposable: Disposable? = null
@@ -264,29 +264,29 @@ class SuggestionsAdapter(
 
             if (networkDisposable?.isDisposed != false) {
                 networkDisposable = suggestionsRepository.resultsForSearch(query)
-                        .subscribeOn(networkScheduler)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { item ->
-                            suggestionsAdapter.combineResults(null, null, item)
-                        }
+                    .subscribeOn(networkScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { item ->
+                        suggestionsAdapter.combineResults(null, null, item)
+                    }
             }
 
             if (bookmarkDisposable?.isDisposed != false) {
                 bookmarkDisposable = suggestionsAdapter.getBookmarksForQuery(query)
-                        .subscribeOn(databaseScheduler)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { list ->
-                            suggestionsAdapter.combineResults(list, null, null)
-                        }
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { list ->
+                        suggestionsAdapter.combineResults(list, null, null)
+                    }
             }
 
             if (historyDisposable?.isDisposed != false) {
                 historyDisposable = historyModel.findHistoryItemsContaining(query)
-                        .subscribeOn(databaseScheduler)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { list ->
-                            suggestionsAdapter.combineResults(null, list, null)
-                        }
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { list ->
+                        suggestionsAdapter.combineResults(null, list, null)
+                    }
             }
 
             results.count = 1
@@ -296,7 +296,7 @@ class SuggestionsAdapter(
         override fun convertResultToString(resultValue: Any) = (resultValue as HistoryItem).url
 
         override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) =
-                suggestionsAdapter.combineResults(null, null, null)
+            suggestionsAdapter.combineResults(null, null, null)
     }
 
     private class SuggestionsComparator : Comparator<HistoryItem> {
