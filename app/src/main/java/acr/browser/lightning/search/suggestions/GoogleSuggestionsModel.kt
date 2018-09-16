@@ -2,7 +2,7 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
 import android.app.Application
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -32,15 +32,15 @@ class GoogleSuggestionsModel(
         .build()
 
     @Throws(Exception::class)
-    override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
+    override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
         parser.setInput(responseBody.byteStream(), UTF8)
 
-        val mutableList = mutableListOf<HistoryItem>()
+        val mutableList = mutableListOf<SearchSuggestion>()
         var eventType = parser.eventType
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG && "suggestion" == parser.name) {
                 val suggestion = parser.getAttributeValue(null, "data")
-                mutableList.add(HistoryItem("$searchSubtitle \"$suggestion\"", suggestion, R.drawable.ic_search))
+                mutableList.add(SearchSuggestion("$searchSubtitle \"$suggestion\"", suggestion))
             }
             eventType = parser.next()
         }

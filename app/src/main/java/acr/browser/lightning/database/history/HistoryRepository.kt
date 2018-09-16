@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.history
 
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.HistoryEntry
 import io.reactivex.Completable
 import io.reactivex.Single
 
@@ -24,7 +24,7 @@ interface HistoryRepository {
      * @param url the URL of the item to delete.
      * @return a valid observable.
      */
-    fun deleteHistoryItem(url: String): Completable
+    fun deleteHistoryEntry(url: String): Completable
 
     /**
      * An observable that visits the URL by adding it to the database if it doesn't exist or
@@ -34,7 +34,7 @@ interface HistoryRepository {
      * @param title the title of the item that was visited.
      * @return a valid observable.
      */
-    fun visitHistoryItem(url: String, title: String?): Completable
+    fun visitHistoryEntry(url: String, title: String?): Completable
 
     /**
      * An observable that finds all history items containing the given query. If the query is
@@ -45,12 +45,12 @@ interface HistoryRepository {
      * @return a valid observable that emits
      * a list of history items.
      */
-    fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>>
+    fun findHistoryEntriesContaining(query: String): Single<List<HistoryEntry>>
 
     /**
      * An observable that emits a list of the last 100 visited history items.
      *
      * @return a valid observable that emits a list of history items.
      */
-    fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>>
+    fun lastHundredVisitedHistoryEntries(): Single<List<HistoryEntry>>
 }

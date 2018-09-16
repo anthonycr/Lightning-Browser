@@ -2,7 +2,7 @@ package acr.browser.lightning.html.bookmark
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri
 import android.app.Application
@@ -15,7 +15,7 @@ import java.io.File
 /**
  * A builder for the bookmark page.
  */
-internal class BookmarkPageBuilder(
+class BookmarkPageBuilder(
     private val faviconModel: FaviconModel,
     private val app: Application,
     private val diskScheduler: Scheduler
@@ -42,7 +42,7 @@ internal class BookmarkPageBuilder(
     private fun getDefaultIconFile(application: Application): File =
         File(application.cacheDir, DEFAULT_ICON)
 
-    fun buildPage(bookmarkList: List<HistoryItem>): String {
+    fun buildPage(bookmarkList: List<Bookmark>): String {
         val bookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
 
         val pageContents = bookmarkPageReader.provideHtml()
@@ -59,10 +59,9 @@ internal class BookmarkPageBuilder(
         bookmarkList.forEach {
             val newElement = repeatableElement.clone()
 
-            val viewModel = if (it.isFolder) {
-                createViewModelForFolder(it)
-            } else {
-                createViewModelForBookmark(it)
+            val viewModel = when (it) {
+                is Bookmark.Folder -> createViewModelForFolder(it)
+                is Bookmark.Entry -> createViewModelForBookmark(it)
             }
 
             newElement.getElementsByTag("a").first().attr("href", viewModel.url)
@@ -74,26 +73,26 @@ internal class BookmarkPageBuilder(
         return document.outerHtml()
     }
 
-    private fun createViewModelForFolder(historyItem: HistoryItem): BookmarkViewModel {
-        val folderPage = getBookmarkPage(app, historyItem.title)
+    private fun createViewModelForFolder(folder: Bookmark.Folder): BookmarkViewModel {
+        val folderPage = getBookmarkPage(app, folder.title)
         val iconUrl = folderIconPath
         val url = "$FILE$folderPage"
 
         return BookmarkViewModel(
-            title = historyItem.title,
+            title = folder.title,
             url = url,
             iconUrl = iconUrl
         )
     }
 
-    private fun createViewModelForBookmark(historyItem: HistoryItem): BookmarkViewModel {
-        val bookmarkUri = historyItem.url.toUri().toValidUri()
+    private fun createViewModelForBookmark(bookmark: Bookmark.Entry): BookmarkViewModel {
+        val bookmarkUri = bookmark.url.toUri().toValidUri()
 
         val iconUrl = if (bookmarkUri != null) {
             val faviconFile = FaviconModel.getFaviconCacheFile(app, bookmarkUri)
             if (!faviconFile.exists()) {
-                val defaultFavicon = faviconModel.getDefaultBitmapForString(historyItem.title)
-                faviconModel.cacheFaviconForUrl(defaultFavicon, historyItem.url)
+                val defaultFavicon = faviconModel.getDefaultBitmapForString(bookmark.title)
+                faviconModel.cacheFaviconForUrl(defaultFavicon, bookmark.url)
                     .subscribeOn(diskScheduler)
                     .subscribe()
             }
@@ -104,8 +103,8 @@ internal class BookmarkPageBuilder(
         }
 
         return BookmarkViewModel(
-            title = historyItem.title,
-            url = historyItem.url,
+            title = bookmark.title,
+            url = bookmark.url,
             iconUrl = iconUrl
         )
     }

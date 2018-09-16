@@ -1,7 +1,7 @@
 package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.HistoryEntry
 import android.app.Application
 import com.anthonycr.mezzanine.MezzanineGenerator
 import org.jsoup.Jsoup
@@ -9,9 +9,9 @@ import org.jsoup.Jsoup
 /**
  * The builder for the history page.
  */
-internal class HistoryPageBuilder(private val app: Application) {
+class HistoryPageBuilder(private val app: Application) {
 
-    fun buildPage(historyList: List<HistoryItem>): String {
+    fun buildPage(historyList: List<HistoryEntry>): String {
         val html = MezzanineGenerator.ListPageReader().provideHtml()
 
         val document = Jsoup.parse(html).apply {

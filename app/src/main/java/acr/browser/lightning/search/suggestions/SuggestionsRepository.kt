@@ -1,6 +1,6 @@
 package acr.browser.lightning.search.suggestions
 
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
 import io.reactivex.Single
 
 /**
@@ -14,6 +14,6 @@ interface SuggestionsRepository {
      * @param rawQuery the raw query to retrieve the results for.
      * @return a [Single] that emits the list of results for the query.
      */
-    fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>>
+    fun resultsForSearch(rawQuery: String): Single<List<SearchSuggestion>>
 
 }

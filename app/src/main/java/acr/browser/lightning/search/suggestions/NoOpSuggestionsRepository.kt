@@ -1,6 +1,6 @@
 package acr.browser.lightning.search.suggestions
 
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
 import io.reactivex.Single
 
 /**
@@ -8,7 +8,7 @@ import io.reactivex.Single
  */
 class NoOpSuggestionsRepository : SuggestionsRepository {
 
-    private val emptySingle: Single<List<HistoryItem>> = Single.just(emptyList())
+    private val emptySingle: Single<List<SearchSuggestion>> = Single.just(emptyList())
 
     override fun resultsForSearch(rawQuery: String) = emptySingle
 }

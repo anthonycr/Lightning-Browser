@@ -2,7 +2,7 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.map
 import android.app.Application
 import okhttp3.HttpUrl
@@ -42,13 +42,13 @@ class NaverSuggestionsModel(
             .addQueryParameter("con", "1")
             .build()
 
-    override fun parseResults(responseBody: ResponseBody): List<HistoryItem> {
+    override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
         return JSONObject(responseBody.string())
             .getJSONArray("items")
             .getJSONArray(0)
             .map { it as JSONArray }
             .map { it[0] as String }
-            .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
+            .map { SearchSuggestion("$searchSubtitle \"$it\"", it) }
     }
 
 }

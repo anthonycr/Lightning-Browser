@@ -4,7 +4,7 @@
 package acr.browser.lightning.controller
 
 import acr.browser.lightning.browser.TabsManager
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.view.LightningView
 import android.graphics.Bitmap
@@ -153,7 +153,7 @@ interface UIController {
     /**
      * Notify the browser that the user clicked on the bookmark [item].
      */
-    fun bookmarkItemClicked(item: HistoryItem)
+    fun bookmarkItemClicked(item: Bookmark.Entry)
 
     /**
      * Notify the UI that the forward button should be [enabled] for interaction.
@@ -193,7 +193,7 @@ interface UIController {
     /**
      * Notify the browser that the provided bookmark [item] has changed.
      */
-    fun handleBookmarkDeleted(item: HistoryItem)
+    fun handleBookmarkDeleted(item: Bookmark)
 
     /**
      * Notify the browser that the download list has changed.
