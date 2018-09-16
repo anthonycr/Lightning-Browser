@@ -51,7 +51,7 @@ sealed class Bookmark(
 /**
  * A data type that represents a suggestion for a search query.
  */
-class SearchSuggestion(
+data class SearchSuggestion(
     override val url: String,
     override val title: String
 ) : WebPage(url, title)
