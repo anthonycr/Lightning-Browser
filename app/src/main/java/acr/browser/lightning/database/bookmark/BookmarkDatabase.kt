@@ -249,9 +249,7 @@ class BookmarkDatabase @Inject constructor(
     /**
      * Binds a [Bookmark.Entry] to [ContentValues].
      *
-     * @param this@bindBookmarkToContentValues the bookmark to bind.
-     * @return a valid values object that can be inserted
-     * into the database.
+     * @return a valid values object that can be inserted into the database.
      */
     private fun Bookmark.Entry.bindBookmarkToContentValues() = ContentValues(4).apply {
         put(KEY_TITLE, title.takeIf(String::isNotBlank) ?: defaultBookmarkTitle)
