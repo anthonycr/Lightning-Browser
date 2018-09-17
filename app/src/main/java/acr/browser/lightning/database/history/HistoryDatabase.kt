@@ -3,8 +3,7 @@
  */
 package acr.browser.lightning.database.history
 
-import acr.browser.lightning.R
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.databaseDelegate
 import acr.browser.lightning.extensions.firstOrNullMap
 import acr.browser.lightning.extensions.useMap
@@ -58,11 +57,11 @@ class HistoryDatabase @Inject constructor(
         }
     }
 
-    override fun deleteHistoryItem(url: String): Completable = Completable.fromAction {
+    override fun deleteHistoryEntry(url: String): Completable = Completable.fromAction {
         database.delete(TABLE_HISTORY, "$KEY_URL = ?", arrayOf(url))
     }
 
-    override fun visitHistoryItem(url: String, title: String?): Completable = Completable.fromAction {
+    override fun visitHistoryEntry(url: String, title: String?): Completable = Completable.fromAction {
         val values = ContentValues().apply {
             put(KEY_TITLE, title ?: "")
             put(KEY_TIME_VISITED, System.currentTimeMillis())
@@ -82,12 +81,12 @@ class HistoryDatabase @Inject constructor(
             if (it.count > 0) {
                 database.update(TABLE_HISTORY, values, "$KEY_URL = ?", arrayOf(url))
             } else {
-                addHistoryItem(HistoryItem(url, title ?: ""))
+                addHistoryEntry(HistoryEntry(url, title ?: ""))
             }
         }
     }
 
-    override fun findHistoryItemsContaining(query: String): Single<List<HistoryItem>> =
+    override fun findHistoryEntriesContaining(query: String): Single<List<HistoryEntry>> =
         Single.fromCallable {
             val search = "%$query%"
 
@@ -98,11 +97,12 @@ class HistoryDatabase @Inject constructor(
                 arrayOf(search, search),
                 null,
                 null,
-                "$KEY_TIME_VISITED DESC", "5"
-            ).useMap { it.bindToHistoryItem() }
+                "$KEY_TIME_VISITED DESC",
+                "5"
+            ).useMap { it.bindToHistoryEntry() }
         }
 
-    override fun lastHundredVisitedHistoryItems(): Single<List<HistoryItem>> =
+    override fun lastHundredVisitedHistoryEntries(): Single<List<HistoryEntry>> =
         Single.fromCallable {
             database.query(
                 TABLE_HISTORY,
@@ -113,16 +113,16 @@ class HistoryDatabase @Inject constructor(
                 null,
                 "$KEY_TIME_VISITED DESC",
                 "100"
-            ).useMap { it.bindToHistoryItem() }
+            ).useMap { it.bindToHistoryEntry() }
         }
 
     @WorkerThread
-    private fun addHistoryItem(item: HistoryItem) {
+    private fun addHistoryEntry(item: HistoryEntry) {
         database.insert(TABLE_HISTORY, null, item.toContentValues())
     }
 
     @WorkerThread
-    fun getHistoryItem(url: String): String? =
+    fun getHistoryEntry(url: String): String? =
         database.query(
             TABLE_HISTORY,
             arrayOf(KEY_ID, KEY_URL, KEY_TITLE),
@@ -135,7 +135,7 @@ class HistoryDatabase @Inject constructor(
         ).firstOrNullMap { it.getString(0) }
 
 
-    fun getAllHistoryItems(): List<HistoryItem> {
+    fun getAllHistoryEntries(): List<HistoryEntry> {
         return database.query(
             TABLE_HISTORY,
             null,
@@ -144,22 +144,22 @@ class HistoryDatabase @Inject constructor(
             null,
             null,
             "$KEY_TIME_VISITED DESC"
-        ).useMap { it.bindToHistoryItem() }
+        ).useMap { it.bindToHistoryEntry() }
     }
 
-    fun getHistoryItemsCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
+    fun getHistoryEntriesCount(): Long = DatabaseUtils.queryNumEntries(database, TABLE_HISTORY)
 
-    private fun HistoryItem.toContentValues() = ContentValues().apply {
+    private fun HistoryEntry.toContentValues() = ContentValues().apply {
         put(KEY_URL, url)
         put(KEY_TITLE, title)
-        put(KEY_TIME_VISITED, System.currentTimeMillis())
+        put(KEY_TIME_VISITED, lastTimeVisited)
     }
 
-    private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
-        setUrl(getString(1))
-        setTitle(getString(2))
-        imageId = R.drawable.ic_history
-    }
+    private fun Cursor.bindToHistoryEntry() = HistoryEntry(
+        url = getString(1),
+        title = getString(2),
+        lastTimeVisited = getLong(3)
+    )
 
     companion object {
 
@@ -169,10 +169,10 @@ class HistoryDatabase @Inject constructor(
         // Database name
         private const val DATABASE_NAME = "historyManager"
 
-        // HistoryItem table name
+        // HistoryEntry table name
         private const val TABLE_HISTORY = "history"
 
-        // HistoryItem table columns names
+        // HistoryEntry table columns names
         private const val KEY_ID = "id"
         private const val KEY_URL = "url"
         private const val KEY_TITLE = "title"

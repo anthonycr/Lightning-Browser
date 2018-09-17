@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
@@ -37,7 +38,7 @@ import java.util.Date;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.HistoryEntry;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 
@@ -248,29 +249,31 @@ public final class Utils {
 
     /**
      * Creates a shortcut on the homescreen using the
-     * {@link HistoryItem} information that opens the
+     * {@link HistoryEntry} information that opens the
      * browser. The icon, URL, and title are used in
      * the creation of the shortcut.
      *
      * @param activity the activity needed to create
      *                 the intent and show a snackbar message
-     * @param item     the HistoryItem to create the shortcut from
+     * @param historyEntry     the HistoryEntity to create the shortcut from
      */
-    public static void createShortcut(@NonNull Activity activity, @NonNull HistoryItem item) {
-        if (TextUtils.isEmpty(item.getUrl())) {
+    public static void createShortcut(@NonNull Activity activity,
+                                      @NonNull HistoryEntry historyEntry,
+                                      @NonNull Bitmap favicon) {
+        if (TextUtils.isEmpty(historyEntry.getUrl())) {
             return;
         }
-        Log.d(TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
+        Log.d(TAG, "Creating shortcut: " + historyEntry.getTitle() + ' ' + historyEntry.getUrl());
         Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
-        shortcutIntent.setData(Uri.parse(item.getUrl()));
+        shortcutIntent.setData(Uri.parse(historyEntry.getUrl()));
 
-        final String title = TextUtils.isEmpty(item.getTitle()) ? activity.getString(R.string.untitled) : item.getTitle();
+        final String title = TextUtils.isEmpty(historyEntry.getTitle()) ? activity.getString(R.string.untitled) : historyEntry.getTitle();
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             Intent addIntent = new Intent();
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, favicon);
             addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             activity.sendBroadcast(addIntent);
             ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
@@ -278,9 +281,9 @@ public final class Utils {
             ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
             if (shortcutManager.isRequestPinShortcutSupported()) {
                 ShortcutInfo pinShortcutInfo =
-                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + item.getUrl().hashCode())
+                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + historyEntry.getUrl().hashCode())
                         .setIntent(shortcutIntent)
-                        .setIcon(Icon.createWithBitmap(item.getBitmap()))
+                        .setIcon(Icon.createWithBitmap(favicon))
                         .setShortLabel(title)
                         .build();
 

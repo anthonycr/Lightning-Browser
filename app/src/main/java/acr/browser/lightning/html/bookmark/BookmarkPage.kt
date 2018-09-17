@@ -6,7 +6,7 @@ package acr.browser.lightning.html.bookmark
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
@@ -62,7 +62,7 @@ class BookmarkPage(activity: Activity) {
                 }
             })
             .toList()
-            .map { it.flatten().sorted() }
+            .map { it.flatten() }
             .subscribeOn(databaseScheduler)
             .observeOn(diskScheduler)
             .subscribe { bookmarksAndFolders ->
@@ -70,7 +70,7 @@ class BookmarkPage(activity: Activity) {
             }
     }
 
-    private fun buildPageHtml(bookmarksAndFolders: List<HistoryItem>, folder: String?) {
+    private fun buildPageHtml(bookmarksAndFolders: List<Bookmark>, folder: String?) {
         val bookmarkWebPage = getBookmarkPage(app, folder)
 
         val builder = BookmarkPageBuilder(faviconModel, app, diskScheduler)
@@ -80,7 +80,7 @@ class BookmarkPage(activity: Activity) {
         }
 
         bookmarksAndFolders
-            .filter(HistoryItem::isFolder)
+            .filterIsInstance<Bookmark.Folder>()
             .forEach { buildBookmarkPage(it.title) }
     }
 

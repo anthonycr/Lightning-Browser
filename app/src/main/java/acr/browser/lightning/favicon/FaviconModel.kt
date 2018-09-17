@@ -15,7 +15,7 @@ import android.util.Log
 import android.util.LruCache
 import androidx.core.net.toUri
 import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.Maybe
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -42,7 +42,6 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @return the bitmap associated with the URL, may be null.
      */
     private fun getFaviconFromMemCache(url: String): Bitmap? {
-        requireNotNull(url)
         synchronized(faviconCache) {
             return faviconCache.get(url)
         }
@@ -53,10 +52,12 @@ class FaviconModel @Inject constructor(private val application: Application) {
 
         @ColorInt val defaultFaviconColor = DrawableUtils.characterToColorHash(firstTitleCharacter, application)
 
-        return DrawableUtils.getRoundedLetterImage(firstTitleCharacter,
+        return DrawableUtils.getRoundedLetterImage(
+            firstTitleCharacter,
             bookmarkIconSize,
             bookmarkIconSize,
-            defaultFaviconColor)
+            defaultFaviconColor
+        )
     }
 
     /**
@@ -66,8 +67,6 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param bitmap the bitmap to store.
      */
     private fun addFaviconToMemCache(url: String, bitmap: Bitmap) {
-        requireNotNull(url)
-        requireNotNull(bitmap)
         synchronized(faviconCache) {
             faviconCache.put(url, bitmap)
         }
@@ -79,19 +78,14 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @param url   The URL that we should retrieve the favicon for.
      * @param title The title for the web page.
      */
-    fun faviconForUrl(url: String, title: String): Single<Bitmap> = Single.create {
+    fun faviconForUrl(url: String, title: String): Maybe<Bitmap> = Maybe.create {
         val uri = url.toUri().toValidUri()
-
-        if (uri == null) {
-            it.onSuccess(getDefaultBitmapForString(title).pad())
-            return@create
-        }
+            ?: return@create it.onSuccess(getDefaultBitmapForString(title).pad())
 
         val cachedFavicon = getFaviconFromMemCache(url)
 
         if (cachedFavicon != null) {
-            it.onSuccess(cachedFavicon.pad())
-            return@create
+            return@create it.onSuccess(cachedFavicon.pad())
         }
 
         val faviconCacheFile = getFaviconCacheFile(application, uri)
@@ -101,12 +95,11 @@ class FaviconModel @Inject constructor(private val application: Application) {
 
             if (storedFavicon != null) {
                 addFaviconToMemCache(url, storedFavicon)
-                it.onSuccess(storedFavicon.pad())
-                return@create
+                return@create it.onSuccess(storedFavicon.pad())
             }
         }
 
-        it.onSuccess(getDefaultBitmapForString(title).pad())
+        return@create it.onSuccess(getDefaultBitmapForString(title).pad())
     }
 
     /**
@@ -117,12 +110,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
      * @return an observable that notifies the consumer when it is complete.
      */
     fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create { emitter ->
-        val uri = url.toUri().toValidUri()
-
-        if (uri == null) {
-            emitter.onComplete()
-            return@create
-        }
+        val uri = url.toUri().toValidUri() ?: return@create emitter.onComplete()
 
         Log.d(TAG, "Caching icon for ${uri.host}")
         FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {

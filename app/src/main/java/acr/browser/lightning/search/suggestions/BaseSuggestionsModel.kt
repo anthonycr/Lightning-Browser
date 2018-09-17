@@ -1,6 +1,6 @@
 package acr.browser.lightning.search.suggestions
 
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.safeUse
 import android.util.Log
 import io.reactivex.Single
@@ -31,23 +31,23 @@ abstract class BaseSuggestionsModel internal constructor(
     abstract fun createQueryUrl(query: String, language: String): HttpUrl
 
     /**
-     * Parse the results of an input stream into a list of [HistoryItem].
+     * Parse the results of an input stream into a list of [SearchSuggestion].
      *
      * @param responseBody the raw [ResponseBody] to parse.
      */
     @Throws(Exception::class)
-    protected abstract fun parseResults(responseBody: ResponseBody): List<HistoryItem>
+    protected abstract fun parseResults(responseBody: ResponseBody): List<SearchSuggestion>
 
-    override fun resultsForSearch(rawQuery: String): Single<List<HistoryItem>> = Single.fromCallable {
+    override fun resultsForSearch(rawQuery: String): Single<List<SearchSuggestion>> = Single.fromCallable {
         val query = try {
             URLEncoder.encode(rawQuery, encoding)
         } catch (e: UnsupportedEncodingException) {
             Log.e(TAG, "Unable to encode the URL", e)
 
-            return@fromCallable emptyList<HistoryItem>()
+            return@fromCallable emptyList<SearchSuggestion>()
         }
 
-        var results = emptyList<HistoryItem>()
+        var results = emptyList<SearchSuggestion>()
 
         downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
             results += parseResults(it).take(MAX_RESULTS)

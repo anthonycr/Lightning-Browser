@@ -10,8 +10,8 @@ import org.jsoup.Jsoup
 /**
  * The builder for the download page.
  */
-internal class DownloadPageBuilder(private val app: Application,
-                                   private val storageDirectory: String) {
+class DownloadPageBuilder(private val app: Application,
+                          private val storageDirectory: String) {
 
     fun buildPage(downloadList: List<DownloadItem>): String {
         val html = MezzanineGenerator.ListPageReader().provideHtml()
@@ -38,7 +38,7 @@ internal class DownloadPageBuilder(private val app: Application,
     }
 
     private fun createFileUrl(fileName: String): String =
-            "$FILE$storageDirectory/$fileName"
+        "$FILE$storageDirectory/$fileName"
 
     private fun createFileTitle(downloadItem: DownloadItem): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {

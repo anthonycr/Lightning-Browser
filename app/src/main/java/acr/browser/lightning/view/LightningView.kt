@@ -220,7 +220,7 @@ class LightningView(
             return
         }
 
-        when (requireNotNull(homepage)) {
+        when (homepage) {
             SCHEME_HOMEPAGE -> loadStartPage()
             SCHEME_BOOKMARKS -> loadBookmarkPage()
             else -> webView?.loadUrl(homepage, requestHeaders)
@@ -391,7 +391,7 @@ class LightningView(
             .subscribeOn(databaseScheduler)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { file ->
-                settings.setAppCachePath(requireNotNull(file).path)
+                settings.setAppCachePath(file.path)
             }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
@@ -399,7 +399,7 @@ class LightningView(
                 .subscribeOn(databaseScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { file ->
-                    settings.setGeolocationDatabasePath(requireNotNull(file).path)
+                    settings.setGeolocationDatabasePath(file.path)
                 }
         }
 

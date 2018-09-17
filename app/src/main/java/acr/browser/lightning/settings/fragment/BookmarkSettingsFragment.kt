@@ -200,13 +200,12 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(
                         onSuccess = { importList ->
-                            val importedBookmarks = requireNotNull(importList)
-                            bookmarkRepository.addBookmarkList(importedBookmarks)
+                            bookmarkRepository.addBookmarkList(importList)
                                 .subscribeOn(databaseScheduler)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe {
                                     activity?.apply {
-                                        snackbar("${importedBookmarks.size} ${getString(R.string.message_import)}")
+                                        snackbar("${importList.size} ${getString(R.string.message_import)}")
                                     }
                                 }
                         },

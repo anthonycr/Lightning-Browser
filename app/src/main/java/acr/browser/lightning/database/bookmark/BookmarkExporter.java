@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import acr.browser.lightning.R;
-import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.Bookmark;
+import acr.browser.lightning.database.WebPageKt;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
 import io.reactivex.Completable;
@@ -54,8 +55,8 @@ public final class BookmarkExporter {
      * @return a non null list of the bookmarks stored in assets.
      */
     @NonNull
-    public static List<HistoryItem> importBookmarksFromAssets(@NonNull Context context) {
-        List<HistoryItem> bookmarks = new ArrayList<>();
+    public static List<Bookmark.Entry> importBookmarksFromAssets(@NonNull Context context) {
+        List<Bookmark.Entry> bookmarks = new ArrayList<>();
         BufferedReader bookmarksReader = null;
         InputStream inputStream = null;
         try {
@@ -66,14 +67,15 @@ public final class BookmarkExporter {
             while ((line = bookmarksReader.readLine()) != null) {
                 try {
                     JSONObject object = new JSONObject(line);
-                    HistoryItem item = new HistoryItem();
-                    item.setTitle(object.getString(KEY_TITLE));
-                    final String url = object.getString(KEY_URL);
-                    item.setUrl(url);
-                    item.setFolder(object.getString(KEY_FOLDER));
-                    item.setPosition(object.getInt(KEY_ORDER));
-                    item.setImageId(R.drawable.ic_bookmark);
-                    bookmarks.add(item);
+                    final String folderTitle = object.getString(KEY_FOLDER);
+                    bookmarks.add(
+                        new Bookmark.Entry(
+                            object.getString(KEY_URL),
+                            object.getString(KEY_TITLE),
+                            object.getInt(KEY_ORDER),
+                            folderTitle != null ? WebPageKt.asFolder(folderTitle) : null
+                        )
+                    );
                 } catch (JSONException e) {
                     Log.e(TAG, "Can't parse line " + line, e);
                 }
@@ -98,7 +100,7 @@ public final class BookmarkExporter {
      * event if there is a problem.
      */
     @NonNull
-    public static Completable exportBookmarksToFile(@NonNull final List<HistoryItem> bookmarkList,
+    public static Completable exportBookmarksToFile(@NonNull final List<Bookmark.Entry> bookmarkList,
                                                     @NonNull final File file) {
         return Completable.fromAction(new Action() {
             @Override
@@ -110,10 +112,10 @@ public final class BookmarkExporter {
                     bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
 
                     JSONObject object = new JSONObject();
-                    for (HistoryItem item : bookmarkList) {
+                    for (Bookmark.Entry item : bookmarkList) {
                         object.put(KEY_TITLE, item.getTitle());
                         object.put(KEY_URL, item.getUrl());
-                        object.put(KEY_FOLDER, item.getFolder());
+                        object.put(KEY_FOLDER, item.getFolder() != null ? item.getFolder().getTitle() : null);
                         object.put(KEY_ORDER, item.getPosition());
                         bookmarkWriter.write(object.toString());
                         bookmarkWriter.newLine();
@@ -136,25 +138,27 @@ public final class BookmarkExporter {
      * file cannot be imported.
      */
     @NonNull
-    public static Single<List<HistoryItem>> importBookmarksFromFile(@NonNull final File file) {
-        return Single.fromCallable(new Callable<List<HistoryItem>>() {
+    public static Single<List<Bookmark.Entry>> importBookmarksFromFile(@NonNull final File file) {
+        return Single.fromCallable(new Callable<List<Bookmark.Entry>>() {
             @Override
-            public List<HistoryItem> call() throws Exception {
+            public List<Bookmark.Entry> call() throws Exception {
                 BufferedReader bookmarksReader = null;
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed
                     bookmarksReader = new BufferedReader(new FileReader(file));
                     String line;
 
-                    List<HistoryItem> bookmarks = new ArrayList<>();
+                    List<Bookmark.Entry> bookmarks = new ArrayList<>();
                     while ((line = bookmarksReader.readLine()) != null) {
                         JSONObject object = new JSONObject(line);
-                        HistoryItem item = new HistoryItem();
-                        item.setTitle(object.getString(KEY_TITLE));
-                        item.setUrl(object.getString(KEY_URL));
-                        item.setFolder(object.getString(KEY_FOLDER));
-                        item.setPosition(object.getInt(KEY_ORDER));
-                        bookmarks.add(item);
+                        final String folderName = object.getString(KEY_FOLDER);
+                        final Bookmark.Entry entry = new Bookmark.Entry(
+                            object.getString(KEY_TITLE),
+                            object.getString(KEY_URL),
+                            object.getInt(KEY_ORDER),
+                            folderName != null ? WebPageKt.asFolder(folderName) : null
+                        );
+                        bookmarks.add(entry);
                     }
 
                     return bookmarks;

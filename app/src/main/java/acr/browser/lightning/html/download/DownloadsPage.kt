@@ -32,7 +32,7 @@ class DownloadsPage {
 
                 val fileName = getDownloadsPageFile(app)
                 FileWriter(fileName, false).use {
-                    it.write(downloadPageBuilder.buildPage(requireNotNull(list)))
+                    it.write(downloadPageBuilder.buildPage(list))
                 }
 
                 return@map fileName

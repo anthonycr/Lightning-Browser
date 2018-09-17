@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.bookmark
 
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.Bookmark
 import android.support.annotation.WorkerThread
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -19,7 +19,7 @@ interface BookmarkRepository {
      * @param url the URL to look for.
      * @return an observable that will emit either the bookmark associated with the URL or null.
      */
-    fun findBookmarkForUrl(url: String): Maybe<HistoryItem>
+    fun findBookmarkForUrl(url: String): Maybe<Bookmark.Entry>
 
     /**
      * Determines if a URL is associated with a bookmark.
@@ -32,10 +32,10 @@ interface BookmarkRepository {
     /**
      * Adds a bookmark if one does not already exist with the same URL.
      *
-     * @param item the bookmark to add.
+     * @param entry the bookmark to add.
      * @return an observable that emits true if the bookmark was added, false otherwise.
      */
-    fun addBookmarkIfNotExists(item: HistoryItem): Single<Boolean>
+    fun addBookmarkIfNotExists(entry: Bookmark.Entry): Single<Boolean>
 
     /**
      * Adds a list of bookmarks to the database.
@@ -43,15 +43,15 @@ interface BookmarkRepository {
      * @param bookmarkItems the bookmarks to add.
      * @return an observable that emits a complete event when all the bookmarks have been added.
      */
-    fun addBookmarkList(bookmarkItems: List<HistoryItem>): Completable
+    fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>): Completable
 
     /**
      * Deletes a bookmark from the database.
      *
-     * @param bookmark the bookmark to delete.
-     * @return an observable that emits true when the bookmark is deleted, false otherwise.
+     * @param entry the bookmark to delete.
+     * @return an observable that emits true when the entry is deleted, false otherwise.
      */
-    fun deleteBookmark(bookmark: HistoryItem): Single<Boolean>
+    fun deleteBookmark(entry: Bookmark.Entry): Single<Boolean>
 
     /**
      * Moves all bookmarks in the old folder to the new folder.
@@ -85,14 +85,14 @@ interface BookmarkRepository {
      * @param newBookmark the new bookmark.
      * @return an observable that emits a completion event when the bookmark edit is done.
      */
-    fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem): Completable
+    fun editBookmark(oldBookmark: Bookmark.Entry, newBookmark: Bookmark.Entry): Completable
 
     /**
      * Emits a list of all bookmarks
      *
      * @return an observable that emits a list of all bookmarks.
      */
-    fun getAllBookmarks(): Single<List<HistoryItem>>
+    fun getAllBookmarks(): Single<List<Bookmark.Entry>>
 
     /**
      * Emits all bookmarks in a certain folder. If the folder chosen is null, then all bookmarks
@@ -101,14 +101,14 @@ interface BookmarkRepository {
      * @param folder gets the bookmarks from this folder, may be null.
      * @return an observable that emits a list of bookmarks in the given folder.
      */
-    fun getBookmarksFromFolderSorted(folder: String?): Single<List<HistoryItem>>
+    fun getBookmarksFromFolderSorted(folder: String?): Single<List<Bookmark>>
 
     /**
-     * Returns all folders as [HistoryItem]. The root folder is omitted.
+     * Returns all folders as [Bookmark.Folder]. The root folder is omitted.
      *
      * @return an observable that emits a list of folders.
      */
-    fun getFoldersSorted(): Single<List<HistoryItem>>
+    fun getFoldersSorted(): Single<List<Bookmark.Folder>>
 
     /**
      * Returns the names of all folders. The root folder is omitted.

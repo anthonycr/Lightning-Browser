@@ -23,7 +23,7 @@ class HistoryPage {
     }
 
     fun createHistoryPage(): Single<String> = historyModel
-            .lastHundredVisitedHistoryItems()
+            .lastHundredVisitedHistoryEntries()
             .map { list ->
                 val newList = list.toMutableList()
 
