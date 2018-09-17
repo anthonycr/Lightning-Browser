@@ -34,7 +34,7 @@ import acr.browser.lightning.MainActivity;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.downloads.DownloadItem;
+import acr.browser.lightning.database.downloads.DownloadEntry;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
@@ -289,7 +289,7 @@ public class DownloadHandler {
         LightningView view = browserActivity.getTabModel().getCurrentTab();
 
         if (view != null && !view.isIncognito()) {
-            downloadsRepository.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
+            downloadsRepository.addDownloadIfNotExists(new DownloadEntry(url, filename, contentSize))
                 .subscribeOn(databaseScheduler)
                 .subscribe(new Consumer<Boolean>() {
                     @Override

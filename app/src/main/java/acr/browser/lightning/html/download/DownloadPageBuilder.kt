@@ -2,7 +2,7 @@ package acr.browser.lightning.html.download
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.database.downloads.DownloadItem
+import acr.browser.lightning.database.downloads.DownloadEntry
 import android.app.Application
 import com.anthonycr.mezzanine.MezzanineGenerator
 import org.jsoup.Jsoup
@@ -10,10 +10,12 @@ import org.jsoup.Jsoup
 /**
  * The builder for the download page.
  */
-class DownloadPageBuilder(private val app: Application,
-                          private val storageDirectory: String) {
+class DownloadPageBuilder(
+    private val app: Application,
+    private val storageDirectory: String
+) {
 
-    fun buildPage(downloadList: List<DownloadItem>): String {
+    fun buildPage(downloadList: List<DownloadEntry>): String {
         val html = MezzanineGenerator.ListPageReader().provideHtml()
 
         val document = Jsoup.parse(html).apply {
@@ -40,7 +42,7 @@ class DownloadPageBuilder(private val app: Application,
     private fun createFileUrl(fileName: String): String =
         "$FILE$storageDirectory/$fileName"
 
-    private fun createFileTitle(downloadItem: DownloadItem): String {
+    private fun createFileTitle(downloadItem: DownloadEntry): String {
         val contentSize = if (downloadItem.contentSize.isNotBlank()) {
             "[${downloadItem.contentSize}]"
         } else {

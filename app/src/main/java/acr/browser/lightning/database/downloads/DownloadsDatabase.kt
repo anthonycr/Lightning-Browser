@@ -44,7 +44,7 @@ class DownloadsDatabase @Inject constructor(
         onCreate(db)
     }
 
-    override fun findDownloadForUrl(url: String): Maybe<DownloadItem> = Maybe.fromCallable {
+    override fun findDownloadForUrl(url: String): Maybe<DownloadEntry> = Maybe.fromCallable {
         database.query(
             TABLE_DOWNLOADS,
             null,
@@ -71,12 +71,12 @@ class DownloadsDatabase @Inject constructor(
         }
     }
 
-    override fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean> = Single.fromCallable {
+    override fun addDownloadIfNotExists(entry: DownloadEntry): Single<Boolean> = Single.fromCallable {
         database.query(
             TABLE_DOWNLOADS,
             null,
             "$KEY_URL=?",
-            arrayOf(item.url),
+            arrayOf(entry.url),
             null,
             null,
             "1"
@@ -86,17 +86,17 @@ class DownloadsDatabase @Inject constructor(
             }
         }
 
-        val id = database.insert(TABLE_DOWNLOADS, null, item.toContentValues())
+        val id = database.insert(TABLE_DOWNLOADS, null, entry.toContentValues())
 
         return@fromCallable id != -1L
     }
 
-    override fun addDownloadsList(downloadItems: List<DownloadItem>): Completable = Completable.fromAction {
+    override fun addDownloadsList(downloadEntries: List<DownloadEntry>): Completable = Completable.fromAction {
         database.apply {
             beginTransaction()
             setTransactionSuccessful()
 
-            for (item in downloadItems) {
+            for (item in downloadEntries) {
                 addDownloadIfNotExists(item).subscribe()
             }
 
@@ -115,7 +115,7 @@ class DownloadsDatabase @Inject constructor(
         }
     }
 
-    override fun getAllDownloads(): Single<List<DownloadItem>> = Single.fromCallable {
+    override fun getAllDownloads(): Single<List<DownloadEntry>> = Single.fromCallable {
         return@fromCallable database.query(
             TABLE_DOWNLOADS,
             null,
@@ -130,22 +130,22 @@ class DownloadsDatabase @Inject constructor(
     override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_DOWNLOADS)
 
     /**
-     * Maps the fields of [DownloadItem] to [ContentValues].
+     * Maps the fields of [DownloadEntry] to [ContentValues].
      */
-    private fun DownloadItem.toContentValues() = ContentValues(3).apply {
+    private fun DownloadEntry.toContentValues() = ContentValues(3).apply {
         put(KEY_TITLE, title)
         put(KEY_URL, url)
         put(KEY_SIZE, contentSize)
     }
 
     /**
-     * Binds a [Cursor] to a single [DownloadItem].
+     * Binds a [Cursor] to a single [DownloadEntry].
      */
-    private fun Cursor.bindToDownloadItem() = DownloadItem().apply {
-        setUrl(getString(getColumnIndex(KEY_URL)))
-        setTitle(getString(getColumnIndex(KEY_TITLE)))
-        setContentSize(getString(getColumnIndex(KEY_SIZE)))
-    }
+    private fun Cursor.bindToDownloadItem() = DownloadEntry(
+        url = getString(getColumnIndex(KEY_URL)),
+        title = getString(getColumnIndex(KEY_TITLE)),
+        contentSize = getString(getColumnIndex(KEY_SIZE))
+    )
 
     companion object {
 

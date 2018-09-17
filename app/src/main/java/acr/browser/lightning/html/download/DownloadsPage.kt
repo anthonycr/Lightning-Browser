@@ -24,27 +24,27 @@ class DownloadsPage {
     }
 
     fun getDownloadsPage(): Single<String> = manager
-            .getAllDownloads()
-            .map { list ->
-                val directory = userPreferences.downloadDirectory
+        .getAllDownloads()
+        .map { list ->
+            val directory = userPreferences.downloadDirectory
 
-                val downloadPageBuilder = DownloadPageBuilder(app, directory)
+            val downloadPageBuilder = DownloadPageBuilder(app, directory)
 
-                val fileName = getDownloadsPageFile(app)
-                FileWriter(fileName, false).use {
-                    it.write(downloadPageBuilder.buildPage(list))
-                }
-
-                return@map fileName
+            val fileName = getDownloadsPageFile(app)
+            FileWriter(fileName, false).use {
+                it.write(downloadPageBuilder.buildPage(list))
             }
-            .map { "$FILE$it" }
+
+            return@map fileName
+        }
+        .map { "$FILE$it" }
 
     companion object {
 
         const val FILENAME = "downloads.html"
 
         private fun getDownloadsPageFile(application: Application): File =
-                File(application.filesDir, FILENAME)
+            File(application.filesDir, FILENAME)
     }
 
 }

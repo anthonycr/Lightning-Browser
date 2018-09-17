@@ -26,23 +26,23 @@ interface DownloadsRepository {
      * @param url the URL to look for.
      * @return an observable that will emit either the download associated with the URL or null.
      */
-    fun findDownloadForUrl(url: String): Maybe<DownloadItem>
+    fun findDownloadForUrl(url: String): Maybe<DownloadEntry>
 
     /**
      * Adds a download if one does not already exist with the same URL.
      *
-     * @param item the download to add.
+     * @param entry the download to add.
      * @return an observable that emits true if the download was added, false otherwise.
      */
-    fun addDownloadIfNotExists(item: DownloadItem): Single<Boolean>
+    fun addDownloadIfNotExists(entry: DownloadEntry): Single<Boolean>
 
     /**
      * Adds a list of downloads to the database.
      *
-     * @param downloadItems the downloads to add.
+     * @param downloadEntries the downloads to add.
      * @return an observable that emits a complete event when all the downloads have been added.
      */
-    fun addDownloadsList(downloadItems: List<DownloadItem>): Completable
+    fun addDownloadsList(downloadEntries: List<DownloadEntry>): Completable
 
     /**
      * Deletes a download from the database.
@@ -64,7 +64,7 @@ interface DownloadsRepository {
      *
      * @return an observable that emits a list of all downloads.
      */
-    fun getAllDownloads(): Single<List<DownloadItem>>
+    fun getAllDownloads(): Single<List<DownloadEntry>>
 
     /**
      * A synchronous call to the model that returns the number of downloads. Should be called from a
