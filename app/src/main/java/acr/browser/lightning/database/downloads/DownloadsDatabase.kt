@@ -123,7 +123,7 @@ class DownloadsDatabase @Inject constructor(
             null,
             null,
             null,
-            null
+            "$KEY_ID DESC"
         ).useMap { it.bindToDownloadItem() }
     }
 
