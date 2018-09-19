@@ -1,8 +1,6 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.R
-import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
@@ -10,7 +8,9 @@ import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.utils.Option
 import acr.browser.lightning.utils.UrlUtils
+import acr.browser.lightning.utils.value
 import acr.browser.lightning.view.*
 import android.app.Activity
 import android.app.Application
@@ -18,13 +18,13 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
 import android.webkit.URLUtil
-import io.reactivex.*
+import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -81,49 +81,63 @@ class TabsManager {
     }
 
     /**
-     * Restores old tabs that were open before the browser was closed. Handles the intent used to
-     * open the browser.
-     *
-     * @param activity  the activity needed to create tabs.
-     * @param intent    the intent that started the browser activity.
-     * @param incognito whether or not we are in incognito mode.
+     * Initialize the state of the [TabsManager] based on previous state of the browser and with the
+     * new provided [intent] and emit the last tab that should be displayed. By default operates on
+     * a background scheduler and emits on the foreground scheduler.
      */
-    fun initializeTabs(
-        activity: Activity,
-        intent: Intent?,
-        incognito: Boolean
-    ): Completable = Completable.create { emitter ->
-        // Make sure we start with a clean tab list
-        shutdown()
+    fun initializeTabs(activity: Activity, intent: Intent?, incognito: Boolean): Single<LightningView> =
+        Single
+            .just(Option.fromNullable(
+                if (intent?.action == Intent.ACTION_WEB_SEARCH) {
+                    extractSearchFromIntent(intent)
+                } else {
+                    intent?.dataString
+                }
+            ))
+            .doOnSuccess { shutdown() }
+            .subscribeOn(mainScheduler)
+            .flatMapObservable {
+                return@flatMapObservable if (incognito) {
+                    initializeIncognitoMode(it.value(), activity)
+                } else {
+                    initializeRegularMode(it.value(), activity)
+                }
+            }
+            .subscribeOn(databaseScheduler)
+            .observeOn(mainScheduler)
+            .map { newTab(activity, it, incognito) }
+            .lastOrError()
+            .doOnSuccess { finishInitialization() }
 
-        val url: String? = if (intent?.action == Intent.ACTION_WEB_SEARCH) {
-            extractSearchFromIntent(intent)
-        } else {
-            intent?.dataString
+    /**
+     * Returns an [Observable] that emits the [TabInitializer] for incognito mode.
+     */
+    private fun initializeIncognitoMode(initialUrl: String?, activity: Activity): Observable<TabInitializer> =
+        Observable.fromCallable {
+            return@fromCallable initialUrl?.let(::UrlInitializer)
+                ?: HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler)
         }
 
-        val tabInitializer = url?.let(::UrlInitializer)
-            ?: HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler)
+    /**
+     * Returns an [Observable] that emits the [TabInitializer] for normal operation mode.
+     */
+    private fun initializeRegularMode(initialUrl: String?, activity: Activity): Observable<TabInitializer> =
+        restorePreviousTabs(activity)
+            .concatWith(Maybe.fromCallable<TabInitializer> {
+                return@fromCallable initialUrl?.let {
+                    if (URLUtil.isFileUrl(it)) {
+                        PermissionInitializer(it, activity, HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler))
+                    } else {
+                        UrlInitializer(it)
+                    }
+                }
+            })
+            .defaultIfEmpty(HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler))
 
-        // If incognito, only create one tab
-        if (incognito) {
-            newTab(activity, tabInitializer, true)
-            finishInitialization()
-            emitter.onComplete()
-            return@create
-        }
-
-        Log.d(TAG, "URL from intent: $url")
-        currentTab = null
-        if (userPreferences.restoreLostTabsEnabled) {
-            restoreLostTabs(url, activity, emitter)
-        } else {
-            newTab(activity, tabInitializer, false)
-            finishInitialization()
-            emitter.onComplete()
-        }
-    }
-
+    /**
+     * Returns the URL for a search [Intent]. If the query is empty, then a null URL will be
+     * returned.
+     */
     fun extractSearchFromIntent(intent: Intent): String? {
         val query = intent.getStringExtra(SearchManager.QUERY)
         val searchUrl = "${searchEngineProvider.provideSearchEngine().queryUrl}${UrlUtils.QUERY_PLACE_HOLDER}"
@@ -135,71 +149,24 @@ class TabsManager {
         }
     }
 
-    private fun restoreLostTabs(
-        newTabUrl: String?,
-        activity: Activity,
-        emitter: CompletableEmitter
-    ) = restoreState()
-        .subscribeOn(diskScheduler)
-        .observeOn(mainScheduler)
-        .subscribeBy(
-            onNext = { bundle ->
-                val url = bundle.getString(URL_KEY)
-                if (url != null) {
-                    val initializer = AsyncUrlInitializer(when {
-                        UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity).createBookmarkPage()
-                        UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
-                        UrlUtils.isStartPageUrl(url) -> StartPage().createHomePage()
-                        UrlUtils.isHistoryUrl(url) -> HistoryPage().createHistoryPage()
-                        else -> StartPage().createHomePage()
-                    }, databaseScheduler, mainScheduler)
-
-                    newTab(activity, initializer, false)
-                } else {
-                    newTab(activity, BundleInitializer(bundle), false)
-                }
-            },
-            onComplete = {
-                if (newTabUrl != null) {
-                    if (URLUtil.isFileUrl(newTabUrl)) {
-                        AlertDialog.Builder(activity).apply {
-                            setTitle(R.string.title_warning)
-                            setMessage(R.string.message_blocked_local)
-                            setOnDismissListener {
-                                if (tabList.isEmpty()) {
-                                    newTab(
-                                        activity,
-                                        HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler),
-                                        false
-                                    )
-                                }
-                                finishInitialization()
-                                emitter.onComplete()
-                            }
-                            setNegativeButton(android.R.string.cancel, null)
-                            setPositiveButton(R.string.action_open) { _, _ ->
-                                newTab(activity, UrlInitializer(newTabUrl), false)
-                            }
-                        }.resizeAndShow()
-                    } else {
-                        newTab(activity, UrlInitializer(newTabUrl), false)
-                        finishInitialization()
-                        emitter.onComplete()
-                    }
-                } else if (tabList.isEmpty()) {
-                    newTab(
-                        activity,
-                        HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler),
-                        false
-                    )
-                    finishInitialization()
-                    emitter.onComplete()
-                } else {
-                    finishInitialization()
-                    emitter.onComplete()
-                }
-            }
-        )
+    /**
+     * Returns an observable that emits the [TabInitializer] for each previously opened tab as
+     * saved on disk. Can potentially be empty.
+     */
+    private fun restorePreviousTabs(
+        activity: Activity
+    ): Observable<TabInitializer> = readSavedStateFromDisk()
+        .map { bundle ->
+            return@map bundle.getString(URL_KEY)?.let { url ->
+                AsyncUrlInitializer(when {
+                    UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity).createBookmarkPage()
+                    UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
+                    UrlUtils.isStartPageUrl(url) -> StartPage().createHomePage()
+                    UrlUtils.isHistoryUrl(url) -> HistoryPage().createHistoryPage()
+                    else -> StartPage().createHomePage()
+                }, databaseScheduler, mainScheduler)
+            } ?: BundleInitializer(bundle)
+        }
 
 
     /**
@@ -249,7 +216,7 @@ class TabsManager {
      * tab is also released for garbage collection.
      */
     fun shutdown() {
-        tabList.indices.forEach { deleteTab(0) }
+        repeat(tabList.size) { deleteTab(0) }
         isInitialized = false
         currentTab = null
     }
@@ -389,11 +356,11 @@ class TabsManager {
     fun clearSavedState() = FileUtils.deleteBundleInStorage(app, BUNDLE_STORAGE)
 
     /**
-     * Restores the previously saved tabs from the bundle stored in persistent file storage. It will
-     * create new tabs for each tab saved and will delete the saved instance file when restoration
-     * is complete.
+     * Creates an [Observable] that emits the [Bundle] state stored for each previously opened tab
+     * on disk. After the list of bundle [Bundle] is read off disk, the old state will be deleted.
+     * Can potentially be empty.
      */
-    private fun restoreState(): Observable<Bundle> = Maybe
+    private fun readSavedStateFromDisk(): Observable<Bundle> = Maybe
         .fromCallable { FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE) }
         .flattenAsObservable { bundle ->
             bundle.keySet()
