@@ -59,7 +59,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
                     // At this point we always have at least a tab in the tab manager
                     view.notifyTabViewInitialized()
                     view.updateTabNumber(tabsModel.size())
-                    onTabChanged(it)
+                    tabChanged(tabsModel.positionOf(it))
                 }
             )
     }

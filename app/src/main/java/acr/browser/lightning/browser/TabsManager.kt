@@ -35,7 +35,7 @@ import javax.inject.Named
  */
 class TabsManager {
 
-    private val tabList = ArrayList<LightningView>(1)
+    private val tabList = arrayListOf<LightningView>()
     /**
      * Return the current [LightningView] or null if no current tab has been set.
      *
@@ -404,9 +404,9 @@ class TabsManager {
             Log.e(TAG, "Returning a null LightningView requested for position: $position")
             null
         } else {
-            val tab = tabList[position]
-            currentTab = tab
-            tab
+            tabList[position].also {
+                currentTab = it
+            }
         }
     }
 
