@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.di.MainScheduler;
 import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.UserPreferences;
@@ -41,7 +42,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -54,6 +54,7 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Inject UserPreferences mUserPreferences;
     @Inject @NetworkScheduler Scheduler mNetworkScheduler;
+    @Inject @MainScheduler Scheduler mMainScheduler;
 
     private boolean mInvert;
     @Nullable private String mUrl = null;
@@ -168,7 +169,7 @@ public class ReadingActivity extends AppCompatActivity {
 
         mPageLoaderSubscription = loadPage(mUrl)
             .subscribeOn(mNetworkScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mMainScheduler)
             .subscribe(new Consumer<ReaderInfo>() {
                 @Override
                 public void accept(@NonNull ReaderInfo readerInfo) {

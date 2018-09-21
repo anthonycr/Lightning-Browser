@@ -8,6 +8,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
@@ -22,7 +23,6 @@ import androidx.core.widget.toast
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import java.io.File
@@ -34,6 +34,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var application: Application
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
 
     private var importSubscription: Disposable? = null
     private var exportSubscription: Disposable? = null
@@ -82,7 +83,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                             exportSubscription?.dispose()
                             exportSubscription = BookmarkExporter.exportBookmarksToFile(list, exportFile)
                                 .subscribeOn(databaseScheduler)
-                                .observeOn(AndroidSchedulers.mainThread())
+                                .observeOn(mainScheduler)
                                 .subscribeBy(
                                     onComplete = {
                                         activity?.apply {
@@ -197,12 +198,12 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                 importSubscription = BookmarkExporter
                     .importBookmarksFromFile(fileList[which])
                     .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mainScheduler)
                     .subscribeBy(
                         onSuccess = { importList ->
                             bookmarkRepository.addBookmarkList(importList)
                                 .subscribeOn(databaseScheduler)
-                                .observeOn(AndroidSchedulers.mainThread())
+                                .observeOn(mainScheduler)
                                 .subscribe {
                                     activity?.apply {
                                         snackbar("${importList.size} ${getString(R.string.message_import)}")

@@ -11,6 +11,7 @@ import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPage
@@ -40,7 +41,6 @@ import android.webkit.WebView
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 
@@ -114,6 +114,7 @@ class LightningView(
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
 
     private val lightningWebClient: LightningWebClient
 
@@ -235,7 +236,7 @@ class LightningView(
         StartPage()
             .createHomePage()
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe(this::loadUrl)
     }
 
@@ -247,7 +248,7 @@ class LightningView(
         BookmarkPage(activity)
             .createBookmarkPage()
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe(this::loadUrl)
     }
 
@@ -259,7 +260,7 @@ class LightningView(
         DownloadsPage()
             .getDownloadsPage()
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe(this::loadUrl)
     }
 
@@ -389,7 +390,7 @@ class LightningView(
 
         getPathObservable("appcache")
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe { file ->
                 settings.setAppCachePath(file.path)
             }
@@ -397,7 +398,7 @@ class LightningView(
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             getPathObservable("geolocation")
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe { file ->
                     settings.setGeolocationDatabasePath(file.path)
                 }

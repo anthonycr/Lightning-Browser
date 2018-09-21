@@ -823,7 +823,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun addBookmark(title: String, url: String) {
         bookmarkManager.addBookmarkIfNotExists(Bookmark.Entry(url, title, 0, null))
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe { boolean ->
                 if (boolean) {
                     suggestionsAdapter?.refreshBookmarks()
@@ -836,7 +836,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun deleteBookmark(title: String, url: String) {
         bookmarkManager.deleteBookmark(Bookmark.Entry(url, title, 0, null))
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe { boolean ->
                 if (boolean) {
                     suggestionsAdapter?.refreshBookmarks()
@@ -1061,7 +1061,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (!UrlUtils.isSpecialUrl(url)) {
             bookmarkManager.isBookmark(url)
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe { boolean ->
                     if (boolean) {
                         deleteBookmark(title, url)
@@ -1256,7 +1256,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         networkDisposable = networkConnectivityModel
             .connectivity()
-            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(mainScheduler)
             .subscribe { connected ->
                 Log.d(TAG, "Network connected: $connected")
                 tabsManager.notifyConnectionStatus(connected)
