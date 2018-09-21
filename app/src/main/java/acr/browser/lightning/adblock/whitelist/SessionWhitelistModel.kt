@@ -2,12 +2,12 @@ package acr.browser.lightning.adblock.whitelist
 
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.database.whitelist.WhitelistItem
+import acr.browser.lightning.di.DatabaseScheduler
 import android.util.Log
 import androidx.core.net.toUri
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class SessionWhitelistModel @Inject constructor(
     private val adBlockWhitelistModel: AdBlockWhitelistRepository,
-    @Named("database") private val ioScheduler: Scheduler
+    @DatabaseScheduler private val ioScheduler: Scheduler
 ) : WhitelistModel {
 
     private var whitelistSet = hashSetOf<String>()

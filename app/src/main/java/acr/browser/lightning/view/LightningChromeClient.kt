@@ -3,6 +3,7 @@ package acr.browser.lightning.view
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
@@ -38,7 +39,7 @@ class LightningChromeClient(
     @Inject internal lateinit var faviconModel: FaviconModel
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var webRtcPermissionsModel: WebRtcPermissionsModel
-    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
+    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
 
     init {
         BrowserApp.appComponent.inject(this)

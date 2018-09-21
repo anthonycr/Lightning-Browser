@@ -8,6 +8,9 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.di.NetworkScheduler
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
@@ -23,13 +26,11 @@ import android.widget.*
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import javax.inject.Named
 
 class SuggestionsAdapter(
     private val context: Context,
@@ -56,8 +57,9 @@ class SuggestionsAdapter(
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var application: Application
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
     private val allBookmarks = arrayListOf<Bookmark.Entry>()
@@ -78,7 +80,9 @@ class SuggestionsAdapter(
             this,
             historyModel,
             databaseScheduler,
-            networkScheduler)
+            networkScheduler,
+            mainScheduler
+        )
 
         refreshBookmarks()
 
@@ -177,7 +181,7 @@ class SuggestionsAdapter(
                 suggestions.clear()
             }
             .subscribeOn(filterScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe()
     }
 
@@ -222,7 +226,7 @@ class SuggestionsAdapter(
             it.onSuccess(list)
         }
             .subscribeOn(filterScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe(this::publishResults)
     }
 
@@ -251,7 +255,8 @@ class SuggestionsAdapter(
         private val suggestionsAdapter: SuggestionsAdapter,
         private val historyModel: HistoryRepository,
         private val databaseScheduler: Scheduler,
-        private val networkScheduler: Scheduler
+        private val networkScheduler: Scheduler,
+        private val mainScheduler: Scheduler
     ) : Filter() {
 
         private var networkDisposable: Disposable? = null
@@ -269,7 +274,7 @@ class SuggestionsAdapter(
             if (networkDisposable?.isDisposed != false) {
                 networkDisposable = suggestionsRepository.resultsForSearch(query)
                     .subscribeOn(networkScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mainScheduler)
                     .subscribe { item ->
                         suggestionsAdapter.combineResults(null, null, item)
                     }
@@ -278,7 +283,7 @@ class SuggestionsAdapter(
             if (bookmarkDisposable?.isDisposed != false) {
                 bookmarkDisposable = suggestionsAdapter.getBookmarksForQuery(query)
                     .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mainScheduler)
                     .subscribe { list ->
                         suggestionsAdapter.combineResults(list, null, null)
                     }
@@ -287,7 +292,7 @@ class SuggestionsAdapter(
             if (historyDisposable?.isDisposed != false) {
                 historyDisposable = historyModel.findHistoryEntriesContaining(query)
                     .subscribeOn(databaseScheduler)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mainScheduler)
                     .subscribe { list ->
                         suggestionsAdapter.combineResults(null, list, null)
                     }

@@ -1,5 +1,6 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.extensions.inlineReplace
 import acr.browser.lightning.extensions.inlineTrim
 import acr.browser.lightning.extensions.stringEquals
@@ -13,7 +14,6 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -22,8 +22,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class AssetsAdBlocker @Inject internal constructor(
-        private val application: Application,
-        @Named("disk") diskScheduler: Scheduler
+    private val application: Application,
+    @DiskScheduler diskScheduler: Scheduler
 ) : AdBlocker {
 
     private val blockedDomainsSet = HashSet<String>()
@@ -105,9 +105,9 @@ class AssetsAdBlocker @Inject internal constructor(
         @Throws(URISyntaxException::class)
         private fun getDomainName(url: String): String {
             val host = url.indexOf('/', 8)
-                    .takeIf { it != -1 }
-                    ?.let(url::take)
-                    ?: url
+                .takeIf { it != -1 }
+                ?.let(url::take)
+                ?: url
 
             val uri = URI(host)
             val domain = uri.host ?: return host

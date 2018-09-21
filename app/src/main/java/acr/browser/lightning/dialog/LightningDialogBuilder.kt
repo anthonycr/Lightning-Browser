@@ -10,6 +10,8 @@ import acr.browser.lightning.database.asFolder
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.preference.UserPreferences
@@ -24,9 +26,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.core.net.toUri
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * A builder of various dialogs.
@@ -37,7 +37,8 @@ class LightningDialogBuilder @Inject constructor(
     private val historyModel: HistoryRepository,
     private val userPreferences: UserPreferences,
     private val downloadHandler: DownloadHandler,
-    @Named("database") private val databaseScheduler: Scheduler
+    @DatabaseScheduler private val databaseScheduler: Scheduler,
+    @MainScheduler private val mainScheduler: Scheduler
 ) {
 
     enum class NewTab {
@@ -67,7 +68,7 @@ class LightningDialogBuilder @Inject constructor(
         } else {
             bookmarkManager.findBookmarkForUrl(url)
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe { historyItem ->
                     // TODO: 6/14/17 figure out solution to case where slashes get appended to root urls causing the item to not exist
                     showLongPressedDialogForBookmarkUrl(activity, uiController, historyItem)
@@ -98,7 +99,7 @@ class LightningDialogBuilder @Inject constructor(
         DialogItem(R.string.dialog_remove_bookmark) {
             bookmarkManager.deleteBookmark(entry)
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe { success ->
                     if (success) {
                         uiController.handleBookmarkDeleted(entry)
@@ -124,7 +125,7 @@ class LightningDialogBuilder @Inject constructor(
         DialogItem(R.string.dialog_delete_all_downloads) {
             downloadsModel.deleteAllDownloads()
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe(uiController::handleDownloadDeleted)
         })
 
@@ -146,7 +147,7 @@ class LightningDialogBuilder @Inject constructor(
 
         bookmarkManager.getFolderNames()
             .subscribeOn(databaseScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainScheduler)
             .subscribe { folders ->
                 val suggestionsAdapter = ArrayAdapter(activity,
                     android.R.layout.simple_dropdown_item_1line, folders)
@@ -162,7 +163,7 @@ class LightningDialogBuilder @Inject constructor(
                     )
                     bookmarkManager.editBookmark(entry, editedItem)
                         .subscribeOn(databaseScheduler)
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .observeOn(mainScheduler)
                         .subscribe(uiController::handleBookmarksChange)
                 }
                 val dialog = editBookmarkDialog.show()
@@ -181,7 +182,7 @@ class LightningDialogBuilder @Inject constructor(
         DialogItem(R.string.dialog_remove_folder) {
             bookmarkManager.deleteFolder(folder.title)
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe {
                     uiController.handleBookmarkDeleted(folder)
                 }
@@ -200,7 +201,7 @@ class LightningDialogBuilder @Inject constructor(
             val oldTitle = folder.title
             bookmarkManager.renameFolder(oldTitle, text)
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe(uiController::handleBookmarksChange)
         }
     }
@@ -228,7 +229,7 @@ class LightningDialogBuilder @Inject constructor(
         DialogItem(R.string.dialog_remove_from_history) {
             historyModel.deleteHistoryEntry(url)
                 .subscribeOn(databaseScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe(uiController::handleHistoryChange)
         })
 

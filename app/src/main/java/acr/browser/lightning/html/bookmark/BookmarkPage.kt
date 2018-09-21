@@ -8,6 +8,8 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.utils.ThemeUtils
@@ -21,15 +23,14 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
 import javax.inject.Inject
-import javax.inject.Named
 
 class BookmarkPage(activity: Activity) {
 
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject internal lateinit var faviconModel: FaviconModel
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
 
     private val folderIcon = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, false)
 

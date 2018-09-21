@@ -3,6 +3,8 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
@@ -14,15 +16,14 @@ import android.os.Bundle
 import android.webkit.WebView
 import io.reactivex.Completable
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
-import javax.inject.Named
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
 
@@ -36,105 +37,105 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         clickablePreference(preference = SETTINGS_CLEARWEBSTORAGE, onClick = this::clearWebStorage)
 
         checkBoxPreference(
-                preference = SETTINGS_LOCATION,
-                isChecked = userPreferences.locationEnabled,
-                onCheckChange = { userPreferences.locationEnabled = it }
+            preference = SETTINGS_LOCATION,
+            isChecked = userPreferences.locationEnabled,
+            onCheckChange = { userPreferences.locationEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_THIRDPCOOKIES,
-                isChecked = userPreferences.blockThirdPartyCookiesEnabled,
-                isEnabled = ApiUtils.doesSupportThirdPartyCookieBlocking(),
-                onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
+            preference = SETTINGS_THIRDPCOOKIES,
+            isChecked = userPreferences.blockThirdPartyCookiesEnabled,
+            isEnabled = ApiUtils.doesSupportThirdPartyCookieBlocking(),
+            onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_SAVEPASSWORD,
-                isChecked = userPreferences.savePasswordsEnabled,
-                onCheckChange = { userPreferences.savePasswordsEnabled = it }
+            preference = SETTINGS_SAVEPASSWORD,
+            isChecked = userPreferences.savePasswordsEnabled,
+            onCheckChange = { userPreferences.savePasswordsEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_CACHEEXIT,
-                isChecked = userPreferences.clearCacheExit,
-                onCheckChange = { userPreferences.clearCacheExit = it }
+            preference = SETTINGS_CACHEEXIT,
+            isChecked = userPreferences.clearCacheExit,
+            onCheckChange = { userPreferences.clearCacheExit = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_HISTORYEXIT,
-                isChecked = userPreferences.clearHistoryExitEnabled,
-                onCheckChange = { userPreferences.clearHistoryExitEnabled = it }
+            preference = SETTINGS_HISTORYEXIT,
+            isChecked = userPreferences.clearHistoryExitEnabled,
+            onCheckChange = { userPreferences.clearHistoryExitEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_COOKIEEXIT,
-                isChecked = userPreferences.clearCookiesExitEnabled,
-                onCheckChange = { userPreferences.clearCookiesExitEnabled = it }
+            preference = SETTINGS_COOKIEEXIT,
+            isChecked = userPreferences.clearCookiesExitEnabled,
+            onCheckChange = { userPreferences.clearCookiesExitEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_WEBSTORAGEEXIT,
-                isChecked = userPreferences.clearWebStorageExitEnabled,
-                onCheckChange = { userPreferences.clearWebStorageExitEnabled = it }
+            preference = SETTINGS_WEBSTORAGEEXIT,
+            isChecked = userPreferences.clearWebStorageExitEnabled,
+            onCheckChange = { userPreferences.clearWebStorageExitEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_DONOTTRACK,
-                isChecked = userPreferences.doNotTrackEnabled && ApiUtils.doesSupportWebViewHeaders(),
-                isEnabled = ApiUtils.doesSupportWebViewHeaders(),
-                onCheckChange = { userPreferences.doNotTrackEnabled = it }
+            preference = SETTINGS_DONOTTRACK,
+            isChecked = userPreferences.doNotTrackEnabled && ApiUtils.doesSupportWebViewHeaders(),
+            isEnabled = ApiUtils.doesSupportWebViewHeaders(),
+            onCheckChange = { userPreferences.doNotTrackEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_WEBRTC,
-                isChecked = userPreferences.webRtcEnabled && ApiUtils.doesSupportWebRtc(),
-                isEnabled = ApiUtils.doesSupportWebRtc(),
-                onCheckChange = { userPreferences.webRtcEnabled = it }
+            preference = SETTINGS_WEBRTC,
+            isChecked = userPreferences.webRtcEnabled && ApiUtils.doesSupportWebRtc(),
+            isEnabled = ApiUtils.doesSupportWebRtc(),
+            onCheckChange = { userPreferences.webRtcEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_IDENTIFYINGHEADERS,
-                isChecked = userPreferences.removeIdentifyingHeadersEnabled && ApiUtils.doesSupportWebViewHeaders(),
-                isEnabled = ApiUtils.doesSupportWebViewHeaders(),
-                summary = "${LightningView.HEADER_REQUESTED_WITH}, ${LightningView.HEADER_WAP_PROFILE}",
-                onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
+            preference = SETTINGS_IDENTIFYINGHEADERS,
+            isChecked = userPreferences.removeIdentifyingHeadersEnabled && ApiUtils.doesSupportWebViewHeaders(),
+            isEnabled = ApiUtils.doesSupportWebViewHeaders(),
+            summary = "${LightningView.HEADER_REQUESTED_WITH}, ${LightningView.HEADER_WAP_PROFILE}",
+            onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
         )
 
     }
 
     private fun clearHistoryDialog() {
         BrowserDialog.showPositiveNegativeDialog(
-                activity = activity,
-                title = R.string.title_clear_history,
-                message = R.string.dialog_history,
-                positiveButton = DialogItem(R.string.action_yes) {
-                    clearHistory()
-                            .subscribeOn(databaseScheduler)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                activity.snackbar(R.string.message_clear_history)
-                            }
-                },
-                negativeButton = DialogItem(R.string.action_no) {},
-                onCancel = {}
+            activity = activity,
+            title = R.string.title_clear_history,
+            message = R.string.dialog_history,
+            positiveButton = DialogItem(R.string.action_yes) {
+                clearHistory()
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribe {
+                        activity.snackbar(R.string.message_clear_history)
+                    }
+            },
+            negativeButton = DialogItem(R.string.action_no) {},
+            onCancel = {}
         )
     }
 
     private fun clearCookiesDialog() {
         BrowserDialog.showPositiveNegativeDialog(
-                activity = activity,
-                title = R.string.title_clear_cookies,
-                message = R.string.dialog_cookies,
-                positiveButton = DialogItem(R.string.action_yes) {
-                    clearCookies()
-                            .subscribeOn(databaseScheduler)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                activity.snackbar(R.string.message_cookies_cleared)
-                            }
-                },
-                negativeButton = DialogItem(R.string.action_no) {},
-                onCancel = {}
+            activity = activity,
+            title = R.string.title_clear_cookies,
+            message = R.string.dialog_cookies,
+            positiveButton = DialogItem(R.string.action_yes) {
+                clearCookies()
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribe {
+                        activity.snackbar(R.string.message_cookies_cleared)
+                    }
+            },
+            negativeButton = DialogItem(R.string.action_no) {},
+            onCancel = {}
         )
     }
 

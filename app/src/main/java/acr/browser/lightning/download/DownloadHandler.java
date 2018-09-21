@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.BrowserApp;
@@ -36,6 +35,9 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadEntry;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
+import acr.browser.lightning.di.DatabaseScheduler;
+import acr.browser.lightning.di.MainScheduler;
+import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.preference.UserPreferences;
@@ -43,7 +45,6 @@ import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
 import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -59,8 +60,9 @@ public class DownloadHandler {
 
     @Inject DownloadsRepository downloadsRepository;
     @Inject DownloadManager downloadManager;
-    @Inject @Named("database") Scheduler databaseScheduler;
-    @Inject @Named("network") Scheduler networkScheduler;
+    @Inject @DatabaseScheduler Scheduler databaseScheduler;
+    @Inject @NetworkScheduler Scheduler networkScheduler;
+    @Inject @MainScheduler Scheduler mainScheduler;
 
     @Inject
     public DownloadHandler() {
@@ -251,7 +253,7 @@ public class DownloadHandler {
             final Disposable disposable = new FetchUrlMimeType(downloadManager, request, addressString, cookies, userAgent)
                 .create()
                 .subscribeOn(networkScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mainScheduler)
                 .subscribe(new Consumer<FetchUrlMimeType.Result>() {
                     @Override
                     public void accept(FetchUrlMimeType.Result result) {

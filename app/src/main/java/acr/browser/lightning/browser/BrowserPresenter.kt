@@ -8,6 +8,7 @@ import acr.browser.lightning.constant.INTENT_ORIGIN
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.UserPreferences
@@ -21,8 +22,9 @@ import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.webkit.URLUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -33,6 +35,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     @Inject internal lateinit var application: Application
     @Inject internal lateinit var userPreferences: UserPreferences
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     private val tabsModel: TabsManager
     private var currentTab: LightningView? = null
     private var shouldClose: Boolean = false
@@ -51,13 +54,14 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
      */
     fun setupTabs(intent: Intent?) {
         tabsModel.initializeTabs(view as Activity, intent, isIncognito)
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                // At this point we always have at least a tab in the tab manager
-                view.notifyTabViewInitialized()
-                view.updateTabNumber(tabsModel.size())
-                tabChanged(tabsModel.last())
-            }
+            .subscribeBy(
+                onSuccess = {
+                    // At this point we always have at least a tab in the tab manager
+                    view.notifyTabViewInitialized()
+                    view.updateTabNumber(tabsModel.size())
+                    tabChanged(tabsModel.positionOf(it))
+                }
+            )
     }
 
     /**
@@ -77,7 +81,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab
             ?.sslStateObservable()
-            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.observeOn(mainScheduler)
             ?.subscribe(view::updateSslState)
 
         val webView = newTab?.webView

@@ -1,13 +1,16 @@
 package acr.browser.lightning.view
 
+import acr.browser.lightning.R
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
 import android.os.Bundle
 import android.os.Message
+import android.support.v7.app.AlertDialog
 import android.webkit.WebView
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -145,5 +148,33 @@ class BundleInitializer(private val bundle: Bundle) : TabInitializer {
 class NoOpInitializer : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) = Unit
+
+}
+
+/**
+ * Ask the user's permission before loading the [url] and load the homepage instead if they deny
+ * permission. Useful for scenarios where another app may attempt to open a malicious URL in the
+ * browser via an intent.
+ */
+class PermissionInitializer(
+    private val url: String,
+    private val activity: Activity,
+    private val homePageInitializer: HomePageInitializer
+) : TabInitializer {
+
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
+        AlertDialog.Builder(activity).apply {
+            setTitle(R.string.title_warning)
+            setMessage(R.string.message_blocked_local)
+            setCancelable(false)
+            setOnDismissListener {
+                homePageInitializer.initialize(webView, headers)
+            }
+            setNegativeButton(android.R.string.cancel, null)
+            setPositiveButton(R.string.action_open) { _, _ ->
+                UrlInitializer(url).initialize(webView, headers)
+            }
+        }.resizeAndShow()
+    }
 
 }
