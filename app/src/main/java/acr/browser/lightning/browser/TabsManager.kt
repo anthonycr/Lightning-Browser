@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
@@ -28,16 +27,23 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import java.util.*
 import javax.inject.Inject
 
 /**
  * A manager singleton that holds all the [LightningView] and tracks the current tab. It handles
  * creation, deletion, restoration, state saving, and switching of tabs.
  */
-class TabsManager {
+class TabsManager @Inject constructor(
+    private val userPreferences: UserPreferences,
+    private val app: Application,
+    private val searchEngineProvider: SearchEngineProvider,
+    @DatabaseScheduler private val databaseScheduler: Scheduler,
+    @DiskScheduler private val diskScheduler: Scheduler,
+    @MainScheduler private val mainScheduler: Scheduler
+) {
 
     private val tabList = arrayListOf<LightningView>()
+
     /**
      * Return the current [LightningView] or null if no current tab has been set.
      *
@@ -45,33 +51,25 @@ class TabsManager {
      */
     var currentTab: LightningView? = null
         private set
-    private var tabNumberListeners: Set<((Int) -> Unit)> = hashSetOf()
+
+    private var tabNumberListeners = emptySet<(Int) -> Unit>()
 
     private var isInitialized = false
-    private val postInitializationWorkList = ArrayList<() -> Unit>()
-
-    @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject internal lateinit var app: Application
-    @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
-
-    init {
-        BrowserApp.appComponent.inject(this)
-    }
+    private var postInitializationWorkList = emptyList<() -> Unit>()
 
     fun addTabNumberChangedListener(listener: ((Int) -> Unit)) {
         tabNumberListeners += listener
     }
 
-    fun cancelPendingWork() = postInitializationWorkList.clear()
+    fun cancelPendingWork() {
+        postInitializationWorkList = emptyList()
+    }
 
     fun doAfterInitialization(runnable: () -> Unit) {
         if (isInitialized) {
             runnable()
         } else {
-            postInitializationWorkList.add(runnable)
+            postInitializationWorkList += runnable
         }
     }
 

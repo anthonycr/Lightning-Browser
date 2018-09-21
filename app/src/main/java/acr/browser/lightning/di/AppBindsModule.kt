@@ -19,7 +19,7 @@ import dagger.Module
  * Dependency injection module used to bind implementations to interfaces.
  */
 @Module
-abstract class LightningModule {
+abstract class AppBindsModule {
 
     @Binds
     abstract fun provideBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository

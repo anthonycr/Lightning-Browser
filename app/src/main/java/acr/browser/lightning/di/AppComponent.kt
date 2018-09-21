@@ -3,9 +3,7 @@ package acr.browser.lightning.di
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.adblock.AssetsAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
-import acr.browser.lightning.browser.BrowserPresenter
 import acr.browser.lightning.browser.SearchBoxModel
-import acr.browser.lightning.browser.TabsManager
 import acr.browser.lightning.browser.activity.BrowserActivity
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.browser.fragment.BookmarksFragment
@@ -17,9 +15,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.html.homepage.StartPage
-import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.reading.activity.ReadingActivity
-import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.ThemableSettingsActivity
 import acr.browser.lightning.settings.fragment.*
@@ -31,7 +27,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [(AppModule::class), (LightningModule::class)])
+@Component(modules = [(AppModule::class), (AppBindsModule::class)])
 interface AppComponent {
 
     fun inject(activity: BrowserActivity)
@@ -72,10 +68,6 @@ interface AppComponent {
 
     fun inject(downloadsPage: DownloadsPage)
 
-    fun inject(presenter: BrowserPresenter)
-
-    fun inject(manager: TabsManager)
-
     fun inject(fragment: DebugSettingsFragment)
 
     fun inject(suggestionsAdapter: SuggestionsAdapter)
@@ -86,13 +78,9 @@ interface AppComponent {
 
     fun inject(searchBoxModel: SearchBoxModel)
 
-    fun inject(searchEngineProvider: SearchEngineProvider)
-
     fun inject(generalSettingsFragment: GeneralSettingsFragment)
 
     fun inject(displaySettingsFragment: DisplaySettingsFragment)
-
-    fun inject(networkConnectivityModel: NetworkConnectivityModel)
 
     fun provideAssetsAdBlocker(): AssetsAdBlocker
 

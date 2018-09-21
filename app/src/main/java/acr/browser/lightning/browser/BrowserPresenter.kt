@@ -1,13 +1,11 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.INTENT_ORIGIN
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
-import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.homepage.StartPage
@@ -25,25 +23,25 @@ import android.webkit.URLUtil
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import javax.inject.Inject
 
 /**
  * Presenter in charge of keeping track of the current tab and setting the current tab of the
  * browser.
  */
-class BrowserPresenter(private val view: BrowserView, private val isIncognito: Boolean) {
+class BrowserPresenter(
+    private val view: BrowserView,
+    private val isIncognito: Boolean,
+    private val application: Application,
+    private val userPreferences: UserPreferences,
+    private val tabsModel: TabsManager,
+    @MainScheduler private val mainScheduler: Scheduler
+) {
 
-    @Inject internal lateinit var application: Application
-    @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
-    private val tabsModel: TabsManager
     private var currentTab: LightningView? = null
     private var shouldClose: Boolean = false
     private var sslStateSubscription: Disposable? = null
 
     init {
-        BrowserApp.appComponent.inject(this)
-        tabsModel = (view as UIController).getTabModel()
         tabsModel.addTabNumberChangedListener(view::updateTabNumber)
     }
 
