@@ -3,6 +3,7 @@ package acr.browser.lightning.settings.fragment
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
@@ -16,13 +17,12 @@ import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
-import javax.inject.Named
 
 class PrivacySettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var historyRepository: HistoryRepository
     @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
 
     override fun providePreferencesXmlResource() = R.xml.preference_privacy
 

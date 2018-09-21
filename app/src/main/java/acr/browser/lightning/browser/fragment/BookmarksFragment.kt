@@ -10,6 +10,9 @@ import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.di.NetworkScheduler
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
@@ -38,7 +41,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.bookmark_drawer.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
-import javax.inject.Named
 
 class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickListener, BookmarksView {
 
@@ -52,9 +54,9 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     @Inject internal lateinit var faviconModel: FaviconModel
 
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
-    @Inject @field:Named("main") internal lateinit var mainScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
 
     private lateinit var uiController: UIController
 

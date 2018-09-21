@@ -7,6 +7,7 @@ import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
@@ -27,13 +28,12 @@ import io.reactivex.rxkotlin.subscribeBy
 import java.io.File
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 class BookmarkSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var application: Application
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
 
     private var importSubscription: Disposable? = null
     private var exportSubscription: Disposable? = null

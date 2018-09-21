@@ -1,6 +1,9 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.BrowserApp
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPage
@@ -27,7 +30,6 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * A manager singleton that holds all the [LightningView] and tracks the current tab. It handles
@@ -51,9 +53,9 @@ class TabsManager {
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var app: Application
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:Named("disk") internal lateinit var diskScheduler: Scheduler
-    @Inject @field:Named("main") internal lateinit var mainScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
 
     init {
         BrowserApp.appComponent.inject(this)

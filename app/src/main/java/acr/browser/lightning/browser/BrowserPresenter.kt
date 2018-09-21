@@ -8,6 +8,7 @@ import acr.browser.lightning.constant.INTENT_ORIGIN
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.UserPreferences
@@ -25,7 +26,6 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * Presenter in charge of keeping track of the current tab and setting the current tab of the
@@ -35,7 +35,7 @@ class BrowserPresenter(private val view: BrowserView, private val isIncognito: B
 
     @Inject internal lateinit var application: Application
     @Inject internal lateinit var userPreferences: UserPreferences
-    @Inject @field:Named("main") internal lateinit var mainScheduler: Scheduler
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     private val tabsModel: TabsManager
     private var currentTab: LightningView? = null
     private var shouldClose: Boolean = false

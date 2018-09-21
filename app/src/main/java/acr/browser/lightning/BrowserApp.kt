@@ -5,6 +5,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.AppComponent
 import acr.browser.lightning.di.AppModule
 import acr.browser.lightning.di.DaggerAppComponent
+import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
@@ -23,13 +24,12 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
-import javax.inject.Named
 
 class BrowserApp : Application() {
 
     @Inject internal lateinit var developerPreferences: DeveloperPreferences
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
 
     override fun onCreate() {
         super.onCreate()

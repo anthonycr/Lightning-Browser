@@ -10,6 +10,7 @@ import acr.browser.lightning.database.asFolder
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.preference.UserPreferences
@@ -26,7 +27,6 @@ import androidx.core.net.toUri
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * A builder of various dialogs.
@@ -37,7 +37,7 @@ class LightningDialogBuilder @Inject constructor(
     private val historyModel: HistoryRepository,
     private val userPreferences: UserPreferences,
     private val downloadHandler: DownloadHandler,
-    @Named("database") private val databaseScheduler: Scheduler
+    @DatabaseScheduler private val databaseScheduler: Scheduler
 ) {
 
     enum class NewTab {

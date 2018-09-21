@@ -10,6 +10,7 @@ import acr.browser.lightning.constant.MOBILE_USER_AGENT
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPage
@@ -42,7 +43,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.lang.ref.WeakReference
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * [LightningView] acts as a tab for the browser, handling WebView creation and handling logic, as
@@ -113,7 +113,7 @@ class LightningView(
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
 
     private val lightningWebClient: LightningWebClient
 

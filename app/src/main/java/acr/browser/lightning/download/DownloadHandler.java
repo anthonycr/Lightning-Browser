@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import acr.browser.lightning.BrowserApp;
@@ -36,6 +35,8 @@ import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.downloads.DownloadEntry;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
+import acr.browser.lightning.di.DatabaseScheduler;
+import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.preference.UserPreferences;
@@ -59,8 +60,8 @@ public class DownloadHandler {
 
     @Inject DownloadsRepository downloadsRepository;
     @Inject DownloadManager downloadManager;
-    @Inject @Named("database") Scheduler databaseScheduler;
-    @Inject @Named("network") Scheduler networkScheduler;
+    @Inject @DatabaseScheduler Scheduler databaseScheduler;
+    @Inject @NetworkScheduler Scheduler networkScheduler;
 
     @Inject
     public DownloadHandler() {

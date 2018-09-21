@@ -8,6 +8,8 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.NetworkScheduler
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
@@ -29,7 +31,6 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import javax.inject.Named
 
 class SuggestionsAdapter(
     private val context: Context,
@@ -56,8 +57,8 @@ class SuggestionsAdapter(
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var historyModel: HistoryRepository
     @Inject internal lateinit var application: Application
-    @Inject @field:Named("database") internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:Named("network") internal lateinit var networkScheduler: Scheduler
+    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
     private val allBookmarks = arrayListOf<Bookmark.Entry>()

@@ -28,6 +28,7 @@ import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -70,22 +71,22 @@ class AppModule(private val browserApp: BrowserApp) {
     fun providesShortcutManager() = browserApp.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
 
     @Provides
-    @Named("database")
+    @DatabaseScheduler
     @Singleton
     fun providesIoThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 
     @Provides
-    @Named("disk")
+    @DiskScheduler
     @Singleton
     fun providesDiskThread(): Scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 
     @Provides
-    @Named("network")
+    @NetworkScheduler
     @Singleton
     fun providesNetworkThread(): Scheduler = Schedulers.from(ThreadPoolExecutor(0, 4, 60, TimeUnit.SECONDS, LinkedBlockingDeque()))
 
     @Provides
-    @Named("main")
+    @MainScheduler
     @Singleton
     fun providesMainThread(): Scheduler = AndroidSchedulers.mainThread()
 
@@ -135,8 +136,20 @@ class AppModule(private val browserApp: BrowserApp) {
 object Name {
     const val DEVELOPER_SETTINGS = "developer_settings"
     const val SETTINGS = "settings"
-
-    const val DATABASE = "database"
-    const val DISK = "disk"
-    const val NETWORK = "network"
 }
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class MainScheduler
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class DiskScheduler
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class NetworkScheduler
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class DatabaseScheduler
