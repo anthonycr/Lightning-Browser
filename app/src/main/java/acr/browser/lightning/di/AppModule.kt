@@ -27,7 +27,6 @@ import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -41,11 +40,11 @@ class AppModule(private val browserApp: BrowserApp) {
     fun provideContext(): Context = browserApp.applicationContext
 
     @Provides
-    @Named(Name.SETTINGS)
+    @UserPrefs
     fun provideDebugPreferences(): SharedPreferences = browserApp.getSharedPreferences("settings", 0)
 
     @Provides
-    @Named(Name.DEVELOPER_SETTINGS)
+    @DevPrefs
     fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
 
     @Provides
@@ -133,10 +132,13 @@ class AppModule(private val browserApp: BrowserApp) {
 
 }
 
-object Name {
-    const val DEVELOPER_SETTINGS = "developer_settings"
-    const val SETTINGS = "settings"
-}
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class UserPrefs
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class DevPrefs
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

@@ -4,7 +4,7 @@ import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.di.Name
+import acr.browser.lightning.di.UserPrefs
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.stringPreference
@@ -12,7 +12,6 @@ import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -20,7 +19,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class UserPreferences @Inject constructor(
-    @Named(Name.SETTINGS) preferences: SharedPreferences,
+    @UserPrefs preferences: SharedPreferences,
     screenSize: ScreenSize
 ) {
 
