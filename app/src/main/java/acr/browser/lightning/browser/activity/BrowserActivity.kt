@@ -26,7 +26,7 @@ import acr.browser.lightning.extensions.removeFromParent
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.html.download.DownloadsPage
-import acr.browser.lightning.html.history.HistoryPage
+import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
@@ -151,6 +151,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var tabsManager: TabsManager
+    @Inject internal lateinit var historyPageBuilder: HistoryPageFactory
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -439,7 +440,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         tabsManager.switchToTab(0)
         tabsManager.clearSavedState()
 
-        HistoryPage.deleteHistoryPage(application).subscribe()
+        historyPageBuilder.deleteHistoryPage().subscribe()
         closeBrowser()
         // System exit needed in the case of receiving
         // the panic intent since finish() isn't completely
@@ -1076,7 +1077,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun handleHistoryChange() {
-        HistoryPage().createHistoryPage()
+        historyPageBuilder.buildPage()
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribeBy(onSuccess = { tabsManager.currentTab?.reload() })
@@ -1425,7 +1426,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun openHistory() {
         presenter?.newTab(
-            AsyncUrlInitializer(HistoryPage().createHistoryPage(), databaseScheduler, mainScheduler),
+            AsyncUrlInitializer(historyPageBuilder.buildPage(), databaseScheduler, mainScheduler),
             true
         )
     }

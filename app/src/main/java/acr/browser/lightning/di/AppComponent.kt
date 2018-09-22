@@ -13,7 +13,6 @@ import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
-import acr.browser.lightning.html.history.HistoryPage
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SuggestionsAdapter
@@ -61,8 +60,6 @@ interface AppComponent {
     fun inject(fragment: PrivacySettingsFragment)
 
     fun inject(startPage: StartPage)
-
-    fun inject(historyPage: HistoryPage)
 
     fun inject(bookmarkPage: BookmarkPage)
 

@@ -5,7 +5,7 @@ import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
-import acr.browser.lightning.html.history.HistoryPage
+import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.StartPage
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
@@ -39,7 +39,8 @@ class TabsManager @Inject constructor(
     private val searchEngineProvider: SearchEngineProvider,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
-    @MainScheduler private val mainScheduler: Scheduler
+    @MainScheduler private val mainScheduler: Scheduler,
+    private val historyPageBuilder: HistoryPageFactory
 ) {
 
     private val tabList = arrayListOf<LightningView>()
@@ -162,7 +163,7 @@ class TabsManager @Inject constructor(
                     UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity).createBookmarkPage()
                     UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
                     UrlUtils.isStartPageUrl(url) -> StartPage().createHomePage()
-                    UrlUtils.isHistoryUrl(url) -> HistoryPage().createHistoryPage()
+                    UrlUtils.isHistoryUrl(url) -> historyPageBuilder.buildPage()
                     else -> StartPage().createHomePage()
                 }, databaseScheduler, mainScheduler)
             } ?: BundleInitializer(bundle)
