@@ -1,4 +1,4 @@
-package acr.browser.lightning.html.history
+package acr.browser.lightning.html
 
 import com.anthonycr.mezzanine.FileStream
 

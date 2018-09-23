@@ -16,7 +16,7 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadsPage
+import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
@@ -55,7 +55,8 @@ class LightningView(
     tabInitializer: TabInitializer,
     val isIncognito: Boolean,
     private val homePageFactory: HomePageFactory,
-    private val bookmarkPageFactory: BookmarkPageFactory
+    private val bookmarkPageFactory: BookmarkPageFactory,
+    private val downloadPageFactory: DownloadPageFactory
 ) {
 
     /**
@@ -261,8 +262,8 @@ class LightningView(
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
     fun loadDownloadsPage() {
-        DownloadsPage()
-            .getDownloadsPage()
+        downloadPageFactory
+            .buildPage()
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe(this::loadUrl)

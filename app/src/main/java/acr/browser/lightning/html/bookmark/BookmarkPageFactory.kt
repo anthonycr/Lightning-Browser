@@ -140,6 +140,9 @@ class BookmarkPageFactory @Inject constructor(
         )
     }
 
+    /**
+     * Create the bookmark page file.
+     */
     fun createBookmarkPage(folder: Bookmark.Folder?): File {
         val prefix = if (folder?.title?.isNotBlank() == true) {
             "${folder.title}-"
@@ -149,12 +152,8 @@ class BookmarkPageFactory @Inject constructor(
         return File(application.filesDir, prefix + FILENAME)
     }
 
-
     companion object {
 
-        /**
-         * The bookmark page standard suffix
-         */
         const val FILENAME = "bookmarks.html"
 
         private const val FOLDER_ICON = "folder.png"

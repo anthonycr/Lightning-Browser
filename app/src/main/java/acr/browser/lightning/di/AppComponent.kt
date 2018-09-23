@@ -11,7 +11,6 @@ import acr.browser.lightning.browser.fragment.TabsFragment
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.download.LightningDownloadListener
-import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.ThemableSettingsActivity
@@ -56,8 +55,6 @@ interface AppComponent {
     fun inject(listener: LightningDownloadListener)
 
     fun inject(fragment: PrivacySettingsFragment)
-
-    fun inject(downloadsPage: DownloadsPage)
 
     fun inject(fragment: DebugSettingsFragment)
 

@@ -60,7 +60,7 @@ interface DownloadsRepository {
     fun deleteAllDownloads(): Completable
 
     /**
-     * Emits a list of all downloads
+     * Emits a list of all downloads, sorted by primary key.
      *
      * @return an observable that emits a list of all downloads.
      */

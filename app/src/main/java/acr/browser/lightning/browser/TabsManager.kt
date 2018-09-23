@@ -4,7 +4,7 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadsPage
+import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
@@ -42,7 +42,8 @@ class TabsManager @Inject constructor(
     @MainScheduler private val mainScheduler: Scheduler,
     private val historyPageBuilder: HistoryPageFactory,
     private val homePageFactory: HomePageFactory,
-    private val bookmarkPageFactory: BookmarkPageFactory
+    private val bookmarkPageFactory: BookmarkPageFactory,
+    private val downloadPageFactory: DownloadPageFactory
 ) {
 
     private val tabList = arrayListOf<LightningView>()
@@ -161,7 +162,7 @@ class TabsManager @Inject constructor(
             return@map bundle.getString(URL_KEY)?.let { url ->
                 AsyncUrlInitializer(when {
                     UrlUtils.isBookmarkUrl(url) -> bookmarkPageFactory.buildPage()
-                    UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
+                    UrlUtils.isDownloadsUrl(url) -> downloadPageFactory.buildPage()
                     UrlUtils.isStartPageUrl(url) -> homePageFactory.buildPage()
                     UrlUtils.isHistoryUrl(url) -> historyPageBuilder.buildPage()
                     else -> homePageFactory.buildPage()
@@ -267,7 +268,7 @@ class TabsManager @Inject constructor(
         isIncognito: Boolean
     ): LightningView {
         Log.d(TAG, "New tab")
-        val tab = LightningView(activity, tabInitializer, isIncognito, homePageFactory, bookmarkPageFactory)
+        val tab = LightningView(activity, tabInitializer, isIncognito, homePageFactory, bookmarkPageFactory, downloadPageFactory)
         tabList.add(tab)
         tabNumberListeners.forEach { it(size()) }
         return tab

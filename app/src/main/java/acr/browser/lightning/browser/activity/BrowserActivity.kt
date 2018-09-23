@@ -26,7 +26,7 @@ import acr.browser.lightning.extensions.removeFromParent
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadsPage
+import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
@@ -156,6 +156,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var historyPageBuilder: HistoryPageFactory
     @Inject internal lateinit var homePageFactory: HomePageFactory
     @Inject internal lateinit var bookmarkPageFactory: BookmarkPageFactory
+    @Inject internal lateinit var downloadPageFactory: DownloadPageFactory
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -1437,7 +1438,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     private fun openDownloads() {
         presenter?.newTab(
-            AsyncUrlInitializer(DownloadsPage().getDownloadsPage(), databaseScheduler, mainScheduler),
+            AsyncUrlInitializer(downloadPageFactory.buildPage(), databaseScheduler, mainScheduler),
             true
         )
     }

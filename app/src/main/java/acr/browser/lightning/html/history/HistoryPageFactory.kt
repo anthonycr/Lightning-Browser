@@ -5,6 +5,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.html.HtmlPageFactory
+import acr.browser.lightning.html.ListPageReader
 import android.app.Application
 import io.reactivex.Completable
 import io.reactivex.Single

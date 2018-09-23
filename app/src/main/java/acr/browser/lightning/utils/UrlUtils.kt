@@ -17,7 +17,7 @@ package acr.browser.lightning.utils
 
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadsPage
+import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import android.util.Patterns
@@ -83,7 +83,7 @@ object UrlUtils {
         return url != null
                 && url.startsWith(FILE)
                 && (url.endsWith(BookmarkPageFactory.FILENAME)
-                || url.endsWith(DownloadsPage.FILENAME)
+                || url.endsWith(DownloadPageFactory.FILENAME)
                 || url.endsWith(HistoryPageFactory.FILENAME)
                 || url.endsWith(HomePageFactory.FILENAME))
     }
@@ -106,7 +106,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isDownloadsUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(DownloadsPage.FILENAME)
+            url != null && url.startsWith(FILE) && url.endsWith(DownloadPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the history page.
