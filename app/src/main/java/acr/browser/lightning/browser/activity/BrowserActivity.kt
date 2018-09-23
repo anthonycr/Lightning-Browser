@@ -25,6 +25,7 @@ import acr.browser.lightning.extensions.doOnLayout
 import acr.browser.lightning.extensions.removeFromParent
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
@@ -154,6 +155,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject internal lateinit var tabsManager: TabsManager
     @Inject internal lateinit var historyPageBuilder: HistoryPageFactory
     @Inject internal lateinit var homePageFactory: HomePageFactory
+    @Inject internal lateinit var bookmarkPageFactory: BookmarkPageFactory
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -222,7 +224,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        presenter = BrowserPresenter(this, isIncognito(), application, userPreferences, tabsManager, mainScheduler, homePageFactory)
+        presenter = BrowserPresenter(this, isIncognito(), application, userPreferences, tabsManager, mainScheduler, homePageFactory, bookmarkPageFactory)
 
         initialize(savedInstanceState)
     }
@@ -665,7 +667,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     KeyEvent.KEYCODE_T -> {
                         // Open new tab
                         presenter?.newTab(
-                            HomePageInitializer(userPreferences, homePageFactory, this, databaseScheduler, mainScheduler),
+                            HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler),
                             true
                         )
                         return true
@@ -762,7 +764,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_new_tab -> {
-                presenter?.newTab(HomePageInitializer(userPreferences, homePageFactory,this, databaseScheduler, mainScheduler), true)
+                presenter?.newTab(HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler), true)
                 return true
             }
             R.id.action_incognito -> {
@@ -821,7 +823,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     // By using a manager, adds a bookmark and notifies third parties about that
     private fun addBookmark(title: String, url: String) {
-        bookmarkManager.addBookmarkIfNotExists(Bookmark.Entry(url, title, 0, null))
+        bookmarkManager.addBookmarkIfNotExists(Bookmark.Entry(url, title, 0, Bookmark.Folder.Root))
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { boolean ->
@@ -834,7 +836,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun deleteBookmark(title: String, url: String) {
-        bookmarkManager.deleteBookmark(Bookmark.Entry(url, title, 0, null))
+        bookmarkManager.deleteBookmark(Bookmark.Entry(url, title, 0, Bookmark.Folder.Root))
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { boolean ->
@@ -1033,7 +1035,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun newTabButtonClicked() {
         presenter?.newTab(
-            HomePageInitializer(userPreferences, homePageFactory, this, databaseScheduler, mainScheduler),
+            HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler),
             true
         )
     }

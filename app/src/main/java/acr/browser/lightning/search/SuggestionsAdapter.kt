@@ -100,7 +100,7 @@ class SuggestionsAdapter(
     }
 
     fun refreshBookmarks() {
-        bookmarkManager.getAllBookmarks()
+        bookmarkManager.getAllBookmarksSorted()
             .subscribeOn(databaseScheduler)
             .subscribe { list ->
                 allBookmarks.clear()

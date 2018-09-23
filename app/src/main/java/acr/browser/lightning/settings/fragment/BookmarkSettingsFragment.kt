@@ -72,7 +72,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, REQUIRED_PERMISSIONS,
             object : PermissionsResultAction() {
                 override fun onGranted() {
-                    bookmarkRepository.getAllBookmarks()
+                    bookmarkRepository.getAllBookmarksSorted()
                         .subscribeOn(databaseScheduler)
                         .subscribe { list ->
                             if (!isAdded) {

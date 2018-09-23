@@ -13,7 +13,7 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.download.DownloadHandler
-import acr.browser.lightning.html.bookmark.BookmarkPage
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.UrlUtils
@@ -63,7 +63,7 @@ class LightningDialogBuilder @Inject constructor(
             // TODO hacky, make a better bookmark mechanism in the future
             val uri = url.toUri()
             val filename = uri.lastPathSegment
-            val folderTitle = filename.substring(0, filename.length - BookmarkPage.FILENAME.length - 1)
+            val folderTitle = filename.substring(0, filename.length - BookmarkPageFactory.FILENAME.length - 1)
             showBookmarkFolderLongPressedDialog(activity, uiController, folderTitle.asFolder())
         } else {
             bookmarkManager.findBookmarkForUrl(url)

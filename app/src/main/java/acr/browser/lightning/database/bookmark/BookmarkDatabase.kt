@@ -188,7 +188,7 @@ class BookmarkDatabase @Inject constructor(
         updateWithOptionalEndSlash(oldBookmark.url, contentValues)
     }
 
-    override fun getAllBookmarks(): Single<List<Bookmark.Entry>> = Single.fromCallable {
+    override fun getAllBookmarksSorted(): Single<List<Bookmark.Entry>> = Single.fromCallable {
         return@fromCallable database.query(
             TABLE_BOOKMARK,
             null,
@@ -196,7 +196,7 @@ class BookmarkDatabase @Inject constructor(
             null,
             null,
             null,
-            null
+            "$KEY_FOLDER, $KEY_POSITION ASC, $KEY_TITLE COLLATE NOCASE ASC, $KEY_URL ASC"
         ).useMap { it.bindToBookmarkEntry() }
     }
 
@@ -214,17 +214,19 @@ class BookmarkDatabase @Inject constructor(
     }
 
     override fun getFoldersSorted(): Single<List<Bookmark.Folder>> = Single.fromCallable {
-        return@fromCallable database.query(
-            true,
-            TABLE_BOOKMARK,
-            arrayOf(KEY_FOLDER),
-            null,
-            null,
-            null,
-            null,
-            "$KEY_FOLDER ASC",
-            null
-        ).useMap { it.getString(it.getColumnIndex(KEY_FOLDER)) }
+        return@fromCallable database
+            .query(
+                true,
+                TABLE_BOOKMARK,
+                arrayOf(KEY_FOLDER),
+                null,
+                null,
+                null,
+                null,
+                "$KEY_FOLDER ASC",
+                null
+            )
+            .useMap { it.getString(it.getColumnIndex(KEY_FOLDER)) }
             .filter { !it.isNullOrEmpty() }
             .map(String::asFolder)
     }
@@ -269,7 +271,7 @@ class BookmarkDatabase @Inject constructor(
     private fun Cursor.bindToBookmarkEntry() = Bookmark.Entry(
         url = getString(getColumnIndex(KEY_URL)),
         title = getString(getColumnIndex(KEY_TITLE)),
-        folder = getStringOrNull(getColumnIndex(KEY_FOLDER))?.asFolder(),
+        folder = getStringOrNull(getColumnIndex(KEY_FOLDER)).asFolder(),
         position = getInt(getColumnIndex(KEY_POSITION))
     )
 

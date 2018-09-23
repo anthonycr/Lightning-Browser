@@ -1,6 +1,7 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
+import acr.browser.lightning.html.bookmark.BookmarkPageReader
 import acr.browser.lightning.html.history.ListPageReader
 import acr.browser.lightning.html.homepage.HomePageReader
 import acr.browser.lightning.search.suggestions.RequestFactory
@@ -138,6 +139,9 @@ class AppModule(private val browserApp: BrowserApp) {
 
     @Provides
     fun providesHomePageReader(): HomePageReader = MezzanineGenerator.HomePageReader()
+
+    @Provides
+    fun providesBookmarkPageReader(): BookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
 
 }
 

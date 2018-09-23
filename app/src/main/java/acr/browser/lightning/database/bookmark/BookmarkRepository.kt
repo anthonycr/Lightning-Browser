@@ -46,7 +46,8 @@ interface BookmarkRepository {
     fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>): Completable
 
     /**
-     * Deletes a bookmark from the database.
+     * Deletes a bookmark from the database. The [Bookmark.Entry.url] is used to delete the
+     * bookmark.
      *
      * @param entry the bookmark to delete.
      * @return an observable that emits true when the entry is deleted, false otherwise.
@@ -88,11 +89,11 @@ interface BookmarkRepository {
     fun editBookmark(oldBookmark: Bookmark.Entry, newBookmark: Bookmark.Entry): Completable
 
     /**
-     * Emits a list of all bookmarks
+     * Emits a list of all bookmarks, sorted by folder, position, title, and url.
      *
      * @return an observable that emits a list of all bookmarks.
      */
-    fun getAllBookmarks(): Single<List<Bookmark.Entry>>
+    fun getAllBookmarksSorted(): Single<List<Bookmark.Entry>>
 
     /**
      * Emits all bookmarks in a certain folder. If the folder chosen is null, then all bookmarks

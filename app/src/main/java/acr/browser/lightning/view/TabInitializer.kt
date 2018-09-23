@@ -3,8 +3,10 @@ package acr.browser.lightning.view
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
+import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.html.bookmark.BookmarkPage
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
@@ -46,7 +48,7 @@ class UrlInitializer(private val url: String) : TabInitializer {
 class HomePageInitializer(
     private val userPreferences: UserPreferences,
     private val homePageFactory: HomePageFactory,
-    private val activity: Activity,
+    private val bookmarkPageFactory: BookmarkPageFactory,
     private val databaseScheduler: Scheduler,
     private val foregroundScheduler: Scheduler
 ) : TabInitializer {
@@ -56,7 +58,7 @@ class HomePageInitializer(
 
         when (homepage) {
             SCHEME_HOMEPAGE -> StartPageInitializer(homePageFactory, databaseScheduler, foregroundScheduler)
-            SCHEME_BOOKMARKS -> BookmarkPageInitializer(activity, databaseScheduler, foregroundScheduler)
+            SCHEME_BOOKMARKS -> BookmarkPageInitializer(bookmarkPageFactory, databaseScheduler, foregroundScheduler)
             else -> UrlInitializer(homepage)
         }.initialize(webView, headers)
     }
@@ -86,15 +88,15 @@ class StartPageInitializer(
  * An initializer that displays the bookmark page.
  */
 class BookmarkPageInitializer(
-    private val activity: Activity,
-    private val databaseScheduler: Scheduler,
-    private val foregroundScheduler: Scheduler
+    private val bookmarkPageFactory: BookmarkPageFactory,
+    @DiskScheduler private val diskScheduler: Scheduler,
+    @MainScheduler private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
-        BookmarkPage(activity)
-            .createBookmarkPage()
-            .subscribeOn(databaseScheduler)
+        bookmarkPageFactory
+            .buildPage()
+            .subscribeOn(diskScheduler)
             .observeOn(foregroundScheduler)
             .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
     }

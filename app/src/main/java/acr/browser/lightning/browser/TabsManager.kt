@@ -3,7 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.html.bookmark.BookmarkPage
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
@@ -41,7 +41,8 @@ class TabsManager @Inject constructor(
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     private val historyPageBuilder: HistoryPageFactory,
-    private val homePageFactory: HomePageFactory
+    private val homePageFactory: HomePageFactory,
+    private val bookmarkPageFactory: BookmarkPageFactory
 ) {
 
     private val tabList = arrayListOf<LightningView>()
@@ -100,7 +101,7 @@ class TabsManager @Inject constructor(
             .subscribeOn(mainScheduler)
             .flatMapObservable {
                 return@flatMapObservable if (incognito) {
-                    initializeIncognitoMode(it.value(), activity)
+                    initializeIncognitoMode(it.value())
                 } else {
                     initializeRegularMode(it.value(), activity)
                 }
@@ -114,27 +115,27 @@ class TabsManager @Inject constructor(
     /**
      * Returns an [Observable] that emits the [TabInitializer] for incognito mode.
      */
-    private fun initializeIncognitoMode(initialUrl: String?, activity: Activity): Observable<TabInitializer> =
+    private fun initializeIncognitoMode(initialUrl: String?): Observable<TabInitializer> =
         Observable.fromCallable {
             return@fromCallable initialUrl?.let(::UrlInitializer)
-                ?: HomePageInitializer(userPreferences, homePageFactory, activity, databaseScheduler, mainScheduler)
+                ?: HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler)
         }
 
     /**
      * Returns an [Observable] that emits the [TabInitializer] for normal operation mode.
      */
     private fun initializeRegularMode(initialUrl: String?, activity: Activity): Observable<TabInitializer> =
-        restorePreviousTabs(activity)
+        restorePreviousTabs()
             .concatWith(Maybe.fromCallable<TabInitializer> {
                 return@fromCallable initialUrl?.let {
                     if (URLUtil.isFileUrl(it)) {
-                        PermissionInitializer(it, activity, HomePageInitializer(userPreferences, homePageFactory, activity, databaseScheduler, mainScheduler))
+                        PermissionInitializer(it, activity, HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler))
                     } else {
                         UrlInitializer(it)
                     }
                 }
             })
-            .defaultIfEmpty(HomePageInitializer(userPreferences, homePageFactory, activity, databaseScheduler, mainScheduler))
+            .defaultIfEmpty(HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler))
 
     /**
      * Returns the URL for a search [Intent]. If the query is empty, then a null URL will be
@@ -155,13 +156,11 @@ class TabsManager @Inject constructor(
      * Returns an observable that emits the [TabInitializer] for each previously opened tab as
      * saved on disk. Can potentially be empty.
      */
-    private fun restorePreviousTabs(
-        activity: Activity
-    ): Observable<TabInitializer> = readSavedStateFromDisk()
+    private fun restorePreviousTabs(): Observable<TabInitializer> = readSavedStateFromDisk()
         .map { bundle ->
             return@map bundle.getString(URL_KEY)?.let { url ->
                 AsyncUrlInitializer(when {
-                    UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity).createBookmarkPage()
+                    UrlUtils.isBookmarkUrl(url) -> bookmarkPageFactory.buildPage()
                     UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
                     UrlUtils.isStartPageUrl(url) -> homePageFactory.buildPage()
                     UrlUtils.isHistoryUrl(url) -> historyPageBuilder.buildPage()
@@ -268,7 +267,7 @@ class TabsManager @Inject constructor(
         isIncognito: Boolean
     ): LightningView {
         Log.d(TAG, "New tab")
-        val tab = LightningView(activity, tabInitializer, isIncognito, homePageFactory)
+        val tab = LightningView(activity, tabInitializer, isIncognito, homePageFactory, bookmarkPageFactory)
         tabList.add(tab)
         tabNumberListeners.forEach { it(size()) }
         return tab

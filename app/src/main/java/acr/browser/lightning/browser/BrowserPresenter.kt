@@ -7,7 +7,7 @@ import acr.browser.lightning.constant.INTENT_ORIGIN
 import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.html.bookmark.BookmarkPage
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
@@ -35,7 +35,8 @@ class BrowserPresenter(
     private val userPreferences: UserPreferences,
     private val tabsModel: TabsManager,
     @MainScheduler private val mainScheduler: Scheduler,
-    private val homePageFactory: HomePageFactory
+    private val homePageFactory: HomePageFactory,
+    private val bookmarkPageFactory: BookmarkPageFactory
 ) {
 
     private var currentTab: LightningView? = null
@@ -145,7 +146,7 @@ class BrowserPresenter(
 
         return when (homepage) {
             SCHEME_HOMEPAGE -> "$FILE${homePageFactory.createHomePage()}"
-            SCHEME_BOOKMARKS -> "$FILE${BookmarkPage.getBookmarkPage(application, null)}"
+            SCHEME_BOOKMARKS -> "$FILE${bookmarkPageFactory.createBookmarkPage(null)}"
             else -> homepage
         }
     }

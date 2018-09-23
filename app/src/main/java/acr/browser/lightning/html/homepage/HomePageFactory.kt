@@ -13,7 +13,7 @@ import java.io.FileWriter
 import javax.inject.Inject
 
 /**
- * Created by anthonycr on 9/22/18.
+ * A factory for the home page.
  */
 class HomePageFactory @Inject constructor(
     private val application: Application,
@@ -46,6 +46,9 @@ class HomePageFactory @Inject constructor(
         }
         .map { (page, _) -> "$FILE$page" }
 
+    /**
+     * Create the home page file.
+     */
     fun createHomePage() = File(application.filesDir, FILENAME)
 
     companion object {

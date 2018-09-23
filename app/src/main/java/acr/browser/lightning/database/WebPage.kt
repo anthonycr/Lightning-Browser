@@ -35,16 +35,25 @@ sealed class Bookmark(
         override val url: String,
         override val title: String,
         val position: Int,
-        val folder: Folder?
+        val folder: Folder
     ) : Bookmark(url, title)
 
     /**
      * A data type that represents a container for a [Bookmark.Entry].
      */
-    data class Folder(
+    sealed class Folder(
         override val url: String,
         override val title: String
-    ) : Bookmark(url, title)
+    ) : Bookmark(url, title) {
+
+        object Root : Folder("", "")
+
+        data class Entry(
+            override val url: String,
+            override val title: String
+        ) : Folder(url, title)
+
+    }
 
 }
 
@@ -59,7 +68,11 @@ data class SearchSuggestion(
 /**
  * Creates a [Bookmark.Folder] from the provided [String].
  */
-fun String.asFolder() = Bookmark.Folder(
-    url = "$FOLDER$this",
-    title = this
-)
+fun String?.asFolder(): Bookmark.Folder = this
+    ?.takeIf(String::isNotBlank)
+    ?.let {
+        Bookmark.Folder.Entry(
+            url = "$FOLDER$this",
+            title = this
+        )
+    } ?: Bookmark.Folder.Root

@@ -73,7 +73,7 @@ public final class BookmarkExporter {
                             object.getString(KEY_URL),
                             object.getString(KEY_TITLE),
                             object.getInt(KEY_ORDER),
-                            folderTitle != null ? WebPageKt.asFolder(folderTitle) : null
+                            WebPageKt.asFolder(folderTitle)
                         )
                     );
                 } catch (JSONException e) {
@@ -115,7 +115,7 @@ public final class BookmarkExporter {
                     for (Bookmark.Entry item : bookmarkList) {
                         object.put(KEY_TITLE, item.getTitle());
                         object.put(KEY_URL, item.getUrl());
-                        object.put(KEY_FOLDER, item.getFolder() != null ? item.getFolder().getTitle() : null);
+                        object.put(KEY_FOLDER, item.getFolder().getTitle());
                         object.put(KEY_ORDER, item.getPosition());
                         bookmarkWriter.write(object.toString());
                         bookmarkWriter.newLine();
@@ -156,7 +156,7 @@ public final class BookmarkExporter {
                             object.getString(KEY_TITLE),
                             object.getString(KEY_URL),
                             object.getInt(KEY_ORDER),
-                            folderName != null ? WebPageKt.asFolder(folderName) : null
+                            WebPageKt.asFolder(folderName)
                         );
                         bookmarks.add(entry);
                     }
