@@ -16,7 +16,7 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
-import acr.browser.lightning.html.homepage.StartPage
+import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
@@ -52,7 +52,8 @@ import javax.inject.Inject
 class LightningView(
     private val activity: Activity,
     tabInitializer: TabInitializer,
-    val isIncognito: Boolean
+    val isIncognito: Boolean,
+    private val homePageFactory: HomePageFactory
 ) {
 
     /**
@@ -233,8 +234,8 @@ class LightningView(
      * URL in the WebView on the UI thread.
      */
     private fun loadStartPage() {
-        StartPage()
-            .createHomePage()
+        homePageFactory
+            .buildPage()
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe(this::loadUrl)

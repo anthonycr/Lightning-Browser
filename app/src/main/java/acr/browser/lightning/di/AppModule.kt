@@ -2,6 +2,7 @@ package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.html.history.ListPageReader
+import acr.browser.lightning.html.homepage.HomePageReader
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -134,6 +135,9 @@ class AppModule(private val browserApp: BrowserApp) {
 
     @Provides
     fun providesListPageReader(): ListPageReader = MezzanineGenerator.ListPageReader()
+
+    @Provides
+    fun providesHomePageReader(): HomePageReader = MezzanineGenerator.HomePageReader()
 
 }
 

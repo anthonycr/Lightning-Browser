@@ -27,6 +27,7 @@ import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPageFactory
+import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
@@ -152,6 +153,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var tabsManager: TabsManager
     @Inject internal lateinit var historyPageBuilder: HistoryPageFactory
+    @Inject internal lateinit var homePageFactory: HomePageFactory
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -220,7 +222,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        presenter = BrowserPresenter(this, isIncognito(), application, userPreferences, tabsManager, mainScheduler)
+        presenter = BrowserPresenter(this, isIncognito(), application, userPreferences, tabsManager, mainScheduler, homePageFactory)
 
         initialize(savedInstanceState)
     }
@@ -663,7 +665,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     KeyEvent.KEYCODE_T -> {
                         // Open new tab
                         presenter?.newTab(
-                            HomePageInitializer(userPreferences, this, databaseScheduler, mainScheduler),
+                            HomePageInitializer(userPreferences, homePageFactory, this, databaseScheduler, mainScheduler),
                             true
                         )
                         return true
@@ -760,7 +762,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_new_tab -> {
-                presenter?.newTab(HomePageInitializer(userPreferences, this, databaseScheduler, mainScheduler), true)
+                presenter?.newTab(HomePageInitializer(userPreferences, homePageFactory,this, databaseScheduler, mainScheduler), true)
                 return true
             }
             R.id.action_incognito -> {
@@ -1031,7 +1033,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun newTabButtonClicked() {
         presenter?.newTab(
-            HomePageInitializer(userPreferences, this, databaseScheduler, mainScheduler),
+            HomePageInitializer(userPreferences, homePageFactory, this, databaseScheduler, mainScheduler),
             true
         )
     }

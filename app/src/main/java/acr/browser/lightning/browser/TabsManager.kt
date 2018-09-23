@@ -6,7 +6,7 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPageFactory
-import acr.browser.lightning.html.homepage.StartPage
+import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
@@ -40,7 +40,8 @@ class TabsManager @Inject constructor(
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
-    private val historyPageBuilder: HistoryPageFactory
+    private val historyPageBuilder: HistoryPageFactory,
+    private val homePageFactory: HomePageFactory
 ) {
 
     private val tabList = arrayListOf<LightningView>()
@@ -116,7 +117,7 @@ class TabsManager @Inject constructor(
     private fun initializeIncognitoMode(initialUrl: String?, activity: Activity): Observable<TabInitializer> =
         Observable.fromCallable {
             return@fromCallable initialUrl?.let(::UrlInitializer)
-                ?: HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler)
+                ?: HomePageInitializer(userPreferences, homePageFactory, activity, databaseScheduler, mainScheduler)
         }
 
     /**
@@ -127,13 +128,13 @@ class TabsManager @Inject constructor(
             .concatWith(Maybe.fromCallable<TabInitializer> {
                 return@fromCallable initialUrl?.let {
                     if (URLUtil.isFileUrl(it)) {
-                        PermissionInitializer(it, activity, HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler))
+                        PermissionInitializer(it, activity, HomePageInitializer(userPreferences, homePageFactory, activity, databaseScheduler, mainScheduler))
                     } else {
                         UrlInitializer(it)
                     }
                 }
             })
-            .defaultIfEmpty(HomePageInitializer(userPreferences, activity, databaseScheduler, mainScheduler))
+            .defaultIfEmpty(HomePageInitializer(userPreferences, homePageFactory, activity, databaseScheduler, mainScheduler))
 
     /**
      * Returns the URL for a search [Intent]. If the query is empty, then a null URL will be
@@ -162,9 +163,9 @@ class TabsManager @Inject constructor(
                 AsyncUrlInitializer(when {
                     UrlUtils.isBookmarkUrl(url) -> BookmarkPage(activity).createBookmarkPage()
                     UrlUtils.isDownloadsUrl(url) -> DownloadsPage().getDownloadsPage()
-                    UrlUtils.isStartPageUrl(url) -> StartPage().createHomePage()
+                    UrlUtils.isStartPageUrl(url) -> homePageFactory.buildPage()
                     UrlUtils.isHistoryUrl(url) -> historyPageBuilder.buildPage()
-                    else -> StartPage().createHomePage()
+                    else -> homePageFactory.buildPage()
                 }, databaseScheduler, mainScheduler)
             } ?: BundleInitializer(bundle)
         }
@@ -267,7 +268,7 @@ class TabsManager @Inject constructor(
         isIncognito: Boolean
     ): LightningView {
         Log.d(TAG, "New tab")
-        val tab = LightningView(activity, tabInitializer, isIncognito)
+        val tab = LightningView(activity, tabInitializer, isIncognito, homePageFactory)
         tabList.add(tab)
         tabNumberListeners.forEach { it(size()) }
         return tab

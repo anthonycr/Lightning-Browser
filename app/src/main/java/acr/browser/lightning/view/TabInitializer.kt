@@ -5,7 +5,7 @@ import acr.browser.lightning.constant.SCHEME_BOOKMARKS
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.html.bookmark.BookmarkPage
-import acr.browser.lightning.html.homepage.StartPage
+import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
 import android.os.Bundle
@@ -45,6 +45,7 @@ class UrlInitializer(private val url: String) : TabInitializer {
  */
 class HomePageInitializer(
     private val userPreferences: UserPreferences,
+    private val homePageFactory: HomePageFactory,
     private val activity: Activity,
     private val databaseScheduler: Scheduler,
     private val foregroundScheduler: Scheduler
@@ -54,7 +55,7 @@ class HomePageInitializer(
         val homepage = userPreferences.homepage
 
         when (homepage) {
-            SCHEME_HOMEPAGE -> StartPageInitializer(databaseScheduler, foregroundScheduler)
+            SCHEME_HOMEPAGE -> StartPageInitializer(homePageFactory, databaseScheduler, foregroundScheduler)
             SCHEME_BOOKMARKS -> BookmarkPageInitializer(activity, databaseScheduler, foregroundScheduler)
             else -> UrlInitializer(homepage)
         }.initialize(webView, headers)
@@ -66,13 +67,14 @@ class HomePageInitializer(
  * An initializer that displays the start page.
  */
 class StartPageInitializer(
+    private val homePageFactory: HomePageFactory,
     private val databaseScheduler: Scheduler,
     private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
-        StartPage()
-            .createHomePage()
+        homePageFactory
+            .buildPage()
             .subscribeOn(databaseScheduler)
             .observeOn(foregroundScheduler)
             .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })

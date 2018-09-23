@@ -2,6 +2,7 @@ package acr.browser.lightning.html.history
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.FILE
+import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.html.HtmlPageFactory
 import android.app.Application
@@ -30,6 +31,7 @@ class HistoryPageFactory @Inject constructor(
             Jsoup.parse(listPageReader.provideHtml())
                 .apply {
                     title(title)
+                    outputSettings().charset(UTF8)
                     body().also { body ->
                         val repeatedElement = body.getElementById("repeated").also(Element::remove)
                         body.getElementById("content").also { content ->

@@ -19,7 +19,7 @@ import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.html.bookmark.BookmarkPage
 import acr.browser.lightning.html.download.DownloadsPage
 import acr.browser.lightning.html.history.HistoryPageFactory
-import acr.browser.lightning.html.homepage.StartPage
+import acr.browser.lightning.html.homepage.HomePageFactory
 import android.util.Patterns
 import android.webkit.URLUtil
 import java.util.regex.Pattern
@@ -85,7 +85,7 @@ object UrlUtils {
                 && (url.endsWith(BookmarkPage.FILENAME)
                 || url.endsWith(DownloadsPage.FILENAME)
                 || url.endsWith(HistoryPageFactory.FILENAME)
-                || url.endsWith(StartPage.FILENAME))
+                || url.endsWith(HomePageFactory.FILENAME))
     }
 
     /**
@@ -126,5 +126,5 @@ object UrlUtils {
      */
     @JvmStatic
     fun isStartPageUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(StartPage.FILENAME)
+            url != null && url.startsWith(FILE) && url.endsWith(HomePageFactory.FILENAME)
 }
