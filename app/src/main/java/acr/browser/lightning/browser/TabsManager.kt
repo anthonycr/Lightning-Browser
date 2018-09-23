@@ -5,9 +5,7 @@ import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.download.DownloadPageFactory
-import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.Option
@@ -34,13 +32,15 @@ import javax.inject.Inject
  * creation, deletion, restoration, state saving, and switching of tabs.
  */
 class TabsManager @Inject constructor(
-    private val userPreferences: UserPreferences,
     private val app: Application,
     private val searchEngineProvider: SearchEngineProvider,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
-    private val historyPageBuilder: HistoryPageFactory,
+    private val homePageInitializer: HomePageInitializer,
+    private val bookmarkPageInitializer: BookmarkPageInitializer,
+    private val historyPageInitializer: HistoryPageInitializer,
+    private val downloadPageInitializer: DownloadPageInitializer,
     private val homePageFactory: HomePageFactory,
     private val bookmarkPageFactory: BookmarkPageFactory,
     private val downloadPageFactory: DownloadPageFactory
@@ -118,8 +118,7 @@ class TabsManager @Inject constructor(
      */
     private fun initializeIncognitoMode(initialUrl: String?): Observable<TabInitializer> =
         Observable.fromCallable {
-            return@fromCallable initialUrl?.let(::UrlInitializer)
-                ?: HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler)
+            return@fromCallable initialUrl?.let(::UrlInitializer) ?: homePageInitializer
         }
 
     /**
@@ -130,13 +129,13 @@ class TabsManager @Inject constructor(
             .concatWith(Maybe.fromCallable<TabInitializer> {
                 return@fromCallable initialUrl?.let {
                     if (URLUtil.isFileUrl(it)) {
-                        PermissionInitializer(it, activity, HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler))
+                        PermissionInitializer(it, activity, homePageInitializer)
                     } else {
                         UrlInitializer(it)
                     }
                 }
             })
-            .defaultIfEmpty(HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler))
+            .defaultIfEmpty(homePageInitializer)
 
     /**
      * Returns the URL for a search [Intent]. If the query is empty, then a null URL will be
@@ -160,13 +159,13 @@ class TabsManager @Inject constructor(
     private fun restorePreviousTabs(): Observable<TabInitializer> = readSavedStateFromDisk()
         .map { bundle ->
             return@map bundle.getString(URL_KEY)?.let { url ->
-                AsyncUrlInitializer(when {
-                    UrlUtils.isBookmarkUrl(url) -> bookmarkPageFactory.buildPage()
-                    UrlUtils.isDownloadsUrl(url) -> downloadPageFactory.buildPage()
-                    UrlUtils.isStartPageUrl(url) -> homePageFactory.buildPage()
-                    UrlUtils.isHistoryUrl(url) -> historyPageBuilder.buildPage()
-                    else -> homePageFactory.buildPage()
-                }, databaseScheduler, mainScheduler)
+                when {
+                    UrlUtils.isBookmarkUrl(url) -> bookmarkPageInitializer
+                    UrlUtils.isDownloadsUrl(url) -> downloadPageInitializer
+                    UrlUtils.isStartPageUrl(url) -> homePageInitializer
+                    UrlUtils.isHistoryUrl(url) -> historyPageInitializer
+                    else -> homePageInitializer
+                }
             } ?: BundleInitializer(bundle)
         }
 

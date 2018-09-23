@@ -26,7 +26,6 @@ import acr.browser.lightning.extensions.removeFromParent
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
@@ -153,10 +152,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var tabsManager: TabsManager
-    @Inject internal lateinit var historyPageBuilder: HistoryPageFactory
     @Inject internal lateinit var homePageFactory: HomePageFactory
     @Inject internal lateinit var bookmarkPageFactory: BookmarkPageFactory
-    @Inject internal lateinit var downloadPageFactory: DownloadPageFactory
+    @Inject internal lateinit var historyPageFactory: HistoryPageFactory
+    @Inject internal lateinit var historyPageInitializer: HistoryPageInitializer
+    @Inject internal lateinit var downloadPageInitializer: DownloadPageInitializer
+    @Inject internal lateinit var homePageInitializer: HomePageInitializer
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -445,7 +446,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         tabsManager.switchToTab(0)
         tabsManager.clearSavedState()
 
-        historyPageBuilder.deleteHistoryPage().subscribe()
+        historyPageFactory.deleteHistoryPage().subscribe()
         closeBrowser()
         // System exit needed in the case of receiving
         // the panic intent since finish() isn't completely
@@ -668,7 +669,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     KeyEvent.KEYCODE_T -> {
                         // Open new tab
                         presenter?.newTab(
-                            HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler),
+                            homePageInitializer,
                             true
                         )
                         return true
@@ -765,7 +766,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_new_tab -> {
-                presenter?.newTab(HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler), true)
+                presenter?.newTab(homePageInitializer, true)
                 return true
             }
             R.id.action_incognito -> {
@@ -1036,7 +1037,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun newTabButtonClicked() {
         presenter?.newTab(
-            HomePageInitializer(userPreferences, homePageFactory, bookmarkPageFactory, databaseScheduler, mainScheduler),
+            homePageInitializer,
             true
         )
     }
@@ -1082,7 +1083,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun handleHistoryChange() {
-        historyPageBuilder.buildPage()
+        historyPageFactory
+            .buildPage()
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribeBy(onSuccess = { tabsManager.currentTab?.reload() })
@@ -1431,14 +1433,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun openHistory() {
         presenter?.newTab(
-            AsyncUrlInitializer(historyPageBuilder.buildPage(), databaseScheduler, mainScheduler),
+            historyPageInitializer,
             true
         )
     }
 
     private fun openDownloads() {
         presenter?.newTab(
-            AsyncUrlInitializer(downloadPageFactory.buildPage(), databaseScheduler, mainScheduler),
+            downloadPageInitializer,
             true
         )
     }

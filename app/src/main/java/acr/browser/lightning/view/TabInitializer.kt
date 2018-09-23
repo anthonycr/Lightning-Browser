@@ -6,7 +6,10 @@ import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
+import acr.browser.lightning.html.download.DownloadPageFactory
+import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
@@ -15,8 +18,8 @@ import android.os.Message
 import android.support.v7.app.AlertDialog
 import android.webkit.WebView
 import io.reactivex.Scheduler
-import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
+import javax.inject.Inject
 
 /**
  * An initializer that is run on a [LightningView] after it is created.
@@ -45,20 +48,18 @@ class UrlInitializer(private val url: String) : TabInitializer {
 /**
  * An initializer that displays the page set as the user's homepage preference.
  */
-class HomePageInitializer(
+class HomePageInitializer @Inject constructor(
     private val userPreferences: UserPreferences,
-    private val homePageFactory: HomePageFactory,
-    private val bookmarkPageFactory: BookmarkPageFactory,
-    private val databaseScheduler: Scheduler,
-    private val foregroundScheduler: Scheduler
+    private val startPageInitializer: StartPageInitializer,
+    private val bookmarkPageInitializer: BookmarkPageInitializer
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
         val homepage = userPreferences.homepage
 
         when (homepage) {
-            SCHEME_HOMEPAGE -> StartPageInitializer(homePageFactory, databaseScheduler, foregroundScheduler)
-            SCHEME_BOOKMARKS -> BookmarkPageInitializer(bookmarkPageFactory, databaseScheduler, foregroundScheduler)
+            SCHEME_HOMEPAGE -> startPageInitializer
+            SCHEME_BOOKMARKS -> bookmarkPageInitializer
             else -> UrlInitializer(homepage)
         }.initialize(webView, headers)
     }
@@ -68,53 +69,52 @@ class HomePageInitializer(
 /**
  * An initializer that displays the start page.
  */
-class StartPageInitializer(
-    private val homePageFactory: HomePageFactory,
-    private val databaseScheduler: Scheduler,
-    private val foregroundScheduler: Scheduler
-) : TabInitializer {
-
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
-        homePageFactory
-            .buildPage()
-            .subscribeOn(databaseScheduler)
-            .observeOn(foregroundScheduler)
-            .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
-    }
-
-}
+class StartPageInitializer @Inject constructor(
+    homePageFactory: HomePageFactory,
+    @DiskScheduler diskScheduler: Scheduler,
+    @MainScheduler foregroundScheduler: Scheduler
+) : HtmlPageFactoryInitializer(homePageFactory, diskScheduler, foregroundScheduler)
 
 /**
  * An initializer that displays the bookmark page.
  */
-class BookmarkPageInitializer(
-    private val bookmarkPageFactory: BookmarkPageFactory,
+class BookmarkPageInitializer @Inject constructor(
+    bookmarkPageFactory: BookmarkPageFactory,
+    @DiskScheduler diskScheduler: Scheduler,
+    @MainScheduler foregroundScheduler: Scheduler
+) : HtmlPageFactoryInitializer(bookmarkPageFactory, diskScheduler, foregroundScheduler)
+
+/**
+ * An initializer that displays the download page.
+ */
+class DownloadPageInitializer @Inject constructor(
+    downloadPageFactory: DownloadPageFactory,
+    @DiskScheduler diskScheduler: Scheduler,
+    @MainScheduler foregroundScheduler: Scheduler
+) : HtmlPageFactoryInitializer(downloadPageFactory, diskScheduler, foregroundScheduler)
+
+/**
+ * An initializer that displays the history page.
+ */
+class HistoryPageInitializer @Inject constructor(
+    historyPageFactory: HistoryPageFactory,
+    @DiskScheduler diskScheduler: Scheduler,
+    @MainScheduler foregroundScheduler: Scheduler
+) : HtmlPageFactoryInitializer(historyPageFactory, diskScheduler, foregroundScheduler)
+
+/**
+ * An initializer that loads the url built by the [HtmlPageFactory].
+ */
+abstract class HtmlPageFactoryInitializer(
+    private val htmlPageFactory: HtmlPageFactory,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
-        bookmarkPageFactory
+        htmlPageFactory
             .buildPage()
             .subscribeOn(diskScheduler)
-            .observeOn(foregroundScheduler)
-            .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
-    }
-
-}
-
-/**
- * An initializer that loads the url emitted by the [asyncUrl] observable.
- */
-class AsyncUrlInitializer(
-    private val asyncUrl: Single<String>,
-    private val backgroundScheduler: Scheduler,
-    private val foregroundScheduler: Scheduler
-) : TabInitializer {
-
-    override fun initialize(webView: WebView, headers: Map<String, String>) {
-        asyncUrl
-            .subscribeOn(backgroundScheduler)
             .observeOn(foregroundScheduler)
             .subscribeBy(onSuccess = { webView.loadUrl(it, headers) })
     }
