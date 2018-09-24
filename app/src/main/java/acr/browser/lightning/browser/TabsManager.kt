@@ -3,9 +3,6 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadPageFactory
-import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.Option
@@ -18,7 +15,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.webkit.URLUtil
 import io.reactivex.Maybe
@@ -32,7 +28,7 @@ import javax.inject.Inject
  * creation, deletion, restoration, state saving, and switching of tabs.
  */
 class TabsManager @Inject constructor(
-    private val app: Application,
+    private val application: Application,
     private val searchEngineProvider: SearchEngineProvider,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @DiskScheduler private val diskScheduler: Scheduler,
@@ -40,10 +36,7 @@ class TabsManager @Inject constructor(
     private val homePageInitializer: HomePageInitializer,
     private val bookmarkPageInitializer: BookmarkPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
-    private val downloadPageInitializer: DownloadPageInitializer,
-    private val homePageFactory: HomePageFactory,
-    private val bookmarkPageFactory: BookmarkPageFactory,
-    private val downloadPageFactory: DownloadPageFactory
+    private val downloadPageInitializer: DownloadPageInitializer
 ) {
 
     private val tabList = arrayListOf<LightningView>()
@@ -172,7 +165,7 @@ class TabsManager @Inject constructor(
 
     /**
      * Method used to resume all the tabs in the browser. This is necessary because we cannot pause
-     * the WebView when the app is open currently due to a bug in the WebView, where calling
+     * the WebView when the application is open currently due to a bug in the WebView, where calling
      * onResume doesn't consistently resume it.
      *
      * @param context the context needed to initialize the LightningView preferences.
@@ -187,7 +180,7 @@ class TabsManager @Inject constructor(
 
     /**
      * Method used to pause all the tabs in the browser. This is necessary because we cannot pause
-     * the WebView when the app is open currently due to a bug in the WebView, where calling
+     * the WebView when the application is open currently due to a bug in the WebView, where calling
      * onResume doesn't consistently resume it.
      */
     fun pauseAll() {
@@ -267,7 +260,7 @@ class TabsManager @Inject constructor(
         isIncognito: Boolean
     ): LightningView {
         Log.d(TAG, "New tab")
-        val tab = LightningView(activity, tabInitializer, isIncognito, homePageFactory, bookmarkPageFactory, downloadPageFactory)
+        val tab = LightningView(activity, tabInitializer, isIncognito, homePageInitializer, bookmarkPageInitializer, downloadPageInitializer)
         tabList.add(tab)
         tabNumberListeners.forEach { it(size()) }
         return tab
@@ -330,22 +323,21 @@ class TabsManager @Inject constructor(
     fun saveState() {
         val outState = Bundle(ClassLoader.getSystemClassLoader())
         Log.d(TAG, "Saving tab state")
-        for (n in tabList.indices) {
-            val tab = tabList[n]
-            if (TextUtils.isEmpty(tab.url)) {
-                continue
+        tabList
+            .filter { it.url.isNotBlank() }
+            .withIndex()
+            .forEach { (index, tab) ->
+                val state = Bundle(ClassLoader.getSystemClassLoader())
+                val webView = tab.webView
+                if (webView != null && !UrlUtils.isSpecialUrl(tab.url)) {
+                    webView.saveState(state)
+                    outState.putBundle(BUNDLE_KEY + index, state)
+                } else if (webView != null) {
+                    state.putString(URL_KEY, tab.url)
+                    outState.putBundle(BUNDLE_KEY + index, state)
+                }
             }
-            val state = Bundle(ClassLoader.getSystemClassLoader())
-            val webView = tab.webView
-            if (webView != null && !UrlUtils.isSpecialUrl(tab.url)) {
-                webView.saveState(state)
-                outState.putBundle(BUNDLE_KEY + n, state)
-            } else if (webView != null) {
-                state.putString(URL_KEY, tab.url)
-                outState.putBundle(BUNDLE_KEY + n, state)
-            }
-        }
-        FileUtils.writeBundleToStorage(app, outState, BUNDLE_STORAGE)
+        FileUtils.writeBundleToStorage(application, outState, BUNDLE_STORAGE)
             .subscribeOn(diskScheduler)
             .subscribe()
     }
@@ -354,7 +346,7 @@ class TabsManager @Inject constructor(
      * Use this method to clear the saved state if you do not wish it to be restored when the
      * browser next starts.
      */
-    fun clearSavedState() = FileUtils.deleteBundleInStorage(app, BUNDLE_STORAGE)
+    fun clearSavedState() = FileUtils.deleteBundleInStorage(application, BUNDLE_STORAGE)
 
     /**
      * Creates an [Observable] that emits the [Bundle] state stored for each previously opened tab
@@ -362,7 +354,7 @@ class TabsManager @Inject constructor(
      * Can potentially be empty.
      */
     private fun readSavedStateFromDisk(): Observable<Bundle> = Maybe
-        .fromCallable { FileUtils.readBundleFromStorage(app, BUNDLE_STORAGE) }
+        .fromCallable { FileUtils.readBundleFromStorage(application, BUNDLE_STORAGE) }
         .flattenAsObservable { bundle ->
             bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }

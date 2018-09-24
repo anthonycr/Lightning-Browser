@@ -7,17 +7,11 @@ package acr.browser.lightning.view
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.constant.MOBILE_USER_AGENT
-import acr.browser.lightning.constant.SCHEME_BOOKMARKS
-import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
-import acr.browser.lightning.html.bookmark.BookmarkPageFactory
-import acr.browser.lightning.html.download.DownloadPageFactory
-import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
@@ -54,9 +48,9 @@ class LightningView(
     private val activity: Activity,
     tabInitializer: TabInitializer,
     val isIncognito: Boolean,
-    private val homePageFactory: HomePageFactory,
-    private val bookmarkPageFactory: BookmarkPageFactory,
-    private val downloadPageFactory: DownloadPageFactory
+    private val homePageInitializer: HomePageInitializer,
+    private val bookmarkPageInitializer: BookmarkPageInitializer,
+    private val downloadPageInitializer: DownloadPageInitializer
 ) {
 
     /**
@@ -111,14 +105,12 @@ class LightningView(
      */
     internal val requestHeaders = ArrayMap<String, String>()
 
-    private var homepage: String
     private val maxFling: Float
 
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var dialogBuilder: LightningDialogBuilder
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
 
     private val lightningWebClient: LightningWebClient
@@ -178,36 +170,37 @@ class LightningView(
     init {
         BrowserApp.appComponent.inject(this)
         uiController = activity as UIController
-        val tab = WebView(activity).also { webView = it }
 
-        homepage = userPreferences.homepage
-
-        tab.id = View.generateViewId()
         titleInfo = LightningViewTitle(activity)
 
         maxFling = ViewConfiguration.get(activity).scaledMaximumFlingVelocity.toFloat()
-
-        tab.drawingCacheBackgroundColor = Color.WHITE
-        tab.isFocusableInTouchMode = true
-        tab.isFocusable = true
-        tab.isDrawingCacheEnabled = false
-        tab.setWillNotCacheDrawing(true)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            tab.isAnimationCacheEnabled = false
-            tab.isAlwaysDrawnWithCacheEnabled = false
-        }
-        tab.setBackgroundColor(Color.WHITE)
-
-        tab.isScrollbarFadingEnabled = true
-        tab.isSaveEnabled = true
-        tab.setNetworkAvailable(true)
-        tab.webChromeClient = LightningChromeClient(activity, this)
         lightningWebClient = LightningWebClient(activity, this)
-        tab.webViewClient = lightningWebClient
-        tab.setDownloadListener(LightningDownloadListener(activity))
         gestureDetector = GestureDetector(activity, CustomGestureListener())
-        tab.setOnTouchListener(TouchListener())
-        initializeSettings()
+
+        val tab = WebView(activity).also { webView = it }.apply {
+            id = View.generateViewId()
+
+            drawingCacheBackgroundColor = Color.WHITE
+            isFocusableInTouchMode = true
+            isFocusable = true
+            isDrawingCacheEnabled = false
+            setWillNotCacheDrawing(true)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                isAnimationCacheEnabled = false
+                isAlwaysDrawnWithCacheEnabled = false
+            }
+            setBackgroundColor(Color.WHITE)
+
+            isScrollbarFadingEnabled = true
+            isSaveEnabled = true
+            setNetworkAvailable(true)
+            webChromeClient = LightningChromeClient(activity, this@LightningView)
+            webViewClient = lightningWebClient
+
+            setDownloadListener(LightningDownloadListener(activity))
+            setOnTouchListener(TouchListener())
+            initializeSettings()
+        }
         initializePreferences(activity)
 
         tabInitializer.initialize(tab, requestHeaders)
@@ -222,27 +215,11 @@ class LightningView(
      * homepage, or loads the startpage or bookmark page if either of those are set as the homepage.
      */
     fun loadHomePage() {
-        if (webView == null) {
-            return
-        }
-
-        when (homepage) {
-            SCHEME_HOMEPAGE -> loadStartPage()
-            SCHEME_BOOKMARKS -> loadBookmarkPage()
-            else -> webView?.loadUrl(homepage, requestHeaders)
-        }
+        reinitialize(homePageInitializer)
     }
 
-    /**
-     * This method gets the HomePage URL from the [StartPage] class asynchronously and loads the
-     * URL in the WebView on the UI thread.
-     */
-    private fun loadStartPage() {
-        homePageFactory
-            .buildPage()
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe(this::loadUrl)
+    fun reinitialize(tabInitializer: TabInitializer) {
+        webView?.let { tabInitializer.initialize(it, requestHeaders) }
     }
 
     /**
@@ -250,11 +227,7 @@ class LightningView(
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
     fun loadBookmarkPage() {
-        bookmarkPageFactory
-            .buildPage()
-            .subscribeOn(diskScheduler)
-            .observeOn(mainScheduler)
-            .subscribe(this::loadUrl)
+        reinitialize(bookmarkPageInitializer)
     }
 
     /**
@@ -262,11 +235,7 @@ class LightningView(
      * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
      */
     fun loadDownloadsPage() {
-        downloadPageFactory
-            .buildPage()
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe(this::loadUrl)
+        reinitialize(downloadPageInitializer)
     }
 
     /**
@@ -297,7 +266,6 @@ class LightningView(
         }
 
         settings.defaultTextEncodingName = userPreferences.textEncoding
-        homepage = userPreferences.homepage
         setColorMode(userPreferences.renderingMode)
 
         if (!isIncognito) {
@@ -361,52 +329,52 @@ class LightningView(
      * by the user. Distinguish between Incognito and Regular tabs here.
      */
     @SuppressLint("NewApi")
-    private fun initializeSettings() {
-        val settings = webView?.settings ?: return
+    private fun WebView.initializeSettings() {
+        settings.apply {
+            mediaPlaybackRequiresUserGesture = true
 
-        settings.mediaPlaybackRequiresUserGesture = true
-
-        if (API >= Build.VERSION_CODES.LOLLIPOP && !isIncognito) {
-            settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
-        } else if (API >= Build.VERSION_CODES.LOLLIPOP) {
-            // We're in Incognito mode, reject
-            settings.mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
-        }
-
-        if (!isIncognito) {
-            settings.domStorageEnabled = true
-            settings.setAppCacheEnabled(true)
-            settings.cacheMode = WebSettings.LOAD_DEFAULT
-            settings.databaseEnabled = true
-        } else {
-            settings.domStorageEnabled = false
-            settings.setAppCacheEnabled(false)
-            settings.databaseEnabled = false
-            settings.cacheMode = WebSettings.LOAD_NO_CACHE
-        }
-
-        settings.setSupportZoom(true)
-        settings.builtInZoomControls = true
-        settings.displayZoomControls = false
-        settings.allowContentAccess = true
-        settings.allowFileAccess = true
-        settings.allowFileAccessFromFileURLs = false
-        settings.allowUniversalAccessFromFileURLs = false
-
-        getPathObservable("appcache")
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe { file ->
-                settings.setAppCachePath(file.path)
+            if (API >= Build.VERSION_CODES.LOLLIPOP && !isIncognito) {
+                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            } else if (API >= Build.VERSION_CODES.LOLLIPOP) {
+                // We're in Incognito mode, reject
+                mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            getPathObservable("geolocation")
+            if (!isIncognito) {
+                domStorageEnabled = true
+                setAppCacheEnabled(true)
+                cacheMode = WebSettings.LOAD_DEFAULT
+                databaseEnabled = true
+            } else {
+                domStorageEnabled = false
+                setAppCacheEnabled(false)
+                databaseEnabled = false
+                cacheMode = WebSettings.LOAD_NO_CACHE
+            }
+
+            setSupportZoom(true)
+            builtInZoomControls = true
+            displayZoomControls = false
+            allowContentAccess = true
+            allowFileAccess = true
+            allowFileAccessFromFileURLs = false
+            allowUniversalAccessFromFileURLs = false
+
+            getPathObservable("appcache")
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
                 .subscribe { file ->
-                    settings.setGeolocationDatabasePath(file.path)
+                    setAppCachePath(file.path)
                 }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                getPathObservable("geolocation")
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribe { file ->
+                        setGeolocationDatabasePath(file.path)
+                    }
+            }
         }
 
     }
