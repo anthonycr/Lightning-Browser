@@ -27,7 +27,6 @@ import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler
 import javax.inject.Inject
-import javax.inject.Named
 
 class LightningChromeClient(
         private val activity: Activity,

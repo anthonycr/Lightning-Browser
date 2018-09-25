@@ -223,16 +223,14 @@ class LightningView(
     }
 
     /**
-     * This method gets the bookmark page URL from the [BookmarkPage] class asynchronously and loads
-     * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
+     * This function loads the bookmark page via the [BookmarkPageInitializer].
      */
     fun loadBookmarkPage() {
         reinitialize(bookmarkPageInitializer)
     }
 
     /**
-     * This method gets the bookmark page URL from the [BookmarkPage] class asynchronously and loads
-     * the URL in the WebView on the UI thread. It also caches the default folder icon locally.
+     * This function loads the download page via the [DownloadPageInitializer].
      */
     fun loadDownloadsPage() {
         reinitialize(downloadPageInitializer)

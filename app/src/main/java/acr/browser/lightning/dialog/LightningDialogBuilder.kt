@@ -143,7 +143,7 @@ class LightningDialogBuilder @Inject constructor(
         getUrl.setText(entry.url)
         val getFolder = dialogLayout.findViewById<AutoCompleteTextView>(R.id.bookmark_folder)
         getFolder.setHint(R.string.folder)
-        getFolder.setText(entry.folder?.title)
+        getFolder.setText(entry.folder.title)
 
         bookmarkManager.getFolderNames()
             .subscribeOn(databaseScheduler)

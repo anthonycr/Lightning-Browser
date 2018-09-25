@@ -1,8 +1,8 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.html.bookmark.BookmarkPageReader
 import acr.browser.lightning.html.ListPageReader
+import acr.browser.lightning.html.bookmark.BookmarkPageReader
 import acr.browser.lightning.html.homepage.HomePageReader
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
@@ -95,7 +95,7 @@ class AppModule(private val browserApp: BrowserApp) {
 
     @Singleton
     @Provides
-    fun providesSuggestionsCacheControl() = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
+    fun providesSuggestionsCacheControl(): CacheControl = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
 
     @Singleton
     @Provides

@@ -256,7 +256,7 @@ class BookmarkDatabase @Inject constructor(
     private fun Bookmark.Entry.bindBookmarkToContentValues() = ContentValues(4).apply {
         put(KEY_TITLE, title.takeIf(String::isNotBlank) ?: defaultBookmarkTitle)
         put(KEY_URL, url)
-        put(KEY_FOLDER, folder?.title ?: "")
+        put(KEY_FOLDER, folder.title)
         put(KEY_POSITION, position)
     }
 
