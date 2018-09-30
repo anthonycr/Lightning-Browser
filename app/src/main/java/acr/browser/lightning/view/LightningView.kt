@@ -218,7 +218,7 @@ class LightningView(
         reinitialize(homePageInitializer)
     }
 
-    fun reinitialize(tabInitializer: TabInitializer) {
+    private fun reinitialize(tabInitializer: TabInitializer) {
         webView?.let { tabInitializer.initialize(it, requestHeaders) }
     }
 
@@ -701,27 +701,25 @@ class LightningView(
     private fun longClickPage(url: String?) {
         val result = webView?.hitTestResult
         val currentUrl = webView?.url
+        val newUrl = result?.extra
 
         if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
             if (UrlUtils.isHistoryUrl(currentUrl)) {
                 if (url != null) {
                     dialogBuilder.showLongPressedHistoryLinkDialog(activity, uiController, url)
-                } else if (result != null && result.extra != null) {
-                    val newUrl = result.extra
+                } else if (newUrl != null) {
                     dialogBuilder.showLongPressedHistoryLinkDialog(activity, uiController, newUrl)
                 }
             } else if (UrlUtils.isBookmarkUrl(currentUrl)) {
                 if (url != null) {
                     dialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, url)
-                } else if (result != null && result.extra != null) {
-                    val newUrl = result.extra
+                } else if (newUrl != null) {
                     dialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, newUrl)
                 }
             } else if (UrlUtils.isDownloadsUrl(currentUrl)) {
                 if (url != null) {
                     dialogBuilder.showLongPressedDialogForDownloadUrl(activity, uiController, url)
-                } else if (result != null && result.extra != null) {
-                    val newUrl = result.extra
+                } else if (newUrl != null) {
                     dialogBuilder.showLongPressedDialogForDownloadUrl(activity, uiController, newUrl)
                 }
             }
@@ -736,8 +734,7 @@ class LightningView(
                 } else {
                     dialogBuilder.showLongPressLinkDialog(activity, uiController, url)
                 }
-            } else if (result != null && result.extra != null) {
-                val newUrl = result.extra
+            } else if (newUrl != null) {
                 if (result.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE || result.type == WebView.HitTestResult.IMAGE_TYPE) {
                     dialogBuilder.showLongPressImageDialog(activity, uiController, newUrl, userAgent)
                 } else {

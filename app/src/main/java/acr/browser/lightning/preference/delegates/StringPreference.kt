@@ -14,7 +14,7 @@ private class StringPreferenceDelegate(
     private val preferences: SharedPreferences
 ) : ReadWriteProperty<Any, String> {
     override fun getValue(thisRef: Any, property: KProperty<*>): String =
-        preferences.getString(name, defaultValue)
+        preferences.getString(name, defaultValue)!!
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String) {
         preferences.edit().putString(name, value).apply()

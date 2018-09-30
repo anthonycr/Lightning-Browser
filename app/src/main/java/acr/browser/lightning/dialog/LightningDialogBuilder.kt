@@ -62,7 +62,7 @@ class LightningDialogBuilder @Inject constructor(
         if (UrlUtils.isBookmarkUrl(url)) {
             // TODO hacky, make a better bookmark mechanism in the future
             val uri = url.toUri()
-            val filename = uri.lastPathSegment
+            val filename = requireNotNull(uri.lastPathSegment) { "Last segment should always exist for bookmark file" }
             val folderTitle = filename.substring(0, filename.length - BookmarkPageFactory.FILENAME.length - 1)
             showBookmarkFolderLongPressedDialog(activity, uiController, folderTitle.asFolder())
         } else {

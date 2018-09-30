@@ -33,7 +33,7 @@ fun Canvas.drawTrapezoid(backgroundColor: Int, withShadow: Boolean) {
     val radians = Math.PI / 3
     val base = (height / tan(radians)).toInt()
 
-    val wallpath = Path().apply {
+    val wallPath = Path().apply {
         reset()
         moveTo(0f, height.toFloat())
         lineTo(width.toFloat(), height.toFloat())
@@ -42,5 +42,5 @@ fun Canvas.drawTrapezoid(backgroundColor: Int, withShadow: Boolean) {
         close()
     }
 
-    drawPath(wallpath, paint)
+    drawPath(wallPath, paint)
 }

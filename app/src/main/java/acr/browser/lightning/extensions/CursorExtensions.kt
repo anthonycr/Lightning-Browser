@@ -32,7 +32,7 @@ inline fun <T> Cursor.useMap(block: (Cursor) -> T): List<T> {
  * Return the first element returned by this cursor as [T] or null if there were no elements in the
  * cursor.
  */
-fun <T> Cursor.firstOrNullMap(block: (Cursor) -> T): T? {
+inline fun <T> Cursor.firstOrNullMap(block: (Cursor) -> T): T? {
     return if (moveToFirst()) {
         return block(this)
     } else {

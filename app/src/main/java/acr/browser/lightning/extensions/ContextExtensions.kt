@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package acr.browser.lightning.extensions
 
 import android.content.Context
@@ -11,10 +13,10 @@ import android.support.v4.content.ContextCompat
  *
  * @param dimenRes the dimension resource to fetch.
  */
-fun Context.dimen(@DimenRes dimenRes: Int): Int = resources.getDimensionPixelSize(dimenRes)
+inline fun Context.dimen(@DimenRes dimenRes: Int): Int = resources.getDimensionPixelSize(dimenRes)
 
 /**
  * Returns the [ColorRes] as a [ColorInt]
  */
 @ColorInt
-fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
+inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
