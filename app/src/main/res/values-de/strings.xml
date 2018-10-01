@@ -131,7 +131,7 @@
     <string name="block_ads">Werbung blockieren</string>
 
     <string name="ssl_warning_dont_ask_again">Während dieser Sitzung nicht mehr nachfragen</string>
-    <string name="message_insecure_connection">Die Verbindung zu dieser Seite ist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
+    <string name="message_insecure_connection">Die Verbindung zu der Seite\n%2$s\nist nicht sicher:\n%1$s\nTrotzdem fortfahren?</string>
     <string name="message_certificate_date_invalid">Datum des Zertifikats ungültig</string>
     <string name="message_certificate_expired">Zertifikat abgelaufen</string>
     <string name="message_certificate_domain_mismatch">Domain des Zertifikats stimmt nicht mit der Domain der aktuellen Seite überein</string>
