@@ -4,7 +4,6 @@
 
 package acr.browser.lightning.browser.activity
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.*
@@ -1306,7 +1305,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
         Palette.from(favicon).generate { palette ->
             // OR with opaque black to remove transparency glitches
-            val color = Color.BLACK or palette.getVibrantColor(defaultColor)
+            val color = Color.BLACK or (palette?.getVibrantColor(defaultColor) ?: defaultColor)
 
             // Lighten up the dark color if it is too dark
             val finalColor = if (!shouldShowTabsInDrawer || Utils.isColorTooDark(color)) {
