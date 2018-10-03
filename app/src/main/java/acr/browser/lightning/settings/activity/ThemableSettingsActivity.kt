@@ -1,7 +1,7 @@
 package acr.browser.lightning.settings.activity
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.graphics.Color
@@ -17,7 +17,7 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
     @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
         themeId = userPreferences.useTheme
 
         // set the theme

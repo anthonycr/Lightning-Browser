@@ -3,8 +3,8 @@
  */
 package acr.browser.lightning.settings.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
@@ -28,7 +28,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
 
         // preferences storage
         themeOptions = this.resources.getStringArray(R.array.themes)

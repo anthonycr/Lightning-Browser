@@ -1,12 +1,12 @@
 package acr.browser.lightning.browser.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.TabsManager
 import acr.browser.lightning.browser.TabsView
 import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
 import acr.browser.lightning.browser.fragment.anim.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.desaturate
 import acr.browser.lightning.extensions.drawTrapezoid
@@ -59,13 +59,9 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     @Inject internal lateinit var userPreferences: UserPreferences
 
-    init {
-        BrowserApp.appComponent.inject(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val arguments = arguments
+        injector.inject(this)
         val context = requireNotNull(context) { "Context should never be null in onCreate" }
         uiController = activity as UIController
         isIncognito = arguments?.getBoolean(IS_INCOGNITO, false) == true

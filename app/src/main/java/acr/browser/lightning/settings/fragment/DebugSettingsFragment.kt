@@ -1,7 +1,7 @@
 package acr.browser.lightning.settings.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.preference.DeveloperPreferences
 import android.os.Bundle
@@ -15,7 +15,7 @@ class DebugSettingsFragment : AbstractSettingsFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
 
         togglePreference(
             preference = LEAK_CANARY,

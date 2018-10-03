@@ -1,6 +1,5 @@
 package acr.browser.lightning.search
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -11,6 +10,7 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.NetworkScheduler
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
@@ -67,7 +67,7 @@ class SuggestionsAdapter(
     private val searchFilter: SearchFilter
 
     init {
-        BrowserApp.appComponent.inject(this)
+        context.injector.inject(this)
         darkTheme = dark || isIncognito
 
         val suggestionsRepository = if (isIncognito) {

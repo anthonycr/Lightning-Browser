@@ -1,9 +1,9 @@
 package acr.browser.lightning.settings.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.*
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
@@ -41,7 +41,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
 
         proxyChoices = resources.getStringArray(R.array.proxy_choices_array)
 

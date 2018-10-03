@@ -1,12 +1,12 @@
 package acr.browser.lightning.view
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.preference.UserPreferences
@@ -72,7 +72,7 @@ class LightningWebClient(
     private val sslStateObservable: PublishSubject<SSLState> = PublishSubject.create()
 
     init {
-        BrowserApp.appComponent.inject(this)
+        activity.injector.inject(this)
         uiController = activity as UIController
         adBlock = chooseAdBlocker()
     }
@@ -84,9 +84,9 @@ class LightningWebClient(
     }
 
     private fun chooseAdBlocker(): AdBlocker = if (userPreferences.adBlockEnabled) {
-        BrowserApp.appComponent.provideAssetsAdBlocker()
+        activity.injector.provideAssetsAdBlocker()
     } else {
-        BrowserApp.appComponent.provideNoOpAdBlocker()
+        activity.injector.provideNoOpAdBlocker()
     }
 
     private fun isAd(pageUrl: String, requestUrl: String) =

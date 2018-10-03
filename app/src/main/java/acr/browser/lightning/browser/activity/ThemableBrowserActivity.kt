@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.activity
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
@@ -22,7 +22,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     private var shouldRunOnResumeActions = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
         themeId = userPreferences.useTheme
         showTabsInDrawer = userPreferences.showTabsInDrawer
 

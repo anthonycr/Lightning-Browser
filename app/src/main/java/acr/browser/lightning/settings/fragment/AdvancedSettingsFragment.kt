@@ -1,8 +1,8 @@
 package acr.browser.lightning.settings.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.TEXT_ENCODINGS
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
@@ -22,7 +22,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
 
         clickableDynamicPreference(
                 preference = SETTINGS_RENDERING_MODE,

@@ -1,6 +1,5 @@
 package acr.browser.lightning.browser.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.BookmarksView
@@ -13,6 +12,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.NetworkScheduler
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
@@ -80,7 +80,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
 
         val context = requireNotNull(context) { "Context should never be null in onCreate" }
 

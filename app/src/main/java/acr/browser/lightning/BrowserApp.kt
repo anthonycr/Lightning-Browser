@@ -2,10 +2,7 @@ package acr.browser.lightning
 
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
-import acr.browser.lightning.di.AppComponent
-import acr.browser.lightning.di.AppModule
-import acr.browser.lightning.di.DaggerAppComponent
-import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.*
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
@@ -27,6 +24,8 @@ class BrowserApp : Application() {
     @Inject internal lateinit var developerPreferences: DeveloperPreferences
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+
+    val applicationComponent: AppComponent by lazy { appComponent }
 
     override fun onCreate() {
         super.onCreate()
@@ -63,7 +62,7 @@ class BrowserApp : Application() {
         }
 
         appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
-        appComponent.inject(this)
+        injector.inject(this)
 
         Single.fromCallable(bookmarkModel::count)
             .filter { it == 0L }

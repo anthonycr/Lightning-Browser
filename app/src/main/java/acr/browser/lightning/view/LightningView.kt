@@ -4,12 +4,12 @@
 
 package acr.browser.lightning.view
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.constant.MOBILE_USER_AGENT
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.preference.UserPreferences
@@ -168,7 +168,7 @@ class LightningView(
         get() = webView?.url ?: ""
 
     init {
-        BrowserApp.appComponent.inject(this)
+        activity.injector.inject(this)
         uiController = activity as UIController
 
         titleInfo = LightningViewTitle(activity)
