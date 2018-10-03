@@ -1,6 +1,5 @@
 package acr.browser.lightning.dialog
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.MainActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.HTTP
@@ -13,11 +12,13 @@ import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.download.DownloadHandler
+import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
+import android.content.ClipboardManager
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.View
@@ -37,6 +38,7 @@ class LightningDialogBuilder @Inject constructor(
     private val historyModel: HistoryRepository,
     private val userPreferences: UserPreferences,
     private val downloadHandler: DownloadHandler,
+    private val clipboardManager: ClipboardManager,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler
 ) {
@@ -94,7 +96,7 @@ class LightningDialogBuilder @Inject constructor(
             IntentUtils(activity).shareUrl(entry.url, entry.title)
         },
         DialogItem(R.string.dialog_copy_link) {
-            BrowserApp.copyToClipboard(activity, entry.url)
+            clipboardManager.copyToClipboard(entry.url)
         },
         DialogItem(R.string.dialog_remove_bookmark) {
             bookmarkManager.deleteBookmark(entry)
@@ -224,7 +226,7 @@ class LightningDialogBuilder @Inject constructor(
             IntentUtils(activity).shareUrl(url, null)
         },
         DialogItem(R.string.dialog_copy_link) {
-            BrowserApp.copyToClipboard(activity, url)
+            clipboardManager.copyToClipboard(url)
         },
         DialogItem(R.string.dialog_remove_from_history) {
             historyModel.deleteHistoryEntry(url)
@@ -253,7 +255,7 @@ class LightningDialogBuilder @Inject constructor(
             IntentUtils(activity).shareUrl(url, null)
         },
         DialogItem(R.string.dialog_copy_link) {
-            BrowserApp.copyToClipboard(activity, url)
+            clipboardManager.copyToClipboard(url)
         },
         DialogItem(R.string.dialog_download_image) {
             downloadHandler.onDownloadStart(activity, userPreferences, url, userAgent, "attachment", null, "")
@@ -277,7 +279,7 @@ class LightningDialogBuilder @Inject constructor(
             IntentUtils(activity).shareUrl(url, null)
         },
         DialogItem(R.string.dialog_copy_link) {
-            BrowserApp.copyToClipboard(activity, url)
+            clipboardManager.copyToClipboard(url)
         })
 
 }

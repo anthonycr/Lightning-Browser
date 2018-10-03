@@ -11,9 +11,6 @@ import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import android.support.v7.app.AppCompatDelegate
@@ -35,13 +32,13 @@ class BrowserApp : Application() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build())
+                .detectAll()
+                .penaltyLog()
+                .build())
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build())
+                .detectAll()
+                .penaltyLog()
+                .build())
         }
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -69,13 +66,13 @@ class BrowserApp : Application() {
         appComponent.inject(this)
 
         Single.fromCallable(bookmarkModel::count)
-                .filter { it == 0L }
-                .flatMapCompletable {
-                    val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
-                    bookmarkModel.addBookmarkList(assetsBookmarks)
-                }
-                .subscribeOn(databaseScheduler)
-                .subscribe()
+            .filter { it == 0L }
+            .flatMapCompletable {
+                val assetsBookmarks = BookmarkExporter.importBookmarksFromAssets(this@BrowserApp)
+                bookmarkModel.addBookmarkList(assetsBookmarks)
+            }
+            .subscribeOn(databaseScheduler)
+            .subscribe()
 
         if (developerPreferences.useLeakCanary && !isRelease) {
             LeakCanary.install(this)
@@ -112,12 +109,6 @@ class BrowserApp : Application() {
         val isRelease: Boolean
             get() = !BuildConfig.DEBUG || BuildConfig.BUILD_TYPE.toLowerCase() == "release"
 
-        @JvmStatic
-        fun copyToClipboard(context: Context, string: String) {
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("URL", string)
-            clipboard.primaryClip = clip
-        }
     }
 
 }
