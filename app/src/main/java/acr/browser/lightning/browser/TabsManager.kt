@@ -104,7 +104,7 @@ class TabsManager @Inject constructor(
             .observeOn(mainScheduler)
             .map { newTab(activity, it, incognito) }
             .lastOrError()
-            .doOnSuccess { finishInitialization() }
+            .doAfterSuccess { finishInitialization() }
 
     /**
      * Returns an [Observable] that emits the [TabInitializer] for incognito mode.
