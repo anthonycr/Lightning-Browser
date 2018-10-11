@@ -24,6 +24,8 @@ android {
 
     buildTypes {
         debug {
+            // TODO: debug cannot be used on SDK < 21
+            multiDexEnabled true
             minifyEnabled false
             shrinkResources false
             proguardFiles 'proguard-project.txt'
@@ -31,6 +33,7 @@ android {
         }
 
         release {
+            multiDexEnabled false
             minifyEnabled true
             shrinkResources true
             proguardFiles 'proguard-project.txt'
@@ -101,8 +104,10 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.8'
 
     // support libraries
-    final def supportLibVersion = '27.1.1'
+    final def supportLibVersion = '28.0.0'
     implementation "com.android.support:palette-v7:$supportLibVersion"
+    implementation "com.android.support:animated-vector-drawable:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
