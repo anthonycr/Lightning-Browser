@@ -8,13 +8,13 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import javax.inject.Inject
 
 class DisplaySettingsFragment : AbstractSettingsFragment() {

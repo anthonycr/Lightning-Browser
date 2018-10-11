@@ -24,7 +24,6 @@ import android.graphics.*
 import android.os.Build
 import android.os.Handler
 import android.os.Message
-import android.support.v4.util.ArrayMap
 import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -33,6 +32,7 @@ import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebView
+import androidx.collection.ArrayMap
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single

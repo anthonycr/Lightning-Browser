@@ -15,9 +15,9 @@ import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.net.ConnectivityManager
 import android.os.Build
-import android.support.annotation.RequiresApi
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import com.anthonycr.mezzanine.MezzanineGenerator
 import dagger.Module
 import dagger.Provides

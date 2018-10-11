@@ -23,12 +23,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.annotation.IdRes
-import android.support.v4.app.Fragment
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +30,12 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.IdRes
+import androidx.core.widget.TextViewCompat
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.tab_drawer.*
 import java.util.*
 import javax.inject.Inject
@@ -99,9 +99,9 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = if (showInNavigationDrawer) {
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         } else {
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         }
 
         val animator = (if (showInNavigationDrawer) {

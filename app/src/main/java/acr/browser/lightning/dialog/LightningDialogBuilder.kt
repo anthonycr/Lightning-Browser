@@ -19,12 +19,12 @@ import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
 import android.content.ClipboardManager
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import io.reactivex.Scheduler
 import javax.inject.Inject

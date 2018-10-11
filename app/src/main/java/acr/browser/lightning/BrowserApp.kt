@@ -10,9 +10,9 @@ import android.app.Activity
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
-import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatDelegate
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
 import io.reactivex.Single

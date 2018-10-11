@@ -7,8 +7,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.DownloadListener;
@@ -24,6 +22,8 @@ import acr.browser.lightning.R;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.preference.UserPreferences;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 public class LightningDownloadListener implements DownloadListener {
 

@@ -22,14 +22,14 @@ import android.net.MailTo
 import android.net.http.SslError
 import android.os.Build
 import android.os.Message
-import android.support.v4.content.FileProvider
-import android.support.v7.app.AlertDialog
+import androidx.core.content.FileProvider
 import android.util.Log
 import android.view.LayoutInflater
 import android.webkit.*
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.anthonycr.mezzanine.MezzanineGenerator
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject

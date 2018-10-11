@@ -8,7 +8,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single

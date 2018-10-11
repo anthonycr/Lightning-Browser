@@ -3,9 +3,9 @@
 package acr.browser.lightning.extensions
 
 import android.app.Activity
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
 import android.view.View
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Displays a snackbar to the user with a [StringRes] message.

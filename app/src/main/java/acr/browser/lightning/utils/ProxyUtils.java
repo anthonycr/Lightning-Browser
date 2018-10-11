@@ -3,8 +3,6 @@ package acr.browser.lightning.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import net.i2p.android.ui.I2PAndroidHelper;
@@ -20,6 +18,8 @@ import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
 import acr.browser.lightning.preference.DeveloperPreferences;
 import acr.browser.lightning.preference.UserPreferences;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 import info.guardianproject.netcipher.webkit.WebkitProxy;
 

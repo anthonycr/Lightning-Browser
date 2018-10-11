@@ -1,6 +1,6 @@
 package acr.browser.lightning.constant
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 
 /**

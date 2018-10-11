@@ -1,6 +1,6 @@
 package acr.browser.lightning.search.engine
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 /**
  * A class representative of a search engine.
