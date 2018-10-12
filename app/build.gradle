@@ -104,15 +104,15 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.8'
 
     // support libraries
-    final def supportLibVersion = '28.0.0'
-    implementation "com.android.support:palette-v7:$supportLibVersion"
-    implementation "com.android.support:animated-vector-drawable:$supportLibVersion"
-    implementation "com.android.support:support-v4:$supportLibVersion"
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:design:$supportLibVersion"
-    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
-    implementation "com.android.support:support-compat:$supportLibVersion"
-    implementation "com.android.support:support-fragment:$supportLibVersion"
+    implementation "androidx.palette:palette:1.0.0"
+    implementation "androidx.annotation:annotation:1.0.0"
+    implementation "androidx.vectordrawable:vectordrawable-animated:1.0.0"
+    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "com.google.android.material:material:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.core:core:1.0.0"
+    implementation "androidx.fragment:fragment:1.0.0"
+    implementation "androidx.drawerlayout:drawerlayout:1.0.0"
 
     // html parsing for reading mode
     implementation 'org.jsoup:jsoup:1.11.3'
@@ -129,7 +129,7 @@ dependencies {
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    final def butterKnifeVersion = '8.8.1'
+    final def butterKnifeVersion = '9.0.0-rc1'
     implementation "com.jakewharton:butterknife:$butterKnifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
@@ -160,7 +160,7 @@ dependencies {
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation 'androidx.core:core-ktx:0.3'
+    implementation 'androidx.core:core-ktx:1.0.0'
 }
 
 kapt {

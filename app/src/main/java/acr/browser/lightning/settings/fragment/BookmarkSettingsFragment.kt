@@ -12,14 +12,14 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.utils.Utils
 import android.Manifest
 import android.app.Application
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.app.AlertDialog
 import android.util.Log
-import androidx.core.widget.toast
+import androidx.appcompat.app.AlertDialog
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler

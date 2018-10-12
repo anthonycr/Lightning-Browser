@@ -8,8 +8,8 @@ import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.support.annotation.ColorInt
-import android.support.annotation.WorkerThread
+import androidx.annotation.ColorInt
+import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import android.util.LruCache

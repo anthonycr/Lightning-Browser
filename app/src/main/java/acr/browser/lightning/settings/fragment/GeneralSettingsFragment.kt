@@ -16,7 +16,6 @@ import acr.browser.lightning.utils.ThemeUtils
 import android.app.Activity
 import android.os.Bundle
 import android.os.Environment
-import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
@@ -24,6 +23,7 @@ import android.view.LayoutInflater
 import android.webkit.URLUtil
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import javax.inject.Inject
 
 /**

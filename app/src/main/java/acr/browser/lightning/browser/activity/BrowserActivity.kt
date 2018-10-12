@@ -21,10 +21,7 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.extensions.doOnLayout
-import acr.browser.lightning.extensions.removeFromParent
-import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.extensions.*
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
@@ -57,15 +54,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.provider.MediaStore
-import android.support.annotation.ColorInt
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.DrawerLayout.DrawerListener
-import android.support.v7.app.AlertDialog
-import android.support.v7.graphics.Palette
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.style.CharacterStyle
@@ -83,8 +73,13 @@ import android.webkit.WebChromeClient.CustomViewCallback
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView.OnEditorActionListener
+import androidx.annotation.ColorInt
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
-import androidx.core.widget.toast
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.palette.graphics.Palette
 import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
 import io.reactivex.Completable
@@ -255,7 +250,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         left_drawer.setLayerType(View.LAYER_TYPE_NONE, null)
         right_drawer.setLayerType(View.LAYER_TYPE_NONE, null)
 
-        drawer_layout.addDrawerListener(object : DrawerListener {
+        drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
 
             override fun onDrawerOpened(drawerView: View) = Unit
@@ -537,7 +532,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
     }
 
-    private inner class DrawerLocker : DrawerListener {
+    private inner class DrawerLocker : DrawerLayout.DrawerListener {
 
         override fun onDrawerClosed(v: View) {
             val tabsDrawer = getTabDrawer()
@@ -1469,7 +1464,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
         drawer_layout.closeDrawers()
 
-        drawer_layout.addDrawerListener(object : DrawerListener {
+        drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
 
             override fun onDrawerOpened(drawerView: View) = Unit

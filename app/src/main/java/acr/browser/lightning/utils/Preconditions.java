@@ -1,6 +1,6 @@
 package acr.browser.lightning.utils;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public final class Preconditions {
 

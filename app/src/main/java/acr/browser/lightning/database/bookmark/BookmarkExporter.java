@@ -2,8 +2,6 @@ package acr.browser.lightning.database.bookmark;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -26,6 +24,8 @@ import acr.browser.lightning.database.Bookmark;
 import acr.browser.lightning.database.WebPageKt;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.Utils;
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.functions.Action;

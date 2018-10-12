@@ -1,6 +1,7 @@
 package acr.browser.lightning.dialog
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
+
 
 /**
  * An item representing a list item in a list dialog. The item has a [title], an [onClick] function
@@ -8,9 +9,9 @@ import android.support.annotation.StringRes
  * to true and allows the consumer to control the visibility of the item in the list.
  */
 class DialogItem @JvmOverloads constructor(
-        @param:StringRes val title: Int,
-        val isConditionMet: Boolean = true,
-        private val onClick: () -> Unit
+    @param:StringRes val title: Int,
+    val isConditionMet: Boolean = true,
+    private val onClick: () -> Unit
 ) {
 
     fun onClick() = onClick.invoke()

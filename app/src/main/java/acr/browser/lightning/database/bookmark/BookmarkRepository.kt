@@ -1,7 +1,7 @@
 package acr.browser.lightning.database.bookmark
 
 import acr.browser.lightning.database.Bookmark
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single

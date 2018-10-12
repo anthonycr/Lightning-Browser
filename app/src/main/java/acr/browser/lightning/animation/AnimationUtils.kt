@@ -1,10 +1,10 @@
 package acr.browser.lightning.animation
 
-import android.support.annotation.DrawableRes
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.Transformation
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 
 /**
  * Animation specific helper code.

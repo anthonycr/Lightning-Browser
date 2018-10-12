@@ -15,8 +15,8 @@ import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
 import android.os.Bundle
 import android.os.Message
-import android.support.v7.app.AlertDialog
 import android.webkit.WebView
+import androidx.appcompat.app.AlertDialog
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject

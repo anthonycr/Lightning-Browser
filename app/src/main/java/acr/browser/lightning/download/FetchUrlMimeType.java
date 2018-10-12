@@ -5,7 +5,6 @@ package acr.browser.lightning.download;
 
 import android.app.DownloadManager;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
@@ -15,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import acr.browser.lightning.utils.Utils;
+import androidx.annotation.NonNull;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;

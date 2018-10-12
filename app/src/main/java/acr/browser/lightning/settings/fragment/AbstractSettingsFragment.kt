@@ -5,7 +5,7 @@ import android.preference.CheckBoxPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.SwitchPreference
-import android.support.annotation.XmlRes
+import androidx.annotation.XmlRes
 
 /**
  * An abstract settings fragment which performs wiring for an instance of [PreferenceFragment].

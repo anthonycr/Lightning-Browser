@@ -2,7 +2,7 @@ package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
 import android.content.Context
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 /**
  * The [AppComponent] attached to the application [Context].

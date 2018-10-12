@@ -1,6 +1,6 @@
 package acr.browser.lightning.database.downloads
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single

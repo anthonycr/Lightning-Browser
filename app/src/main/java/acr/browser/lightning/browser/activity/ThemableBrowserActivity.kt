@@ -9,7 +9,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject
 
 abstract class ThemableBrowserActivity : AppCompatActivity() {

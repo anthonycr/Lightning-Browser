@@ -21,12 +21,12 @@ import acr.browser.lightning.utils.DeviceUtils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.support.annotation.StringRes
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 
 object BrowserDialog {
 

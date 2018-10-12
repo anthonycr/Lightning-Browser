@@ -3,10 +3,12 @@
 package acr.browser.lightning.extensions
 
 import android.content.Context
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.annotation.DimenRes
-import android.support.v4.content.ContextCompat
+import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 
 /**
  * Returns the dimension in pixels.
@@ -20,3 +22,8 @@ inline fun Context.dimen(@DimenRes dimenRes: Int): Int = resources.getDimensionP
  */
 @ColorInt
 inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
+
+/**
+ * Shows a toast with the provided [StringRes].
+ */
+inline fun Context.toast(@StringRes stringRes: Int) = Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
