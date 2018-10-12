@@ -16,7 +16,6 @@ import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.TabInitializer
 import acr.browser.lightning.view.UrlInitializer
 import android.app.Activity
-import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.webkit.URLUtil
@@ -31,7 +30,6 @@ import io.reactivex.rxkotlin.subscribeBy
 class BrowserPresenter(
     private val view: BrowserView,
     private val isIncognito: Boolean,
-    private val application: Application,
     private val userPreferences: UserPreferences,
     private val tabsModel: TabsManager,
     @MainScheduler private val mainScheduler: Scheduler,

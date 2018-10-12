@@ -16,6 +16,7 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainHandler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
@@ -52,10 +53,9 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
-import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.style.CharacterStyle
@@ -76,7 +76,9 @@ import android.widget.TextView.OnEditorActionListener
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
@@ -135,24 +137,25 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var cameraPhotoPath: String? = null
 
     // The singleton BookmarkManager
-    @Inject internal lateinit var bookmarkManager: BookmarkRepository
-    @Inject internal lateinit var historyModel: HistoryRepository
-    @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
-    @Inject internal lateinit var searchBoxModel: SearchBoxModel
-    @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject internal lateinit var networkConnectivityModel: NetworkConnectivityModel
-    @Inject internal lateinit var inputMethodManager: InputMethodManager
-    @Inject internal lateinit var clipboardManager: ClipboardManager
-    @Inject internal lateinit var notificationManager: NotificationManager
-    @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
-    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
-    @Inject internal lateinit var tabsManager: TabsManager
-    @Inject internal lateinit var homePageFactory: HomePageFactory
-    @Inject internal lateinit var bookmarkPageFactory: BookmarkPageFactory
-    @Inject internal lateinit var historyPageFactory: HistoryPageFactory
-    @Inject internal lateinit var historyPageInitializer: HistoryPageInitializer
-    @Inject internal lateinit var downloadPageInitializer: DownloadPageInitializer
-    @Inject internal lateinit var homePageInitializer: HomePageInitializer
+    @Inject lateinit var bookmarkManager: BookmarkRepository
+    @Inject lateinit var historyModel: HistoryRepository
+    @Inject lateinit var searchBoxModel: SearchBoxModel
+    @Inject lateinit var searchEngineProvider: SearchEngineProvider
+    @Inject lateinit var networkConnectivityModel: NetworkConnectivityModel
+    @Inject lateinit var inputMethodManager: InputMethodManager
+    @Inject lateinit var clipboardManager: ClipboardManager
+    @Inject lateinit var notificationManager: NotificationManager
+    @Inject @field:DatabaseScheduler lateinit var databaseScheduler: Scheduler
+    @Inject @field:MainScheduler lateinit var mainScheduler: Scheduler
+    @Inject lateinit var tabsManager: TabsManager
+    @Inject lateinit var homePageFactory: HomePageFactory
+    @Inject lateinit var bookmarkPageFactory: BookmarkPageFactory
+    @Inject lateinit var historyPageFactory: HistoryPageFactory
+    @Inject lateinit var historyPageInitializer: HistoryPageInitializer
+    @Inject lateinit var downloadPageInitializer: DownloadPageInitializer
+    @Inject lateinit var homePageInitializer: HomePageInitializer
+    @Inject @field:MainHandler lateinit var mainHandler: Handler
+    @Inject lateinit var proxyUtils: ProxyUtils
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -177,9 +180,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private val longPressBackRunnable = Runnable {
         showCloseDialog(tabsManager.positionOf(tabsManager.currentTab))
     }
-
-    // Proxy
-    @Inject internal lateinit var proxyUtils: ProxyUtils
 
     /**
      * Determines if the current browser instance is in incognito mode or not.
@@ -221,7 +221,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        presenter = BrowserPresenter(this, isIncognito(), application, userPreferences, tabsManager, mainScheduler, homePageFactory, bookmarkPageFactory)
+        presenter = BrowserPresenter(this, isIncognito(), userPreferences, tabsManager, mainScheduler, homePageFactory, bookmarkPageFactory)
 
         initialize(savedInstanceState)
     }
@@ -325,18 +325,18 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 updateTabNumber(0)
 
                 // Post drawer locking in case the activity is being recreated
-                Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getTabDrawer()) }
+                mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getTabDrawer()) }
             } else {
 
                 // Post drawer locking in case the activity is being recreated
-                Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer()) }
+                mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer()) }
                 it.setImageResource(R.drawable.ic_action_home)
                 it.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
             }
         }
 
         // Post drawer locking in case the activity is being recreated
-        Handlers.MAIN.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getBookmarkDrawer()) }
+        mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getBookmarkDrawer()) }
 
         customView.findViewById<FrameLayout>(R.id.arrow_button).setOnClickListener(this)
 
@@ -636,14 +636,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             keyDownStartTime = System.currentTimeMillis()
-            Handlers.MAIN.postDelayed(longPressBackRunnable, ViewConfiguration.getLongPressTimeout().toLong())
+            mainHandler.postDelayed(longPressBackRunnable, ViewConfiguration.getLongPressTimeout().toLong())
         }
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Handlers.MAIN.removeCallbacks(longPressBackRunnable)
+            mainHandler.removeCallbacks(longPressBackRunnable)
             if (System.currentTimeMillis() - keyDownStartTime > ViewConfiguration.getLongPressTimeout()) {
                 return true
             }
@@ -968,7 +968,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        Handlers.MAIN.postDelayed(drawer_layout::closeDrawers, 200)
+        mainHandler.postDelayed(drawer_layout::closeDrawers, 200)
 
     }
 
@@ -1001,9 +1001,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // Use a delayed handler to make the transition smooth
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
-        Handlers.MAIN.postDelayed(drawer_layout::closeDrawers, 200)
+        mainHandler.postDelayed(drawer_layout::closeDrawers, 200)
 
-        // Handlers.MAIN.postDelayed(new Runnable() {
+        // mainHandler.postDelayed(new Runnable() {
         //     @Override
         //     public void run() {
         // Remove browser frame background to reduce overdraw
@@ -1074,7 +1074,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun bookmarkItemClicked(entry: Bookmark.Entry) {
         presenter?.loadUrlInCurrentView(entry.url)
         // keep any jank from happening when the drawer is closed after the URL starts to load
-        Handlers.MAIN.postDelayed({ closeDrawers(null) }, 150)
+        mainHandler.postDelayed({ closeDrawers(null) }, 150)
     }
 
     override fun handleHistoryChange() {
@@ -1223,7 +1223,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
 
-        Handlers.MAIN.removeCallbacksAndMessages(null)
+        mainHandler.removeCallbacksAndMessages(null)
 
         presenter?.shutdown()
 
@@ -1322,7 +1322,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     val animatedColor = DrawableUtils.mixColor(interpolatedTime, currentUiColor, finalColor)
                     if (shouldShowTabsInDrawer) {
                         backgroundDrawable.color = animatedColor
-                        Handlers.MAIN.post { window.setBackgroundDrawable(backgroundDrawable) }
+                        mainHandler.post { window.setBackgroundDrawable(backgroundDrawable) }
                     } else {
                         tabBackground?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
                     }

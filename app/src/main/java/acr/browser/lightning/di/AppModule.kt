@@ -15,6 +15,8 @@ import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
 import android.net.ConnectivityManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
@@ -36,6 +38,10 @@ import javax.inject.Singleton
 
 @Module
 class AppModule(private val browserApp: BrowserApp) {
+
+    @Provides
+    @MainHandler
+    fun provideMainHandler() = Handler(Looper.getMainLooper())
 
     @Provides
     fun provideApplication(): Application = browserApp
@@ -144,6 +150,10 @@ class AppModule(private val browserApp: BrowserApp) {
     fun providesBookmarkPageReader(): BookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
 
 }
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class MainHandler
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
