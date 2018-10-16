@@ -31,8 +31,11 @@ import androidx.appcompat.app.AlertDialog
 object BrowserDialog {
 
     @JvmStatic
-    fun show(activity: Activity, @StringRes title: Int, vararg items: DialogItem) =
-            show(activity, activity.getString(title), *items)
+    fun show(
+        activity: Activity,
+        @StringRes title: Int,
+        vararg items: DialogItem
+    ) = show(activity, activity.getString(title), *items)
 
     @JvmStatic
     fun show(activity: Activity, title: String?, vararg items: DialogItem) {
@@ -44,7 +47,7 @@ object BrowserDialog {
         val listView = layout.findViewById<ListView>(R.id.dialog_list)
 
         val adapter = ArrayAdapter<String>(activity,
-                android.R.layout.simple_list_item_1)
+            android.R.layout.simple_list_item_1)
 
         val itemList = items.filter(DialogItem::isConditionMet)
 
@@ -70,13 +73,15 @@ object BrowserDialog {
     }
 
     @JvmStatic
-    fun showPositiveNegativeDialog(activity: Activity,
-                                   @StringRes title: Int,
-                                   @StringRes message: Int,
-                                   messageArguments: Array<Any>? = null,
-                                   positiveButton: DialogItem,
-                                   negativeButton: DialogItem,
-                                   onCancel: () -> Unit) {
+    fun showPositiveNegativeDialog(
+        activity: Activity,
+        @StringRes title: Int,
+        @StringRes message: Int,
+        messageArguments: Array<Any>? = null,
+        positiveButton: DialogItem,
+        negativeButton: DialogItem,
+        onCancel: () -> Unit
+    ) {
         val messageValue = if (messageArguments != null) {
             activity.getString(message, *messageArguments)
         } else {
@@ -94,20 +99,23 @@ object BrowserDialog {
     }
 
     @JvmStatic
-    fun showEditText(activity: Activity,
-                     @StringRes title: Int,
-                     @StringRes hint: Int,
-                     @StringRes action: Int,
-                     textInputListener: (String) -> Unit) =
-            showEditText(activity, title, hint, null, action, textInputListener)
+    fun showEditText(
+        activity: Activity,
+        @StringRes title: Int,
+        @StringRes hint: Int,
+        @StringRes action: Int,
+        textInputListener: (String) -> Unit
+    ) = showEditText(activity, title, hint, null, action, textInputListener)
 
     @JvmStatic
-    fun showEditText(activity: Activity,
-                     @StringRes title: Int,
-                     @StringRes hint: Int,
-                     currentText: String?,
-                     @StringRes action: Int,
-                     textInputListener: (String) -> Unit) {
+    fun showEditText(
+        activity: Activity,
+        @StringRes title: Int,
+        @StringRes hint: Int,
+        currentText: String?,
+        @StringRes action: Int,
+        textInputListener: (String) -> Unit
+    ) {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null)
         val editText = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
 
@@ -117,10 +125,10 @@ object BrowserDialog {
         }
 
         val editorDialog = AlertDialog.Builder(activity)
-                .setTitle(title)
-                .setView(dialogView)
-                .setPositiveButton(action
-                ) { _, _ -> textInputListener(editText.text.toString()) }
+            .setTitle(title)
+            .setView(dialogView)
+            .setPositiveButton(action
+            ) { _, _ -> textInputListener(editText.text.toString()) }
 
         val dialog = editorDialog.show()
         setDialogSize(activity, dialog)

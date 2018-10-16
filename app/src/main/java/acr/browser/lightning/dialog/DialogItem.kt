@@ -8,7 +8,7 @@ import androidx.annotation.StringRes
  * to be invoked when the item is clicked, and a boolean condition [isConditionMet] which defaults
  * to true and allows the consumer to control the visibility of the item in the list.
  */
-class DialogItem @JvmOverloads constructor(
+class DialogItem(
     @param:StringRes val title: Int,
     val isConditionMet: Boolean = true,
     private val onClick: () -> Unit
