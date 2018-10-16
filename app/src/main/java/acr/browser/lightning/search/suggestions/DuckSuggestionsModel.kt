@@ -27,7 +27,7 @@ class DuckSuggestionsModel(
         .scheme("https")
         .host("duckduckgo.com")
         .encodedPath("/ac/")
-        .addQueryParameter("q", query)
+        .addEncodedQueryParameter("q", query)
         .build()
 
     @Throws(Exception::class)

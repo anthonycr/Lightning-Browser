@@ -28,7 +28,7 @@ class GoogleSuggestionsModel(
         .encodedPath("/complete/search")
         .addQueryParameter("output", "toolbar")
         .addQueryParameter("hl", language)
-        .addQueryParameter("q", query)
+        .addEncodedQueryParameter("q", query)
         .build()
 
     @Throws(Exception::class)

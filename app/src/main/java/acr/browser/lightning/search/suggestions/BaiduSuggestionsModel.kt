@@ -28,7 +28,7 @@ class BaiduSuggestionsModel(
         .scheme("http")
         .host("suggestion.baidu.com")
         .encodedPath("/s")
-        .addQueryParameter("wd", query)
+        .addEncodedQueryParameter("wd", query)
         .addQueryParameter("action", "opensearch")
         .build()
 

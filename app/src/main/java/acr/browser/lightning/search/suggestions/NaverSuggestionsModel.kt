@@ -28,7 +28,7 @@ class NaverSuggestionsModel(
             .scheme("https")
             .host("ac.search.naver.com")
             .encodedPath("/nx/ac")
-            .addQueryParameter("q", query)
+            .addEncodedQueryParameter("q", query)
             .addQueryParameter("q_enc", "UTF-8")
             .addQueryParameter("st", "100")
             .addQueryParameter("frm", "nv")
