@@ -267,11 +267,9 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                 }
             }
             R.id.action_toggle_desktop -> {
-                val current = getTabsManager().currentTab
-                val context = context
-                if (current != null && context != null) {
-                    current.toggleDesktopUA(context)
-                    current.reload()
+                getTabsManager().currentTab?.apply {
+                    toggleDesktopUA()
+                    reload()
                     // TODO add back drawer closing
                 }
             }

@@ -19,7 +19,6 @@ import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.utils.Utils
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.graphics.*
 import android.os.Build
 import android.os.Handler
@@ -201,7 +200,7 @@ class LightningView(
             setOnTouchListener(TouchListener())
             initializeSettings()
         }
-        initializePreferences(activity)
+        initializePreferences()
 
         tabInitializer.initialize(tab, requestHeaders)
     }
@@ -239,12 +238,9 @@ class LightningView(
     /**
      * Initialize the preference driven settings of the WebView. This method must be called whenever
      * the preferences are changed within SharedPreferences.
-     *
-     * @param context the context in which the WebView was created, it is used to get the default
-     * UserAgent for the WebView.
      */
     @SuppressLint("NewApi", "SetJavaScriptEnabled")
-    fun initializePreferences(context: Context) {
+    fun initializePreferences() {
         val settings = webView?.settings ?: return
 
         lightningWebClient.updatePreferences()
@@ -272,7 +268,7 @@ class LightningView(
             settings.setGeolocationEnabled(false)
         }
 
-        setUserAgent(context, userPreferences.userAgentChoice)
+        setUserAgent(userPreferences.userAgentChoice)
 
         settings.saveFormData = userPreferences.savePasswordsEnabled && !isIncognito
 
@@ -384,14 +380,12 @@ class LightningView(
     /**
      * This method is used to toggle the user agent between desktop and the current preference of
      * the user.
-     *
-     * @param context the Context needed to set the user agent
      */
-    fun toggleDesktopUA(context: Context) {
+    fun toggleDesktopUA() {
         if (!toggleDesktop) {
             webView?.settings?.userAgentString = DESKTOP_USER_AGENT
         } else {
-            setUserAgent(context, userPreferences.userAgentChoice)
+            setUserAgent(userPreferences.userAgentChoice)
         }
 
         toggleDesktop = !toggleDesktop
@@ -405,15 +399,14 @@ class LightningView(
      * 3. use the mobile user agent
      * 4. use a custom user agent, or the default user agent if none was set.
      *
-     * @param context the context needed to get the default user agent.
      * @param choice  the choice of user agent to use, see above comments.
      */
     @SuppressLint("NewApi")
-    private fun setUserAgent(context: Context, choice: Int) {
+    private fun setUserAgent(choice: Int) {
         val settings = webView?.settings ?: return
 
         when (choice) {
-            1 -> settings.userAgentString = WebSettings.getDefaultUserAgent(context)
+            1 -> settings.userAgentString = WebSettings.getDefaultUserAgent(activity)
             2 -> settings.userAgentString = DESKTOP_USER_AGENT
             3 -> settings.userAgentString = MOBILE_USER_AGENT
             4 -> {

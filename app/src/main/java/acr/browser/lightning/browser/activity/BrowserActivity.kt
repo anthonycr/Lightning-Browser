@@ -1251,7 +1251,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             it.refreshPreferences()
             it.refreshBookmarks()
         }
-        tabsManager.resumeAll(this)
+        tabsManager.resumeAll()
         initializePreferences()
 
         networkDisposable = networkConnectivityModel
@@ -1939,7 +1939,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 startActivity(read)
             }
             R.id.action_toggle_desktop -> {
-                currentTab.toggleDesktopUA(this)
+                currentTab.toggleDesktopUA()
                 currentTab.reload()
                 closeDrawers(null)
             }

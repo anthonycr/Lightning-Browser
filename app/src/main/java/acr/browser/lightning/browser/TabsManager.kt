@@ -12,7 +12,6 @@ import acr.browser.lightning.view.*
 import android.app.Activity
 import android.app.Application
 import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -167,14 +166,12 @@ class TabsManager @Inject constructor(
      * Method used to resume all the tabs in the browser. This is necessary because we cannot pause
      * the WebView when the application is open currently due to a bug in the WebView, where calling
      * onResume doesn't consistently resume it.
-     *
-     * @param context the context needed to initialize the LightningView preferences.
      */
-    fun resumeAll(context: Context) {
+    fun resumeAll() {
         currentTab?.resumeTimers()
         for (tab in tabList) {
             tab.onResume()
-            tab.initializePreferences(context)
+            tab.initializePreferences()
         }
     }
 
