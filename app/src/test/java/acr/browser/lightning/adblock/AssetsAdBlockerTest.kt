@@ -32,12 +32,12 @@ class AssetsAdBlockerTest {
 
         assertThat(mutableList).hasSize(6)
         assertThat(mutableList).contains(
-                "fake.domain1.com",
-                "fake.domain2.com",
-                "fake.domain3.com",
-                "domain4.com",
-                "multiline1.com",
-                "multiline2.com"
+            "fake.domain1.com",
+            "fake.domain2.com",
+            "fake.domain3.com",
+            "domain4.com",
+            "multiline1.com",
+            "multiline2.com"
         )
     }
 }

@@ -28,9 +28,9 @@ class BroadcastReceiverObservableTest {
         val broadcastObservable = broadcastReceiver.test()
 
         val intentList = listOf(
-                Intent(action).apply { putExtra("extra", 1) },
-                Intent(action).apply { putExtra("extra", 2) },
-                Intent(action).apply { putExtra("extra", 3) }
+            Intent(action).apply { putExtra("extra", 1) },
+            Intent(action).apply { putExtra("extra", 2) },
+            Intent(action).apply { putExtra("extra", 3) }
         )
 
         intentList.forEach(application::sendBroadcast)
@@ -48,9 +48,9 @@ class BroadcastReceiverObservableTest {
 
         val otherAction = "test2"
         val intentList = listOf(
-                Intent(otherAction).apply { putExtra("extra", 1) },
-                Intent(otherAction).apply { putExtra("extra", 2) },
-                Intent(otherAction).apply { putExtra("extra", 3) }
+            Intent(otherAction).apply { putExtra("extra", 1) },
+            Intent(otherAction).apply { putExtra("extra", 2) },
+            Intent(otherAction).apply { putExtra("extra", 3) }
         )
 
         intentList.forEach(application::sendBroadcast)

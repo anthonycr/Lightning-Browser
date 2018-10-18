@@ -15,9 +15,9 @@ class AboutSettingsFragment : AbstractSettingsFragment() {
         super.onCreate(savedInstanceState)
 
         clickablePreference(
-                preference = SETTINGS_VERSION,
-                summary = BuildConfig.VERSION_NAME,
-                onClick = { }
+            preference = SETTINGS_VERSION,
+            summary = BuildConfig.VERSION_NAME,
+            onClick = { }
         )
     }
 

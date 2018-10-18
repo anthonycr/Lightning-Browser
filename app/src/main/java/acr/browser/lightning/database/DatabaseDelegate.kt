@@ -15,7 +15,7 @@ private class DatabaseDelegate : ReadOnlyProperty<SQLiteOpenHelper, SQLiteDataba
 
     override fun getValue(thisRef: SQLiteOpenHelper, property: KProperty<*>): SQLiteDatabase {
         return sqLiteDatabase?.takeIf(SQLiteDatabase::isOpen)
-                ?: thisRef.writableDatabase.also { sqLiteDatabase = it }
+            ?: thisRef.writableDatabase.also { sqLiteDatabase = it }
     }
 
 }

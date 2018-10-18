@@ -9,7 +9,7 @@ import acr.browser.lightning.R
  * for the icon.
  */
 class YandexSearch : BaseSearchEngine(
-        "file:///android_asset/yandex.png",
-        "https://yandex.ru/yandsearch?lr=21411&text=",
-        R.string.search_engine_yandex
+    "file:///android_asset/yandex.png",
+    "https://yandex.ru/yandsearch?lr=21411&text=",
+    R.string.search_engine_yandex
 )

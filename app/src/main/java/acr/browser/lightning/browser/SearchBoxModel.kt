@@ -11,8 +11,8 @@ import javax.inject.Inject
  * A UI model for the search box.
  */
 class SearchBoxModel @Inject constructor(
-        private val userPreferences: UserPreferences,
-        application: Application
+    private val userPreferences: UserPreferences,
+    application: Application
 ) {
 
     private val untitledTitle: String = application.getString(R.string.untitled)

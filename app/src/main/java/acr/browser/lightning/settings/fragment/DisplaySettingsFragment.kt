@@ -34,62 +34,62 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         themeOptions = this.resources.getStringArray(R.array.themes)
 
         clickableDynamicPreference(
-                preference = SETTINGS_THEME,
-                summary = themeOptions[userPreferences.useTheme],
-                onClick = this::showThemePicker
+            preference = SETTINGS_THEME,
+            summary = themeOptions[userPreferences.useTheme],
+            onClick = this::showThemePicker
         )
 
         clickablePreference(
-                preference = SETTINGS_TEXTSIZE,
-                onClick = this::showTextSizePicker
+            preference = SETTINGS_TEXTSIZE,
+            onClick = this::showTextSizePicker
         )
 
         checkBoxPreference(
-                preference = SETTINGS_HIDESTATUSBAR,
-                isChecked = userPreferences.hideStatusBarEnabled,
-                onCheckChange = { userPreferences.hideStatusBarEnabled = it }
+            preference = SETTINGS_HIDESTATUSBAR,
+            isChecked = userPreferences.hideStatusBarEnabled,
+            onCheckChange = { userPreferences.hideStatusBarEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_FULLSCREEN,
-                isChecked = userPreferences.fullScreenEnabled,
-                onCheckChange = { userPreferences.fullScreenEnabled = it }
+            preference = SETTINGS_FULLSCREEN,
+            isChecked = userPreferences.fullScreenEnabled,
+            onCheckChange = { userPreferences.fullScreenEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_VIEWPORT,
-                isChecked = userPreferences.useWideViewportEnabled,
-                onCheckChange = { userPreferences.useWideViewportEnabled = it }
+            preference = SETTINGS_VIEWPORT,
+            isChecked = userPreferences.useWideViewportEnabled,
+            onCheckChange = { userPreferences.useWideViewportEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_OVERVIEWMODE,
-                isChecked = userPreferences.overviewModeEnabled,
-                onCheckChange = { userPreferences.overviewModeEnabled = it }
+            preference = SETTINGS_OVERVIEWMODE,
+            isChecked = userPreferences.overviewModeEnabled,
+            onCheckChange = { userPreferences.overviewModeEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_REFLOW,
-                isChecked = userPreferences.textReflowEnabled,
-                onCheckChange = { userPreferences.textReflowEnabled = it }
+            preference = SETTINGS_REFLOW,
+            isChecked = userPreferences.textReflowEnabled,
+            onCheckChange = { userPreferences.textReflowEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_BLACK_STATUS,
-                isChecked = userPreferences.useBlackStatusBar,
-                onCheckChange = { userPreferences.useBlackStatusBar = it }
+            preference = SETTINGS_BLACK_STATUS,
+            isChecked = userPreferences.useBlackStatusBar,
+            onCheckChange = { userPreferences.useBlackStatusBar = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_DRAWERTABS,
-                isChecked = userPreferences.showTabsInDrawer,
-                onCheckChange = { userPreferences.showTabsInDrawer = it }
+            preference = SETTINGS_DRAWERTABS,
+            isChecked = userPreferences.showTabsInDrawer,
+            onCheckChange = { userPreferences.showTabsInDrawer = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_SWAPTABS,
-                isChecked = userPreferences.bookmarksAndTabsSwapped,
-                onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
+            preference = SETTINGS_SWAPTABS,
+            isChecked = userPreferences.bookmarksAndTabsSwapped,
+            onCheckChange = { userPreferences.bookmarksAndTabsSwapped = it }
         )
     }
 
@@ -148,7 +148,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
     }
 
     private class TextSeekBarListener(
-            private val sampleText: TextView
+        private val sampleText: TextView
     ) : SeekBar.OnSeekBarChangeListener {
 
         override fun onProgressChanged(view: SeekBar, size: Int, user: Boolean) {

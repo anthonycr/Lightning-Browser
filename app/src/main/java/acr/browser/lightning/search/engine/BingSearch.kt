@@ -9,7 +9,7 @@ import acr.browser.lightning.R
  * for the icon.
  */
 class BingSearch : BaseSearchEngine(
-        "file:///android_asset/bing.png",
-        "https://www.bing.com/search?q=",
-        R.string.search_engine_bing
+    "file:///android_asset/bing.png",
+    "https://www.bing.com/search?q=",
+    R.string.search_engine_bing
 )

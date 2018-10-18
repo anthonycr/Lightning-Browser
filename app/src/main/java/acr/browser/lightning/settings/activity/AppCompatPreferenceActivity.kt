@@ -47,10 +47,10 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     override fun setContentView(view: View) = delegate.setContentView(view)
 
     override fun setContentView(view: View, params: ViewGroup.LayoutParams) =
-            delegate.setContentView(view, params)
+        delegate.setContentView(view, params)
 
     override fun addContentView(view: View, params: ViewGroup.LayoutParams) =
-            delegate.addContentView(view, params)
+        delegate.addContentView(view, params)
 
     override fun onPostResume() {
         super.onPostResume()

@@ -13,12 +13,12 @@ import androidx.core.content.ContextCompat
  * 2 layers are required for this drawable to work properly.
  */
 class BackgroundDrawable(
-        context: Context
+    context: Context
 ) : TransitionDrawable(
-        arrayOf<Drawable>(
-                ColorDrawable(ContextCompat.getColor(context, R.color.transparent)),
-                ColorDrawable(ThemeUtils.getColor(context, R.attr.selectedBackground))
-        )
+    arrayOf<Drawable>(
+        ColorDrawable(ContextCompat.getColor(context, R.color.transparent)),
+        ColorDrawable(ThemeUtils.getColor(context, R.attr.selectedBackground))
+    )
 ) {
 
     private var isSelected: Boolean = false

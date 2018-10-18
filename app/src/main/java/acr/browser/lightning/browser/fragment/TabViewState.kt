@@ -13,7 +13,7 @@ internal class TabViewState(private val lightningView: LightningView) {
     val isForegroundTab = lightningView.isForegroundTab
 
     override fun equals(other: Any?): Boolean =
-            other is TabViewState && other.lightningView == lightningView
+        other is TabViewState && other.lightningView == lightningView
 
     override fun hashCode(): Int {
         var result = lightningView.hashCode()

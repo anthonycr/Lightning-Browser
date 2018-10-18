@@ -9,11 +9,9 @@ import javax.inject.Inject
  *
  * Created by anthonycr on 2/19/18.
  */
-class ScreenSize @Inject constructor(
-        private val context: Context
-) {
+class ScreenSize @Inject constructor(private val context: Context) {
 
     fun isTablet(): Boolean =
-            context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_XLARGE
+        context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_XLARGE
 
 }

@@ -25,45 +25,45 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
         injector.inject(this)
 
         clickableDynamicPreference(
-                preference = SETTINGS_RENDERING_MODE,
-                summary = getString(renderingModePreferenceToString(userPreferences.renderingMode)),
-                onClick = this::showRenderingDialogPicker
+            preference = SETTINGS_RENDERING_MODE,
+            summary = getString(renderingModePreferenceToString(userPreferences.renderingMode)),
+            onClick = this::showRenderingDialogPicker
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_TEXT_ENCODING,
-                summary = userPreferences.textEncoding,
-                onClick = this::showTextEncodingDialogPicker
+            preference = SETTINGS_TEXT_ENCODING,
+            summary = userPreferences.textEncoding,
+            onClick = this::showTextEncodingDialogPicker
         )
 
         clickableDynamicPreference(
-                preference = SETTINGS_URL_CONTENT,
-                summary = urlBoxPreferenceToString(userPreferences.urlBoxContentChoice),
-                onClick = this::showUrlBoxDialogPicker
+            preference = SETTINGS_URL_CONTENT,
+            summary = urlBoxPreferenceToString(userPreferences.urlBoxContentChoice),
+            onClick = this::showUrlBoxDialogPicker
         )
 
         checkBoxPreference(
-                preference = SETTINGS_NEW_WINDOW,
-                isChecked = userPreferences.popupsEnabled,
-                onCheckChange = { userPreferences.popupsEnabled = it }
+            preference = SETTINGS_NEW_WINDOW,
+            isChecked = userPreferences.popupsEnabled,
+            onCheckChange = { userPreferences.popupsEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_ENABLE_COOKIES,
-                isChecked = userPreferences.cookiesEnabled,
-                onCheckChange = { userPreferences.cookiesEnabled = it }
+            preference = SETTINGS_ENABLE_COOKIES,
+            isChecked = userPreferences.cookiesEnabled,
+            onCheckChange = { userPreferences.cookiesEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_COOKIES_INCOGNITO,
-                isChecked = userPreferences.incognitoCookiesEnabled,
-                onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
+            preference = SETTINGS_COOKIES_INCOGNITO,
+            isChecked = userPreferences.incognitoCookiesEnabled,
+            onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
         )
 
         checkBoxPreference(
-                preference = SETTINGS_RESTORE_TABS,
-                isChecked = userPreferences.restoreLostTabsEnabled,
-                onCheckChange = { userPreferences.restoreLostTabsEnabled = it }
+            preference = SETTINGS_RESTORE_TABS,
+            isChecked = userPreferences.restoreLostTabsEnabled,
+            onCheckChange = { userPreferences.restoreLostTabsEnabled = it }
         )
     }
 
@@ -79,11 +79,11 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
                 setTitle(resources.getString(R.string.rendering_mode))
 
                 val choices = arrayOf(
-                        it.getString(R.string.name_normal),
-                        it.getString(R.string.name_inverted),
-                        it.getString(R.string.name_grayscale),
-                        it.getString(R.string.name_inverted_grayscale),
-                        it.getString(R.string.name_increase_contrast)
+                    it.getString(R.string.name_normal),
+                    it.getString(R.string.name_inverted),
+                    it.getString(R.string.name_grayscale),
+                    it.getString(R.string.name_inverted_grayscale),
+                    it.getString(R.string.name_increase_contrast)
                 )
 
                 setSingleChoiceItems(choices, userPreferences.renderingMode) { _, which ->

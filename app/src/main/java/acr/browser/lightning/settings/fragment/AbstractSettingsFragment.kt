@@ -34,11 +34,11 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
      * @param onCheckChange the function that should be called when the check box is toggled.
      */
     protected fun checkBoxPreference(
-            preference: String,
-            isChecked: Boolean,
-            isEnabled: Boolean = true,
-            summary: String? = null,
-            onCheckChange: (Boolean) -> Unit
+        preference: String,
+        isChecked: Boolean,
+        isEnabled: Boolean = true,
+        summary: String? = null,
+        onCheckChange: (Boolean) -> Unit
     ) {
         (findPreference(preference) as CheckBoxPreference).apply {
             this.isChecked = isChecked
@@ -62,16 +62,16 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
      * @param onClick the function that should be called when the preference is clicked.
      */
     protected fun clickablePreference(
-            preference: String,
-            isEnabled: Boolean = true,
-            summary: String? = null,
-            onClick: () -> Unit
+        preference: String,
+        isEnabled: Boolean = true,
+        summary: String? = null,
+        onClick: () -> Unit
     ) {
         clickableDynamicPreference(
-                preference = preference,
-                isEnabled = isEnabled,
-                summary = summary,
-                onClick = { onClick() }
+            preference = preference,
+            isEnabled = isEnabled,
+            summary = summary,
+            onClick = { onClick() }
         )
     }
 
@@ -87,10 +87,10 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
      * desired.
      */
     protected fun clickableDynamicPreference(
-            preference: String,
-            isEnabled: Boolean = true,
-            summary: String? = null,
-            onClick: (SummaryUpdater) -> Unit
+        preference: String,
+        isEnabled: Boolean = true,
+        summary: String? = null,
+        onClick: (SummaryUpdater) -> Unit
     ) {
         findPreference(preference).apply {
             this.isEnabled = isEnabled
@@ -114,10 +114,10 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
      * @param onCheckChange the function that should be called when the toggle is toggled.
      */
     protected fun togglePreference(
-            preference: String,
-            isChecked: Boolean,
-            isEnabled: Boolean = true,
-            onCheckChange: (Boolean) -> Unit
+        preference: String,
+        isChecked: Boolean,
+        isEnabled: Boolean = true,
+        onCheckChange: (Boolean) -> Unit
     ) {
         (findPreference(preference) as SwitchPreference).apply {
             this.isChecked = isChecked

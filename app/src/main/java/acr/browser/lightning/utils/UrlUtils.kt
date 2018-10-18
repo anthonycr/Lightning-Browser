@@ -69,7 +69,7 @@ object UrlUtils {
 
         return if (canBeSearch) {
             URLUtil.composeSearchUrl(inUrl,
-                    searchUrl, QUERY_PLACE_HOLDER)
+                searchUrl, QUERY_PLACE_HOLDER)
         } else {
             ""
         }
@@ -81,11 +81,11 @@ object UrlUtils {
     @JvmStatic
     fun isSpecialUrl(url: String?): Boolean {
         return url != null
-                && url.startsWith(FILE)
-                && (url.endsWith(BookmarkPageFactory.FILENAME)
-                || url.endsWith(DownloadPageFactory.FILENAME)
-                || url.endsWith(HistoryPageFactory.FILENAME)
-                || url.endsWith(HomePageFactory.FILENAME))
+            && url.startsWith(FILE)
+            && (url.endsWith(BookmarkPageFactory.FILENAME)
+            || url.endsWith(DownloadPageFactory.FILENAME)
+            || url.endsWith(HistoryPageFactory.FILENAME)
+            || url.endsWith(HomePageFactory.FILENAME))
     }
 
     /**
@@ -96,7 +96,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isBookmarkUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(BookmarkPageFactory.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(BookmarkPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the bookmark page.
@@ -106,7 +106,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isDownloadsUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(DownloadPageFactory.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(DownloadPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the history page.
@@ -116,7 +116,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isHistoryUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(HistoryPageFactory.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(HistoryPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the start page.
@@ -126,5 +126,5 @@ object UrlUtils {
      */
     @JvmStatic
     fun isStartPageUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(HomePageFactory.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(HomePageFactory.FILENAME)
 }
