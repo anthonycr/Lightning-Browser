@@ -42,7 +42,7 @@ class BookmarkPageFactory @Inject constructor(
     override fun buildPage(): Single<String> = bookmarkModel
         .getAllBookmarksSorted()
         .flattenAsObservable { it }
-        .groupBy(Bookmark.Entry::folder) { it as Bookmark }
+        .groupBy<Bookmark.Folder, Bookmark>(Bookmark.Entry::folder) { it }
         .flatMapSingle { bookmarksInFolder ->
             val folder = bookmarksInFolder.key
             return@flatMapSingle bookmarksInFolder
@@ -79,8 +79,6 @@ class BookmarkPageFactory @Inject constructor(
         icon.compress(Bitmap.CompressFormat.PNG, 100, it)
         icon.recycle()
     }
-
-    private data class BookmarkViewModel(val title: String, val url: String, val iconUrl: String)
 
     private fun construct(list: List<BookmarkViewModel>): String {
         return Jsoup.parse(bookmarkPageReader.provideHtml()).apply {

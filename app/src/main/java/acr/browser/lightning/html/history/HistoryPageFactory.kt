@@ -47,7 +47,6 @@ class HistoryPageFactory @Inject constructor(
                     }
                 }
                 .outerHtml()
-
         }
         .map { content -> Pair(createHistoryPage(), content) }
         .doOnSuccess { (page, content) ->
