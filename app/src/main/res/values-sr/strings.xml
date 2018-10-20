@@ -171,7 +171,7 @@
     <string name="freeware">Фривер</string>
     <string name="android_open_source_project">Андроид пројекат отвореног кôда</string>
     <string name="hphosts_ad_server_list">hpHosts списак рекламних сервера</string>
-    <string name="deleted_tab">Поново отворени претходни језичак</string>
+    <string name="reopening_recent_tab">Поново отворени претходни језичак</string>
     <string name="rendering_mode">Исцртавање</string>
     <string name="name_inverted">Инверзно</string>
     <string name="name_grayscale">Сивило</string>

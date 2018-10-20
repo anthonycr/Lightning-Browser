@@ -160,7 +160,7 @@
     <string name="freeware">Ücretsiz</string>
     <string name="android_open_source_project">Android Açık Kaynak Projesi</string>
     <string name="hphosts_ad_server_list">hpHosts Reklam Sunucu Listesi</string>
-    <string name="deleted_tab">Önceki sekmeler yeniden açıldı</string>
+    <string name="reopening_recent_tab">Önceki sekmeler yeniden açıldı</string>
     <string name="rendering_mode">Render Modu</string>
     <string name="name_inverted">Ters-Düz</string>
     <string name="name_grayscale">Gri tonlamalı</string>

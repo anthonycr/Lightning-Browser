@@ -95,7 +95,7 @@
 	<string name="name_grayscale">Odcienie szarości</string>
 	<string name="name_inverted">Odwrócony</string>
 	<string name="rendering_mode">Tryb renderowania</string>
-	<string name="deleted_tab">Przywrócono kartę</string>
+	<string name="reopening_recent_tab">Przywrócono kartę</string>
 	<string name="hphosts_ad_server_list">Lista filtrów hpHosts</string>
 	<string name="android_open_source_project">Android Open Source Project</string>
 	<string name="freeware">Freeware</string>

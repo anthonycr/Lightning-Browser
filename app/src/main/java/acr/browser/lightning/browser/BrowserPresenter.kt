@@ -11,7 +11,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
-import acr.browser.lightning.utils.UrlUtils
+import acr.browser.lightning.view.BundleInitializer
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.TabInitializer
 import acr.browser.lightning.view.UrlInitializer
@@ -34,7 +34,8 @@ class BrowserPresenter(
     private val tabsModel: TabsManager,
     @MainScheduler private val mainScheduler: Scheduler,
     private val homePageFactory: HomePageFactory,
-    private val bookmarkPageFactory: BookmarkPageFactory
+    private val bookmarkPageFactory: BookmarkPageFactory,
+    private val recentTabModel: RecentTabModel
 ) {
 
     private var currentTab: LightningView? = null
@@ -158,9 +159,7 @@ class BrowserPresenter(
         Log.d(TAG, "deleting tab...")
         val tabToDelete = tabsModel.getTabAtPosition(position) ?: return
 
-        if (!UrlUtils.isSpecialUrl(tabToDelete.url) && !isIncognito) {
-            userPreferences.savedUrl = tabToDelete.url
-        }
+        recentTabModel.addClosedTab(tabToDelete.saveState())
 
         val isShown = tabToDelete.isShown
         val shouldClose = shouldClose && isShown && tabToDelete.isNewTab
@@ -229,6 +228,16 @@ class BrowserPresenter(
                 shouldClose = true
                 tabsModel.lastTab()?.isNewTab = true
             }
+        }
+    }
+
+    /**
+     * Call when the user long presses the new tab button.
+     */
+    fun onNewTabLongClicked() {
+        recentTabModel.lastClosed()?.let {
+            newTab(BundleInitializer(it), true)
+            view.showSnackbar(R.string.reopening_recent_tab)
         }
     }
 

@@ -73,8 +73,6 @@ class UserPreferences @Inject constructor(
 
     var clearCookiesExitEnabled by preferences.booleanPreference(CLEAR_COOKIES_EXIT, false)
 
-    var savedUrl by preferences.stringPreference(SAVE_URL, "")
-
     var renderingMode by preferences.intPreference(RENDERING_MODE, 0)
 
     var blockThirdPartyCookiesEnabled by preferences.booleanPreference(BLOCK_THIRD_PARTY, false)

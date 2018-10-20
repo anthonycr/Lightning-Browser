@@ -169,7 +169,7 @@
     <string name="freeware">免費軟體</string>
     <string name="android_open_source_project">Android 開放原始碼計畫 (AOSP)</string>
     <string name="hphosts_ad_server_list">hpHosts 廣告伺服器清單</string>    
-    <string name="deleted_tab">還原舊分頁</string>
+    <string name="reopening_recent_tab">還原舊分頁</string>
     <string name="rendering_mode">轉換模式</string>
     <string name="name_inverted">反轉</string>
     <string name="name_grayscale">灰階</string>

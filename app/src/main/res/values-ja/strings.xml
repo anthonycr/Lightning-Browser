@@ -161,7 +161,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">閉じたタブを元に戻す</string>
+    <string name="reopening_recent_tab">閉じたタブを元に戻す</string>
     <string name="rendering_mode">レンダリングモード</string>
     <string name="name_inverted">色の反転</string>
     <string name="name_grayscale">グレースケール</string>

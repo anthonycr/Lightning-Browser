@@ -324,14 +324,12 @@ class TabsManager @Inject constructor(
             .filter { it.url.isNotBlank() }
             .withIndex()
             .forEach { (index, tab) ->
-                val state = Bundle(ClassLoader.getSystemClassLoader())
-                val webView = tab.webView
-                if (webView != null && !UrlUtils.isSpecialUrl(tab.url)) {
-                    webView.saveState(state)
-                    outState.putBundle(BUNDLE_KEY + index, state)
-                } else if (webView != null) {
-                    state.putString(URL_KEY, tab.url)
-                    outState.putBundle(BUNDLE_KEY + index, state)
+                if (!UrlUtils.isSpecialUrl(tab.url)) {
+                    outState.putBundle(BUNDLE_KEY + index, tab.saveState())
+                } else {
+                    outState.putBundle(BUNDLE_KEY + index, Bundle().apply {
+                        putString(URL_KEY, tab.url)
+                    })
                 }
             }
         FileUtils.writeBundleToStorage(application, outState, BUNDLE_STORAGE)

@@ -221,7 +221,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        presenter = BrowserPresenter(this, isIncognito(), userPreferences, tabsManager, mainScheduler, homePageFactory, bookmarkPageFactory)
+        presenter = BrowserPresenter(this, isIncognito(), userPreferences, tabsManager, mainScheduler, homePageFactory, bookmarkPageFactory, RecentTabModel())
 
         initialize(savedInstanceState)
     }
@@ -1038,15 +1038,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun newTabButtonLongClicked() {
-        val savedUrl = userPreferences.savedUrl
-
-        if (savedUrl != "") {
-            presenter?.newTab(UrlInitializer(savedUrl), true)
-
-            snackbar(R.string.deleted_tab)
-        }
-
-        userPreferences.savedUrl = ""
+        presenter?.onNewTabLongClicked()
     }
 
     override fun bookmarkButtonClicked() {

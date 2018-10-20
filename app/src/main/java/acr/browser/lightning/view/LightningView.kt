@@ -21,6 +21,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.*
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
@@ -417,6 +418,13 @@ class LightningView(
                 settings.userAgentString = ua
             }
         }
+    }
+
+    /**
+     * Save the state of the tab and return it as a [Bundle].
+     */
+    fun saveState(): Bundle = Bundle(ClassLoader.getSystemClassLoader()).also {
+        webView?.saveState(it)
     }
 
     /**

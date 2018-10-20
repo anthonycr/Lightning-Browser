@@ -129,7 +129,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts 광고 서버 목록</string>
-    <string name="deleted_tab">다시 열어놓은 기존의 탭</string>
+    <string name="reopening_recent_tab">다시 열어놓은 기존의 탭</string>
     <string name="rendering_mode">렌더링 모드</string>
     <string name="name_inverted">반전</string>
     <string name="name_grayscale">그레이스케일</string>
