@@ -22,7 +22,9 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.Filter
+import android.widget.Filterable
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -119,28 +121,20 @@ class SuggestionsAdapter(
 
     override fun getItemId(position: Int): Long = 0
 
-    private class SuggestionHolder(view: View) {
-
-        val imageView: ImageView = view.findViewById(R.id.suggestionIcon)
-        val titleView: TextView = view.findViewById(R.id.title)
-        val urlView: TextView = view.findViewById(R.id.url)
-
-    }
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
-        val holder: SuggestionHolder
+        val holder: SuggestionViewHolder
         val finalView: View
 
         if (convertView == null) {
             val inflater = LayoutInflater.from(context)
             finalView = inflater.inflate(R.layout.two_line_autocomplete, parent, false)
 
-            holder = SuggestionHolder(finalView)
+            holder = SuggestionViewHolder(finalView)
             finalView.tag = holder
         } else {
             finalView = convertView
-            holder = convertView.tag as SuggestionHolder
+            holder = convertView.tag as SuggestionViewHolder
         }
         val webPage: WebPage = filteredList[position]
 
