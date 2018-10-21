@@ -10,7 +10,6 @@ import acr.browser.lightning.html.jsoup.*
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
 import io.reactivex.Single
-import org.jsoup.nodes.Element
 import java.io.File
 import java.io.FileWriter
 import javax.inject.Inject
@@ -31,7 +30,7 @@ class DownloadPageFactory @Inject constructor(
             parse(listPageReader.provideHtml()) andBuild {
                 title { application.getString(R.string.action_downloads) }
                 body {
-                    val repeatableElement = getElementById("repeated").also(Element::remove)
+                    val repeatableElement = id("repeated").removeElement()
                     id("content") {
                         list.forEach {
                             appendChild(repeatableElement.clone {

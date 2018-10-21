@@ -17,7 +17,6 @@ import android.graphics.Bitmap
 import androidx.core.net.toUri
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import org.jsoup.nodes.Element
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
@@ -84,7 +83,7 @@ class BookmarkPageFactory @Inject constructor(
         return parse(bookmarkPageReader.provideHtml()) andBuild {
             title { title }
             body {
-                val repeatableElement = getElementById("repeated").also(Element::remove)
+                val repeatableElement = id("repeated").removeElement()
                 id("content") {
                     list.forEach {
                         appendChild(repeatableElement.clone {

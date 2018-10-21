@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package acr.browser.lightning.html.jsoup
 
 import org.jsoup.Jsoup
@@ -29,6 +31,14 @@ inline fun Element.clone(edit: Element.() -> Unit): Element {
 
 inline fun Element.id(string: String, build: Element.() -> Unit): Element {
     return getElementById(string).also(build)
+}
+
+inline fun Element.id(string: String): Element {
+    return getElementById(string)
+}
+
+inline fun Element.removeElement(): Element {
+    return also(Element::remove)
 }
 
 inline fun Element.div(clazz: String, id: String? = null, build: Element.() -> Unit) {
