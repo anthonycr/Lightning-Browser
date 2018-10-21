@@ -6,10 +6,10 @@ import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.ListPageReader
+import acr.browser.lightning.html.jsoup.*
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
 import io.reactivex.Single
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.File
 import java.io.FileWriter
@@ -28,22 +28,21 @@ class DownloadPageFactory @Inject constructor(
     override fun buildPage(): Single<String> = manager
         .getAllDownloads()
         .map { list ->
-            Jsoup.parse(listPageReader.provideHtml()).apply {
-                title(application.getString(R.string.action_downloads))
-                body().also { body ->
-                    val repeatableElement = body.getElementById("repeated").also(Element::remove)
-
-                    body.getElementById("content").also { content ->
+            parse(listPageReader.provideHtml()) andBuild {
+                title { application.getString(R.string.action_downloads) }
+                body {
+                    val repeatableElement = getElementById("repeated").also(Element::remove)
+                    id("content") {
                         list.forEach {
-                            content.appendChild(repeatableElement.clone().apply {
-                                getElementsByTag("a").first().attr("href", createFileUrl(it.title))
-                                getElementById("title").text(createFileTitle(it))
-                                getElementById("url").text(it.url)
+                            appendChild(repeatableElement.clone {
+                                tag("a") { attr("href", createFileUrl(it.title)) }
+                                id("title") { text(createFileTitle(it)) }
+                                id("url") { text(it.url) }
                             })
                         }
                     }
                 }
-            }.outerHtml()
+            }
         }
         .map { content -> Pair(createDownloadsPageFile(), content) }
         .doOnSuccess { (page, content) ->
