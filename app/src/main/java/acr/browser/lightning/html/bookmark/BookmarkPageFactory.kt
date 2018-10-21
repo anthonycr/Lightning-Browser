@@ -10,13 +10,13 @@ import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.favicon.toValidUri
 import acr.browser.lightning.html.HtmlPageFactory
+import acr.browser.lightning.html.jsoup.*
 import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.File
 import java.io.FileOutputStream
@@ -81,21 +81,21 @@ class BookmarkPageFactory @Inject constructor(
     }
 
     private fun construct(list: List<BookmarkViewModel>): String {
-        return Jsoup.parse(bookmarkPageReader.provideHtml()).apply {
-            title(title)
-            body().also { body ->
-                val repeatableElement = body.getElementById("repeated").also(Element::remove)
-                body.getElementById("content").also { content ->
+        return parse(bookmarkPageReader.provideHtml()) andBuild {
+            title { title }
+            body {
+                val repeatableElement = getElementById("repeated").also(Element::remove)
+                id("content") {
                     list.forEach {
-                        content.appendChild(repeatableElement.clone().apply {
-                            getElementsByTag("a").first().attr("href", it.url)
-                            getElementsByTag("img").first().attr("src", it.iconUrl)
-                            getElementById("title").appendText(it.title)
+                        appendChild(repeatableElement.clone {
+                            tag("a") { attr("href", it.url) }
+                            tag("img") { attr("src", it.iconUrl) }
+                            id("title") { appendText(it.title) }
                         })
                     }
                 }
             }
-        }.outerHtml()
+        }
     }
 
     private fun Bookmark.asViewModel(): BookmarkViewModel = when (this) {
