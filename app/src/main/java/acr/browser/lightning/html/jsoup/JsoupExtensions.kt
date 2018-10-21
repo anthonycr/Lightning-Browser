@@ -21,6 +21,10 @@ inline fun Document.body(build: Element.() -> Unit) {
     build(body())
 }
 
+inline fun Document.charset(charset: () -> String) {
+    outputSettings().charset(charset())
+}
+
 inline fun Element.tag(tag: String, build: Element.() -> Unit): Element {
     return getElementsByTag(tag).first().also(build)
 }
