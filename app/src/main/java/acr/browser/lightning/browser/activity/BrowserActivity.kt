@@ -1517,29 +1517,31 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * used to allow uploading into the browser
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            if (requestCode == 1) {
-                val result = if (intent == null || resultCode != Activity.RESULT_OK) null else intent.data
+        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                val result = if (intent == null || resultCode != Activity.RESULT_OK) {
+                    null
+                } else {
+                    intent.data
+                }
+
                 uploadMessageCallback?.onReceiveValue(result)
                 uploadMessageCallback = null
-
-            }
-        }
-
-        if (requestCode == FILE_CHOOSER_REQUEST_CODE) {
-            val results: Array<Uri>? = if (resultCode == Activity.RESULT_OK) {
-                if (intent == null) {
-                    // If there is not data, then we may have taken a photo
-                    cameraPhotoPath?.let { arrayOf(it.toUri()) }
-                } else {
-                    intent.dataString?.let { arrayOf(it.toUri()) }
-                }
             } else {
-                null
-            }
+                val results: Array<Uri>? = if (resultCode == Activity.RESULT_OK) {
+                    if (intent == null) {
+                        // If there is not data, then we may have taken a photo
+                        cameraPhotoPath?.let { arrayOf(it.toUri()) }
+                    } else {
+                        intent.dataString?.let { arrayOf(it.toUri()) }
+                    }
+                } else {
+                    null
+                }
 
-            filePathCallback?.onReceiveValue(results)
-            filePathCallback = null
+                filePathCallback?.onReceiveValue(results)
+                filePathCallback = null
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, intent)
         }
