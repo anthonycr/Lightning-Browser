@@ -8,17 +8,17 @@ import java.util.*
  */
 class RecentTabModel {
 
-    private val bundleQueue: Queue<Bundle> = ArrayDeque<Bundle>()
+    private val bundleStack: Stack<Bundle> = Stack()
 
     /**
      * Return the last closed tab as a [Bundle] or null if there is no previously opened tab.
      * Removes the [Bundle] from the queue after returning it.
      */
-    fun lastClosed(): Bundle? = bundleQueue.poll()
+    fun lastClosed(): Bundle? = bundleStack.pop()
 
     /**
      * Add the [savedBundle] to the queue. The next call to [lastClosed] will return this [Bundle].
      */
-    fun addClosedTab(savedBundle: Bundle) = bundleQueue.add(savedBundle)
+    fun addClosedTab(savedBundle: Bundle) = bundleStack.add(savedBundle)
 
 }
