@@ -9,6 +9,7 @@ import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.ssl.SslWarningPreferences
@@ -22,7 +23,6 @@ import android.net.MailTo
 import android.net.http.SslError
 import android.os.Build
 import android.os.Message
-import androidx.core.content.FileProvider
 import android.util.Log
 import android.view.LayoutInflater
 import android.webkit.*
@@ -30,6 +30,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import com.anthonycr.mezzanine.MezzanineGenerator
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -52,6 +53,7 @@ class LightningWebClient(
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var sslWarningPreferences: SslWarningPreferences
     @Inject internal lateinit var whitelistModel: WhitelistModel
+    @Inject internal lateinit var logger: Logger
 
     private var adBlock: AdBlocker
 
@@ -164,7 +166,7 @@ class LightningWebClient(
                 val user = name.text.toString()
                 val pass = password.text.toString()
                 handler.proceed(user.trim(), pass.trim())
-                Log.d(TAG, "Attempting HTTP Authentication")
+                logger.log(TAG, "Attempting HTTP Authentication")
             }
             setNegativeButton(R.string.action_cancel) { _, _ ->
                 handler.cancel()

@@ -3,6 +3,7 @@ package acr.browser.lightning
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.*
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
@@ -10,7 +11,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
-import android.util.Log
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
 import com.squareup.leakcanary.LeakCanary
@@ -24,6 +24,7 @@ class BrowserApp : Application() {
     @Inject internal lateinit var developerPreferences: DeveloperPreferences
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
+    @Inject internal lateinit var logger: Logger
 
     val applicationComponent: AppComponent by lazy { appComponent }
 
@@ -82,7 +83,7 @@ class BrowserApp : Application() {
 
         registerActivityLifecycleCallbacks(object : MemoryLeakUtils.LifecycleAdapter() {
             override fun onActivityDestroyed(activity: Activity) {
-                Log.d(TAG, "Cleaning up after the Android framework")
+                logger.log(TAG, "Cleaning up after the Android framework")
                 MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
             }
         })

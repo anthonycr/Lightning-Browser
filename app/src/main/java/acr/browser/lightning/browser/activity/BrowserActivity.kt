@@ -27,6 +27,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
 import acr.browser.lightning.reading.activity.ReadingActivity
@@ -156,6 +157,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject lateinit var homePageInitializer: HomePageInitializer
     @Inject @field:MainHandler lateinit var mainHandler: Handler
     @Inject lateinit var proxyUtils: ProxyUtils
+    @Inject lateinit var logger: Logger
 
     // Subscriptions
     private var networkDisposable: Disposable? = null
@@ -221,7 +223,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        presenter = BrowserPresenter(this, isIncognito(), userPreferences, tabsManager, mainScheduler, homePageFactory, bookmarkPageFactory, RecentTabModel())
+        presenter = BrowserPresenter(
+            this,
+            isIncognito(),
+            userPreferences,
+            tabsManager,
+            mainScheduler,
+            homePageFactory,
+            bookmarkPageFactory,
+            RecentTabModel(),
+            logger
+        )
 
         initialize(savedInstanceState)
     }
@@ -436,7 +448,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     protected fun panicClean() {
-        Log.d(TAG, "Closing browser")
+        logger.log(TAG, "Closing browser")
         tabsManager.newTab(this, NoOpInitializer(), false)
         tabsManager.switchToTab(0)
         tabsManager.clearSavedState()
@@ -755,8 +767,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_add_to_homescreen -> {
-                if (currentView != null) {
-                    Utils.createShortcut(this, HistoryEntry(currentView.url, currentView.title), currentView.favicon)
+                if (currentView != null
+                    && currentView.url.isNotBlank()
+                    && !UrlUtils.isSpecialUrl(currentView.url)) {
+                    HistoryEntry(currentView.url, currentView.title).also {
+                        Utils.createShortcut(this, it, currentView.favicon)
+                        logger.log(TAG, "Creating shortcut: ${it.title} ${it.url}")
+                    }
                 }
                 return true
             }
@@ -913,22 +930,22 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun notifyTabViewRemoved(position: Int) {
-        Log.d(TAG, "Notify Tab Removed: $position")
+        logger.log(TAG, "Notify Tab Removed: $position")
         tabsView?.tabRemoved(position)
     }
 
     override fun notifyTabViewAdded() {
-        Log.d(TAG, "Notify Tab Added")
+        logger.log(TAG, "Notify Tab Added")
         tabsView?.tabAdded()
     }
 
     override fun notifyTabViewChanged(position: Int) {
-        Log.d(TAG, "Notify Tab Changed: $position")
+        logger.log(TAG, "Notify Tab Changed: $position")
         tabsView?.tabChanged(position)
     }
 
     override fun notifyTabViewInitialized() {
-        Log.d(TAG, "Notify Tabs Initialized")
+        logger.log(TAG, "Notify Tabs Initialized")
         tabsView?.tabsInitialized()
     }
 
@@ -956,7 +973,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun removeTabView() {
 
-        Log.d(TAG, "Remove the tab view")
+        logger.log(TAG, "Remove the tab view")
 
         // Set the background color so the color mode color doesn't show through
         content_frame.setBackgroundColor(backgroundColor)
@@ -977,7 +994,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             return
         }
 
-        Log.d(TAG, "Setting the tab view")
+        logger.log(TAG, "Setting the tab view")
 
         // Set the background color so the color mode color doesn't show through
         content_frame.setBackgroundColor(backgroundColor)
@@ -1096,19 +1113,19 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val currentTab = tabsManager.currentTab
         if (userPreferences.clearCacheExit && currentTab != null && !isIncognito()) {
             WebUtils.clearCache(currentTab.webView)
-            Log.d(TAG, "Cache Cleared")
+            logger.log(TAG, "Cache Cleared")
         }
         if (userPreferences.clearHistoryExitEnabled && !isIncognito()) {
             WebUtils.clearHistory(this, historyModel, databaseScheduler)
-            Log.d(TAG, "History Cleared")
+            logger.log(TAG, "History Cleared")
         }
         if (userPreferences.clearCookiesExitEnabled && !isIncognito()) {
             WebUtils.clearCookies(this)
-            Log.d(TAG, "Cookies Cleared")
+            logger.log(TAG, "Cookies Cleared")
         }
         if (userPreferences.clearWebStorageExitEnabled && !isIncognito()) {
             WebUtils.clearWebStorage()
-            Log.d(TAG, "WebStorage Cleared")
+            logger.log(TAG, "WebStorage Cleared")
         } else if (isIncognito()) {
             WebUtils.clearWebStorage()     // We want to make sure incognito mode is secure
         }
@@ -1117,7 +1134,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        Log.d(TAG, "onConfigurationChanged")
+        logger.log(TAG, "onConfigurationChanged")
 
         if (isFullScreen) {
             showActionBar()
@@ -1166,7 +1183,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             bookmarksView?.navigateBack()
         } else {
             if (currentTab != null) {
-                Log.d(TAG, "onBackPressed")
+                logger.log(TAG, "onBackPressed")
                 if (searchView?.hasFocus() == true) {
                     currentTab.requestFocus()
                 } else if (currentTab.canGoBack()) {
@@ -1191,7 +1208,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG, "onPause")
+        logger.log(TAG, "onPause")
         tabsManager.pauseAll()
 
         networkDisposable?.dispose()
@@ -1213,7 +1230,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
+        logger.log(TAG, "onDestroy")
 
         mainHandler.removeCallbacksAndMessages(null)
 
@@ -1234,7 +1251,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume")
+        logger.log(TAG, "onResume")
         if (swapBookmarksAndTabs != userPreferences.bookmarksAndTabsSwapped) {
             restart()
         }
@@ -1250,7 +1267,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             .connectivity()
             .subscribeOn(mainScheduler)
             .subscribe { connected ->
-                Log.d(TAG, "Network connected: $connected")
+                logger.log(TAG, "Network connected: $connected")
                 tabsManager.notifyConnectionStatus(connected)
             }
 
@@ -1644,7 +1661,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
             return
         }
-        Log.d(TAG, "onHideCustomView")
+        logger.log(TAG, "onHideCustomView")
         currentTab.setVisibility(View.VISIBLE)
         try {
             customView?.keepScreenOn = false
@@ -1662,7 +1679,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         fullscreenContainerView = null
         customView = null
 
-        Log.d(TAG, "VideoView is being stopped")
+        logger.log(TAG, "VideoView is being stopped")
         videoView?.stopPlayback()
         videoView?.setOnErrorListener(null)
         videoView?.setOnCompletionListener(null)
@@ -1688,7 +1705,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        Log.d(TAG, "onWindowFocusChanged")
+        logger.log(TAG, "onWindowFocusChanged")
         if (hasFocus) {
             setFullscreen(hideStatusBar, isImmersiveMode)
         }
@@ -1813,7 +1830,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     override fun showActionBar() {
         if (isFullScreen) {
-            Log.d(TAG, "showActionBar")
+            logger.log(TAG, "showActionBar")
             if (toolbar_layout == null)
                 return
 

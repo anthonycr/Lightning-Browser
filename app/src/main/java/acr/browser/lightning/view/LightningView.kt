@@ -12,6 +12,7 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
@@ -50,7 +51,8 @@ class LightningView(
     val isIncognito: Boolean,
     private val homePageInitializer: HomePageInitializer,
     private val bookmarkPageInitializer: BookmarkPageInitializer,
-    private val downloadPageInitializer: DownloadPageInitializer
+    private val downloadPageInitializer: DownloadPageInitializer,
+    private val logger: Logger
 ) {
 
     /**
@@ -432,7 +434,7 @@ class LightningView(
      */
     fun onPause() {
         webView?.onPause()
-        Log.d(TAG, "WebView onPause: " + webView?.id)
+        logger.log(TAG, "WebView onPause: " + webView?.id)
     }
 
     /**
@@ -440,7 +442,7 @@ class LightningView(
      */
     fun onResume() {
         webView?.onResume()
-        Log.d(TAG, "WebView onResume: " + webView?.id)
+        logger.log(TAG, "WebView onResume: " + webView?.id)
     }
 
     /**
@@ -544,7 +546,7 @@ class LightningView(
      */
     fun pauseTimers() {
         webView?.pauseTimers()
-        Log.d(TAG, "Pausing JS timers")
+        logger.log(TAG, "Pausing JS timers")
     }
 
     /**
@@ -554,7 +556,7 @@ class LightningView(
      */
     fun resumeTimers() {
         webView?.resumeTimers()
-        Log.d(TAG, "Resuming JS timers")
+        logger.log(TAG, "Resuming JS timers")
     }
 
     /**

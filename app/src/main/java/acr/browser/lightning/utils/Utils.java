@@ -260,10 +260,6 @@ public final class Utils {
     public static void createShortcut(@NonNull Activity activity,
                                       @NonNull HistoryEntry historyEntry,
                                       @NonNull Bitmap favicon) {
-        if (TextUtils.isEmpty(historyEntry.getUrl())) {
-            return;
-        }
-        Log.d(TAG, "Creating shortcut: " + historyEntry.getTitle() + ' ' + historyEntry.getUrl());
         Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
         shortcutIntent.setData(Uri.parse(historyEntry.getUrl()));
 

@@ -5,8 +5,8 @@ import acr.browser.lightning.extensions.inlineReplace
 import acr.browser.lightning.extensions.inlineTrim
 import acr.browser.lightning.extensions.stringEquals
 import acr.browser.lightning.extensions.substringToBuilder
+import acr.browser.lightning.log.Logger
 import android.app.Application
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import java.io.InputStreamReader
@@ -23,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class AssetsAdBlocker @Inject internal constructor(
     private val application: Application,
-    @DiskScheduler diskScheduler: Scheduler
+    @DiskScheduler diskScheduler: Scheduler,
+    private val logger: Logger
 ) : AdBlocker {
 
     private val blockedDomainsSet = HashSet<String>()
@@ -39,14 +40,14 @@ class AssetsAdBlocker @Inject internal constructor(
 
         val domain = try {
             getDomainName(url)
-        } catch (e: URISyntaxException) {
-            Log.d(TAG, "URL '$url' is invalid", e)
+        } catch (exception: URISyntaxException) {
+            logger.log(TAG, "URL '$url' is invalid", exception)
             return false
         }
 
         val isOnBlacklist = blockedDomainsSet.contains(domain)
         if (isOnBlacklist) {
-            Log.d(TAG, "URL '$url' is an ad")
+            logger.log(TAG, "URL '$url' is an ad")
         }
         return isOnBlacklist
     }
@@ -78,7 +79,7 @@ class AssetsAdBlocker @Inject internal constructor(
         }
 
         blockedDomainsSet.addAll(domains)
-        Log.d(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
+        logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
     }
 
     companion object {

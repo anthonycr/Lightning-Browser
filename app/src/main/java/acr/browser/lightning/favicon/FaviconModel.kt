@@ -3,16 +3,16 @@ package acr.browser.lightning.favicon
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.pad
 import acr.browser.lightning.extensions.safeUse
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.DrawableUtils
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.text.TextUtils
+import android.util.LruCache
 import androidx.annotation.ColorInt
 import androidx.annotation.WorkerThread
-import android.text.TextUtils
-import android.util.Log
-import android.util.LruCache
 import androidx.core.net.toUri
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -26,7 +26,10 @@ import javax.inject.Singleton
  * from URLs and also cache them.
  */
 @Singleton
-class FaviconModel @Inject constructor(private val application: Application) {
+class FaviconModel @Inject constructor(
+    private val application: Application,
+    private val logger: Logger
+) {
 
     private val loaderOptions = BitmapFactory.Options()
     private val bookmarkIconSize = application.resources.getDimensionPixelSize(R.dimen.bookmark_item_icon_size)
@@ -112,7 +115,7 @@ class FaviconModel @Inject constructor(private val application: Application) {
     fun cacheFaviconForUrl(favicon: Bitmap, url: String): Completable = Completable.create { emitter ->
         val uri = url.toUri().toValidUri() ?: return@create emitter.onComplete()
 
-        Log.d(TAG, "Caching icon for ${uri.host}")
+        logger.log(TAG, "Caching icon for ${uri.host}")
         FileOutputStream(getFaviconCacheFile(application, uri)).safeUse {
             favicon.compress(Bitmap.CompressFormat.PNG, 100, it)
             it.flush()

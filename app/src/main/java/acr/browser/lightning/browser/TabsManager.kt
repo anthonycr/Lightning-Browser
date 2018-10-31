@@ -3,6 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.Option
@@ -35,7 +36,8 @@ class TabsManager @Inject constructor(
     private val homePageInitializer: HomePageInitializer,
     private val bookmarkPageInitializer: BookmarkPageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
-    private val downloadPageInitializer: DownloadPageInitializer
+    private val downloadPageInitializer: DownloadPageInitializer,
+    private val logger: Logger
 ) {
 
     private val tabList = arrayListOf<LightningView>()
@@ -256,8 +258,16 @@ class TabsManager @Inject constructor(
         tabInitializer: TabInitializer,
         isIncognito: Boolean
     ): LightningView {
-        Log.d(TAG, "New tab")
-        val tab = LightningView(activity, tabInitializer, isIncognito, homePageInitializer, bookmarkPageInitializer, downloadPageInitializer)
+        logger.log(TAG, "New tab")
+        val tab = LightningView(
+            activity,
+            tabInitializer,
+            isIncognito,
+            homePageInitializer,
+            bookmarkPageInitializer,
+            downloadPageInitializer,
+            logger
+        )
         tabList.add(tab)
         tabNumberListeners.forEach { it(size()) }
         return tab
@@ -288,7 +298,7 @@ class TabsManager @Inject constructor(
      * @return returns true if the current tab was deleted, false otherwise.
      */
     fun deleteTab(position: Int): Boolean {
-        Log.d(TAG, "Delete tab: $position")
+        logger.log(TAG, "Delete tab: $position")
         val currentTab = currentTab
         val current = positionOf(currentTab)
 
@@ -319,7 +329,7 @@ class TabsManager @Inject constructor(
      */
     fun saveState() {
         val outState = Bundle(ClassLoader.getSystemClassLoader())
-        Log.d(TAG, "Saving tab state")
+        logger.log(TAG, "Saving tab state")
         tabList
             .filter { it.url.isNotBlank() }
             .withIndex()
@@ -355,7 +365,7 @@ class TabsManager @Inject constructor(
                 .filter { it.startsWith(BUNDLE_KEY) }
                 .map(bundle::getBundle)
         }
-        .doOnNext { Log.d(TAG, "Restoring previous WebView state now") }
+        .doOnNext { logger.log(TAG, "Restoring previous WebView state now") }
 
     /**
      * Returns the index of the current tab.
@@ -387,7 +397,7 @@ class TabsManager @Inject constructor(
      * @return the selected tab or null if position is out of tabs range.
      */
     fun switchToTab(position: Int): LightningView? {
-        Log.d(TAG, "switch to tab: $position")
+        logger.log(TAG, "switch to tab: $position")
         return if (position < 0 || position >= tabList.size) {
             Log.e(TAG, "Returning a null LightningView requested for position: $position")
             null

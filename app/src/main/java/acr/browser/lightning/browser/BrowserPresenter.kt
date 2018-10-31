@@ -9,6 +9,7 @@ import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.view.BundleInitializer
@@ -17,7 +18,6 @@ import acr.browser.lightning.view.TabInitializer
 import acr.browser.lightning.view.UrlInitializer
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.webkit.URLUtil
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
@@ -35,7 +35,8 @@ class BrowserPresenter(
     @MainScheduler private val mainScheduler: Scheduler,
     private val homePageFactory: HomePageFactory,
     private val bookmarkPageFactory: BookmarkPageFactory,
-    private val recentTabModel: RecentTabModel
+    private val recentTabModel: RecentTabModel,
+    private val logger: Logger
 ) {
 
     private var currentTab: LightningView? = null
@@ -74,7 +75,7 @@ class BrowserPresenter(
     }
 
     private fun onTabChanged(newTab: LightningView?) {
-        Log.d(TAG, "On tab changed")
+        logger.log(TAG, "On tab changed")
         view.updateSslState(newTab?.currentSslState() ?: SSLState.None)
 
         sslStateSubscription?.dispose()
@@ -156,7 +157,7 @@ class BrowserPresenter(
      * @param position the position at which to delete the tab.
      */
     fun deleteTab(position: Int) {
-        Log.d(TAG, "deleting tab...")
+        logger.log(TAG, "deleting tab...")
         val tabToDelete = tabsModel.getTabAtPosition(position) ?: return
 
         recentTabModel.addClosedTab(tabToDelete.saveState())
@@ -197,7 +198,7 @@ class BrowserPresenter(
 
         view.updateTabNumber(tabsModel.size())
 
-        Log.d(TAG, "...deleted tab")
+        logger.log(TAG, "...deleted tab")
     }
 
     /**
@@ -268,11 +269,11 @@ class BrowserPresenter(
      */
     fun tabChanged(position: Int) {
         if (position < 0 || position >= tabsModel.size()) {
-            Log.d(TAG, "tabChanged invalid position: $position")
+            logger.log(TAG, "tabChanged invalid position: $position")
             return
         }
 
-        Log.d(TAG, "tabChanged: $position")
+        logger.log(TAG, "tabChanged: $position")
         onTabChanged(tabsModel.switchToTab(position))
     }
 
@@ -291,7 +292,7 @@ class BrowserPresenter(
             return false
         }
 
-        Log.d(TAG, "New tab, show: $show")
+        logger.log(TAG, "New tab, show: $show")
 
         val startingTab = tabsModel.newTab(view as Activity, tabInitializer, isIncognito)
         if (tabsModel.size() == 1) {

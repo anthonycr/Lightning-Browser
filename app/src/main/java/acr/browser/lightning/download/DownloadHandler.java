@@ -37,6 +37,7 @@ import acr.browser.lightning.di.MainScheduler;
 import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.extensions.ActivityExtensions;
+import acr.browser.lightning.log.Logger;
 import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
@@ -63,6 +64,7 @@ public class DownloadHandler {
     @Inject @DatabaseScheduler Scheduler databaseScheduler;
     @Inject @NetworkScheduler Scheduler networkScheduler;
     @Inject @MainScheduler Scheduler mainScheduler;
+    @Inject Logger logger;
 
     @Inject
     public DownloadHandler() {
@@ -83,10 +85,10 @@ public class DownloadHandler {
     public void onDownloadStart(@NonNull Activity context, @NonNull UserPreferences manager, @NonNull String url, String userAgent,
                                 @Nullable String contentDisposition, String mimetype, @NonNull String contentSize) {
 
-        Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
-        Log.d(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
-        Log.d(TAG, "DOWNLOAD: Mimetype: " + mimetype);
-        Log.d(TAG, "DOWNLOAD: User agent: " + userAgent);
+        logger.log(TAG, "DOWNLOAD: Trying to download from URL: " + url);
+        logger.log(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
+        logger.log(TAG, "DOWNLOAD: Mimetype: " + mimetype);
+        logger.log(TAG, "DOWNLOAD: User agent: " + userAgent);
 
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
@@ -228,7 +230,7 @@ public class DownloadHandler {
             return;
         }
         String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
-        Log.d(TAG, "New mimetype: " + newMimeType);
+        logger.log(TAG, "New mimetype: " + newMimeType);
         request.setMimeType(newMimeType);
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
         // let this downloaded file be scanned by MediaScanner - so that it can
@@ -244,7 +246,7 @@ public class DownloadHandler {
 
         //noinspection VariableNotUsedInsideIf
         if (mimetype == null) {
-            Log.d(TAG, "Mimetype is null");
+            logger.log(TAG, "Mimetype is null");
             if (TextUtils.isEmpty(addressString)) {
                 return;
             }
@@ -271,7 +273,7 @@ public class DownloadHandler {
                     }
                 });
         } else {
-            Log.d(TAG, "Valid mimetype, attempting to download");
+            logger.log(TAG, "Valid mimetype, attempting to download");
             try {
                 downloadManager.enqueue(request);
             } catch (IllegalArgumentException e) {

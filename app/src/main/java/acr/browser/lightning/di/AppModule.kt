@@ -1,9 +1,13 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
+import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.bookmark.BookmarkPageReader
 import acr.browser.lightning.html.homepage.HomePageReader
+import acr.browser.lightning.log.AndroidLogger
+import acr.browser.lightning.log.Logger
+import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.search.suggestions.RequestFactory
 import acr.browser.lightning.utils.FileUtils
 import android.app.Application
@@ -134,6 +138,14 @@ class AppModule(private val browserApp: BrowserApp) {
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
             .addNetworkInterceptor(rewriteCacheControlInterceptor)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogger(): Logger = if (BuildConfig.DEBUG) {
+        AndroidLogger()
+    } else {
+        NoOpLogger()
     }
 
     @Provides

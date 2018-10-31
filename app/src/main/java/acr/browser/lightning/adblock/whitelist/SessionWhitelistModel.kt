@@ -3,7 +3,7 @@ package acr.browser.lightning.adblock.whitelist
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.database.whitelist.WhitelistItem
 import acr.browser.lightning.di.DatabaseScheduler
-import android.util.Log
+import acr.browser.lightning.log.Logger
 import androidx.core.net.toUri
 import io.reactivex.Completable
 import io.reactivex.Scheduler
@@ -16,7 +16,8 @@ import javax.inject.Singleton
 @Singleton
 class SessionWhitelistModel @Inject constructor(
     private val adBlockWhitelistModel: AdBlockWhitelistRepository,
-    @DatabaseScheduler private val ioScheduler: Scheduler
+    @DatabaseScheduler private val ioScheduler: Scheduler,
+    private val logger: Logger
 ) : WhitelistModel {
 
     private var whitelistSet = hashSetOf<String>()
@@ -47,7 +48,7 @@ class SessionWhitelistModel @Inject constructor(
                     }
                 }
                 .subscribeOn(ioScheduler)
-                .subscribe { Log.d(TAG, "whitelist item added to database") }
+                .subscribe { logger.log(TAG, "whitelist item added to database") }
 
             whitelistSet.add(host)
         }
@@ -59,7 +60,7 @@ class SessionWhitelistModel @Inject constructor(
                 .whitelistItemForUrl(host)
                 .flatMapCompletable(adBlockWhitelistModel::removeWhitelistItem)
                 .subscribeOn(ioScheduler)
-                .subscribe { Log.d(TAG, "whitelist item removed from database") }
+                .subscribe { logger.log(TAG, "whitelist item removed from database") }
 
             whitelistSet.remove(host)
         }
