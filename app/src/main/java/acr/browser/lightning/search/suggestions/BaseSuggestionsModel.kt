@@ -4,12 +4,14 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.safeUse
 import android.util.Log
 import io.reactivex.Single
-import okhttp3.*
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import okhttp3.ResponseBody
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 /**
  * The base search suggestions API. Provides common fetching and caching functionality for each
@@ -80,19 +82,12 @@ abstract class BaseSuggestionsModel internal constructor(
         private const val TAG = "BaseSuggestionsModel"
 
         private const val MAX_RESULTS = 5
-        private val INTERVAL_DAY = TimeUnit.DAYS.toSeconds(1)
         private const val DEFAULT_LANGUAGE = "en"
 
         private val language by lazy {
             Locale.getDefault().language.takeIf(String::isNotEmpty) ?: DEFAULT_LANGUAGE
         }
 
-        private val REWRITE_CACHE_CONTROL_INTERCEPTOR = Interceptor { chain ->
-            val originalResponse = chain.proceed(chain.request())
-            originalResponse.newBuilder()
-                .header("cache-control", "max-age=$INTERVAL_DAY, max-stale=$INTERVAL_DAY")
-                .build()
-        }
     }
 
 }

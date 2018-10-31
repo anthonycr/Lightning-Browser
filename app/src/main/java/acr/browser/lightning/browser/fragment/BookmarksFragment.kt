@@ -385,7 +385,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
             val bitmap = viewModel.icon ?: when (viewModel.bookmark) {
                 is Bookmark.Folder -> folderBitmap
-                is Bookmark.Entry -> webPageBitmap.also { _ ->
+                is Bookmark.Entry -> webPageBitmap.also {
                     holder.favicon.tag = viewModel.bookmark.url.hashCode()
 
                     val url = viewModel.bookmark.url
@@ -395,10 +395,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                         .subscribeOn(networkScheduler)
                         .observeOn(mainScheduler)
                         .subscribeBy(
-                            onSuccess = {
-                                viewModel.icon = it
+                            onSuccess = { bitmap ->
+                                viewModel.icon = bitmap
                                 if (holder.favicon.tag == url.hashCode()) {
-                                    holder.favicon.setImageBitmap(it)
+                                    holder.favicon.setImageBitmap(bitmap)
                                 }
                             }
                         )
