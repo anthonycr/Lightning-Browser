@@ -169,6 +169,19 @@ kapt {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+    kotlinOptions {
+        jvmTarget = '1.6'
+        kotlinOptions {
+            freeCompilerArgs += ['-XXLanguage:+InlineClasses']
+            freeCompilerArgs += ['-progressive']
+        }
+    }
+}
+
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testLightningPlusDebugUnitTest', 'createLightningPlusDebugCoverageReport']) {
 
     reports {
