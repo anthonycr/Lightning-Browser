@@ -16,6 +16,7 @@ import acr.browser.lightning.view.BundleInitializer
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.TabInitializer
 import acr.browser.lightning.view.UrlInitializer
+import acr.browser.lightning.view.find.FindResults
 import android.app.Activity
 import android.content.Intent
 import android.webkit.URLUtil
@@ -313,8 +314,8 @@ class BrowserPresenter(
         tabsModel.currentTab?.requestFocus()
     }
 
-    fun findInPage(query: String) {
-        tabsModel.currentTab?.find(query)
+    fun findInPage(query: String): FindResults? {
+        return tabsModel.currentTab?.find(query)
     }
 
     companion object {

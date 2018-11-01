@@ -38,6 +38,7 @@ import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
 import acr.browser.lightning.view.SearchView
+import acr.browser.lightning.view.find.FindResults
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.ClipData
@@ -136,6 +137,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var keyDownStartTime: Long = 0
     private var searchText: String? = null
     private var cameraPhotoPath: String? = null
+
+    private var findResult: FindResults? = null
 
     // The singleton BookmarkManager
     @Inject lateinit var bookmarkManager: BookmarkRepository
@@ -899,7 +902,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         R.string.search_hint
     ) { text ->
         if (text.isNotEmpty()) {
-            presenter?.findInPage(text)
+            findResult = presenter?.findInPage(text)
             showFindInPageControls(text)
         }
     }
@@ -1938,10 +1941,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 shouldShowTabsInDrawer -> drawer_layout.openDrawer(getTabDrawer())
                 else -> currentTab.loadHomePage()
             }
-            R.id.button_next -> currentTab.findNext()
-            R.id.button_back -> currentTab.findPrevious()
+            R.id.button_next -> findResult?.nextResult()
+            R.id.button_back -> findResult?.previousResult()
             R.id.button_quit -> {
-                currentTab.clearFindMatches()
+                findResult?.clearResults()
+                findResult = null
                 search_bar.visibility = View.GONE
             }
             R.id.action_reading -> {

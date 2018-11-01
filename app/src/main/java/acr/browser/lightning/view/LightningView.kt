@@ -18,6 +18,7 @@ import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.view.find.FindResults
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.*
@@ -604,8 +605,22 @@ class LightningView(
      * @param text the text to search for.
      */
     @SuppressLint("NewApi")
-    fun find(text: String) {
+    fun find(text: String): FindResults {
         webView?.findAllAsync(text)
+
+        return object : FindResults {
+            override fun nextResult() {
+                webView?.findNext(true)
+            }
+
+            override fun previousResult() {
+                webView?.findNext(false)
+            }
+
+            override fun clearResults() {
+                webView?.clearMatches()
+            }
+        }
     }
 
     /**
@@ -654,35 +669,6 @@ class LightningView(
      */
     fun goForward() {
         webView?.goForward()
-    }
-
-    /**
-     * Move the highlighted text in the WebView
-     * to the next matched text. This method will
-     * only have an affect after [LightningView.find]
-     * is called. Otherwise it will do nothing.
-     */
-    fun findNext() {
-        webView?.findNext(true)
-    }
-
-    /**
-     * Move the highlighted text in the WebView
-     * to the previous matched text. This method will
-     * only have an affect after [LightningView.find]
-     * is called. Otherwise it will do nothing.
-     */
-    fun findPrevious() {
-        webView?.findNext(false)
-    }
-
-    /**
-     * Clear the highlighted text in the WebView after
-     * [LightningView.find] has been called.
-     * Otherwise it will have no affect.
-     */
-    fun clearFindMatches() {
-        webView?.clearMatches()
     }
 
     /**
