@@ -215,15 +215,6 @@ class TabsManager @Inject constructor(
     }
 
     /**
-     * Forwards network connection status to the WebViews.
-     *
-     * @param isConnected whether there is a network connection or not.
-     */
-    fun notifyConnectionStatus(isConnected: Boolean) = tabList.forEach {
-        it.setNetworkAvailable(isConnected)
-    }
-
-    /**
      * The current number of tabs in the manager.
      *
      * @return the number of tabs in the list.

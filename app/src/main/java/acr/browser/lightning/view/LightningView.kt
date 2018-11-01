@@ -13,6 +13,7 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.log.Logger
+import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
 import acr.browser.lightning.utils.ProxyUtils
@@ -38,6 +39,7 @@ import androidx.collection.ArrayMap
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
+import io.reactivex.disposables.Disposable
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 
@@ -115,8 +117,11 @@ class LightningView(
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject lateinit var networkConnectivityModel: NetworkConnectivityModel
 
     private val lightningWebClient: LightningWebClient
+
+    private val networkDisposable: Disposable
 
     /**
      * This method determines whether the current tab is visible or not.
@@ -207,6 +212,10 @@ class LightningView(
         initializePreferences()
 
         tabInitializer.initialize(tab, requestHeaders)
+
+        networkDisposable = networkConnectivityModel.connectivity()
+            .observeOn(mainScheduler)
+            .subscribe(::setNetworkAvailable)
     }
 
     fun currentSslState(): SSLState = lightningWebClient.sslState
@@ -635,6 +644,7 @@ class LightningView(
     // is removed and would cause a memory leak if the parent check
     // was not in place.
     fun onDestroy() {
+        networkDisposable.dispose()
         webView?.let { tab ->
             // Check to make sure the WebView has been removed
             // before calling destroy() so that a memory leak is not created
@@ -674,7 +684,7 @@ class LightningView(
     /**
      * Notifies the [WebView] whether the network is available or not.
      */
-    fun setNetworkAvailable(isAvailable: Boolean) {
+    private fun setNetworkAvailable(isAvailable: Boolean) {
         webView?.setNetworkAvailable(isAvailable)
     }
 

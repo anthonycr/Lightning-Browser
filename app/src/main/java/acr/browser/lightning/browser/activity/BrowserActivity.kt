@@ -28,7 +28,6 @@ import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.log.Logger
-import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.notifications.IncognitoNotification
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
@@ -88,7 +87,6 @@ import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
 import io.reactivex.Completable
 import io.reactivex.Scheduler
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
@@ -145,7 +143,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject lateinit var historyModel: HistoryRepository
     @Inject lateinit var searchBoxModel: SearchBoxModel
     @Inject lateinit var searchEngineProvider: SearchEngineProvider
-    @Inject lateinit var networkConnectivityModel: NetworkConnectivityModel
     @Inject lateinit var inputMethodManager: InputMethodManager
     @Inject lateinit var clipboardManager: ClipboardManager
     @Inject lateinit var notificationManager: NotificationManager
@@ -161,9 +158,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject @field:MainHandler lateinit var mainHandler: Handler
     @Inject lateinit var proxyUtils: ProxyUtils
     @Inject lateinit var logger: Logger
-
-    // Subscriptions
-    private var networkDisposable: Disposable? = null
 
     // Image
     private var webPageBitmap: Bitmap? = null
@@ -1214,8 +1208,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         logger.log(TAG, "onPause")
         tabsManager.pauseAll()
 
-        networkDisposable?.dispose()
-
         if (isIncognito() && isFinishing) {
             overridePendingTransition(R.anim.fade_in_scale, R.anim.slide_down_out)
         }
@@ -1265,14 +1257,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
         tabsManager.resumeAll()
         initializePreferences()
-
-        networkDisposable = networkConnectivityModel
-            .connectivity()
-            .subscribeOn(mainScheduler)
-            .subscribe { connected ->
-                logger.log(TAG, "Network connected: $connected")
-                tabsManager.notifyConnectionStatus(connected)
-            }
 
         if (isFullScreen) {
             overlayToolbarOnWebView()
