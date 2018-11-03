@@ -5,6 +5,7 @@ import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
 import acr.browser.lightning.database.whitelist.WhitelistItem
+import acr.browser.lightning.log.NoOpLogger
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -30,7 +31,7 @@ class SessionWhitelistModelTest {
     @Test
     fun `isUrlWhitelisted checks domain`() {
         whenever(adBlockWhitelistModel.allWhitelistItems()).thenReturn(Single.just(listOf(WhitelistItem("test.com", 0))))
-        val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(sessionWhitelistModel.isUrlWhitelisted("http://test.com/12345")).isTrue()
         assertThat(sessionWhitelistModel.isUrlWhitelisted("https://test.com")).isTrue()
@@ -42,7 +43,7 @@ class SessionWhitelistModelTest {
         whenever(adBlockWhitelistModel.allWhitelistItems()).thenReturn(Single.just(emptyList()))
         whenever(adBlockWhitelistModel.whitelistItemForUrl(any())).thenReturn(Maybe.empty())
         whenever(adBlockWhitelistModel.addWhitelistItem(any())).thenReturn(Completable.complete())
-        val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(sessionWhitelistModel.isUrlWhitelisted("http://test.com")).isFalse()
 
@@ -56,7 +57,7 @@ class SessionWhitelistModelTest {
         whenever(adBlockWhitelistModel.allWhitelistItems()).thenReturn(Single.just(listOf(WhitelistItem("test.com", 0))))
         whenever(adBlockWhitelistModel.whitelistItemForUrl(any())).thenReturn(Maybe.empty())
         whenever(adBlockWhitelistModel.removeWhitelistItem(any())).thenReturn(Completable.complete())
-        val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val sessionWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(sessionWhitelistModel.isUrlWhitelisted("http://test.com")).isTrue()
 
@@ -76,13 +77,13 @@ class SessionWhitelistModelTest {
             }
         }
 
-        val oldWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val oldWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(oldWhitelistModel.isUrlWhitelisted("http://test.com")).isFalse()
 
         oldWhitelistModel.addUrlToWhitelist("https://test.com/12345")
 
-        val newWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val newWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(newWhitelistModel.isUrlWhitelisted("http://test.com")).isTrue()
     }
@@ -103,13 +104,13 @@ class SessionWhitelistModelTest {
             }
         }
 
-        val oldWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val oldWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(oldWhitelistModel.isUrlWhitelisted("http://test.com")).isTrue()
 
         oldWhitelistModel.removeUrlFromWhitelist("https://test.com/12345")
 
-        val newWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline())
+        val newWhitelistModel = SessionWhitelistModel(adBlockWhitelistModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(newWhitelistModel.isUrlWhitelisted("http://test.com")).isFalse()
     }

@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.map
+import acr.browser.lightning.log.Logger
 import android.app.Application
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -17,8 +18,9 @@ import org.json.JSONObject
 class DuckSuggestionsModel(
     httpClient: OkHttpClient,
     requestFactory: RequestFactory,
-    application: Application
-) : BaseSuggestionsModel(httpClient, requestFactory, UTF8) {
+    application: Application,
+    logger: Logger
+) : BaseSuggestionsModel(httpClient, requestFactory, UTF8, logger) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 

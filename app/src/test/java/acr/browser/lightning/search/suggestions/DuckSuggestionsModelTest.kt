@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.suggestions
 
+import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.unimplemented
 import android.app.Application
 import com.nhaarman.mockito_kotlin.any
@@ -25,7 +26,7 @@ class DuckSuggestionsModelTest {
 
     @Test
     fun `verify query url`() {
-        val suggestionsModel = DuckSuggestionsModel(httpClient, requestFactory, application)
+        val suggestionsModel = DuckSuggestionsModel(httpClient, requestFactory, application, NoOpLogger())
 
         (0..100).forEach {
             val result = "https://duckduckgo.com/ac/?q=$it"

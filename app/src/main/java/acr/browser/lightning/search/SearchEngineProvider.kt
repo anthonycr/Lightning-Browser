@@ -1,5 +1,6 @@
 package acr.browser.lightning.search
 
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*
 import acr.browser.lightning.search.suggestions.*
@@ -15,7 +16,8 @@ class SearchEngineProvider @Inject constructor(
     private val userPreferences: UserPreferences,
     private val httpClient: OkHttpClient,
     private val requestFactory: RequestFactory,
-    private val application: Application
+    private val application: Application,
+    private val logger: Logger
 ) {
 
     /**
@@ -24,11 +26,11 @@ class SearchEngineProvider @Inject constructor(
     fun provideSearchSuggestions(): SuggestionsRepository =
         when (userPreferences.searchSuggestionChoice) {
             0 -> NoOpSuggestionsRepository()
-            1 -> GoogleSuggestionsModel(httpClient, requestFactory, application)
-            2 -> DuckSuggestionsModel(httpClient, requestFactory, application)
-            3 -> BaiduSuggestionsModel(httpClient, requestFactory, application)
-            4 -> NaverSuggestionsModel(httpClient, requestFactory, application)
-            else -> GoogleSuggestionsModel(httpClient, requestFactory, application)
+            1 -> GoogleSuggestionsModel(httpClient, requestFactory, application, logger)
+            2 -> DuckSuggestionsModel(httpClient, requestFactory, application, logger)
+            3 -> BaiduSuggestionsModel(httpClient, requestFactory, application, logger)
+            4 -> NaverSuggestionsModel(httpClient, requestFactory, application, logger)
+            else -> GoogleSuggestionsModel(httpClient, requestFactory, application, logger)
         }
 
     /**

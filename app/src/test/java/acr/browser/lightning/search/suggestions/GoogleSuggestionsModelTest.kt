@@ -1,5 +1,6 @@
 package acr.browser.lightning.search.suggestions
 
+import acr.browser.lightning.log.NoOpLogger
 import acr.browser.lightning.unimplemented
 import android.app.Application
 import com.nhaarman.mockito_kotlin.any
@@ -25,7 +26,7 @@ class GoogleSuggestionsModelTest {
 
     @Test
     fun `verify query url`() {
-        val suggestionsModel = GoogleSuggestionsModel(httpClient, requestFactory, application)
+        val suggestionsModel = GoogleSuggestionsModel(httpClient, requestFactory, application, NoOpLogger())
 
         (0..100).forEach {
             val result = "https://suggestqueries.google.com/complete/search?output=toolbar&hl=$it&q=$it"

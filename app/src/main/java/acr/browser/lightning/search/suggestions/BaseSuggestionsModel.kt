@@ -2,6 +2,7 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.safeUse
+import acr.browser.lightning.log.Logger
 import android.util.Log
 import io.reactivex.Single
 import okhttp3.HttpUrl
@@ -20,7 +21,8 @@ import java.util.*
 abstract class BaseSuggestionsModel internal constructor(
     private val httpClient: OkHttpClient,
     private val requestFactory: RequestFactory,
-    private val encoding: String
+    private val encoding: String,
+    private val logger: Logger
 ) : SuggestionsRepository {
 
     /**
@@ -43,8 +45,8 @@ abstract class BaseSuggestionsModel internal constructor(
     override fun resultsForSearch(rawQuery: String): Single<List<SearchSuggestion>> = Single.fromCallable {
         val query = try {
             URLEncoder.encode(rawQuery, encoding)
-        } catch (e: UnsupportedEncodingException) {
-            Log.e(TAG, "Unable to encode the URL", e)
+        } catch (throwable: UnsupportedEncodingException) {
+            logger.log(TAG, "Unable to encode the URL", throwable)
 
             return@fromCallable emptyList<SearchSuggestion>()
         }
