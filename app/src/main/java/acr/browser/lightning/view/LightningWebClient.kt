@@ -23,7 +23,6 @@ import android.net.MailTo
 import android.net.http.SslError
 import android.os.Build
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.webkit.*
 import android.widget.CheckBox
@@ -307,7 +306,7 @@ class LightningWebClient(
                 try {
                     activity.startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
-                    Log.e(TAG, "ActivityNotFoundException")
+                    logger.log(TAG, "ActivityNotFoundException")
                 }
 
                 return true

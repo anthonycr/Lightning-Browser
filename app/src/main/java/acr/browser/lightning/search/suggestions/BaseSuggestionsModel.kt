@@ -3,7 +3,6 @@ package acr.browser.lightning.search.suggestions
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.safeUse
 import acr.browser.lightning.log.Logger
-import android.util.Log
 import io.reactivex.Single
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -74,7 +73,7 @@ abstract class BaseSuggestionsModel internal constructor(
         return try {
             httpClient.newCall(request).execute()
         } catch (exception: IOException) {
-            Log.e(TAG, "Problem getting search suggestions", exception)
+            logger.log(TAG, "Problem getting search suggestions", exception)
             null
         }
     }

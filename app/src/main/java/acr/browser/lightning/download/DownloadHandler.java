@@ -13,7 +13,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
@@ -203,7 +202,7 @@ public class DownloadHandler {
         } catch (Exception e) {
             // This only happens for very bad urls, we want to catch the
             // exception here
-            Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
+            logger.log(TAG, "Exception while trying to parse url '" + url + '\'', e);
             ActivityExtensions.snackbar(context, R.string.problem_download);
             return;
         }
@@ -278,7 +277,7 @@ public class DownloadHandler {
                 downloadManager.enqueue(request);
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
-                Log.e(TAG, "Unable to enqueue request", e);
+                logger.log(TAG, "Unable to enqueue request", e);
                 ActivityExtensions.snackbar(context, R.string.cannot_download);
             } catch (SecurityException e) {
                 // TODO write a download utility that downloads files rather than rely on the system
@@ -297,9 +296,9 @@ public class DownloadHandler {
                 .subscribeOn(databaseScheduler)
                 .subscribe(new Consumer<Boolean>() {
                     @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        if (aBoolean != null && !aBoolean) {
-                            Log.i(TAG, "error saving download to database");
+                    public void accept(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            logger.log(TAG, "error saving download to database");
                         }
                     }
                 });

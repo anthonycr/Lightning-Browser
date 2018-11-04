@@ -27,7 +27,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.View.OnTouchListener
@@ -300,7 +299,7 @@ class LightningView(
             } catch (e: Exception) {
                 // This shouldn't be necessary, but there are a number
                 // of KitKat devices that crash trying to set this
-                Log.e(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
+                logger.log(TAG, "Problem setting LayoutAlgorithm to TEXT_AUTOSIZING")
             }
         } else {
             settings.layoutAlgorithm = LayoutAlgorithm.NORMAL
@@ -650,7 +649,7 @@ class LightningView(
             // before calling destroy() so that a memory leak is not created
             val parent = tab.parent as? ViewGroup
             if (parent != null) {
-                Log.e(TAG, "WebView was not detached from window before onDestroy")
+                logger.log(TAG, "WebView was not detached from window before onDestroy")
                 parent.removeView(webView)
             }
             tab.stopLoading()

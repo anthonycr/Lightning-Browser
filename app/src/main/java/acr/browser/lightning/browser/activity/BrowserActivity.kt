@@ -61,7 +61,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.text.style.CharacterStyle
 import android.text.style.ParagraphStyle
-import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.ViewGroup.LayoutParams
@@ -1197,7 +1196,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     }
                 }
             } else {
-                Log.e(TAG, "This shouldn't happen ever")
+                logger.log(TAG, "This shouldn't happen ever")
                 super.onBackPressed()
             }
         }
@@ -1568,7 +1567,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             })
         } catch (ex: IOException) {
             // Error occurred while creating the File
-            Log.e(TAG, "Unable to create Image File", ex)
+            logger.log(TAG, "Unable to create Image File", ex)
             emptyArray()
         }
 
@@ -1594,7 +1593,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             try {
                 callback.onCustomViewHidden()
             } catch (e: Exception) {
-                Log.e(TAG, "Error hiding custom view", e)
+                logger.log(TAG, "Error hiding custom view", e)
             }
 
             return
@@ -1603,7 +1602,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         try {
             view.keepScreenOn = true
         } catch (e: SecurityException) {
-            Log.e(TAG, "WebView is not allowed to keep the screen on")
+            logger.log(TAG, "WebView is not allowed to keep the screen on")
         }
 
         originalOrientation = getRequestedOrientation()
@@ -1641,7 +1640,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 try {
                     customViewCallback?.onCustomViewHidden()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error hiding custom view", e)
+                    logger.log(TAG, "Error hiding custom view", e)
                 }
 
                 customViewCallback = null
@@ -1653,7 +1652,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         try {
             customView?.keepScreenOn = false
         } catch (e: SecurityException) {
-            Log.e(TAG, "WebView is not allowed to keep the screen on")
+            logger.log(TAG, "WebView is not allowed to keep the screen on")
         }
 
         setFullscreen(userPreferences.hideStatusBarEnabled, false)
@@ -1675,7 +1674,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         try {
             customViewCallback?.onCustomViewHidden()
         } catch (e: Exception) {
-            Log.e(TAG, "Error hiding custom view", e)
+            logger.log(TAG, "Error hiding custom view", e)
         }
 
         customViewCallback = null

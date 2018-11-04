@@ -13,12 +13,12 @@ import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.extensions.toast
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.utils.Utils
 import android.Manifest
 import android.app.Application
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
@@ -35,6 +35,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     @Inject internal lateinit var application: Application
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject internal lateinit var logger: Logger
 
     private var importSubscription: Disposable? = null
     private var exportSubscription: Disposable? = null
@@ -91,7 +92,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                                         }
                                     },
                                     onError = { throwable ->
-                                        Log.e(TAG, "onError: exporting bookmarks", throwable)
+                                        logger.log(TAG, "onError: exporting bookmarks", throwable)
                                         val activity = activity
                                         if (activity != null && !activity.isFinishing && isAdded) {
                                             Utils.createInformativeDialog(activity, R.string.title_error, R.string.bookmark_export_failure)
@@ -153,7 +154,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
         try {
             file.mkdirs()
         } catch (e: SecurityException) {
-            Log.e(TAG, "Unable to make directory", e)
+            logger.log(TAG, "Unable to make directory", e)
         }
 
         return (if (file.exists()) {
@@ -211,7 +212,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                                 }
                         },
                         onError = { throwable ->
-                            Log.e(TAG, "onError: importing bookmarks", throwable)
+                            logger.log(TAG, "onError: importing bookmarks", throwable)
                             val activity = activity
                             if (activity != null && !activity.isFinishing && isAdded) {
                                 Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error)
