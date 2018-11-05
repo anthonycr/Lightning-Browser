@@ -3,8 +3,10 @@
  */
 package acr.browser.lightning.settings.activity
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.device.BuildInfo
+import acr.browser.lightning.device.BuildType
+import acr.browser.lightning.di.injector
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,11 +14,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.anthonycr.grant.PermissionsManager
+import javax.inject.Inject
 
 class SettingsActivity : ThemableSettingsActivity() {
 
+    @Inject lateinit var buildInfo: BuildInfo
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injector.inject(this)
         // this is a workaround for the Toolbar in PreferenceActivity
         val root = findViewById<ViewGroup>(android.R.id.content)
         val content = root.getChildAt(0) as LinearLayout
@@ -35,7 +41,9 @@ class SettingsActivity : ThemableSettingsActivity() {
         loadHeadersFromResource(R.xml.preferences_headers, target)
         fragments.clear()
 
-        target.removeAll { it.titleRes == R.string.debug_title && BrowserApp.isRelease }
+        if (buildInfo.buildType == BuildType.RELEASE) {
+            target.removeAll { it.titleRes == R.string.debug_title }
+        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             // Workaround for bug in the AppCompat support library

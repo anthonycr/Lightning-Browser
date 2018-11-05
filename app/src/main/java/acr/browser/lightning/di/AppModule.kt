@@ -2,6 +2,7 @@ package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.BuildConfig
+import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.bookmark.BookmarkPageReader
 import acr.browser.lightning.html.homepage.HomePageReader
@@ -41,7 +42,10 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
-class AppModule(private val browserApp: BrowserApp) {
+class AppModule(private val browserApp: BrowserApp, private val buildInfo: BuildInfo) {
+
+    @Provides
+    fun provideBuildInfo() = buildInfo
 
     @Provides
     @MainHandler

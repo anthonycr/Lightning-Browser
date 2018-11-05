@@ -2,6 +2,8 @@ package acr.browser.lightning
 
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.device.BuildInfo
+import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.di.*
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.DeveloperPreferences
@@ -25,6 +27,7 @@ class BrowserApp : Application() {
     @Inject internal lateinit var bookmarkModel: BookmarkRepository
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject internal lateinit var logger: Logger
+    @Inject internal lateinit var buildInfo: BuildInfo
 
     val applicationComponent: AppComponent by lazy { appComponent }
 
@@ -62,7 +65,10 @@ class BrowserApp : Application() {
             }
         }
 
-        appComponent = DaggerAppComponent.builder().appModule(AppModule(this)).build()
+        appComponent = DaggerAppComponent.builder().appModule(AppModule(
+            this,
+            BuildInfo(createBuildType())
+        )).build()
         injector.inject(this)
 
         Single.fromCallable(bookmarkModel::count)
@@ -74,10 +80,10 @@ class BrowserApp : Application() {
             .subscribeOn(databaseScheduler)
             .subscribe()
 
-        if (developerPreferences.useLeakCanary && !isRelease) {
+        if (developerPreferences.useLeakCanary && buildInfo.buildType == BuildType.DEBUG) {
             LeakCanary.install(this)
         }
-        if (!isRelease) {
+        if (buildInfo.buildType == BuildType.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
 
@@ -87,6 +93,14 @@ class BrowserApp : Application() {
                 MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
             }
         })
+    }
+
+    /**
+     * Create the [BuildType] from the [BuildConfig].
+     */
+    private fun createBuildType() = when {
+        BuildConfig.DEBUG -> BuildType.DEBUG
+        else -> BuildType.RELEASE
     }
 
     companion object {
@@ -99,15 +113,6 @@ class BrowserApp : Application() {
 
         @JvmStatic
         lateinit var appComponent: AppComponent
-
-        /**
-         * Determines whether this is a release build.
-         *
-         * @return true if this is a release build, false otherwise.
-         */
-        @JvmStatic
-        val isRelease: Boolean
-            get() = !BuildConfig.DEBUG || BuildConfig.BUILD_TYPE.toLowerCase() == "release"
 
     }
 

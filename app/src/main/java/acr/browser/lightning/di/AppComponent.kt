@@ -13,6 +13,7 @@ import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SuggestionsAdapter
+import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.settings.activity.ThemableSettingsActivity
 import acr.browser.lightning.settings.fragment.*
 import acr.browser.lightning.utils.ProxyUtils
@@ -49,6 +50,8 @@ interface AppComponent {
     fun inject(activity: ReadingActivity)
 
     fun inject(webClient: LightningWebClient)
+
+    fun inject(activity: SettingsActivity)
 
     fun inject(activity: ThemableSettingsActivity)
 
