@@ -114,8 +114,8 @@ class LightningChromeClient(
                 title = R.string.title_permission_request,
                 message = R.string.message_permission_request,
                 messageArguments = arrayOf(source, resourcesString),
-                positiveButton = DialogItem(R.string.action_allow) { onGrant(true) },
-                negativeButton = DialogItem(R.string.action_dont_allow) { onGrant(false) },
+                positiveButton = DialogItem(title = R.string.action_allow) { onGrant(true) },
+                negativeButton = DialogItem(title = R.string.action_dont_allow) { onGrant(false) },
                 onCancel = { onGrant(false) }
             )
         }

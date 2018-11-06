@@ -108,7 +108,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
             activity = activity,
             title = R.string.title_clear_history,
             message = R.string.dialog_history,
-            positiveButton = DialogItem(R.string.action_yes) {
+            positiveButton = DialogItem(title = R.string.action_yes) {
                 clearHistory()
                     .subscribeOn(databaseScheduler)
                     .observeOn(mainScheduler)
@@ -116,7 +116,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
                         activity.snackbar(R.string.message_clear_history)
                     }
             },
-            negativeButton = DialogItem(R.string.action_no) {},
+            negativeButton = DialogItem(title = R.string.action_no) {},
             onCancel = {}
         )
     }
@@ -126,7 +126,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
             activity = activity,
             title = R.string.title_clear_cookies,
             message = R.string.dialog_cookies,
-            positiveButton = DialogItem(R.string.action_yes) {
+            positiveButton = DialogItem(title = R.string.action_yes) {
                 clearCookies()
                     .subscribeOn(databaseScheduler)
                     .observeOn(mainScheduler)
@@ -134,7 +134,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
                         activity.snackbar(R.string.message_cookies_cleared)
                     }
             },
-            negativeButton = DialogItem(R.string.action_no) {},
+            negativeButton = DialogItem(title = R.string.action_no) {},
             onCancel = {}
         )
     }

@@ -83,22 +83,25 @@ class LightningDialogBuilder @Inject constructor(
         uiController: UIController,
         entry: Bookmark.Entry
     ) = BrowserDialog.show(activity, R.string.action_bookmarks,
-        DialogItem(R.string.dialog_open_new_tab) {
+        DialogItem(title = R.string.dialog_open_new_tab) {
             uiController.handleNewTab(NewTab.FOREGROUND, entry.url)
         },
-        DialogItem(R.string.dialog_open_background_tab) {
+        DialogItem(title = R.string.dialog_open_background_tab) {
             uiController.handleNewTab(NewTab.BACKGROUND, entry.url)
         },
-        DialogItem(R.string.dialog_open_incognito_tab, activity is MainActivity) {
+        DialogItem(
+            title = R.string.dialog_open_incognito_tab,
+            isConditionMet = activity is MainActivity
+        ) {
             uiController.handleNewTab(NewTab.INCOGNITO, entry.url)
         },
-        DialogItem(R.string.action_share) {
+        DialogItem(title = R.string.action_share) {
             IntentUtils(activity).shareUrl(entry.url, entry.title)
         },
-        DialogItem(R.string.dialog_copy_link) {
+        DialogItem(title = R.string.dialog_copy_link) {
             clipboardManager.copyToClipboard(entry.url)
         },
-        DialogItem(R.string.dialog_remove_bookmark) {
+        DialogItem(title = R.string.dialog_remove_bookmark) {
             bookmarkManager.deleteBookmark(entry)
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
@@ -108,7 +111,7 @@ class LightningDialogBuilder @Inject constructor(
                     }
                 }
         },
-        DialogItem(R.string.dialog_edit_bookmark) {
+        DialogItem(title = R.string.dialog_edit_bookmark) {
             showEditBookmarkDialog(activity, uiController, entry)
         })
 
@@ -124,7 +127,7 @@ class LightningDialogBuilder @Inject constructor(
         uiController: UIController,
         url: String
     ) = BrowserDialog.show(activity, R.string.action_downloads,
-        DialogItem(R.string.dialog_delete_all_downloads) {
+        DialogItem(title = R.string.dialog_delete_all_downloads) {
             downloadsModel.deleteAllDownloads()
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
@@ -178,10 +181,10 @@ class LightningDialogBuilder @Inject constructor(
         uiController: UIController,
         folder: Bookmark.Folder
     ) = BrowserDialog.show(activity, R.string.action_folder,
-        DialogItem(R.string.dialog_rename_folder) {
+        DialogItem(title = R.string.dialog_rename_folder) {
             showRenameFolderDialog(activity, uiController, folder)
         },
-        DialogItem(R.string.dialog_remove_folder) {
+        DialogItem(title = R.string.dialog_remove_folder) {
             bookmarkManager.deleteFolder(folder.title)
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
@@ -213,22 +216,25 @@ class LightningDialogBuilder @Inject constructor(
         uiController: UIController,
         url: String
     ) = BrowserDialog.show(activity, R.string.action_history,
-        DialogItem(R.string.dialog_open_new_tab) {
+        DialogItem(title = R.string.dialog_open_new_tab) {
             uiController.handleNewTab(NewTab.FOREGROUND, url)
         },
-        DialogItem(R.string.dialog_open_background_tab) {
+        DialogItem(title = R.string.dialog_open_background_tab) {
             uiController.handleNewTab(NewTab.BACKGROUND, url)
         },
-        DialogItem(R.string.dialog_open_incognito_tab, activity is MainActivity) {
+        DialogItem(
+            title = R.string.dialog_open_incognito_tab,
+            isConditionMet = activity is MainActivity
+        ) {
             uiController.handleNewTab(NewTab.INCOGNITO, url)
         },
-        DialogItem(R.string.action_share) {
+        DialogItem(title = R.string.action_share) {
             IntentUtils(activity).shareUrl(url, null)
         },
-        DialogItem(R.string.dialog_copy_link) {
+        DialogItem(title = R.string.dialog_copy_link) {
             clipboardManager.copyToClipboard(url)
         },
-        DialogItem(R.string.dialog_remove_from_history) {
+        DialogItem(title = R.string.dialog_remove_from_history) {
             historyModel.deleteHistoryEntry(url)
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
@@ -242,22 +248,25 @@ class LightningDialogBuilder @Inject constructor(
         url: String,
         userAgent: String
     ) = BrowserDialog.show(activity, url.replace(HTTP, ""),
-        DialogItem(R.string.dialog_open_new_tab) {
+        DialogItem(title = R.string.dialog_open_new_tab) {
             uiController.handleNewTab(NewTab.FOREGROUND, url)
         },
-        DialogItem(R.string.dialog_open_background_tab) {
+        DialogItem(title = R.string.dialog_open_background_tab) {
             uiController.handleNewTab(NewTab.BACKGROUND, url)
         },
-        DialogItem(R.string.dialog_open_incognito_tab, activity is MainActivity) {
+        DialogItem(
+            title = R.string.dialog_open_incognito_tab,
+            isConditionMet = activity is MainActivity
+        ) {
             uiController.handleNewTab(NewTab.INCOGNITO, url)
         },
-        DialogItem(R.string.action_share) {
+        DialogItem(title = R.string.action_share) {
             IntentUtils(activity).shareUrl(url, null)
         },
-        DialogItem(R.string.dialog_copy_link) {
+        DialogItem(title = R.string.dialog_copy_link) {
             clipboardManager.copyToClipboard(url)
         },
-        DialogItem(R.string.dialog_download_image) {
+        DialogItem(title = R.string.dialog_download_image) {
             downloadHandler.onDownloadStart(activity, userPreferences, url, userAgent, "attachment", null, "")
         })
 
@@ -266,19 +275,22 @@ class LightningDialogBuilder @Inject constructor(
         uiController: UIController,
         url: String
     ) = BrowserDialog.show(activity, url,
-        DialogItem(R.string.dialog_open_new_tab) {
+        DialogItem(title = R.string.dialog_open_new_tab) {
             uiController.handleNewTab(NewTab.FOREGROUND, url)
         },
-        DialogItem(R.string.dialog_open_background_tab) {
+        DialogItem(title = R.string.dialog_open_background_tab) {
             uiController.handleNewTab(NewTab.BACKGROUND, url)
         },
-        DialogItem(R.string.dialog_open_incognito_tab, activity is MainActivity) {
+        DialogItem(
+            title = R.string.dialog_open_incognito_tab,
+            isConditionMet = activity is MainActivity
+        ) {
             uiController.handleNewTab(NewTab.INCOGNITO, url)
         },
-        DialogItem(R.string.action_share) {
+        DialogItem(title = R.string.action_share) {
             IntentUtils(activity).shareUrl(url, null)
         },
-        DialogItem(R.string.dialog_copy_link) {
+        DialogItem(title = R.string.dialog_copy_link) {
             clipboardManager.copyToClipboard(url)
         })
 

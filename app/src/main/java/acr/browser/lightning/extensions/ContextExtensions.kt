@@ -3,6 +3,7 @@
 package acr.browser.lightning.extensions
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -27,3 +28,9 @@ inline fun Context.color(@ColorRes colorRes: Int): Int = ContextCompat.getColor(
  * Shows a toast with the provided [StringRes].
  */
 inline fun Context.toast(@StringRes stringRes: Int) = Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show()
+
+/**
+ * The [LayoutInflater] available on the [Context].
+ */
+inline val Context.inflater: LayoutInflater
+    get() = LayoutInflater.from(this)

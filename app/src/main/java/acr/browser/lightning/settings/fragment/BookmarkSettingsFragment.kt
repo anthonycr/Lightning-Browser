@@ -137,13 +137,13 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
             activity = activity,
             title = R.string.action_delete,
             message = R.string.action_delete_all_bookmarks,
-            positiveButton = DialogItem(R.string.yes) {
+            positiveButton = DialogItem(title = R.string.yes) {
                 bookmarkRepository
                     .deleteAllBookmarks()
                     .subscribeOn(databaseScheduler)
                     .subscribe()
             },
-            negativeButton = DialogItem(R.string.no) {},
+            negativeButton = DialogItem(title = R.string.no) {},
             onCancel = {}
         )
     }

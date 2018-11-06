@@ -916,10 +916,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             return
         }
         BrowserDialog.show(this, R.string.dialog_title_close_browser,
-            DialogItem(R.string.close_tab) {
+            DialogItem(title = R.string.close_tab) {
                 presenter?.deleteTab(position)
             },
-            DialogItem(R.string.close_other_tabs) {
+            DialogItem(title = R.string.close_other_tabs) {
                 presenter?.closeAllOtherTabs()
             },
             DialogItem(title = R.string.close_all_tabs, onClick = this::closeBrowser))
