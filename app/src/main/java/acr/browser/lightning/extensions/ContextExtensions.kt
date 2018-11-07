@@ -3,12 +3,10 @@
 package acr.browser.lightning.extensions
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.core.content.ContextCompat
 
 /**
@@ -34,3 +32,8 @@ inline fun Context.toast(@StringRes stringRes: Int) = Toast.makeText(this, strin
  */
 inline val Context.inflater: LayoutInflater
     get() = LayoutInflater.from(this)
+
+/**
+ * Gets a drawable from the context.
+ */
+inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable = ContextCompat.getDrawable(this, drawableRes)!!

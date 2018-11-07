@@ -1931,16 +1931,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 findResult = null
                 search_bar.visibility = View.GONE
             }
-            R.id.action_reading -> {
-                val read = Intent(this, ReadingActivity::class.java)
-                read.putExtra(LOAD_READING_URL, currentTab.url)
-                startActivity(read)
-            }
-            R.id.action_toggle_desktop -> {
-                currentTab.toggleDesktopUA()
-                currentTab.reload()
-                closeDrawers(null)
-            }
         }
     }
 

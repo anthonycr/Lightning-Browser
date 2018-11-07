@@ -1,6 +1,7 @@
 package acr.browser.lightning.browser.fragment
 
 import acr.browser.lightning.R
+import acr.browser.lightning.adblock.whitelist.WhitelistModel
 import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.BookmarksView
 import acr.browser.lightning.browser.TabsManager
@@ -13,11 +14,16 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.NetworkScheduler
 import acr.browser.lightning.di.injector
+import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
+import acr.browser.lightning.extensions.color
+import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.favicon.FaviconModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.utils.ThemeUtils
+import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -57,6 +63,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject internal lateinit var whitelistModel: WhitelistModel
 
     private lateinit var uiController: UIController
 
@@ -73,6 +80,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     private var isIncognito: Boolean = false
 
+    private var darkTheme: Boolean = false
+
     private var bookmarksSubscription: Disposable? = null
     private var bookmarkUpdateSubscription: Disposable? = null
 
@@ -86,7 +95,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
         uiController = context as UIController
         isIncognito = arguments?.getBoolean(INCOGNITO_MODE, false) == true
-        val darkTheme = userPreferences.useTheme != 0 || isIncognito
+        darkTheme = userPreferences.useTheme != 0 || isIncognito
         webPageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme)
         folderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme)
         iconColor = ThemeUtils.getIconThemeColor(context, darkTheme)
@@ -115,7 +124,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         }
         setupNavigationButton(view, R.id.action_add_bookmark, R.id.action_add_bookmark_image)
         setupNavigationButton(view, R.id.action_reading, R.id.action_reading_image)
-        setupNavigationButton(view, R.id.action_toggle_desktop, R.id.action_toggle_desktop_image)
+        setupNavigationButton(view, R.id.action_page_tools, R.id.action_page_tools_image)
 
 
         bookmarkAdapter = BookmarkListAdapter(
@@ -266,16 +275,57 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     startActivity(read)
                 }
             }
-            R.id.action_toggle_desktop -> {
+            R.id.action_page_tools -> {
+                activity?.also(this::showPageToolsDialog)
+            }
+            else -> Unit
+        }
+    }
+
+    /**
+     * Show the page tools dialog.
+     */
+    private fun showPageToolsDialog(activity: Activity) {
+        val currentTab = getTabsManager().currentTab ?: return
+        val isWhitelisted = whitelistModel.isUrlWhitelisted(currentTab.url)
+        val whitelistColor = if (isWhitelisted) {
+            ThemeUtils.getIconThemeColor(activity, darkTheme)
+        } else {
+
+            activity.color(R.color.error_red)
+        }
+        val whitelistString = if (isWhitelisted) {
+            R.string.dialog_adblock_enable_for_site
+        } else {
+            R.string.dialog_adblock_disable_for_site
+        }
+
+        BrowserDialog.showWithIcons(activity, activity.getString(R.string.dialog_tools_title),
+            DialogItem(
+                activity.drawable(R.drawable.ic_action_desktop),
+                ThemeUtils.getIconThemeColor(activity, darkTheme),
+                R.string.dialog_toggle_desktop
+            ) {
                 getTabsManager().currentTab?.apply {
                     toggleDesktopUA()
                     reload()
                     // TODO add back drawer closing
                 }
+            },
+            DialogItem(
+                activity.drawable(R.drawable.ic_block),
+                whitelistColor,
+                whitelistString,
+                !UrlUtils.isSpecialUrl(currentTab.url)
+            ) {
+                if (isWhitelisted) {
+                    whitelistModel.removeUrlFromWhitelist(currentTab.url)
+                } else {
+                    whitelistModel.addUrlToWhitelist(currentTab.url)
+                }
+                getTabsManager().currentTab?.reload()
             }
-            else -> {
-            }
-        }
+        )
     }
 
     override fun onLongClick(v: View) = false

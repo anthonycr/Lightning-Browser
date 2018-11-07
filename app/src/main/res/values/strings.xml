@@ -264,6 +264,12 @@
     <string name="dialog_title_close_browser">Close browser</string>
     <string name="dialog_delete_download">Delete download</string>
     <string name="dialog_delete_all_downloads">Delete all downloads</string>
+    
+    <!-- Tools dialog -->
+    <string name="dialog_tools_title">Page tools</string>
+    <string name="dialog_toggle_desktop">Toggle desktop user agent</string>
+    <string name="dialog_adblock_enable_for_site">Enable ad block for site</string>
+    <string name="dialog_adblock_disable_for_site">Disable ad block for site</string>
 
     <!-- Search Engines -->
     <string name="search_engine_custom">Custom URL</string>

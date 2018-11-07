@@ -18,6 +18,7 @@ package acr.browser.lightning.dialog
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.dimen
 import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.list.RecyclerViewDialogItemAdapter
 import acr.browser.lightning.list.RecyclerViewStringAdapter
 import acr.browser.lightning.utils.DeviceUtils
 import android.app.Activity
@@ -40,6 +41,40 @@ object BrowserDialog {
         @StringRes title: Int,
         vararg items: DialogItem
     ) = show(activity, activity.getString(title), *items)
+    
+    fun showWithIcons(activity: Activity, title: String?, vararg items: DialogItem) {
+        val builder = AlertDialog.Builder(activity)
+
+        val layout = activity.inflater.inflate(R.layout.list_dialog, null)
+
+        val titleView = layout.findViewById<TextView>(R.id.dialog_title)
+        val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
+
+        val itemList = items.filter(DialogItem::isConditionMet)
+
+        val adapter = RecyclerViewDialogItemAdapter(itemList)
+
+        if (title?.isNotEmpty() == true) {
+            titleView.text = title
+        }
+
+        recyclerView.apply {
+            this.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            this.adapter = adapter
+            setHasFixedSize(true)
+        }
+
+        builder.setView(layout)
+
+        val dialog = builder.show()
+
+        setDialogSize(activity, dialog)
+
+        adapter.onItemClickListener = { item ->
+            item.onClick()
+            dialog.dismiss()
+        }
+    }
 
     @JvmStatic
     fun show(activity: Activity, title: String?, vararg items: DialogItem) {

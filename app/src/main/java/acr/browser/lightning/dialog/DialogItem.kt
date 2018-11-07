@@ -1,6 +1,8 @@
 package acr.browser.lightning.dialog
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 
 
@@ -11,7 +13,10 @@ import androidx.annotation.StringRes
  */
 class DialogItem(
     val icon: Drawable? = null,
-    @param:StringRes val title: Int,
+    @param:ColorInt
+    val colorTint: Int = Color.BLACK,
+    @param:StringRes
+    val title: Int,
     val isConditionMet: Boolean = true,
     private val onClick: () -> Unit
 ) {
