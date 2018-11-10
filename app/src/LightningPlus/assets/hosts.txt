@@ -31110,6 +31110,7 @@
 127.0.0.1	main.exdynsrv.com
 127.0.0.1	main.exoclick.com
 127.0.0.1	main.exosrv.com
+127.0.0.1	ads.exosrv.com
 127.0.0.1	majintetley.bravejournal.com
 127.0.0.1	majoringmcaiynfa.download
 127.0.0.1	makemoneyonline.2yu.in

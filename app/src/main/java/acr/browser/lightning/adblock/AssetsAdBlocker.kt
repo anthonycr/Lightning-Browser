@@ -45,11 +45,11 @@ class AssetsAdBlocker @Inject internal constructor(
             return false
         }
 
-        val isOnBlacklist = blockedDomainsSet.contains(domain)
-        if (isOnBlacklist) {
+        val isOnBlockList = blockedDomainsSet.contains(domain)
+        if (isOnBlockList) {
             logger.log(TAG, "URL '$url' is an ad")
         }
-        return isOnBlacklist
+        return isOnBlockList
     }
 
     /**
