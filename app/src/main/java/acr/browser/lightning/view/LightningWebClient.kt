@@ -3,7 +3,7 @@ package acr.browser.lightning.view
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.AdBlocker
-import acr.browser.lightning.adblock.whitelist.WhitelistModel
+import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.injector
@@ -51,7 +51,7 @@ class LightningWebClient(
     @Inject internal lateinit var proxyUtils: ProxyUtils
     @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var sslWarningPreferences: SslWarningPreferences
-    @Inject internal lateinit var whitelistModel: WhitelistModel
+    @Inject internal lateinit var whitelistModel: AllowListModel
     @Inject internal lateinit var logger: Logger
 
     private var adBlock: AdBlocker
@@ -91,7 +91,7 @@ class LightningWebClient(
     }
 
     private fun isAd(pageUrl: String, requestUrl: String) =
-        !whitelistModel.isUrlWhitelisted(pageUrl) && adBlock.isAd(requestUrl)
+        !whitelistModel.isUrlAllowedAds(pageUrl) && adBlock.isAd(requestUrl)
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {

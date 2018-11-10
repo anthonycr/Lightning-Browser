@@ -1,9 +1,9 @@
-package acr.browser.lightning.database.whitelist
+package acr.browser.lightning.database.allowlist
 
 /**
  * A model object representing a whitelisted URL.
  */
-data class WhitelistItem(
+data class AllowListItem(
     val url: String,
     val timeCreated: Long
 )

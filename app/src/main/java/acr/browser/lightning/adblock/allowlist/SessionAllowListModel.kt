@@ -1,7 +1,7 @@
-package acr.browser.lightning.adblock.whitelist
+package acr.browser.lightning.adblock.allowlist
 
-import acr.browser.lightning.database.whitelist.AdBlockWhitelistRepository
-import acr.browser.lightning.database.whitelist.WhitelistItem
+import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
+import acr.browser.lightning.database.allowlist.AllowListItem
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import androidx.core.net.toUri
@@ -14,34 +14,34 @@ import javax.inject.Singleton
  * An in memory representation of the ad blocking whitelist. Can be queried synchronously.
  */
 @Singleton
-class SessionWhitelistModel @Inject constructor(
-    private val adBlockWhitelistModel: AdBlockWhitelistRepository,
+class SessionAllowListModel @Inject constructor(
+    private val adBlockAllowListModel: AdBlockAllowListRepository,
     @DatabaseScheduler private val ioScheduler: Scheduler,
     private val logger: Logger
-) : WhitelistModel {
+) : AllowListModel {
 
     private var whitelistSet = hashSetOf<String>()
 
     init {
-        adBlockWhitelistModel
-            .allWhitelistItems()
-            .map { it.map(WhitelistItem::url).toHashSet() }
+        adBlockAllowListModel
+            .allAllowListItems()
+            .map { it.map(AllowListItem::url).toHashSet() }
             .subscribeOn(ioScheduler)
             .subscribe { hashSet -> whitelistSet = hashSet }
     }
 
-    override fun isUrlWhitelisted(url: String): Boolean =
+    override fun isUrlAllowedAds(url: String): Boolean =
         url.toUri().host?.let(whitelistSet::contains) ?: false
 
-    override fun addUrlToWhitelist(url: String) {
+    override fun addUrlToAllowList(url: String) {
         url.toUri().host?.let { host ->
-            adBlockWhitelistModel
-                .whitelistItemForUrl(host)
+            adBlockAllowListModel
+                .allowListItemForUrl(host)
                 .isEmpty
                 .flatMapCompletable {
                     if (it) {
-                        adBlockWhitelistModel.addWhitelistItem(
-                            WhitelistItem(host, System.currentTimeMillis())
+                        adBlockAllowListModel.addAllowListItem(
+                            AllowListItem(host, System.currentTimeMillis())
                         )
                     } else {
                         Completable.complete()
@@ -54,11 +54,11 @@ class SessionWhitelistModel @Inject constructor(
         }
     }
 
-    override fun removeUrlFromWhitelist(url: String) {
+    override fun removeUrlFromAllowList(url: String) {
         url.toUri().host?.let { host ->
-            adBlockWhitelistModel
-                .whitelistItemForUrl(host)
-                .flatMapCompletable(adBlockWhitelistModel::removeWhitelistItem)
+            adBlockAllowListModel
+                .allowListItemForUrl(host)
+                .flatMapCompletable(adBlockAllowListModel::removeAllowListItem)
                 .subscribeOn(ioScheduler)
                 .subscribe { logger.log(TAG, "whitelist item removed from database") }
 
@@ -67,6 +67,6 @@ class SessionWhitelistModel @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "SessionWhitelistModel"
+        private const val TAG = "SessionAllowListModel"
     }
 }

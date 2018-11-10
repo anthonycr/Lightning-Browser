@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser.fragment
 
 import acr.browser.lightning.R
-import acr.browser.lightning.adblock.whitelist.WhitelistModel
+import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.BookmarksView
 import acr.browser.lightning.browser.TabsManager
@@ -63,7 +63,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:NetworkScheduler internal lateinit var networkScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
-    @Inject internal lateinit var whitelistModel: WhitelistModel
+    @Inject internal lateinit var whitelistModel: AllowListModel
 
     private lateinit var uiController: UIController
 
@@ -287,14 +287,14 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
      */
     private fun showPageToolsDialog(activity: Activity) {
         val currentTab = getTabsManager().currentTab ?: return
-        val isWhitelisted = whitelistModel.isUrlWhitelisted(currentTab.url)
-        val whitelistColor = if (isWhitelisted) {
+        val isAllowedAds = whitelistModel.isUrlAllowedAds(currentTab.url)
+        val whitelistColor = if (isAllowedAds) {
             ThemeUtils.getIconThemeColor(activity, darkTheme)
         } else {
 
             activity.color(R.color.error_red)
         }
-        val whitelistString = if (isWhitelisted) {
+        val whitelistString = if (isAllowedAds) {
             R.string.dialog_adblock_enable_for_site
         } else {
             R.string.dialog_adblock_disable_for_site
@@ -318,10 +318,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                 whitelistString,
                 !UrlUtils.isSpecialUrl(currentTab.url)
             ) {
-                if (isWhitelisted) {
-                    whitelistModel.removeUrlFromWhitelist(currentTab.url)
+                if (isAllowedAds) {
+                    whitelistModel.removeUrlFromAllowList(currentTab.url)
                 } else {
-                    whitelistModel.addUrlToWhitelist(currentTab.url)
+                    whitelistModel.addUrlToAllowList(currentTab.url)
                 }
                 getTabsManager().currentTab?.reload()
             }
