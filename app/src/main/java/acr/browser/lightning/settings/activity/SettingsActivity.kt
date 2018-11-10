@@ -21,8 +21,8 @@ class SettingsActivity : ThemableSettingsActivity() {
     @Inject lateinit var buildInfo: BuildInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         injector.inject(this)
+        super.onCreate(savedInstanceState)
         // this is a workaround for the Toolbar in PreferenceActivity
         val root = findViewById<ViewGroup>(android.R.id.content)
         val content = root.getChildAt(0) as LinearLayout
