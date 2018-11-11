@@ -65,12 +65,12 @@ class LightningWebClient(
     private var currentUrl: String = ""
 
     var sslState: SSLState = SSLState.None
-        set(value) {
-            sslStateObservable.onNext(value)
+        private set(value) {
+            sslStateSubject.onNext(value)
             field = value
         }
 
-    private val sslStateObservable: PublishSubject<SSLState> = PublishSubject.create()
+    private val sslStateSubject: PublishSubject<SSLState> = PublishSubject.create()
 
     init {
         activity.injector.inject(this)
@@ -78,7 +78,7 @@ class LightningWebClient(
         adBlock = chooseAdBlocker()
     }
 
-    fun sslStateObservable(): Observable<SSLState> = sslStateObservable
+    fun sslStateObservable(): Observable<SSLState> = sslStateSubject.hide()
 
     fun updatePreferences() {
         adBlock = chooseAdBlocker()
