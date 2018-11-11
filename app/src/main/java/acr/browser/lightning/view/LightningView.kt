@@ -512,7 +512,7 @@ class LightningView(
             }
             1 -> {
                 val filterInvert = ColorMatrixColorFilter(
-                    sNegativeColorArray)
+                    negativeColorArray)
                 paint.colorFilter = filterInvert
                 setHardwareRendering()
 
@@ -527,7 +527,7 @@ class LightningView(
             }
             3 -> {
                 val matrix = ColorMatrix()
-                matrix.set(sNegativeColorArray)
+                matrix.set(negativeColorArray)
                 val matrixGray = ColorMatrix()
                 matrixGray.setSaturation(0f)
                 val concat = ColorMatrix()
@@ -540,7 +540,7 @@ class LightningView(
             }
 
             4 -> {
-                val increaseHighContrast = ColorMatrixColorFilter(sIncreaseContrastColorArray)
+                val increaseHighContrast = ColorMatrixColorFilter(increaseContrastColorArray)
                 paint.colorFilter = increaseHighContrast
                 setHardwareRendering()
             }
@@ -898,12 +898,14 @@ class LightningView(
         private val API = android.os.Build.VERSION.SDK_INT
         private val SCROLL_UP_THRESHOLD = Utils.dpToPx(10f)
 
-        private val sNegativeColorArray = floatArrayOf(-1.0f, 0f, 0f, 0f, 255f, // red
+        private val negativeColorArray = floatArrayOf(
+            -1.0f, 0f, 0f, 0f, 255f, // red
             0f, -1.0f, 0f, 0f, 255f, // green
             0f, 0f, -1.0f, 0f, 255f, // blue
             0f, 0f, 0f, 1.0f, 0f // alpha
         )
-        private val sIncreaseContrastColorArray = floatArrayOf(2.0f, 0f, 0f, 0f, -160f, // red
+        private val increaseContrastColorArray = floatArrayOf(
+            2.0f, 0f, 0f, 0f, -160f, // red
             0f, 2.0f, 0f, 0f, -160f, // green
             0f, 0f, 2.0f, 0f, -160f, // blue
             0f, 0f, 0f, 1.0f, 0f // alpha
