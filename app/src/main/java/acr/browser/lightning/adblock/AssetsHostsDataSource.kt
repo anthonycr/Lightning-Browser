@@ -1,67 +1,33 @@
 package acr.browser.lightning.adblock
 
-import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.extensions.inlineReplace
 import acr.browser.lightning.extensions.inlineTrim
 import acr.browser.lightning.extensions.stringEquals
 import acr.browser.lightning.extensions.substringToBuilder
 import acr.browser.lightning.log.Logger
 import android.app.Application
-import io.reactivex.Completable
-import io.reactivex.Scheduler
+import io.reactivex.Single
 import java.io.InputStreamReader
-import java.net.URI
-import java.net.URISyntaxException
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * An implementation of the ad blocker that checks the URLs against the hosts stored in assets.
- * Checking whether a URL is an ad is an `O(log n)` operation.
+ * A [HostsDataSource] that reads from the hosts list in assets.
  */
 @Singleton
-class AssetsAdBlocker @Inject internal constructor(
+class AssetsHostsDataSource @Inject constructor(
     private val application: Application,
-    @DiskScheduler diskScheduler: Scheduler,
     private val logger: Logger
-) : AdBlocker {
-
-    private val blockedDomainsSet = HashSet<String>()
-
-    init {
-        loadHostsFile().subscribeOn(diskScheduler).subscribe()
-    }
-
-    override fun isAd(url: String?): Boolean {
-        if (url == null) {
-            return false
-        }
-
-        val domain = try {
-            getDomainName(url)
-        } catch (exception: URISyntaxException) {
-            logger.log(TAG, "URL '$url' is invalid", exception)
-            return false
-        }
-
-        val isOnBlockList = blockedDomainsSet.contains(domain)
-        if (isOnBlockList) {
-            logger.log(TAG, "URL '$url' is an ad")
-        }
-        return isOnBlockList
-    }
+) : HostsDataSource {
 
     /**
-     * This Completable reads through a hosts file and extracts the domains that should
-     * be redirected to localhost (a.k.a. IP address 127.0.0.1). It can handle files that
-     * simply have a list of host names to block, or it can handle a full blown hosts file.
-     * It will strip out comments, references to the base IP address and just extract the
-     * domains to be used.
-     *
-     * @return a Completable that will load the hosts file into memory.
+     * A [Single] that reads through a hosts file and extracts the domains that should be redirected
+     * to localhost (a.k.a. IP address 127.0.0.1). It can handle files that simply have a list of
+     * host names to block, or it can handle a full blown hosts file. It will strip out comments,
+     * references to the base IP address and just extract the domains to be used.
      */
-    private fun loadHostsFile() = Completable.fromAction {
+    override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
         val asset = application.assets
         val reader = InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
         val lineBuilder = StringBuilder()
@@ -78,8 +44,8 @@ class AssetsAdBlocker @Inject internal constructor(
             }
         }
 
-        blockedDomainsSet.addAll(domains)
         logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
+        emitter.onSuccess(domains)
     }
 
     companion object {
@@ -94,31 +60,6 @@ class AssetsAdBlocker @Inject internal constructor(
         private const val TAB = "\t"
         private const val SPACE = " "
         private const val EMPTY = ""
-
-        /**
-         * Returns the probable domain name for a given URL
-         *
-         * @param url the url to parse
-         * @return returns the domain
-         * @throws URISyntaxException throws an exception if the string cannot form a URI
-         */
-        @JvmStatic
-        @Throws(URISyntaxException::class)
-        private fun getDomainName(url: String): String {
-            val host = url.indexOf('/', 8)
-                .takeIf { it != -1 }
-                ?.let(url::take)
-                ?: url
-
-            val uri = URI(host)
-            val domain = uri.host ?: return host
-
-            return if (domain.startsWith("www.")) {
-                domain.substring(4)
-            } else {
-                domain
-            }
-        }
 
         @JvmStatic
         internal fun parseString(lineBuilder: StringBuilder, parsedList: MutableList<String>) {

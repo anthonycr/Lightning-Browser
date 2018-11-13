@@ -85,7 +85,7 @@ class LightningWebClient(
     }
 
     private fun chooseAdBlocker(): AdBlocker = if (userPreferences.adBlockEnabled) {
-        activity.injector.provideAssetsAdBlocker()
+        activity.injector.provideBloomFilterAdBlocker()
     } else {
         activity.injector.provideNoOpAdBlocker()
     }

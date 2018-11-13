@@ -1,7 +1,11 @@
 package acr.browser.lightning.di
 
+import acr.browser.lightning.adblock.AssetsHostsDataSource
+import acr.browser.lightning.adblock.HostsDataSource
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.adblock.allowlist.SessionAllowListModel
+import acr.browser.lightning.database.adblock.HostsRepository
+import acr.browser.lightning.database.adblock.InMemoryHostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
 import acr.browser.lightning.database.bookmark.BookmarkDatabase
@@ -39,4 +43,9 @@ abstract class AppBindsModule {
     @Binds
     abstract fun providesSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences
 
+    @Binds
+    abstract fun providesHostsDataSource(assetsHostsDataSource: AssetsHostsDataSource): HostsDataSource
+
+    @Binds
+    abstract fun providesHostsRepository(inMemoryHostsRepository: InMemoryHostsRepository): HostsRepository
 }

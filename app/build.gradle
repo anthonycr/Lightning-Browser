@@ -114,6 +114,11 @@ dependencies {
     implementation "androidx.fragment:fragment:1.0.0"
     implementation "androidx.drawerlayout:drawerlayout:1.0.0"
 
+    // guava - used for BloomFilter
+    implementation('com.google.guava:guava:27.0-android') {
+        exclude group: 'com.google.guava', module: 'failureaccess'
+    }
+
     // html parsing for reading mode
     implementation 'org.jsoup:jsoup:1.11.3'
 

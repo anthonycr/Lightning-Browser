@@ -1,7 +1,7 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
-import acr.browser.lightning.adblock.AssetsAdBlocker
+import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.browser.activity.BrowserActivity
@@ -73,7 +73,7 @@ interface AppComponent {
 
     fun inject(displaySettingsFragment: DisplaySettingsFragment)
 
-    fun provideAssetsAdBlocker(): AssetsAdBlocker
+    fun provideBloomFilterAdBlocker(): BloomFilterAdBlocker
 
     fun provideNoOpAdBlocker(): NoOpAdBlocker
 

@@ -6,7 +6,7 @@ import org.junit.Test
 /**
  * Unit tests for the assets ad blocker
  */
-class AssetsAdBlockerTest {
+class AssetsHostsDataSourceTest {
 
     @Test
     fun `line parsing is valid`() {
@@ -27,7 +27,7 @@ class AssetsAdBlockerTest {
         val mutableList = mutableListOf<String>()
 
         testInput.trimIndent().split("\n").forEach {
-            AssetsAdBlocker.parseString(StringBuilder(it), mutableList)
+            AssetsHostsDataSource.parseString(StringBuilder(it), mutableList)
         }
 
         assertThat(mutableList).hasSize(6)
