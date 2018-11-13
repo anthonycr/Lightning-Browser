@@ -4,7 +4,7 @@ import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
-import acr.browser.lightning.database.allowlist.AllowListItem
+import acr.browser.lightning.database.allowlist.AllowListEntry
 import acr.browser.lightning.log.NoOpLogger
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -30,7 +30,7 @@ class SessionAllowListModelTest {
 
     @Test
     fun `isUrlAllowListed checks domain`() {
-        whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(listOf(AllowListItem("test.com", 0))))
+        whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(listOf(AllowListEntry("test.com", 0))))
         val sessionAllowListModel = SessionAllowListModel(adBlockAllowListModel, Schedulers.trampoline(), NoOpLogger())
 
         assertThat(sessionAllowListModel.isUrlAllowedAds("http://test.com/12345")).isTrue()
@@ -54,7 +54,7 @@ class SessionAllowListModelTest {
 
     @Test
     fun `removeUrlFromAllowList updates immediately`() {
-        whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(listOf(AllowListItem("test.com", 0))))
+        whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(listOf(AllowListEntry("test.com", 0))))
         whenever(adBlockAllowListModel.allowListItemForUrl(any())).thenReturn(Maybe.empty())
         whenever(adBlockAllowListModel.removeAllowListItem(any())).thenReturn(Completable.complete())
         val sessionAllowListModel = SessionAllowListModel(adBlockAllowListModel, Schedulers.trampoline(), NoOpLogger())
@@ -68,12 +68,12 @@ class SessionAllowListModelTest {
 
     @Test
     fun `addUrlToAllowList persists across instances`() {
-        val mutableList = mutableListOf<AllowListItem>()
+        val mutableList = mutableListOf<AllowListEntry>()
         whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(mutableList))
         whenever(adBlockAllowListModel.allowListItemForUrl(any())).thenReturn(Maybe.empty())
         whenever(adBlockAllowListModel.addAllowListItem(any())).then { invocation ->
             return@then Completable.fromAction {
-                mutableList.add(invocation.arguments[0] as AllowListItem)
+                mutableList.add(invocation.arguments[0] as AllowListEntry)
             }
         }
 
@@ -90,17 +90,17 @@ class SessionAllowListModelTest {
 
     @Test
     fun `removeUrlFromAllowList persists across instances`() {
-        val mutableList = mutableListOf(AllowListItem("test.com", 0))
+        val mutableList = mutableListOf(AllowListEntry("test.com", 0))
         whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(mutableList))
         whenever(adBlockAllowListModel.allAllowListItems()).thenReturn(Single.just(mutableList))
         whenever(adBlockAllowListModel.allowListItemForUrl(any())).then { invocation ->
             return@then Maybe.fromCallable {
-                return@fromCallable mutableList.find { it.url == (invocation.arguments[0] as String) }
+                return@fromCallable mutableList.find { it.domain == (invocation.arguments[0] as String) }
             }
         }
         whenever(adBlockAllowListModel.removeAllowListItem(any())).then { invocation ->
             return@then Completable.fromAction {
-                mutableList.remove(invocation.arguments[0] as AllowListItem)
+                mutableList.remove(invocation.arguments[0] as AllowListEntry)
             }
         }
 
