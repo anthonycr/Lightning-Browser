@@ -48,11 +48,7 @@ class BloomFilterAdBlocker @Inject constructor(
             .subscribe()
     }
 
-    override fun isAd(url: String?): Boolean {
-        if (url == null) {
-            return false
-        }
-
+    override fun isAd(url: String): Boolean {
         val domain = try {
             getDomainName(url)
         } catch (exception: URISyntaxException) {

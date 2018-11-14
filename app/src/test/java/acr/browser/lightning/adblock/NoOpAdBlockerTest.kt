@@ -13,6 +13,5 @@ class NoOpAdBlockerTest {
         val noOpAdBlocker = NoOpAdBlocker()
 
         assertThat(noOpAdBlocker.isAd("https://ads.google.com")).isFalse()
-        assertThat(noOpAdBlocker.isAd(null)).isFalse()
     }
 }

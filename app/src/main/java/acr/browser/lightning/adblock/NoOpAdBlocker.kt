@@ -9,6 +9,6 @@ import javax.inject.Singleton
 @Singleton
 class NoOpAdBlocker @Inject internal constructor() : AdBlocker {
 
-    override fun isAd(url: String?) = false
+    override fun isAd(url: String) = false
 
 }
