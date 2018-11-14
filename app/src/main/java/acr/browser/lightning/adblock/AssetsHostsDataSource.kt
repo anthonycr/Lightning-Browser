@@ -67,11 +67,13 @@ class AssetsHostsDataSource @Inject constructor(
                 lineBuilder.inlineReplace(LOCAL_IP_V4, EMPTY)
                 lineBuilder.inlineReplace(LOCAL_IP_V4_ALT, EMPTY)
                 lineBuilder.inlineReplace(LOCAL_IP_V6, EMPTY)
-                lineBuilder.inlineReplace(TAB, EMPTY)
+                lineBuilder.inlineReplace(TAB, SPACE)
 
                 val comment = lineBuilder.indexOf(COMMENT)
-                if (comment >= 0) {
-                    lineBuilder.replace(comment, lineBuilder.length, EMPTY)
+                if (comment > 0) {
+                    lineBuilder.setLength(comment)
+                } else if (comment == 0) {
+                    return
                 }
 
                 lineBuilder.inlineTrim()
