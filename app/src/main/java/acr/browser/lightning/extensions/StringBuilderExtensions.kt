@@ -1,6 +1,6 @@
 package acr.browser.lightning.extensions
 
-private const val SPACE = " "
+private const val SPACE = ' '
 private const val EMPTY = ""
 
 /**
@@ -21,12 +21,28 @@ fun StringBuilder.inlineReplace(toReplace: String,
  * Trims a string builder of any spaces at the beginning and end.
  */
 fun StringBuilder.inlineTrim() {
-    while (indexOf(SPACE) == 0) {
-        replace(0, 1, EMPTY)
+    var replacements = 0
+    for (i in length - 1 downTo 0) {
+        if (this[i] == SPACE) {
+            replacements++
+        } else {
+            break
+        }
+    }
+    if (replacements > 0) {
+        setLength(length - replacements)
     }
 
-    while (lastIndexOf(SPACE) == length - 1 && length > 0) {
-        replace(length - 1, length, EMPTY)
+    var newStartIndex = 0
+    for (i in 0..length) {
+        if (this[i] == SPACE) {
+            newStartIndex++
+        } else {
+            break
+        }
+    }
+    if (newStartIndex > 0) {
+        replace(0, newStartIndex, EMPTY)
     }
 }
 
@@ -42,7 +58,12 @@ fun StringBuilder.stringEquals(equal: String): Boolean {
         return false
     }
 
-    return (0 until builderLength).none { this[it] != equal[it] }
+    for (i in 0 until builderLength) {
+        if (this[i] != equal[i]) {
+            return false
+        }
+    }
+    return true
 }
 
 /**
