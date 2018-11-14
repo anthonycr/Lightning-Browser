@@ -50,7 +50,7 @@ class AssetsHostsDataSource @Inject constructor(
 
     companion object {
 
-        private const val TAG = "AdBlock"
+        private const val TAG = "AssetsHostsDataSource"
         private const val BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt"
         private const val LOCAL_IP_V4 = "127.0.0.1"
         private const val LOCAL_IP_V4_ALT = "0.0.0.0"

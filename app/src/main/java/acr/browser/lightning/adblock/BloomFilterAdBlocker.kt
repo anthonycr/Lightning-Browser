@@ -27,7 +27,8 @@ class BloomFilterAdBlocker @Inject constructor(
 
     private val bloomFilter = BloomFilter.create(
         Funnels.stringFunnel(Charset.defaultCharset()),
-        50_000
+        50_000,
+        0.01
     )
 
     init {
@@ -102,7 +103,7 @@ class BloomFilterAdBlocker @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "AdBlock"
+        private const val TAG = "BloomFilterAdBlocker"
     }
 
 }
