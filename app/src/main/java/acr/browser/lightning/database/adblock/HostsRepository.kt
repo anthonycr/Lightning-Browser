@@ -1,7 +1,6 @@
 package acr.browser.lightning.database.adblock
 
 import io.reactivex.Completable
-import io.reactivex.Single
 
 /**
  * A repository that stores [Host].
@@ -23,9 +22,8 @@ interface HostsRepository {
     fun removeAllHosts(): Completable
 
     /**
-     * @return A [Single] that emits `true` if the repository contains the [Host], `false`
-     * otherwise.
+     * @return `true` if the repository contains the [Host], `false` otherwise.
      */
-    fun containsHost(host: Host): Single<Boolean>
+    fun containsHost(host: Host): Boolean
 
 }

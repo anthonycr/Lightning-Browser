@@ -62,7 +62,7 @@ class BloomFilterAdBlocker @Inject constructor(
         val mightBeOnBlockList = bloomFilter.mightContain(domain.name)
 
         return if (mightBeOnBlockList) {
-            val isOnBlockList = hostsRepository.containsHost(domain).blockingGet()
+            val isOnBlockList = hostsRepository.containsHost(domain)
             if (isOnBlockList) {
                 logger.log(TAG, "URL '$url' is an ad")
             } else {
@@ -71,9 +71,6 @@ class BloomFilterAdBlocker @Inject constructor(
 
             isOnBlockList
         } else {
-            if (hostsRepository.containsHost(domain).blockingGet()) {
-                logger.log(TAG, "URL SHOULD BE AN AD: $url")
-            }
             false
         }
     }
