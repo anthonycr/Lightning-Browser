@@ -1,5 +1,6 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.di.DatabaseScheduler
@@ -26,7 +27,7 @@ class BloomFilterAdBlocker @Inject constructor(
 ) : AdBlocker {
 
     private val bloomFilter = BloomFilter.create(
-        Funnels.stringFunnel(Charset.defaultCharset()),
+        Funnels.stringFunnel(Charset.forName(UTF8)),
         50_000,
         0.01
     )
