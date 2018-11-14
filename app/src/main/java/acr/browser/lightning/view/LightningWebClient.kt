@@ -90,13 +90,12 @@ class LightningWebClient(
         activity.injector.provideNoOpAdBlocker()
     }
 
-    private fun isAd(pageUrl: String, requestUrl: String) =
+    private fun shouldRequestBeBlocked(pageUrl: String, requestUrl: String) =
         !whitelistModel.isUrlAllowedAds(pageUrl) && adBlock.isAd(requestUrl)
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-        val pageUrl = currentUrl
-        if (isAd(pageUrl, request.url.toString())) {
+        if (shouldRequestBeBlocked(currentUrl, request.url.toString())) {
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
@@ -106,8 +105,7 @@ class LightningWebClient(
     @Suppress("OverridingDeprecatedMember")
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-        val pageUrl = currentUrl
-        if (isAd(pageUrl, url)) {
+        if (shouldRequestBeBlocked(currentUrl, url)) {
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse("text/plain", "utf-8", empty)
         }
