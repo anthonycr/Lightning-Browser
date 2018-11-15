@@ -57,13 +57,14 @@ class AssetsHostsDataSource @Inject constructor(
         private const val LOCAL_IP_V6 = "::1"
         private const val LOCALHOST = "localhost"
         private const val COMMENT = "#"
+        private const val COMMENT_CHAR = '#'
         private const val TAB = "\t"
         private const val SPACE = " "
         private const val EMPTY = ""
 
         @JvmStatic
         internal fun parseString(lineBuilder: StringBuilder, parsedList: MutableList<String>) {
-            if (lineBuilder.isNotEmpty() && !lineBuilder.startsWith(COMMENT)) {
+            if (lineBuilder.isNotEmpty() && lineBuilder[0] != COMMENT_CHAR) {
                 lineBuilder.inlineReplace(LOCAL_IP_V4, EMPTY)
                 lineBuilder.inlineReplace(LOCAL_IP_V4_ALT, EMPTY)
                 lineBuilder.inlineReplace(LOCAL_IP_V6, EMPTY)
