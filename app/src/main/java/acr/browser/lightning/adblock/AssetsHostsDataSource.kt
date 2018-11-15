@@ -1,9 +1,6 @@
 package acr.browser.lightning.adblock
 
-import acr.browser.lightning.extensions.inlineReplace
-import acr.browser.lightning.extensions.inlineTrim
-import acr.browser.lightning.extensions.stringEquals
-import acr.browser.lightning.extensions.substringToBuilder
+import acr.browser.lightning.extensions.*
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import io.reactivex.Single
@@ -60,6 +57,7 @@ class AssetsHostsDataSource @Inject constructor(
         private const val COMMENT_CHAR = '#'
         private const val TAB = "\t"
         private const val SPACE = " "
+        private const val SPACE_CHAR = ' '
         private const val EMPTY = ""
 
         @JvmStatic
@@ -70,7 +68,7 @@ class AssetsHostsDataSource @Inject constructor(
                 lineBuilder.inlineReplace(LOCAL_IP_V6, EMPTY)
                 lineBuilder.inlineReplace(TAB, SPACE)
 
-                val comment = lineBuilder.indexOf(COMMENT)
+                val comment = lineBuilder.indexOfChar(COMMENT_CHAR)
                 if (comment > 0) {
                     lineBuilder.setLength(comment)
                 } else if (comment == 0) {
@@ -80,8 +78,8 @@ class AssetsHostsDataSource @Inject constructor(
                 lineBuilder.inlineTrim()
 
                 if (lineBuilder.isNotEmpty() && !lineBuilder.stringEquals(LOCALHOST)) {
-                    while (lineBuilder.contains(SPACE)) {
-                        val space = lineBuilder.indexOf(SPACE)
+                    while (lineBuilder.containsChar(SPACE_CHAR)) {
+                        val space = lineBuilder.indexOfChar(SPACE_CHAR)
                         val partial = lineBuilder.substringToBuilder(0, space)
                         partial.inlineTrim()
 

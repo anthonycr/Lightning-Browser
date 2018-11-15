@@ -18,6 +18,25 @@ fun StringBuilder.inlineReplace(toReplace: String,
 }
 
 /**
+ * Returns the index of the provided [char] in the string or -1 if it cannot be found.
+ */
+fun StringBuilder.indexOfChar(char: Char): Int {
+    for (i in 0 until length) {
+        if (this[i] == char) {
+            return i
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns true if the string contains the [char], false otherwise.
+ */
+fun StringBuilder.containsChar(char: Char): Boolean {
+    return indexOfChar(char) > -1
+}
+
+/**
  * Trims a string builder of any spaces at the beginning and end.
  */
 fun StringBuilder.inlineTrim() {
