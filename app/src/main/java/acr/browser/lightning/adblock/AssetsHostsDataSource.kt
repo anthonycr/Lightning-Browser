@@ -53,7 +53,6 @@ class AssetsHostsDataSource @Inject constructor(
         private const val LOCAL_IP_V4_ALT = "0.0.0.0"
         private const val LOCAL_IP_V6 = "::1"
         private const val LOCALHOST = "localhost"
-        private const val COMMENT = "#"
         private const val COMMENT_CHAR = '#'
         private const val TAB = "\t"
         private const val SPACE = " "
