@@ -1,6 +1,5 @@
 package acr.browser.lightning.adblock
 
-import acr.browser.lightning.extensions.*
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import io.reactivex.Single
@@ -27,17 +26,14 @@ class AssetsHostsDataSource @Inject constructor(
     override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
         val asset = application.assets
         val reader = InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
-        val lineBuilder = StringBuilder()
+        val hostsFileParser = HostsFileParser()
         val time = System.currentTimeMillis()
 
         val domains = ArrayList<String>(1)
 
         reader.use { inputStreamReader ->
             inputStreamReader.forEachLine {
-                lineBuilder.append(it)
-
-                parseString(lineBuilder, domains)
-                lineBuilder.setLength(0)
+                hostsFileParser.parseLine(it, domains)
             }
         }
 
@@ -46,56 +42,8 @@ class AssetsHostsDataSource @Inject constructor(
     }
 
     companion object {
-
         private const val TAG = "AssetsHostsDataSource"
         private const val BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt"
-        private const val LOCAL_IP_V4 = "127.0.0.1"
-        private const val LOCAL_IP_V4_ALT = "0.0.0.0"
-        private const val LOCAL_IP_V6 = "::1"
-        private const val LOCALHOST = "localhost"
-        private const val COMMENT_CHAR = '#'
-        private const val TAB = "\t"
-        private const val SPACE = " "
-        private const val SPACE_CHAR = ' '
-        private const val EMPTY = ""
-
-        @JvmStatic
-        internal fun parseString(lineBuilder: StringBuilder, parsedList: MutableList<String>) {
-            if (lineBuilder.isNotEmpty() && lineBuilder[0] != COMMENT_CHAR) {
-                lineBuilder.inlineReplace(LOCAL_IP_V4, EMPTY)
-                lineBuilder.inlineReplace(LOCAL_IP_V4_ALT, EMPTY)
-                lineBuilder.inlineReplace(LOCAL_IP_V6, EMPTY)
-                lineBuilder.inlineReplace(TAB, SPACE)
-
-                val comment = lineBuilder.indexOfChar(COMMENT_CHAR)
-                if (comment > 0) {
-                    lineBuilder.setLength(comment)
-                } else if (comment == 0) {
-                    return
-                }
-
-                lineBuilder.inlineTrim()
-
-                if (lineBuilder.isNotEmpty() && !lineBuilder.stringEquals(LOCALHOST)) {
-                    while (lineBuilder.containsChar(SPACE_CHAR)) {
-                        val space = lineBuilder.indexOfChar(SPACE_CHAR)
-                        val partial = lineBuilder.substringToBuilder(0, space)
-                        partial.inlineTrim()
-
-                        val partialLine = partial.toString()
-
-                        // Add string to list
-                        parsedList.add(partialLine)
-                        lineBuilder.inlineReplace(partialLine, EMPTY)
-                        lineBuilder.inlineTrim()
-                    }
-                    if (lineBuilder.isNotEmpty()) {
-                        // Add string to list.
-                        parsedList.add(lineBuilder.toString())
-                    }
-                }
-            }
-        }
     }
 
 }

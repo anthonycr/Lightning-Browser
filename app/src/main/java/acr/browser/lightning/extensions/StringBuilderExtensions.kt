@@ -6,14 +6,26 @@ private const val EMPTY = ""
 /**
  * Replace the first string found in a string builder with another string.
  *
- * @param toReplace the string to replace.
- * @param replacement the replacement string.
+ * @param toReplace The string to replace.
+ * @param replacement The replacement string.
  */
-fun StringBuilder.inlineReplace(toReplace: String,
-                                replacement: String) {
+fun StringBuilder.inlineReplace(toReplace: String, replacement: String) {
     val index = indexOf(toReplace)
     if (index >= 0) {
         replace(index, index + toReplace.length, replacement)
+    }
+}
+
+/**
+ * Replace the first char wound in a string builder with another char.
+ *
+ * @param toReplace The char to replace.
+ * @param replacement The replacement char.
+ */
+fun StringBuilder.inlineReplaceChar(toReplace: Char, replacement: Char) {
+    val index = indexOfChar(toReplace)
+    if (index >= 0) {
+        setCharAt(index, replacement)
     }
 }
 
@@ -89,13 +101,14 @@ fun StringBuilder.stringEquals(equal: String): Boolean {
  * Creates a sub-string builder from the current string builder.
  *
  * @param start the starting index.
- * @param end the ending index.
+ * @param end the ending index, must be greater than [start].
  * @return a string builder that contains the characters between the indices.
  */
 fun StringBuilder.substringToBuilder(start: Int, end: Int): StringBuilder {
-    val newStringBuilder = StringBuilder(this)
-    newStringBuilder.replace(end, length, EMPTY)
-    newStringBuilder.replace(0, start, EMPTY)
-
-    return newStringBuilder
+    require(end > start) { "End must be greater than start." }
+    this.substring(start, end)
+    return StringBuilder(this).apply {
+        setLength(end)
+        replace(0, start, EMPTY)
+    }
 }
