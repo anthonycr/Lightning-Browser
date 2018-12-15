@@ -28,11 +28,8 @@ class SearchBoxModel @Inject constructor(
      * should be displayed by the search box.
      *
      * @param url       the URL of the current page.
-     *
      * @param title     the title of the current page, if known.
-     *
      * @param isLoading whether the page is currently loading or not.
-     *
      * @return the string that should be displayed by the search box.
      */
     fun getDisplayContent(url: String, title: String?, isLoading: Boolean): String {
