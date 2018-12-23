@@ -25,6 +25,7 @@ import android.os.Looper
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
+import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.MezzanineGenerator
 import dagger.Module
 import dagger.Provides
@@ -66,26 +67,26 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
 
     @Provides
-    fun providesClipboardManager() = browserApp.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    fun providesClipboardManager() = browserApp.getSystemService<ClipboardManager>()!!
 
     @Provides
-    fun providesInputMethodManager() = browserApp.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    fun providesInputMethodManager() = browserApp.getSystemService<InputMethodManager>()!!
 
     @Provides
-    fun providesDownloadManager() = browserApp.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    fun providesDownloadManager() = browserApp.getSystemService<DownloadManager>()!!
 
     @Provides
-    fun providesConnectivityManager() = browserApp.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun providesConnectivityManager() = browserApp.getSystemService<ConnectivityManager>()!!
 
     @Provides
-    fun providesNotificationManager() = browserApp.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    fun providesNotificationManager() = browserApp.getSystemService<NotificationManager>()!!
 
     @Provides
-    fun providesWindowManager() = browserApp.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    fun providesWindowManager() = browserApp.getSystemService<WindowManager>()!!
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
     @Provides
-    fun providesShortcutManager() = browserApp.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
+    fun providesShortcutManager() = browserApp.getSystemService<ShortcutManager>()!!
 
     @Provides
     @DatabaseScheduler
