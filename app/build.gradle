@@ -105,7 +105,7 @@ dependencies {
 
     // support libraries
     implementation "androidx.palette:palette:1.0.0"
-    implementation "androidx.annotation:annotation:1.0.0"
+    implementation "androidx.annotation:annotation:1.0.1"
     implementation "androidx.vectordrawable:vectordrawable-animated:1.0.0"
     implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "com.google.android.material:material:1.0.0"
@@ -115,7 +115,7 @@ dependencies {
     implementation "androidx.drawerlayout:drawerlayout:1.0.0"
 
     // guava - used for BloomFilter
-    implementation('com.google.guava:guava:27.0-android') {
+    implementation('com.google.guava:guava:27.0.1-android') {
         exclude group: 'com.google.guava', module: 'failureaccess'
     }
 
