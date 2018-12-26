@@ -1,7 +1,7 @@
 package acr.browser.lightning.adblock
 
 import acr.browser.lightning.log.Logger
-import android.app.Application
+import android.content.res.AssetManager
 import io.reactivex.Single
 import java.io.InputStreamReader
 import java.util.*
@@ -10,10 +10,13 @@ import javax.inject.Singleton
 
 /**
  * A [HostsDataSource] that reads from the hosts list in assets.
+ *
+ * @param assetManager The store for application assets.
+ * @param logger The logger used to log status.
  */
 @Singleton
 class AssetsHostsDataSource @Inject constructor(
-    private val application: Application,
+    private val assetManager: AssetManager,
     private val logger: Logger
 ) : HostsDataSource {
 
@@ -24,8 +27,7 @@ class AssetsHostsDataSource @Inject constructor(
      * references to the base IP address and just extract the domains to be used.
      */
     override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
-        val asset = application.assets
-        val reader = InputStreamReader(asset.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
+        val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
         val hostsFileParser = HostsFileParser()
         val time = System.currentTimeMillis()
 

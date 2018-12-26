@@ -67,6 +67,9 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
 
     @Provides
+    fun providesAssetManager() = browserApp.assets
+
+    @Provides
     fun providesClipboardManager() = browserApp.getSystemService<ClipboardManager>()!!
 
     @Provides

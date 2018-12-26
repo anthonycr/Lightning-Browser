@@ -17,6 +17,11 @@ import javax.inject.Singleton
 
 /**
  * An [AdBlocker] that is backed by a [BloomFilter].
+ *
+ * @param logger The logger used to log status.
+ * @param hostsDataSource The data source used to populate the bloom filter and [hostsRepository].
+ * @param hostsRepository The long term store for blocked hosts.
+ * @param databaseScheduler The scheduler used to communicate with the database asynchronously.
  */
 @Singleton
 class BloomFilterAdBlocker @Inject constructor(
