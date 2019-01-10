@@ -100,6 +100,12 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         )
 
         checkBoxPreference(
+                preference = SETTINGS_SAVEDATA,
+                isChecked = userPreferences.saveDataEnabled,
+                onCheckChange = { userPreferences.saveDataEnabled = it }
+        )
+
+        checkBoxPreference(
             preference = SETTINGS_JAVASCRIPT,
             isChecked = userPreferences.javaScriptEnabled,
             onCheckChange = { userPreferences.javaScriptEnabled = it }
@@ -443,6 +449,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         private const val SETTINGS_PROXY = "proxy"
         private const val SETTINGS_ADS = "cb_ads"
         private const val SETTINGS_IMAGES = "cb_images"
+        private const val SETTINGS_SAVEDATA = "savedata"
         private const val SETTINGS_JAVASCRIPT = "cb_javascript"
         private const val SETTINGS_COLOR_MODE = "cb_colormode"
         private const val SETTINGS_USER_AGENT = "agent"
