@@ -1,17 +1,16 @@
 package acr.browser.lightning.adblock
 
-import acr.browser.lightning.constant.UTF8
+import acr.browser.lightning.adblock.util.BloomFilter
+import acr.browser.lightning.adblock.util.DefaultBloomFilter
+import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
-import com.google.common.hash.BloomFilter
-import com.google.common.hash.Funnels
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.toObservable
 import java.net.URI
 import java.net.URISyntaxException
-import java.nio.charset.Charset
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,10 +30,10 @@ class BloomFilterAdBlocker @Inject constructor(
     @DatabaseScheduler private val databaseScheduler: Scheduler
 ) : AdBlocker {
 
-    private val bloomFilter = BloomFilter.create(
-        Funnels.stringFunnel(Charset.forName(UTF8)),
-        50_000,
-        0.01
+    private val bloomFilter: BloomFilter<String> = DefaultBloomFilter(
+        numberOfElements = 50_000,
+        falsePositiveRate = 0.01,
+        hashingAlgorithm = MurmurHashStringAdapter()
     )
 
     init {
@@ -42,7 +41,7 @@ class BloomFilterAdBlocker @Inject constructor(
             .removeAllHosts()
             .andThen(hostsDataSource.loadHosts())
             .flatMapObservable { it.toObservable() }
-            .doOnNext { bloomFilter.put(it) }
+            .doOnNext(bloomFilter::put)
             .map(::Host)
             .toList()
             .flatMapCompletable(hostsRepository::addHosts)
