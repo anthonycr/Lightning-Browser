@@ -1,6 +1,5 @@
 package acr.browser.lightning.rx
 
-import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import android.content.BroadcastReceiver
@@ -18,7 +17,7 @@ import org.robolectric.annotation.Config
  * Unit tests for [BroadcastReceiverDisposable].
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
+@Config(application = TestApplication::class, sdk = [SDK_VERSION])
 class DisposableBroadcastReceiverTest {
 
     private val context = mock<Context>()

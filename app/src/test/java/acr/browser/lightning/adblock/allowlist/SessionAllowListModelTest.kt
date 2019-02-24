@@ -1,6 +1,5 @@
 package acr.browser.lightning.adblock.allowlist
 
-import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
@@ -23,7 +22,7 @@ import org.robolectric.annotation.Config
  * Unit tests for [SessionAllowListModel].
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
+@Config(application = TestApplication::class, sdk = [SDK_VERSION])
 class SessionAllowListModelTest {
 
     private val adBlockAllowListModel = mock<AdBlockAllowListRepository>()
