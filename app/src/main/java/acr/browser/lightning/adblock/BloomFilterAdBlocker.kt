@@ -2,13 +2,17 @@ package acr.browser.lightning.adblock
 
 import acr.browser.lightning.adblock.util.BloomFilter
 import acr.browser.lightning.adblock.util.DefaultBloomFilter
+import acr.browser.lightning.adblock.util.DelegatingBloomFilter
+import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
+import acr.browser.lightning.adblock.util.`object`.ObjectStore
 import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
+import android.app.Application
 import io.reactivex.Scheduler
-import io.reactivex.rxkotlin.toObservable
+import io.reactivex.Single
 import java.net.URI
 import java.net.URISyntaxException
 import javax.inject.Inject
@@ -27,29 +31,52 @@ class BloomFilterAdBlocker @Inject constructor(
     private val logger: Logger,
     hostsDataSource: HostsDataSource,
     private val hostsRepository: HostsRepository,
+    private val application: Application,
     @DatabaseScheduler private val databaseScheduler: Scheduler
 ) : AdBlocker {
 
-    private val bloomFilter: BloomFilter<String> = DefaultBloomFilter(
-        numberOfElements = 50_000,
-        falsePositiveRate = 0.01,
-        hashingAlgorithm = MurmurHashStringAdapter()
-    )
+    private val bloomFilter: DelegatingBloomFilter<String> = DelegatingBloomFilter()
+    private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
     init {
         hostsRepository
             .removeAllHosts()
             .andThen(hostsDataSource.loadHosts())
-            .flatMapObservable { it.toObservable() }
-            .doOnNext(bloomFilter::put)
-            .map(::Host)
-            .toList()
-            .flatMapCompletable(hostsRepository::addHosts)
+            .flatMap {
+                hostsRepository.addHosts(it.map(::Host))
+                    .andThen(loadBloomFilter(it))
+            }
             .subscribeOn(databaseScheduler)
-            .doOnComplete {
+            .doOnSuccess {
+                bloomFilter.delegate = it
                 logger.log(TAG, "Finished loading bloom filter")
             }
             .subscribe()
+    }
+
+    /**
+     * Loads the [BloomFilter] from storage or creates a new one and stores it for fast future initialization.
+     */
+    private fun loadBloomFilter(hosts: List<String>): Single<BloomFilter<String>> = Single.fromCallable {
+        val previouslyStored = objectStore.retrieve(BLOOM_FILTER_KEY)
+
+        if (previouslyStored != null) {
+            return@fromCallable previouslyStored
+        }
+
+        logger.log(TAG, "Constructing bloom filter from list")
+
+        val bloomFilter = DefaultBloomFilter(
+            numberOfElements = hosts.size,
+            falsePositiveRate = 0.01,
+            hashingAlgorithm = MurmurHashStringAdapter()
+        )
+        for (host in hosts) {
+            bloomFilter.put(host)
+        }
+        objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
+
+        return@fromCallable bloomFilter
     }
 
     override fun isAd(url: String): Boolean {
@@ -102,6 +129,7 @@ class BloomFilterAdBlocker @Inject constructor(
 
     companion object {
         private const val TAG = "BloomFilterAdBlocker"
+        private const val BLOOM_FILTER_KEY = "AdBlockingBloomFilter"
     }
 
 }
