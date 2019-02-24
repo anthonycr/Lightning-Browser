@@ -139,7 +139,7 @@ dependencies {
     // proxy support
     implementation 'net.i2p.android:client:0.8'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 
     // rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
