@@ -31,7 +31,7 @@ class BloomFilterAdBlocker @Inject constructor(
     private val logger: Logger,
     hostsDataSource: HostsDataSource,
     private val hostsRepository: HostsRepository,
-    private val application: Application,
+    application: Application,
     @DatabaseScheduler private val databaseScheduler: Scheduler
 ) : AdBlocker {
 
@@ -39,13 +39,15 @@ class BloomFilterAdBlocker @Inject constructor(
     private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
     init {
-        hostsRepository
-            .removeAllHosts()
-            .andThen(hostsDataSource.loadHosts())
-            .flatMap {
-                hostsRepository.addHosts(it.map(::Host))
-                    .andThen(loadBloomFilter(it))
+        Single.defer {
+            if (hostsRepository.hasHosts()) {
+                hostsRepository.allHosts()
+            } else {
+                hostsDataSource.loadHosts()
+                    .map { it.map(::Host) }
+                    .flatMap { hostsRepository.addHosts(it).andThen(Single.just(it)) }
             }
+        }.flatMap(::loadBloomFilter)
             .subscribeOn(databaseScheduler)
             .doOnSuccess {
                 bloomFilter.delegate = it
@@ -57,7 +59,7 @@ class BloomFilterAdBlocker @Inject constructor(
     /**
      * Loads the [BloomFilter] from storage or creates a new one and stores it for fast future initialization.
      */
-    private fun loadBloomFilter(hosts: List<String>): Single<BloomFilter<String>> = Single.fromCallable {
+    private fun loadBloomFilter(hosts: List<Host>): Single<BloomFilter<String>> = Single.fromCallable {
         val previouslyStored = objectStore.retrieve(BLOOM_FILTER_KEY)
 
         if (previouslyStored != null) {
@@ -72,7 +74,7 @@ class BloomFilterAdBlocker @Inject constructor(
             hashingAlgorithm = MurmurHashStringAdapter()
         )
         for (host in hosts) {
-            bloomFilter.put(host)
+            bloomFilter.put(host.name)
         }
         objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
 

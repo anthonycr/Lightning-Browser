@@ -1,6 +1,7 @@
 package acr.browser.lightning.database.adblock
 
 import io.reactivex.Completable
+import io.reactivex.Single
 
 /**
  * A repository that stores [Host].
@@ -25,5 +26,15 @@ interface HostsRepository {
      * @return `true` if the repository contains the [Host], `false` otherwise.
      */
     fun containsHost(host: Host): Boolean
+
+    /**
+     * @return `true` if the repository has been initialized, `false` otherwise.
+     */
+    fun hasHosts(): Boolean
+
+    /**
+     * @return A [Single] that emits a list of all hosts in the repository.
+     */
+    fun allHosts(): Single<List<Host>>
 
 }
