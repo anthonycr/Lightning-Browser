@@ -65,7 +65,7 @@ fun StringBuilder.inlineTrim() {
     }
 
     var newStartIndex = 0
-    for (i in 0..length) {
+    for (i in 0 until length) {
         if (this[i] == SPACE) {
             newStartIndex++
         } else {
