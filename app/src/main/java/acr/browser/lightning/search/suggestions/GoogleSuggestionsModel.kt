@@ -52,11 +52,13 @@ class GoogleSuggestionsModel(
 
     companion object {
 
-        private val parser by lazy(
+        // Converting to a lambda results in pulling the newInstance call out of the lazy.
+        @Suppress("ConvertLambdaToReference")
+        private val parser by lazy {
             XmlPullParserFactory.newInstance().apply {
                 isNamespaceAware = true
-            }::newPullParser
-        )
+            }.newPullParser()
+        }
 
     }
 }
