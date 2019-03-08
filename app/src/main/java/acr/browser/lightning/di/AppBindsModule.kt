@@ -4,8 +4,8 @@ import acr.browser.lightning.adblock.AssetsHostsDataSource
 import acr.browser.lightning.adblock.HostsDataSource
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.adblock.allowlist.SessionAllowListModel
+import acr.browser.lightning.database.adblock.HostsDatabase
 import acr.browser.lightning.database.adblock.HostsRepository
-import acr.browser.lightning.database.adblock.InMemoryHostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
 import acr.browser.lightning.database.bookmark.BookmarkDatabase
@@ -47,5 +47,5 @@ abstract class AppBindsModule {
     abstract fun providesHostsDataSource(assetsHostsDataSource: AssetsHostsDataSource): HostsDataSource
 
     @Binds
-    abstract fun providesHostsRepository(inMemoryHostsRepository: InMemoryHostsRepository): HostsRepository
+    abstract fun providesHostsRepository(hostsDatabase: HostsDatabase): HostsRepository
 }
