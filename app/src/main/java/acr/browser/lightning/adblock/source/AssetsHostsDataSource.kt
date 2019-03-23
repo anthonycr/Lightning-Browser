@@ -1,5 +1,6 @@
-package acr.browser.lightning.adblock
+package acr.browser.lightning.adblock.source
 
+import acr.browser.lightning.adblock.HostsFileParser
 import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
 import io.reactivex.Single

@@ -1,5 +1,6 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.adblock.source.HostsDataSourceProvider
 import acr.browser.lightning.adblock.util.BloomFilter
 import acr.browser.lightning.adblock.util.DefaultBloomFilter
 import acr.browser.lightning.adblock.util.DelegatingBloomFilter
@@ -22,14 +23,15 @@ import javax.inject.Singleton
  * An [AdBlocker] that is backed by a [BloomFilter].
  *
  * @param logger The logger used to log status.
- * @param hostsDataSource The data source used to populate the bloom filter and [hostsRepository].
+ * @param hostsDataSourceProvider The provider that provides the data source used to populate the
+ * bloom filter and [hostsRepository].
  * @param hostsRepository The long term store for blocked hosts.
  * @param databaseScheduler The scheduler used to communicate with the database asynchronously.
  */
 @Singleton
 class BloomFilterAdBlocker @Inject constructor(
     private val logger: Logger,
-    hostsDataSource: HostsDataSource,
+    hostsDataSourceProvider: HostsDataSourceProvider,
     private val hostsRepository: HostsRepository,
     application: Application,
     @DatabaseScheduler private val databaseScheduler: Scheduler
@@ -43,7 +45,8 @@ class BloomFilterAdBlocker @Inject constructor(
             if (hostsRepository.hasHosts()) {
                 hostsRepository.allHosts()
             } else {
-                hostsDataSource.loadHosts()
+                hostsDataSourceProvider.createHostsDataSource()
+                    .loadHosts()
                     .map { it.map(::Host) }
                     .flatMap { hostsRepository.addHosts(it).andThen(Single.just(it)) }
             }

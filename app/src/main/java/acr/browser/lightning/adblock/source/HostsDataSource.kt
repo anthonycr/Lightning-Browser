@@ -1,4 +1,4 @@
-package acr.browser.lightning.adblock
+package acr.browser.lightning.adblock.source
 
 import io.reactivex.Single
 

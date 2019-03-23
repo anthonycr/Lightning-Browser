@@ -112,9 +112,39 @@
     <string name="message_blocked_local">Local file has been blocked from loading</string>
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
-    <string name="block_ads">Block ads</string>
 
-    <!--  -->
+    <!-- Ad block -->
+    <string name="block_ads">Block ads</string>
+    <string name="block_ad_source">Hosts file source</string>
+    <string name="block_ad_remote_refresh_frequency">Refresh frequency</string>
+    <string name="block_ad_remote_refresh_frequency_description">For remote hosts file</string>
+    <string name="block_ad_refresh_now">Refresh hosts now</string>
+
+    <string name="block_ads_upsell_source">Upgrade to Lightning Plus to choose</string>
+
+    <string name="block_remote_frequency_daily">Daily</string>
+    <string name="block_remote_frequency_weekly">Weekly</string>
+    <string name="block_remote_frequency_monthly">Monthly</string>
+
+    <string-array name="block_ad_frequency_list">
+        <item>@string/block_remote_frequency_daily</item>
+        <item>@string/block_remote_frequency_weekly</item>
+        <item>@string/block_remote_frequency_monthly</item>
+    </string-array>
+
+    <string name="block_source_default">Default hosts</string>
+    <string name="block_source_local">Local hosts file</string>
+    <string name="block_source_local_description">File: %1$s</string>
+    <string name="block_source_remote">Remote hosts file</string>
+    <string name="block_source_remote_description">URL: %1$s</string>
+
+    <string-array name="block_ad_source_list">
+        <item>@string/block_source_default</item>
+        <item>@string/block_source_local</item>
+        <item>@string/block_source_remote</item>
+    </string-array>
+
+    <!-- SSL warnings -->
     <string name="ssl_warning_dont_ask_again">Don\'t ask again for this browsing session.</string>
     <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
     <string name="message_certificate_date_invalid">Date of certificate is invalid</string>
@@ -123,7 +153,6 @@
     <string name="message_certificate_invalid">Certificate is invalid</string>
     <string name="message_certificate_not_yet_valid">Certificate is not yet valid</string>
     <string name="message_certificate_untrusted">Certificate is not trusted</string>
-    <!--  -->
 
     <!-- permissions request -->
     <string name="title_permission_request">Permission request</string>
@@ -228,7 +257,7 @@
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
     <string name="message_web_storage_cleared">Web storage cleared</string>
     <string name="hosts_source">Hosts file ad blocking source</string>
-    <string name="settings_adblock">Ad block settings</string>
+    <string name="settings_adblock">Ad Block Settings</string>
     <string name="tabs_in_drawer">Show tabs in navigation drawer</string>
     <string name="swap_bookmarks_and_tabs">Swap bookmark and tab drawers</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
@@ -264,7 +293,7 @@
     <string name="dialog_title_close_browser">Close browser</string>
     <string name="dialog_delete_download">Delete download</string>
     <string name="dialog_delete_all_downloads">Delete all downloads</string>
-    
+
     <!-- Tools dialog -->
     <string name="dialog_tools_title">Page tools</string>
     <string name="dialog_toggle_desktop">Toggle desktop user agent</string>
