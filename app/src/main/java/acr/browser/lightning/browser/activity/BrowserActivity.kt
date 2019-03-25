@@ -22,7 +22,10 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.extensions.*
+import acr.browser.lightning.extensions.doOnLayout
+import acr.browser.lightning.extensions.removeFromParent
+import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
@@ -157,6 +160,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject @field:MainHandler lateinit var mainHandler: Handler
     @Inject lateinit var proxyUtils: ProxyUtils
     @Inject lateinit var logger: Logger
+    @Inject lateinit var bookmarksDialogBuilder: LightningDialogBuilder
 
     // Image
     private var webPageBitmap: Bitmap? = null
@@ -294,7 +298,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             fragmentManager.beginTransaction().remove(tabsFragment).commit()
         }
 
-        tabsView = tabsFragment ?: TabsFragment.createTabsFragment(isIncognito(), shouldShowTabsInDrawer)
+        tabsView = tabsFragment
+            ?: TabsFragment.createTabsFragment(isIncognito(), shouldShowTabsInDrawer)
 
         if (bookmarksFragment != null) {
             fragmentManager.beginTransaction().remove(bookmarksFragment).commit()
@@ -833,16 +838,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     // By using a manager, adds a bookmark and notifies third parties about that
     private fun addBookmark(title: String, url: String) {
-        bookmarkManager.addBookmarkIfNotExists(Bookmark.Entry(url, title, 0, Bookmark.Folder.Root))
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribe { boolean ->
-                if (boolean) {
-                    suggestionsAdapter?.refreshBookmarks()
-                    bookmarksView?.handleUpdatedUrl(url)
-                    toast(R.string.message_bookmark_added)
-                }
-            }
+        val bookmark = Bookmark.Entry(url, title, 0, Bookmark.Folder.Root)
+        bookmarksDialogBuilder.showAddBookmarkDialog(this, this, bookmark)
     }
 
     private fun deleteBookmark(title: String, url: String) {
@@ -851,8 +848,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             .observeOn(mainScheduler)
             .subscribe { boolean ->
                 if (boolean) {
-                    suggestionsAdapter?.refreshBookmarks()
-                    bookmarksView?.handleUpdatedUrl(url)
+                    handleBookmarksChange()
                 }
             }
     }
@@ -1850,6 +1846,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (currentTab != null) {
             bookmarksView?.handleUpdatedUrl(currentTab.url)
         }
+        suggestionsAdapter?.refreshBookmarks()
     }
 
     override fun handleDownloadDeleted() {
