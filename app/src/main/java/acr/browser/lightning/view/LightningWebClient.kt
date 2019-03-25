@@ -267,13 +267,18 @@ class LightningWebClient(
         return if (isMailOrIntent(url, view) || intentUtils.startActivityForUrl(view, url)) {
             // If it was a mailto: link, or an intent, or could be launched elsewhere, do that
             true
-        } else continueLoadingUrl(view, url, headers)
-
-        // If none of the special conditions was met, continue with loading the url
+        } else {
+            // If none of the special conditions was met, continue with loading the url
+            continueLoadingUrl(view, url, headers)
+        }
     }
 
-    private fun continueLoadingUrl(webView: WebView, url: String, headers: Map<String, String>) =
-        when {
+    private fun continueLoadingUrl(webView: WebView, url: String, headers: Map<String, String>): Boolean {
+        if (!URLUtil.isNetworkUrl(url)) {
+            webView.stopLoading()
+            return true
+        }
+        return when {
             headers.isEmpty() -> false
             ApiUtils.doesSupportWebViewHeaders() -> {
                 webView.loadUrl(url, headers)
@@ -281,12 +286,12 @@ class LightningWebClient(
             }
             else -> false
         }
+    }
 
     private fun isMailOrIntent(url: String, view: WebView): Boolean {
         if (url.startsWith("mailto:")) {
             val mailTo = MailTo.parse(url)
-            val i = Utils.newEmailIntent(mailTo.to, mailTo.subject,
-                mailTo.body, mailTo.cc)
+            val i = Utils.newEmailIntent(mailTo.to, mailTo.subject, mailTo.body, mailTo.cc)
             activity.startActivity(i)
             view.reload()
             return true
