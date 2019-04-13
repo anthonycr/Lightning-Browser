@@ -18,6 +18,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
+import android.content.res.AssetManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
@@ -67,7 +68,7 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
 
     @Provides
-    fun providesAssetManager() = browserApp.assets
+    fun providesAssetManager(): AssetManager = browserApp.assets
 
     @Provides
     fun providesClipboardManager() = browserApp.getSystemService<ClipboardManager>()!!

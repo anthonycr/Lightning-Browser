@@ -1625,7 +1625,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         decorView.addView(fullscreenContainerView, COVER_SCREEN_PARAMS)
         fullscreenContainerView?.addView(customView, COVER_SCREEN_PARAMS)
         decorView.requestLayout()
-        setFullscreen(true, true)
+        setFullscreen(enabled = true, immersive = true)
         currentTab?.setVisibility(View.INVISIBLE)
     }
 

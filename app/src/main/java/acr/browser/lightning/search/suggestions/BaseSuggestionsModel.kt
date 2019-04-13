@@ -50,13 +50,10 @@ abstract class BaseSuggestionsModel internal constructor(
             return@fromCallable emptyList<SearchSuggestion>()
         }
 
-        var results = emptyList<SearchSuggestion>()
-
-        downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
-            results += parseResults(it).take(MAX_RESULTS)
-        }
-
-        return@fromCallable results
+        return@fromCallable downloadSuggestionsForQuery(query, language)
+            ?.let(Response::body)
+            ?.safeUse(::parseResults)
+            ?.take(MAX_RESULTS)
     }
 
     /**
