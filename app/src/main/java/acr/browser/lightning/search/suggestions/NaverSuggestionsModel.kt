@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.map
+import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import okhttp3.HttpUrl
@@ -20,7 +21,7 @@ class NaverSuggestionsModel(
     requestFactory: RequestFactory,
     application: Application,
     logger: Logger
-) : BaseSuggestionsModel(httpClient, requestFactory, UTF8, logger) {
+) : BaseSuggestionsModel(httpClient, requestFactory, UTF8, application.preferredLocale, logger) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 

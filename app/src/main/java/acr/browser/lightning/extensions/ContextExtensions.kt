@@ -4,10 +4,12 @@ package acr.browser.lightning.extensions
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.*
 import androidx.core.content.ContextCompat
+import java.util.*
 
 /**
  * Returns the dimension in pixels.
@@ -37,3 +39,14 @@ inline val Context.inflater: LayoutInflater
  * Gets a drawable from the context.
  */
 inline fun Context.drawable(@DrawableRes drawableRes: Int): Drawable = ContextCompat.getDrawable(this, drawableRes)!!
+
+/**
+ * The preferred locale of the user.
+ */
+val Context.preferredLocale: Locale
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        resources.configuration.locales[0]
+    } else {
+        @Suppress("DEPRECATION")
+        resources.configuration.locale
+    }
