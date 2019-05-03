@@ -362,15 +362,13 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         fun createTabsFragment(isIncognito: Boolean, showTabsInDrawer: Boolean): TabsFragment {
             return TabsFragment().apply {
                 arguments = Bundle().apply {
-                    putBoolean(TabsFragment.IS_INCOGNITO, isIncognito)
-                    putBoolean(TabsFragment.VERTICAL_MODE, showTabsInDrawer)
+                    putBoolean(IS_INCOGNITO, isIncognito)
+                    putBoolean(VERTICAL_MODE, showTabsInDrawer)
                 }
             }
         }
 
         private const val TAG = "TabsFragment"
-
-        private const val DESATURATED = 0.5f
 
         /**
          * Arguments boolean to tell the fragment it is displayed in the drawner or on the tab strip

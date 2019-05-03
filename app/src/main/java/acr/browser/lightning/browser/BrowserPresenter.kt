@@ -142,14 +142,10 @@ class BrowserPresenter(
 
     }
 
-    private fun mapHomepageToCurrentUrl(): String {
-        val homepage = userPreferences.homepage
-
-        return when (homepage) {
-            SCHEME_HOMEPAGE -> "$FILE${homePageFactory.createHomePage()}"
-            SCHEME_BOOKMARKS -> "$FILE${bookmarkPageFactory.createBookmarkPage(null)}"
-            else -> homepage
-        }
+    private fun mapHomepageToCurrentUrl(): String = when (val homepage = userPreferences.homepage) {
+        SCHEME_HOMEPAGE -> "$FILE${homePageFactory.createHomePage()}"
+        SCHEME_BOOKMARKS -> "$FILE${bookmarkPageFactory.createBookmarkPage(null)}"
+        else -> homepage
     }
 
     /**

@@ -467,7 +467,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         @JvmStatic
         fun createFragment(isIncognito: Boolean) = BookmarksFragment().apply {
             arguments = Bundle().apply {
-                putBoolean(BookmarksFragment.INCOGNITO_MODE, isIncognito)
+                putBoolean(INCOGNITO_MODE, isIncognito)
             }
         }
 

@@ -21,9 +21,9 @@ sealed class Option<out T> {
          */
         fun <T> fromNullable(value: T?): Option<T> =
             if (value != null) {
-                Option.Some(value)
+                Some(value)
             } else {
-                Option.None
+                None
             }
     }
 

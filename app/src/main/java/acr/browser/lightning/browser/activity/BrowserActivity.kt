@@ -259,8 +259,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         backgroundDrawable.color = primaryColor
 
         // Drawer stutters otherwise
-        left_drawer.setLayerType(View.LAYER_TYPE_NONE, null)
-        right_drawer.setLayerType(View.LAYER_TYPE_NONE, null)
+        left_drawer.setLayerType(LAYER_TYPE_NONE, null)
+        right_drawer.setLayerType(LAYER_TYPE_NONE, null)
 
         drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
@@ -274,8 +274,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     left_drawer.setLayerType(View.LAYER_TYPE_HARDWARE, null)
                     right_drawer.setLayerType(View.LAYER_TYPE_HARDWARE, null)
                 } else if (newState == DrawerLayout.STATE_IDLE) {
-                    left_drawer.setLayerType(View.LAYER_TYPE_NONE, null)
-                    right_drawer.setLayerType(View.LAYER_TYPE_NONE, null)
+                    left_drawer.setLayerType(LAYER_TYPE_NONE, null)
+                    right_drawer.setLayerType(LAYER_TYPE_NONE, null)
                 }
             }
         })

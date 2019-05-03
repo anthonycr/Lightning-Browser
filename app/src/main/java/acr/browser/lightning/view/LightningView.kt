@@ -895,7 +895,7 @@ class LightningView(
         const val HEADER_WAP_PROFILE = "X-Wap-Profile"
         private const val HEADER_DNT = "DNT"
 
-        private val API = android.os.Build.VERSION.SDK_INT
+        private val API = Build.VERSION.SDK_INT
         private val SCROLL_UP_THRESHOLD = Utils.dpToPx(10f)
 
         private val negativeColorArray = floatArrayOf(

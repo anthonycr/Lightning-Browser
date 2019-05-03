@@ -257,8 +257,8 @@ class SuggestionsAdapter(
         private var historyDisposable: Disposable? = null
         private var bookmarkDisposable: Disposable? = null
 
-        override fun performFiltering(constraint: CharSequence?): Filter.FilterResults {
-            val results = Filter.FilterResults()
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            val results = FilterResults()
             if (constraint == null || constraint.isEmpty()) {
                 suggestionsAdapter.clearSuggestions()
                 return results
@@ -298,7 +298,7 @@ class SuggestionsAdapter(
 
         override fun convertResultToString(resultValue: Any) = (resultValue as WebPage).url
 
-        override fun publishResults(constraint: CharSequence?, results: Filter.FilterResults?) =
+        override fun publishResults(constraint: CharSequence?, results: FilterResults?) =
             suggestionsAdapter.combineResults(null, null, null)
     }
 
