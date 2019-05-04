@@ -21,7 +21,7 @@ class DebugSettingsFragment : AbstractSettingsFragment() {
             preference = LEAK_CANARY,
             isChecked = developerPreferences.useLeakCanary,
             onCheckChange = { change ->
-                activity?.apply { snackbar(R.string.app_restart) }
+                activity?.snackbar(R.string.app_restart)
                 developerPreferences.useLeakCanary = change
             }
         )

@@ -144,6 +144,9 @@
         <item>@string/block_source_remote</item>
     </string-array>
 
+    <!-- Common actions -->
+    <string name="action_message_canceled">Action canceled.</string>
+
     <!-- SSL warnings -->
     <string name="ssl_warning_dont_ask_again">Don\'t ask again for this browsing session.</string>
     <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>

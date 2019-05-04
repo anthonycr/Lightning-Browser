@@ -41,7 +41,7 @@ object BrowserDialog {
         @StringRes title: Int,
         vararg items: DialogItem
     ) = show(activity, activity.getString(title), *items)
-    
+
     fun showWithIcons(activity: Activity, title: String?, vararg items: DialogItem) {
         val builder = AlertDialog.Builder(activity)
 
@@ -74,6 +74,28 @@ object BrowserDialog {
             item.onClick()
             dialog.dismiss()
         }
+    }
+
+    /**
+     * Show a singly selectable list of [DialogItem] with the provided [title]. All items will be
+     * shown, and the first [DialogItem] where [DialogItem.isConditionMet] returns `true` will be
+     * the selected item when the dialog is shown. The dialog has an OK button which just dismisses
+     * the dialog.
+     */
+    fun showListChoices(activity: Activity, @StringRes title: Int, vararg items: DialogItem) {
+        val dialog = AlertDialog.Builder(activity).apply {
+            setTitle(title)
+
+            val choices = items.map { activity.getString(it.title) }.toTypedArray()
+            val currentChoice = items.indexOfFirst(DialogItem::isConditionMet)
+
+            setSingleChoiceItems(choices, currentChoice) { _, which ->
+                items[which].onClick()
+            }
+            setPositiveButton(activity.getString(R.string.action_ok), null)
+        }.show()
+
+        setDialogSize(activity, dialog)
     }
 
     @JvmStatic
