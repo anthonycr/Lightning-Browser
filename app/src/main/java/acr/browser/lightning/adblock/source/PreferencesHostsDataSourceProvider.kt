@@ -15,10 +15,14 @@ class PreferencesHostsDataSourceProvider @Inject constructor(
 ) : HostsDataSourceProvider {
 
     override fun createHostsDataSource(): HostsDataSource =
-        when (val hostsSource = userPreferences.selectedHostsSource()) {
+        when (val source = userPreferences.selectedHostsSource()) {
             HostsSourceType.Default -> AssetsHostsDataSource(assetManager, logger)
-            is HostsSourceType.Local -> TODO()
+            is HostsSourceType.Local -> FileHostsDataSource(logger, source.file)
             is HostsSourceType.Remote -> TODO()
         }
+
+    override fun sourceIdentity(): String {
+        return userPreferences.selectedHostsSource().identity()
+    }
 
 }

@@ -3,6 +3,9 @@ package acr.browser.lightning.adblock.source
 import acr.browser.lightning.preference.UserPreferences
 import okhttp3.HttpUrl
 import java.io.File
+import java.io.FileInputStream
+import java.security.MessageDigest
+
 
 /**
  * The source from which hosts should be loaded.
@@ -56,4 +59,42 @@ fun HostsSourceType.toPreferenceIndex(): Int = when (this) {
     HostsSourceType.Default -> 0
     is HostsSourceType.Local -> 1
     is HostsSourceType.Remote -> 2
+}
+
+/**
+ * The identity of the source. Will be unique for all source types.
+ */
+fun HostsSourceType.identity(): String = when (this) {
+    HostsSourceType.Default -> "assets"
+    is HostsSourceType.Local -> getMd5OfFile(file.path)
+    is HostsSourceType.Remote -> httpUrl.toString()
+}
+
+/**
+ * Compute and return the MD5 hash of the file at the provided [filePath].
+ */
+private fun getMd5OfFile(filePath: String): String {
+    var returnVal = ""
+    try {
+        val input = FileInputStream(filePath)
+        val buffer = ByteArray(1024)
+        val md5Hash = MessageDigest.getInstance("MD5")
+        var numRead = 0
+        while (numRead != -1) {
+            numRead = input.read(buffer)
+            if (numRead > 0) {
+                md5Hash.update(buffer, 0, numRead)
+            }
+        }
+        input.close()
+
+        val md5Bytes = md5Hash.digest()
+        for (i in md5Bytes.indices) {
+            returnVal += Integer.toString((md5Bytes[i].toInt() and 0xff) + 0x100, 16).substring(1)
+        }
+    } catch (t: Throwable) {
+        t.printStackTrace()
+    }
+
+    return returnVal.toUpperCase()
 }

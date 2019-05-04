@@ -61,11 +61,16 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
     @Provides
     @UserPrefs
-    fun provideDebugPreferences(): SharedPreferences = browserApp.getSharedPreferences("settings", 0)
+    fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("settings", 0)
 
     @Provides
     @DevPrefs
-    fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
+    fun provideDebugPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
+
+    @Provides
+    @AdBlockPrefs
+    fun provideAdBlockPreferences(): SharedPreferences = browserApp.getSharedPreferences("ad_block_settings", 0)
+
 
     @Provides
     fun providesAssetManager(): AssetManager = browserApp.assets
@@ -179,6 +184,10 @@ annotation class MainHandler
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class UserPrefs
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class AdBlockPrefs
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

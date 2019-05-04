@@ -26,6 +26,8 @@ class AssetsHostsDataSource @Inject constructor(
      * to localhost (a.k.a. IP address 127.0.0.1). It can handle files that simply have a list of
      * host names to block, or it can handle a full blown hosts file. It will strip out comments,
      * references to the base IP address and just extract the domains to be used.
+     *
+     * @see HostsDataSource.loadHosts
      */
     override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
         val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
@@ -41,6 +43,7 @@ class AssetsHostsDataSource @Inject constructor(
         }
 
         logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
+        logger.log(TAG, "Loaded ${domains.size} domains")
         emitter.onSuccess(domains)
     }
 

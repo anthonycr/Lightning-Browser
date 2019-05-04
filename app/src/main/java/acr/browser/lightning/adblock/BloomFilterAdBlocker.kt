@@ -9,9 +9,11 @@ import acr.browser.lightning.adblock.util.`object`.ObjectStore
 import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
+import acr.browser.lightning.database.adblock.HostsRepositoryInfo
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import android.app.Application
+import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import java.net.URI
@@ -33,6 +35,7 @@ class BloomFilterAdBlocker @Inject constructor(
     private val logger: Logger,
     hostsDataSourceProvider: HostsDataSourceProvider,
     private val hostsRepository: HostsRepository,
+    private val hostsRepositoryInfo: HostsRepositoryInfo,
     application: Application,
     @DatabaseScheduler private val databaseScheduler: Scheduler
 ) : AdBlocker {
@@ -41,7 +44,14 @@ class BloomFilterAdBlocker @Inject constructor(
     private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
     init {
-        Single.defer {
+        Completable.defer {
+            if (hostsRepositoryInfo.identity != hostsDataSourceProvider.sourceIdentity()) {
+                logger.log(TAG, "New source detected, removing old hosts")
+                hostsRepository.removeAllHosts()
+            } else {
+                Completable.complete()
+            }
+        }.andThen(Single.defer {
             if (hostsRepository.hasHosts()) {
                 hostsRepository.allHosts()
             } else {
@@ -50,8 +60,11 @@ class BloomFilterAdBlocker @Inject constructor(
                     .map { it.map(::Host) }
                     .flatMap { hostsRepository.addHosts(it).andThen(Single.just(it)) }
             }
-        }.flatMap(::loadBloomFilter)
-            .subscribeOn(databaseScheduler)
+        }).flatMap {
+            val changed = hostsRepositoryInfo.identity != hostsDataSourceProvider.sourceIdentity()
+            hostsRepositoryInfo.identity = hostsDataSourceProvider.sourceIdentity()
+            loadBloomFilter(it, changed)
+        }.subscribeOn(databaseScheduler)
             .doOnSuccess {
                 bloomFilter.delegate = it
                 logger.log(TAG, "Finished loading bloom filter")
@@ -62,10 +75,13 @@ class BloomFilterAdBlocker @Inject constructor(
     /**
      * Loads the [BloomFilter] from storage or creates a new one and stores it for fast future initialization.
      */
-    private fun loadBloomFilter(hosts: List<Host>): Single<BloomFilter<String>> = Single.fromCallable {
+    private fun loadBloomFilter(
+        hosts: List<Host>,
+        changed: Boolean
+    ): Single<BloomFilter<String>> = Single.fromCallable {
         val previouslyStored = objectStore.retrieve(BLOOM_FILTER_KEY)
 
-        if (previouslyStored != null) {
+        if (previouslyStored != null && !changed) {
             return@fromCallable previouslyStored
         }
 
