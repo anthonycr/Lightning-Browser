@@ -96,6 +96,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                 onClick = {
                     userPreferences.hostsSource = HostsSourceType.Default.toPreferenceIndex()
                     summaryUpdater.updateSummary(userPreferences.selectedHostsSource().toSummary())
+                    activity?.snackbar(R.string.app_restart)
                 }
             ),
             DialogItem(
