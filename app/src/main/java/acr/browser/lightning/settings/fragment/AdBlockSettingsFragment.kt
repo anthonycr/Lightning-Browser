@@ -21,6 +21,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import okhttp3.HttpUrl
 import okio.Okio
 import java.io.File
 import java.io.IOException
@@ -105,13 +106,14 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                 onClick = {
                     showFileChooser(summaryUpdater)
                 }
+            ),
+            DialogItem(
+                title = R.string.block_source_remote,
+                isConditionMet = userPreferences.selectedHostsSource() is HostsSourceType.Remote,
+                onClick = {
+                    showUrlChooser(summaryUpdater)
+                }
             )
-            // TODO add support for remote sources
-            // DialogItem(
-            //    title = R.string.block_source_remote,
-            //    isConditionMet = userPreferences.selectedHostsSource() is HostsSourceType.Remote,
-            //    onClick = {}
-            // )
         )
     }
 
@@ -133,7 +135,10 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             currentText = userPreferences.hostsRemoteFile,
             action = R.string.action_ok,
             textInputListener = {
-                // TODO implement
+                // TODO validate the URL and test that it actually contains hosts before allowing
+                userPreferences.hostsSource = HostsSourceType.Remote(HttpUrl.parse(it)!!).toPreferenceIndex()
+                userPreferences.hostsRemoteFile = it
+                summaryUpdater.updateSummary(it)
             }
         )
     }

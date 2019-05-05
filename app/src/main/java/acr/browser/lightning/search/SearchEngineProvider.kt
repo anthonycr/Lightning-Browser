@@ -1,5 +1,6 @@
 package acr.browser.lightning.search
 
+import acr.browser.lightning.di.SuggestionsClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*
@@ -14,7 +15,7 @@ import javax.inject.Inject
  */
 class SearchEngineProvider @Inject constructor(
     private val userPreferences: UserPreferences,
-    private val httpClient: OkHttpClient,
+    @SuggestionsClient private val httpClient: OkHttpClient,
     private val requestFactory: RequestFactory,
     private val application: Application,
     private val logger: Logger

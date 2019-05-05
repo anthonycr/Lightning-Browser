@@ -136,6 +136,7 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
     @Singleton
     @Provides
+    @SuggestionsClient
     fun providesSuggestionsHttpClient(): OkHttpClient {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
 
@@ -147,6 +148,27 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
         }
 
         val suggestionsCache = File(browserApp.cacheDir, "suggestion_responses")
+
+        return OkHttpClient.Builder()
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+            .addNetworkInterceptor(rewriteCacheControlInterceptor)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @GeneralClient
+    fun providesGeneralHttpClient(): OkHttpClient {
+        val intervalDay = TimeUnit.DAYS.toSeconds(1)
+
+        val rewriteCacheControlInterceptor = Interceptor { chain ->
+            val originalResponse = chain.proceed(chain.request())
+            originalResponse.newBuilder()
+                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                .build()
+        }
+
+        val suggestionsCache = File(browserApp.cacheDir, "okhttp")
 
         return OkHttpClient.Builder()
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
@@ -176,6 +198,14 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     fun providesBookmarkPageReader(): BookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
 
 }
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class SuggestionsClient
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class GeneralClient
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
