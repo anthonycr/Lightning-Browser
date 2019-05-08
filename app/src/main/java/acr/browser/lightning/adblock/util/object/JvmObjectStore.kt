@@ -47,4 +47,9 @@ class JvmObjectStore<T>(
             it.writeObject(value)
         }
     }
+
+    override fun clear(key: String) {
+        val storageFile = createStorageFile(key)
+        storageFile.delete()
+    }
 }

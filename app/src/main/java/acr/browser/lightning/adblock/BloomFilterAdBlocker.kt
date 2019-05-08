@@ -14,6 +14,7 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import java.net.URI
@@ -47,24 +48,23 @@ class BloomFilterAdBlocker @Inject constructor(
         Completable.defer {
             if (hostsRepositoryInfo.identity != hostsDataSourceProvider.sourceIdentity()) {
                 logger.log(TAG, "New source detected, removing old hosts")
+                // TODO don't clear old hosts until we've successfully loaded from the new source.
                 hostsRepository.removeAllHosts()
+                    .andThen(deleteStoredBloomFilter())
             } else {
                 Completable.complete()
             }
         }.andThen(Single.defer {
             if (hostsRepository.hasHosts()) {
-                hostsRepository.allHosts()
+                loadStoredBloomFilter()
+                    .switchIfEmpty(hostsRepository.allHosts().flatMap(::createAndSaveBloomFilter))
             } else {
                 hostsDataSourceProvider.createHostsDataSource()
                     .loadHosts()
                     .map { it.map(::Host) }
-                    .flatMap { hostsRepository.addHosts(it).andThen(Single.just(it)) }
+                    .flatMap { hostsRepository.addHosts(it).andThen(createAndSaveBloomFilter(it)) }
             }
-        }).flatMap {
-            val changed = hostsRepositoryInfo.identity != hostsDataSourceProvider.sourceIdentity()
-            hostsRepositoryInfo.identity = hostsDataSourceProvider.sourceIdentity()
-            loadBloomFilter(it, changed)
-        }.subscribeOn(databaseScheduler)
+        }).subscribeOn(databaseScheduler)
             .doOnSuccess {
                 bloomFilter.delegate = it
                 logger.log(TAG, "Finished loading bloom filter")
@@ -72,19 +72,15 @@ class BloomFilterAdBlocker @Inject constructor(
             .subscribe()
     }
 
-    /**
-     * Loads the [BloomFilter] from storage or creates a new one and stores it for fast future initialization.
-     */
-    private fun loadBloomFilter(
-        hosts: List<Host>,
-        changed: Boolean
-    ): Single<BloomFilter<String>> = Single.fromCallable {
-        val previouslyStored = objectStore.retrieve(BLOOM_FILTER_KEY)
+    private fun loadStoredBloomFilter(): Maybe<BloomFilter<String>> = Maybe.fromCallable {
+        objectStore.retrieve(BLOOM_FILTER_KEY)
+    }
 
-        if (previouslyStored != null && !changed) {
-            return@fromCallable previouslyStored
-        }
+    private fun deleteStoredBloomFilter(): Completable = Completable.fromAction {
+        objectStore.clear(BLOOM_FILTER_KEY)
+    }
 
+    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<String>> = Single.fromCallable {
         logger.log(TAG, "Constructing bloom filter from list")
 
         val bloomFilter = DefaultBloomFilter(
@@ -97,7 +93,7 @@ class BloomFilterAdBlocker @Inject constructor(
         }
         objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
 
-        return@fromCallable bloomFilter
+        bloomFilter
     }
 
     override fun isAd(url: String): Boolean {

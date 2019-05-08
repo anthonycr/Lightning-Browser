@@ -8,7 +8,7 @@ import java.io.Serializable
 interface ObjectStore<T> where T : Any, T : Serializable {
 
     /**
-     * Retrieve the object held for [key] or `null` if it is absent.
+     * Retrieve the value held for [key] or `null` if it is absent.
      */
     fun retrieve(key: String): T?
 
@@ -16,5 +16,10 @@ interface ObjectStore<T> where T : Any, T : Serializable {
      * Stores the [value] matched to the provided [key].
      */
     fun store(key: String, value: T)
+
+    /**
+     * Clears the value held for [key].
+     */
+    fun clear(key: String)
 
 }
