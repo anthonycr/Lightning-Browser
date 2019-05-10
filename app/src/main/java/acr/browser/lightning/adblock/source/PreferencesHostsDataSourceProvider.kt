@@ -24,8 +24,4 @@ class PreferencesHostsDataSourceProvider @Inject constructor(
             is HostsSourceType.Remote -> UrlHostsDataSource(source.httpUrl, okHttpClient, logger)
         }
 
-    override fun sourceIdentity(): String {
-        return userPreferences.selectedHostsSource().identity()
-    }
-
 }

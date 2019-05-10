@@ -12,4 +12,14 @@ interface HostsDataSource {
      */
     fun loadHosts(): Single<HostsResult>
 
+    /**
+     * The unique [String] identifier for this source.
+     */
+    fun identifier(): String
+
+    /**
+     * @return `true` if the source is stale, `false` otherwise.
+     */
+    fun requiresRefresh(): Boolean
+
 }

@@ -39,6 +39,13 @@ class UrlHostsDataSource(
         })
     }.onIOExceptionResumeNext { HostsResult.Failure(it) }
 
+    override fun identifier(): String = url.toString()
+
+    override fun requiresRefresh(): Boolean {
+        // TODO setup refresh sync
+        return false
+    }
+
     companion object {
         private const val TAG = "UrlHostsDataSource"
     }

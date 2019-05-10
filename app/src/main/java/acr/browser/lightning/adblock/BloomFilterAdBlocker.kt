@@ -47,9 +47,11 @@ class BloomFilterAdBlocker @Inject constructor(
     private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
     init {
+        val hostsDataSource = hostsDataSourceProvider.createHostsDataSource()
         loadStoredBloomFilter().filter {
             // Force a new hosts request if the hosts are out of date or if the repo has no hosts.
-            hostsRepositoryInfo.identity == hostsDataSourceProvider.sourceIdentity()
+            hostsRepositoryInfo.identity == hostsDataSource.identifier()
+                && !hostsDataSource.requiresRefresh()
                 && hostsRepository.hasHosts()
         }.switchIfEmpty(
             hostsDataSourceProvider
@@ -70,6 +72,9 @@ class BloomFilterAdBlocker @Inject constructor(
                     hostsRepository.removeAllHosts()
                         .andThen(hostsRepository.addHosts(it))
                         .andThen(createAndSaveBloomFilter(it))
+                        .doOnSuccess {
+                            hostsRepositoryInfo.identity = hostsDataSource.identifier()
+                        }
                 }.switchIfEmpty(loadStoredBloomFilter())
         ).filter {
             // If we were unsuccessful in loading hosts and we don't have hosts in the repo, don't

@@ -10,9 +10,4 @@ interface HostsDataSourceProvider {
      */
     fun createHostsDataSource(): HostsDataSource
 
-    /**
-     * The identity of the hosts data source.
-     */
-    fun sourceIdentity(): String
-
 }

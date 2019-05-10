@@ -1,6 +1,7 @@
 package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.adblock.HostsFileParser
+import acr.browser.lightning.adblock.util.hash.computeMD5
 import acr.browser.lightning.extensions.onIOExceptionResumeNext
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
@@ -36,6 +37,10 @@ class FileHostsDataSource constructor(
         logger.log(TAG, "Loaded ${domains.size} domains")
         emitter.onSuccess(HostsResult.Success(domains))
     }.onIOExceptionResumeNext { HostsResult.Failure(it) }
+
+    override fun identifier(): String = file.inputStream().computeMD5()
+
+    override fun requiresRefresh(): Boolean = false
 
     companion object {
         private const val TAG = "FileHostsDataSource"
