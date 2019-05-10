@@ -5,7 +5,6 @@ import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
 import io.reactivex.Single
 import java.io.InputStreamReader
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,18 +30,10 @@ class AssetsHostsDataSource @Inject constructor(
      */
     override fun loadHosts(): Single<HostsResult> = Single.create { emitter ->
         val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
-        val hostsFileParser = HostsFileParser()
-        val time = System.currentTimeMillis()
+        val hostsFileParser = HostsFileParser(logger)
 
-        val domains = ArrayList<String>(1)
+        val domains = hostsFileParser.parseInput(reader)
 
-        reader.use { inputStreamReader ->
-            inputStreamReader.forEachLine {
-                hostsFileParser.parseLine(it, domains)
-            }
-        }
-
-        logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
         logger.log(TAG, "Loaded ${domains.size} domains")
         emitter.onSuccess(HostsResult.Success(domains))
     }

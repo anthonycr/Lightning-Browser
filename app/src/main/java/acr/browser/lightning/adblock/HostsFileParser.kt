@@ -1,18 +1,42 @@
 package acr.browser.lightning.adblock
 
 import acr.browser.lightning.extensions.*
+import acr.browser.lightning.log.Logger
+import java.io.InputStreamReader
 
 /**
  * A parser for a hosts file.
  */
-class HostsFileParser {
+class HostsFileParser(
+    private val logger: Logger
+) {
 
     private val lineBuilder = StringBuilder()
 
     /**
+     * Parse the lines of the [input] from a hosts file and return the list of [String] domains held
+     * in that file.
+     */
+    fun parseInput(input: InputStreamReader): List<String> {
+        val time = System.currentTimeMillis()
+
+        val domains = ArrayList<String>(100)
+
+        input.use { inputStreamReader ->
+            inputStreamReader.forEachLine {
+                parseLine(it, domains)
+            }
+        }
+
+        logger.log(TAG, "Parsed ad list in: ${(System.currentTimeMillis() - time)} ms")
+
+        return domains
+    }
+
+    /**
      * Parse a [line] from a hosts file and populate the [parsedList] with the extracted hosts.
      */
-    fun parseLine(line: String, parsedList: MutableList<String>) {
+    private fun parseLine(line: String, parsedList: MutableList<String>) {
         lineBuilder.setLength(0)
         lineBuilder.append(line)
         if (lineBuilder.isNotEmpty() && lineBuilder[0] != COMMENT_CHAR) {
@@ -52,6 +76,8 @@ class HostsFileParser {
     }
 
     companion object {
+        private const val TAG = "HostsFileParser"
+
         private const val LOCAL_IP_V4 = "127.0.0.1"
         private const val LOCAL_IP_V4_ALT = "0.0.0.0"
         private const val LOCAL_IP_V6 = "::1"

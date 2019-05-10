@@ -7,7 +7,6 @@ import io.reactivex.Single
 import okhttp3.*
 import java.io.IOException
 import java.io.InputStreamReader
-import java.util.*
 
 /**
  * A [HostsDataSource] that loads hosts from an [HttpUrl].
@@ -30,18 +29,10 @@ class UrlHostsDataSource(
                 val input = response.body()?.byteStream()?.let(::InputStreamReader)
                     ?: return emitter.onError(IOException("Empty response"))
 
-                val hostsFileParser = HostsFileParser()
-                val time = System.currentTimeMillis()
+                val hostsFileParser = HostsFileParser(logger)
 
-                val domains = ArrayList<String>(1)
+                val domains = hostsFileParser.parseInput(input)
 
-                input.use { inputStreamReader ->
-                    inputStreamReader.forEachLine {
-                        hostsFileParser.parseLine(it, domains)
-                    }
-                }
-
-                logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
                 logger.log(TAG, "Loaded ${domains.size} domains")
                 emitter.onSuccess(HostsResult.Success(domains))
             }

@@ -7,7 +7,6 @@ import acr.browser.lightning.preference.UserPreferences
 import io.reactivex.Single
 import java.io.File
 import java.io.InputStreamReader
-import java.util.*
 
 /**
  * A [HostsDataSource] that loads hosts from the file found in [UserPreferences].
@@ -30,18 +29,10 @@ class FileHostsDataSource constructor(
      */
     override fun loadHosts(): Single<HostsResult> = Single.create<HostsResult> { emitter ->
         val reader = InputStreamReader(file.inputStream())
-        val hostsFileParser = HostsFileParser()
-        val time = System.currentTimeMillis()
+        val hostsFileParser = HostsFileParser(logger)
 
-        val domains = ArrayList<String>(1)
+        val domains = hostsFileParser.parseInput(reader)
 
-        reader.use { inputStreamReader ->
-            inputStreamReader.forEachLine {
-                hostsFileParser.parseLine(it, domains)
-            }
-        }
-
-        logger.log(TAG, "Loaded local ad list in: ${(System.currentTimeMillis() - time)} ms")
         logger.log(TAG, "Loaded ${domains.size} domains")
         emitter.onSuccess(HostsResult.Success(domains))
     }.onIOExceptionResumeNext { HostsResult.Failure(it) }

@@ -1,7 +1,9 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.log.NoOpLogger
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.InputStreamReader
 
 /**
  * Unit tests for the assets ad blocker
@@ -25,12 +27,9 @@ class HostsFileParserTest {
             0.0.0.0 comment.close.by.com#comment
             """
 
-        val mutableList = mutableListOf<String>()
-
-        val hostsFileParser = HostsFileParser()
-        testInput.trimIndent().split("\n").forEach {
-            hostsFileParser.parseLine(it, mutableList)
-        }
+        val inputStreamReader = InputStreamReader(testInput.trimIndent().byteInputStream())
+        val hostsFileParser = HostsFileParser(NoOpLogger())
+        val mutableList = hostsFileParser.parseInput(inputStreamReader)
 
         assertThat(mutableList).hasSize(7)
         assertThat(mutableList).contains(
