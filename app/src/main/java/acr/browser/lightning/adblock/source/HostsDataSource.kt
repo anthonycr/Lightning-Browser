@@ -8,8 +8,8 @@ import io.reactivex.Single
 interface HostsDataSource {
 
     /**
-     * Load the hosts and emit them as a [Single] [List].
+     * Load the hosts and emit them as a [Single] [HostsResult].
      */
-    fun loadHosts(): Single<List<String>>
+    fun loadHosts(): Single<HostsResult>
 
 }

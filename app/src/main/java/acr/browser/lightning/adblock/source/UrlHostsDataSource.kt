@@ -1,6 +1,7 @@
 package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.adblock.HostsFileParser
+import acr.browser.lightning.extensions.onIOExceptionResumeNext
 import acr.browser.lightning.log.Logger
 import io.reactivex.Single
 import okhttp3.*
@@ -17,8 +18,7 @@ class UrlHostsDataSource(
     private val logger: Logger
 ) : HostsDataSource {
 
-    override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
-        // TODO don't emit errors, instead use a Maybe, handle in AdBlocker
+    override fun loadHosts(): Single<HostsResult> = Single.create<HostsResult> { emitter ->
         val request = Request.Builder().url(url).get().build()
 
         okHttpClient.newCall(request).enqueue(object : Callback {
@@ -43,11 +43,10 @@ class UrlHostsDataSource(
 
                 logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
                 logger.log(TAG, "Loaded ${domains.size} domains")
-                emitter.onSuccess(domains)
+                emitter.onSuccess(HostsResult.Success(domains))
             }
         })
-
-    }
+    }.onIOExceptionResumeNext { HostsResult.Failure(it) }
 
     companion object {
         private const val TAG = "UrlHostsDataSource"

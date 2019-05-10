@@ -1,6 +1,8 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.R
 import acr.browser.lightning.adblock.source.HostsDataSourceProvider
+import acr.browser.lightning.adblock.source.HostsResult
 import acr.browser.lightning.adblock.util.BloomFilter
 import acr.browser.lightning.adblock.util.DefaultBloomFilter
 import acr.browser.lightning.adblock.util.DelegatingBloomFilter
@@ -11,9 +13,9 @@ import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.adblock.HostsRepositoryInfo
 import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
-import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -45,39 +47,47 @@ class BloomFilterAdBlocker @Inject constructor(
     private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
     init {
-        Completable.defer {
-            if (hostsRepositoryInfo.identity != hostsDataSourceProvider.sourceIdentity()) {
-                logger.log(TAG, "New source detected, removing old hosts")
-                // TODO don't clear old hosts until we've successfully loaded from the new source.
-                hostsRepository.removeAllHosts()
-                    .andThen(deleteStoredBloomFilter())
-            } else {
-                Completable.complete()
-            }
-        }.andThen(Single.defer {
-            if (hostsRepository.hasHosts()) {
-                loadStoredBloomFilter()
-                    .switchIfEmpty(hostsRepository.allHosts().flatMap(::createAndSaveBloomFilter))
-            } else {
-                hostsDataSourceProvider.createHostsDataSource()
-                    .loadHosts()
-                    .map { it.map(::Host) }
-                    .flatMap { hostsRepository.addHosts(it).andThen(createAndSaveBloomFilter(it)) }
-            }
-        }).subscribeOn(databaseScheduler)
+        loadStoredBloomFilter().filter {
+            // Force a new hosts request if the hosts are out of date or if the repo has no hosts.
+            hostsRepositoryInfo.identity == hostsDataSourceProvider.sourceIdentity()
+                && hostsRepository.hasHosts()
+        }.switchIfEmpty(
+            hostsDataSourceProvider
+                .createHostsDataSource()
+                .loadHosts()
+                .flatMapMaybe {
+                    when (it) {
+                        is HostsResult.Success -> Maybe.just(it.hosts)
+                        is HostsResult.Failure ->
+                            Maybe.empty<List<String>>().doOnComplete {
+                                logger.log(TAG, "Unable to load hosts", it.cause)
+                            }
+                    }
+                }
+                .map { it.map(::Host) }
+                .flatMapSingleElement {
+                    // Clear out the old hosts and bloom filter now that we have the new hosts.
+                    hostsRepository.removeAllHosts()
+                        .andThen(hostsRepository.addHosts(it))
+                        .andThen(createAndSaveBloomFilter(it))
+                }.switchIfEmpty(loadStoredBloomFilter())
+        ).filter {
+            // If we were unsuccessful in loading hosts and we don't have hosts in the repo, don't
+            // allow initialization, as false positives will result in bad browsing experience.
+            hostsRepository.hasHosts()
+        }.subscribeOn(databaseScheduler)
             .doOnSuccess {
                 bloomFilter.delegate = it
                 logger.log(TAG, "Finished loading bloom filter")
+            }
+            .doOnComplete {
+                application.toast(R.string.bookmark_export_failure)
             }
             .subscribe()
     }
 
     private fun loadStoredBloomFilter(): Maybe<BloomFilter<String>> = Maybe.fromCallable {
         objectStore.retrieve(BLOOM_FILTER_KEY)
-    }
-
-    private fun deleteStoredBloomFilter(): Completable = Completable.fromAction {
-        objectStore.clear(BLOOM_FILTER_KEY)
     }
 
     private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<String>> = Single.fromCallable {

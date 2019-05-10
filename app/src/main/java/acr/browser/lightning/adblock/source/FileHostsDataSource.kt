@@ -1,6 +1,7 @@
 package acr.browser.lightning.adblock.source
 
 import acr.browser.lightning.adblock.HostsFileParser
+import acr.browser.lightning.extensions.onIOExceptionResumeNext
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import io.reactivex.Single
@@ -27,7 +28,7 @@ class FileHostsDataSource constructor(
      *
      * @see HostsDataSource.loadHosts
      */
-    override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
+    override fun loadHosts(): Single<HostsResult> = Single.create<HostsResult> { emitter ->
         val reader = InputStreamReader(file.inputStream())
         val hostsFileParser = HostsFileParser()
         val time = System.currentTimeMillis()
@@ -42,8 +43,8 @@ class FileHostsDataSource constructor(
 
         logger.log(TAG, "Loaded local ad list in: ${(System.currentTimeMillis() - time)} ms")
         logger.log(TAG, "Loaded ${domains.size} domains")
-        emitter.onSuccess(domains)
-    }
+        emitter.onSuccess(HostsResult.Success(domains))
+    }.onIOExceptionResumeNext { HostsResult.Failure(it) }
 
     companion object {
         private const val TAG = "FileHostsDataSource"

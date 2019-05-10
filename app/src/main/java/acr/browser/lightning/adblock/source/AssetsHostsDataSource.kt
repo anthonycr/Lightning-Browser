@@ -29,7 +29,7 @@ class AssetsHostsDataSource @Inject constructor(
      *
      * @see HostsDataSource.loadHosts
      */
-    override fun loadHosts(): Single<List<String>> = Single.create { emitter ->
+    override fun loadHosts(): Single<HostsResult> = Single.create { emitter ->
         val reader = InputStreamReader(assetManager.open(BLOCKED_DOMAINS_LIST_FILE_NAME))
         val hostsFileParser = HostsFileParser()
         val time = System.currentTimeMillis()
@@ -44,7 +44,7 @@ class AssetsHostsDataSource @Inject constructor(
 
         logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
         logger.log(TAG, "Loaded ${domains.size} domains")
-        emitter.onSuccess(domains)
+        emitter.onSuccess(HostsResult.Success(domains))
     }
 
     companion object {
