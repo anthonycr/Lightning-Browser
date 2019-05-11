@@ -6,8 +6,6 @@ import acr.browser.lightning.log.Logger
 import android.content.res.AssetManager
 import io.reactivex.Single
 import java.io.InputStreamReader
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * A [HostsDataSource] that reads from the hosts list in assets.
@@ -15,8 +13,7 @@ import javax.inject.Singleton
  * @param assetManager The store for application assets.
  * @param logger The logger used to log status.
  */
-@Singleton
-class AssetsHostsDataSource @Inject constructor(
+class AssetsHostsDataSource constructor(
     private val assetManager: AssetManager,
     private val logger: Logger
 ) : HostsDataSource {
