@@ -1,4 +1,4 @@
-package acr.browser.lightning.adblock
+package acr.browser.lightning.adblock.parser
 
 import acr.browser.lightning.extensions.*
 import acr.browser.lightning.log.Logger

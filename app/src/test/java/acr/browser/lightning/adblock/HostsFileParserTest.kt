@@ -1,5 +1,6 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.log.NoOpLogger
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

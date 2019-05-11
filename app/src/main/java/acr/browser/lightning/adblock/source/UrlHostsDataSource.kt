@@ -1,6 +1,6 @@
 package acr.browser.lightning.adblock.source
 
-import acr.browser.lightning.adblock.HostsFileParser
+import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.extensions.onIOExceptionResumeNext
 import acr.browser.lightning.log.Logger
 import io.reactivex.Single
