@@ -1,20 +1,21 @@
 package acr.browser.lightning.database.bookmark
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.FOLDER
-import acr.browser.lightning.database.HistoryItem
-import acr.browser.lightning.database.LazyDatabase
+import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.asFolder
+import acr.browser.lightning.database.databaseDelegate
+import acr.browser.lightning.extensions.firstOrNullMap
+import acr.browser.lightning.extensions.useMap
 import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.text.TextUtils
+import androidx.core.database.getStringOrNull
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,23 +26,21 @@ import javax.inject.Singleton
  */
 @Singleton
 class BookmarkDatabase @Inject constructor(
-        application: Application
+    application: Application
 ) : SQLiteOpenHelper(application, DATABASE_NAME, null, DATABASE_VERSION), BookmarkRepository {
 
     private val defaultBookmarkTitle: String = application.getString(R.string.untitled)
-    private val lazy = LazyDatabase(this)
-    private val database: SQLiteDatabase
-        get() = lazy.db()
+    private val database: SQLiteDatabase by databaseDelegate()
 
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
         val createBookmarkTable = "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_BOOKMARK)}(" +
-                "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
-                "${DatabaseUtils.sqlEscapeString(KEY_URL)} TEXT," +
-                "${DatabaseUtils.sqlEscapeString(KEY_TITLE)} TEXT," +
-                "${DatabaseUtils.sqlEscapeString(KEY_FOLDER)} TEXT," +
-                "${DatabaseUtils.sqlEscapeString(KEY_POSITION)} INTEGER" +
-                ')'
+            "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
+            "${DatabaseUtils.sqlEscapeString(KEY_URL)} TEXT," +
+            "${DatabaseUtils.sqlEscapeString(KEY_TITLE)} TEXT," +
+            "${DatabaseUtils.sqlEscapeString(KEY_FOLDER)} TEXT," +
+            "${DatabaseUtils.sqlEscapeString(KEY_POSITION)} INTEGER" +
+            ')'
         db.execSQL(createBookmarkTable)
     }
 
@@ -62,16 +61,17 @@ class BookmarkDatabase @Inject constructor(
      * @return a cursor with bookmarks matching the URL.
      */
     private fun queryWithOptionalEndSlash(url: String): Cursor {
-        var cursor = database.query(TABLE_BOOKMARK, null, "$KEY_URL=?", arrayOf(url), null, null, null, "1")
-
-        if (cursor.count == 0) {
-            cursor.close()
-
-            val alternateUrl = alternateSlashUrl(url)
-            cursor = database.query(TABLE_BOOKMARK, null, "$KEY_URL=?", arrayOf(alternateUrl), null, null, null, "1")
-        }
-
-        return cursor
+        val alternateUrl = alternateSlashUrl(url)
+        return database.query(
+            TABLE_BOOKMARK,
+            null,
+            "$KEY_URL=? OR $KEY_URL=?",
+            arrayOf(url, alternateUrl),
+            null,
+            null,
+            null,
+            "1"
+        )
     }
 
     /**
@@ -83,14 +83,11 @@ class BookmarkDatabase @Inject constructor(
      * @return the number of deleted rows.
      */
     private fun deleteWithOptionalEndSlash(url: String): Int {
-        var deletedRows = database.delete(TABLE_BOOKMARK, "$KEY_URL=?", arrayOf(url))
-
-        if (deletedRows == 0) {
-            val alternateUrl = alternateSlashUrl(url)
-            deletedRows = database.delete(TABLE_BOOKMARK, "$KEY_URL=?", arrayOf(alternateUrl))
-        }
-
-        return deletedRows
+        return database.delete(
+            TABLE_BOOKMARK,
+            "$KEY_URL=? OR $KEY_URL=?",
+            arrayOf(url, alternateSlashUrl(url))
+        )
     }
 
     /**
@@ -103,24 +100,28 @@ class BookmarkDatabase @Inject constructor(
      * @return the numebr of rows updated.
      */
     private fun updateWithOptionalEndSlash(url: String, contentValues: ContentValues): Int {
-        var updatedRows = database.update(TABLE_BOOKMARK, contentValues, "$KEY_URL=?", arrayOf(url))
+        var updatedRows = database.update(
+            TABLE_BOOKMARK,
+            contentValues,
+            "$KEY_URL=?",
+            arrayOf(url)
+        )
 
         if (updatedRows == 0) {
             val alternateUrl = alternateSlashUrl(url)
-            updatedRows = database.update(TABLE_BOOKMARK, contentValues, "$KEY_URL=?", arrayOf(alternateUrl))
+            updatedRows = database.update(
+                TABLE_BOOKMARK,
+                contentValues,
+                "$KEY_URL=?",
+                arrayOf(alternateUrl)
+            )
         }
 
         return updatedRows
     }
 
-    override fun findBookmarkForUrl(url: String): Maybe<HistoryItem> = Maybe.fromCallable {
-        val cursor = queryWithOptionalEndSlash(url)
-
-        if (cursor.moveToFirst()) {
-            return@fromCallable cursor.bindToHistoryItem()
-        } else {
-            return@fromCallable null
-        }
+    override fun findBookmarkForUrl(url: String): Maybe<Bookmark.Entry> = Maybe.fromCallable {
+        return@fromCallable queryWithOptionalEndSlash(url).firstOrNullMap { it.bindToBookmarkEntry() }
     }
 
     override fun isBookmark(url: String): Single<Boolean> = Single.fromCallable {
@@ -129,38 +130,43 @@ class BookmarkDatabase @Inject constructor(
         }
     }
 
-    override fun addBookmarkIfNotExists(item: HistoryItem): Single<Boolean> = Single.fromCallable {
-        queryWithOptionalEndSlash(item.url).use {
+    override fun addBookmarkIfNotExists(entry: Bookmark.Entry): Single<Boolean> = Single.fromCallable {
+        queryWithOptionalEndSlash(entry.url).use {
             if (it.moveToFirst()) {
                 return@fromCallable false
             }
         }
 
-        val id = database.insert(TABLE_BOOKMARK, null, bindBookmarkToContentValues(item))
+        val id = database.insert(
+            TABLE_BOOKMARK,
+            null,
+            entry.bindBookmarkToContentValues()
+        )
 
         return@fromCallable id != -1L
     }
 
-    override fun addBookmarkList(bookmarkItems: List<HistoryItem>): Completable = Completable.fromAction {
-        database.beginTransaction()
+    override fun addBookmarkList(bookmarkItems: List<Bookmark.Entry>): Completable = Completable.fromAction {
+        database.apply {
+            beginTransaction()
 
-        for (item in bookmarkItems) {
-            addBookmarkIfNotExists(item).subscribe()
+            for (item in bookmarkItems) {
+                addBookmarkIfNotExists(item).subscribe()
+            }
+
+            setTransactionSuccessful()
+            endTransaction()
         }
-
-        database.setTransactionSuccessful()
-        database.endTransaction()
     }
 
-    override fun deleteBookmark(bookmark: HistoryItem): Single<Boolean> = Single.defer {
-        val rows = deleteWithOptionalEndSlash(bookmark.url)
-
-        return@defer Single.just(rows > 0)
+    override fun deleteBookmark(entry: Bookmark.Entry): Single<Boolean> = Single.fromCallable {
+        return@fromCallable deleteWithOptionalEndSlash(entry.url) > 0
     }
 
     override fun renameFolder(oldName: String, newName: String): Completable = Completable.fromAction {
-        val contentValues = ContentValues(1)
-        contentValues.put(KEY_FOLDER, newName)
+        val contentValues = ContentValues(1).apply {
+            put(KEY_FOLDER, newName)
+        }
 
         database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
     }
@@ -176,117 +182,98 @@ class BookmarkDatabase @Inject constructor(
         }
     }
 
-    override fun editBookmark(oldBookmark: HistoryItem, newBookmark: HistoryItem): Completable = Completable.fromAction {
-        if (newBookmark.title.isEmpty()) {
-            newBookmark.setTitle(defaultBookmarkTitle)
-        }
-        val contentValues = bindBookmarkToContentValues(newBookmark)
+    override fun editBookmark(oldBookmark: Bookmark.Entry, newBookmark: Bookmark.Entry): Completable = Completable.fromAction {
+        val contentValues = newBookmark.bindBookmarkToContentValues()
 
         updateWithOptionalEndSlash(oldBookmark.url, contentValues)
     }
 
-    override fun getAllBookmarks(): Single<List<HistoryItem>> = Single.fromCallable {
-        database.query(TABLE_BOOKMARK, null, null, null, null, null, null).use {
-            return@fromCallable it.bindToHistoryItemList()
-        }
+    override fun getAllBookmarksSorted(): Single<List<Bookmark.Entry>> = Single.fromCallable {
+        return@fromCallable database.query(
+            TABLE_BOOKMARK,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "$KEY_FOLDER, $KEY_POSITION ASC, $KEY_TITLE COLLATE NOCASE ASC, $KEY_URL ASC"
+        ).useMap { it.bindToBookmarkEntry() }
     }
 
-    override fun getBookmarksFromFolderSorted(folder: String?): Single<List<HistoryItem>> = Single.fromCallable {
+    override fun getBookmarksFromFolderSorted(folder: String?): Single<List<Bookmark>> = Single.fromCallable {
         val finalFolder = folder ?: ""
-        database.query(TABLE_BOOKMARK, null, "$KEY_FOLDER=?", arrayOf(finalFolder), null, null, null).use {
-            val list = it.bindToHistoryItemList()
-            Collections.sort(list)
-            return@fromCallable list
-        }
+        return@fromCallable database.query(
+            TABLE_BOOKMARK,
+            null,
+            "$KEY_FOLDER=?",
+            arrayOf(finalFolder),
+            null,
+            null,
+            "$KEY_POSITION ASC, $KEY_TITLE COLLATE NOCASE ASC, $KEY_URL ASC"
+        ).useMap { it.bindToBookmarkEntry() }
     }
 
-    override fun getFoldersSorted(): Single<List<HistoryItem>> = Single.fromCallable {
-        database.query(true, TABLE_BOOKMARK, arrayOf(KEY_FOLDER), null, null, null, null, null, null).use {
-
-            val folders = ArrayList<HistoryItem>()
-            while (it.moveToNext()) {
-                val folderName = it.getString(it.getColumnIndex(KEY_FOLDER))
-                if (TextUtils.isEmpty(folderName)) {
-                    continue
-                }
-
-                val folder = HistoryItem()
-                folder.setIsFolder(true)
-                folder.setTitle(folderName)
-                folder.imageId = R.drawable.ic_folder
-                folder.setUrl("$FOLDER$folderName")
-
-                folders.add(folder)
-            }
-
-            Collections.sort(folders)
-            return@fromCallable folders
-        }
+    override fun getFoldersSorted(): Single<List<Bookmark.Folder>> = Single.fromCallable {
+        return@fromCallable database
+            .query(
+                true,
+                TABLE_BOOKMARK,
+                arrayOf(KEY_FOLDER),
+                null,
+                null,
+                null,
+                null,
+                "$KEY_FOLDER ASC",
+                null
+            )
+            .useMap { it.getString(it.getColumnIndex(KEY_FOLDER)) }
+            .filter { !it.isNullOrEmpty() }
+            .map(String::asFolder)
     }
 
     override fun getFolderNames(): Single<List<String>> = Single.fromCallable {
-        database.query(true, TABLE_BOOKMARK, arrayOf(KEY_FOLDER), null, null, null, null, null, null).use {
-            val folders = ArrayList<String>()
-            while (it.moveToNext()) {
-                val folderName = it.getString(it.getColumnIndex(KEY_FOLDER))
-                if (TextUtils.isEmpty(folderName)) {
-                    continue
-                }
-
-                folders.add(folderName)
-            }
-
-            return@fromCallable folders
-        }
+        return@fromCallable database.query(
+            true,
+            TABLE_BOOKMARK,
+            arrayOf(KEY_FOLDER),
+            null,
+            null,
+            null,
+            null,
+            "$KEY_FOLDER ASC",
+            null
+        ).useMap { it.getString(it.getColumnIndex(KEY_FOLDER)) }
+            .filter { !it.isNullOrEmpty() }
     }
 
     override fun count(): Long = DatabaseUtils.queryNumEntries(database, TABLE_BOOKMARK)
 
     /**
-     * Binds a [HistoryItem] to [ContentValues].
+     * Binds a [Bookmark.Entry] to [ContentValues].
      *
-     * @param bookmarkItem the bookmark to bind.
-     * @return a valid values object that can be inserted
-     * into the database.
+     * @return a valid values object that can be inserted into the database.
      */
-    private fun bindBookmarkToContentValues(bookmarkItem: HistoryItem) = ContentValues(4).apply {
-        put(KEY_TITLE, bookmarkItem.title)
-        put(KEY_URL, bookmarkItem.url)
-        put(KEY_FOLDER, bookmarkItem.folder)
-        put(KEY_POSITION, bookmarkItem.position)
+    private fun Bookmark.Entry.bindBookmarkToContentValues() = ContentValues(4).apply {
+        put(KEY_TITLE, title.takeIf(String::isNotBlank) ?: defaultBookmarkTitle)
+        put(KEY_URL, url)
+        put(KEY_FOLDER, folder.title)
+        put(KEY_POSITION, position)
     }
 
     /**
-     * Binds a cursor to a [HistoryItem]. This is
+     * Binds a cursor to a [Bookmark.Entry]. This is
      * a non consuming operation on the cursor. Note that
      * this operation is not safe to perform on a cursor
      * unless you know that the cursor is of history items.
      *
      * @return a valid item containing all the pertinent information.
      */
-    private fun Cursor.bindToHistoryItem() = HistoryItem().apply {
-        imageId = R.drawable.ic_bookmark
-        setUrl(getString(getColumnIndex(KEY_URL)))
-        setTitle(getString(getColumnIndex(KEY_TITLE)))
-        setFolder(getString(getColumnIndex(KEY_FOLDER)))
+    private fun Cursor.bindToBookmarkEntry() = Bookmark.Entry(
+        url = getString(getColumnIndex(KEY_URL)),
+        title = getString(getColumnIndex(KEY_TITLE)),
+        folder = getStringOrNull(getColumnIndex(KEY_FOLDER)).asFolder(),
         position = getInt(getColumnIndex(KEY_POSITION))
-    }
-
-    /**
-     * Binds a cursor to a list of [HistoryItem].
-     * This operation consumes the cursor.
-     *
-     * @return a valid list of history items, may be empty.
-     */
-    private fun Cursor.bindToHistoryItemList(): List<HistoryItem> = use {
-        val bookmarks = ArrayList<HistoryItem>()
-
-        while (moveToNext()) {
-            bookmarks.add(bindToHistoryItem())
-        }
-
-        return bookmarks
-    }
+    )
 
     /**
      * URLs can represent the same thing with or without a trailing slash,
@@ -301,7 +288,7 @@ class BookmarkDatabase @Inject constructor(
     private fun alternateSlashUrl(url: String): String = if (url.endsWith("/")) {
         url.substring(0, url.length - 1)
     } else {
-        url + '/'
+        "$url/"
     }
 
     companion object {
@@ -312,10 +299,10 @@ class BookmarkDatabase @Inject constructor(
         // Database name
         private const val DATABASE_NAME = "bookmarkManager"
 
-        // HistoryItem table name
+        // Bookmark table name
         private const val TABLE_BOOKMARK = "bookmark"
 
-        // HistoryItem table columns names
+        // Bookmark table columns names
         private const val KEY_ID = "id"
         private const val KEY_URL = "url"
         private const val KEY_TITLE = "title"

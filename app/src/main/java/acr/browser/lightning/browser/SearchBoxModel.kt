@@ -1,7 +1,7 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.utils.Utils
 import android.app.Application
@@ -11,8 +11,8 @@ import javax.inject.Inject
  * A UI model for the search box.
  */
 class SearchBoxModel @Inject constructor(
-        private val preferences: PreferenceManager,
-        application: Application
+    private val userPreferences: UserPreferences,
+    application: Application
 ) {
 
     private val untitledTitle: String = application.getString(R.string.untitled)
@@ -39,7 +39,7 @@ class SearchBoxModel @Inject constructor(
         when {
             UrlUtils.isSpecialUrl(url) -> return ""
             isLoading -> return url
-            else -> when (preferences.urlBoxContentChoice) {
+            else -> when (userPreferences.urlBoxContentChoice) {
                 1 -> {
                     // URL, show the entire URL
                     return url
@@ -64,6 +64,6 @@ class SearchBoxModel @Inject constructor(
         }
     }
 
-    private fun safeDomain(url: String) = Utils.getDomainName(url) ?: url
+    private fun safeDomain(url: String) = Utils.getDomainName(url)
 
 }

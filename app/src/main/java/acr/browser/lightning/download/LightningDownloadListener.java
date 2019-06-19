@@ -7,8 +7,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.DownloadListener;
@@ -23,7 +21,10 @@ import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.downloads.DownloadsRepository;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.log.Logger;
+import acr.browser.lightning.preference.UserPreferences;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 public class LightningDownloadListener implements DownloadListener {
 
@@ -31,9 +32,10 @@ public class LightningDownloadListener implements DownloadListener {
 
     private final Activity mActivity;
 
-    @Inject PreferenceManager mPreferenceManager;
-    @Inject DownloadHandler mDownloadHandler;
-    @Inject DownloadsRepository downloadsRespository;
+    @Inject UserPreferences userPreferences;
+    @Inject DownloadHandler downloadHandler;
+    @Inject DownloadsRepository downloadsRepository;
+    @Inject Logger logger;
 
     public LightningDownloadListener(Activity context) {
         BrowserApp.getAppComponent().inject(this);
@@ -62,7 +64,7 @@ public class LightningDownloadListener implements DownloadListener {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    mDownloadHandler.onDownloadStart(mActivity, mPreferenceManager, url, userAgent, contentDisposition, mimetype, downloadSize);
+                                    downloadHandler.onDownloadStart(mActivity, userPreferences, url, userAgent, contentDisposition, mimetype, downloadSize);
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     break;
@@ -79,7 +81,7 @@ public class LightningDownloadListener implements DownloadListener {
                         .setNegativeButton(mActivity.getResources().getString(R.string.action_cancel),
                             dialogClickListener).show();
                     BrowserDialog.setDialogSize(mActivity, dialog);
-                    Log.i(TAG, "Downloading: " + fileName);
+                    logger.log(TAG, "Downloading: " + fileName);
                 }
 
                 @Override

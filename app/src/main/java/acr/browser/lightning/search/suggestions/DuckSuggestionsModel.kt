@@ -2,33 +2,42 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.extensions.map
-import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.log.Logger
 import android.app.Application
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.InputStream
 
 /**
  * The search suggestions provider for the DuckDuckGo search engine.
  */
-class DuckSuggestionsModel(application: Application) : BaseSuggestionsModel(application, UTF8) {
+class DuckSuggestionsModel(
+    httpClient: OkHttpClient,
+    requestFactory: RequestFactory,
+    application: Application,
+    logger: Logger
+) : BaseSuggestionsModel(httpClient, requestFactory, UTF8, logger) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
-    override fun createQueryUrl(query: String, language: String): String =
-            "https://duckduckgo.com/ac/?q=$query"
+    // https://duckduckgo.com/ac/?q={query}
+    override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
+        .scheme("https")
+        .host("duckduckgo.com")
+        .encodedPath("/ac/")
+        .addEncodedQueryParameter("q", query)
+        .build()
 
     @Throws(Exception::class)
-    override fun parseResults(inputStream: InputStream): List<HistoryItem> {
-        val content = FileUtils.readStringFromStream(inputStream, UTF8)
-        val jsonArray = JSONArray(content)
-
-        return jsonArray
-                .map { it as JSONObject }
-                .map { it.getString("phrase") }
-                .map { HistoryItem("$searchSubtitle \"$it\"", it, R.drawable.ic_search) }
+    override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
+        return JSONArray(responseBody.string())
+            .map { it as JSONObject }
+            .map { it.getString("phrase") }
+            .map { SearchSuggestion("$searchSubtitle \"$it\"", it) }
     }
 
 }

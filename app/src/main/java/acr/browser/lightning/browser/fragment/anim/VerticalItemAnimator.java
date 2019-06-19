@@ -17,14 +17,6 @@ package acr.browser.lightning.browser.fragment.anim;
 
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorCompat;
-import android.support.v4.view.ViewPropertyAnimatorListener;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
@@ -32,6 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewPropertyAnimatorCompat;
+import androidx.core.view.ViewPropertyAnimatorListener;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * This implementation of {@link RecyclerView.ItemAnimator} provides basic

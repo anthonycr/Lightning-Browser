@@ -13,7 +13,7 @@ class DialogItemTest {
     fun `onClick triggers onClick function reference`() {
         // mock
         val onClick = mock<() -> Unit>()
-        val dialogItem = DialogItem(0, false, onClick)
+        val dialogItem = DialogItem(title = 0, isConditionMet = false, onClick = onClick)
 
         // train
         dialogItem.onClick()

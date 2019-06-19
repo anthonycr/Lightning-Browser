@@ -1,13 +1,14 @@
 package acr.browser.lightning.view
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
+import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.webrtc.WebRtcPermissionsModel
 import acr.browser.lightning.view.webrtc.WebRtcPermissionsView
 import android.Manifest
@@ -18,28 +19,29 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Message
-import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.webkit.*
-import com.anthonycr.bonsai.Schedulers
+import androidx.appcompat.app.AlertDialog
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
+import io.reactivex.Scheduler
 import javax.inject.Inject
 
 class LightningChromeClient(
-        private val activity: Activity,
-        private val lightningView: LightningView
+    private val activity: Activity,
+    private val lightningView: LightningView
 ) : WebChromeClient(), WebRtcPermissionsView {
 
     private val geoLocationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     private val uiController: UIController
     @Inject internal lateinit var faviconModel: FaviconModel
-    @Inject internal lateinit var preferences: PreferenceManager
+    @Inject internal lateinit var userPreferences: UserPreferences
     @Inject internal lateinit var webRtcPermissionsModel: WebRtcPermissionsModel
+    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
 
     init {
-        BrowserApp.appComponent.inject(this)
+        activity.injector.inject(this)
         uiController = activity as UIController
     }
 
@@ -66,8 +68,8 @@ class LightningChromeClient(
         }
 
         faviconModel.cacheFaviconForUrl(icon, url)
-                .subscribeOn(Schedulers.io())
-                .subscribe()
+            .subscribeOn(diskScheduler)
+            .subscribe()
     }
 
 
@@ -85,19 +87,19 @@ class LightningChromeClient(
 
     override fun requestPermissions(permissions: Set<String>, onGrant: (Boolean) -> Unit) {
         val missingPermissions = permissions
-                .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
+            .filter { PermissionsManager.getInstance().hasPermission(activity, it) }
 
         if (missingPermissions.isEmpty()) {
             onGrant(true)
         } else {
             PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(
-                    activity,
-                    missingPermissions.toTypedArray(),
-                    object : PermissionsResultAction() {
-                        override fun onGranted() = onGrant(true)
+                activity,
+                missingPermissions.toTypedArray(),
+                object : PermissionsResultAction() {
+                    override fun onGranted() = onGrant(true)
 
-                        override fun onDenied(permission: String?) = onGrant(false)
-                    }
+                    override fun onDenied(permission: String?) = onGrant(false)
+                }
             )
         }
     }
@@ -108,20 +110,20 @@ class LightningChromeClient(
         activity.runOnUiThread {
             val resourcesString = resources.joinToString(separator = "\n")
             BrowserDialog.showPositiveNegativeDialog(
-                    activity = activity,
-                    title = R.string.title_permission_request,
-                    message = R.string.message_permission_request,
-                    messageArguments = arrayOf(source, resourcesString),
-                    positiveButton = DialogItem(R.string.action_allow) { onGrant(true) },
-                    negativeButton = DialogItem(R.string.action_dont_allow) { onGrant(false) },
-                    onCancel = { onGrant(false) }
+                activity = activity,
+                title = R.string.title_permission_request,
+                message = R.string.message_permission_request,
+                messageArguments = arrayOf(source, resourcesString),
+                positiveButton = DialogItem(title = R.string.action_allow) { onGrant(true) },
+                negativeButton = DialogItem(title = R.string.action_dont_allow) { onGrant(false) },
+                onCancel = { onGrant(false) }
             )
         }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onPermissionRequest(request: PermissionRequest) {
-        if (preferences.webRtcEnabled) {
+        if (userPreferences.webRtcEnabled) {
             webRtcPermissionsModel.requestPermission(request, this)
         } else {
             request.deny()
@@ -130,30 +132,30 @@ class LightningChromeClient(
 
     override fun onGeolocationPermissionsShowPrompt(origin: String,
                                                     callback: GeolocationPermissions.Callback) =
-            PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, geoLocationPermissions, object : PermissionsResultAction() {
-                override fun onGranted() {
-                    val remember = true
-                    AlertDialog.Builder(activity).apply {
-                        setTitle(activity.getString(R.string.location))
-                        val org = if (origin.length > 50) {
-                            "${origin.subSequence(0, 50)}..."
-                        } else {
-                            origin
-                        }
-                        setMessage(org + activity.getString(R.string.message_location))
-                        setCancelable(true)
-                        setPositiveButton(activity.getString(R.string.action_allow)) { _, _ ->
-                            callback.invoke(origin, true, remember)
-                        }
-                        setNegativeButton(activity.getString(R.string.action_dont_allow)) { _, _ ->
-                            callback.invoke(origin, false, remember)
-                        }
-                    }.resizeAndShow()
-                }
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(activity, geoLocationPermissions, object : PermissionsResultAction() {
+            override fun onGranted() {
+                val remember = true
+                AlertDialog.Builder(activity).apply {
+                    setTitle(activity.getString(R.string.location))
+                    val org = if (origin.length > 50) {
+                        "${origin.subSequence(0, 50)}..."
+                    } else {
+                        origin
+                    }
+                    setMessage(org + activity.getString(R.string.message_location))
+                    setCancelable(true)
+                    setPositiveButton(activity.getString(R.string.action_allow)) { _, _ ->
+                        callback.invoke(origin, true, remember)
+                    }
+                    setNegativeButton(activity.getString(R.string.action_dont_allow)) { _, _ ->
+                        callback.invoke(origin, false, remember)
+                    }
+                }.resizeAndShow()
+            }
 
-                override fun onDenied(permission: String) =//TODO show message and/or turn off setting
-                        Unit
-            })
+            override fun onDenied(permission: String) =//TODO show message and/or turn off setting
+                Unit
+        })
 
     override fun onCreateWindow(view: WebView, isDialog: Boolean, isUserGesture: Boolean,
                                 resultMsg: Message): Boolean {
@@ -168,11 +170,11 @@ class LightningChromeClient(
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String) =
-            uiController.openFileChooser(uploadMsg)
+        uiController.openFileChooser(uploadMsg)
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String, capture: String) =
-            uiController.openFileChooser(uploadMsg)
+        uiController.openFileChooser(uploadMsg)
 
     override fun onShowFileChooser(webView: WebView, filePathCallback: ValueCallback<Array<Uri>>,
                                    fileChooserParams: WebChromeClient.FileChooserParams): Boolean {
@@ -199,15 +201,15 @@ class LightningChromeClient(
      * of a video's loading progress.
      */
     override fun getVideoLoadingProgressView(): View =
-            LayoutInflater.from(activity).inflate(R.layout.video_loading_progress, null)
+        LayoutInflater.from(activity).inflate(R.layout.video_loading_progress, null)
 
     override fun onHideCustomView() = uiController.onHideCustomView()
 
     override fun onShowCustomView(view: View, callback: WebChromeClient.CustomViewCallback) =
-            uiController.onShowCustomView(view, callback)
+        uiController.onShowCustomView(view, callback)
 
     override fun onShowCustomView(view: View, requestedOrientation: Int,
                                   callback: WebChromeClient.CustomViewCallback) =
-            uiController.onShowCustomView(view, callback, requestedOrientation)
+        uiController.onShowCustomView(view, callback, requestedOrientation)
 
 }

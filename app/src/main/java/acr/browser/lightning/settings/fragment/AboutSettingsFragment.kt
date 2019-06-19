@@ -15,13 +15,13 @@ class AboutSettingsFragment : AbstractSettingsFragment() {
         super.onCreate(savedInstanceState)
 
         clickablePreference(
-                preference = SETTINGS_VERSION,
-                summary = BuildConfig.VERSION_NAME,
-                onClick = { }
+            preference = SETTINGS_VERSION,
+            summary = BuildConfig.VERSION_NAME,
+            onClick = { }
         )
     }
 
     companion object {
-        private val SETTINGS_VERSION = "pref_version"
+        private const val SETTINGS_VERSION = "pref_version"
     }
 }

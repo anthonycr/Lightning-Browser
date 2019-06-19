@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser
 
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.Bookmark
 
 interface BookmarksView {
 
@@ -8,6 +8,6 @@ interface BookmarksView {
 
     fun handleUpdatedUrl(url: String)
 
-    fun handleBookmarkDeleted(item: HistoryItem)
+    fun handleBookmarkDeleted(bookmark: Bookmark)
 
 }

@@ -15,27 +15,14 @@ import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Shader;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Toast;
 
 import java.io.Closeable;
 import java.io.File;
@@ -47,18 +34,19 @@ import java.util.Date;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
-import acr.browser.lightning.database.HistoryItem;
+import acr.browser.lightning.database.HistoryEntry;
 import acr.browser.lightning.dialog.BrowserDialog;
+import acr.browser.lightning.extensions.ActivityExtensions;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 
 public final class Utils {
 
     private static final String TAG = "Utils";
 
     private Utils() {}
-
-    public static boolean doesSupportHeaders() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
 
     /**
      * Creates a new intent that can launch the email
@@ -107,56 +95,6 @@ public final class Utils {
     }
 
     /**
-     * Displays a snackbar to the user with a String resource.
-     * <p>
-     * NOTE: If there is an accessibility manager enabled on
-     * the device, such as LastPass, then the snackbar animations
-     * will not work.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param resource the string resource to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) {
-            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
-            return;
-        }
-        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Displays a snackbar to the user with a string message.
-     * <p>
-     * NOTE: If there is an accessibility manager enabled on
-     * the device, such as LastPass, then the snackbar animations
-     * will not work.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param message  the string message to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) {
-            Log.e(TAG, "showSnackbar", new NullPointerException("Unable to find android.R.id.content"));
-            return;
-        }
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Shows a toast to the user.
-     * Should only be used if an activity is
-     * not available to show a snackbar.
-     *
-     * @param context  the context needed to show the toast.
-     * @param resource the string shown by the toast to the user.
-     */
-    public static void showToast(@NonNull Context context, @StringRes int resource) {
-        Toast.makeText(context, resource, Toast.LENGTH_SHORT).show();
-    }
-
-    /**
      * Converts Density Pixels (DP) to Pixels (PX).
      *
      * @param dp the number of density pixels to convert.
@@ -176,7 +114,7 @@ public final class Utils {
      * could not be extracted. The domain name may include
      * HTTPS if the URL is an SSL supported URL.
      */
-    @Nullable
+    @NonNull
     public static String getDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 
@@ -229,27 +167,6 @@ public final class Utils {
         }
         // The directory is now empty so delete it
         return dir != null && dir.delete();
-    }
-
-    /**
-     * Creates and returns a new favicon which is the same as the provided
-     * favicon but with horizontal or vertical padding of 4dp
-     *
-     * @param bitmap is the bitmap to pad.
-     * @return the padded bitmap.
-     */
-    @NonNull
-    public static Bitmap padFavicon(@NonNull Bitmap bitmap) {
-        int padding = Utils.dpToPx(4);
-
-        Bitmap paddedBitmap = Bitmap.createBitmap(bitmap.getWidth() + padding, bitmap.getHeight()
-            + padding, Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(paddedBitmap);
-        canvas.drawARGB(0x00, 0x00, 0x00, 0x00); // this represents white color
-        canvas.drawBitmap(bitmap, padding / 2, padding / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        return paddedBitmap;
     }
 
     public static boolean isColorTooDark(int color) {
@@ -331,86 +248,45 @@ public final class Utils {
     }
 
     /**
-     * Draws the trapezoid background for the horizontal tabs on a canvas object using
-     * the specified color.
-     *
-     * @param canvas the canvas to draw upon
-     * @param color  the color to use to draw the tab
-     */
-    public static void drawTrapezoid(@NonNull Canvas canvas, int color, boolean withShader) {
-
-        Paint paint = new Paint();
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
-//        paint.setFilterBitmap(true);
-        paint.setAntiAlias(true);
-        paint.setDither(true);
-        if (withShader) {
-            paint.setShader(new LinearGradient(0, 0.9f * canvas.getHeight(),
-                0, canvas.getHeight(),
-                color, mixTwoColors(Color.BLACK, color, 0.5f),
-                Shader.TileMode.CLAMP));
-        } else {
-            paint.setShader(null);
-        }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        double radians = Math.PI / 3;
-        int base = (int) (height / Math.tan(radians));
-
-        Path wallpath = new Path();
-        wallpath.reset();
-        wallpath.moveTo(0, height);
-        wallpath.lineTo(width, height);
-        wallpath.lineTo(width - base, 0);
-        wallpath.lineTo(base, 0);
-        wallpath.close();
-
-        canvas.drawPath(wallpath, paint);
-    }
-
-    /**
      * Creates a shortcut on the homescreen using the
-     * {@link HistoryItem} information that opens the
+     * {@link HistoryEntry} information that opens the
      * browser. The icon, URL, and title are used in
      * the creation of the shortcut.
      *
      * @param activity the activity needed to create
      *                 the intent and show a snackbar message
-     * @param item     the HistoryItem to create the shortcut from
+     * @param historyEntry     the HistoryEntity to create the shortcut from
      */
-    public static void createShortcut(@NonNull Activity activity, @NonNull HistoryItem item) {
-        if (TextUtils.isEmpty(item.getUrl())) {
-            return;
-        }
-        Log.d(TAG, "Creating shortcut: " + item.getTitle() + ' ' + item.getUrl());
+    public static void createShortcut(@NonNull Activity activity,
+                                      @NonNull HistoryEntry historyEntry,
+                                      @NonNull Bitmap favicon) {
         Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
-        shortcutIntent.setData(Uri.parse(item.getUrl()));
+        shortcutIntent.setData(Uri.parse(historyEntry.getUrl()));
 
-        final String title = TextUtils.isEmpty(item.getTitle()) ? activity.getString(R.string.untitled) : item.getTitle();
+        final String title = TextUtils.isEmpty(historyEntry.getTitle()) ? activity.getString(R.string.untitled) : historyEntry.getTitle();
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             Intent addIntent = new Intent();
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
             addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, item.getBitmap());
+            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, favicon);
             addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             activity.sendBroadcast(addIntent);
-            Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+            ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
         } else {
             ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
             if (shortcutManager.isRequestPinShortcutSupported()) {
                 ShortcutInfo pinShortcutInfo =
-                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + item.getUrl().hashCode())
+                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + historyEntry.getUrl().hashCode())
                         .setIntent(shortcutIntent)
-                        .setIcon(Icon.createWithBitmap(item.getBitmap()))
+                        .setIcon(Icon.createWithBitmap(favicon))
                         .setShortLabel(title)
                         .build();
 
                 shortcutManager.requestPinShortcut(pinShortcutInfo, null);
-                Utils.showSnackbar(activity, R.string.message_added_to_homescreen);
+                ActivityExtensions.snackbar(activity, R.string.message_added_to_homescreen);
             } else {
-                Utils.showSnackbar(activity, R.string.shortcut_message_failed_to_add);
+                ActivityExtensions.snackbar(activity, R.string.shortcut_message_failed_to_add);
             }
         }
     }

@@ -172,7 +172,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Projeto Android Open Source</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Reabrir último separador</string>
+    <string name="reopening_recent_tab">Reabrir último separador</string>
     <string name="rendering_mode">Modo de processamento</string>
     <string name="name_inverted">Invertido</string>
     <string name="name_grayscale">Escala de cinzento</string>

@@ -1,7 +1,7 @@
 # Lightning Browser [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
 
 #### Speed, Simplicity, Security
-![](ic_launcher_small.png)
+![](launcher_icon_small.png)
 
 #### Download
 [<img src="https://f-droid.org/badge/get-it-on.png"

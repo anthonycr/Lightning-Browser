@@ -3,21 +3,25 @@
  */
 package acr.browser.lightning.settings.activity
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
+import acr.browser.lightning.device.BuildInfo
+import acr.browser.lightning.device.BuildType
+import acr.browser.lightning.di.injector
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.anthonycr.grant.PermissionsManager
-import java.util.*
+import javax.inject.Inject
 
 class SettingsActivity : ThemableSettingsActivity() {
 
+    @Inject lateinit var buildInfo: BuildInfo
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        injector.inject(this)
         super.onCreate(savedInstanceState)
         // this is a workaround for the Toolbar in PreferenceActivity
         val root = findViewById<ViewGroup>(android.R.id.content)
@@ -29,31 +33,24 @@ class SettingsActivity : ThemableSettingsActivity() {
         root.addView(toolbarContainer)
 
         // now we can set the Toolbar using AppCompatPreferenceActivity
-        setSupportActionbar(toolbarContainer.findViewById<Toolbar>(R.id.toolbar))
+        setSupportActionbar(toolbarContainer.findViewById(R.id.toolbar))
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onBuildHeaders(target: MutableList<Header>) {
         loadHeadersFromResource(R.xml.preferences_headers, target)
         fragments.clear()
-        val headerIterator = target.iterator()
-        while (headerIterator.hasNext()) {
-            val header = headerIterator.next()
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                // Workaround for bug in the AppCompat support library
-                header.iconRes = R.drawable.empty
-            }
 
-            if (header.titleRes == R.string.debug_title) {
-                if (BrowserApp.isRelease) {
-                    headerIterator.remove()
-                } else {
-                    fragments.add(header.fragment)
-                }
-            } else {
-                fragments.add(header.fragment)
-            }
+        if (buildInfo.buildType == BuildType.RELEASE) {
+            target.removeAll { it.titleRes == R.string.debug_title }
         }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // Workaround for bug in the AppCompat support library
+            target.forEach { it.iconRes = R.drawable.empty }
+        }
+
+        fragments.addAll(target.map(Header::fragment))
     }
 
     override fun isValidFragment(fragmentName: String): Boolean = fragments.contains(fragmentName)
@@ -69,6 +66,6 @@ class SettingsActivity : ThemableSettingsActivity() {
     }
 
     companion object {
-        private val fragments = ArrayList<String>(7)
+        private val fragments = mutableListOf<String>()
     }
 }

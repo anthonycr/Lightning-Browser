@@ -1,7 +1,11 @@
 package acr.browser.lightning.search
 
-import acr.browser.lightning.preference.PreferenceManager
+import acr.browser.lightning.log.Logger
+import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*
+import acr.browser.lightning.search.suggestions.*
+import android.app.Application
+import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 /**
@@ -9,53 +13,82 @@ import javax.inject.Inject
  * on the user's preference.
  */
 class SearchEngineProvider @Inject constructor(
-        private val preferenceManager: PreferenceManager
+    private val userPreferences: UserPreferences,
+    private val httpClient: OkHttpClient,
+    private val requestFactory: RequestFactory,
+    private val application: Application,
+    private val logger: Logger
 ) {
 
-    fun getCurrentSearchEngine(): BaseSearchEngine =
-            when (preferenceManager.searchChoice) {
-                0 -> CustomSearch(preferenceManager.searchUrl)
-                1 -> GoogleSearch()
-                2 -> AskSearch()
-                3 -> BingSearch()
-                4 -> YahooSearch()
-                5 -> StartPageSearch()
-                6 -> StartPageMobileSearch()
-                7 -> DuckSearch()
-                8 -> DuckLiteSearch()
-                9 -> BaiduSearch()
-                10 -> YandexSearch()
-                else -> GoogleSearch()
-            }
+    /**
+     * Provide the [SuggestionsRepository] that maps to the user's current preference.
+     */
+    fun provideSearchSuggestions(): SuggestionsRepository =
+        when (userPreferences.searchSuggestionChoice) {
+            0 -> NoOpSuggestionsRepository()
+            1 -> GoogleSuggestionsModel(httpClient, requestFactory, application, logger)
+            2 -> DuckSuggestionsModel(httpClient, requestFactory, application, logger)
+            3 -> BaiduSuggestionsModel(httpClient, requestFactory, application, logger)
+            4 -> NaverSuggestionsModel(httpClient, requestFactory, application, logger)
+            else -> GoogleSuggestionsModel(httpClient, requestFactory, application, logger)
+        }
 
+    /**
+     * Provide the [BaseSearchEngine] that maps to the user's current preference.
+     */
+    fun provideSearchEngine(): BaseSearchEngine =
+        when (userPreferences.searchChoice) {
+            0 -> CustomSearch(userPreferences.searchUrl)
+            1 -> GoogleSearch()
+            2 -> AskSearch()
+            3 -> BingSearch()
+            4 -> YahooSearch()
+            5 -> StartPageSearch()
+            6 -> StartPageMobileSearch()
+            7 -> DuckSearch()
+            8 -> DuckLiteSearch()
+            9 -> BaiduSearch()
+            10 -> YandexSearch()
+            11 -> NaverSearch()
+            else -> GoogleSearch()
+        }
+
+    /**
+     * Return the serializable index of of the provided [BaseSearchEngine].
+     */
     fun mapSearchEngineToPreferenceIndex(searchEngine: BaseSearchEngine): Int =
-            when (searchEngine) {
-                is CustomSearch -> 0
-                is GoogleSearch -> 1
-                is AskSearch -> 2
-                is BingSearch -> 3
-                is YahooSearch -> 4
-                is StartPageSearch -> 5
-                is StartPageMobileSearch -> 6
-                is DuckSearch -> 7
-                is DuckLiteSearch -> 8
-                is BaiduSearch -> 9
-                is YandexSearch -> 10
-                else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
-            }
+        when (searchEngine) {
+            is CustomSearch -> 0
+            is GoogleSearch -> 1
+            is AskSearch -> 2
+            is BingSearch -> 3
+            is YahooSearch -> 4
+            is StartPageSearch -> 5
+            is StartPageMobileSearch -> 6
+            is DuckSearch -> 7
+            is DuckLiteSearch -> 8
+            is BaiduSearch -> 9
+            is YandexSearch -> 10
+            is NaverSearch -> 11
+            else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
+        }
 
-    fun getAllSearchEngines(): List<BaseSearchEngine> = listOf(
-            CustomSearch(preferenceManager.searchUrl),
-            GoogleSearch(),
-            AskSearch(),
-            BingSearch(),
-            YahooSearch(),
-            StartPageSearch(),
-            StartPageMobileSearch(),
-            DuckSearch(),
-            DuckLiteSearch(),
-            BaiduSearch(),
-            YandexSearch()
+    /**
+     * Provide a list of all supported search engines.
+     */
+    fun provideAllSearchEngines(): List<BaseSearchEngine> = listOf(
+        CustomSearch(userPreferences.searchUrl),
+        GoogleSearch(),
+        AskSearch(),
+        BingSearch(),
+        YahooSearch(),
+        StartPageSearch(),
+        StartPageMobileSearch(),
+        DuckSearch(),
+        DuckLiteSearch(),
+        BaiduSearch(),
+        YandexSearch(),
+        NaverSearch()
     )
 
 }

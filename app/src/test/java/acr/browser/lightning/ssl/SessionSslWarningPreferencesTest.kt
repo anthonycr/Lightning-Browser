@@ -13,7 +13,7 @@ import org.robolectric.annotation.Config
  * Unit tests for [SessionSslWarningPreferences]
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = intArrayOf(SDK_VERSION))
+@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
 class SessionSslWarningPreferencesTest {
 
     @Test

@@ -183,7 +183,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server Liste</string>
-    <string name="deleted_tab">Alten Tab geöffnet</string>
+    <string name="reopening_recent_tab">Alten Tab geöffnet</string>
     <string name="rendering_mode">Rendering Modus</string>
     <string name="name_inverted">Invertiert</string>
     <string name="name_grayscale">Graustufen</string>

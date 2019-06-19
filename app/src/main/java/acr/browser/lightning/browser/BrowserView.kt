@@ -1,8 +1,8 @@
 package acr.browser.lightning.browser
 
 import acr.browser.lightning.ssl.SSLState
-import android.support.annotation.StringRes
 import android.view.View
+import androidx.annotation.StringRes
 
 interface BrowserView {
 

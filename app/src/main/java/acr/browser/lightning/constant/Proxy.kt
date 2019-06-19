@@ -1,6 +1,6 @@
 package acr.browser.lightning.constant
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 
 /**
@@ -8,6 +8,6 @@ import android.support.annotation.IntDef
  *
  * These should match the order of @array/proxy_choices_array
  */
-@IntDef(NO_PROXY.toLong(), PROXY_ORBOT.toLong(), PROXY_I2P.toLong(), PROXY_MANUAL.toLong())
+@IntDef(NO_PROXY, PROXY_ORBOT, PROXY_I2P, PROXY_MANUAL)
 @Retention(AnnotationRetention.SOURCE)
 annotation class Proxy

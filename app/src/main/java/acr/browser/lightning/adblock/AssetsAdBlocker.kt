@@ -1,13 +1,14 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.extensions.inlineReplace
 import acr.browser.lightning.extensions.inlineTrim
 import acr.browser.lightning.extensions.stringEquals
 import acr.browser.lightning.extensions.substringToBuilder
+import acr.browser.lightning.log.Logger
 import android.app.Application
-import android.util.Log
 import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.Scheduler
 import java.io.InputStreamReader
 import java.net.URI
 import java.net.URISyntaxException
@@ -21,13 +22,15 @@ import javax.inject.Singleton
  */
 @Singleton
 class AssetsAdBlocker @Inject internal constructor(
-        private val application: Application
+    private val application: Application,
+    @DiskScheduler diskScheduler: Scheduler,
+    private val logger: Logger
 ) : AdBlocker {
 
-    private val blockedDomainsList = HashSet<String>()
+    private val blockedDomainsSet = HashSet<String>()
 
     init {
-        loadHostsFile().subscribeOn(Schedulers.io()).subscribe()
+        loadHostsFile().subscribeOn(diskScheduler).subscribe()
     }
 
     override fun isAd(url: String?): Boolean {
@@ -37,16 +40,16 @@ class AssetsAdBlocker @Inject internal constructor(
 
         val domain = try {
             getDomainName(url)
-        } catch (e: URISyntaxException) {
-            Log.d(TAG, "URL '$url' is invalid", e)
+        } catch (exception: URISyntaxException) {
+            logger.log(TAG, "URL '$url' is invalid", exception)
             return false
         }
 
-        val isOnBlacklist = blockedDomainsList.contains(domain)
-        if (isOnBlacklist) {
-            Log.d(TAG, "URL '$url' is an ad")
+        val isOnBlockList = blockedDomainsSet.contains(domain)
+        if (isOnBlockList) {
+            logger.log(TAG, "URL '$url' is an ad")
         }
-        return isOnBlacklist
+        return isOnBlockList
     }
 
     /**
@@ -66,8 +69,8 @@ class AssetsAdBlocker @Inject internal constructor(
 
         val domains = ArrayList<String>(1)
 
-        reader.use {
-            it.forEachLine {
+        reader.use { inputStreamReader ->
+            inputStreamReader.forEachLine {
                 lineBuilder.append(it)
 
                 parseString(lineBuilder, domains)
@@ -75,8 +78,8 @@ class AssetsAdBlocker @Inject internal constructor(
             }
         }
 
-        blockedDomainsList.addAll(domains)
-        Log.d(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
+        blockedDomainsSet.addAll(domains)
+        logger.log(TAG, "Loaded ad list in: ${(System.currentTimeMillis() - time)} ms")
     }
 
     companion object {
@@ -102,16 +105,19 @@ class AssetsAdBlocker @Inject internal constructor(
         @JvmStatic
         @Throws(URISyntaxException::class)
         private fun getDomainName(url: String): String {
-            var mutableUrl = url
-            val index = mutableUrl.indexOf('/', 8)
-            if (index != -1) {
-                mutableUrl = mutableUrl.take(index)
+            val host = url.indexOf('/', 8)
+                .takeIf { it != -1 }
+                ?.let(url::take)
+                ?: url
+
+            val uri = URI(host)
+            val domain = uri.host ?: return host
+
+            return if (domain.startsWith("www.")) {
+                domain.substring(4)
+            } else {
+                domain
             }
-
-            val uri = URI(mutableUrl)
-            val domain = uri.host ?: return mutableUrl
-
-            return if (domain.startsWith("www.")) domain.substring(4) else domain
         }
 
         @JvmStatic

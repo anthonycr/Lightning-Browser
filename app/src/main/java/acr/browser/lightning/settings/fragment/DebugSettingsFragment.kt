@@ -1,31 +1,29 @@
 package acr.browser.lightning.settings.fragment
 
-import acr.browser.lightning.BrowserApp
 import acr.browser.lightning.R
-import acr.browser.lightning.preference.PreferenceManager
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.di.injector
+import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.preference.DeveloperPreferences
 import android.os.Bundle
 import javax.inject.Inject
 
 class DebugSettingsFragment : AbstractSettingsFragment() {
 
-    @Inject internal lateinit var preferenceManager: PreferenceManager
+    @Inject internal lateinit var developerPreferences: DeveloperPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_debug
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        BrowserApp.appComponent.inject(this)
+        injector.inject(this)
 
         togglePreference(
-                preference = LEAK_CANARY,
-                isChecked = preferenceManager.useLeakCanary,
-                onCheckChange = {
-                    activity?.let {
-                        Utils.showSnackbar(it, R.string.app_restart)
-                    }
-                    preferenceManager.useLeakCanary = it
-                }
+            preference = LEAK_CANARY,
+            isChecked = developerPreferences.useLeakCanary,
+            onCheckChange = { change ->
+                activity?.apply { snackbar(R.string.app_restart) }
+                developerPreferences.useLeakCanary = change
+            }
         )
     }
 

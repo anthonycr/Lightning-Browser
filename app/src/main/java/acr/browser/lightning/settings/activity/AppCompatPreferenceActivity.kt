@@ -4,13 +4,13 @@ import acr.browser.lightning.R
 import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
-import android.support.annotation.LayoutRes
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatDelegate
-import android.support.v7.widget.Toolbar
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 
 /**
  * A [android.preference.PreferenceActivity] which implements and proxies the necessary calls
@@ -47,10 +47,10 @@ abstract class AppCompatPreferenceActivity : PreferenceActivity() {
     override fun setContentView(view: View) = delegate.setContentView(view)
 
     override fun setContentView(view: View, params: ViewGroup.LayoutParams) =
-            delegate.setContentView(view, params)
+        delegate.setContentView(view, params)
 
     override fun addContentView(view: View, params: ViewGroup.LayoutParams) =
-            delegate.addContentView(view, params)
+        delegate.addContentView(view, params)
 
     override fun onPostResume() {
         super.onPostResume()

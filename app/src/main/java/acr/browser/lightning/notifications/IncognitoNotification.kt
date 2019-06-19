@@ -9,16 +9,18 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 
 
 /**
  * A notification helper that displays the current number of tabs open in a notification as a
  * warning. When the notification is pressed, the incognito browser will open.
  */
-class IncognitoNotification(val context: Context) {
+class IncognitoNotification(
+    private val context: Context,
+    private val notificationManager: NotificationManager
+) {
 
-    private val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val incognitoNotificationId = 1
     private val channelId = "channel_incognito"
 
@@ -47,14 +49,14 @@ class IncognitoNotification(val context: Context) {
         val incognitoIntent = IncognitoActivity.createIntent(context)
 
         val incognitoNotification = NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.ic_notification_incognito)
-                .setContentTitle(context.resources.getQuantityString(R.plurals.notification_incognito_running_title, number, number))
-                .setContentIntent(PendingIntent.getActivity(context, 0, incognitoIntent, 0))
-                .setContentText(context.getString(R.string.notification_incognito_running_message))
-                .setAutoCancel(false)
-                .setColor(ThemeUtils.getAccentColor(context))
-                .setOngoing(true)
-                .build()
+            .setSmallIcon(R.drawable.ic_notification_incognito)
+            .setContentTitle(context.resources.getQuantityString(R.plurals.notification_incognito_running_title, number, number))
+            .setContentIntent(PendingIntent.getActivity(context, 0, incognitoIntent, 0))
+            .setContentText(context.getString(R.string.notification_incognito_running_message))
+            .setAutoCancel(false)
+            .setColor(ThemeUtils.getAccentColor(context))
+            .setOngoing(true)
+            .build()
 
         notificationManager.notify(incognitoNotificationId, incognitoNotification)
     }

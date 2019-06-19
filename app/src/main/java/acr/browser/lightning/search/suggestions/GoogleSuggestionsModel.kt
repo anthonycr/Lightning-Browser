@@ -2,47 +2,61 @@ package acr.browser.lightning.search.suggestions
 
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.UTF8
-import acr.browser.lightning.database.HistoryItem
+import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.log.Logger
 import android.app.Application
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
-import java.io.InputStream
 
 /**
  * Search suggestions provider for Google search engine.
  */
-class GoogleSuggestionsModel(application: Application) : BaseSuggestionsModel(application, UTF8) {
+class GoogleSuggestionsModel(
+    httpClient: OkHttpClient,
+    requestFactory: RequestFactory,
+    application: Application,
+    logger: Logger
+) : BaseSuggestionsModel(httpClient, requestFactory, UTF8, logger) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 
-    override fun createQueryUrl(query: String, language: String): String =
-            "https://suggestqueries.google.com/complete/search?output=toolbar&hl=$language&q=$query"
+    // https://suggestqueries.google.com/complete/search?output=toolbar&hl={language}&q={query}
+    override fun createQueryUrl(query: String, language: String): HttpUrl = HttpUrl.Builder()
+        .scheme("https")
+        .host("suggestqueries.google.com")
+        .encodedPath("/complete/search")
+        .addQueryParameter("output", "toolbar")
+        .addQueryParameter("hl", language)
+        .addEncodedQueryParameter("q", query)
+        .build()
 
     @Throws(Exception::class)
-    override fun parseResults(inputStream: InputStream): List<HistoryItem> {
-        parser.setInput(inputStream, UTF8)
+    override fun parseResults(responseBody: ResponseBody): List<SearchSuggestion> {
+        parser.setInput(responseBody.byteStream(), UTF8)
 
-        val mutableList = mutableListOf<HistoryItem>()
+        val suggestions = mutableListOf<SearchSuggestion>()
         var eventType = parser.eventType
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG && "suggestion" == parser.name) {
                 val suggestion = parser.getAttributeValue(null, "data")
-                mutableList.add(HistoryItem("$searchSubtitle \"$suggestion\"", suggestion, R.drawable.ic_search))
+                suggestions.add(SearchSuggestion("$searchSubtitle \"$suggestion\"", suggestion))
             }
             eventType = parser.next()
         }
 
-        return mutableList
+        return suggestions
     }
 
     companion object {
 
-        private val parser by lazy {
-            val factory = XmlPullParserFactory.newInstance()
-            factory.isNamespaceAware = true
-
-            factory.newPullParser()
-        }
+        private val parser by lazy(
+            XmlPullParserFactory.newInstance().apply {
+                isNamespaceAware = true
+            }::newPullParser
+        )
 
     }
 }

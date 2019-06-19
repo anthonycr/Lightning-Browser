@@ -12,12 +12,12 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.AttrRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
 
 import acr.browser.lightning.R;
@@ -96,7 +96,7 @@ public final class ThemeUtils {
      * @return the color of the icon.
      */
     @ColorInt
-    public static int getIconLightThemeColor(@NonNull Context context) {
+    private static int getIconLightThemeColor(@NonNull Context context) {
         return ContextCompat.getColor(context, R.color.icon_light_theme);
     }
 
@@ -107,7 +107,7 @@ public final class ThemeUtils {
      * @return the color of the icon.
      */
     @ColorInt
-    public static int getIconDarkThemeColor(@NonNull Context context) {
+    private static int getIconDarkThemeColor(@NonNull Context context) {
         return ContextCompat.getColor(context, R.color.icon_dark_theme);
     }
 
@@ -126,7 +126,7 @@ public final class ThemeUtils {
     }
 
     @NonNull
-    public static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
+    private static Drawable getVectorDrawable(@NonNull Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
 
         Preconditions.checkNonNull(drawable);

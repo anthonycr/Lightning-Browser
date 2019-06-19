@@ -1,6 +1,6 @@
 package acr.browser.lightning.reading;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;

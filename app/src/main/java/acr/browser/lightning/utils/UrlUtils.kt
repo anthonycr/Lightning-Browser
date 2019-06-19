@@ -16,10 +16,10 @@
 package acr.browser.lightning.utils
 
 import acr.browser.lightning.constant.FILE
-import acr.browser.lightning.html.bookmark.BookmarkPage
-import acr.browser.lightning.html.download.DownloadsPage
-import acr.browser.lightning.html.history.HistoryPage
-import acr.browser.lightning.html.homepage.StartPage
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
+import acr.browser.lightning.html.download.DownloadPageFactory
+import acr.browser.lightning.html.history.HistoryPageFactory
+import acr.browser.lightning.html.homepage.HomePageFactory
 import android.util.Patterns
 import android.webkit.URLUtil
 import java.util.regex.Pattern
@@ -69,7 +69,7 @@ object UrlUtils {
 
         return if (canBeSearch) {
             URLUtil.composeSearchUrl(inUrl,
-                    searchUrl, QUERY_PLACE_HOLDER)
+                searchUrl, QUERY_PLACE_HOLDER)
         } else {
             ""
         }
@@ -81,11 +81,11 @@ object UrlUtils {
     @JvmStatic
     fun isSpecialUrl(url: String?): Boolean {
         return url != null
-                && url.startsWith(FILE)
-                && (url.endsWith(BookmarkPage.FILENAME)
-                || url.endsWith(DownloadsPage.FILENAME)
-                || url.endsWith(HistoryPage.FILENAME)
-                || url.endsWith(StartPage.FILENAME))
+            && url.startsWith(FILE)
+            && (url.endsWith(BookmarkPageFactory.FILENAME)
+            || url.endsWith(DownloadPageFactory.FILENAME)
+            || url.endsWith(HistoryPageFactory.FILENAME)
+            || url.endsWith(HomePageFactory.FILENAME))
     }
 
     /**
@@ -96,7 +96,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isBookmarkUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(BookmarkPage.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(BookmarkPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the bookmark page.
@@ -106,7 +106,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isDownloadsUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(DownloadsPage.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(DownloadPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the history page.
@@ -116,7 +116,7 @@ object UrlUtils {
      */
     @JvmStatic
     fun isHistoryUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(HistoryPage.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(HistoryPageFactory.FILENAME)
 
     /**
      * Determines if the url is a url for the start page.
@@ -126,5 +126,5 @@ object UrlUtils {
      */
     @JvmStatic
     fun isStartPageUrl(url: String?): Boolean =
-            url != null && url.startsWith(FILE) && url.endsWith(StartPage.FILENAME)
+        url != null && url.startsWith(FILE) && url.endsWith(HomePageFactory.FILENAME)
 }

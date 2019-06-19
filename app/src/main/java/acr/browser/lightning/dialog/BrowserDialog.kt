@@ -17,66 +17,110 @@ package acr.browser.lightning.dialog
 
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.dimen
+import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.list.RecyclerViewDialogItemAdapter
+import acr.browser.lightning.list.RecyclerViewStringAdapter
 import acr.browser.lightning.utils.DeviceUtils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.support.annotation.StringRes
-import android.support.v7.app.AlertDialog
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 object BrowserDialog {
 
     @JvmStatic
-    fun show(activity: Activity, @StringRes title: Int, vararg items: DialogItem) =
-            show(activity, activity.getString(title), *items)
-
-    @JvmStatic
-    fun show(activity: Activity, title: String?, vararg items: DialogItem) {
+    fun show(
+        activity: Activity,
+        @StringRes title: Int,
+        vararg items: DialogItem
+    ) = show(activity, activity.getString(title), *items)
+    
+    fun showWithIcons(activity: Activity, title: String?, vararg items: DialogItem) {
         val builder = AlertDialog.Builder(activity)
 
-        val layout = LayoutInflater.from(activity).inflate(R.layout.list_dialog, null)
+        val layout = activity.inflater.inflate(R.layout.list_dialog, null)
 
         val titleView = layout.findViewById<TextView>(R.id.dialog_title)
-        val listView = layout.findViewById<ListView>(R.id.dialog_list)
-
-        val adapter = ArrayAdapter<String>(activity,
-                android.R.layout.simple_list_item_1)
+        val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
 
         val itemList = items.filter(DialogItem::isConditionMet)
 
-        adapter.addAll(itemList.map { activity.getString(it.title) })
+        val adapter = RecyclerViewDialogItemAdapter(itemList)
 
-        if (!TextUtils.isEmpty(title)) {
+        if (title?.isNotEmpty() == true) {
             titleView.text = title
         }
 
-        listView.adapter = adapter
+        recyclerView.apply {
+            this.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            this.adapter = adapter
+            setHasFixedSize(true)
+        }
 
-        listView.divider = null
         builder.setView(layout)
 
         val dialog = builder.show()
 
         setDialogSize(activity, dialog)
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            itemList[position].onClick()
+        adapter.onItemClickListener = { item ->
+            item.onClick()
             dialog.dismiss()
         }
     }
 
     @JvmStatic
-    fun showPositiveNegativeDialog(activity: Activity,
-                                   @StringRes title: Int,
-                                   @StringRes message: Int,
-                                   messageArguments: Array<Any>? = null,
-                                   positiveButton: DialogItem,
-                                   negativeButton: DialogItem,
-                                   onCancel: () -> Unit) {
+    fun show(activity: Activity, title: String?, vararg items: DialogItem) {
+        val builder = AlertDialog.Builder(activity)
+
+        val layout = activity.inflater.inflate(R.layout.list_dialog, null)
+
+        val titleView = layout.findViewById<TextView>(R.id.dialog_title)
+        val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
+
+        val itemList = items.filter(DialogItem::isConditionMet)
+
+        val adapter = RecyclerViewStringAdapter(itemList, convertToString = { activity.getString(this.title) })
+
+        if (title?.isNotEmpty() == true) {
+            titleView.text = title
+        }
+
+        recyclerView.apply {
+            this.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            this.adapter = adapter
+            setHasFixedSize(true)
+        }
+
+        builder.setView(layout)
+
+        val dialog = builder.show()
+
+        setDialogSize(activity, dialog)
+
+        adapter.onItemClickListener = { item ->
+            item.onClick()
+            dialog.dismiss()
+        }
+    }
+
+    @JvmStatic
+    fun showPositiveNegativeDialog(
+        activity: Activity,
+        @StringRes title: Int,
+        @StringRes message: Int,
+        messageArguments: Array<Any>? = null,
+        positiveButton: DialogItem,
+        negativeButton: DialogItem,
+        onCancel: () -> Unit
+    ) {
         val messageValue = if (messageArguments != null) {
             activity.getString(message, *messageArguments)
         } else {
@@ -94,20 +138,23 @@ object BrowserDialog {
     }
 
     @JvmStatic
-    fun showEditText(activity: Activity,
-                     @StringRes title: Int,
-                     @StringRes hint: Int,
-                     @StringRes action: Int,
-                     textInputListener: (String) -> Unit) =
-            showEditText(activity, title, hint, null, action, textInputListener)
+    fun showEditText(
+        activity: Activity,
+        @StringRes title: Int,
+        @StringRes hint: Int,
+        @StringRes action: Int,
+        textInputListener: (String) -> Unit
+    ) = showEditText(activity, title, hint, null, action, textInputListener)
 
     @JvmStatic
-    fun showEditText(activity: Activity,
-                     @StringRes title: Int,
-                     @StringRes hint: Int,
-                     currentText: String?,
-                     @StringRes action: Int,
-                     textInputListener: (String) -> Unit) {
+    fun showEditText(
+        activity: Activity,
+        @StringRes title: Int,
+        @StringRes hint: Int,
+        currentText: String?,
+        @StringRes action: Int,
+        textInputListener: (String) -> Unit
+    ) {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null)
         val editText = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
 
@@ -117,10 +164,10 @@ object BrowserDialog {
         }
 
         val editorDialog = AlertDialog.Builder(activity)
-                .setTitle(title)
-                .setView(dialogView)
-                .setPositiveButton(action
-                ) { _, _ -> textInputListener(editText.text.toString()) }
+            .setTitle(title)
+            .setView(dialogView)
+            .setPositiveButton(action
+            ) { _, _ -> textInputListener(editText.text.toString()) }
 
         val dialog = editorDialog.show()
         setDialogSize(activity, dialog)
