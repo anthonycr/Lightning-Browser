@@ -15,6 +15,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.preference.Preference
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -37,6 +38,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     private var recentSummaryUpdater: SummaryUpdater? = null
     private val compositeDisposable = CompositeDisposable()
+    private var forceRefreshHostsPreference: Preference? = null
 
     override fun providePreferencesXmlResource(): Int = R.xml.preference_ad_block
 
@@ -62,14 +64,20 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             onClick = ::showHostsSourceChooser
         )
 
-        clickableDynamicPreference(
+        forceRefreshHostsPreference = clickableDynamicPreference(
             preference = "preference_hosts_refresh_force",
-            isEnabled = userPreferences.selectedHostsSource() is HostsSourceType.Remote,
+            isEnabled = isRefreshHostsEnabled(),
             onClick = {
                 bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
             }
         )
     }
+
+    private fun updateRefreshHostsEnabledStatus() {
+        forceRefreshHostsPreference?.isEnabled = isRefreshHostsEnabled()
+    }
+
+    private fun isRefreshHostsEnabled() = userPreferences.selectedHostsSource() is HostsSourceType.Remote
 
     override fun onDestroy() {
         super.onDestroy()
@@ -92,7 +100,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                 onClick = {
                     userPreferences.hostsSource = HostsSourceType.Default.toPreferenceIndex()
                     summaryUpdater.updateSummary(userPreferences.selectedHostsSource().toSummary())
-                    bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
+                    updateForNewHostsSource()
                 }
             ),
             DialogItem(
@@ -130,10 +138,12 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             currentText = userPreferences.hostsRemoteFile,
             action = R.string.action_ok,
             textInputListener = {
-                // TODO validate the URL and test that it actually contains hosts before allowing
-                userPreferences.hostsSource = HostsSourceType.Remote(HttpUrl.parse(it)!!).toPreferenceIndex()
+                val url = HttpUrl.parse(it)
+                    ?: return@showEditText run { activity?.toast(R.string.problem_download) }
+                userPreferences.hostsSource = HostsSourceType.Remote(url).toPreferenceIndex()
                 userPreferences.hostsRemoteFile = it
                 summaryUpdater.updateSummary(it)
+                updateForNewHostsSource()
             }
         )
     }
@@ -151,7 +161,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                                 userPreferences.hostsSource = HostsSourceType.Local(file).toPreferenceIndex()
                                 userPreferences.hostsLocalFile = file.path
                                 recentSummaryUpdater?.updateSummary(userPreferences.selectedHostsSource().toSummary())
-                                bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
+                                updateForNewHostsSource()
                             }
                         )
                 }
@@ -160,6 +170,11 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun updateForNewHostsSource() {
+        bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
+        updateRefreshHostsEnabledStatus()
     }
 
     private fun readTextFromUri(uri: Uri): Maybe<File> = Maybe.create {
