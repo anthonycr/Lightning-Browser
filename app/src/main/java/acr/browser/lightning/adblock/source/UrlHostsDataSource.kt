@@ -35,7 +35,9 @@ class UrlHostsDataSource(
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val input = response.body()?.byteStream()?.let(::InputStreamReader)
+                val successfulResponse = response.takeIf { it.isSuccessful }
+                    ?: return emitter.onError(IOException("Error reading remote file"))
+                val input = successfulResponse.body()?.byteStream()?.let(::InputStreamReader)
                     ?: return emitter.onError(IOException("Empty response"))
 
                 val hostsFileParser = HostsFileParser(logger)

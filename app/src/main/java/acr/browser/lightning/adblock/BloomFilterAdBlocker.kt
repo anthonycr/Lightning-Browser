@@ -91,7 +91,7 @@ class BloomFilterAdBlocker @Inject constructor(
                         .doOnSuccess {
                             hostsRepositoryInfo.identity = hostsDataSource.identifier()
                         }
-                }.switchIfEmpty(loadStoredBloomFilter())
+                }
         ).filter {
             // If we were unsuccessful in loading hosts and we don't have hosts in the repo, don't
             // allow initialization, as false positives will result in bad browsing experience.
