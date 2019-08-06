@@ -95,6 +95,8 @@ class UserPreferences @Inject constructor(
 
     var doNotTrackEnabled by preferences.booleanPreference(DO_NOT_TRACK, false)
 
+    var saveDataEnabled by preferences.booleanPreference(SAVE_DATA, false)
+
     var removeIdentifyingHeadersEnabled by preferences.booleanPreference(IDENTIFYING_HEADERS, false)
 
     var bookmarksAndTabsSwapped by preferences.booleanPreference(SWAP_BOOKMARKS_AND_TABS, false)
@@ -147,6 +149,7 @@ private const val TEXT_ENCODING = "textEncoding"
 private const val CLEAR_WEB_STORAGE_EXIT = "clearWebStorageExit"
 private const val SHOW_TABS_IN_DRAWER = "showTabsInDrawer"
 private const val DO_NOT_TRACK = "doNotTrack"
+private const val SAVE_DATA = "saveData"
 private const val IDENTIFYING_HEADERS = "removeIdentifyingHeaders"
 private const val SWAP_BOOKMARKS_AND_TABS = "swapBookmarksAndTabs"
 private const val BLACK_STATUS_BAR = "blackStatusBar"

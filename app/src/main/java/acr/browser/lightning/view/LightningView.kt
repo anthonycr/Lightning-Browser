@@ -263,6 +263,12 @@ class LightningView(
             requestHeaders.remove(HEADER_DNT)
         }
 
+        if (userPreferences.saveDataEnabled) {
+            requestHeaders[HEADER_SAVEDATA] = "on"
+        } else {
+            requestHeaders.remove(HEADER_SAVEDATA)
+        }
+
         if (userPreferences.removeIdentifyingHeadersEnabled) {
             requestHeaders[HEADER_REQUESTED_WITH] = ""
             requestHeaders[HEADER_WAP_PROFILE] = ""
@@ -894,6 +900,7 @@ class LightningView(
         const val HEADER_REQUESTED_WITH = "X-Requested-With"
         const val HEADER_WAP_PROFILE = "X-Wap-Profile"
         private const val HEADER_DNT = "DNT"
+        private const val HEADER_SAVEDATA = "Save-Data"
 
         private val API = android.os.Build.VERSION.SDK_INT
         private val SCROLL_UP_THRESHOLD = Utils.dpToPx(10f)
