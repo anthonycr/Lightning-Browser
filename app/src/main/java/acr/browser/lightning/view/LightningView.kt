@@ -198,6 +198,10 @@ class LightningView(
             }
             setBackgroundColor(Color.WHITE)
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+            }
+
             isScrollbarFadingEnabled = true
             isSaveEnabled = true
             setNetworkAvailable(true)
