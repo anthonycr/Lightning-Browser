@@ -40,7 +40,7 @@
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="4dp"
-        android:background="?attr/actionBarItemBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:gravity="center">
 
         <ImageView
