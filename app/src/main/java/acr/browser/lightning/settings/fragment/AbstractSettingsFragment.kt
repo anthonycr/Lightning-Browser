@@ -39,17 +39,15 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         isEnabled: Boolean = true,
         summary: String? = null,
         onCheckChange: (Boolean) -> Unit
-    ) {
-        (findPreference(preference) as CheckBoxPreference).apply {
-            this.isChecked = isChecked
-            this.isEnabled = isEnabled
-            summary?.let {
-                this.summary = summary
-            }
-            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, any: Any ->
-                onCheckChange(any as Boolean)
-                true
-            }
+    ): CheckBoxPreference = (findPreference(preference) as CheckBoxPreference).apply {
+        this.isChecked = isChecked
+        this.isEnabled = isEnabled
+        summary?.let {
+            this.summary = summary
+        }
+        onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, any: Any ->
+            onCheckChange(any as Boolean)
+            true
         }
     }
 
@@ -66,14 +64,12 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         isEnabled: Boolean = true,
         summary: String? = null,
         onClick: () -> Unit
-    ) {
-        clickableDynamicPreference(
-            preference = preference,
-            isEnabled = isEnabled,
-            summary = summary,
-            onClick = { onClick() }
-        )
-    }
+    ): Preference = clickableDynamicPreference(
+        preference = preference,
+        isEnabled = isEnabled,
+        summary = summary,
+        onClick = { onClick() }
+    )
 
     /**
      * Creates a simple [Preference] which reacts to clicks with the provided options and listener.
@@ -91,17 +87,15 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         isEnabled: Boolean = true,
         summary: String? = null,
         onClick: (SummaryUpdater) -> Unit
-    ) {
-        findPreference(preference).apply {
-            this.isEnabled = isEnabled
-            summary?.let {
-                this.summary = summary
-            }
-            val summaryUpdate = SummaryUpdater(this)
-            onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                onClick(summaryUpdate)
-                true
-            }
+    ): Preference = findPreference(preference).apply {
+        this.isEnabled = isEnabled
+        summary?.let {
+            this.summary = summary
+        }
+        val summaryUpdate = SummaryUpdater(this)
+        onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            onClick(summaryUpdate)
+            true
         }
     }
 
@@ -118,14 +112,12 @@ abstract class AbstractSettingsFragment : PreferenceFragment() {
         isChecked: Boolean,
         isEnabled: Boolean = true,
         onCheckChange: (Boolean) -> Unit
-    ) {
-        (findPreference(preference) as SwitchPreference).apply {
-            this.isChecked = isChecked
-            this.isEnabled = isEnabled
-            onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, any: Any ->
-                onCheckChange(any as Boolean)
-                true
-            }
+    ): SwitchPreference = (findPreference(preference) as SwitchPreference).apply {
+        this.isChecked = isChecked
+        this.isEnabled = isEnabled
+        onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, any: Any ->
+            onCheckChange(any as Boolean)
+            true
         }
     }
 

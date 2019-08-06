@@ -1,7 +1,7 @@
 package acr.browser.lightning.adblock.allowlist
 
 import acr.browser.lightning.database.allowlist.AdBlockAllowListRepository
-import acr.browser.lightning.database.allowlist.AllowListItem
+import acr.browser.lightning.database.allowlist.AllowListEntry
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.log.Logger
 import androidx.core.net.toUri
@@ -25,7 +25,7 @@ class SessionAllowListModel @Inject constructor(
     init {
         adBlockAllowListModel
             .allAllowListItems()
-            .map { it.map(AllowListItem::url).toHashSet() }
+            .map { it.map(AllowListEntry::domain).toHashSet() }
             .subscribeOn(ioScheduler)
             .subscribe { hashSet -> whitelistSet = hashSet }
     }
@@ -41,7 +41,7 @@ class SessionAllowListModel @Inject constructor(
                 .flatMapCompletable {
                     if (it) {
                         adBlockAllowListModel.addAllowListItem(
-                            AllowListItem(host, System.currentTimeMillis())
+                            AllowListEntry(host, System.currentTimeMillis())
                         )
                     } else {
                         Completable.complete()

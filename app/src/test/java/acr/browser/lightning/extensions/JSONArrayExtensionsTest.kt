@@ -1,6 +1,5 @@
 package acr.browser.lightning.extensions
 
-import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +13,7 @@ import org.robolectric.annotation.Config
  * Unit tests for JSONArrayExtensions.kt
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
+@Config(application = TestApplication::class, sdk = [SDK_VERSION])
 class JSONArrayExtensionsTest {
 
     @Test

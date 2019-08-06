@@ -74,7 +74,7 @@ class LightningChromeClient(
 
 
     override fun onReceivedTitle(view: WebView?, title: String?) {
-        if (title != null && !title.isEmpty()) {
+        if (title?.isNotEmpty() == true) {
             lightningView.titleInfo.setTitle(title)
         } else {
             lightningView.titleInfo.setTitle(activity.getString(R.string.untitled))
@@ -177,7 +177,7 @@ class LightningChromeClient(
         uiController.openFileChooser(uploadMsg)
 
     override fun onShowFileChooser(webView: WebView, filePathCallback: ValueCallback<Array<Uri>>,
-                                   fileChooserParams: WebChromeClient.FileChooserParams): Boolean {
+                                   fileChooserParams: FileChooserParams): Boolean {
         uiController.showFileChooser(filePathCallback)
         return true
     }
@@ -205,11 +205,11 @@ class LightningChromeClient(
 
     override fun onHideCustomView() = uiController.onHideCustomView()
 
-    override fun onShowCustomView(view: View, callback: WebChromeClient.CustomViewCallback) =
+    override fun onShowCustomView(view: View, callback: CustomViewCallback) =
         uiController.onShowCustomView(view, callback)
 
     override fun onShowCustomView(view: View, requestedOrientation: Int,
-                                  callback: WebChromeClient.CustomViewCallback) =
+                                  callback: CustomViewCallback) =
         uiController.onShowCustomView(view, callback, requestedOrientation)
 
 }

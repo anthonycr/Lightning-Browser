@@ -10,25 +10,25 @@ import io.reactivex.Single
 interface AdBlockAllowListRepository {
 
     /**
-     * Returns a [Single] that emits a list of all [AllowListItem] in the database.
+     * Returns a [Single] that emits a list of all [AllowListEntry] in the database.
      */
-    fun allAllowListItems(): Single<List<AllowListItem>>
+    fun allAllowListItems(): Single<List<AllowListEntry>>
 
     /**
-     * Returns a [Maybe] that emits the [AllowListItem] associated with the [url] if there is one.
+     * Returns a [Maybe] that emits the [AllowListEntry] associated with the [url] if there is one.
      */
-    fun allowListItemForUrl(url: String): Maybe<AllowListItem>
+    fun allowListItemForUrl(url: String): Maybe<AllowListEntry>
 
     /**
-     * Returns a [Completable] that adds a [AllowListItem] to the database and completes when done.
+     * Returns a [Completable] that adds a [AllowListEntry] to the database and completes when done.
      */
-    fun addAllowListItem(whitelistItem: AllowListItem): Completable
+    fun addAllowListItem(whitelistItem: AllowListEntry): Completable
 
     /**
-     * Returns a [Completable] that removes a [AllowListItem] from the database and completes when
+     * Returns a [Completable] that removes a [AllowListEntry] from the database and completes when
      * done.
      */
-    fun removeAllowListItem(whitelistItem: AllowListItem): Completable
+    fun removeAllowListItem(whitelistItem: AllowListEntry): Completable
 
     /**
      * Returns a [Completable] that clears the entire database.

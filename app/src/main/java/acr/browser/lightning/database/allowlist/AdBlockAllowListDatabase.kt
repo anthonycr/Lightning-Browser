@@ -45,12 +45,12 @@ class AdBlockAllowListDatabase @Inject constructor(
         onCreate(db)
     }
 
-    private fun Cursor.bindToAllowListItem() = AllowListItem(
-        url = getString(1),
+    private fun Cursor.bindToAllowListItem() = AllowListEntry(
+        domain = getString(1),
         timeCreated = getLong(2)
     )
 
-    override fun allAllowListItems(): Single<List<AllowListItem>> = Single.fromCallable {
+    override fun allAllowListItems(): Single<List<AllowListEntry>> = Single.fromCallable {
         database.query(
             TABLE_WHITELIST,
             null,
@@ -62,7 +62,7 @@ class AdBlockAllowListDatabase @Inject constructor(
         ).useMap { it.bindToAllowListItem() }
     }
 
-    override fun allowListItemForUrl(url: String): Maybe<AllowListItem> = Maybe.fromCallable {
+    override fun allowListItemForUrl(url: String): Maybe<AllowListEntry> = Maybe.fromCallable {
         database.query(
             TABLE_WHITELIST,
             null,
@@ -74,16 +74,16 @@ class AdBlockAllowListDatabase @Inject constructor(
         ).firstOrNullMap { it.bindToAllowListItem() }
     }
 
-    override fun addAllowListItem(whitelistItem: AllowListItem): Completable = Completable.fromAction {
+    override fun addAllowListItem(whitelistItem: AllowListEntry): Completable = Completable.fromAction {
         val values = ContentValues().apply {
-            put(KEY_URL, whitelistItem.url)
+            put(KEY_URL, whitelistItem.domain)
             put(KEY_CREATED, whitelistItem.timeCreated)
         }
         database.insert(TABLE_WHITELIST, null, values)
     }
 
-    override fun removeAllowListItem(whitelistItem: AllowListItem): Completable = Completable.fromAction {
-        database.delete(TABLE_WHITELIST, "$KEY_URL = ?", arrayOf(whitelistItem.url))
+    override fun removeAllowListItem(whitelistItem: AllowListEntry): Completable = Completable.fromAction {
+        database.delete(TABLE_WHITELIST, "$KEY_URL = ?", arrayOf(whitelistItem.domain))
     }
 
     override fun clearAllowList(): Completable = Completable.fromAction {

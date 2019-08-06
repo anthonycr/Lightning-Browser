@@ -18,6 +18,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.ShortcutManager
+import android.content.res.AssetManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
@@ -25,6 +26,7 @@ import android.os.Looper
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
+import androidx.core.content.getSystemService
 import com.anthonycr.mezzanine.MezzanineGenerator
 import dagger.Module
 import dagger.Provides
@@ -59,33 +61,41 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
     @Provides
     @UserPrefs
-    fun provideDebugPreferences(): SharedPreferences = browserApp.getSharedPreferences("settings", 0)
+    fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("settings", 0)
 
     @Provides
     @DevPrefs
-    fun provideUserPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
+    fun provideDebugPreferences(): SharedPreferences = browserApp.getSharedPreferences("developer_settings", 0)
 
     @Provides
-    fun providesClipboardManager() = browserApp.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    @AdBlockPrefs
+    fun provideAdBlockPreferences(): SharedPreferences = browserApp.getSharedPreferences("ad_block_settings", 0)
+
 
     @Provides
-    fun providesInputMethodManager() = browserApp.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    fun providesAssetManager(): AssetManager = browserApp.assets
 
     @Provides
-    fun providesDownloadManager() = browserApp.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    fun providesClipboardManager() = browserApp.getSystemService<ClipboardManager>()!!
 
     @Provides
-    fun providesConnectivityManager() = browserApp.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun providesInputMethodManager() = browserApp.getSystemService<InputMethodManager>()!!
 
     @Provides
-    fun providesNotificationManager() = browserApp.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    fun providesDownloadManager() = browserApp.getSystemService<DownloadManager>()!!
 
     @Provides
-    fun providesWindowManager() = browserApp.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    fun providesConnectivityManager() = browserApp.getSystemService<ConnectivityManager>()!!
+
+    @Provides
+    fun providesNotificationManager() = browserApp.getSystemService<NotificationManager>()!!
+
+    @Provides
+    fun providesWindowManager() = browserApp.getSystemService<WindowManager>()!!
 
     @RequiresApi(Build.VERSION_CODES.N_MR1)
     @Provides
-    fun providesShortcutManager() = browserApp.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
+    fun providesShortcutManager() = browserApp.getSystemService<ShortcutManager>()!!
 
     @Provides
     @DatabaseScheduler
@@ -126,6 +136,7 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
     @Singleton
     @Provides
+    @SuggestionsClient
     fun providesSuggestionsHttpClient(): OkHttpClient {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
 
@@ -140,6 +151,27 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
         return OkHttpClient.Builder()
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+            .addNetworkInterceptor(rewriteCacheControlInterceptor)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @HostsClient
+    fun providesHostsHttpClient(): OkHttpClient {
+        val intervalDay = TimeUnit.DAYS.toSeconds(365)
+
+        val rewriteCacheControlInterceptor = Interceptor { chain ->
+            val originalResponse = chain.proceed(chain.request())
+            originalResponse.newBuilder()
+                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                .build()
+        }
+
+        val suggestionsCache = File(browserApp.cacheDir, "hosts_cache")
+
+        return OkHttpClient.Builder()
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
             .addNetworkInterceptor(rewriteCacheControlInterceptor)
             .build()
     }
@@ -169,11 +201,23 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
+annotation class SuggestionsClient
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class HostsClient
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
 annotation class MainHandler
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
 annotation class UserPrefs
+
+@Qualifier
+@Retention(AnnotationRetention.SOURCE)
+annotation class AdBlockPrefs
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

@@ -93,6 +93,7 @@ class TabsManager @Inject constructor(
             ))
             .doOnSuccess { shutdown() }
             .subscribeOn(mainScheduler)
+            .observeOn(databaseScheduler)
             .flatMapObservable {
                 return@flatMapObservable if (incognito) {
                     initializeIncognitoMode(it.value())
@@ -100,7 +101,6 @@ class TabsManager @Inject constructor(
                     initializeRegularMode(it.value(), activity)
                 }
             }
-            .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .map { newTab(activity, it, incognito) }
             .lastOrError()

@@ -1,12 +1,15 @@
 package acr.browser.lightning.adblock
 
+import acr.browser.lightning.adblock.parser.HostsFileParser
+import acr.browser.lightning.log.NoOpLogger
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.InputStreamReader
 
 /**
  * Unit tests for the assets ad blocker
  */
-class AssetsAdBlockerTest {
+class HostsFileParserTest {
 
     @Test
     fun `line parsing is valid`() {
@@ -22,22 +25,22 @@ class AssetsAdBlockerTest {
             # random comment
             ::1 domain4.com
             0.0.0.0 multiline1.com multiline2.com # comment
+            0.0.0.0 comment.close.by.com#comment
             """
 
-        val mutableList = mutableListOf<String>()
+        val inputStreamReader = InputStreamReader(testInput.trimIndent().byteInputStream())
+        val hostsFileParser = HostsFileParser(NoOpLogger())
+        val mutableList = hostsFileParser.parseInput(inputStreamReader)
 
-        testInput.trimIndent().split("\n").forEach {
-            AssetsAdBlocker.parseString(StringBuilder(it), mutableList)
-        }
-
-        assertThat(mutableList).hasSize(6)
+        assertThat(mutableList).hasSize(7)
         assertThat(mutableList).contains(
             "fake.domain1.com",
             "fake.domain2.com",
             "fake.domain3.com",
             "domain4.com",
             "multiline1.com",
-            "multiline2.com"
+            "multiline2.com",
+            "comment.close.by.com"
         )
     }
 }

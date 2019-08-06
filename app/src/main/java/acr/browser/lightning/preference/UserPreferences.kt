@@ -7,6 +7,7 @@ import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.UserPrefs
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.intPreference
+import acr.browser.lightning.preference.delegates.nullableStringPreference
 import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
@@ -110,6 +111,12 @@ class UserPreferences @Inject constructor(
     var proxyPort by preferences.intPreference(USE_PROXY_PORT, 8118)
 
     var searchSuggestionChoice by preferences.intPreference(SEARCH_SUGGESTIONS, 1)
+
+    var hostsSource by preferences.intPreference(HOSTS_SOURCE, 0)
+
+    var hostsLocalFile by preferences.nullableStringPreference(HOSTS_LOCAL_FILE)
+
+    var hostsRemoteFile by preferences.nullableStringPreference(HOSTS_REMOTE_FILE)
 }
 
 private const val WEB_RTC = "webRtc"
@@ -157,3 +164,6 @@ private const val PROXY_CHOICE = "proxyChoice"
 private const val USE_PROXY_HOST = "useProxyHost"
 private const val USE_PROXY_PORT = "useProxyPort"
 private const val SEARCH_SUGGESTIONS = "searchSuggestionsChoice"
+private const val HOSTS_SOURCE = "hostsSource"
+private const val HOSTS_LOCAL_FILE = "hostsLocalFile"
+private const val HOSTS_REMOTE_FILE = "hostsRemoteFile"

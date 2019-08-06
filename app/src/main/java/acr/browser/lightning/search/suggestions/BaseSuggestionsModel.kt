@@ -21,8 +21,11 @@ abstract class BaseSuggestionsModel internal constructor(
     private val httpClient: OkHttpClient,
     private val requestFactory: RequestFactory,
     private val encoding: String,
+    locale: Locale,
     private val logger: Logger
 ) : SuggestionsRepository {
+
+    private val language = locale.language.takeIf(String::isNotEmpty) ?: DEFAULT_LANGUAGE
 
     /**
      * Create a URL for the given query in the given language.
@@ -50,13 +53,10 @@ abstract class BaseSuggestionsModel internal constructor(
             return@fromCallable emptyList<SearchSuggestion>()
         }
 
-        var results = emptyList<SearchSuggestion>()
-
-        downloadSuggestionsForQuery(query, language)?.let(Response::body)?.safeUse {
-            results += parseResults(it).take(MAX_RESULTS)
-        }
-
-        return@fromCallable results
+        return@fromCallable downloadSuggestionsForQuery(query, language)
+            ?.let(Response::body)
+            ?.safeUse(::parseResults)
+            ?.take(MAX_RESULTS) ?: emptyList()
     }
 
     /**
@@ -84,10 +84,6 @@ abstract class BaseSuggestionsModel internal constructor(
 
         private const val MAX_RESULTS = 5
         private const val DEFAULT_LANGUAGE = "en"
-
-        private val language by lazy {
-            Locale.getDefault().language.takeIf(String::isNotEmpty) ?: DEFAULT_LANGUAGE
-        }
 
     }
 
