@@ -17,9 +17,4 @@ interface HostsDataSource {
      */
     fun identifier(): String
 
-    /**
-     * @return `true` if the source is stale, `false` otherwise.
-     */
-    fun requiresRefresh(): Boolean
-
 }

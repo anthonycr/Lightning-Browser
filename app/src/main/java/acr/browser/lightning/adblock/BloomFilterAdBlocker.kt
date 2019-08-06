@@ -13,12 +13,16 @@ import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.adblock.HostsRepositoryInfo
 import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
 import io.reactivex.Maybe
 import io.reactivex.Scheduler
 import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import java.net.URI
 import java.net.URISyntaxException
 import javax.inject.Inject
@@ -36,23 +40,35 @@ import javax.inject.Singleton
 @Singleton
 class BloomFilterAdBlocker @Inject constructor(
     private val logger: Logger,
-    hostsDataSourceProvider: HostsDataSourceProvider,
+    private val hostsDataSourceProvider: HostsDataSourceProvider,
     private val hostsRepository: HostsRepository,
     private val hostsRepositoryInfo: HostsRepositoryInfo,
-    application: Application,
-    @DatabaseScheduler private val databaseScheduler: Scheduler
+    private val application: Application,
+    @DatabaseScheduler private val databaseScheduler: Scheduler,
+    @MainScheduler private val mainScheduler: Scheduler
 ) : AdBlocker {
 
     private val bloomFilter: DelegatingBloomFilter<String> = DelegatingBloomFilter()
     private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
+    private val compositeDisposable = CompositeDisposable()
+
     init {
+        populateAdBlockerFromDataSource(forceRefresh = false)
+    }
+
+    /**
+     * Force the ad blocker to (re)populate its internal hosts filter from the provided hosts data
+     * source.
+     */
+    fun populateAdBlockerFromDataSource(forceRefresh: Boolean) {
+        compositeDisposable.clear()
         val hostsDataSource = hostsDataSourceProvider.createHostsDataSource()
-        loadStoredBloomFilter().filter {
+        compositeDisposable += loadStoredBloomFilter().filter {
             // Force a new hosts request if the hosts are out of date or if the repo has no hosts.
             hostsRepositoryInfo.identity == hostsDataSource.identifier()
-                && !hostsDataSource.requiresRefresh()
                 && hostsRepository.hasHosts()
+                && !forceRefresh
         }.switchIfEmpty(
             hostsDataSourceProvider
                 .createHostsDataSource()
@@ -81,14 +97,16 @@ class BloomFilterAdBlocker @Inject constructor(
             // allow initialization, as false positives will result in bad browsing experience.
             hostsRepository.hasHosts()
         }.subscribeOn(databaseScheduler)
-            .doOnSuccess {
-                bloomFilter.delegate = it
-                logger.log(TAG, "Finished loading bloom filter")
-            }
-            .doOnComplete {
-                application.toast(R.string.bookmark_export_failure)
-            }
-            .subscribe()
+            .observeOn(mainScheduler)
+            .subscribeBy(
+                onSuccess = {
+                    bloomFilter.delegate = it
+                    logger.log(TAG, "Finished loading bloom filter")
+                },
+                onComplete = {
+                    application.toast(R.string.ad_block_load_failure)
+                }
+            )
     }
 
     private fun loadStoredBloomFilter(): Maybe<BloomFilter<String>> = Maybe.fromCallable {

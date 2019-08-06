@@ -38,8 +38,6 @@ class AssetsHostsDataSource constructor(
 
     override fun identifier(): String = "assets:${BuildConfig.VERSION_CODE}"
 
-    override fun requiresRefresh(): Boolean = false
-
     companion object {
         private const val TAG = "AssetsHostsDataSource"
         private const val BLOCKED_DOMAINS_LIST_FILE_NAME = "hosts.txt"

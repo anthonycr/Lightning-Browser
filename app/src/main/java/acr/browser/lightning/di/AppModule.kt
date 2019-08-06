@@ -157,9 +157,9 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
     @Singleton
     @Provides
-    @GeneralClient
-    fun providesGeneralHttpClient(): OkHttpClient {
-        val intervalDay = TimeUnit.DAYS.toSeconds(1)
+    @HostsClient
+    fun providesHostsHttpClient(): OkHttpClient {
+        val intervalDay = TimeUnit.DAYS.toSeconds(365)
 
         val rewriteCacheControlInterceptor = Interceptor { chain ->
             val originalResponse = chain.proceed(chain.request())
@@ -168,10 +168,10 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
                 .build()
         }
 
-        val suggestionsCache = File(browserApp.cacheDir, "okhttp")
+        val suggestionsCache = File(browserApp.cacheDir, "hosts_cache")
 
         return OkHttpClient.Builder()
-            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
+            .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
             .addNetworkInterceptor(rewriteCacheControlInterceptor)
             .build()
     }
@@ -205,7 +205,7 @@ annotation class SuggestionsClient
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)
-annotation class GeneralClient
+annotation class HostsClient
 
 @Qualifier
 @Retention(AnnotationRetention.SOURCE)

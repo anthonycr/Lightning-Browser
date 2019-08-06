@@ -10,10 +10,6 @@
             android:summary="@string/block_source_default"
             android:title="@string/block_ad_source"/>
         <Preference
-            android:key="preference_hosts_refresh_frequency"
-            android:summary="@string/block_ad_remote_refresh_frequency_description"
-            android:title="@string/block_ad_remote_refresh_frequency"/>
-        <Preference
             android:key="preference_hosts_refresh_force"
             android:summary="@string/block_ad_remote_refresh_frequency_description"
             android:title="@string/block_ad_refresh_now"/>

@@ -116,7 +116,6 @@
     <!-- Ad block -->
     <string name="block_ads">Block ads</string>
     <string name="block_ad_source">Hosts file source</string>
-    <string name="block_ad_remote_refresh_frequency">Refresh frequency</string>
     <string name="block_ad_remote_refresh_frequency_description">For remote hosts file</string>
     <string name="block_ad_refresh_now">Refresh hosts now</string>
 
@@ -324,4 +323,7 @@
     </plurals>
     <string name="notification_incognito_running_message">Touch to open</string>
     <string name="notification_incognito_running_description">Ongoing incognito notification</string>
+
+    <!--Ad block -->
+    <string name="ad_block_load_failure">Failed to load hosts from ad blocking source.</string>
 </resources>

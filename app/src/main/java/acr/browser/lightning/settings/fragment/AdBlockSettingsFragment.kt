@@ -2,13 +2,13 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.R
+import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
-import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
@@ -33,6 +33,7 @@ import javax.inject.Inject
 class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferences: UserPreferences
+    @Inject internal lateinit var bloomFilterAdBlocker: BloomFilterAdBlocker
 
     private var recentSummaryUpdater: SummaryUpdater? = null
     private val compositeDisposable = CompositeDisposable()
@@ -62,17 +63,11 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
         )
 
         clickableDynamicPreference(
-            preference = "preference_hosts_refresh_frequency",
-            isEnabled = userPreferences.selectedHostsSource() is HostsSourceType.Remote,
-            // TODO implement changing summary and enable/disable
-            onClick = {}
-        )
-
-        clickableDynamicPreference(
             preference = "preference_hosts_refresh_force",
             isEnabled = userPreferences.selectedHostsSource() is HostsSourceType.Remote,
-            // TODO implement
-            onClick = {}
+            onClick = {
+                bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
+            }
         )
     }
 
@@ -97,7 +92,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                 onClick = {
                     userPreferences.hostsSource = HostsSourceType.Default.toPreferenceIndex()
                     summaryUpdater.updateSummary(userPreferences.selectedHostsSource().toSummary())
-                    activity?.snackbar(R.string.app_restart)
+                    bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
                 }
             ),
             DialogItem(
@@ -156,7 +151,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
                                 userPreferences.hostsSource = HostsSourceType.Local(file).toPreferenceIndex()
                                 userPreferences.hostsLocalFile = file.path
                                 recentSummaryUpdater?.updateSummary(userPreferences.selectedHostsSource().toSummary())
-                                activity?.snackbar(R.string.app_restart)
+                                bloomFilterAdBlocker.populateAdBlockerFromDataSource(forceRefresh = true)
                             }
                         )
                 }

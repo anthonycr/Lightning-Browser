@@ -40,8 +40,6 @@ class FileHostsDataSource constructor(
 
     override fun identifier(): String = file.inputStream().computeMD5()
 
-    override fun requiresRefresh(): Boolean = false
-
     companion object {
         private const val TAG = "FileHostsDataSource"
     }

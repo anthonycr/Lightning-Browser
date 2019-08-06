@@ -3,6 +3,9 @@ package acr.browser.lightning.adblock.source
 import acr.browser.lightning.adblock.parser.HostsFileParser
 import acr.browser.lightning.extensions.onIOExceptionResumeNext
 import acr.browser.lightning.log.Logger
+import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.preference.userAgent
+import android.app.Application
 import io.reactivex.Single
 import okhttp3.*
 import java.io.IOException
@@ -14,11 +17,17 @@ import java.io.InputStreamReader
 class UrlHostsDataSource(
     private val url: HttpUrl,
     private val okHttpClient: OkHttpClient,
-    private val logger: Logger
+    private val logger: Logger,
+    private val userPreferences: UserPreferences,
+    private val application: Application
 ) : HostsDataSource {
 
     override fun loadHosts(): Single<HostsResult> = Single.create<HostsResult> { emitter ->
-        val request = Request.Builder().url(url).get().build()
+        val request = Request.Builder()
+            .url(url)
+            .header("User-Agent", userPreferences.userAgent(application))
+            .get()
+            .build()
 
         okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -40,11 +49,6 @@ class UrlHostsDataSource(
     }.onIOExceptionResumeNext { HostsResult.Failure(it) }
 
     override fun identifier(): String = url.toString()
-
-    override fun requiresRefresh(): Boolean {
-        // TODO setup refresh sync
-        return false
-    }
 
     companion object {
         private const val TAG = "UrlHostsDataSource"
