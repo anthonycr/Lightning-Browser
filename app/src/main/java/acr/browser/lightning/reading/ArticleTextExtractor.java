@@ -3,25 +3,25 @@ package acr.browser.lightning.reading;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Date;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector.SelectorParseException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is thread safe.
@@ -36,13 +36,10 @@ public class ArticleTextExtractor {
     // Interessting nodes
     private static final Pattern NODES = Pattern.compile("p|div|td|h1|h2|article|section");
     // Unlikely candidates
-    private String unlikelyStr;
     private Pattern UNLIKELY;
     // Most likely positive candidates
-    private String positiveStr;
     private Pattern POSITIVE;
     // Most likely negative candidates
-    private String negativeStr;
     private Pattern NEGATIVE;
     private static final Pattern NEGATIVE_STYLE =
             Pattern.compile("hidden|display: ?none|font-size: ?small");
@@ -85,68 +82,25 @@ public class ArticleTextExtractor {
 
     @NonNull
     private ArticleTextExtractor setUnlikely(@NonNull String unlikelyStr) {
-        this.unlikelyStr = unlikelyStr;
         UNLIKELY = Pattern.compile(unlikelyStr);
         return this;
     }
 
     @NonNull
-    public ArticleTextExtractor addUnlikely(String unlikelyMatches) {
-        return setUnlikely(unlikelyStr + '|' + unlikelyMatches);
-    }
-
-    @NonNull
     private ArticleTextExtractor setPositive(@NonNull String positiveStr) {
-        this.positiveStr = positiveStr;
         POSITIVE = Pattern.compile(positiveStr);
         return this;
     }
 
     @NonNull
-    public ArticleTextExtractor addPositive(String pos) {
-        return setPositive(positiveStr + '|' + pos);
-    }
-
-    @NonNull
     private ArticleTextExtractor setNegative(@NonNull String negativeStr) {
-        this.negativeStr = negativeStr;
         NEGATIVE = Pattern.compile(negativeStr);
         return this;
     }
 
     @NonNull
-    public ArticleTextExtractor addNegative(String neg) {
-        setNegative(negativeStr + '|' + neg);
-        return this;
-    }
-
-    public void setOutputFormatter(OutputFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    /**
-     * @param html extracts article text from given html string. wasn't tested
-     *             with improper HTML, although jSoup should be able to handle minor stuff.
-     * @returns extracted article, all HTML tags stripped
-     */
-    @NonNull
-    public JResult extractContent(@NonNull String html, int maxContentSize) throws Exception {
-        return extractContent(new JResult(), html, maxContentSize);
-    }
-
-    @NonNull
-    public JResult extractContent(@NonNull String html) throws Exception {
-        return extractContent(new JResult(), html, 0);
-    }
-
-    @NonNull
     public JResult extractContent(@NonNull JResult res, @NonNull String html, int maxContentSize) throws Exception {
         return extractContent(res, html, formatter, true, maxContentSize);
-    }
-
-    @NonNull
-    public JResult extractContent(@NonNull JResult res, @NonNull String html) throws Exception {
-        return extractContent(res, html, formatter, true, 0);
     }
 
     @NonNull
@@ -165,7 +119,6 @@ public class ArticleTextExtractor {
         int maxWeight = -200;        // why -200 now instead of 0?
         Element bestMatchElement = null;
 
-        boolean ignoreMaxWeightLimit = false;
         for (Element entry : nodes) {
 
             int currentWeight = getWeight(entry, false);
