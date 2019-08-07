@@ -7,6 +7,7 @@ import acr.browser.lightning.extensions.map
 import acr.browser.lightning.extensions.preferredLocale
 import acr.browser.lightning.log.Logger
 import android.app.Application
+import io.reactivex.Single
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -17,11 +18,11 @@ import org.json.JSONObject
  * The search suggestions provider for the Naver search engine.
  */
 class NaverSuggestionsModel(
-    httpClient: OkHttpClient,
+    okHttpClient: Single<OkHttpClient>,
     requestFactory: RequestFactory,
     application: Application,
     logger: Logger
-) : BaseSuggestionsModel(httpClient, requestFactory, UTF8, application.preferredLocale, logger) {
+) : BaseSuggestionsModel(okHttpClient, requestFactory, UTF8, application.preferredLocale, logger) {
 
     private val searchSubtitle = application.getString(R.string.suggestion)
 

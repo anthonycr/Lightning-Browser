@@ -31,6 +31,7 @@ import com.anthonycr.mezzanine.MezzanineGenerator
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.i2p.android.ui.I2PAndroidHelper
@@ -137,7 +138,7 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     @Singleton
     @Provides
     @SuggestionsClient
-    fun providesSuggestionsHttpClient(): OkHttpClient {
+    fun providesSuggestionsHttpClient(): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
 
         val rewriteCacheControlInterceptor = Interceptor { chain ->
@@ -149,16 +150,16 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
         val suggestionsCache = File(browserApp.cacheDir, "suggestion_responses")
 
-        return OkHttpClient.Builder()
+        return@fromCallable OkHttpClient.Builder()
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
             .addNetworkInterceptor(rewriteCacheControlInterceptor)
             .build()
-    }
+    }.cache()
 
     @Singleton
     @Provides
     @HostsClient
-    fun providesHostsHttpClient(): OkHttpClient {
+    fun providesHostsHttpClient(): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(365)
 
         val rewriteCacheControlInterceptor = Interceptor { chain ->
@@ -170,11 +171,11 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
 
         val suggestionsCache = File(browserApp.cacheDir, "hosts_cache")
 
-        return OkHttpClient.Builder()
+        return@fromCallable OkHttpClient.Builder()
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
             .addNetworkInterceptor(rewriteCacheControlInterceptor)
             .build()
-    }
+    }.cache()
 
     @Provides
     @Singleton

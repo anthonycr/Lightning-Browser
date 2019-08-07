@@ -18,7 +18,7 @@ import java.util.*
  * potential suggestions provider.
  */
 abstract class BaseSuggestionsModel internal constructor(
-    private val httpClient: OkHttpClient,
+    private val okHttpClient: Single<OkHttpClient>,
     private val requestFactory: RequestFactory,
     private val encoding: String,
     locale: Locale,
@@ -44,20 +44,23 @@ abstract class BaseSuggestionsModel internal constructor(
     @Throws(Exception::class)
     protected abstract fun parseResults(responseBody: ResponseBody): List<SearchSuggestion>
 
-    override fun resultsForSearch(rawQuery: String): Single<List<SearchSuggestion>> = Single.fromCallable {
-        val query = try {
-            URLEncoder.encode(rawQuery, encoding)
-        } catch (throwable: UnsupportedEncodingException) {
-            logger.log(TAG, "Unable to encode the URL", throwable)
+    override fun resultsForSearch(rawQuery: String): Single<List<SearchSuggestion>> =
+        okHttpClient.flatMap { client ->
+            Single.fromCallable {
+                val query = try {
+                    URLEncoder.encode(rawQuery, encoding)
+                } catch (throwable: UnsupportedEncodingException) {
+                    logger.log(TAG, "Unable to encode the URL", throwable)
 
-            return@fromCallable emptyList<SearchSuggestion>()
+                    return@fromCallable emptyList<SearchSuggestion>()
+                }
+
+                return@fromCallable client.downloadSuggestionsForQuery(query, language)
+                    ?.let(Response::body)
+                    ?.safeUse(::parseResults)
+                    ?.take(MAX_RESULTS) ?: emptyList()
+            }
         }
-
-        return@fromCallable downloadSuggestionsForQuery(query, language)
-            ?.let(Response::body)
-            ?.safeUse(::parseResults)
-            ?.take(MAX_RESULTS) ?: emptyList()
-    }
 
     /**
      * This method downloads the search suggestions for the specific query.
@@ -67,11 +70,11 @@ abstract class BaseSuggestionsModel internal constructor(
      *
      * @return the cache file containing the suggestions
      */
-    private fun downloadSuggestionsForQuery(query: String, language: String): Response? {
+    private fun OkHttpClient.downloadSuggestionsForQuery(query: String, language: String): Response? {
         val queryUrl = createQueryUrl(query, language)
         val request = requestFactory.createSuggestionsRequest(queryUrl, encoding)
         return try {
-            httpClient.newCall(request).execute()
+            newCall(request).execute()
         } catch (exception: IOException) {
             logger.log(TAG, "Problem getting search suggestions", exception)
             null

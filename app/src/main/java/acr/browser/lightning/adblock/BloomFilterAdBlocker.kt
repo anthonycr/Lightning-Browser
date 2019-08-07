@@ -63,40 +63,43 @@ class BloomFilterAdBlocker @Inject constructor(
      */
     fun populateAdBlockerFromDataSource(forceRefresh: Boolean) {
         compositeDisposable.clear()
-        val hostsDataSource = hostsDataSourceProvider.createHostsDataSource()
-        compositeDisposable += loadStoredBloomFilter().filter {
-            // Force a new hosts request if the hosts are out of date or if the repo has no hosts.
-            hostsRepositoryInfo.identity == hostsDataSource.identifier()
-                && hostsRepository.hasHosts()
-                && !forceRefresh
-        }.switchIfEmpty(
-            hostsDataSourceProvider
-                .createHostsDataSource()
-                .loadHosts()
-                .flatMapMaybe {
-                    when (it) {
-                        is HostsResult.Success -> Maybe.just(it.hosts)
-                        is HostsResult.Failure ->
-                            Maybe.empty<List<String>>().doOnComplete {
-                                logger.log(TAG, "Unable to load hosts", it.cause)
+        compositeDisposable += Single.fromCallable(hostsDataSourceProvider::createHostsDataSource)
+            .flatMapMaybe { hostsDataSource ->
+                loadStoredBloomFilter().filter {
+                    // Force a new hosts request if the hosts are out of date or if the repo has no hosts.
+                    hostsRepositoryInfo.identity == hostsDataSource.identifier()
+                        && hostsRepository.hasHosts()
+                        && !forceRefresh
+                }.switchIfEmpty(
+                    hostsDataSourceProvider
+                        .createHostsDataSource()
+                        .loadHosts()
+                        .flatMapMaybe {
+                            when (it) {
+                                is HostsResult.Success -> Maybe.just(it.hosts)
+                                is HostsResult.Failure ->
+                                    Maybe.empty<List<String>>().doOnComplete {
+                                        logger.log(TAG, "Unable to load hosts", it.cause)
+                                    }
                             }
-                    }
-                }
-                .map { it.map(::Host) }
-                .flatMapSingleElement {
-                    // Clear out the old hosts and bloom filter now that we have the new hosts.
-                    hostsRepository.removeAllHosts()
-                        .andThen(hostsRepository.addHosts(it))
-                        .andThen(createAndSaveBloomFilter(it))
-                        .doOnSuccess {
-                            hostsRepositoryInfo.identity = hostsDataSource.identifier()
                         }
-                }
-        ).filter {
-            // If we were unsuccessful in loading hosts and we don't have hosts in the repo, don't
-            // allow initialization, as false positives will result in bad browsing experience.
-            hostsRepository.hasHosts()
-        }.subscribeOn(databaseScheduler)
+                        .map { it.map(::Host) }
+                        .flatMapSingleElement {
+                            // Clear out the old hosts and bloom filter now that we have the new hosts.
+                            hostsRepository.removeAllHosts()
+                                .andThen(hostsRepository.addHosts(it))
+                                .andThen(createAndSaveBloomFilter(it))
+                                .doOnSuccess {
+                                    hostsRepositoryInfo.identity = hostsDataSource.identifier()
+                                }
+                        }
+                )
+            }
+            .filter {
+                // If we were unsuccessful in loading hosts and we don't have hosts in the repo, don't
+                // allow initialization, as false positives will result in bad browsing experience.
+                hostsRepository.hasHosts()
+            }.subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribeBy(
                 onSuccess = {
