@@ -9,6 +9,7 @@ import android.os.LocaleList
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import io.reactivex.Single
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +21,7 @@ import java.util.*
  */
 class BaiduSuggestionsModelTest {
 
-    private val httpClient = OkHttpClient.Builder().build()
+    private val httpClient = Single.just(OkHttpClient.Builder().build())
     private val requestFactory = object : RequestFactory {
         override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String) = unimplemented()
     }
