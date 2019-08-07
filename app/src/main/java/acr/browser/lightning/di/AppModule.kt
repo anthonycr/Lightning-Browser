@@ -141,11 +141,13 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     fun providesSuggestionsHttpClient(): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
 
-        val rewriteCacheControlInterceptor = Interceptor { chain ->
-            val originalResponse = chain.proceed(chain.request())
-            originalResponse.newBuilder()
-                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
-                .build()
+        val rewriteCacheControlInterceptor = object : Interceptor {
+            override fun intercept(chain: Interceptor.Chain): Response {
+                val originalResponse = chain.proceed(chain.request())
+                return originalResponse.newBuilder()
+                    .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                    .build()
+            }
         }
 
         val suggestionsCache = File(browserApp.cacheDir, "suggestion_responses")
@@ -162,11 +164,13 @@ class AppModule(private val browserApp: BrowserApp, private val buildInfo: Build
     fun providesHostsHttpClient(): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(365)
 
-        val rewriteCacheControlInterceptor = Interceptor { chain ->
-            val originalResponse = chain.proceed(chain.request())
-            originalResponse.newBuilder()
-                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
-                .build()
+        val rewriteCacheControlInterceptor = object : Interceptor {
+            override fun intercept(chain: Interceptor.Chain): Response {
+                val originalResponse = chain.proceed(chain.request())
+                return originalResponse.newBuilder()
+                    .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                    .build()
+            }
         }
 
         val suggestionsCache = File(browserApp.cacheDir, "hosts_cache")

@@ -11,6 +11,7 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import io.reactivex.Single
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -46,7 +47,7 @@ class GoogleSuggestionsModelTest {
         (0..100).forEach {
             val result = "https://suggestqueries.google.com/complete/search?output=toolbar&hl=$it&q=$it"
 
-            assertThat(suggestionsModel.createQueryUrl(it.toString(), it.toString())).isEqualTo(HttpUrl.parse(result))
+            assertThat(suggestionsModel.createQueryUrl(it.toString(), it.toString())).isEqualTo(result.toHttpUrlOrNull())
         }
     }
 }

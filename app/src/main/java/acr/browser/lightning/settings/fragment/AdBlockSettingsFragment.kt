@@ -22,8 +22,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import okhttp3.HttpUrl
-import okio.Okio
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -138,7 +140,7 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             currentText = userPreferences.hostsRemoteFile,
             action = R.string.action_ok,
             textInputListener = {
-                val url = HttpUrl.parse(it)
+                val url = it.toHttpUrlOrNull()
                     ?: return@showEditText run { activity?.toast(R.string.problem_download) }
                 userPreferences.hostsSource = HostsSourceType.Remote(url).toPreferenceIndex()
                 userPreferences.hostsRemoteFile = it
@@ -185,8 +187,8 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
         try {
             val outputFile = File(externalFilesDir, AD_HOSTS_FILE)
-            val input = Okio.source(inputStream)
-            val output = Okio.buffer(Okio.sink(outputFile))
+            val input = inputStream.source()
+            val output = outputFile.sink().buffer()
             output.writeAll(input)
             return@create it.onSuccess(outputFile)
         } catch (exception: IOException) {
