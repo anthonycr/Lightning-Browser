@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/toolbar_layout"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
-    android:elevation="2dp"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:elevation="3dp"
+    android:fitsSystemWindows="true">
 
     <FrameLayout
         android:id="@+id/tabs_toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="30dp"/>
+        android:layout_height="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -23,21 +27,21 @@
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:paddingTop="2dp"
-        custom:contentInsetEnd="0dp"
-        custom:contentInsetStart="0dp"/>
+        app:contentInsetEnd="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabs_toolbar_container"/>
 
-    <LinearLayout
+    <com.anthonycr.progress.AnimatedProgressBar
+        android:id="@+id/progress_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/progressBackgroundColor">
+        android:layout_height="2dp"
+        android:background="@color/transparent"
+        app:bidirectionalAnimate="false"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:progressColor="?attr/colorAccent"/>
 
-        <com.anthonycr.progress.AnimatedProgressBar
-            android:id="@+id/progress_view"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/transparent"
-            custom:bidirectionalAnimate="false"
-            custom:progressColor="?attr/colorAccent"/>
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

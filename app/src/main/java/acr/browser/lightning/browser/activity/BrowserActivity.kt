@@ -79,6 +79,7 @@ import android.widget.TextView.OnEditorActionListener
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
@@ -315,7 +316,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             .replace(getBookmarksFragmentViewId(), bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
             .commit()
         if (shouldShowTabsInDrawer) {
-            toolbar_layout.removeView(findViewById(R.id.tabs_toolbar_container))
+            tabs_toolbar_container.visibility = GONE
         }
 
         // set display options of the ActionBar
@@ -1148,7 +1149,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 // In landscape toolbar should be 48 dp tall
                 Utils.dpToPx(52f)
             }
-            toolbar.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
+            toolbar.layoutParams = ConstraintLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
             toolbar.minimumHeight = toolbarSize
             toolbar.doOnLayout { setWebViewTranslation(toolbar_layout.height.toFloat()) }
             toolbar.requestLayout()
@@ -1926,7 +1927,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             R.id.button_quit -> {
                 findResult?.clearResults()
                 findResult = null
-                search_bar.visibility = View.GONE
+                search_bar.visibility = GONE
             }
         }
     }
