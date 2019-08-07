@@ -22,7 +22,7 @@ fun InputStream.computeMD5(): String {
 
         val md5Bytes = md5Hash.digest()
         for (i in md5Bytes.indices) {
-            returnVal += Integer.toString((md5Bytes[i].toInt() and 0xff) + 0x100, 16).substring(1)
+            returnVal += ((md5Bytes[i].toInt() and 0xff) + 0x100).toString(16).substring(1)
         }
     } catch (t: Throwable) {
         t.printStackTrace()

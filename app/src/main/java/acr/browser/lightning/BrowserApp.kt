@@ -20,6 +20,7 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 class BrowserApp : Application() {
 
@@ -54,7 +55,7 @@ class BrowserApp : Application() {
             if (defaultHandler != null) {
                 defaultHandler.uncaughtException(thread, ex)
             } else {
-                System.exit(2)
+                exitProcess(2)
             }
         }
 

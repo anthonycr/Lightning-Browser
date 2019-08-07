@@ -38,6 +38,7 @@ import java.io.File
 import java.net.URISyntaxException
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 class LightningWebClient(
     private val activity: Activity,
@@ -174,7 +175,7 @@ class LightningWebClient(
         if (view.isShown && lightningView.userPreferences.textReflowEnabled) {
             if (isRunning)
                 return
-            val changeInPercent = Math.abs(100 - 100 / zoomScale * newScale)
+            val changeInPercent = abs(100 - 100 / zoomScale * newScale)
             if (changeInPercent > 2.5f && !isRunning) {
                 isRunning = view.postDelayed({
                     zoomScale = newScale

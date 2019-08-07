@@ -98,6 +98,7 @@ import kotlinx.android.synthetic.main.search_interface.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIController, OnClickListener {
 
@@ -272,8 +273,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_DRAGGING) {
-                    left_drawer.setLayerType(View.LAYER_TYPE_HARDWARE, null)
-                    right_drawer.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                    left_drawer.setLayerType(LAYER_TYPE_HARDWARE, null)
+                    right_drawer.setLayerType(LAYER_TYPE_HARDWARE, null)
                 } else if (newState == DrawerLayout.STATE_IDLE) {
                     left_drawer.setLayerType(LAYER_TYPE_NONE, null)
                     right_drawer.setLayerType(LAYER_TYPE_NONE, null)
@@ -334,7 +335,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         arrowImageView = customView.findViewById<ImageView>(R.id.arrow).also {
             if (shouldShowTabsInDrawer) {
                 if (it.width <= 0) {
-                    it.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                    it.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
                 }
                 updateTabNumber(0)
 
@@ -460,7 +461,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // System exit needed in the case of receiving
         // the panic intent since finish() isn't completely
         // closing the browser
-        System.exit(1)
+        exitProcess(1)
     }
 
     private inner class SearchListenerClass : OnKeyListener,
@@ -898,7 +899,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun showFindInPageControls(text: String) {
-        search_bar.visibility = View.VISIBLE
+        search_bar.visibility = VISIBLE
 
         findViewById<TextView>(R.id.search_query).apply { this.text = "'$text'" }
         findViewById<ImageButton>(R.id.button_next).apply { setOnClickListener(this@BrowserActivity) }
@@ -1627,7 +1628,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         fullscreenContainerView?.addView(customView, COVER_SCREEN_PARAMS)
         decorView.requestLayout()
         setFullscreen(enabled = true, immersive = true)
-        currentTab?.setVisibility(View.INVISIBLE)
+        currentTab?.setVisibility(INVISIBLE)
     }
 
     override fun onHideCustomView() {
@@ -1645,7 +1646,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             return
         }
         logger.log(TAG, "onHideCustomView")
-        currentTab.setVisibility(View.VISIBLE)
+        currentTab.setVisibility(VISIBLE)
         try {
             customView?.keepScreenOn = false
         } catch (e: SecurityException) {
@@ -1739,20 +1740,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val decor = window.decorView
         if (enabled) {
             if (immersive) {
-                decor.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                decor.systemUiVisibility = (SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or SYSTEM_UI_FLAG_FULLSCREEN
+                    or SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
             } else {
-                decor.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                decor.systemUiVisibility = SYSTEM_UI_FLAG_VISIBLE
             }
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            decor.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            decor.systemUiVisibility = SYSTEM_UI_FLAG_VISIBLE
         }
     }
 
@@ -1819,7 +1820,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
             var height = toolbar_layout.height
             if (height == 0) {
-                toolbar_layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                toolbar_layout.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
                 height = toolbar_layout.measuredHeight
             }
 

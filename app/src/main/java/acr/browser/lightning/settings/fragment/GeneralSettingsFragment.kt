@@ -87,9 +87,9 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         )
 
         checkBoxPreference(
-                preference = SETTINGS_SAVEDATA,
-                isChecked = userPreferences.saveDataEnabled,
-                onCheckChange = { userPreferences.saveDataEnabled = it }
+            preference = SETTINGS_SAVEDATA,
+            isChecked = userPreferences.saveDataEnabled,
+            onCheckChange = { userPreferences.saveDataEnabled = it }
         )
 
         checkBoxPreference(
@@ -146,7 +146,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         // Limit the number of characters since the port needs to be of type int
         // Use input filters to limit the EditText length and determine the max
         // length by using length of integer MAX_VALUE
-        val maxCharacters = Integer.toString(Integer.MAX_VALUE).length
+        val maxCharacters = Integer.MAX_VALUE.toString().length
         eProxyPort.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxCharacters - 1))
 
         eProxyHost.text = userPreferences.proxyHost
