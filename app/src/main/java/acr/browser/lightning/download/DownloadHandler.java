@@ -46,7 +46,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 /**
  * Handle download requests
@@ -255,20 +254,17 @@ public class DownloadHandler {
                 .create()
                 .subscribeOn(networkScheduler)
                 .observeOn(mainScheduler)
-                .subscribe(new Consumer<FetchUrlMimeType.Result>() {
-                    @Override
-                    public void accept(FetchUrlMimeType.Result result) {
-                        switch (result) {
-                            case FAILURE_ENQUEUE:
-                                ActivityExtensions.snackbar(context, R.string.cannot_download);
-                                break;
-                            case FAILURE_LOCATION:
-                                ActivityExtensions.snackbar(context, R.string.problem_location_download);
-                                break;
-                            case SUCCESS:
-                                ActivityExtensions.snackbar(context, R.string.download_pending);
-                                break;
-                        }
+                .subscribe(result -> {
+                    switch (result) {
+                        case FAILURE_ENQUEUE:
+                            ActivityExtensions.snackbar(context, R.string.cannot_download);
+                            break;
+                        case FAILURE_LOCATION:
+                            ActivityExtensions.snackbar(context, R.string.problem_location_download);
+                            break;
+                        case SUCCESS:
+                            ActivityExtensions.snackbar(context, R.string.download_pending);
+                            break;
                     }
                 });
         } else {
@@ -294,18 +290,18 @@ public class DownloadHandler {
         if (view != null && !view.isIncognito()) {
             downloadsRepository.addDownloadIfNotExists(new DownloadEntry(url, filename, contentSize))
                 .subscribeOn(databaseScheduler)
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) {
-                        if (!aBoolean) {
-                            logger.log(TAG, "error saving download to database");
-                        }
+                .subscribe(aBoolean -> {
+                    if (!aBoolean) {
+                        logger.log(TAG, "error saving download to database");
                     }
                 });
         }
     }
 
     private static boolean isWriteAccessAvailable(@NonNull Uri fileUri) {
+        if (fileUri.getPath() == null){
+            return false;
+        }
         File file = new File(fileUri.getPath());
 
         if (!file.isDirectory() && !file.mkdirs()) {

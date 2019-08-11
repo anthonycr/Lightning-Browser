@@ -13,15 +13,15 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+
+import acr.browser.lightning.R;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import android.view.View;
-
-import acr.browser.lightning.R;
 
 public final class DrawableUtils {
 
@@ -97,7 +97,7 @@ public final class DrawableUtils {
         final int xPos = (canvas.getWidth() / 2);
         final int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
 
-        canvas.drawText(String.valueOf(text), xPos, yPos, paint);
+        canvas.drawText(text, xPos, yPos, paint);
 
         return image;
     }

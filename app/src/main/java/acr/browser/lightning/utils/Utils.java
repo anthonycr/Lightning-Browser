@@ -6,7 +6,6 @@ package acr.browser.lightning.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -84,10 +83,7 @@ public final class Utils {
         builder.setMessage(message)
             .setCancelable(true)
             .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
+                (dialog, id) -> {
                 });
         AlertDialog alert = builder.create();
         alert.show();
@@ -318,7 +314,7 @@ public final class Utils {
     public static String guessFileExtension(@NonNull String filename) {
         int lastIndex = filename.lastIndexOf('.') + 1;
         if (lastIndex > 0 && filename.length() > lastIndex) {
-            return filename.substring(lastIndex, filename.length());
+            return filename.substring(lastIndex);
         }
         return null;
     }

@@ -70,35 +70,24 @@ public final class ProxyUtils {
                 String[] proxyChoices = activity.getResources().getStringArray(R.array.proxy_choices_array);
                 builder.setTitle(activity.getResources().getString(R.string.http_proxy))
                     .setSingleChoiceItems(proxyChoices, mUserPreferences.getProxyChoice(),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mUserPreferences.setProxyChoice(which);
-                            }
-                        })
+                        (dialog, which) -> mUserPreferences.setProxyChoice(which))
                     .setPositiveButton(activity.getResources().getString(R.string.action_ok),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (mUserPreferences.getProxyChoice() != Constants.NO_PROXY) {
-                                    initializeProxy(activity);
-                                }
+                        (dialog, which) -> {
+                            if (mUserPreferences.getProxyChoice() != Constants.NO_PROXY) {
+                                initializeProxy(activity);
                             }
                         });
             } else {
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                mUserPreferences.setProxyChoice(orbotInstalled ?
-                                    Constants.PROXY_ORBOT : Constants.PROXY_I2P);
-                                initializeProxy(activity);
-                                break;
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                mUserPreferences.setProxyChoice(Constants.NO_PROXY);
-                                break;
-                        }
+                DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
+                            mUserPreferences.setProxyChoice(orbotInstalled ?
+                                Constants.PROXY_ORBOT : Constants.PROXY_I2P);
+                            initializeProxy(activity);
+                            break;
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            mUserPreferences.setProxyChoice(Constants.NO_PROXY);
+                            break;
                     }
                 };
 
@@ -191,13 +180,10 @@ public final class ProxyUtils {
     public void onStart(final Activity activity) {
         if (mUserPreferences.getProxyChoice() == Constants.PROXY_I2P) {
             // Try to bind to I2P Android
-            mI2PHelper.bind(new I2PAndroidHelper.Callback() {
-                @Override
-                public void onI2PAndroidBound() {
-                    sI2PHelperBound = true;
-                    if (sI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
-                        mI2PHelper.requestI2PAndroidStart(activity);
-                }
+            mI2PHelper.bind(() -> {
+                sI2PHelperBound = true;
+                if (sI2PProxyInitialized && !mI2PHelper.isI2PAndroidRunning())
+                    mI2PHelper.requestI2PAndroidStart(activity);
             });
         }
     }

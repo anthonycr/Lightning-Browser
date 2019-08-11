@@ -170,22 +170,16 @@ public class ReadingActivity extends AppCompatActivity {
         mPageLoaderSubscription = loadPage(mUrl)
             .subscribeOn(mNetworkScheduler)
             .observeOn(mMainScheduler)
-            .subscribe(new Consumer<ReaderInfo>() {
-                @Override
-                public void accept(@NonNull ReaderInfo readerInfo) {
-                    if (readerInfo.getTitle().isEmpty() || readerInfo.getBody().isEmpty()) {
-                        setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                    } else {
-                        setText(readerInfo.getTitle(), readerInfo.getBody());
-                    }
-                    dismissProgressDialog();
-                }
-            }, new Consumer<Throwable>() {
-                @Override
-                public void accept(@NonNull Throwable throwable) {
+            .subscribe(readerInfo -> {
+                if (readerInfo.getTitle().isEmpty() || readerInfo.getBody().isEmpty()) {
                     setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                    dismissProgressDialog();
+                } else {
+                    setText(readerInfo.getTitle(), readerInfo.getBody());
                 }
+                dismissProgressDialog();
+            }, throwable -> {
+                setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                dismissProgressDialog();
             });
         return true;
     }
@@ -199,21 +193,18 @@ public class ReadingActivity extends AppCompatActivity {
 
     @NonNull
     private static Single<ReaderInfo> loadPage(@NonNull final String url) {
-        return Single.create(new SingleOnSubscribe<ReaderInfo>() {
-            @Override
-            public void subscribe(SingleEmitter<ReaderInfo> emitter) {
-                HtmlFetcher fetcher = new HtmlFetcher();
-                try {
-                    JResult result = fetcher.fetchAndExtract(url, 2500, true);
-                    emitter.onSuccess(new ReaderInfo(result.getTitle(), result.getText()));
-                } catch (Exception e) {
-                    emitter.onError(new Throwable("Encountered exception"));
-                    Log.e(TAG, "Error parsing page", e);
-                } catch (OutOfMemoryError e) {
-                    System.gc();
-                    emitter.onError(new Throwable("Out of memory"));
-                    Log.e(TAG, "Out of memory", e);
-                }
+        return Single.create(emitter -> {
+            HtmlFetcher fetcher = new HtmlFetcher();
+            try {
+                JResult result = fetcher.fetchAndExtract(url, 2500, true);
+                emitter.onSuccess(new ReaderInfo(result.getTitle(), result.getText()));
+            } catch (Exception e) {
+                emitter.onError(new Throwable("Encountered exception"));
+                Log.e(TAG, "Error parsing page", e);
+            } catch (OutOfMemoryError e) {
+                System.gc();
+                emitter.onError(new Throwable("Out of memory"));
+                Log.e(TAG, "Out of memory", e);
             }
         });
     }
@@ -319,15 +310,10 @@ public class ReadingActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setView(view)
                     .setTitle(R.string.size)
-                    .setPositiveButton(android.R.string.ok, new OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int arg1) {
-                            mTextSize = bar.getProgress();
-                            mBody.setTextSize(getTextSize(mTextSize));
-                            mUserPreferences.setReadingTextSize(bar.getProgress());
-                        }
-
+                    .setPositiveButton(android.R.string.ok, (dialog, arg1) -> {
+                        mTextSize = bar.getProgress();
+                        mBody.setTextSize(getTextSize(mTextSize));
+                        mUserPreferences.setReadingTextSize(bar.getProgress());
                     });
                 Dialog dialog = builder.show();
                 BrowserDialog.setDialogSize(this, dialog);

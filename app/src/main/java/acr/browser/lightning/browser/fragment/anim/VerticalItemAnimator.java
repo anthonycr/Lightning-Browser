@@ -124,20 +124,16 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
         mPendingRemovals.clear();
         // Next, move stuff
         if (movesPending) {
-            final ArrayList<MoveInfo> moves = new ArrayList<>();
-            moves.addAll(mPendingMoves);
+            final ArrayList<MoveInfo> moves = new ArrayList<>(mPendingMoves);
             mMovesList.add(moves);
             mPendingMoves.clear();
-            Runnable mover = new Runnable() {
-                @Override
-                public void run() {
-                    for (MoveInfo moveInfo : moves) {
-                        animateMoveImpl(moveInfo.holder, moveInfo.fromX, moveInfo.fromY,
-                            moveInfo.toX, moveInfo.toY);
-                    }
-                    moves.clear();
-                    mMovesList.remove(moves);
+            Runnable mover = () -> {
+                for (MoveInfo moveInfo : moves) {
+                    animateMoveImpl(moveInfo.holder, moveInfo.fromX, moveInfo.fromY,
+                        moveInfo.toX, moveInfo.toY);
                 }
+                moves.clear();
+                mMovesList.remove(moves);
             };
             if (removalsPending) {
                 View view = moves.get(0).holder.itemView;
@@ -148,19 +144,15 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
         }
         // Next, change stuff, to run in parallel with move animations
         if (changesPending) {
-            final ArrayList<ChangeInfo> changes = new ArrayList<>();
-            changes.addAll(mPendingChanges);
+            final ArrayList<ChangeInfo> changes = new ArrayList<>(mPendingChanges);
             mChangesList.add(changes);
             mPendingChanges.clear();
-            Runnable changer = new Runnable() {
-                @Override
-                public void run() {
-                    for (ChangeInfo change : changes) {
-                        animateChangeImpl(change);
-                    }
-                    changes.clear();
-                    mChangesList.remove(changes);
+            Runnable changer = () -> {
+                for (ChangeInfo change : changes) {
+                    animateChangeImpl(change);
                 }
+                changes.clear();
+                mChangesList.remove(changes);
             };
             if (removalsPending) {
                 ViewHolder holder = changes.get(0).oldHolder;
@@ -173,18 +165,15 @@ public class VerticalItemAnimator extends SimpleItemAnimator {
         }
         // Next, add stuff
         if (additionsPending) {
-            final ArrayList<ViewHolder> additions = new ArrayList<>();
-            additions.addAll(mPendingAdditions);
+            final ArrayList<ViewHolder> additions = new ArrayList<>(mPendingAdditions);
             mAdditionsList.add(additions);
             mPendingAdditions.clear();
-            Runnable adder = new Runnable() {
-                public void run() {
-                    for (ViewHolder holder : additions) {
-                        animateAddImpl(holder);
-                    }
-                    additions.clear();
-                    mAdditionsList.remove(additions);
+            Runnable adder = () -> {
+                for (ViewHolder holder : additions) {
+                    animateAddImpl(holder);
                 }
+                additions.clear();
+                mAdditionsList.remove(additions);
             };
             if (removalsPending || movesPending || changesPending) {
                 long removeDuration = removalsPending ? getRemoveDuration() : 0;

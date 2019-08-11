@@ -150,7 +150,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         eProxyPort.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxCharacters - 1))
 
         eProxyHost.text = userPreferences.proxyHost
-        eProxyPort.text = Integer.toString(userPreferences.proxyPort)
+        eProxyPort.text = userPreferences.proxyPort.toString()
 
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.manual_proxy)
