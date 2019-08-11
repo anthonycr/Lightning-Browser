@@ -74,9 +74,6 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         }
     }
 
-    protected val isTablet: Boolean
-        get() = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_XLARGE
-
     protected fun restart() {
         finish()
         startActivity(Intent(this, javaClass))

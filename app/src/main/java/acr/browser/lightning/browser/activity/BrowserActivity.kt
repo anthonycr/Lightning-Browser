@@ -15,6 +15,7 @@ import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
+import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainHandler
 import acr.browser.lightning.di.MainScheduler
@@ -164,6 +165,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject lateinit var proxyUtils: ProxyUtils
     @Inject lateinit var logger: Logger
     @Inject lateinit var bookmarksDialogBuilder: LightningDialogBuilder
+    @Inject lateinit var screenSize: ScreenSize
 
     // Image
     private var webPageBitmap: Bitmap? = null
@@ -571,7 +573,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     private fun setNavigationDrawerWidth() {
         val width = resources.displayMetrics.widthPixels - Utils.dpToPx(56f)
-        val maxWidth = if (isTablet) {
+        val maxWidth = if (screenSize.isTablet()) {
             Utils.dpToPx(320f)
         } else {
             Utils.dpToPx(300f)
