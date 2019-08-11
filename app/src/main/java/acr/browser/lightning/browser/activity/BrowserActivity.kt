@@ -895,10 +895,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun showFindInPageControls(text: String) {
         search_bar.visibility = VISIBLE
 
-        findViewById<TextView>(R.id.search_query).apply { this.text = "'$text'" }
-        findViewById<ImageButton>(R.id.button_next).apply { setOnClickListener(this@BrowserActivity) }
-        findViewById<ImageButton>(R.id.button_back).apply { setOnClickListener(this@BrowserActivity) }
-        findViewById<ImageButton>(R.id.button_quit).apply { setOnClickListener(this@BrowserActivity) }
+        findViewById<TextView>(R.id.search_query).text = "'$text'"
+        findViewById<ImageButton>(R.id.button_next).setOnClickListener(this)
+        findViewById<ImageButton>(R.id.button_back).setOnClickListener(this)
+        findViewById<ImageButton>(R.id.button_quit).setOnClickListener(this)
     }
 
     override fun getTabModel(): TabsManager = tabsManager
@@ -1019,13 +1019,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun showBlockedLocalFileDialog(onPositiveClick: Function0<Unit>) =
-        AlertDialog.Builder(this).apply {
-            setCancelable(true)
-            setTitle(R.string.title_warning)
-            setMessage(R.string.message_blocked_local)
-            setNegativeButton(android.R.string.cancel, null)
-            setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
-        }.resizeAndShow()
+        AlertDialog.Builder(this)
+            .setCancelable(true)
+            .setTitle(R.string.title_warning)
+            .setMessage(R.string.message_blocked_local)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
+            .resizeAndShow()
 
     override fun showSnackbar(@StringRes resource: Int) = snackbar(resource)
 
