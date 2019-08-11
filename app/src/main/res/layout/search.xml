@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,25 +16,41 @@
     android:descendantFocusability="beforeDescendants"
     android:elevation="2dp"
     android:focusableInTouchMode="true"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="horizontal">
 
     <acr.browser.lightning.view.SearchView
         android:id="@+id/search"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:background="@null"
+        android:completionThreshold="1"
+        android:drawablePadding="3dp"
+        android:dropDownAnchor="@+id/toolbar_layout"
+        android:dropDownWidth="match_parent"
         android:gravity="left|center_vertical"
         android:hint="@string/search_hint"
         android:imeOptions="actionGo"
-        android:inputType="textUri"
-        android:paddingBottom="1dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="5dp"
         android:importantForAutofill="no"
-        android:paddingTop="1dp"
+        android:inputType="textUri"
         android:maxLines="1"
+        android:paddingLeft="8dp"
+        android:paddingTop="1dp"
+        android:selectAllOnFocus="true"
         android:textColor="@color/gray_dark"
         android:textColorHint="@color/hint_text"
-        android:textCursorDrawable="@null"/>
+        android:textCursorDrawable="@null"
+        app:layout_constraintEnd_toStartOf="@+id/search_refresh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-</LinearLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/search_refresh"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

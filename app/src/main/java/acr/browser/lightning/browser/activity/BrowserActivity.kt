@@ -94,6 +94,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
+import kotlinx.android.synthetic.main.search.*
 import kotlinx.android.synthetic.main.search_interface.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.io.IOException
@@ -170,7 +171,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var deleteIconDrawable: Drawable? = null
     private var refreshIconDrawable: Drawable? = null
     private var clearIconDrawable: Drawable? = null
-    private var iconDrawable: Drawable? = null
     private var sslDrawable: Drawable? = null
 
     private var presenter: BrowserPresenter? = null
@@ -355,25 +355,17 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         customView.findViewById<FrameLayout>(R.id.arrow_button).setOnClickListener(this)
 
-        val iconBounds = Utils.dpToPx(24f)
         backgroundColor = ThemeUtils.getPrimaryColor(this)
-        deleteIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, isDarkTheme).apply {
-            setBounds(0, 0, iconBounds, iconBounds)
-        }
-        refreshIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_refresh, isDarkTheme).apply {
-            setBounds(0, 0, iconBounds, iconBounds)
-        }
-        clearIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, isDarkTheme).apply {
-            setBounds(0, 0, iconBounds, iconBounds)
-        }
+        deleteIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, isDarkTheme)
+        refreshIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_refresh, isDarkTheme)
+        clearIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, isDarkTheme)
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
             setHintTextColor(ThemeUtils.getThemedTextHintColor(isDarkTheme))
             setTextColor(if (isDarkTheme) Color.WHITE else Color.BLACK)
-            iconDrawable = refreshIconDrawable
-            compoundDrawablePadding = Utils.dpToPx(3f)
-            setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, refreshIconDrawable, null)
+            setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
+            search_refresh.setImageDrawable(refreshIconDrawable)
 
             val searchListener = SearchListenerClass()
             setOnKeyListener(searchListener)
@@ -385,9 +377,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             initializeSearchSuggestions(this)
         }
 
-        searchView?.onRightDrawableClickListener = {
-            if (it.hasFocus()) {
-                it.setText("")
+        search_refresh.setOnClickListener {
+            if (searchView?.hasFocus() == true) {
+                searchView?.setText("")
             } else {
                 refreshOrStop()
             }
@@ -525,8 +517,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
                 // Hack to make sure the text gets selected
                 (v as SearchView).selectAll()
-                iconDrawable = clearIconDrawable
-                searchView?.setCompoundDrawablesWithIntrinsicBounds(null, null, clearIconDrawable, null)
+                searchView?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                search_refresh.setImageDrawable(clearIconDrawable)
             }
 
             if (!hasFocus) {
@@ -958,7 +950,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
         }
 
-        searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, iconDrawable, null)
+        searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
     }
 
     override fun tabChanged(tab: LightningView) {
@@ -1385,12 +1377,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * previously searched URLs
      */
     private fun initializeSearchSuggestions(getUrl: AutoCompleteTextView) {
-
-        suggestionsAdapter = SuggestionsAdapter(this, isDarkTheme, isIncognito())
-
-        getUrl.threshold = 1
-        getUrl.dropDownWidth = -1
-        getUrl.dropDownAnchor = R.id.toolbar_layout
         getUrl.onItemClickListener = OnItemClickListener { _, view, _, _ ->
             var url: String? = null
             val urlString = (view.findViewById<View>(R.id.url) as TextView).text
@@ -1412,8 +1398,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             presenter?.onAutoCompleteItemPressed()
         }
 
-        getUrl.setSelectAllOnFocus(true)
-        getUrl.setAdapter<SuggestionsAdapter>(suggestionsAdapter)
+        getUrl.setAdapter(SuggestionsAdapter(this, isDarkTheme, isIncognito()))
     }
 
     /**
@@ -1887,8 +1872,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun setIsLoading(isLoading: Boolean) {
         if (searchView?.hasFocus() == false) {
-            iconDrawable = if (isLoading) deleteIconDrawable else refreshIconDrawable
-            searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, iconDrawable, null)
+            searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
+            search_refresh.setImageDrawable(if (isLoading) deleteIconDrawable else refreshIconDrawable)
         }
     }
 

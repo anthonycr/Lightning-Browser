@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.appcompat.R
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
+import java.util.concurrent.TimeUnit
 
 class SearchView @JvmOverloads constructor(
     context: Context,
@@ -18,38 +19,26 @@ class SearchView @JvmOverloads constructor(
     }
 
     var onPreFocusListener: PreFocusListener? = null
-    var onRightDrawableClickListener: ((SearchView) -> Unit)? = null
     private var isBeingClicked: Boolean = false
-    private var timePressed: Long = 0
+    private var timePressedNs: Long = 0
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                timePressed = System.currentTimeMillis()
+                timePressedNs = System.nanoTime()
                 isBeingClicked = true
             }
             MotionEvent.ACTION_CANCEL -> isBeingClicked = false
-            MotionEvent.ACTION_UP -> if (isBeingClicked && !isLongPress(timePressed)) {
+            MotionEvent.ACTION_UP -> if (isBeingClicked && !isLongPress(timePressedNs)) {
                 onPreFocusListener?.onPreFocus()
             }
         }
-
-        compoundDrawables[2]
-            ?.takeIf { event.x > (width - paddingRight - it.intrinsicWidth) }
-            ?.let {
-                if (event.action == MotionEvent.ACTION_UP) {
-                    onRightDrawableClickListener?.invoke(this@SearchView)
-                }
-                return true
-            }
-
 
         return super.onTouchEvent(event)
     }
 
     private fun isLongPress(actionDownTime: Long): Boolean =
-        System.currentTimeMillis() - actionDownTime >= ViewConfiguration.getLongPressTimeout()
+        TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - actionDownTime) >= ViewConfiguration.getLongPressTimeout()
 
 
 }
