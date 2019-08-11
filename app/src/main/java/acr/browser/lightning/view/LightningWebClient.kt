@@ -275,7 +275,11 @@ class LightningWebClient(
     }
 
     private fun continueLoadingUrl(webView: WebView, url: String, headers: Map<String, String>): Boolean {
-        if (!URLUtil.isNetworkUrl(url)) {
+        if (!URLUtil.isNetworkUrl(url)
+            && !URLUtil.isFileUrl(url)
+            && !URLUtil.isAboutUrl(url)
+            && !URLUtil.isDataUrl(url)
+            && !URLUtil.isJavaScriptUrl(url)) {
             webView.stopLoading()
             return true
         }
