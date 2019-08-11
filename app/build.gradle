@@ -161,7 +161,7 @@ dependencies {
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha03'
 }
 
 kapt {
@@ -171,11 +171,11 @@ kapt {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     kotlinOptions {
-        jvmTarget = '1.6'
+        jvmTarget = '1.8'
         kotlinOptions {
             freeCompilerArgs += ['-XXLanguage:+InlineClasses']
             freeCompilerArgs += ['-progressive']
