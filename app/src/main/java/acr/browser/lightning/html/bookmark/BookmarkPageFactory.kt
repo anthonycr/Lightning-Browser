@@ -125,15 +125,15 @@ class BookmarkPageFactory @Inject constructor(
                     .subscribe()
             }
 
-            "$FILE$faviconFile"
+            faviconFile
         } else {
-            "$FILE$defaultIconFile"
+            defaultIconFile
         }
 
         return BookmarkViewModel(
             title = entry.title,
             url = entry.url,
-            iconUrl = iconUrl
+            iconUrl = iconUrl.toString()
         )
     }
 
