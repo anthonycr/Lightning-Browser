@@ -23,10 +23,7 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.extensions.doOnLayout
-import acr.browser.lightning.extensions.removeFromParent
-import acr.browser.lightning.extensions.resizeAndShow
-import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.extensions.*
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
@@ -82,6 +79,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -170,9 +168,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     // Image
     private var webPageBitmap: Bitmap? = null
     private val backgroundDrawable = ColorDrawable()
-    private var deleteIconDrawable: Drawable? = null
-    private var refreshIconDrawable: Drawable? = null
-    private var clearIconDrawable: Drawable? = null
     private var sslDrawable: Drawable? = null
 
     private var presenter: BrowserPresenter? = null
@@ -291,7 +286,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setNavigationDrawerWidth()
         drawer_layout.addDrawerListener(DrawerLocker())
 
-        webPageBitmap = ThemeUtils.getThemedBitmap(this, R.drawable.ic_webpage, isDarkTheme)
+        webPageBitmap = drawable(R.drawable.ic_webpage).toBitmap()
 
         val fragmentManager = supportFragmentManager
 
@@ -348,7 +343,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 // Post drawer locking in case the activity is being recreated
                 mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer()) }
                 it.setImageResource(R.drawable.ic_action_home)
-                it.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
             }
         }
 
@@ -358,16 +352,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         customView.findViewById<FrameLayout>(R.id.arrow_button).setOnClickListener(this)
 
         backgroundColor = ThemeUtils.getPrimaryColor(this)
-        deleteIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, isDarkTheme)
-        refreshIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_refresh, isDarkTheme)
-        clearIconDrawable = ThemeUtils.getThemedDrawable(this, R.drawable.ic_action_delete, isDarkTheme)
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
             setHintTextColor(ThemeUtils.getThemedTextHintColor(isDarkTheme))
             setTextColor(if (isDarkTheme) Color.WHITE else Color.BLACK)
             setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
-            search_refresh.setImageDrawable(refreshIconDrawable)
+            search_refresh.setImageResource(R.drawable.ic_action_refresh)
 
             val searchListener = SearchListenerClass()
             setOnKeyListener(searchListener)
@@ -520,7 +511,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 // Hack to make sure the text gets selected
                 (v as SearchView).selectAll()
                 searchView?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
-                search_refresh.setImageDrawable(clearIconDrawable)
+                search_refresh.setImageResource(R.drawable.ic_action_delete)
             }
 
             if (!hasFocus) {
@@ -608,7 +599,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             if (!isIncognito() && !colorMode && !isDarkTheme) {
                 changeToolbarBackground(webBitmap, null)
             } else if (!isIncognito() && currentView != null && !isDarkTheme) {
-                changeToolbarBackground(currentView.favicon, null)
+                changeToolbarBackground(currentView.favicon ?: webBitmap, null)
             } else if (!isIncognito() && !isDarkTheme) {
                 changeToolbarBackground(webBitmap, null)
             }
@@ -617,8 +608,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val manager = supportFragmentManager
         val tabsFragment = manager.findFragmentByTag(TAG_TABS_FRAGMENT) as? TabsFragment
         tabsFragment?.reinitializePreferences()
-        val bookmarksFragment = manager.findFragmentByTag(TAG_BOOKMARK_FRAGMENT)as? BookmarksFragment
-        bookmarksFragment?.reinitializePreferences()
 
         // TODO layout transition causing memory leak
         //        content_frame.setLayoutTransition(new LayoutTransition());
@@ -768,7 +757,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                     && currentView.url.isNotBlank()
                     && !UrlUtils.isSpecialUrl(currentView.url)) {
                     HistoryEntry(currentView.url, currentView.title).also {
-                        Utils.createShortcut(this, it, currentView.favicon)
+                        Utils.createShortcut(this, it, currentView.favicon ?: webPageBitmap!!)
                         logger.log(TAG, "Creating shortcut: ${it.title} ${it.url}")
                     }
                 }
@@ -941,12 +930,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         sslDrawable = when (sslState) {
             is SSLState.None -> null
             is SSLState.Valid -> {
-                val bitmap = DrawableUtils.getImageInsetInRoundedSquare(this, R.drawable.ic_secured, R.color.ssl_secured)
+                val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_secured)
                 val securedDrawable = BitmapDrawable(resources, bitmap)
                 securedDrawable
             }
             is SSLState.Invalid -> {
-                val bitmap = DrawableUtils.getImageInsetInRoundedSquare(this, R.drawable.ic_unsecured, R.color.ssl_unsecured)
+                val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_unsecured)
                 val unsecuredDrawable = BitmapDrawable(resources, bitmap)
                 unsecuredDrawable
             }
@@ -1280,12 +1269,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param favicon the Bitmap to extract the color from
      * @param tabBackground the optional LinearLayout to color
      */
-    override fun changeToolbarBackground(favicon: Bitmap, tabBackground: Drawable?) {
+    override fun changeToolbarBackground(favicon: Bitmap?, tabBackground: Drawable?) {
         val defaultColor = ContextCompat.getColor(this, R.color.primary_color)
         if (currentUiColor == Color.BLACK) {
             currentUiColor = defaultColor
         }
-        Palette.from(favicon).generate { palette ->
+        Palette.from(favicon ?: webPageBitmap!!).generate { palette ->
             // OR with opaque black to remove transparency glitches
             val color = Color.BLACK or (palette?.getVibrantColor(defaultColor) ?: defaultColor)
 
@@ -1351,7 +1340,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun updateTabNumber(number: Int) {
         if (shouldShowTabsInDrawer) {
             if (isIncognito()) {
-                arrowImageView?.setImageDrawable(ThemeUtils.getThemedDrawable(this, R.drawable.incognito_mode, true))
+                arrowImageView?.setImageResource(R.drawable.incognito_mode)
             } else {
                 arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
                     Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
@@ -1875,7 +1864,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun setIsLoading(isLoading: Boolean) {
         if (searchView?.hasFocus() == false) {
             searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
-            search_refresh.setImageDrawable(if (isLoading) deleteIconDrawable else refreshIconDrawable)
+            search_refresh.setImageResource(if (isLoading) R.drawable.ic_action_delete else R.drawable.ic_action_refresh)
         }
     }
 

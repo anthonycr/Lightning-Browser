@@ -46,7 +46,7 @@ interface UIController {
      * @param tabBackground the background of the tab, only used when tabs are not displayed in the
      * drawer.
      */
-    fun changeToolbarBackground(favicon: Bitmap, tabBackground: Drawable?)
+    fun changeToolbarBackground(favicon: Bitmap?, tabBackground: Drawable?)
 
     /**
      * Updates the current URL of the page.

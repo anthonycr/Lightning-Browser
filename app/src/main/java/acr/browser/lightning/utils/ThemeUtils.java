@@ -12,15 +12,15 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.TypedValue;
+
+import acr.browser.lightning.R;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import android.util.TypedValue;
-
-import acr.browser.lightning.R;
 
 public final class ThemeUtils {
 
@@ -162,7 +162,7 @@ public final class ThemeUtils {
      * @return a themed icon.
      */
     @NonNull
-    public static Bitmap getThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
+    public static Bitmap createThemedBitmap(@NonNull Context context, @DrawableRes int res, boolean dark) {
         int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
 
         Bitmap sourceBitmap = getBitmapFromVectorDrawable(context, res);
@@ -175,26 +175,6 @@ public final class ThemeUtils {
         canvas.drawBitmap(sourceBitmap, 0, 0, p);
         sourceBitmap.recycle();
         return resultBitmap;
-    }
-
-    /**
-     * Gets the icon with an applied color filter
-     * for the correct theme.
-     *
-     * @param context the context to use.
-     * @param res     the drawable resource to use.
-     * @param dark    true for icon suitable for use with a dark theme,
-     *                false for icon suitable for use with a light theme.
-     * @return a themed icon.
-     */
-    @NonNull
-    public static Drawable getThemedDrawable(@NonNull Context context, @DrawableRes int res, boolean dark) {
-        int color = dark ? getIconDarkThemeColor(context) : getIconLightThemeColor(context);
-
-        final Drawable drawable = getVectorDrawable(context, res);
-        drawable.mutate();
-        drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-        return drawable;
     }
 
     /**

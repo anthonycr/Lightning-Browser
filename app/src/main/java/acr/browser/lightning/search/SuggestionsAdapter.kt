@@ -11,14 +11,13 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.NetworkScheduler
 import acr.browser.lightning.di.injector
+import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.suggestions.NoOpSuggestionsRepository
 import acr.browser.lightning.search.suggestions.SuggestionsRepository
-import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,10 +48,6 @@ class SuggestionsAdapter(
     private val bookmarks = arrayListOf<Bookmark.Entry>()
     private val suggestions = arrayListOf<SearchSuggestion>()
 
-    private val searchDrawable: Drawable
-    private val historyDrawable: Drawable
-    private val bookmarkDrawable: Drawable
-
     private val filterComparator = SuggestionsComparator()
 
     @Inject internal lateinit var bookmarkManager: BookmarkRepository
@@ -67,6 +62,10 @@ class SuggestionsAdapter(
     private val allBookmarks = arrayListOf<Bookmark.Entry>()
     private val darkTheme: Boolean
     private val searchFilter: SearchFilter
+
+    private val searchIcon = context.drawable(R.drawable.ic_search)
+    private val webpageIcon = context.drawable(R.drawable.ic_webpage)
+    private val bookmarkIcon = context.drawable(R.drawable.ic_bookmark)
 
     init {
         context.injector.inject(this)
@@ -87,10 +86,6 @@ class SuggestionsAdapter(
         )
 
         refreshBookmarks()
-
-        searchDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_search, darkTheme)
-        bookmarkDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_bookmark, darkTheme)
-        historyDrawable = ThemeUtils.getThemedDrawable(context, R.drawable.ic_history, darkTheme)
     }
 
     fun refreshPreferences() {
@@ -146,10 +141,9 @@ class SuggestionsAdapter(
         }
 
         val image = when (webPage) {
-            is Bookmark.Entry -> bookmarkDrawable
-            is SearchSuggestion -> searchDrawable
-            is HistoryEntry -> historyDrawable
-            else -> searchDrawable
+            is Bookmark -> bookmarkIcon
+            is SearchSuggestion -> searchIcon
+            is HistoryEntry -> webpageIcon
         }
 
         holder.imageView.setImageDrawable(image)

@@ -9,7 +9,7 @@ import android.graphics.Bitmap
 internal class TabViewState(private val lightningView: LightningView) {
 
     val title: String = lightningView.title
-    val favicon: Bitmap = lightningView.favicon
+    val favicon: Bitmap? = lightningView.favicon
     val isForegroundTab = lightningView.isForegroundTab
 
     override fun equals(other: Any?): Boolean =

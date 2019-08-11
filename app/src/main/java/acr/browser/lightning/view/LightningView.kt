@@ -154,8 +154,8 @@ class LightningView(
      *
      * @return a non-null Bitmap with the current favicon.
      */
-    val favicon: Bitmap
-        get() = titleInfo.getFavicon(uiController.getUseDarkTheme())
+    val favicon: Bitmap?
+        get() = titleInfo.getFavicon()
 
     /**
      * Get the current title of the page, retrieved from the title object.

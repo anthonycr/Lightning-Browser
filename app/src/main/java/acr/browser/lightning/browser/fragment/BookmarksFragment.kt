@@ -20,11 +20,11 @@ import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.drawable
 import acr.browser.lightning.favicon.FaviconModel
-import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.UrlUtils
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
@@ -56,8 +56,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     // Dialog builder
     @Inject internal lateinit var bookmarksDialogBuilder: LightningDialogBuilder
 
-    @Inject internal lateinit var userPreferences: UserPreferences
-
     @Inject internal lateinit var faviconModel: FaviconModel
 
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
@@ -70,17 +68,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     // Adapter
     private var bookmarkAdapter: BookmarkListAdapter? = null
 
-    // Preloaded images
-    private var webPageBitmap: Bitmap? = null
-    private var folderBitmap: Bitmap? = null
-
     // Colors
-    private var iconColor: Int = 0
     private var scrollIndex: Int = 0
 
     private var isIncognito: Boolean = false
-
-    private var darkTheme: Boolean = false
 
     private var bookmarksSubscription: Disposable? = null
     private var bookmarkUpdateSubscription: Disposable? = null
@@ -95,10 +86,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
         uiController = context as UIController
         isIncognito = arguments?.getBoolean(INCOGNITO_MODE, false) == true
-        darkTheme = userPreferences.useTheme != 0 || isIncognito
-        webPageBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_webpage, darkTheme)
-        folderBitmap = ThemeUtils.getThemedBitmap(context, R.drawable.ic_folder, darkTheme)
-        iconColor = ThemeUtils.getIconThemeColor(context, darkTheme)
     }
 
     override fun onResume() {
@@ -114,23 +101,20 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bookmark_back_button_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-        val backView = view.findViewById<View>(R.id.bookmark_back_button)
-        backView.setOnClickListener {
+        view.findViewById<View>(R.id.bookmark_back_button).setOnClickListener {
             if (!uiModel.isCurrentFolderRoot()) {
                 setBookmarksShown(null, true)
                 bookmark_list_view?.layoutManager?.scrollToPosition(scrollIndex)
             }
         }
-        setupNavigationButton(view, R.id.action_add_bookmark, R.id.action_add_bookmark_image)
-        setupNavigationButton(view, R.id.action_reading, R.id.action_reading_image)
-        setupNavigationButton(view, R.id.action_page_tools, R.id.action_page_tools_image)
+        setupNavigationButton(view, R.id.action_add_bookmark)
+        setupNavigationButton(view, R.id.action_reading)
+        setupNavigationButton(view, R.id.action_page_tools)
 
 
         bookmarkAdapter = BookmarkListAdapter(
+            view.context,
             faviconModel,
-            folderBitmap!!,
-            webPageBitmap!!,
             networkScheduler,
             mainScheduler,
             this::handleItemLongPress,
@@ -165,14 +149,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
     private fun getTabsManager(): TabsManager = uiController.getTabModel()
 
-    fun reinitializePreferences() {
-        val activity = activity ?: return
-        val darkTheme = userPreferences.useTheme != 0 || isIncognito
-        webPageBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_webpage, darkTheme)
-        folderBitmap = ThemeUtils.getThemedBitmap(activity, R.drawable.ic_folder, darkTheme)
-        iconColor = ThemeUtils.getIconThemeColor(activity, darkTheme)
-    }
-
     private fun updateBookmarkIndicator(url: String) {
         bookmarkUpdateSubscription?.dispose()
         bookmarkUpdateSubscription = bookmarkModel.isBookmark(url)
@@ -189,7 +165,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                     action_add_bookmark_image?.setColorFilter(ThemeUtils.getAccentColor(activity), PorterDuff.Mode.SRC_IN)
                 } else {
                     action_add_bookmark_image?.setImageResource(R.drawable.ic_action_star)
-                    action_add_bookmark_image?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
+                    action_add_bookmark_image?.clearColorFilter()
                 }
             }
     }
@@ -237,12 +213,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         }
     }
 
-    private fun setupNavigationButton(view: View, @IdRes buttonId: Int, @IdRes imageId: Int) {
+    private fun setupNavigationButton(view: View, @IdRes buttonId: Int) {
         val frameButton = view.findViewById<FrameLayout>(buttonId)
         frameButton.setOnClickListener(this)
         frameButton.setOnLongClickListener(this)
-        val buttonImage = view.findViewById<ImageView>(imageId)
-        buttonImage.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
     }
 
     private fun handleItemLongPress(bookmark: Bookmark): Boolean {
@@ -288,12 +262,6 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     private fun showPageToolsDialog(activity: Activity) {
         val currentTab = getTabsManager().currentTab ?: return
         val isAllowedAds = whitelistModel.isUrlAllowedAds(currentTab.url)
-        val whitelistColor = if (isAllowedAds) {
-            ThemeUtils.getIconThemeColor(activity, darkTheme)
-        } else {
-
-            activity.color(R.color.error_red)
-        }
         val whitelistString = if (isAllowedAds) {
             R.string.dialog_adblock_enable_for_site
         } else {
@@ -302,9 +270,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
         BrowserDialog.showWithIcons(activity, activity.getString(R.string.dialog_tools_title),
             DialogItem(
-                activity.drawable(R.drawable.ic_action_desktop),
-                ThemeUtils.getIconThemeColor(activity, darkTheme),
-                R.string.dialog_toggle_desktop
+                icon = activity.drawable(R.drawable.ic_action_desktop),
+                title = R.string.dialog_toggle_desktop
             ) {
                 getTabsManager().currentTab?.apply {
                     toggleDesktopUA()
@@ -313,10 +280,10 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                 }
             },
             DialogItem(
-                activity.drawable(R.drawable.ic_block),
-                whitelistColor,
-                whitelistString,
-                !UrlUtils.isSpecialUrl(currentTab.url)
+                icon = activity.drawable(R.drawable.ic_block),
+                colorTint = activity.color(R.color.error_red).takeIf { isAllowedAds },
+                title = whitelistString,
+                isConditionMet = !UrlUtils.isSpecialUrl(currentTab.url)
             ) {
                 if (isAllowedAds) {
                     whitelistModel.removeUrlFromAllowList(currentTab.url)
@@ -374,9 +341,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
     }
 
     private class BookmarkListAdapter(
+        context: Context,
         private val faviconModel: FaviconModel,
-        private val folderBitmap: Bitmap,
-        private val webPageBitmap: Bitmap,
         private val networkScheduler: Scheduler,
         private val mainScheduler: Scheduler,
         private val onItemLongClickListener: (Bookmark) -> Boolean,
@@ -385,6 +351,8 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
 
         private var bookmarks: List<BookmarkViewModel> = listOf()
         private val faviconFetchSubscriptions = ConcurrentHashMap<String, Disposable>()
+        private val folderIcon = context.drawable(R.drawable.ic_folder)
+        private val webpageIcon = context.drawable(R.drawable.ic_webpage)
 
         fun itemAt(position: Int): BookmarkViewModel = bookmarks[position]
 
@@ -432,22 +400,26 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
             val viewModel = bookmarks[position]
             holder.txtTitle.text = viewModel.bookmark.title
 
+            val url = viewModel.bookmark.url
+            holder.favicon.tag = url
 
-            val bitmap = viewModel.icon ?: when (viewModel.bookmark) {
-                is Bookmark.Folder -> folderBitmap
-                is Bookmark.Entry -> webPageBitmap.also {
-                    holder.favicon.tag = viewModel.bookmark.url.hashCode()
+            viewModel.icon?.let {
+                holder.favicon.setImageBitmap(it)
+                return
+            }
 
-                    val url = viewModel.bookmark.url
-
+            val imageDrawable = when (viewModel.bookmark) {
+                is Bookmark.Folder -> folderIcon
+                is Bookmark.Entry -> webpageIcon.also {
                     faviconFetchSubscriptions[url]?.dispose()
-                    faviconFetchSubscriptions[url] = faviconModel.faviconForUrl(url, viewModel.bookmark.title)
+                    faviconFetchSubscriptions[url] = faviconModel
+                        .faviconForUrl(url, viewModel.bookmark.title)
                         .subscribeOn(networkScheduler)
                         .observeOn(mainScheduler)
                         .subscribeBy(
                             onSuccess = { bitmap ->
                                 viewModel.icon = bitmap
-                                if (holder.favicon.tag == url.hashCode()) {
+                                if (holder.favicon.tag == url) {
                                     holder.favicon.setImageBitmap(bitmap)
                                 }
                             }
@@ -455,8 +427,7 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
                 }
             }
 
-            holder.favicon.setImageBitmap(bitmap)
-
+            holder.favicon.setImageDrawable(imageDrawable)
         }
 
         override fun getItemCount() = bookmarks.size

@@ -49,8 +49,6 @@ import javax.inject.Inject
 class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener, TabsView {
 
     private var isIncognito: Boolean = false
-    private var darkTheme: Boolean = false
-    private var iconColor: Int = 0
     private var colorMode = true
     private var showInNavigationDrawer: Boolean = false
 
@@ -62,15 +60,12 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injector.inject(this)
-        val context = requireNotNull(context) { "Context should never be null in onCreate" }
         uiController = activity as UIController
         isIncognito = arguments?.getBoolean(IS_INCOGNITO, false) == true
         showInNavigationDrawer = arguments?.getBoolean(VERTICAL_MODE, true) == true
-        darkTheme = userPreferences.useTheme != 0 || isIncognito
+        val darkTheme = userPreferences.useTheme != 0 || isIncognito
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
-
-        iconColor = ThemeUtils.getIconThemeColor(context, darkTheme)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,11 +73,11 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         val context = inflater.context
         if (showInNavigationDrawer) {
             view = inflater.inflate(R.layout.tab_drawer, container, false)
-            setupFrameLayoutButton(view, R.id.tab_header_button, R.id.plusIcon)
-            setupFrameLayoutButton(view, R.id.new_tab_button, R.id.icon_plus)
-            setupFrameLayoutButton(view, R.id.action_back, R.id.icon_back)
-            setupFrameLayoutButton(view, R.id.action_forward, R.id.icon_forward)
-            setupFrameLayoutButton(view, R.id.action_home, R.id.icon_home)
+            setupFrameLayoutButton(view, R.id.tab_header_button)
+            setupFrameLayoutButton(view, R.id.new_tab_button)
+            setupFrameLayoutButton(view, R.id.action_back)
+            setupFrameLayoutButton(view, R.id.action_forward)
+            setupFrameLayoutButton(view, R.id.action_home)
         } else {
             view = inflater.inflate(R.layout.tab_strip, container, false)
             view.findViewById<ImageView>(R.id.new_tab_button).apply {
@@ -134,13 +129,10 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
     private fun getTabsManager(): TabsManager = uiController.getTabModel()
 
-    private fun setupFrameLayoutButton(root: View, @IdRes buttonId: Int,
-                                       @IdRes imageId: Int) {
+    private fun setupFrameLayoutButton(root: View, @IdRes buttonId: Int) {
         val frameButton = root.findViewById<View>(buttonId)
-        val buttonImage = root.findViewById<ImageView>(imageId)
         frameButton.setOnClickListener(this)
         frameButton.setOnLongClickListener(this)
-        buttonImage.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
     }
 
     override fun onResume() {
@@ -154,11 +146,9 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
     }
 
     fun reinitializePreferences() {
-        val activity = activity ?: return
-        darkTheme = userPreferences.useTheme != 0 || isIncognito
+        val darkTheme = userPreferences.useTheme != 0 || isIncognito
         colorMode = userPreferences.colorModeEnabled
         colorMode = colorMode and !darkTheme
-        iconColor = ThemeUtils.getIconThemeColor(activity, darkTheme)
         tabsAdapter?.notifyDataSetChanged()
     }
 
@@ -280,12 +270,15 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
             viewHolder.txtTitle.text = title
         }
 
-        private fun updateViewHolderFavicon(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) =
-            if (isForeground) {
-                viewHolder.favicon.setImageBitmap(favicon)
-            } else {
-                viewHolder.favicon.setImageBitmap(favicon.desaturate())
-            }
+        private fun updateViewHolderFavicon(viewHolder: LightningViewHolder, favicon: Bitmap?, isForeground: Boolean) {
+            favicon?.let {
+                if (isForeground) {
+                    viewHolder.favicon.setImageBitmap(it)
+                } else {
+                    viewHolder.favicon.setImageBitmap(it.desaturate())
+                }
+            } ?: viewHolder.favicon.setImageResource(R.drawable.ic_webpage)
+        }
 
         private fun updateViewHolderBackground(viewHolder: LightningViewHolder, isForeground: Boolean) {
             if (drawerTabs) {
@@ -299,7 +292,7 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
             }
         }
 
-        private fun updateViewHolderAppearance(viewHolder: LightningViewHolder, favicon: Bitmap, isForeground: Boolean) {
+        private fun updateViewHolderAppearance(viewHolder: LightningViewHolder, favicon: Bitmap?, isForeground: Boolean) {
             if (isForeground) {
                 var foregroundDrawable: Drawable? = null
                 if (!drawerTabs) {
@@ -329,12 +322,10 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
 
             val txtTitle: TextView = view.findViewById(R.id.textTab)
             val favicon: ImageView = view.findViewById(R.id.faviconTab)
-            val exit: ImageView = view.findViewById(R.id.deleteButton)
             val exitButton: FrameLayout = view.findViewById(R.id.deleteAction)
             val layout: LinearLayout = view.findViewById(R.id.tab_item_background)
 
             init {
-                exit.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
                 exitButton.setOnClickListener(this)
                 layout.setOnClickListener(this)
                 layout.setOnLongClickListener(this)

@@ -3,10 +3,7 @@ package acr.browser.lightning.reading.activity;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,10 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class ReadingActivity extends AppCompatActivity {
 
@@ -131,19 +125,6 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.reading, menu);
-        MenuItem invert = menu.findItem(R.id.invert_item);
-        MenuItem textSize = menu.findItem(R.id.text_size_item);
-
-        int iconColor = ThemeUtils.getIconThemeColor(this, mInvert);
-
-        if (invert != null && invert.getIcon() != null) {
-            invert.getIcon().mutate().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
-        }
-
-        if (textSize != null && textSize.getIcon() != null) {
-            textSize.getIcon().mutate().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
-        }
-
         return super.onCreateOptionsMenu(menu);
     }
 
