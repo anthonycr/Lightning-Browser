@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="#000000"
+            android:textColor="?attr/autoCompleteTitleColor"
             android:textSize="18sp"/>
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="#6a6a6a"/>
+            android:textColor="?attr/autoCompleteUrlColor"/>
     </LinearLayout>
 
 </LinearLayout>

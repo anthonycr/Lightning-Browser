@@ -355,8 +355,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
-            setHintTextColor(ThemeUtils.getThemedTextHintColor(isDarkTheme))
-            setTextColor(if (isDarkTheme) Color.WHITE else Color.BLACK)
             setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
             search_refresh.setImageResource(R.drawable.ic_action_refresh)
 

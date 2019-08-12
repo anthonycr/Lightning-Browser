@@ -51,6 +51,9 @@
 
         <item name="iconColor">@color/icon_light_theme</item>
 
+        <item name="autoCompleteTitleColor">@color/black</item>
+        <item name="autoCompleteUrlColor">@color/hint_text_light_theme</item>
+
         <item name="selectedBackground">@color/selected_light</item>
 
         <item name="windowNoTitle">true</item>
@@ -76,6 +79,9 @@
 
         <item name="iconColor">@color/icon_dark_theme</item>
 
+        <item name="autoCompleteTitleColor">@color/white</item>
+        <item name="autoCompleteUrlColor">@color/hint_text_dark_theme</item>
+
         <item name="selectedBackground">@color/selected_dark</item>
 
         <item name="windowNoTitle">true</item>
@@ -99,6 +105,9 @@
         <item name="dividerColor">@color/black</item>
 
         <item name="iconColor">@color/icon_dark_theme</item>
+
+        <item name="autoCompleteTitleColor">@color/white</item>
+        <item name="autoCompleteUrlColor">@color/hint_text_dark_theme</item>
 
         <item name="selectedBackground">@color/selected_dark</item>
 

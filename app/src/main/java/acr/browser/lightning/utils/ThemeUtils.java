@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -175,18 +174,6 @@ public final class ThemeUtils {
         canvas.drawBitmap(sourceBitmap, 0, 0, p);
         sourceBitmap.recycle();
         return resultBitmap;
-    }
-
-    /**
-     * The text hint color for dark theme or light theme.
-     *
-     * @param dark true for a text color suitable for use with a dark theme,
-     *             false for a text color suitable for use with a light theme.
-     * @return a text color.
-     */
-    @ColorInt
-    public static int getThemedTextHintColor(boolean dark) {
-        return 0x80ffffff & (dark ? Color.WHITE : Color.BLACK);
     }
 
     /**
