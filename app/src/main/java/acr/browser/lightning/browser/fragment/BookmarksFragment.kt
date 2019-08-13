@@ -154,17 +154,16 @@ class BookmarksFragment : Fragment(), View.OnClickListener, View.OnLongClickList
         bookmarkUpdateSubscription = bookmarkModel.isBookmark(url)
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
-            .subscribe { boolean ->
+            .subscribe { isBookmark ->
                 bookmarkUpdateSubscription = null
                 val activity = activity
                 if (action_add_bookmark_image == null || activity == null) {
                     return@subscribe
                 }
-                if (boolean) {
-                    action_add_bookmark_image?.setImageResource(R.drawable.ic_bookmark)
+                action_add_bookmark_image.isSelected = isBookmark
+                if (isBookmark) {
                     action_add_bookmark_image?.setColorFilter(ThemeUtils.getAccentColor(activity), PorterDuff.Mode.SRC_IN)
                 } else {
-                    action_add_bookmark_image?.setImageResource(R.drawable.ic_action_star)
                     action_add_bookmark_image?.clearColorFilter()
                 }
             }

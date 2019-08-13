@@ -99,7 +99,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_action_star"/>
+                app:srcCompat="@drawable/state_ic_bookmark"/>
         </FrameLayout>
 
         <FrameLayout
