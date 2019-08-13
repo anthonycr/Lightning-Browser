@@ -7,8 +7,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
@@ -205,25 +203,6 @@ public final class Utils {
             ".jpg", /* suffix */
             storageDir /* directory */
         );
-    }
-
-    /**
-     * Checks if flash player is installed
-     *
-     * @param context the context needed to obtain the PackageManager
-     * @return true if flash is installed, false otherwise
-     */
-    public static boolean isFlashInstalled(@NonNull Context context) {
-        try {
-            PackageManager pm = context.getPackageManager();
-            ApplicationInfo ai = pm.getApplicationInfo("com.adobe.flashplayer", 0);
-            if (ai != null) {
-                return true;
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-        return false;
     }
 
     /**
