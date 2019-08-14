@@ -16,6 +16,8 @@ import android.os.StrictMode
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
 import com.squareup.leakcanary.LeakCanary
+import de.cotech.hw.SecurityKeyManager
+import de.cotech.hw.SecurityKeyManagerConfig
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
@@ -94,6 +96,12 @@ class BrowserApp : Application() {
                 MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
             }
         })
+
+        val securityKeyManager = SecurityKeyManager.getInstance()
+        val config = SecurityKeyManagerConfig.Builder()
+                .setEnableDebugLogging(BuildConfig.DEBUG)
+                .build()
+        securityKeyManager.init(this, config)
     }
 
     /**

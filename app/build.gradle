@@ -162,6 +162,9 @@ dependencies {
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'androidx.core:core-ktx:1.2.0-alpha03'
+
+    // FIDO
+    implementation 'com.github.cotechde.hwsecurity:hwsecurity-fido:2.4.1'
 }
 
 kapt {

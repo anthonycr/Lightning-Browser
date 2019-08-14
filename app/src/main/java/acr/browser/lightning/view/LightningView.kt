@@ -34,7 +34,9 @@ import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
+import de.cotech.hw.fido.WebViewFidoBridge
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -182,6 +184,7 @@ class LightningView(
 
         maxFling = ViewConfiguration.get(activity).scaledMaximumFlingVelocity.toFloat()
         lightningWebClient = LightningWebClient(activity, this)
+
         gestureDetector = GestureDetector(activity, CustomGestureListener())
 
         val tab = WebView(activity).also { webView = it }.apply {
@@ -212,6 +215,8 @@ class LightningView(
             setOnTouchListener(TouchListener())
             initializeSettings()
         }
+        var webViewFidoBridge = WebViewFidoBridge.createInstanceForWebView(activity as AppCompatActivity, tab)
+        lightningWebClient.webViewFidoBridge = webViewFidoBridge;
         initializePreferences()
 
         tabInitializer.initialize(tab, requestHeaders)
@@ -219,6 +224,8 @@ class LightningView(
         networkDisposable = networkConnectivityModel.connectivity()
             .observeOn(mainScheduler)
             .subscribe(::setNetworkAvailable)
+
+
     }
 
     fun currentSslState(): SSLState = lightningWebClient.sslState

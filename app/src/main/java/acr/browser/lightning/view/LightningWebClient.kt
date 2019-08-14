@@ -31,6 +31,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import com.anthonycr.mezzanine.MezzanineGenerator
+import de.cotech.hw.fido.WebViewFidoBridge
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream
@@ -73,6 +74,8 @@ class LightningWebClient(
 
     private val sslStateSubject: PublishSubject<SSLState> = PublishSubject.create()
 
+    var webViewFidoBridge: WebViewFidoBridge? = null
+
     init {
         activity.injector.inject(this)
         uiController = activity as UIController
@@ -96,6 +99,7 @@ class LightningWebClient(
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+        webViewFidoBridge?.delegateShouldInterceptRequest(view, request)
         if (shouldRequestBeBlocked(currentUrl, request.url.toString())) {
             val empty = ByteArrayInputStream(emptyResponseByteArray)
             return WebResourceResponse("text/plain", "utf-8", empty)
@@ -132,6 +136,7 @@ class LightningWebClient(
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
+        webViewFidoBridge?.delegateOnPageStarted(view, url, favicon)
         currentUrl = url
         sslState = if (URLUtil.isHttpsUrl(url)) {
             SSLState.Valid
