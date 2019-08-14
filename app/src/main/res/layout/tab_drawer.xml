@@ -73,7 +73,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:tint="?iconColorState"
                 android:contentDescription="@string/action_back"
                 app:srcCompat="@drawable/ic_action_back"/>
         </FrameLayout>
@@ -110,7 +109,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:tint="?iconColorState"
                 android:contentDescription="@string/action_forward"
                 app:srcCompat="@drawable/ic_action_forward"/>
         </FrameLayout>
