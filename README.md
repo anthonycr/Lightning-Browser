@@ -1,13 +1,6 @@
-# Lightning Browser [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
+# Lightning Browser with U2F [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
 
 #### Speed, Simplicity, Security
-![](launcher_icon_small.png)
-
-#### Download
-[<img src="https://f-droid.org/badge/get-it-on.png"
-      alt="Get it on F-Droid"
-      height="80">](https://f-droid.org/app/acr.browser.lightning) [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
-alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=acr.browser.lightning)
 
 #### Master Branch
 * [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=master)](https://travis-ci.org/anthonycr/Lightning-Browser)
@@ -60,11 +53,5 @@ alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/det
 ```
 Copyright 2014 Anthony Restaino
 
-Lightning Browser
-
-   This Source Code Form is subject to the terms of the 
-   Mozilla Public License, v. 2.0. If a copy of the MPL 
-   was not distributed with this file, You can obtain one at 
-   
-   http://mozilla.org/MPL/2.0/
+Based on Lightning Browser that was originally under MPL. Now it's GPLv3.
 ```
