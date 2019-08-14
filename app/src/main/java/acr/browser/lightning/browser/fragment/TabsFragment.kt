@@ -171,6 +171,16 @@ class TabsFragment : Fragment(), View.OnClickListener, View.OnLongClickListener,
         return true
     }
 
+    override fun setGoBackEnabled(isEnabled: Boolean) {
+        view?.findViewById<View>(R.id.action_back)?.isEnabled = isEnabled
+        view?.findViewById<View>(R.id.icon_back)?.isEnabled = isEnabled
+    }
+
+    override fun setGoForwardEnabled(isEnabled: Boolean) {
+        view?.findViewById<View>(R.id.action_forward)?.isEnabled = isEnabled
+        view?.findViewById<View>(R.id.icon_forward)?.isEnabled = isEnabled
+    }
+
     override fun tabAdded() {
         tabsAdapter?.let {
             it.showTabs(toViewModels(getTabsManager().allTabs))

@@ -134,8 +134,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     private var originalOrientation: Int = 0
     private var backgroundColor: Int = 0
-    private var iconColor: Int = 0
-    private var disabledIconColor: Int = 0
     private var currentUiColor = Color.BLACK
     private var keyDownStartTime: Long = 0
     private var searchText: String? = null
@@ -245,12 +243,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         //TODO make sure dark theme flag gets set correctly
         isDarkTheme = userPreferences.useTheme != 0 || isIncognito()
-        iconColor = ThemeUtils.getIconThemeColor(this, isDarkTheme)
-        disabledIconColor = if (isDarkTheme) {
-            ContextCompat.getColor(this, R.color.icon_dark_theme_disabled)
-        } else {
-            ContextCompat.getColor(this, R.color.icon_light_theme_disabled)
-        }
         shouldShowTabsInDrawer = userPreferences.showTabsInDrawer
         swapBookmarksAndTabs = userPreferences.bookmarksAndTabsSwapped
 
@@ -1447,32 +1439,18 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun setForwardButtonEnabled(enabled: Boolean) {
-        val colorFilter = if (enabled) {
-            iconColor
-        } else {
-            disabledIconColor
-        }
-        forwardMenuItem?.icon?.setColorFilter(colorFilter, PorterDuff.Mode.SRC_IN)
-        forwardMenuItem?.icon = forwardMenuItem?.icon
+        forwardMenuItem?.isEnabled = enabled
+        tabsView?.setGoForwardEnabled(enabled)
     }
 
     override fun setBackButtonEnabled(enabled: Boolean) {
-        val colorFilter = if (enabled) {
-            iconColor
-        } else {
-            disabledIconColor
-        }
-        backMenuItem?.icon?.setColorFilter(colorFilter, PorterDuff.Mode.SRC_IN)
-        backMenuItem?.icon = backMenuItem?.icon
+        backMenuItem?.isEnabled = enabled
+        tabsView?.setGoBackEnabled(enabled)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        backMenuItem = menu.findItem(R.id.action_back)?.apply {
-            icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-        }
-        forwardMenuItem = menu.findItem(R.id.action_forward)?.apply {
-            icon?.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-        }
+        backMenuItem = menu.findItem(R.id.action_back)
+        forwardMenuItem = menu.findItem(R.id.action_forward)
         return super.onCreateOptionsMenu(menu)
     }
 

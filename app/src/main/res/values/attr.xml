@@ -2,6 +2,7 @@
 <resources>
 
     <attr name="iconColor" format="reference|color" />
+    <attr name="iconColorState" format="reference|color" />
     <attr name="autoCompleteTitleColor" format="reference|color" />
     <attr name="autoCompleteUrlColor" format="reference|color" />
     <attr name="listBackground" format="reference|color" />

@@ -50,6 +50,7 @@
         <item name="dividerColor">@color/divider_light</item>
 
         <item name="iconColor">@color/icon_light_theme</item>
+        <item name="iconColorState">@color/state_color_icons_light</item>
 
         <item name="autoCompleteTitleColor">@color/black</item>
         <item name="autoCompleteUrlColor">@color/hint_text_light_theme</item>
@@ -78,6 +79,7 @@
         <item name="dividerColor">@color/divider_dark</item>
 
         <item name="iconColor">@color/icon_dark_theme</item>
+        <item name="iconColorState">@color/state_color_icons_dark</item>
 
         <item name="autoCompleteTitleColor">@color/white</item>
         <item name="autoCompleteUrlColor">@color/hint_text_dark_theme</item>
@@ -105,6 +107,7 @@
         <item name="dividerColor">@color/black</item>
 
         <item name="iconColor">@color/icon_dark_theme</item>
+        <item name="iconColorState">@color/state_color_icons_dark</item>
 
         <item name="autoCompleteTitleColor">@color/white</item>
         <item name="autoCompleteUrlColor">@color/hint_text_dark_theme</item>
