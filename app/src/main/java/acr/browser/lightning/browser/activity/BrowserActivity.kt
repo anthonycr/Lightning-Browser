@@ -133,7 +133,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var swapBookmarksAndTabs: Boolean = false
 
     private var originalOrientation: Int = 0
-    private var backgroundColor: Int = 0
     private var currentUiColor = Color.BLACK
     private var keyDownStartTime: Long = 0
     private var searchText: String? = null
@@ -343,8 +342,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getBookmarkDrawer()) }
 
         customView.findViewById<FrameLayout>(R.id.arrow_button).setOnClickListener(this)
-
-        backgroundColor = ThemeUtils.getPrimaryColor(this)
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
@@ -943,9 +940,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         logger.log(TAG, "Remove the tab view")
 
-        // Set the background color so the color mode color doesn't show through
-        content_frame.setBackgroundColor(backgroundColor)
-
         currentTabView.removeFromParent()
 
         currentTabView = null
@@ -963,9 +957,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
         logger.log(TAG, "Setting the tab view")
-
-        // Set the background color so the color mode color doesn't show through
-        content_frame.setBackgroundColor(backgroundColor)
 
         view.removeFromParent()
         currentTabView.removeFromParent()
@@ -987,15 +978,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         // otherwise it will get caught up with the showTab code
         // and cause a janky motion
         mainHandler.postDelayed(drawer_layout::closeDrawers, 200)
-
-        // mainHandler.postDelayed(new Runnable() {
-        //     @Override
-        //     public void run() {
-        // Remove browser frame background to reduce overdraw
-        //TODO evaluate performance
-        //         content_frame.setBackgroundColor(Color.TRANSPARENT);
-        //     }
-        // }, 300);
     }
 
     override fun showBlockedLocalFileDialog(onPositiveClick: Function0<Unit>) =
@@ -1131,7 +1113,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
 
     override fun closeBrowser() {
-        content_frame.setBackgroundColor(backgroundColor)
         currentTabView.removeFromParent()
         performExitCleanUp()
         val size = tabsManager.size()
