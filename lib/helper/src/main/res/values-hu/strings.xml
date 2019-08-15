@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Igen</string>
+  <string name="no">Nem</string>
+  <string name="install_i2p_android">I2P Android telepítése?</string>
+  <string name="you_must_have_i2p_android">Az I2P Android telepítve lennie és futnia kell. Szeretné telepíteni?</string>
+  <string name="start_i2p_android">I2P Android indítása?</string>
+  <string name="would_you_like_to_start_i2p_android">Úgy tűnik, hogy az I2P Android nem fut. Szeretné elindítani?</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Po</string>
+  <string name="no">Jo</string>
+  <string name="install_i2p_android">Të instalohet I2P Android?</string>
+  <string name="you_must_have_i2p_android">Duhet ta keni I2P Android të instaluar dhe në xhirim e sipër. Doni të instalohet?</string>
+  <string name="start_i2p_android">Të niset I2P Android?</string>
+  <string name="would_you_like_to_start_i2p_android">Duket se I2P Android s’është në funksionim, Doni të niset?</string>
+</resources>

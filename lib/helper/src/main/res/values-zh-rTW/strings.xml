@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">是</string>
+  <string name="no">否</string>
+  <string name="install_i2p_android">要安装 I2P Android 吗？</string>
+  <string name="you_must_have_i2p_android">I2P Android 必須已安裝並在運行中。你要安裝它嗎？</string>
+  <string name="start_i2p_android">開啓 I2P Android？</string>
+  <string name="would_you_like_to_start_i2p_android">I2P Android 似乎沒有運作。你要開啓它嗎？</string>
+</resources>

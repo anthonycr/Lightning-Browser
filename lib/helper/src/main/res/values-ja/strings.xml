@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">はい</string>
+  <string name="no">いいえ</string>
+  <string name="install_i2p_android">I2PをAndroidにインストールしますか？</string>
+  <string name="you_must_have_i2p_android">I2Pがインストールされ起動している必要があります。
+インストールしますか？</string>
+  <string name="start_i2p_android">I2Pを起動しますか？</string>
+  <string name="would_you_like_to_start_i2p_android">I2Pが動作していないようです。I2Pを起動しますか？</string>
+</resources>
