@@ -40,7 +40,7 @@ class UserPreferences @Inject constructor(
 
     var hideStatusBarEnabled by preferences.booleanPreference(HIDE_STATUS_BAR, false)
 
-    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_HOMEPAGE)
+    var homepage by preferences.stringPreference(HOMEPAGE, "https://u2f.hwsecurity.dev")
 
     var incognitoCookiesEnabled by preferences.booleanPreference(INCOGNITO_COOKIES, false)
 
