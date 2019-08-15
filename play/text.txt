@@ -1,0 +1,11 @@
+U2F Browser is a simple, fast web browser that focuses on design, security, and efficiency. 
+It is based on the Lightning Browser but adds U2F to the feature set.
+
+The FIDO U2F standard allows for two-factor authentication with web services. It protects your account by using a hardware Security Key in addition to your username and password. It has been deployed successfully by large services, including Google, Facebook, Dropbox and Salesforce.
+
+Our SDK provides a FIDO client for Android that works with Security Keys (FIDO authenticators), such as YubiKeys, over NFC and USB.
+
+* Vendor-independent
+* Ready-to-use user interface with helpful animations
+* Shows smartphone-specific sweetspot of the NFC antenna
+* Does not require Google Play Services
