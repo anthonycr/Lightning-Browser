@@ -116,7 +116,7 @@ dependencies {
     implementation "androidx.drawerlayout:drawerlayout:1.0.0"
 
     // html parsing for reading mode
-    implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'org.jsoup:jsoup:1.12.1'
 
     // file reading
     final def mezzanineVersion = '1.1.1'
@@ -138,9 +138,9 @@ dependencies {
     implementation 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
-    implementation 'net.i2p.android:client:0.8'
+    implementation 'net.i2p.android:client:0.9'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.1.0'
 
     // rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
