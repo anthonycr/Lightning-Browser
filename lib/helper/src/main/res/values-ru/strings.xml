@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Да</string>
+  <string name="no">Нет</string>
+  <string name="install_i2p_android">Установить I2P Android?</string>
+  <string name="you_must_have_i2p_android">Вам необходимо установить и запустить I2P Android. Установить сейчас?</string>
+  <string name="start_i2p_android">Запустить I2P Android?</string>
+  <string name="would_you_like_to_start_i2p_android">Похоже, I2P Android не запущен. Хотите его запустить?</string>
+</resources>

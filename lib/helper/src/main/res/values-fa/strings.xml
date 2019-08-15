@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">بله</string>
+  <string name="no">خیر</string>
+  <string name="install_i2p_android">نصب I2P اندروید؟</string>
+  <string name="you_must_have_i2p_android">I2P اندروید باید نصب شده باشد و در حال اجرا باشد. آیا مایل هستید آن را نصب کنید؟</string>
+  <string name="start_i2p_android">آغاز I2P اندروید؟</string>
+  <string name="would_you_like_to_start_i2p_android">به نظر می آید که I2P اندروید در حال اجرا نمی باشد. آیا مایل به آغاز آن میباشید؟</string>
+</resources>

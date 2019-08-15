@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Ya</string>
+  <string name="no">Tidak</string>
+  <string name="install_i2p_android">Pasang I2P Android?</string>
+  <string name="you_must_have_i2p_android">Anda harus memasang dan menjalankan I2P Android. Apakah anda ingin memasangnya?</string>
+  <string name="start_i2p_android">Memulai I2P Android?</string>
+  <string name="would_you_like_to_start_i2p_android">Sepertinya I2P Android belum dijalankan. Apakah anda ingin memulainya?</string>
+</resources>

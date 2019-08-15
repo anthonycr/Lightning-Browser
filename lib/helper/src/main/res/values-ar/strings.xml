@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">نعم</string>
+  <string name="no">ﻻ</string>
+  <string name="install_i2p_android">تثبيت I2P أندرويد؟</string>
+  <string name="you_must_have_i2p_android">يجب تثبيت I2P أندرويد وتشغيله. هل ترغب في تثبيته؟</string>
+  <string name="start_i2p_android">بدأ I2P أندرويد؟</string>
+  <string name="would_you_like_to_start_i2p_android">يبدو أن I2P أندرويد لا يعمل. هل ترغب في بدء تشغيله؟</string>
+</resources>

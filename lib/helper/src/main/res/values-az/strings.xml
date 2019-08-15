@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Bəli</string>
+  <string name="no">Xeyir</string>
+  <string name="install_i2p_android">I2P Androidi quraşdırılsın?</string>
+  <string name="you_must_have_i2p_android">I2P Androidi quruşdırılmış və işlək olmalıdır. Quraşdırmaq istəyirsiniz?</string>
+  <string name="start_i2p_android">I2P Android-i başlasın?</string>
+  <string name="would_you_like_to_start_i2p_android">Belə görünür I2P Androidi işləmir. Başlamaq istəyirsiniz?</string>
+</resources>

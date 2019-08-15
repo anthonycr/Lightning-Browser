@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Ano</string>
+  <string name="no">Ne</string>
+  <string name="install_i2p_android">Instalovat I2P Android?</string>
+  <string name="you_must_have_i2p_android">Musíte mít nainstalovaný a zapnutý I2P Android. Přejete si jej nainstalovat?</string>
+  <string name="start_i2p_android">Otevřít I2P Android?</string>
+</resources>

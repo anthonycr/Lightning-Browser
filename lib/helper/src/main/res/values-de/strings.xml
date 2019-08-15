@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Ja</string>
+  <string name="no">Nein</string>
+  <string name="install_i2p_android">I2P für Android installieren?</string>
+  <string name="you_must_have_i2p_android">Sie müssen I2P für Android installiert und gestartet haben. Möchten Sie es installieren?</string>
+  <string name="start_i2p_android">I2P für Android starten?</string>
+  <string name="would_you_like_to_start_i2p_android">I2P für Android scheint nicht zu laufen. Möchten Sie es starten?</string>
+</resources>

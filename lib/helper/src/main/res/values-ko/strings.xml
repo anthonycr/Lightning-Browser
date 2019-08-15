@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">네</string>
+  <string name="no">아니요</string>
+  <string name="install_i2p_android">안드로이드 I2P를 설치할까요?</string>
+  <string name="you_must_have_i2p_android">안드로이드 I2P가 설치되고 작동 되어야 합니다. 설치하시겠습니까?</string>
+  <string name="start_i2p_android">안드로이드 I2P를 시작할까요?</string>
+  <string name="would_you_like_to_start_i2p_android">안드로이드 I2P가 작동중이 아닌것 같습니다. 시작할까요?</string>
+</resources>

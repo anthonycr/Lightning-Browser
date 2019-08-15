@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="yes">Da</string>
+  <string name="no">Nu</string>
+  <string name="install_i2p_android">Instalați I2P Android?</string>
+  <string name="you_must_have_i2p_android">Trebuie să aveți instalat și să ruleze I2P Android. Doriți să îl instalați?</string>
+  <string name="start_i2p_android">Porniți I2P Android?</string>
+  <string name="would_you_like_to_start_i2p_android">Apare că I2P Android nu rulează. Doriți să îl porniți?</string>
+</resources>

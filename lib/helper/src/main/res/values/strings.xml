@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name" translatable="false">I2P Android helper</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="install_i2p_android">Install I2P Android?</string>
+    <string name="you_must_have_i2p_android">You must have I2P Android installed and running. Would you like to install it?</string>
+    <string name="market_i2p_android" translatable="false">market://search?q=pname:net.i2p.android</string>
+    <string name="start_i2p_android">Start I2P Android?</string>
+    <string name="would_you_like_to_start_i2p_android">It appears that I2P Android is not running. Would you like to start it?</string>
+</resources>
