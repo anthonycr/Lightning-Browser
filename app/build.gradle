@@ -56,14 +56,14 @@ android {
         lightningPlus {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
-            applicationId "acr.browser.lightning"
+            applicationId "de.cotech.hw.fido.browser"
             versionCode project.versionCode_plus
         }
 
         lightningLite {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
-            applicationId "acr.browser.barebones"
+            applicationId "de.cotech.hw.fido.browserlite"
             versionCode project.versionCode_lite
         }
     }
