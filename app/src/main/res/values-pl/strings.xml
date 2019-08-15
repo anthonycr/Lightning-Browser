@@ -99,7 +99,7 @@
 	<string name="hphosts_ad_server_list">Lista filtrów hpHosts</string>
 	<string name="android_open_source_project">Android Open Source Project</string>
 	<string name="freeware">Freeware</string>
-	<string name="mpl_license">Mozilla Public License v. 2.0</string>
+	<string name="mpl_license">GNU General Public License v3</string>
 	<string name="untitled">Bez tytułu</string>
 	<string name="folder_custom">Własna lokalizacja</string>
 	<string name="folder_default">Domyślne</string>

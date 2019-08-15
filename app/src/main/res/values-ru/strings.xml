@@ -97,7 +97,7 @@
     <string name="action_manual">Вручную</string>
     <string name="action_auto">Автоматически</string>
     <string name="action_follow_me">Связаться с разработчиками</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">twitter.com/cotechde</string>
     <string name="clear_cache">Очистить кэш</string>
     <string name="message_cache_cleared">Кэш очищен</string>
     <string name="message_import">Закладки импортированы</string>
@@ -150,7 +150,7 @@
     <string name="folder_default">По умолчанию</string>
     <string name="folder_custom">Выбрать</string>
     <string name="untitled">Без названия</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">GNU General Public License v3</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">Список рекламных серверов</string>

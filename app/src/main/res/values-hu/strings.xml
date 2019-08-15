@@ -114,7 +114,7 @@
     <string name="action_manual">Kézi</string>
     <string name="action_auto">Automata</string>
     <string name="action_follow_me">Vedd fel velem a kapcsolatot</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">twitter.com/cotechde</string>
     <string name="clear_cache">Gyorsítótár törlése</string>
     <string name="message_cache_cleared">Gyorsítótár törölve</string>
     <string name="message_import">Könyvjelzők importálva</string>
@@ -167,7 +167,7 @@
     <string name="folder_default">Alapértelmezett</string>
     <string name="folder_custom">Egyéni</string>
     <string name="untitled">Névtelen</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">GNU General Public License v3</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server Lista</string>

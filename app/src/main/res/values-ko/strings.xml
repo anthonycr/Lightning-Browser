@@ -92,7 +92,7 @@
     <string name="action_manual">수동</string>
     <string name="action_auto">자동</string>
     <string name="action_follow_me">개발자에게 연락하기</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">twitter.com/cotechde</string>
     <string name="clear_cache">캐시 지우기</string>
     <string name="message_cache_cleared">캐시를 지웠습니다</string>
     <string name="message_import">즐겨찾기를 가져왔습니다</string>
@@ -125,7 +125,7 @@
     <string name="folder_default">기본값</string>
     <string name="folder_custom">임의의 위치</string>
     <string name="untitled">제목 없음</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">GNU General Public License v3</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts 광고 서버 목록</string>

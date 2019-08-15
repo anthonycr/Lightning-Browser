@@ -166,7 +166,7 @@
     <string name="folder_default">預設</string>
     <string name="folder_custom">自訂</string>
     <string name="untitled">無標題</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">GNU General Public License v3</string>
     <string name="freeware">免費軟體</string>
     <string name="android_open_source_project">Android 開放原始碼計畫 (AOSP)</string>
     <string name="hphosts_ad_server_list">hpHosts 廣告伺服器清單</string>    

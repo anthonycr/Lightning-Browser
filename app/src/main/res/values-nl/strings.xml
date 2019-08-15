@@ -114,7 +114,7 @@
     <string name="action_manual">Manueel</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contacteer Mij</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">twitter.com/cotechde</string>
     <string name="clear_cache">Wis cache</string>
     <string name="message_cache_cleared">Cache gewist</string>
     <string name="message_import">Bladwijzers zijn geïmporteerd</string>
@@ -166,7 +166,7 @@
     <string name="folder_default">Standaard</string>
     <string name="folder_custom">Aangepast</string>
     <string name="untitled">Geen titel</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">GNU General Public License v3</string>
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>

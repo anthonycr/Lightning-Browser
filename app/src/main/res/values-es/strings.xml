@@ -93,7 +93,7 @@
     <string name="action_manual">Manual</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contáctame</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">twitter.com/cotechde</string>
     <string name="clear_cache">Limpiar caché</string>
     <string name="message_cache_cleared">La caché se ha borrado</string>
     <string name="message_import">Los marcadores se han importado</string>
@@ -138,7 +138,7 @@
     <string name="folder_default">Por defecto</string>
     <string name="folder_custom">Personalizado</string>
     <string name="untitled">Sin título</string>
-    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="mpl_license">GNU General Public License v3</string>
     <string name="freeware">Software gratuito</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
