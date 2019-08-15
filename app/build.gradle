@@ -79,6 +79,26 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
+    if (project.hasProperty('fidoSigningStoreLocation') &&
+            project.hasProperty('fidoSigningStorePassword') &&
+            project.hasProperty('fidoSigningKeyAlias') &&
+            project.hasProperty('fidoSigningKeyPassword')) {
+        println "Found sign properties in gradle.properties! Signing build…"
+
+        signingConfigs {
+            release {
+                storeFile file(fidoSigningStoreLocation)
+                storePassword fidoSigningStorePassword
+                keyAlias fidoSigningKeyAlias
+                keyPassword fidoSigningKeyPassword
+            }
+        }
+
+        buildTypes.release.signingConfig = signingConfigs.release
+    } else {
+        buildTypes.release.signingConfig = null
+    }
 }
 
 jacoco {
