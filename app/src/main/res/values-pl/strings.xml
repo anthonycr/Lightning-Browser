@@ -249,7 +249,7 @@
 	<string name="action_history">Historia</string>
 	<string name="action_share">Udostępnij</string>
 	<string name="action_new_tab">Nowa karta</string>
-	<string name="app_name">Lightning</string>
+	<string name="app_name">U2F Browser: Secure Login with Security Keys</string>
 	<string-array name="proxy_choices_array">
 		<item>Bez proxy</item>
 		<item>Orbot</item>

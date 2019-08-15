@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name" translatable="false">U2F Browser: Secure Login with Security Keys</string>
     <string name="action_new_tab">New tab</string>
     <string name="action_share">Share</string>
     <string name="action_history">History</string>

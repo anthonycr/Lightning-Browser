@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">U2F Browser: Secure Login with Security Keys</string>
     <string name="action_new_tab">Νέα καρτέλα</string>
     <string name="action_share">Κοινοποίηση</string>
     <string name="action_history">Ιστορικό</string>

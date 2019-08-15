@@ -16,7 +16,7 @@
 
 <resources>
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">U2F Browser: Secure Login with Security Keys</string>
     <string name="action_new_tab">Novo separador</string>
     <string name="action_share">Partilhar</string>
     <string name="action_history">Histórico</string>
