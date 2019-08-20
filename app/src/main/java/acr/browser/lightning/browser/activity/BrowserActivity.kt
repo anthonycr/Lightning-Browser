@@ -1361,7 +1361,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             presenter?.onAutoCompleteItemPressed()
         }
 
-        getUrl.setAdapter(SuggestionsAdapter(this, isDarkTheme, isIncognito()))
+        getUrl.setAdapter(SuggestionsAdapter(this, isIncognito()))
     }
 
     /**

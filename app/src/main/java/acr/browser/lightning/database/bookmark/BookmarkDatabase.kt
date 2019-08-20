@@ -97,7 +97,7 @@ class BookmarkDatabase @Inject constructor(
      *
      * @param url           the URL to update.
      * @param contentValues the new values to update to.
-     * @return the numebr of rows updated.
+     * @return the number of rows updated.
      */
     private fun updateWithOptionalEndSlash(url: String, contentValues: ContentValues): Int {
         var updatedRows = database.update(
