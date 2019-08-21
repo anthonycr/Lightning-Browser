@@ -30,7 +30,7 @@ dependencies {
     implementation "com.android.support:support-v4:$supportVersion"
     // Testing-only dependencies
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.11.0'
+    testImplementation 'org.mockito:mockito-core:3.0.0'
 }
 
 apply from: "${project.rootDir}/gradle/maven-push.gradle"

@@ -32,7 +32,7 @@ dependencies {
     implementation "net.i2p:i2p:$I2P_VERSION"
     implementation "net.i2p.client:streaming:$I2P_VERSION"
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.11.0'
+    testImplementation 'org.mockito:mockito-core:3.0.0'
 }
 
 apply from: "${project.rootDir}/gradle/maven-push.gradle"
