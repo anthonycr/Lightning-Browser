@@ -5,10 +5,7 @@ import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.search.SearchEngineProvider
-import acr.browser.lightning.utils.FileUtils
-import acr.browser.lightning.utils.Option
-import acr.browser.lightning.utils.UrlUtils
-import acr.browser.lightning.utils.value
+import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
 import android.app.Activity
 import android.app.Application
@@ -136,10 +133,10 @@ class TabsManager @Inject constructor(
      */
     fun extractSearchFromIntent(intent: Intent): String? {
         val query = intent.getStringExtra(SearchManager.QUERY)
-        val searchUrl = "${searchEngineProvider.provideSearchEngine().queryUrl}${UrlUtils.QUERY_PLACE_HOLDER}"
+        val searchUrl = "${searchEngineProvider.provideSearchEngine().queryUrl}$QUERY_PLACE_HOLDER"
 
         return if (query?.isNotBlank() == true) {
-            UrlUtils.smartUrlFilter(query, true, searchUrl)
+            smartUrlFilter(query, true, searchUrl)
         } else {
             null
         }
@@ -153,10 +150,10 @@ class TabsManager @Inject constructor(
         .map { bundle ->
             return@map bundle.getString(URL_KEY)?.let { url ->
                 when {
-                    UrlUtils.isBookmarkUrl(url) -> bookmarkPageInitializer
-                    UrlUtils.isDownloadsUrl(url) -> downloadPageInitializer
-                    UrlUtils.isStartPageUrl(url) -> homePageInitializer
-                    UrlUtils.isHistoryUrl(url) -> historyPageInitializer
+                    url.isBookmarkUrl() -> bookmarkPageInitializer
+                    url.isDownloadsUrl() -> downloadPageInitializer
+                    url.isStartPageUrl() -> homePageInitializer
+                    url.isHistoryUrl() -> historyPageInitializer
                     else -> homePageInitializer
                 }
             } ?: BundleInitializer(bundle)
@@ -324,7 +321,7 @@ class TabsManager @Inject constructor(
             .filter { it.url.isNotBlank() }
             .withIndex()
             .forEach { (index, tab) ->
-                if (!UrlUtils.isSpecialUrl(tab.url)) {
+                if (!tab.url.isSpecialUrl()) {
                     outState.putBundle(BUNDLE_KEY + index, tab.saveState())
                 } else {
                     outState.putBundle(BUNDLE_KEY + index, Bundle().apply {

@@ -512,7 +512,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         override fun onPreFocus() {
             val currentView = tabsManager.currentTab ?: return
             val url = currentView.url
-            if (!UrlUtils.isSpecialUrl(url)) {
+            if (!url.isSpecialUrl()) {
                 if (searchView?.hasFocus() == false) {
                     searchView?.setText(url)
                 }
@@ -743,7 +743,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             R.id.action_add_to_homescreen -> {
                 if (currentView != null
                     && currentView.url.isNotBlank()
-                    && !UrlUtils.isSpecialUrl(currentView.url)) {
+                    && !currentView.url.isSpecialUrl()) {
                     HistoryEntry(currentView.url, currentView.title).also {
                         Utils.createShortcut(this, it, currentView.favicon ?: webPageBitmap!!)
                         logger.log(TAG, "Creating shortcut: ${it.title} ${it.url}")
@@ -769,7 +769,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_copy -> {
-                if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
+                if (currentUrl != null && !currentUrl.isSpecialUrl()) {
                     clipboardManager.primaryClip = ClipData.newPlainText("label", currentUrl)
                     snackbar(R.string.message_link_copied)
                 }
@@ -788,7 +788,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 return true
             }
             R.id.action_add_bookmark -> {
-                if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
+                if (currentUrl != null && !currentUrl.isSpecialUrl()) {
                     addBookmark(currentView.title, currentUrl)
                 }
                 return true
@@ -1016,7 +1016,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             return
         }
 
-        if (!UrlUtils.isSpecialUrl(url)) {
+        if (!url.isSpecialUrl()) {
             bookmarkManager.isBookmark(url)
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
@@ -1226,10 +1226,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (query.isEmpty()) {
             return
         }
-        val searchUrl = "$searchText${UrlUtils.QUERY_PLACE_HOLDER}"
+        val searchUrl = "$searchText$QUERY_PLACE_HOLDER"
         if (currentTab != null) {
             currentTab.stopLoading()
-            presenter?.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query.trim(), true, searchUrl))
+            presenter?.loadUrlInCurrentView(smartUrlFilter(query.trim(), true, searchUrl))
         }
     }
 
@@ -1326,7 +1326,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     protected fun addItemToHistory(title: String?, url: String) {
-        if (UrlUtils.isSpecialUrl(url)) {
+        if (url.isSpecialUrl()) {
             return
         }
 
@@ -1775,7 +1775,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun handleBookmarksChange() {
         val currentTab = tabsManager.currentTab
-        if (currentTab != null && UrlUtils.isBookmarkUrl(currentTab.url)) {
+        if (currentTab != null && currentTab.url.isBookmarkUrl()) {
             currentTab.loadBookmarkPage()
         }
         if (currentTab != null) {
@@ -1786,7 +1786,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun handleDownloadDeleted() {
         val currentTab = tabsManager.currentTab
-        if (currentTab != null && UrlUtils.isDownloadsUrl(currentTab.url)) {
+        if (currentTab != null && currentTab.url.isDownloadsUrl()) {
             currentTab.loadDownloadsPage()
         }
         if (currentTab != null) {

@@ -2,8 +2,8 @@ package acr.browser.lightning.browser
 
 import acr.browser.lightning.R
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.utils.UrlUtils
 import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Application
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class SearchBoxModel @Inject constructor(
      */
     fun getDisplayContent(url: String, title: String?, isLoading: Boolean): String {
         when {
-            UrlUtils.isSpecialUrl(url) -> return ""
+            url.isSpecialUrl() -> return ""
             isLoading -> return url
             else -> when (userPreferences.urlBoxContentChoice) {
                 1 -> {

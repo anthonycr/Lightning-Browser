@@ -16,9 +16,7 @@ import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.userAgent
 import acr.browser.lightning.ssl.SSLState
-import acr.browser.lightning.utils.ProxyUtils
-import acr.browser.lightning.utils.UrlUtils
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.find.FindResults
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -690,20 +688,20 @@ class LightningView(
         val currentUrl = webView?.url
         val newUrl = result?.extra
 
-        if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
-            if (UrlUtils.isHistoryUrl(currentUrl)) {
+        if (currentUrl != null && currentUrl.isSpecialUrl()) {
+            if (currentUrl.isHistoryUrl()) {
                 if (url != null) {
                     dialogBuilder.showLongPressedHistoryLinkDialog(activity, uiController, url)
                 } else if (newUrl != null) {
                     dialogBuilder.showLongPressedHistoryLinkDialog(activity, uiController, newUrl)
                 }
-            } else if (UrlUtils.isBookmarkUrl(currentUrl)) {
+            } else if (currentUrl.isBookmarkUrl()) {
                 if (url != null) {
                     dialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, url)
                 } else if (newUrl != null) {
                     dialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, newUrl)
                 }
-            } else if (UrlUtils.isDownloadsUrl(currentUrl)) {
+            } else if (currentUrl.isDownloadsUrl()) {
                 if (url != null) {
                     dialogBuilder.showLongPressedDialogForDownloadUrl(activity, uiController, url)
                 } else if (newUrl != null) {

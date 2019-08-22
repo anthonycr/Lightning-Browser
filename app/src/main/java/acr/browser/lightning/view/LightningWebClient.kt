@@ -319,7 +319,7 @@ class LightningWebClient(
 
                 return true
             }
-        } else if (URLUtil.isFileUrl(url) && !UrlUtils.isSpecialUrl(url)) {
+        } else if (URLUtil.isFileUrl(url) && !url.isSpecialUrl()) {
             val file = File(url.replace(FILE, ""))
 
             if (file.exists()) {
