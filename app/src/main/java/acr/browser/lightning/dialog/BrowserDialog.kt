@@ -203,8 +203,7 @@ object BrowserDialog {
         if (maxWidth > screenSize - 2 * padding) {
             maxWidth = screenSize - 2 * padding
         }
-        val window = dialog.window
-        window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     /**

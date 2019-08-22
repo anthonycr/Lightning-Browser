@@ -16,10 +16,7 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.di.DatabaseScheduler
-import acr.browser.lightning.di.MainHandler
-import acr.browser.lightning.di.MainScheduler
-import acr.browser.lightning.di.injector
+import acr.browser.lightning.di.*
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
@@ -91,7 +88,6 @@ import com.anthonycr.grant.PermissionsManager
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browser_content.*
 import kotlinx.android.synthetic.main.search.*
@@ -148,6 +144,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject lateinit var inputMethodManager: InputMethodManager
     @Inject lateinit var clipboardManager: ClipboardManager
     @Inject lateinit var notificationManager: NotificationManager
+    @Inject @field:DiskScheduler lateinit var diskScheduler: Scheduler
     @Inject @field:DatabaseScheduler lateinit var databaseScheduler: Scheduler
     @Inject @field:MainScheduler lateinit var mainScheduler: Scheduler
     @Inject lateinit var tabsManager: TabsManager
@@ -605,7 +602,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val currentSearchEngine = searchEngineProvider.provideSearchEngine()
         searchText = currentSearchEngine.queryUrl
 
-        updateCookiePreference().subscribeOn(Schedulers.computation()).subscribe()
+        updateCookiePreference().subscribeOn(diskScheduler).subscribe()
         proxyUtils.updateProxySettings(this)
     }
 

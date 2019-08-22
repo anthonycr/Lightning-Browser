@@ -6,6 +6,8 @@ import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.source.HostsSourceType
 import acr.browser.lightning.adblock.source.selectedHostsSource
 import acr.browser.lightning.adblock.source.toPreferenceIndex
+import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -17,11 +19,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.preference.Preference
 import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okio.buffer
 import okio.sink
@@ -36,6 +37,8 @@ import javax.inject.Inject
 class AdBlockSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var userPreferences: UserPreferences
+    @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
+    @Inject @field:DiskScheduler internal lateinit var diskScheduler: Scheduler
     @Inject internal lateinit var bloomFilterAdBlocker: BloomFilterAdBlocker
 
     private var recentSummaryUpdater: SummaryUpdater? = null
@@ -155,8 +158,8 @@ class AdBlockSettingsFragment : AbstractSettingsFragment() {
             if (resultCode == Activity.RESULT_OK) {
                 data?.data?.also { uri ->
                     compositeDisposable += readTextFromUri(uri)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(diskScheduler)
+                        .observeOn(mainScheduler)
                         .subscribeBy(
                             onComplete = { activity?.toast(R.string.action_message_canceled) },
                             onSuccess = { file ->
