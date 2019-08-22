@@ -8,6 +8,7 @@ import acr.browser.lightning.browser.activity.BrowserActivity
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.browser.fragment.BookmarksFragment
 import acr.browser.lightning.browser.fragment.TabsFragment
+import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.download.LightningDownloadListener
@@ -20,12 +21,26 @@ import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.view.LightningChromeClient
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.LightningWebClient
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [(AppModule::class), (AppBindsModule::class)])
 interface AppComponent {
+
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        fun application(application: Application): Builder
+
+        @BindsInstance
+        fun buildInfo(buildInfo: BuildInfo): Builder
+
+        fun build(): AppComponent
+    }
 
     fun inject(activity: BrowserActivity)
 

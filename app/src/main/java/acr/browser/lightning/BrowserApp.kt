@@ -4,7 +4,10 @@ import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.device.BuildType
-import acr.browser.lightning.di.*
+import acr.browser.lightning.di.AppComponent
+import acr.browser.lightning.di.DaggerAppComponent
+import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.DeveloperPreferences
 import acr.browser.lightning.utils.FileUtils
@@ -66,10 +69,10 @@ class BrowserApp : Application() {
             }
         }
 
-        appComponent = DaggerAppComponent.builder().appModule(AppModule(
-            this,
-            BuildInfo(createBuildType())
-        )).build()
+        appComponent = DaggerAppComponent.builder()
+            .application(this)
+            .buildInfo(createBuildInfo())
+            .build()
         injector.inject(this)
 
         Single.fromCallable(bookmarkModel::count)
@@ -99,10 +102,10 @@ class BrowserApp : Application() {
     /**
      * Create the [BuildType] from the [BuildConfig].
      */
-    private fun createBuildType() = when {
+    private fun createBuildInfo() = BuildInfo(when {
         BuildConfig.DEBUG -> BuildType.DEBUG
         else -> BuildType.RELEASE
-    }
+    })
 
     companion object {
 

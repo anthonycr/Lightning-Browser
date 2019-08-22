@@ -45,26 +45,23 @@ class SuggestionsAdapter(
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
     private val allBookmarks = arrayListOf<Bookmark.Entry>()
-    private val searchFilter: SearchFilter
+    private val searchFilter = SearchFilter(this)
 
     private val searchIcon = context.drawable(R.drawable.ic_search)
     private val webPageIcon = context.drawable(R.drawable.ic_webpage)
     private val bookmarkIcon = context.drawable(R.drawable.ic_bookmark)
     private var suggestionsRepository: SuggestionsRepository
 
-    private val layoutInflater: LayoutInflater
+    private val layoutInflater = LayoutInflater.from(context)
 
     init {
         context.injector.inject(this)
-        layoutInflater = LayoutInflater.from(context)
 
         suggestionsRepository = if (isIncognito) {
             NoOpSuggestionsRepository()
         } else {
             searchEngineProvider.provideSearchSuggestions()
         }
-
-        searchFilter = SearchFilter(this)
 
         refreshBookmarks()
 
