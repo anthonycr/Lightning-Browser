@@ -48,7 +48,7 @@ class SuggestionsAdapter(
     private val searchFilter = SearchFilter(this)
 
     private val searchIcon = context.drawable(R.drawable.ic_search)
-    private val webPageIcon = context.drawable(R.drawable.ic_webpage)
+    private val webPageIcon = context.drawable(R.drawable.ic_history)
     private val bookmarkIcon = context.drawable(R.drawable.ic_bookmark)
     private var suggestionsRepository: SuggestionsRepository
 
