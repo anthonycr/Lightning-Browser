@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import io.reactivex.Completable;
-import io.reactivex.functions.Action;
 
 /**
  * A utility class containing helpful methods

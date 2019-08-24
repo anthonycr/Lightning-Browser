@@ -1295,8 +1295,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE)
         }
 
-    override fun getUseDarkTheme(): Boolean = isDarkTheme
-
     @ColorInt
     override fun getUiColor(): Int = currentUiColor
 
