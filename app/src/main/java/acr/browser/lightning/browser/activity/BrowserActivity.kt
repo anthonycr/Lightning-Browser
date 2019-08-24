@@ -1107,7 +1107,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 // In landscape toolbar should be 48 dp tall
                 Utils.dpToPx(52f)
             }
-            toolbar.layoutParams = ConstraintLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarSize)
+            toolbar.layoutParams = (toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
+                height = toolbarSize
+            }
             toolbar.minimumHeight = toolbarSize
             toolbar.doOnLayout { setWebViewTranslation(toolbar_layout.height.toFloat()) }
             toolbar.requestLayout()
