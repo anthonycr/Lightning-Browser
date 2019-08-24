@@ -24,6 +24,7 @@ import acr.browser.lightning.extensions.*
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
+import acr.browser.lightning.icon.TabCountView
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.notifications.IncognitoNotification
@@ -102,7 +103,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     // Toolbar Views
     private var searchBackground: View? = null
     private var searchView: SearchView? = null
-    private var arrowImageView: ImageView? = null
+    private var homeImageView: ImageView? = null
+    private var tabCountView: TabCountView? = null
 
     // Current tab view being displayed
     private var currentTabView: View? = null
@@ -318,27 +320,29 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             height = LayoutParams.MATCH_PARENT
         }
 
-        arrowImageView = customView.findViewById<ImageView>(R.id.arrow).also {
-            if (shouldShowTabsInDrawer) {
-                if (it.width <= 0) {
-                    it.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
-                }
-                updateTabNumber(0)
-
-                // Post drawer locking in case the activity is being recreated
-                mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getTabDrawer()) }
-            } else {
-
-                // Post drawer locking in case the activity is being recreated
-                mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer()) }
-                it.setImageResource(R.drawable.ic_action_home)
-            }
+        tabCountView = customView.findViewById(R.id.tab_count_view)
+        homeImageView = customView.findViewById(R.id.home_image_view)
+        if (shouldShowTabsInDrawer && !isIncognito()) {
+            tabCountView?.visibility = VISIBLE
+            homeImageView?.visibility = GONE
+        } else if (shouldShowTabsInDrawer) {
+            tabCountView?.visibility = GONE
+            homeImageView?.visibility = VISIBLE
+            homeImageView?.setImageResource(R.drawable.incognito_mode)
+            // Post drawer locking in case the activity is being recreated
+            mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getTabDrawer()) }
+        } else {
+            tabCountView?.visibility = GONE
+            homeImageView?.visibility = VISIBLE
+            homeImageView?.setImageResource(R.drawable.ic_action_home)
+            // Post drawer locking in case the activity is being recreated
+            mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, getTabDrawer()) }
         }
 
         // Post drawer locking in case the activity is being recreated
         mainHandler.post { drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, getBookmarkDrawer()) }
 
-        customView.findViewById<FrameLayout>(R.id.arrow_button).setOnClickListener(this)
+        customView.findViewById<FrameLayout>(R.id.home_button).setOnClickListener(this)
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
@@ -1307,13 +1311,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun updateTabNumber(number: Int) {
-        if (shouldShowTabsInDrawer) {
-            if (isIncognito()) {
-                arrowImageView?.setImageResource(R.drawable.incognito_mode)
-            } else {
-                arrowImageView?.setImageBitmap(DrawableUtils.getRoundedNumberImage(number, Utils.dpToPx(24f),
-                    Utils.dpToPx(24f), ThemeUtils.getIconThemeColor(this, isDarkTheme), Utils.dpToPx(2.5f)))
-            }
+        if (shouldShowTabsInDrawer && !isIncognito()) {
+            tabCountView?.updateCount(number)
         }
     }
 
@@ -1848,7 +1847,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onClick(v: View) {
         val currentTab = tabsManager.currentTab ?: return
         when (v.id) {
-            R.id.arrow_button -> when {
+            R.id.home_button -> when {
                 searchView?.hasFocus() == true -> currentTab.requestFocus()
                 shouldShowTabsInDrawer -> drawer_layout.openDrawer(getTabDrawer())
                 else -> currentTab.loadHomePage()

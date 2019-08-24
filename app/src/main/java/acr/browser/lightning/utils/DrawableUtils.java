@@ -55,48 +55,6 @@ public final class DrawableUtils {
         return image;
     }
 
-    @NonNull
-    public static Bitmap getRoundedNumberImage(int number, int width, int height, int color, int thickness) {
-        final String text;
-
-        if (number > 99) {
-            text = "\u221E";
-        } else {
-            text = String.valueOf(number);
-        }
-
-        final Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(image);
-        final Paint paint = new Paint();
-        paint.setColor(color);
-        final Typeface boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-        paint.setTypeface(boldText);
-        paint.setTextSize(Utils.dpToPx(14));
-        paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-
-        int radius = Utils.dpToPx(2);
-
-        final RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.drawRoundRect(outer, radius, radius, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-
-        radius--;
-        final RectF inner = new RectF(thickness, thickness, canvas.getWidth() - thickness, canvas.getHeight() - thickness);
-        canvas.drawRoundRect(inner, radius, radius, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-
-        final int xPos = (canvas.getWidth() / 2);
-        final int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-
-        canvas.drawText(text, xPos, yPos, paint);
-
-        return image;
-    }
-
     /**
      * Creates a rounded square of a certain color with
      * a character imprinted in white on it.
