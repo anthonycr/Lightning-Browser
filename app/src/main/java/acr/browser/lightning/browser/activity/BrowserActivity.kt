@@ -13,6 +13,8 @@ import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
+import acr.browser.lightning.database.SearchSuggestion
+import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.device.ScreenSize
@@ -1336,28 +1338,21 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * previously searched URLs
      */
     private fun initializeSearchSuggestions(getUrl: AutoCompleteTextView) {
-        getUrl.onItemClickListener = OnItemClickListener { _, view, _, _ ->
-            var url: String? = null
-            val urlString = (view.findViewById<View>(R.id.url) as TextView).text
-            if (urlString != null) {
-                url = urlString.toString()
-            }
-            if (url == null || url.startsWith(getString(R.string.suggestion))) {
-                val searchString = (view.findViewById<View>(R.id.title) as TextView).text
-                if (searchString != null) {
-                    url = searchString.toString()
-                }
-            }
-            if (url == null) {
-                return@OnItemClickListener
-            }
+        val adapter = SuggestionsAdapter(this, isIncognito())
+        getUrl.onItemClickListener = OnItemClickListener { _, _, position, _ ->
+            val url = when (val selection = adapter.getItem(position) as WebPage) {
+                is HistoryEntry,
+                is Bookmark.Entry -> selection.url
+                is SearchSuggestion -> selection.title
+                else -> null
+            } ?: return@OnItemClickListener
             getUrl.setText(url)
             searchTheWeb(url)
             inputMethodManager.hideSoftInputFromWindow(getUrl.windowToken, 0)
             presenter?.onAutoCompleteItemPressed()
         }
 
-        getUrl.setAdapter(SuggestionsAdapter(this, isIncognito()))
+        getUrl.setAdapter(adapter)
     }
 
     /**
