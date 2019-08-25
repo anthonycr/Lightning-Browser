@@ -17,7 +17,6 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.history.HistoryRepository
-import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.*
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
@@ -162,7 +161,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject lateinit var proxyUtils: ProxyUtils
     @Inject lateinit var logger: Logger
     @Inject lateinit var bookmarksDialogBuilder: LightningDialogBuilder
-    @Inject lateinit var screenSize: ScreenSize
 
     // Image
     private var webPageBitmap: Bitmap? = null
@@ -555,21 +553,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     private fun setNavigationDrawerWidth() {
         val width = resources.displayMetrics.widthPixels - Utils.dpToPx(56f)
-        val maxWidth = if (screenSize.isTablet()) {
-            Utils.dpToPx(320f)
-        } else {
-            Utils.dpToPx(300f)
-        }
-        if (width > maxWidth) {
-            val params = left_drawer.layoutParams as DrawerLayout.LayoutParams
-            params.width = maxWidth
-            left_drawer.layoutParams = params
-            left_drawer.requestLayout()
-            val paramsRight = right_drawer.layoutParams as DrawerLayout.LayoutParams
-            paramsRight.width = maxWidth
-            right_drawer.layoutParams = paramsRight
-            right_drawer.requestLayout()
-        } else {
+        val maxWidth = resources.getDimensionPixelSize(R.dimen.navigation_drawer_max_width)
+        if (width < maxWidth) {
             val params = left_drawer.layoutParams as DrawerLayout.LayoutParams
             params.width = width
             left_drawer.layoutParams = params
