@@ -998,7 +998,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         presenter?.deleteTab(position)
     }
 
-    override fun tabClicked(position: Int) = showTab(position)
+    override fun tabClicked(position: Int) {
+        presenter?.tabChanged(position)
+    }
 
     override fun newTabButtonClicked() {
         presenter?.newTab(
@@ -1045,17 +1047,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribeBy(onSuccess = { tabsManager.currentTab?.reload() })
-    }
-
-    /**
-     * displays the WebView contained in the LightningView Also handles the
-     * removal of previous views
-     *
-     * @param position the position of the tab to display
-     */
-    // TODO move to presenter
-    private fun showTab(position: Int) {
-        presenter?.tabChanged(position)
     }
 
     protected fun handleNewIntent(intent: Intent) {
