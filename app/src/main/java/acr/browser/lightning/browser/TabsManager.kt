@@ -51,14 +51,23 @@ class TabsManager @Inject constructor(
     private var isInitialized = false
     private var postInitializationWorkList = emptyList<() -> Unit>()
 
+    /**
+     * Adds a listener to be notified when the number of tabs changes.
+     */
     fun addTabNumberChangedListener(listener: ((Int) -> Unit)) {
         tabNumberListeners += listener
     }
 
+    /**
+     * Cancels any pending work that was scheduled to run after initialization.
+     */
     fun cancelPendingWork() {
         postInitializationWorkList = emptyList()
     }
 
+    /**
+     * Executes the [runnable] after the manager has been initialized.
+     */
     fun doAfterInitialization(runnable: () -> Unit) {
         if (isInitialized) {
             runnable()
