@@ -185,11 +185,8 @@ class LightningView(
         val tab = WebView(activity).also { webView = it }.apply {
             id = View.generateViewId()
 
-            drawingCacheBackgroundColor = Color.WHITE
             isFocusableInTouchMode = true
             isFocusable = true
-            isDrawingCacheEnabled = false
-            setWillNotCacheDrawing(true)
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 isAnimationCacheEnabled = false
                 isAlwaysDrawnWithCacheEnabled = false
