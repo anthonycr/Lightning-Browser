@@ -317,7 +317,7 @@ class LightningView(
             settings.setSupportMultipleWindows(false)
         }
 
-        settings.useWideViewPort = userPreferences.useWideViewportEnabled
+        settings.useWideViewPort = userPreferences.useWideViewPortEnabled
         settings.loadWithOverviewMode = userPreferences.overviewModeEnabled
         settings.textZoom = when (userPreferences.textSize) {
             0 -> 200

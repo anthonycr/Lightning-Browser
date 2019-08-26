@@ -58,8 +58,8 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
             preference = SETTINGS_VIEWPORT,
-            isChecked = userPreferences.useWideViewportEnabled,
-            onCheckChange = { userPreferences.useWideViewportEnabled = it }
+            isChecked = userPreferences.useWideViewPortEnabled,
+            onCheckChange = { userPreferences.useWideViewPortEnabled = it }
         )
 
         checkBoxPreference(
