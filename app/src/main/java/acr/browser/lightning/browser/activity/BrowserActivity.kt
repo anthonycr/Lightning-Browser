@@ -1314,9 +1314,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * previously searched URLs
      */
     private fun initializeSearchSuggestions(getUrl: AutoCompleteTextView) {
-        val adapter = SuggestionsAdapter(this, isIncognito())
+        suggestionsAdapter = SuggestionsAdapter(this, isIncognito())
         getUrl.onItemClickListener = OnItemClickListener { _, _, position, _ ->
-            val url = when (val selection = adapter.getItem(position) as WebPage) {
+            val url = when (val selection = suggestionsAdapter?.getItem(position) as WebPage) {
                 is HistoryEntry,
                 is Bookmark.Entry -> selection.url
                 is SearchSuggestion -> selection.title
@@ -1328,7 +1328,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             presenter?.onAutoCompleteItemPressed()
         }
 
-        getUrl.setAdapter(adapter)
+        getUrl.setAdapter(suggestionsAdapter)
     }
 
     /**
