@@ -7,6 +7,8 @@ sealed class Option<out T> {
 
     /**
      * A type representing the presences of [some] [T].
+     *
+     * @param some Some [T].
      */
     data class Some<T>(val some: T) : Option<T>()
 

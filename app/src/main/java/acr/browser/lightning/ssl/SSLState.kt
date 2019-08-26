@@ -19,6 +19,8 @@ sealed class SSLState {
 
     /**
      * Broken SSL connection.
+     *
+     * @param sslError The error that is causing the invalid SSL state.
      */
     class Invalid(val sslError: SslError) : SSLState()
 

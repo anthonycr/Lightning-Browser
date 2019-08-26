@@ -7,6 +7,9 @@ import android.webkit.PermissionRequest
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * The model that manages permission requests originating from a web page.
+ */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 @Singleton
 class WebRtcPermissionsModel @Inject constructor() {
