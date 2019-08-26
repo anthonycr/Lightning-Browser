@@ -1,5 +1,7 @@
 package acr.browser.lightning.adblock.source
 
+import acr.browser.lightning.database.adblock.Host
+
 /**
  * The result of a request for the hosts to block.
  */
@@ -10,7 +12,7 @@ sealed class HostsResult {
      *
      * @param hosts The hosts to block.
      */
-    data class Success(val hosts: List<String>) : HostsResult()
+    data class Success(val hosts: List<Host>) : HostsResult()
 
     /**
      * An unsuccessful request.

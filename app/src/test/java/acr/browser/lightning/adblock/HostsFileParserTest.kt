@@ -1,6 +1,7 @@
 package acr.browser.lightning.adblock
 
 import acr.browser.lightning.adblock.parser.HostsFileParser
+import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.log.NoOpLogger
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -34,13 +35,13 @@ class HostsFileParserTest {
 
         assertThat(mutableList).hasSize(7)
         assertThat(mutableList).contains(
-            "fake.domain1.com",
-            "fake.domain2.com",
-            "fake.domain3.com",
-            "domain4.com",
-            "multiline1.com",
-            "multiline2.com",
-            "comment.close.by.com"
+            Host("fake.domain1.com"),
+            Host("fake.domain2.com"),
+            Host("fake.domain3.com"),
+            Host("domain4.com"),
+            Host("multiline1.com"),
+            Host("multiline2.com"),
+            Host("comment.close.by.com")
         )
     }
 }

@@ -1,11 +1,12 @@
 package acr.browser.lightning.adblock.parser
 
+import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.extensions.*
 import acr.browser.lightning.log.Logger
 import java.io.InputStreamReader
 
 /**
- * A parser for a hosts file.
+ * A single threaded parser for a hosts file.
  */
 class HostsFileParser(
     private val logger: Logger
@@ -17,10 +18,10 @@ class HostsFileParser(
      * Parse the lines of the [input] from a hosts file and return the list of [String] domains held
      * in that file.
      */
-    fun parseInput(input: InputStreamReader): List<String> {
+    fun parseInput(input: InputStreamReader): List<Host> {
         val time = System.currentTimeMillis()
 
-        val domains = ArrayList<String>(100)
+        val domains = ArrayList<Host>(100)
 
         input.use { inputStreamReader ->
             inputStreamReader.forEachLine {
@@ -36,7 +37,7 @@ class HostsFileParser(
     /**
      * Parse a [line] from a hosts file and populate the [parsedList] with the extracted hosts.
      */
-    private fun parseLine(line: String, parsedList: MutableList<String>) {
+    private fun parseLine(line: String, parsedList: MutableList<Host>) {
         lineBuilder.setLength(0)
         lineBuilder.append(line)
         if (lineBuilder.isNotEmpty() && lineBuilder[0] != COMMENT_CHAR) {
@@ -63,13 +64,13 @@ class HostsFileParser(
                     val partialLine = partial.toString()
 
                     // Add string to list
-                    parsedList.add(partialLine)
+                    parsedList.add(Host(partialLine))
                     lineBuilder.inlineReplace(partialLine, EMPTY)
                     lineBuilder.inlineTrim()
                 }
                 if (lineBuilder.isNotEmpty()) {
                     // Add string to list.
-                    parsedList.add(lineBuilder.toString())
+                    parsedList.add(Host(lineBuilder.toString()))
                 }
             }
         }

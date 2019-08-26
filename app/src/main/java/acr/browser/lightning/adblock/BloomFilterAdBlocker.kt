@@ -77,13 +77,11 @@ class BloomFilterAdBlocker @Inject constructor(
                         .flatMapMaybe {
                             when (it) {
                                 is HostsResult.Success -> Maybe.just(it.hosts)
-                                is HostsResult.Failure ->
-                                    Maybe.empty<List<String>>().doOnComplete {
-                                        logger.log(TAG, "Unable to load hosts", it.cause)
-                                    }
+                                is HostsResult.Failure -> Maybe.empty<List<Host>>().doOnComplete {
+                                    logger.log(TAG, "Unable to load hosts", it.cause)
+                                }
                             }
                         }
-                        .map { it.map(::Host) }
                         .flatMapSingleElement {
                             // Clear out the old hosts and bloom filter now that we have the new hosts.
                             hostsRepository.removeAllHosts()
