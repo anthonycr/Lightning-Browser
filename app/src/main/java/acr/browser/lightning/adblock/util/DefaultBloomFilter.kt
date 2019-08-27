@@ -62,6 +62,10 @@ class DefaultBloomFilter<T>(
         }
     }
 
+    override fun putAll(collection: Collection<T>) {
+        collection.forEach(::put)
+    }
+
     override fun mightContain(item: T): Boolean {
         val hash = hashingAlgorithm.hash(item)
 

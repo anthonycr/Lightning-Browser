@@ -8,6 +8,7 @@ import acr.browser.lightning.adblock.util.DefaultBloomFilter
 import acr.browser.lightning.adblock.util.DelegatingBloomFilter
 import acr.browser.lightning.adblock.util.`object`.JvmObjectStore
 import acr.browser.lightning.adblock.util.`object`.ObjectStore
+import acr.browser.lightning.adblock.util.hash.MurmurHashHostAdapter
 import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import acr.browser.lightning.database.adblock.Host
 import acr.browser.lightning.database.adblock.HostsRepository
@@ -48,8 +49,8 @@ class BloomFilterAdBlocker @Inject constructor(
     @MainScheduler private val mainScheduler: Scheduler
 ) : AdBlocker {
 
-    private val bloomFilter: DelegatingBloomFilter<String> = DelegatingBloomFilter()
-    private val objectStore: ObjectStore<DefaultBloomFilter<String>> = JvmObjectStore(application, MurmurHashStringAdapter())
+    private val bloomFilter: DelegatingBloomFilter<Host> = DelegatingBloomFilter()
+    private val objectStore: ObjectStore<DefaultBloomFilter<Host>> = JvmObjectStore(application, MurmurHashStringAdapter())
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -110,21 +111,19 @@ class BloomFilterAdBlocker @Inject constructor(
             )
     }
 
-    private fun loadStoredBloomFilter(): Maybe<BloomFilter<String>> = Maybe.fromCallable {
+    private fun loadStoredBloomFilter(): Maybe<BloomFilter<Host>> = Maybe.fromCallable {
         objectStore.retrieve(BLOOM_FILTER_KEY)
     }
 
-    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<String>> = Single.fromCallable {
+    private fun createAndSaveBloomFilter(hosts: List<Host>): Single<BloomFilter<Host>> = Single.fromCallable {
         logger.log(TAG, "Constructing bloom filter from list")
 
         val bloomFilter = DefaultBloomFilter(
             numberOfElements = hosts.size,
             falsePositiveRate = 0.01,
-            hashingAlgorithm = MurmurHashStringAdapter()
+            hashingAlgorithm = MurmurHashHostAdapter()
         )
-        for (host in hosts) {
-            bloomFilter.put(host.name)
-        }
+        bloomFilter.putAll(hosts)
         objectStore.store(BLOOM_FILTER_KEY, bloomFilter)
 
         bloomFilter
@@ -138,7 +137,7 @@ class BloomFilterAdBlocker @Inject constructor(
             return false
         }
 
-        val mightBeOnBlockList = bloomFilter.mightContain(domain.name)
+        val mightBeOnBlockList = bloomFilter.mightContain(domain)
 
         return if (mightBeOnBlockList) {
             val isOnBlockList = hostsRepository.containsHost(domain)
