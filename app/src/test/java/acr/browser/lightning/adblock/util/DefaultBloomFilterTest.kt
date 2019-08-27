@@ -1,6 +1,6 @@
 package acr.browser.lightning.adblock.util
 
-import acr.browser.lightning.adblock.util.hash.MurmurHashHostAdapter
+import acr.browser.lightning.adblock.util.hash.MurmurHashStringAdapter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -14,7 +14,7 @@ class DefaultBloomFilterTest {
         val bloomFilter: BloomFilter<String> = DefaultBloomFilter(
             MAX_TEST_VALUE,
             0.01,
-            MurmurHashHostAdapter()
+            MurmurHashStringAdapter()
         )
         for (i in 0..MAX_TEST_VALUE) {
             val entry = i.toString()
@@ -27,7 +27,7 @@ class DefaultBloomFilterTest {
         val bloomFilter: BloomFilter<String> = DefaultBloomFilter(
             MAX_TEST_VALUE,
             0.01,
-            MurmurHashHostAdapter()
+            MurmurHashStringAdapter()
         )
         for (i in 0..MAX_TEST_VALUE) {
             bloomFilter.put(i.toString())
@@ -40,7 +40,7 @@ class DefaultBloomFilterTest {
         val bloomFilter: BloomFilter<String> = DefaultBloomFilter(
             MAX_TEST_VALUE,
             0.01,
-            MurmurHashHostAdapter()
+            MurmurHashStringAdapter()
         )
 
         val collection = (0..MAX_TEST_VALUE).map(Int::toString)
@@ -55,7 +55,7 @@ class DefaultBloomFilterTest {
         val bloomFilter: BloomFilter<String> = DefaultBloomFilter(
             MAX_TEST_VALUE,
             0.01,
-            MurmurHashHostAdapter()
+            MurmurHashStringAdapter()
         )
         for (i in 0 until MAX_TEST_VALUE) {
             val entry = i.toString()
