@@ -195,9 +195,6 @@
     <string name="folder_default">默认</string>
     <string name="folder_custom">自定义</string>
     <string name="untitled">未命名</string>
-    <string name="freeware">免费软件</string>
-    <string name="android_open_source_project">Android 开源项目 (AOSP)</string>
-    <string name="hphosts_ad_server_list">hpHosts 广告服务器列表</string>
     <string name="reopening_recent_tab">重新打开了之前的标签页</string>
     <string name="rendering_mode">渲染模式</string>
     <string name="name_inverted">反色</string>
