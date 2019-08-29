@@ -82,7 +82,7 @@
     <string name="hint_url">URL</string>
     <string name="title_edit_bookmark">编辑书签</string>
     <string name="action_edit">编辑</string>
-    <string name="action_incognito">新建隐身标签页</string>
+    <string name="action_incognito">新建无痕标签页</string>
     <string name="action_homepage">默认</string>
     <string name="action_back">返回</string>
     <string name="action_find">在页面中查找</string>
@@ -93,8 +93,8 @@
     <string name="download_no_sdcard_dlg_title">没有 SD 卡</string>
     <string name="download_no_sdcard_dlg_msg">需要 USB 存储以下载文件</string>
     <string name="download_sdcard_busy_dlg_title">USB 存储不可用</string>
-    <string name="download_sdcard_busy_dlg_msg">存储正忙。要允许下载，请轻触通知中的“关闭 USB 存储”</string>
-    <string name="incognito_cookies">在隐身模式下启用 Cookie</string>
+    <string name="download_sdcard_busy_dlg_msg">存储设备正忙。要允许下载，请轻触通知中的“关闭 USB 存储”</string>
+    <string name="incognito_cookies">在无痕模式下启用 Cookie</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">手动</string>
     <string name="action_auto">自动</string>
@@ -114,7 +114,7 @@
     <!-- Ad block -->
     <string name="block_ads">屏蔽广告</string>
     <string name="block_ad_source">Hosts 文件来源</string>
-    <string name="block_ad_remote_refresh_frequency_description">对远程 Hosts 有效</string>
+    <string name="block_ad_remote_refresh_frequency_description">对于远程 Hosts 文件</string>
     <string name="block_ad_refresh_now">立即更新 Hosts</string>
 
     <string name="block_ads_upsell_source">升级到 Lightning Plus 以选择</string>
@@ -183,8 +183,8 @@
     <string name="manual_proxy">手动设置代理</string>
     <string name="host">主机：</string>
     <string name="port">端口：</string>
-    <string name="use_tor_prompt">你似乎安装了 Orbot。要使用 Tor 代理吗？</string>
-    <string name="use_i2p_prompt">你似乎安装了 I2P。 要使用 I2P 代理吗？</string>
+    <string name="use_tor_prompt">看起来你安装了 Orbot。要使用 Tor 代理吗？</string>
+    <string name="use_i2p_prompt">看起来你安装了 I2P。要使用 I2P 代理吗？</string>
     <string name="install_orbot">要使用 Tor 代理，请安装 Orbot</string>
     <string name="i2p_not_running">I2P 未在运行</string>
     <string name="i2p_tunnels_not_ready">I2P 隧道尚未就绪</string>
@@ -273,7 +273,7 @@
     <!-- Dialogs -->
     <string name="dialog_open_new_tab">在新标签页中打开</string>
     <string name="dialog_open_background_tab">在后台标签页中打开</string>
-    <string name="dialog_open_incognito_tab">在隐身标签页中打开</string>
+    <string name="dialog_open_incognito_tab">在无痕标签页中打开</string>
     <string name="dialog_remove_bookmark">移除书签</string>
     <string name="dialog_edit_bookmark">编辑书签</string>
     <string name="dialog_remove_from_history">从历史记录中移除</string>
@@ -307,10 +307,10 @@
 
     <!-- Notifications -->
     <plurals name="notification_incognito_running_title">
-        <item quantity="other">打开了 %1$d 个隐身标签页</item>
+        <item quantity="other">打开了 %1$d 个无痕标签页</item>
     </plurals>
     <string name="notification_incognito_running_message">轻触以打开</string>
-    <string name="notification_incognito_running_description">进行中的隐身标签页通知</string>
+    <string name="notification_incognito_running_description">进行中的无痕标签页通知</string>
 
     <!--Ad block -->
     <string name="ad_block_load_failure">从广告屏蔽来源加载 Hosts 失败</string>
