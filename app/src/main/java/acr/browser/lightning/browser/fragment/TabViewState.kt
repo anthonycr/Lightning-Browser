@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 /**
  * A view model representing the visual state of a tab.
  */
-internal class TabViewState(private val lightningView: LightningView) {
+class TabViewState(private val lightningView: LightningView) {
 
     val title: String = lightningView.title
     val favicon: Bitmap? = lightningView.favicon

@@ -28,6 +28,11 @@ interface UIController {
     fun getUiColor(): Int
 
     /**
+     * @return true if color mode is enabled, false otherwise.
+     */
+    fun isColorMode(): Boolean
+
+    /**
      * @return the tab model which contains all the tabs presented to the user.
      */
     fun getTabModel(): TabsManager
