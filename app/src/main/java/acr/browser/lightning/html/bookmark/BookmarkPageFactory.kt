@@ -69,7 +69,7 @@ class BookmarkPageFactory @Inject constructor(
         .ignoreElements()
         .toSingle {
             cacheIcon(ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false), folderIconFile)
-            cacheIcon(faviconModel.getDefaultBitmapForString(null), defaultIconFile)
+            cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)
 
             "$FILE${createBookmarkPage(null)}"
         }
@@ -119,7 +119,7 @@ class BookmarkPageFactory @Inject constructor(
         val iconUrl = if (bookmarkUri != null) {
             val faviconFile = FaviconModel.getFaviconCacheFile(application, bookmarkUri)
             if (!faviconFile.exists()) {
-                val defaultFavicon = faviconModel.getDefaultBitmapForString(entry.title)
+                val defaultFavicon = faviconModel.createDefaultBitmapForTitle(entry.title)
                 faviconModel.cacheFaviconForUrl(defaultFavicon, entry.url)
                     .subscribeOn(diskScheduler)
                     .subscribe()

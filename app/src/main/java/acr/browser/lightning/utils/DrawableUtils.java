@@ -30,7 +30,8 @@ public final class DrawableUtils {
      * @return a bitmap with the desired content.
      */
     @NonNull
-    public static Bitmap createImageInsetInRoundedSquare(Context context, @DrawableRes int drawableRes) {
+    public static Bitmap createImageInsetInRoundedSquare(Context context,
+                                                         @DrawableRes int drawableRes) {
         final Bitmap icon = ThemeUtils.getBitmapFromVectorDrawable(context, drawableRes);
 
         final Bitmap image = Bitmap.createBitmap(icon.getWidth(), icon.getHeight(), Bitmap.Config.ARGB_8888);
@@ -63,7 +64,10 @@ public final class DrawableUtils {
      * @return a valid bitmap of a rounded square with a character on it.
      */
     @NonNull
-    public static Bitmap getRoundedLetterImage(@NonNull Character character, int width, int height, int color) {
+    public static Bitmap createRoundedLetterImage(@NonNull Character character,
+                                                  int width,
+                                                  int height,
+                                                  int color) {
         Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
         Paint paint = new Paint();
