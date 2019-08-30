@@ -26,6 +26,7 @@ class TabsDrawerView @JvmOverloads constructor(
     private val tabList: RecyclerView
 
     init {
+        orientation = VERTICAL
         context.inflater.inflate(R.layout.tab_drawer, this, true)
 
         val animator = VerticalItemAnimator().apply {

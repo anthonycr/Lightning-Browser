@@ -10,7 +10,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -21,13 +21,14 @@ class TabsDesktopView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), TabsView {
+) : ConstraintLayout(context, attrs, defStyleAttr), TabsView {
 
     private val uiController = context as UIController
     private val tabsAdapter: TabsDesktopAdapter
     private val tabList: RecyclerView
 
     init {
+        setBackgroundColor(context.color(R.color.black))
         context.inflater.inflate(R.layout.tab_strip, this, true)
         findViewById<ImageView>(R.id.new_tab_button).apply {
             setColorFilter(context.color(R.color.icon_dark_theme))

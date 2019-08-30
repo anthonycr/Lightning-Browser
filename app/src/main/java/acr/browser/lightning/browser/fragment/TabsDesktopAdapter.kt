@@ -65,13 +65,9 @@ class TabsDesktopAdapter(
 
         val web = tabList[position]
 
-        updateViewHolderTitle(holder, web.title)
+        holder.txtTitle.text = web.title
         updateViewHolderAppearance(holder, web.favicon, web.isForegroundTab)
         updateViewHolderFavicon(holder, web.favicon, web.isForegroundTab)
-    }
-
-    private fun updateViewHolderTitle(viewHolder: TabViewHolder, title: String) {
-        viewHolder.txtTitle.text = title
     }
 
     private fun updateViewHolderFavicon(viewHolder: TabViewHolder, favicon: Bitmap?, isForeground: Boolean) {
