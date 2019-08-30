@@ -1,11 +1,10 @@
-package acr.browser.lightning.browser.fragment
+package acr.browser.lightning.browser.bookmarks
 
 import acr.browser.lightning.R
 import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.animation.AnimationUtils
 import acr.browser.lightning.browser.BookmarksView
 import acr.browser.lightning.browser.TabsManager
-import acr.browser.lightning.browser.bookmark.BookmarkUiModel
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.bookmark.BookmarkRepository

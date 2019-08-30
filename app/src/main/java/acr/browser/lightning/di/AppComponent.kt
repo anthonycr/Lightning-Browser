@@ -6,7 +6,7 @@ import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.browser.activity.BrowserActivity
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
-import acr.browser.lightning.browser.fragment.BookmarksDrawerView
+import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.DownloadHandler

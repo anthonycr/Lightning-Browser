@@ -7,9 +7,9 @@ package acr.browser.lightning.browser.activity
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.*
-import acr.browser.lightning.browser.fragment.BookmarksDrawerView
-import acr.browser.lightning.browser.fragment.TabsDesktopView
-import acr.browser.lightning.browser.fragment.TabsDrawerView
+import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
+import acr.browser.lightning.browser.tabs.TabsDesktopView
+import acr.browser.lightning.browser.tabs.TabsDrawerView
 import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark

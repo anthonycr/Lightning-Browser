@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.bookmark
 
+import acr.browser.lightning.browser.bookmarks.BookmarkUiModel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

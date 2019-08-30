@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.fragment
+package acr.browser.lightning.browser.tabs
 
 import androidx.recyclerview.widget.DiffUtil
 

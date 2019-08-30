@@ -1,8 +1,8 @@
-package acr.browser.lightning.browser.fragment
+package acr.browser.lightning.browser.tabs
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.TabsView
-import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
+import acr.browser.lightning.list.HorizontalItemAnimator
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.inflater

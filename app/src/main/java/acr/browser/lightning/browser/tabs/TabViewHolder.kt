@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.fragment
+package acr.browser.lightning.browser.tabs
 
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController

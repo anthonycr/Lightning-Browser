@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.fragment
+package acr.browser.lightning.browser.bookmarks
 
 import acr.browser.lightning.database.Bookmark
 import android.graphics.Bitmap
