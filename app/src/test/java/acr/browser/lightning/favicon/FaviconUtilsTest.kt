@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class, sdk = [SDK_VERSION])
-class UriExtensionsKtTest {
+class FaviconUtilsTest {
 
     @Test
     fun `safeUri returns null for empty url`() = assertThat("".toUri().toValidUri()).isNull()
