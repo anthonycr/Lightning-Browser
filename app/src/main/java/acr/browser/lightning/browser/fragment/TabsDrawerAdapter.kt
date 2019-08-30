@@ -35,8 +35,6 @@ class TabsDrawerAdapter(
     override fun onBindViewHolder(holder: TabViewHolder, position: Int) {
         holder.exitButton.tag = position
 
-        holder.exitButton.jumpDrawablesToCurrentState()
-
         val web = tabList[position]
 
         holder.txtTitle.text = web.title
