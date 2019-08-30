@@ -42,10 +42,10 @@ object BrowserDialog {
         vararg items: DialogItem
     ) = show(activity, activity.getString(title), *items)
 
-    fun showWithIcons(activity: Activity, title: String?, vararg items: DialogItem) {
-        val builder = AlertDialog.Builder(activity)
+    fun showWithIcons(context: Context, title: String?, vararg items: DialogItem) {
+        val builder = AlertDialog.Builder(context)
 
-        val layout = activity.inflater.inflate(R.layout.list_dialog, null)
+        val layout = context.inflater.inflate(R.layout.list_dialog, null)
 
         val titleView = layout.findViewById<TextView>(R.id.dialog_title)
         val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
@@ -68,7 +68,7 @@ object BrowserDialog {
 
         val dialog = builder.show()
 
-        setDialogSize(activity, dialog)
+        setDialogSize(context, dialog)
 
         adapter.onItemClickListener = { item ->
             item.onClick()
