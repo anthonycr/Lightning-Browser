@@ -56,6 +56,11 @@ class LightningView(
 ) {
 
     /**
+     * The unique ID of the view.
+     */
+    val id = View.generateViewId()
+
+    /**
      * Getter for the [LightningViewTitle] of the current LightningView instance.
      *
      * @return a NonNull instance of LightningViewTitle
@@ -183,7 +188,7 @@ class LightningView(
         gestureDetector = GestureDetector(activity, CustomGestureListener())
 
         val tab = WebView(activity).also { webView = it }.apply {
-            id = View.generateViewId()
+            id = this@LightningView.id
 
             isFocusableInTouchMode = true
             isFocusable = true

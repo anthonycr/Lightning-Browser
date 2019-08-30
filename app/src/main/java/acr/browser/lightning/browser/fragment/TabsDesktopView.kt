@@ -6,6 +6,7 @@ import acr.browser.lightning.browser.fragment.anim.HorizontalItemAnimator
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.color
 import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.view.LightningView
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
@@ -76,7 +77,7 @@ class TabsDesktopView @JvmOverloads constructor(
     }
 
     private fun displayTabs() {
-        tabsAdapter.showTabs(uiController.getTabModel().allTabs.map(::TabViewState))
+        tabsAdapter.showTabs(uiController.getTabModel().allTabs.map(LightningView::asTabViewState))
     }
 
     override fun tabsInitialized() {

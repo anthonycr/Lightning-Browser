@@ -17,15 +17,8 @@ class TabViewStateDiffCallback(
     override fun getNewListSize() = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].id == newList[newItemPosition].id
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
         oldList[oldItemPosition] == newList[newItemPosition]
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldTab = oldList[oldItemPosition]
-        val newTab = newList[newItemPosition]
-
-        return oldTab.title == newTab.title
-            && oldTab.favicon == newTab.favicon
-            && oldTab.isForegroundTab == newTab.isForegroundTab
-            && oldTab == newTab
-    }
 }
