@@ -166,6 +166,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var webPageBitmap: Bitmap? = null
     private val backgroundDrawable = ColorDrawable()
     private var sslDrawable: Drawable? = null
+    private var incognitoNotification: IncognitoNotification? = null
 
     private var presenter: BrowserPresenter? = null
     private var tabsView: TabsView? = null
@@ -208,13 +209,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 
-        val incognitoNotification = IncognitoNotification(this, notificationManager)
+        if (isIncognito()) {
+            incognitoNotification = IncognitoNotification(this, notificationManager)
+        }
         tabsManager.addTabNumberChangedListener {
             if (isIncognito()) {
                 if (it == 0) {
-                    incognitoNotification.hide()
+                    incognitoNotification?.hide()
                 } else {
-                    incognitoNotification.show(it)
+                    incognitoNotification?.show(it)
                 }
             }
         }
@@ -1121,6 +1124,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
     override fun onDestroy() {
         logger.log(TAG, "onDestroy")
+
+        incognitoNotification?.hide()
 
         mainHandler.removeCallbacksAndMessages(null)
 
