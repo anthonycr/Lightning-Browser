@@ -14,10 +14,12 @@ import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDex
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -34,6 +36,13 @@ class BrowserApp : Application() {
     @Inject internal lateinit var buildInfo: BuildInfo
 
     val applicationComponent: AppComponent by lazy { appComponent }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        if (BuildConfig.DEBUG) {
+            MultiDex.install(this)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
