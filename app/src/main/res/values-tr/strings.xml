@@ -6,7 +6,7 @@
     <string name="action_share">Paylaş</string>
     <string name="action_history">Geçmiş</string>
     <string name="action_bookmarks">Yer işaretleri</string>
-    <string name="action_downloads">İndirmeler</string>												  
+    <string name="action_downloads">İndirmeler</string>
     <string name="action_add_bookmark">Yer işareti ekle</string>
     <string name="action_copy">Bağlantıyı kopyala</string>
     <string name="action_forward">İleri</string>
@@ -112,9 +112,41 @@
     <string name="message_blocked_local">Yerel dosyanın yüklenmesi engellendi</string>
     <string name="licenses">Açık Kaynak Lisansları</string>
     <string name="suggestion">Ara</string>
+
+    <!-- Ad block -->
     <string name="block_ads">Reklamları engelle</string>
-	
-    <!--  -->	
+    <string name="block_ad_source">Sunucu dosya kaynağı</string>
+    <string name="block_ad_remote_refresh_frequency_description">Uzak dosyalar için</string>
+    <string name="block_ad_refresh_now">Sunucuyu şimdi yenile</string>
+
+    <string name="block_ads_upsell_source">Seçmek için Lightning Plus'a yükseltin</string>
+
+    <string name="block_remote_frequency_daily">Günlük</string>
+    <string name="block_remote_frequency_weekly">Haftalık</string>
+    <string name="block_remote_frequency_monthly">Aylık</string>
+
+    <string-array name="block_ad_frequency_list">
+        <item>@string/block_remote_frequency_daily</item>
+        <item>@string/block_remote_frequency_weekly</item>
+        <item>@string/block_remote_frequency_monthly</item>
+    </string-array>
+
+    <string name="block_source_default">Varsayılan sunucu</string>
+    <string name="block_source_local">Yerel sunucu dosyası</string>
+    <string name="block_source_local_description">Dosya: %1$s</string>
+    <string name="block_source_remote">Uzak dosya</string>
+    <string name="block_source_remote_description">Adres: %1$s</string>
+
+    <string-array name="block_ad_source_list">
+        <item>@string/block_source_default</item>
+        <item>@string/block_source_local</item>
+        <item>@string/block_source_remote</item>
+    </string-array>
+
+    <!-- Common actions -->
+    <string name="action_message_canceled">İşlem iptal edildi.</string>
+
+    <!-- SSL warnings -->
     <string name="ssl_warning_dont_ask_again">Bu göz atma oturumu için tekrar sorma.</string>
     <string name="message_insecure_connection">Bağlantı güvenli değil:\n%1$s\nDevam etmek istiyor musunuz?</string>
     <string name="message_certificate_date_invalid">Sertifika tarihi geçersiz</string>
@@ -123,12 +155,11 @@
     <string name="message_certificate_invalid">Sertifika geçersiz</string>
     <string name="message_certificate_not_yet_valid">Sertifika henüz geçerli değil</string>
     <string name="message_certificate_untrusted">Sertifika güvenilir değil</string>
-    <!--  -->
-	
+
     <!-- permissions request -->
     <string name="title_permission_request">İzin isteği</string>
     <string name="message_permission_request">%1$s\n\nkullanmak istiyor:\n\n%2$s</string>
-	
+
     <string name="title_form_resubmission">Formu yeniden gönder</string>
     <string name="message_form_resubmission">Verileri tekrar göndermek ister misiniz?</string>
     <string name="message_location">Konumunuzu kullanmak ister misiniz?</string>
@@ -183,9 +214,9 @@
     <string name="license_gnu">GNU Küçük Genel Kamu Lisansı</string>
     <string name="export_bookmarks">Yer işaretlerini yedekle</string>
     <string name="import_backup">Yer işaretlerini geri yükle</string>
-    <string name="bookmark_export_path">Yer işaretlerinin yedeklendiği konum</string>    
-    <string name="bookmark_export_failure">Üzgünüz, yer işaretleri dışa aktarılamadı!</string>																					   
-    <string name="bookmark_settings">Yer işareti ayarları</string>														   
+    <string name="bookmark_export_path">Yer işaretlerinin yedeklendiği konum</string>
+    <string name="bookmark_export_failure">Üzgünüz, yer işaretleri dışa aktarılamadı!</string>
+    <string name="bookmark_settings">Yer işareti ayarları</string>
     <string name="import_bookmark_error">Yer işaretleri dosyadan yüklenemedi</string>
     <string name="message_bookmark_added">Yer işareti eklendi.</string>
     <string name="title_chooser">Bir dosya seç</string>
@@ -232,25 +263,26 @@
     <string name="tabs_in_drawer">Gezinme sekmelerini göster</string>
     <string name="swap_bookmarks_and_tabs">Yer işareti ve sekme çekmecelerini değiştir</string>
     <string name="do_not_track">\'İzleme isteği\' gönder</string>
+    <string name="save_data">İstek \'Veri-Kaydet\'</string>
     <string name="remove_identifying_headers">Tanımlayıcı başlıkları kaldır</string>
     <string name="webrtc_support">WebRTC desteği</string>
-    <string name="action_add_to_homescreen">Ana ekrana ekle</string>																   
+    <string name="action_add_to_homescreen">Ana ekrana ekle</string>
     <string name="message_added_to_homescreen">Ana ekrana kısayol eklendi</string>
+    <string name="shortcut_message_failed_to_add">Üzgünüz, başlatıcınız kısayolları desteklemiyor.</string>
     <string name="action_delete_all_bookmarks">Tüm yer işaretlerini sil</string>
     <string name="flash_not_supported">Flash Player, sisteminiz tarafından desteklenmiyor</string>
     <string name="upsell_plus_version">Reklamları engellemek için Lightning Plus\'a geçin</string>
     <string name="message_open_download_fail">Bu dosya artık mevcut değil</string>
-	
+
     <string name="faq">S.S.S</string>
-    <string name="faq_description">Sık Sorulan Sorular</string>    
-    
-	
+    <string name="faq_description">Sık Sorulan Sorular</string>
+
     <!-- debug strings -->					  
     <string name="debug_title">Hata ayıklama ayarları</string>
     <string name="debug_leak_canary">LeakCanary</string>
-    <string name="app_restart">Değişikliklerin etkili olması için lütfen uygulamayı yeniden başlatın.</string>   
-    
-    <!-- Dialogs -->				
+    <string name="app_restart">Değişikliklerin etkili olması için lütfen uygulamayı yeniden başlatın.</string>
+
+    <!-- Dialogs -->
     <string name="dialog_open_new_tab">Yeni sekmede aç</string>
     <string name="dialog_open_background_tab">Arka planda aç</string>
     <string name="dialog_open_incognito_tab">Gizli sekmede aç</string>
@@ -264,12 +296,12 @@
     <string name="dialog_title_close_browser">Tarayıcıyı kapat</string>
     <string name="dialog_delete_download">İndirmeyi sil</string>
     <string name="dialog_delete_all_downloads">Tüm indirmeleri sil</string>
-	
+
     <!-- Tools dialog -->
     <string name="dialog_tools_title">Sayfa araçları</string>
     <string name="dialog_toggle_desktop">Masaüstü görünümüne geçiş</string>
     <string name="dialog_adblock_enable_for_site">Site için reklam engelleyiciyi etkinleştir</string>
-    <string name="dialog_adblock_disable_for_site">Site için reklam engelleyiciyi kapat</string>	
+    <string name="dialog_adblock_disable_for_site">Site için reklam engelleyiciyi kapat</string>
 
     <!-- Search Engines -->
     <string name="search_engine_custom">Özel URL</string>
@@ -282,14 +314,19 @@
     <string name="search_engine_duckduckgo">DuckDuckGo</string>
     <string name="search_engine_duckduckgo_lite">DuckDuckGo Lite</string>
     <string name="search_engine_baidu">Baidu</string>
+    <string name="search_engine_yandex">Yandex</string>
     <string name="search_engine_naver">Naver</string>
-	
+
     <!-- Notifications -->
     <plurals name="notification_incognito_running_title">
-    <item quantity="one">%1$d gizli sekme açık</item>
-    <item quantity="other">%1$d gizli sekme açık</item>
+        <item quantity="one">%1$d gizli sekme açık</item>
+        <item quantity="other">%1$d gizli sekme açık</item>
     </plurals>
     <string name="notification_incognito_running_message">Açmak için dokunun</string>
     <string name="notification_incognito_running_description">Devam eden gizli bildirim</string>
-	
+
+    <!--Ad block -->
+    <string name="ad_block_load_failure">Ana bilgisayarlar reklam engelleme kaynağından yüklenemedi.</string>
+
+    <string name="infinity">∞</string>
 </resources>
