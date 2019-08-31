@@ -119,7 +119,7 @@
     <string name="block_ad_remote_refresh_frequency_description">Uzak dosyalar için</string>
     <string name="block_ad_refresh_now">Sunucuyu şimdi yenile</string>
 
-    <string name="block_ads_upsell_source">Seçmek için Lightning Plus'a yükselt</string>
+    <string name="block_ads_upsell_source">Seçmek için Lightning Plus'a yükseltin</string>
 
     <string name="block_remote_frequency_daily">Günlük</string>
     <string name="block_remote_frequency_weekly">Haftalık</string>
