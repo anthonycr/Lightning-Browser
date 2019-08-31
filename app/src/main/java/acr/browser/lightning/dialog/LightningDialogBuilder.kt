@@ -20,7 +20,6 @@ import acr.browser.lightning.utils.IntentUtils
 import acr.browser.lightning.utils.isBookmarkUrl
 import android.app.Activity
 import android.content.ClipboardManager
-import android.text.TextUtils
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -255,7 +254,7 @@ class LightningDialogBuilder @Inject constructor(
         R.string.hint_title,
         folder.title,
         R.string.action_ok) { text ->
-        if (!TextUtils.isEmpty(text)) {
+        if (text.isNotBlank()) {
             val oldTitle = folder.title
             bookmarkManager.renameFolder(oldTitle, text)
                 .subscribeOn(databaseScheduler)

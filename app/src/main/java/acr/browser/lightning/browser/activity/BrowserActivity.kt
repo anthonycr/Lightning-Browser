@@ -7,9 +7,9 @@ package acr.browser.lightning.browser.activity
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.*
-import acr.browser.lightning.browser.fragment.BookmarksFragment
-import acr.browser.lightning.browser.fragment.TabsDesktopView
-import acr.browser.lightning.browser.fragment.TabsDrawerView
+import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
+import acr.browser.lightning.browser.tabs.TabsDesktopView
+import acr.browser.lightning.browser.tabs.TabsDrawerView
 import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark
@@ -84,7 +84,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
 import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
@@ -167,6 +166,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private var webPageBitmap: Bitmap? = null
     private val backgroundDrawable = ColorDrawable()
     private var sslDrawable: Drawable? = null
+    private var incognitoNotification: IncognitoNotification? = null
 
     private var presenter: BrowserPresenter? = null
     private var tabsView: TabsView? = null
@@ -209,13 +209,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 
-        val incognitoNotification = IncognitoNotification(this, notificationManager)
+        if (isIncognito()) {
+            incognitoNotification = IncognitoNotification(this, notificationManager)
+        }
         tabsManager.addTabNumberChangedListener {
             if (isIncognito()) {
                 if (it == 0) {
-                    incognitoNotification.hide()
+                    incognitoNotification?.hide()
                 } else {
-                    incognitoNotification.show(it)
+                    incognitoNotification?.show(it)
                 }
             }
         }
@@ -262,28 +264,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         webPageBitmap = drawable(R.drawable.ic_webpage).toBitmap()
 
-        val fragmentManager = supportFragmentManager
-
         tabsView = if (shouldShowTabsInDrawer) {
-            TabsDrawerView(this).also(findViewById<FrameLayout>(getTabsFragmentViewId())::addView)
+            TabsDrawerView(this).also(findViewById<FrameLayout>(getTabsContainerId())::addView)
         } else {
-            TabsDesktopView(this).also(findViewById<FrameLayout>(getTabsFragmentViewId())::addView)
+            TabsDesktopView(this).also(findViewById<FrameLayout>(getTabsContainerId())::addView)
         }
 
-        val bookmarksFragment: BookmarksFragment? = fragmentManager.findFragmentByTag(TAG_BOOKMARK_FRAGMENT) as? BookmarksFragment
+        bookmarksView = BookmarksDrawerView(this).also(findViewById<FrameLayout>(getBookmarksContainerId())::addView)
 
-        if (bookmarksFragment != null) {
-            fragmentManager.beginTransaction().remove(bookmarksFragment).commit()
-        }
-
-        bookmarksView = bookmarksFragment ?: BookmarksFragment.createFragment(isIncognito())
-
-        fragmentManager.executePendingTransactions()
-
-        fragmentManager
-            .beginTransaction()
-            .replace(getBookmarksFragmentViewId(), bookmarksView as Fragment, TAG_BOOKMARK_FRAGMENT)
-            .commit()
         if (shouldShowTabsInDrawer) {
             tabs_toolbar_container.visibility = GONE
         }
@@ -376,13 +364,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         }
     }
 
-    private fun getBookmarksFragmentViewId(): Int = if (swapBookmarksAndTabs) {
+    private fun getBookmarksContainerId(): Int = if (swapBookmarksAndTabs) {
         R.id.left_drawer
     } else {
         R.id.right_drawer
     }
 
-    private fun getTabsFragmentViewId(): Int = if (shouldShowTabsInDrawer) {
+    private fun getTabsContainerId(): Int = if (shouldShowTabsInDrawer) {
         if (swapBookmarksAndTabs) {
             R.id.right_drawer
         } else {
@@ -1137,6 +1125,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     override fun onDestroy() {
         logger.log(TAG, "onDestroy")
 
+        incognitoNotification?.hide()
+
         mainHandler.removeCallbacksAndMessages(null)
 
         presenter?.shutdown()
@@ -1843,8 +1833,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         private const val TAG = "BrowserActivity"
 
         const val INTENT_PANIC_TRIGGER = "info.guardianproject.panic.action.TRIGGER"
-
-        private const val TAG_BOOKMARK_FRAGMENT = "TAG_BOOKMARK_FRAGMENT"
 
         private const val FILE_CHOOSER_REQUEST_CODE = 1111
 

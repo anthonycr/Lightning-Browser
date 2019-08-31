@@ -24,7 +24,6 @@ android {
 
     buildTypes {
         debug {
-            // TODO: debug cannot be used on SDK < 21
             multiDexEnabled true
             minifyEnabled false
             shrinkResources false
@@ -94,6 +93,9 @@ dexcount {
 }
 
 dependencies {
+    // multidex debug
+    debugImplementation 'androidx.multidex:multidex:2.0.1'
+
     // test dependencies
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:3.13.2'
@@ -140,7 +142,7 @@ dependencies {
     // proxy support
     implementation 'net.i2p.android:client:0.8'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.3'
 
     // rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'

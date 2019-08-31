@@ -6,7 +6,7 @@ import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.browser.activity.BrowserActivity
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
-import acr.browser.lightning.browser.fragment.BookmarksFragment
+import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.DownloadHandler
@@ -42,8 +42,6 @@ interface AppComponent {
     }
 
     fun inject(activity: BrowserActivity)
-
-    fun inject(fragment: BookmarksFragment)
 
     fun inject(fragment: BookmarkSettingsFragment)
 
@@ -86,6 +84,8 @@ interface AppComponent {
     fun inject(displaySettingsFragment: DisplaySettingsFragment)
 
     fun inject(adBlockSettingsFragment: AdBlockSettingsFragment)
+
+    fun inject(bookmarksView: BookmarksDrawerView)
 
     fun provideBloomFilterAdBlocker(): BloomFilterAdBlocker
 

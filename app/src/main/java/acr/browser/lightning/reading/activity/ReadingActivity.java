@@ -3,6 +3,7 @@ package acr.browser.lightning.reading.activity;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -40,6 +41,18 @@ import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 
 public class ReadingActivity extends AppCompatActivity {
+
+    /**
+     * Launches this activity with the necessary URL argument.
+     *
+     * @param context The context needed to launch the activity.
+     * @param url The URL that will be loaded into reading mode.
+     */
+    public static void launch(@NonNull Context context, @NonNull String url) {
+        final Intent intent = new Intent(context, ReadingActivity.class);
+        intent.putExtra(Constants.LOAD_READING_URL, url);
+        context.startActivity(intent);
+    }
 
     private static final String TAG = "ReadingActivity";
 

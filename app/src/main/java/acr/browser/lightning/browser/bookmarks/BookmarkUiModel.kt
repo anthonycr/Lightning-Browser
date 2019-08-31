@@ -1,4 +1,4 @@
-package acr.browser.lightning.browser.bookmark
+package acr.browser.lightning.browser.bookmarks
 
 import acr.browser.lightning.browser.BookmarksView
 
