@@ -27,7 +27,6 @@
     <string name="block">画像を読み込まない</string>
     <string name="window">サイトが新しいタブを開くことを許可する</string>
     <string name="cookies">Cookie を有効にする</string>
-    <string name="importbookmarks">他のブラウザからブックマークをインポートする</string>
     <string name="size">文字サイズ</string>
     <string name="recommended">推奨</string>
     <string name="search">検索エンジン</string>
@@ -162,7 +161,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">閉じたタブを元に戻す</string>
+    <string name="reopening_recent_tab">閉じたタブを元に戻す</string>
     <string name="rendering_mode">レンダリングモード</string>
     <string name="name_inverted">色の反転</string>
     <string name="name_grayscale">グレースケール</string>

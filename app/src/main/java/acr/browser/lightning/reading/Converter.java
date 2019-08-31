@@ -15,6 +15,8 @@
  */
 package acr.browser.lightning.reading;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -39,7 +41,7 @@ public class Converter {
     private final static String ISO = "ISO-8859-1";
     private final static int K2 = 2048;
     private int maxBytes = 1000000 / 2;
-    private String encoding;
+    @Nullable private String encoding;
     private String url;
 
     public Converter(String urlOnlyHint) {
@@ -49,12 +51,14 @@ public class Converter {
     public Converter() {
     }
 
+    @NonNull
     public Converter setMaxBytes(int maxBytes) {
         this.maxBytes = maxBytes;
         return this;
     }
 
-    public static String extractEncoding(String contentType) {
+    @NonNull
+    public static String extractEncoding(@Nullable String contentType) {
         String[] values;
         if (contentType != null)
             values = contentType.split(";");
@@ -77,17 +81,18 @@ public class Converter {
         return charset;
     }
 
+    @NonNull
     public String getEncoding() {
         if (encoding == null)
             return "";
         return encoding.toLowerCase(Locale.getDefault());
     }
 
-    public String streamToString(InputStream is) {
+    public String streamToString(@NonNull InputStream is) {
         return streamToString(is, maxBytes, encoding);
     }
 
-    public String streamToString(InputStream is, String enc) {
+    public String streamToString(@NonNull InputStream is, String enc) {
         return streamToString(is, maxBytes, enc);
     }
 
@@ -99,7 +104,7 @@ public class Converter {
      *            The max bytes that we want to read from the input stream
      * @return String
      */
-    private String streamToString(InputStream is, int maxBytes, String enc) {
+    private String streamToString(@NonNull InputStream is, int maxBytes, String enc) {
         encoding = enc;
         // Http 1.1. standard is iso-8859-1 not utf8 :(
         // but we force utf-8 as youtube assumes it ;)
@@ -181,7 +186,7 @@ public class Converter {
      *
      * @throws IOException
      */
-    private static String detectCharset(String key, ByteArrayOutputStream bos, BufferedInputStream in,
+    private static String detectCharset(@NonNull String key, @NonNull ByteArrayOutputStream bos, @NonNull BufferedInputStream in,
                                         String enc) throws IOException {
 
         // Grab better encoding from stream

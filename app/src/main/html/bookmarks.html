@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns=http://www.w3.org/1999/xhtml>
+
+<head>
+    <meta content=en-us http-equiv=Content-Language>
+    <meta content='text/html; charset=utf-8' http-equiv=Content-Type>
+    <meta name=viewport
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    <title>
+        ${TITLE}
+    </title>
+</head>
+<style>
+    body {
+        background: #E5E5E5;
+        padding-top: 5px;
+        max-width: 100%;
+        min-height: 100%
+    }
+    
+    #content {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center
+    }
+    
+    .box {
+        vertical-align: middle;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+        height: 45px;
+        width: 145px;
+        margin: 6px;
+        padding: 4px;
+        background-color: #fff;
+        border: 1px solid #d2d2d2;
+        border-top-width: 0;
+        border-bottom-width: 2px;
+        font-family: Arial;
+        color: #444;
+        font-size: 12px;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        border-radius: 2px
+    }
+    
+    .box-content {
+        height: 25px;
+        width: 100%;
+        vertical-align: middle;
+        text-align: center;
+        display: table-cell
+    }
+    
+    p.ellipses {
+        width: 130px;
+        font-size: small;
+        font-family: Arial, Helvetica, 'sans-serif';
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: left;
+        vertical-align: middle;
+        margin: auto;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        -ms-text-overflow: ellipsis
+    }
+    
+    .box a {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0
+    }
+    
+    img {
+        vertical-align: middle;
+        margin-right: 10px;
+        width: 20px;
+        height: 20px;
+    }
+    
+    .margin {
+        margin: 10px
+    }
+</style>
+
+<body>
+<div id=content>
+
+    <div id=repeated class=box>
+        <a href='${URL}'></a>
+        <div class=margin>
+            <div class=box-content>
+                <p class=ellipses id=title>
+                    <img src='${IMAGE}'/>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>

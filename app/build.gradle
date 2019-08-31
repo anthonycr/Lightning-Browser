@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.ben-manes.versions'
 
 android {
     compileSdkVersion project.targetSdkVersion
@@ -20,26 +24,43 @@ android {
 
     buildTypes {
         debug {
+            multiDexEnabled true
             minifyEnabled false
             shrinkResources false
             proguardFiles 'proguard-project.txt'
+            testCoverageEnabled true
         }
 
         release {
+            multiDexEnabled false
             minifyEnabled true
             shrinkResources true
             proguardFiles 'proguard-project.txt'
+            testCoverageEnabled false
         }
     }
 
+    testOptions {
+        unitTests.all {
+            jacoco {
+                // This option needs to be included for robolectric tests
+                includeNoLocationClasses = true
+            }
+        }
+    }
+
+    flavorDimensions "capabilities"
+
     productFlavors {
         lightningPlus {
+            dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
             versionCode project.versionCode_plus
         }
 
         lightningLite {
+            dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
             versionCode project.versionCode_lite
@@ -53,6 +74,14 @@ android {
     packagingOptions {
         exclude '.readme'
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+jacoco {
+    toolVersion = '0.7.9' // See http://www.eclemma.org/jacoco/
 }
 
 dexcount {
@@ -64,52 +93,114 @@ dexcount {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    // multidex debug
+    debugImplementation 'androidx.multidex:multidex:2.0.1'
+
+    // test dependencies
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.13.2'
+    testImplementation 'org.mockito:mockito-core:3.0.0'
+    testImplementation 'com.nhaarman:mockito-kotlin:1.6.0', {
+        exclude group: 'org.jetbrains.kotlin'
+    }
+    testImplementation 'org.robolectric:robolectric:4.3'
 
     // support libraries
-    def supportLibVersion = '25.4.0'
-    compile "com.android.support:palette-v7:$supportLibVersion"
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile "com.android.support:design:$supportLibVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibVersion"
-    compile "com.android.support:support-v4:$supportLibVersion"
+    implementation "androidx.palette:palette:1.0.0"
+    implementation "androidx.annotation:annotation:1.1.0"
+    implementation "androidx.vectordrawable:vectordrawable-animated:1.0.0"
+    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "com.google.android.material:material:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.core:core:1.0.2"
+    implementation "androidx.constraintlayout:constraintlayout:1.1.3"
+    implementation "androidx.fragment:fragment:1.0.0"
+    implementation "androidx.drawerlayout:drawerlayout:1.0.0"
 
     // html parsing for reading mode
-    compile 'org.jsoup:jsoup:1.10.2'
+    implementation 'org.jsoup:jsoup:1.11.3'
+
+    // file reading
+    final def mezzanineVersion = '1.1.1'
+    implementation "com.anthonycr.mezzanine:mezzanine:$mezzanineVersion"
+    kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
     // dependency injection
-    def daggerVersion = '2.11'
-    compile "com.google.dagger:dagger:$daggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-    provided 'javax.annotation:jsr250-api:1.0'
+    final def daggerVersion = '2.24'
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // view binding
-    def butterknifeVersion = '8.6.0'
-    compile "com.jakewharton:butterknife:$butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    final def butterKnifeVersion = '10.1.0'
+    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
     // permissions
-    compile 'com.anthonycr.grant:permissions:1.1.2'
+    implementation 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
-    compile 'net.i2p.android:client:0.8'
+    implementation 'net.i2p.android:client:0.8'
 
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.3'
+
+    // rx
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 
     // tor proxy
-    def netcipherVersion = '2.0.0-alpha1'
-    compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
-    compile "info.guardianproject.netcipher:netcipher-webkit:$netcipherVersion"
+    final def netCipherVersion = '2.0.0-alpha1'
+    implementation "info.guardianproject.netcipher:netcipher:$netCipherVersion"
+    implementation "info.guardianproject.netcipher:netcipher-webkit:$netCipherVersion"
 
-    compile 'com.anthonycr.bonsai:bonsai:1.1.0'
-
-    compile 'com.anthonycr.progress:animated-progress:1.0'
+    implementation 'com.anthonycr.progress:animated-progress:1.0'
 
     // memory leak analysis
-    def leakCanaryVersion = '1.5.1'
-    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    final def leakCanaryVersion = '1.6.3'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
-    // Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    // kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation 'androidx.core:core-ktx:1.2.0-alpha03'
+}
+
+kapt {
+    arguments {
+        arg("mezzanine.projectPath", project.rootDir)
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        kotlinOptions {
+            freeCompilerArgs += ['-XXLanguage:+InlineClasses']
+            freeCompilerArgs += ['-progressive']
+        }
+    }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testLightningPlusDebugUnitTest', 'createLightningPlusDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    final def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    final def debugTree = fileTree(dir: "$buildDir/intermediates/classes/lightningPlus/debug", excludes: fileFilter)
+    final def kotlinDebugTree = fileTree(dir: "$buildDir/tmp/kotlin-classes/lightningPlusDebug", excludes: fileFilter)
+    final def mainSrc = "${project.projectDir}/src/test/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree], [kotlinDebugTree])
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testLightningPlusDebugUnitTest.exec",
+            "outputs/code-coverage/connected/*coverage.ec"
+    ])
 }

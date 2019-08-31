@@ -15,6 +15,9 @@
  */
 package acr.browser.lightning.reading;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +49,7 @@ public class JResult implements Serializable {
     private String authorDescription;
     private Date date;
     private Collection<String> keywords;
-    private List<ImageResult> images = null;
+    @Nullable private List<ImageResult> images = null;
     private final List<Map<String, String>> links = new ArrayList<>();
     private String type;
     private String sitename;
@@ -61,11 +64,13 @@ public class JResult implements Serializable {
         return url;
     }
 
+    @NonNull
     public JResult setUrl(String url) {
         this.url = url;
         return this;
     }
 
+    @NonNull
     public JResult setOriginalUrl(String originalUrl) {
         this.originalUrl = originalUrl;
         return this;
@@ -75,6 +80,7 @@ public class JResult implements Serializable {
         return originalUrl;
     }
 
+    @NonNull
     public JResult setCanonicalUrl(String canonicalUrl) {
         this.canonicalUrl = canonicalUrl;
         return this;
@@ -90,11 +96,13 @@ public class JResult implements Serializable {
         return faviconUrl;
     }
 
+    @NonNull
     public JResult setFaviconUrl(String faviconUrl) {
         this.faviconUrl = faviconUrl;
         return this;
     }
 
+    @NonNull
     public JResult setRssUrl(String rssUrl) {
         this.rssUrl = rssUrl;
         return this;
@@ -112,6 +120,7 @@ public class JResult implements Serializable {
         return description;
     }
 
+    @NonNull
     public JResult setDescription(String description) {
         this.description = description;
         return this;
@@ -123,6 +132,7 @@ public class JResult implements Serializable {
         return authorName;
     }
 
+    @NonNull
     public JResult setAuthorName(String authorName) {
         this.authorName = authorName;
         return this;
@@ -134,6 +144,7 @@ public class JResult implements Serializable {
         return authorDescription;
     }
 
+    @NonNull
     public JResult setAuthorDescription(String authorDescription) {
         this.authorDescription = authorDescription;
         return this;
@@ -145,6 +156,7 @@ public class JResult implements Serializable {
         return imageUrl;
     }
 
+    @NonNull
     public JResult setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
         return this;
@@ -157,6 +169,7 @@ public class JResult implements Serializable {
         return text;
     }
 
+    @NonNull
     public JResult setText(String text) {
         this.text = text;
         return this;
@@ -168,6 +181,7 @@ public class JResult implements Serializable {
         return title;
     }
 
+    @NonNull
     public JResult setTitle(String title) {
         this.title = title;
         return this;
@@ -179,11 +193,13 @@ public class JResult implements Serializable {
         return videoUrl;
     }
 
+    @NonNull
     public JResult setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
         return this;
     }
 
+    @NonNull
     public JResult setDate(Date date) {
         this.date = date;
         return this;
@@ -207,6 +223,7 @@ public class JResult implements Serializable {
     /**
      * @return images list
      */
+    @Nullable
     public List<ImageResult> getImages() {
         if (images == null)
             return Collections.emptyList();
@@ -225,7 +242,7 @@ public class JResult implements Serializable {
     /**
      * set images list
      */
-    public void setImages(List<ImageResult> images) {
+    public void setImages(@Nullable List<ImageResult> images) {
         this.images = images;
     }
 
@@ -237,9 +254,8 @@ public class JResult implements Serializable {
         links.add(link);
     }
 
+    @NonNull
     public List<Map<String, String>> getLinks() {
-        if (links == null)
-            return Collections.emptyList();
         return links;
     }
 
@@ -267,6 +283,7 @@ public class JResult implements Serializable {
         this.language = language;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "title:" + getTitle() + " imageUrl:" + getImageUrl() + " text:" + text;

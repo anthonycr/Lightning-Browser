@@ -15,6 +15,9 @@
  */
 package acr.browser.lightning.reading;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -93,7 +96,7 @@ public class HtmlFetcher {
     private final AtomicInteger cacheCounter = new AtomicInteger(0);
     private int maxTextLength = -1;
     private ArticleTextExtractor extractor = new ArticleTextExtractor();
-    private Set<String> furtherResolveNecessary = new LinkedHashSet<String>() {
+    @NonNull private final Set<String> furtherResolveNecessary = new LinkedHashSet<String>() {
         {
             add("bit.ly");
             add("cli.gs");
@@ -135,6 +138,7 @@ public class HtmlFetcher {
         return extractor;
     }
 
+    @NonNull
     public HtmlFetcher setCache(SCache cache) {
         this.cache = cache;
         return this;
@@ -148,11 +152,13 @@ public class HtmlFetcher {
         return cacheCounter.get();
     }
 
+    @NonNull
     public HtmlFetcher clearCacheCounter() {
         cacheCounter.set(0);
         return this;
     }
 
+    @NonNull
     public HtmlFetcher setMaxTextLength(int maxTextLength) {
         this.maxTextLength = maxTextLength;
         return this;
@@ -186,6 +192,7 @@ public class HtmlFetcher {
         return referrer;
     }
 
+    @NonNull
     public HtmlFetcher setReferrer(String referrer) {
         this.referrer = referrer;
         return this;
@@ -211,11 +218,13 @@ public class HtmlFetcher {
         return charset;
     }
 
+    @NonNull
     public JResult fetchAndExtract(String url, int timeout, boolean resolve) throws Exception {
         return fetchAndExtract(url, timeout, resolve, 0, false);
     }
 
     // main workhorse to call externally
+    @NonNull
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     private JResult fetchAndExtract(String url, int timeout, boolean resolve,
                                     int maxContentSize, boolean forceReload) throws Exception {
@@ -324,7 +333,8 @@ public class HtmlFetcher {
         }
     }
 
-    private String lessText(String text) {
+    @NonNull
+    private String lessText(@Nullable String text) {
         if (text == null)
             return "";
 
@@ -362,6 +372,7 @@ public class HtmlFetcher {
         return createConverter(urlAsString).streamToString(is, enc);
     }
 
+    @NonNull
     private static Converter createConverter(String url) {
         return new Converter(url);
     }
@@ -374,7 +385,7 @@ public class HtmlFetcher {
      * @return the resolved url if any. Or null if it couldn't resolve the url
      * (within the specified time) or the same url if response code is OK
      */
-    private String getResolvedUrl(String urlAsString, int timeout,
+    private String getResolvedUrl(@NonNull String urlAsString, int timeout,
                                   int num_redirects) {
         String newUrl;
         int responseCode;
@@ -426,7 +437,7 @@ public class HtmlFetcher {
      * to non-ASCII characters. Workaround for broken origin servers that send
      * UTF-8 in the Location: header.
      */
-    private static String encodeUriFromHeader(String badLocation) {
+    private static String encodeUriFromHeader(@NonNull String badLocation) {
         StringBuilder sb = new StringBuilder(badLocation.length());
 
         for (char ch : badLocation.toCharArray()) {
@@ -441,6 +452,7 @@ public class HtmlFetcher {
         return sb.toString();
     }
 
+    @NonNull
     private HttpURLConnection createUrlConnection(String urlAsStr, int timeout,
                                                   boolean includeSomeGooseOptions) throws IOException {
         URL url = new URL(urlAsStr);
@@ -468,15 +480,13 @@ public class HtmlFetcher {
     private JResult getFromCache(String url, String originalUrl) {
         if (cache != null) {
             JResult res = cache.get(url);
-            if (res != null) {
-                // e.g. the cache returned a shortened url as original url now we want to store the
-                // current original url! Also it can be that the cache response to url but the JResult
-                // does not contain it so overwrite it:
-                res.setUrl(url);
-                res.setOriginalUrl(originalUrl);
-                cacheCounter.addAndGet(1);
-                return res;
-            }
+            // e.g. the cache returned a shortened url as original url now we want to store the
+            // current original url! Also it can be that the cache response to url but the JResult
+            // does not contain it so overwrite it:
+            res.setUrl(url);
+            res.setOriginalUrl(originalUrl);
+            cacheCounter.addAndGet(1);
+            return res;
         }
         return null;
     }

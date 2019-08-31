@@ -25,6 +25,10 @@
             android:title="@string/remove_identifying_headers"/>
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="webrtc_support"
+            android:title="@string/webrtc_support"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="clear_cache_exit"
             android:title="@string/cache"/>
         <CheckBoxPreference

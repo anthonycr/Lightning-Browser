@@ -4,11 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/bookmark_title"
+        android:id="@+id/bookmark_title_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/dividerColor"
@@ -23,7 +22,7 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/starIcon"
+                android:id="@+id/bookmark_back_button_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -43,8 +42,8 @@
             android:textAppearance="?android:attr/textAppearanceLarge"/>
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/right_drawer_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bookmark_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -60,24 +59,25 @@
         android:weightSum="3">
 
         <FrameLayout
-            android:id="@+id/action_toggle_desktop"
+            android:id="@+id/action_page_tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
-                android:id="@+id/icon_desktop"
+                android:id="@+id/action_page_tools_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="@string/action_back"
+                android:contentDescription="@string/dialog_tools_title"
                 android:paddingBottom="4dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_action_desktop"/>
+                app:srcCompat="@drawable/ic_page_tools"/>
         </FrameLayout>
 
         <FrameLayout
@@ -85,20 +85,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
-                android:id="@+id/icon_star"
+                android:id="@+id/action_add_bookmark_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="@string/action_new_tab"
+                android:contentDescription="@string/action_add_bookmark"
                 android:paddingBottom="4dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_action_star"/>
+                app:srcCompat="@drawable/state_ic_bookmark"/>
         </FrameLayout>
 
         <FrameLayout
@@ -106,15 +107,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
-                android:id="@+id/icon_reading"
+                android:id="@+id/action_reading_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="@string/action_forward"
+                android:contentDescription="@string/reading_mode"
                 android:paddingBottom="4dp"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"

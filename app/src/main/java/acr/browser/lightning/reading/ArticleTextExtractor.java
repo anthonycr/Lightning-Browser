@@ -1,24 +1,27 @@
 package acr.browser.lightning.reading;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.Date;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector.SelectorParseException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is thread safe.
@@ -33,13 +36,10 @@ public class ArticleTextExtractor {
     // Interessting nodes
     private static final Pattern NODES = Pattern.compile("p|div|td|h1|h2|article|section");
     // Unlikely candidates
-    private String unlikelyStr;
     private Pattern UNLIKELY;
     // Most likely positive candidates
-    private String positiveStr;
     private Pattern POSITIVE;
     // Most likely negative candidates
-    private String negativeStr;
     private Pattern NEGATIVE;
     private static final Pattern NEGATIVE_STYLE =
             Pattern.compile("hidden|display: ?none|font-size: ?small");
@@ -80,63 +80,31 @@ public class ArticleTextExtractor {
                 + "sidebar|sponsor|tags|tool|widget|player|disclaimer|toc|infobox|vcard");
     }
 
-    private ArticleTextExtractor setUnlikely(String unlikelyStr) {
-        this.unlikelyStr = unlikelyStr;
+    @NonNull
+    private ArticleTextExtractor setUnlikely(@NonNull String unlikelyStr) {
         UNLIKELY = Pattern.compile(unlikelyStr);
         return this;
     }
 
-    public ArticleTextExtractor addUnlikely(String unlikelyMatches) {
-        return setUnlikely(unlikelyStr + '|' + unlikelyMatches);
-    }
-
-    private ArticleTextExtractor setPositive(String positiveStr) {
-        this.positiveStr = positiveStr;
+    @NonNull
+    private ArticleTextExtractor setPositive(@NonNull String positiveStr) {
         POSITIVE = Pattern.compile(positiveStr);
         return this;
     }
 
-    public ArticleTextExtractor addPositive(String pos) {
-        return setPositive(positiveStr + '|' + pos);
-    }
-
-    private ArticleTextExtractor setNegative(String negativeStr) {
-        this.negativeStr = negativeStr;
+    @NonNull
+    private ArticleTextExtractor setNegative(@NonNull String negativeStr) {
         NEGATIVE = Pattern.compile(negativeStr);
         return this;
     }
 
-    public ArticleTextExtractor addNegative(String neg) {
-        setNegative(negativeStr + '|' + neg);
-        return this;
-    }
-
-    public void setOutputFormatter(OutputFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    /**
-     * @param html extracts article text from given html string. wasn't tested
-     *             with improper HTML, although jSoup should be able to handle minor stuff.
-     * @returns extracted article, all HTML tags stripped
-     */
-    public JResult extractContent(String html, int maxContentSize) throws Exception {
-        return extractContent(new JResult(), html, maxContentSize);
-    }
-
-    public JResult extractContent(String html) throws Exception {
-        return extractContent(new JResult(), html, 0);
-    }
-
-    public JResult extractContent(JResult res, String html, int maxContentSize) throws Exception {
+    @NonNull
+    public JResult extractContent(@NonNull JResult res, @NonNull String html, int maxContentSize) throws Exception {
         return extractContent(res, html, formatter, true, maxContentSize);
     }
 
-    public JResult extractContent(JResult res, String html) throws Exception {
-        return extractContent(res, html, formatter, true, 0);
-    }
-
-    private JResult extractContent(JResult res, String html, OutputFormatter formatter,
+    @NonNull
+    private JResult extractContent(@NonNull JResult res, @NonNull String html, @NonNull OutputFormatter formatter,
                                    Boolean extractimages, int maxContentSize) throws Exception {
         if (html.isEmpty())
             throw new IllegalArgumentException("html string is empty!?");
@@ -146,11 +114,11 @@ public class ArticleTextExtractor {
     }
 
     // Returns the best node match based on the weights (see getWeight for strategy)
-    private Element getBestMatchElement(Collection<Element> nodes) {
+    @Nullable
+    private Element getBestMatchElement(@NonNull Collection<Element> nodes) {
         int maxWeight = -200;        // why -200 now instead of 0?
         Element bestMatchElement = null;
 
-        boolean ignoreMaxWeightLimit = false;
         for (Element entry : nodes) {
 
             int currentWeight = getWeight(entry, false);
@@ -188,7 +156,8 @@ public class ArticleTextExtractor {
         return bestMatchElement;
     }
 
-    private JResult extractContent(JResult res, Document doc, OutputFormatter formatter,
+    @NonNull
+    private JResult extractContent(@NonNull JResult res, @NonNull Document doc, @NonNull OutputFormatter formatter,
                                    Boolean extractimages, int maxContentSize) throws Exception {
         Document origDoc = doc.clone();
         JResult result = extractContent(res, doc, formatter, extractimages, maxContentSize, true);
@@ -201,7 +170,8 @@ public class ArticleTextExtractor {
 
 
     // main workhorse
-    private JResult extractContent(JResult res, Document doc, OutputFormatter formatter,
+    @NonNull
+    private JResult extractContent(@NonNull JResult res, @Nullable Document doc, @NonNull OutputFormatter formatter,
                                    Boolean extractimages, int maxContentSize, boolean cleanScripts) {
         if (doc == null)
             throw new NullPointerException("missing document");
@@ -324,14 +294,16 @@ public class ArticleTextExtractor {
         return res;
     }
 
-    private static String getSnippet(String data) {
+    @NonNull
+    private static String getSnippet(@NonNull String data) {
         if (data.length() < 50)
             return data;
         else
             return data.substring(0, 50);
     }
 
-    private static String extractTitle(Document doc) {
+    @NonNull
+    private static String extractTitle(@NonNull Document doc) {
         String title = cleanTitle(doc.title());
         if (title.isEmpty()) {
             title = SHelper.innerTrim(doc.select("head title").text());
@@ -351,7 +323,8 @@ public class ArticleTextExtractor {
         return title;
     }
 
-    private static String extractCanonicalUrl(Document doc) {
+    @NonNull
+    private static String extractCanonicalUrl(@NonNull Document doc) {
         String url = SHelper.replaceSpaces(doc.select("head link[rel=canonical]").attr("href"));
         if (url.isEmpty()) {
             url = SHelper.replaceSpaces(doc.select("head meta[property=og:url]").attr("content"));
@@ -362,7 +335,8 @@ public class ArticleTextExtractor {
         return url;
     }
 
-    private static String extractDescription(Document doc) {
+    @NonNull
+    private static String extractDescription(@NonNull Document doc) {
         String description = SHelper.innerTrim(doc.select("head meta[name=description]").attr("content"));
         if (description.isEmpty()) {
             description = SHelper.innerTrim(doc.select("head meta[property=og:description]").attr("content"));
@@ -374,7 +348,7 @@ public class ArticleTextExtractor {
     }
 
     // Returns the publication Date or null
-    private static Date extractDate(Document doc) {
+    private static Date extractDate(@NonNull Document doc) {
         String dateStr = "";
 
         // try some locations that nytimes uses
@@ -506,6 +480,7 @@ public class ArticleTextExtractor {
         return null;
     }
 
+    @NonNull
     private static Date parseDate(String dateStr) {
 //        String[] parsePatterns = {
 //                "yyyy-MM-dd'T'HH:mm:ssz",
@@ -557,7 +532,7 @@ public class ArticleTextExtractor {
     }
 
     // Returns the author name or null
-    private String extractAuthorName(Document doc) {
+    private String extractAuthorName(@NonNull Document doc) {
         String authorName = "";
 
         // first try the Google Author tag
@@ -645,7 +620,7 @@ public class ArticleTextExtractor {
     }
 
     // Returns the author description or null
-    private String extractAuthorDescription(Document doc, String authorName) {
+    private String extractAuthorDescription(@NonNull Document doc, @NonNull String authorName) {
 
         String authorDesc = "";
 
@@ -680,7 +655,8 @@ public class ArticleTextExtractor {
         return authorDesc;
     }
 
-    private static Collection<String> extractKeywords(Document doc) {
+    @NonNull
+    private static Collection<String> extractKeywords(@NonNull Document doc) {
         String content = SHelper.innerTrim(doc.select("head meta[name=keywords]").attr("content"));
 
         if (content.startsWith("[") && content.endsWith("]"))
@@ -698,7 +674,8 @@ public class ArticleTextExtractor {
      *
      * @return image url or empty str
      */
-    private static String extractImageUrl(Document doc) {
+    @NonNull
+    private static String extractImageUrl(@NonNull Document doc) {
         // use open graph tag to get image
         String imageUrl = SHelper.replaceSpaces(doc.select("head meta[property=og:image]").attr("content"));
         if (imageUrl.isEmpty()) {
@@ -714,15 +691,18 @@ public class ArticleTextExtractor {
         return imageUrl;
     }
 
-    private static String extractRssUrl(Document doc) {
+    @NonNull
+    private static String extractRssUrl(@NonNull Document doc) {
         return SHelper.replaceSpaces(doc.select("link[rel=alternate]").select("link[type=application/rss+xml]").attr("href"));
     }
 
-    private static String extractVideoUrl(Document doc) {
+    @NonNull
+    private static String extractVideoUrl(@NonNull Document doc) {
         return SHelper.replaceSpaces(doc.select("head meta[property=og:video]").attr("content"));
     }
 
-    private static String extractFaviconUrl(Document doc) {
+    @NonNull
+    private static String extractFaviconUrl(@NonNull Document doc) {
         String faviconUrl = SHelper.replaceSpaces(doc.select("head link[rel=icon]").attr("href"));
         if (faviconUrl.isEmpty()) {
             faviconUrl = SHelper.replaceSpaces(doc.select("head link[rel^=shortcut],link[rel$=icon]").attr("href"));
@@ -730,11 +710,12 @@ public class ArticleTextExtractor {
         return faviconUrl;
     }
 
-    private static String extractType(Document doc) {
+    private static String extractType(@NonNull Document doc) {
         return SHelper.innerTrim(doc.select("head meta[property=og:type]").attr("content"));
     }
 
-    private static String extractSitename(Document doc) {
+    @NonNull
+    private static String extractSitename(@NonNull Document doc) {
         String sitename = SHelper.innerTrim(doc.select("head meta[property=og:site_name]").attr("content"));
         if (sitename.isEmpty()) {
             sitename = SHelper.innerTrim(doc.select("head meta[name=twitter:site]").attr("content"));
@@ -745,7 +726,8 @@ public class ArticleTextExtractor {
         return sitename;
     }
 
-    private static String extractLanguage(Document doc) {
+    @NonNull
+    private static String extractLanguage(@NonNull Document doc) {
         String language = SHelper.innerTrim(doc.select("head meta[property=language]").attr("content"));
         if (language.isEmpty()) {
             language = SHelper.innerTrim(doc.select("html").attr("lang"));
@@ -769,7 +751,7 @@ public class ArticleTextExtractor {
      *
      * @param e Element to weight, along with child nodes
      */
-    private int getWeight(Element e, boolean checkextra) {
+    private int getWeight(@NonNull Element e, boolean checkextra) {
         int weight = calcWeight(e);
         int ownTextWeight = (int) Math.round(e.ownText().length() / 100.0 * 10);
         weight += ownTextWeight;
@@ -801,7 +783,7 @@ public class ArticleTextExtractor {
      *
      * @param rootEl Element, who's child nodes will be weighted
      */
-    private int weightChildNodes(Element rootEl) {
+    private int weightChildNodes(@NonNull Element rootEl) {
         int weight = 0;
         Element caption = null;
         List<Element> pEls = new ArrayList<>(5);
@@ -898,12 +880,12 @@ public class ArticleTextExtractor {
         return weight;
     }
 
-    private static void addScore(Element el, int score) {
+    private static void addScore(@NonNull Element el, int score) {
         int old = getScore(el);
         setScore(el, score + old);
     }
 
-    private static int getScore(Element el) {
+    private static int getScore(@NonNull Element el) {
         int old = 0;
         try {
             old = Integer.parseInt(el.attr("gravityScore"));
@@ -912,11 +894,11 @@ public class ArticleTextExtractor {
         return old;
     }
 
-    private static void setScore(Element el, int score) {
+    private static void setScore(@NonNull Element el, int score) {
         el.attr("gravityScore", Integer.toString(score));
     }
 
-    private static int calcWeightForChild(Element child, String ownText) {
+    private static int calcWeightForChild(@NonNull Element child, @NonNull String ownText) {
         int c = SHelper.count(ownText, "&quot;");
         c += SHelper.count(ownText, "&lt;");
         c += SHelper.count(ownText, "&gt;");
@@ -931,7 +913,7 @@ public class ArticleTextExtractor {
         return val;
     }
 
-    private int calcWeight(Element e) {
+    private int calcWeight(@NonNull Element e) {
         int weight = 0;
         if (POSITIVE.matcher(e.className()).find())
             weight += 35;
@@ -963,7 +945,8 @@ public class ArticleTextExtractor {
         return weight;
     }
 
-    private static Element determineImageSource(Element el, List<ImageResult> images) {
+    @Nullable
+    private static Element determineImageSource(@NonNull Element el, @NonNull List<ImageResult> images) {
         int maxWeight = 0;
         Element maxNode = null;
         Elements els = el.select("img");
@@ -1037,7 +1020,7 @@ public class ArticleTextExtractor {
      * @param doc document to prepare. Passed as reference, and changed inside
      *            of function
      */
-    private static void prepareDocument(Document doc) {
+    private static void prepareDocument(@NonNull Document doc) {
 //        stripUnlikelyCandidates(doc);
         removeScriptsAndStyles(doc);
     }
@@ -1048,7 +1031,7 @@ public class ArticleTextExtractor {
      *
      * @param doc document to strip unlikely candidates from
      */
-    protected void stripUnlikelyCandidates(Document doc) {
+    protected void stripUnlikelyCandidates(@NonNull Document doc) {
         for (Element child : doc.select("body").select("*")) {
             String className = child.className().toLowerCase();
             String id = child.id().toLowerCase();
@@ -1060,7 +1043,8 @@ public class ArticleTextExtractor {
         }
     }
 
-    private static Document removeScriptsAndStyles(Document doc) {
+    @NonNull
+    private static Document removeScriptsAndStyles(@NonNull Document doc) {
         Elements scripts = doc.getElementsByTag("script");
         for (Element item : scripts) {
             item.remove();
@@ -1078,7 +1062,7 @@ public class ArticleTextExtractor {
         return doc;
     }
 
-    private static boolean isAdImage(String imageUrl) {
+    private static boolean isAdImage(@NonNull String imageUrl) {
         return SHelper.count(imageUrl, "ad") >= 2;
     }
 
@@ -1102,7 +1086,7 @@ public class ArticleTextExtractor {
      * @param delimeter
      * @return
      */
-    private static String doTitleSplits(String title, String delimeter) {
+    private static String doTitleSplits(@NonNull String title, @NonNull String delimeter) {
         String largeText = "";
         int largetTextLen = 0;
         String[] titlePieces = title.split(delimeter);
@@ -1123,7 +1107,7 @@ public class ArticleTextExtractor {
     /**
      * @return a set of all important nodes
      */
-    private static Collection<Element> getNodes(Document doc) {
+    private static Collection<Element> getNodes(@NonNull Document doc) {
         Map<Element, Object> nodes = new LinkedHashMap<>(64);
         int score = 100;
         for (Element el : doc.select("body").select("*")) {
@@ -1136,7 +1120,7 @@ public class ArticleTextExtractor {
         return nodes.keySet();
     }
 
-    private static String cleanTitle(String title) {
+    private static String cleanTitle(@NonNull String title) {
 
 //        int index = title.lastIndexOf("|");
 //        if (index > 0 && title.length() / 2 < index)
@@ -1169,7 +1153,7 @@ public class ArticleTextExtractor {
      * For discussion of why you might want to do this, see
      * http://lpar.ath0.com/2011/06/07/unicode-alchemy-with-db2/
      */
-    private static String utf8truncate(String input, int length) {
+    private static String utf8truncate(@NonNull String input, int length) {
         StringBuilder result = new StringBuilder(length);
         int resultlen = 0;
         for (int i = 0; i < input.length(); i++) {
@@ -1206,7 +1190,7 @@ public class ArticleTextExtractor {
     private static class ImageComparator implements Comparator<ImageResult> {
 
         @Override
-        public int compare(ImageResult o1, ImageResult o2) {
+        public int compare(@NonNull ImageResult o1, @NonNull ImageResult o2) {
             // Returns the highest weight first
             return o2.weight.compareTo(o1.weight);
         }

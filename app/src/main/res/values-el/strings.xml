@@ -26,7 +26,6 @@
     <string name="block">Μπλοκάρισμα εικόνων</string>
     <string name="window">Να επιτρέπεται στις σελίδες να ανοίγουν νέα παράθυρα</string>
     <string name="cookies">Ενεργοποίηση Cookies</string>
-    <string name="importbookmarks">Εισαγωγή σελιδοδεικτών απο άλλον Browser</string>
     <string name="size">Μέγεθος κειμένου</string>
     <string name="recommended">Συνιστάται</string>
     <string name="search">Μηχανή αναζήτησης</string>
@@ -131,7 +130,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Άνοιγμα παλιάς καρτέλας</string>
+    <string name="reopening_recent_tab">Άνοιγμα παλιάς καρτέλας</string>
     <string name="rendering_mode">Rendering</string>
     <string name="name_inverted">Inverted</string>
     <string name="name_grayscale">Grayscale</string>

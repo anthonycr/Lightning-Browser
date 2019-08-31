@@ -17,13 +17,13 @@
     <color name="secondary_color_settings">#9C9C9C</color>
     <color name="secondary_color_settings_dark">#2E2E2E</color>
 
-    <color name="hint_text">#BDBDBD</color>
+    <color name="hint_text_light_theme">#80000000</color>
+    <color name="hint_text_dark_theme">#80ffffff</color>
 
     <color name="primary_color_dark">#424242</color>
 
     <color name="divider_dark">#1FFFFFFF</color>
     <color name="divider_light">#1F000000</color>
-
 
     <color name="selected_dark">#0FFFFFFF</color>
     <color name="selected_light">#0F000000</color>
@@ -41,5 +41,8 @@
     <color name="bookmark_default_green">#4CAF50</color>
     <color name="bookmark_default_red">#EF5350</color>
     <color name="bookmark_default_orange">#FF9800</color>
+
+    <color name="ssl_secured">#4CAF50</color>
+    <color name="ssl_unsecured">#F44336</color>
 
 </resources>

@@ -7,54 +7,64 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
-
-import com.anthonycr.bonsai.SingleOnSubscribe;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import acr.browser.lightning.BuildConfig;
-import acr.browser.lightning.R;
-import acr.browser.lightning.MainActivity;
 import acr.browser.lightning.BrowserApp;
+import acr.browser.lightning.BuildConfig;
+import acr.browser.lightning.MainActivity;
+import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
-import acr.browser.lightning.database.downloads.DownloadItem;
-import acr.browser.lightning.database.downloads.DownloadsModel;
+import acr.browser.lightning.database.downloads.DownloadEntry;
+import acr.browser.lightning.database.downloads.DownloadsRepository;
+import acr.browser.lightning.di.DatabaseScheduler;
+import acr.browser.lightning.di.MainScheduler;
+import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
-import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.extensions.ActivityExtensions;
+import acr.browser.lightning.log.Logger;
+import acr.browser.lightning.preference.UserPreferences;
 import acr.browser.lightning.utils.FileUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.view.LightningView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Handle download requests
  */
+@Singleton
 public class DownloadHandler {
 
     private static final String TAG = "DownloadHandler";
 
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
-    @Inject DownloadsModel downloadsModel;
+    @Inject DownloadsRepository downloadsRepository;
+    @Inject DownloadManager downloadManager;
+    @Inject @DatabaseScheduler Scheduler databaseScheduler;
+    @Inject @NetworkScheduler Scheduler networkScheduler;
+    @Inject @MainScheduler Scheduler mainScheduler;
+    @Inject Logger logger;
 
+    @Inject
     public DownloadHandler() {
         BrowserApp.getAppComponent().inject(this);
     }
@@ -70,13 +80,13 @@ public class DownloadHandler {
      * @param mimetype           The mimetype of the content reported by the server
      * @param contentSize        The size of the content
      */
-    public void onDownloadStart(@NonNull Activity context, @NonNull PreferenceManager manager, String url, String userAgent,
-                                @Nullable String contentDisposition, String mimetype, String contentSize) {
+    public void onDownloadStart(@NonNull Activity context, @NonNull UserPreferences manager, @NonNull String url, String userAgent,
+                                @Nullable String contentDisposition, String mimetype, @NonNull String contentSize) {
 
-        Log.d(TAG, "DOWNLOAD: Trying to download from URL: " + url);
-        Log.d(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
-        Log.d(TAG, "DOWNLOAD: Mimetype: " + mimetype);
-        Log.d(TAG, "DOWNLOAD: User agent: " + userAgent);
+        logger.log(TAG, "DOWNLOAD: Trying to download from URL: " + url);
+        logger.log(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
+        logger.log(TAG, "DOWNLOAD: Mimetype: " + mimetype);
+        logger.log(TAG, "DOWNLOAD: User agent: " + userAgent);
 
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
@@ -89,9 +99,7 @@ public class DownloadHandler {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_BROWSABLE);
             intent.setComponent(null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                intent.setSelector(null);
-            }
+            intent.setSelector(null);
             ResolveInfo info = context.getPackageManager().resolveActivity(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {
@@ -157,9 +165,9 @@ public class DownloadHandler {
      * @param contentSize        The size of the content
      */
     /* package */
-    private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull PreferenceManager preferences,
-                                         String url, String userAgent,
-                                         String contentDisposition, @Nullable String mimetype, String contentSize) {
+    private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull UserPreferences preferences,
+                                         @NonNull String url, String userAgent,
+                                         String contentDisposition, @Nullable String mimetype, @NonNull String contentSize) {
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
@@ -193,8 +201,8 @@ public class DownloadHandler {
         } catch (Exception e) {
             // This only happens for very bad urls, we want to catch the
             // exception here
-            Log.e(TAG, "Exception while trying to parse url '" + url + '\'', e);
-            Utils.showSnackbar(context, R.string.problem_download);
+            logger.log(TAG, "Exception while trying to parse url '" + url + '\'', e);
+            ActivityExtensions.snackbar(context, R.string.problem_download);
             return;
         }
 
@@ -204,7 +212,7 @@ public class DownloadHandler {
         try {
             request = new DownloadManager.Request(uri);
         } catch (IllegalArgumentException e) {
-            Utils.showSnackbar(context, R.string.cannot_download);
+            ActivityExtensions.snackbar(context, R.string.cannot_download);
             return;
         }
 
@@ -216,11 +224,11 @@ public class DownloadHandler {
         Uri downloadFolder = Uri.parse(location);
 
         if (!isWriteAccessAvailable(downloadFolder)) {
-            Utils.showSnackbar(context, R.string.problem_location_download);
+            ActivityExtensions.snackbar(context, R.string.problem_location_download);
             return;
         }
         String newMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(Utils.guessFileExtension(filename));
-        Log.d(TAG, "New mimetype: " + newMimeType);
+        logger.log(TAG, "New mimetype: " + newMimeType);
         request.setMimeType(newMimeType);
         request.setDestinationUri(Uri.parse(Constants.FILE + location + filename));
         // let this downloaded file be scanned by MediaScanner - so that it can
@@ -236,29 +244,43 @@ public class DownloadHandler {
 
         //noinspection VariableNotUsedInsideIf
         if (mimetype == null) {
-            Log.d(TAG, "Mimetype is null");
+            logger.log(TAG, "Mimetype is null");
             if (TextUtils.isEmpty(addressString)) {
                 return;
             }
             // We must have long pressed on a link or image to download it. We
             // are not sure of the mimetype in this case, so do a head request
-            new FetchUrlMimeType(context, request, addressString, cookies, userAgent).start();
+            final Disposable disposable = new FetchUrlMimeType(downloadManager, request, addressString, cookies, userAgent)
+                .create()
+                .subscribeOn(networkScheduler)
+                .observeOn(mainScheduler)
+                .subscribe(result -> {
+                    switch (result) {
+                        case FAILURE_ENQUEUE:
+                            ActivityExtensions.snackbar(context, R.string.cannot_download);
+                            break;
+                        case FAILURE_LOCATION:
+                            ActivityExtensions.snackbar(context, R.string.problem_location_download);
+                            break;
+                        case SUCCESS:
+                            ActivityExtensions.snackbar(context, R.string.download_pending);
+                            break;
+                    }
+                });
         } else {
-            Log.d(TAG, "Valid mimetype, attempting to download");
-            final DownloadManager manager = (DownloadManager) context
-                .getSystemService(Context.DOWNLOAD_SERVICE);
+            logger.log(TAG, "Valid mimetype, attempting to download");
             try {
-                manager.enqueue(request);
+                downloadManager.enqueue(request);
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
-                Log.e(TAG, "Unable to enqueue request", e);
-                Utils.showSnackbar(context, R.string.cannot_download);
+                logger.log(TAG, "Unable to enqueue request", e);
+                ActivityExtensions.snackbar(context, R.string.cannot_download);
             } catch (SecurityException e) {
                 // TODO write a download utility that downloads files rather than rely on the system
                 // because the system can only handle Environment.getExternal... as a path
-                Utils.showSnackbar(context, R.string.problem_location_download);
+                ActivityExtensions.snackbar(context, R.string.problem_location_download);
             }
-            Utils.showSnackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
+            ActivityExtensions.snackbar(context, context.getString(R.string.download_pending) + ' ' + filename);
         }
 
         // save download in database
@@ -266,18 +288,20 @@ public class DownloadHandler {
         LightningView view = browserActivity.getTabModel().getCurrentTab();
 
         if (view != null && !view.isIncognito()) {
-            downloadsModel.addDownloadIfNotExists(new DownloadItem(url, filename, contentSize))
-                .subscribe(new SingleOnSubscribe<Boolean>() {
-                    @Override
-                    public void onItem(@Nullable Boolean item) {
-                        if (item != null && !item)
-                            Log.i(TAG, "error saving download to database");
+            downloadsRepository.addDownloadIfNotExists(new DownloadEntry(url, filename, contentSize))
+                .subscribeOn(databaseScheduler)
+                .subscribe(aBoolean -> {
+                    if (!aBoolean) {
+                        logger.log(TAG, "error saving download to database");
                     }
                 });
         }
     }
 
     private static boolean isWriteAccessAvailable(@NonNull Uri fileUri) {
+        if (fileUri.getPath() == null){
+            return false;
+        }
         File file = new File(fileUri.getPath());
 
         if (!file.isDirectory() && !file.mkdirs()) {

@@ -24,7 +24,6 @@
     <string name="block">Bloquear imágenes</string>
     <string name="window">Permitir a los sitios abrir nuevas ventanas</string>
     <string name="cookies">Habilitar cookies</string>
-    <string name="importbookmarks">Importar marcadores</string>
     <string name="size">Tamaño de la tipografía</string>
     <string name="recommended">(Recomendado)</string>
     <string name="search">Motor de búsqueda</string>
@@ -143,7 +142,7 @@
     <string name="freeware">Software gratuito</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Pestaña reabierta</string>
+    <string name="reopening_recent_tab">Pestaña reabierta</string>
     <string name="rendering_mode">Modo de renderizado</string>
     <string name="name_inverted">Invertido</string>
     <string name="name_grayscale">Escala de grises</string>

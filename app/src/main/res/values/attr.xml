@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="numberColor" format="reference|color" />
+    <attr name="iconColor" format="reference|color" />
+    <attr name="iconColorState" format="reference|color" />
     <attr name="autoCompleteTitleColor" format="reference|color" />
     <attr name="autoCompleteUrlColor" format="reference|color" />
     <attr name="listBackground" format="reference|color" />
@@ -12,4 +13,10 @@
     <attr name="dividerColor" format="reference|color" />
     <attr name="selectedBackground" format="reference|color" />
 
+    <declare-styleable name="TabCountView">
+        <attr name="tabIconColor" format="reference|color" />
+        <attr name="tabIconTextSize" format="dimension"/>
+        <attr name="tabIconBorderWidth" format="dimension"/>
+        <attr name="tabIconBorderRadius" format="dimension"/>
+    </declare-styleable>
 </resources>

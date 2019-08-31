@@ -27,7 +27,6 @@
     <string name="block">Block images</string>
     <string name="window">Allow sites to open new windows</string>
     <string name="cookies">Enable cookies</string>
-    <string name="importbookmarks">Import bookmarks from browser</string>
     <string name="size">Text size</string>
     <string name="recommended">Recommended</string>
     <string name="search">Search engine</string>
@@ -113,7 +112,42 @@
     <string name="message_blocked_local">Local file has been blocked from loading</string>
     <string name="licenses">Open Source Licenses</string>
     <string name="suggestion">Search for</string>
+
+    <!-- Ad block -->
     <string name="block_ads">Block ads</string>
+    <string name="block_ad_source">Hosts file source</string>
+    <string name="block_ad_remote_refresh_frequency_description">For remote hosts file</string>
+    <string name="block_ad_refresh_now">Refresh hosts now</string>
+
+    <string name="block_ads_upsell_source">Upgrade to Lightning Plus to choose</string>
+
+    <string name="block_remote_frequency_daily">Daily</string>
+    <string name="block_remote_frequency_weekly">Weekly</string>
+    <string name="block_remote_frequency_monthly">Monthly</string>
+
+    <string-array name="block_ad_frequency_list">
+        <item>@string/block_remote_frequency_daily</item>
+        <item>@string/block_remote_frequency_weekly</item>
+        <item>@string/block_remote_frequency_monthly</item>
+    </string-array>
+
+    <string name="block_source_default">Default hosts</string>
+    <string name="block_source_local">Local hosts file</string>
+    <string name="block_source_local_description">File: %1$s</string>
+    <string name="block_source_remote">Remote hosts file</string>
+    <string name="block_source_remote_description">URL: %1$s</string>
+
+    <string-array name="block_ad_source_list">
+        <item>@string/block_source_default</item>
+        <item>@string/block_source_local</item>
+        <item>@string/block_source_remote</item>
+    </string-array>
+
+    <!-- Common actions -->
+    <string name="action_message_canceled">Action canceled.</string>
+
+    <!-- SSL warnings -->
+    <string name="ssl_warning_dont_ask_again">Don\'t ask again for this browsing session.</string>
     <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
     <string name="message_certificate_date_invalid">Date of certificate is invalid</string>
     <string name="message_certificate_expired">Certificate is expired</string>
@@ -121,6 +155,11 @@
     <string name="message_certificate_invalid">Certificate is invalid</string>
     <string name="message_certificate_not_yet_valid">Certificate is not yet valid</string>
     <string name="message_certificate_untrusted">Certificate is not trusted</string>
+
+    <!-- permissions request -->
+    <string name="title_permission_request">Permission request</string>
+    <string name="message_permission_request">%1$s\n\nwould like to use:\n\n%2$s</string>
+
     <string name="title_form_resubmission">Form resubmission</string>
     <string name="message_form_resubmission">Would you like to resend the data?</string>
     <string name="message_location">\nWould like to use your location</string>
@@ -134,6 +173,7 @@
     <string name="powered_by_google">Powered by Google</string>
     <string name="powered_by_duck">Powered by DuckDuckGo</string>
     <string name="powered_by_baidu">Powered by Baidu</string>
+    <string name="powered_by_naver">Powered by Naver</string>
     <string name="search_suggestions_off">No search suggestions</string>
     <string name="http_proxy">HTTP proxy</string>
     <string-array name="proxy_choices_array">
@@ -161,7 +201,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Reopened old tab</string>
+    <string name="reopening_recent_tab">Reopened old tab</string>
     <string name="rendering_mode">Rendering mode</string>
     <string name="name_inverted">Inverted</string>
     <string name="name_grayscale">Grayscale</string>
@@ -178,6 +218,7 @@
     <string name="bookmark_export_failure">Sorry, bookmarks could not be exported!</string>
     <string name="bookmark_settings">Bookmark Settings</string>
     <string name="import_bookmark_error">Could not import bookmarks from file</string>
+    <string name="message_bookmark_added">Bookmark added.</string>
     <string name="title_chooser">Choose a file</string>
     <string name="settings_general">General Settings</string>
     <string name="settings_display">Display Settings</string>
@@ -218,13 +259,16 @@
     <string name="clear_web_storage_exit">Clear web storage on exit</string>
     <string name="message_web_storage_cleared">Web storage cleared</string>
     <string name="hosts_source">Hosts file ad blocking source</string>
-    <string name="settings_adblock">Ad block settings</string>
+    <string name="settings_adblock">Ad Block Settings</string>
     <string name="tabs_in_drawer">Show tabs in navigation drawer</string>
     <string name="swap_bookmarks_and_tabs">Swap bookmark and tab drawers</string>
     <string name="do_not_track">Request \'Do Not Track\'</string>
+    <string name="save_data">Request \'Save-Data\'</string>
     <string name="remove_identifying_headers">Remove identifying headers</string>
+    <string name="webrtc_support">WebRTC Support</string>
     <string name="action_add_to_homescreen">Add to home screen</string>
     <string name="message_added_to_homescreen">Shortcut added to home screen</string>
+    <string name="shortcut_message_failed_to_add">Sorry, your launcher does not support shortcuts.</string>
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
     <string name="flash_not_supported">Flash Player is not supported by your system</string>
     <string name="upsell_plus_version">Upgrade to Lightning Plus to block ads</string>
@@ -253,6 +297,12 @@
     <string name="dialog_delete_download">Delete download</string>
     <string name="dialog_delete_all_downloads">Delete all downloads</string>
 
+    <!-- Tools dialog -->
+    <string name="dialog_tools_title">Page tools</string>
+    <string name="dialog_toggle_desktop">Toggle desktop user agent</string>
+    <string name="dialog_adblock_enable_for_site">Enable ad block for site</string>
+    <string name="dialog_adblock_disable_for_site">Disable ad block for site</string>
+
     <!-- Search Engines -->
     <string name="search_engine_custom">Custom URL</string>
     <string name="search_engine_google">Google</string>
@@ -265,4 +315,18 @@
     <string name="search_engine_duckduckgo_lite">DuckDuckGo Lite</string>
     <string name="search_engine_baidu">Baidu</string>
     <string name="search_engine_yandex">Yandex</string>
+    <string name="search_engine_naver">Naver</string>
+
+    <!-- Notifications -->
+    <plurals name="notification_incognito_running_title">
+        <item quantity="one">%1$d incognito tab open</item>
+        <item quantity="other">%1$d incognito tabs open</item>
+    </plurals>
+    <string name="notification_incognito_running_message">Touch to open</string>
+    <string name="notification_incognito_running_description">Ongoing incognito notification</string>
+
+    <!--Ad block -->
+    <string name="ad_block_load_failure">Failed to load hosts from ad blocking source.</string>
+
+    <string name="infinity">∞</string>
 </resources>

@@ -5,8 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,11 +14,13 @@ import android.view.inputmethod.InputMethodManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class MemoryLeakUtils {
+public final class MemoryLeakUtils {
 
     private static final String TAG = "MemoryLeakUtils";
 
     @Nullable private static Method sFinishInputLocked = null;
+
+    private MemoryLeakUtils() {}
 
     /**
      * Clears the mNextServedView and mServedView in
@@ -28,7 +30,7 @@ public class MemoryLeakUtils {
      *                    the InputMethodManager that is
      *                    leaking the views.
      */
-    public static void clearNextServedView(Activity activity, @NonNull Application application) {
+    public static void clearNextServedView(@NonNull Activity activity, @NonNull Application application) {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             // This shouldn't be a problem on N

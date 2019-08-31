@@ -2,23 +2,23 @@ package acr.browser.lightning.utils;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import android.webkit.WebIconDatabase;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
-import com.anthonycr.bonsai.Schedulers;
-
-import acr.browser.lightning.database.history.HistoryModel;
+import acr.browser.lightning.database.history.HistoryRepository;
+import io.reactivex.Scheduler;
 
 /**
  * Copyright 8/4/2015 Anthony Restaino
  */
-public class WebUtils {
+public final class WebUtils {
+
+    private WebUtils() {}
 
     public static void clearCookies(@NonNull Context context) {
         CookieManager c = CookieManager.getInstance();
@@ -36,19 +36,15 @@ public class WebUtils {
         WebStorage.getInstance().deleteAllData();
     }
 
-    public static void clearHistory(@NonNull Context context, @NonNull HistoryModel historyModel) {
-        historyModel.deleteHistory()
-                .subscribeOn(Schedulers.io())
-                .subscribe();
-        WebViewDatabase m = WebViewDatabase.getInstance(context);
-        m.clearFormData();
-        m.clearHttpAuthUsernamePassword();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //noinspection deprecation
-            m.clearUsernamePassword();
-            //noinspection deprecation
-            WebIconDatabase.getInstance().removeAllIcons();
-        }
+    public static void clearHistory(@NonNull Context context,
+                                    @NonNull HistoryRepository historyRepository,
+                                    @NonNull Scheduler databaseScheduler) {
+        historyRepository.deleteHistory()
+            .subscribeOn(databaseScheduler)
+            .subscribe();
+        WebViewDatabase webViewDatabase = WebViewDatabase.getInstance(context);
+        webViewDatabase.clearFormData();
+        webViewDatabase.clearHttpAuthUsernamePassword();
         Utils.trimCache(context);
     }
 

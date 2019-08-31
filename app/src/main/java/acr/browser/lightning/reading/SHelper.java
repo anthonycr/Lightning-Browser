@@ -15,6 +15,9 @@
  */
 package acr.browser.lightning.reading;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.jsoup.nodes.Element;
 
 import java.io.UnsupportedEncodingException;
@@ -45,7 +48,8 @@ class SHelper {
     private static final String UTF8 = "UTF-8";
     private static final Pattern SPACE = Pattern.compile(" ");
 
-    public static String replaceSpaces(String url) {
+    @NonNull
+    public static String replaceSpaces(@NonNull String url) {
         if (!url.isEmpty()) {
             url = url.trim();
             if (url.contains(" ")) {
@@ -56,7 +60,7 @@ class SHelper {
         return url;
     }
 
-    public static int count(String str, String substring) {
+    public static int count(@NonNull String str, @NonNull String substring) {
         int c = 0;
         int index1 = str.indexOf(substring);
         if (index1 >= 0) {
@@ -69,7 +73,7 @@ class SHelper {
     /**
      * remove more than two spaces or newlines
      */
-    public static String innerTrim(String str) {
+    public static String innerTrim(@NonNull String str) {
         if (str.isEmpty())
             return "";
 
@@ -95,7 +99,7 @@ class SHelper {
      * Starts reading the encoding from the first valid character until an
      * invalid encoding character occurs.
      */
-    public static String encodingCleanup(String str) {
+    public static String encodingCleanup(@NonNull String str) {
         StringBuilder sb = new StringBuilder(str.length());
         boolean startedWithCorrectString = false;
         for (int i = 0; i < str.length(); i++) {
@@ -115,7 +119,7 @@ class SHelper {
     /**
      * @return the longest substring as str1.substring(result[0], result[1]);
      */
-    public static String getLongestSubstring(String str1, String str2) {
+    public static String getLongestSubstring(@NonNull String str1, String str2) {
         int res[] = longestSubstring(str1, str2);
         if (res == null || res[0] >= res[1])
             return "";
@@ -123,7 +127,8 @@ class SHelper {
         return str1.substring(res[0], res[1]);
     }
 
-    private static int[] longestSubstring(String str1, String str2) {
+    @Nullable
+    private static int[] longestSubstring(@Nullable String str1, @Nullable String str2) {
         if (str1 == null || str1.isEmpty() || str2 == null || str2.isEmpty())
             return null;
 
@@ -175,11 +180,13 @@ class SHelper {
         }
     }
 
-    public static String extractHost(String url) {
+    @NonNull
+    public static String extractHost(@NonNull String url) {
         return extractDomain(url, false);
     }
 
-    public static String extractDomain(String url, boolean aggressive) {
+    @NonNull
+    public static String extractDomain(@NonNull String url, boolean aggressive) {
         if (url.startsWith("http://"))
             url = url.substring("http://".length());
         else if (url.startsWith("https://"))
@@ -207,30 +214,30 @@ class SHelper {
             || url.startsWith("vimeo.com") || url.startsWith("blip.tv");
     }
 
-    public static boolean isVideo(String url) {
+    public static boolean isVideo(@NonNull String url) {
         return url.endsWith(".mpeg") || url.endsWith(".mpg") || url.endsWith(".avi") || url.endsWith(".mov")
             || url.endsWith(".mpg4") || url.endsWith(".mp4") || url.endsWith(".flv") || url.endsWith(".wmv");
     }
 
-    public static boolean isAudio(String url) {
+    public static boolean isAudio(@NonNull String url) {
         return url.endsWith(".mp3") || url.endsWith(".ogg") || url.endsWith(".m3u") || url.endsWith(".wav");
     }
 
-    public static boolean isDoc(String url) {
+    public static boolean isDoc(@NonNull String url) {
         return url.endsWith(".pdf") || url.endsWith(".ppt") || url.endsWith(".doc")
             || url.endsWith(".swf") || url.endsWith(".rtf") || url.endsWith(".xls");
     }
 
-    public static boolean isPackage(String url) {
+    public static boolean isPackage(@NonNull String url) {
         return url.endsWith(".gz") || url.endsWith(".tgz") || url.endsWith(".zip")
             || url.endsWith(".rar") || url.endsWith(".deb") || url.endsWith(".rpm") || url.endsWith(".7z");
     }
 
-    public static boolean isApp(String url) {
+    public static boolean isApp(@NonNull String url) {
         return url.endsWith(".exe") || url.endsWith(".bin") || url.endsWith(".bat") || url.endsWith(".dmg");
     }
 
-    public static boolean isImage(String url) {
+    public static boolean isImage(@NonNull String url) {
         return url.endsWith(".png") || url.endsWith(".jpeg") || url.endsWith(".gif")
             || url.endsWith(".jpg") || url.endsWith(".bmp") || url.endsWith(".ico") || url.endsWith(".eps");
     }
@@ -251,7 +258,7 @@ class SHelper {
         System.setProperty("http.agent", "");
     }
 
-    public static String getUrlFromUglyGoogleRedirect(String url) {
+    public static String getUrlFromUglyGoogleRedirect(@NonNull String url) {
         if (url.startsWith("https://www.google.com/url?")) {
             url = url.substring("https://www.google.com/url?".length());
             String arr[] = urlDecode(url).split("&");
@@ -264,7 +271,7 @@ class SHelper {
         return null;
     }
 
-    public static String getUrlFromUglyFacebookRedirect(String url) {
+    public static String getUrlFromUglyFacebookRedirect(@NonNull String url) {
         if (url.startsWith("https://www.facebook.com/l.php?u=")) {
             url = url.substring("https://www.facebook.com/l.php?u=".length());
             return urlDecode(url);
@@ -293,15 +300,15 @@ class SHelper {
      * Popular sites uses the #! to indicate the importance of the following
      * chars. Ugly but true. Such as: facebook, twitter, gizmodo, ...
      */
-    public static String removeHashbang(String url) {
+    public static String removeHashbang(@NonNull String url) {
         return url.replaceFirst("#!", "");
     }
 
-    public static String printNode(Element root) {
+    public static String printNode(@NonNull Element root) {
         return printNode(root, 0);
     }
 
-    private static String printNode(Element root, int indentation) {
+    private static String printNode(@NonNull Element root, int indentation) {
         StringBuilder sb = new StringBuilder(indentation);
         for (int i = 0; i < indentation; i++) {
             sb.append(' ');
@@ -317,7 +324,7 @@ class SHelper {
         return sb.toString();
     }
 
-    public static String estimateDate(String url) {
+    public static String estimateDate(@NonNull String url) {
         int index = url.indexOf("://");
         if (index > 0)
             url = url.substring(index + 3);
@@ -389,7 +396,8 @@ class SHelper {
         return str.toString();
     }
 
-    public static String completeDate(String dateStr) {
+    @Nullable
+    public static String completeDate(@Nullable String dateStr) {
         if (dateStr == null)
             return null;
 
@@ -418,7 +426,7 @@ class SHelper {
     private static class DefaultTrustManager implements X509TrustManager {
 
         @Override
-        public void checkClientTrusted(X509Certificate[] certs, String arg1) throws CertificateException {
+        public void checkClientTrusted(@NonNull X509Certificate[] certs, String arg1) throws CertificateException {
             Date today = new Date();
             for (X509Certificate certificate : certs) {
                 certificate.checkValidity(today);
@@ -426,20 +434,21 @@ class SHelper {
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] certs, String arg1) throws CertificateException {
+        public void checkServerTrusted(@NonNull X509Certificate[] certs, String arg1) throws CertificateException {
             Date today = new Date();
             for (X509Certificate certificate : certs) {
                 certificate.checkValidity(today);
             }
         }
 
+        @Nullable
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
     }
 
-    public static int countLetters(String str) {
+    public static int countLetters(@NonNull String str) {
         int len = str.length();
         int chars = 0;
         for (int i = 0; i < len; i++) {

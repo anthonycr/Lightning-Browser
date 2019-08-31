@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:parentTag="android.widget.LinearLayout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_new_tab"
-                app:srcCompat="@drawable/ic_action_tabs"/>
+                app:srcCompat="@drawable/ic_action_tabs" />
         </FrameLayout>
 
         <TextView
@@ -39,17 +39,17 @@
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:text="@string/tabs"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabs_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:overScrollMode="ifContentScrolls"/>
+        android:overScrollMode="ifContentScrolls" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -64,8 +64,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/icon_back"
@@ -73,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_back"
-                app:srcCompat="@drawable/ic_action_back"/>
+                app:srcCompat="@drawable/ic_action_back" />
         </FrameLayout>
 
         <FrameLayout
@@ -81,8 +82,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/icon_home"
@@ -90,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_homepage"
-                app:srcCompat="@drawable/ic_action_home"/>
+                app:srcCompat="@drawable/ic_action_home" />
         </FrameLayout>
 
         <FrameLayout
@@ -98,8 +100,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/icon_forward"
@@ -107,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_forward"
-                app:srcCompat="@drawable/ic_action_forward"/>
+                app:srcCompat="@drawable/ic_action_forward" />
         </FrameLayout>
 
         <FrameLayout
@@ -115,8 +118,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/actionBarItemBackground"
-            android:clickable="true">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/icon_plus"
@@ -124,8 +128,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/action_new_tab"
-                app:srcCompat="@drawable/ic_action_plus"/>
+                app:srcCompat="@drawable/ic_action_plus" />
         </FrameLayout>
     </LinearLayout>
 
-</LinearLayout>
+</merge>

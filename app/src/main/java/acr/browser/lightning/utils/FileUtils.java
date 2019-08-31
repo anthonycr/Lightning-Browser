@@ -4,32 +4,31 @@ import android.app.Application;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
-import com.anthonycr.bonsai.Schedulers;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
+
+import io.reactivex.Completable;
 
 /**
  * A utility class containing helpful methods
  * pertaining to file storage.
  */
-public class FileUtils {
+public final class FileUtils {
 
     private static final String TAG = "FileUtils";
 
     public static final String DEFAULT_DOWNLOAD_PATH =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+
+    private FileUtils() {}
 
     /**
      * Writes a bundle to persistent storage in the files directory
@@ -40,25 +39,22 @@ public class FileUtils {
      * @param bundle the bundle to store in persistent storage.
      * @param name   the name of the file to store the bundle in.
      */
-    public static void writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
-        Schedulers.io().execute(new Runnable() {
-            @Override
-            public void run() {
-                File outputFile = new File(app.getFilesDir(), name);
-                FileOutputStream outputStream = null;
-                try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
-                    outputStream = new FileOutputStream(outputFile);
-                    Parcel parcel = Parcel.obtain();
-                    parcel.writeBundle(bundle);
-                    outputStream.write(parcel.marshall());
-                    outputStream.flush();
-                    parcel.recycle();
-                } catch (IOException e) {
-                    Log.e(TAG, "Unable to write bundle to storage");
-                } finally {
-                    Utils.close(outputStream);
-                }
+    public static Completable writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
+        return Completable.fromAction(() -> {
+            File outputFile = new File(app.getFilesDir(), name);
+            FileOutputStream outputStream = null;
+            try {
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                outputStream = new FileOutputStream(outputFile);
+                Parcel parcel = Parcel.obtain();
+                parcel.writeBundle(bundle);
+                outputStream.write(parcel.marshall());
+                outputStream.flush();
+                parcel.recycle();
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to write bundle to storage");
+            } finally {
+                Utils.close(outputStream);
             }
         });
     }
@@ -109,7 +105,7 @@ public class FileUtils {
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Unable to read bundle from storage");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to read bundle from storage", e);
         } finally {
             //noinspection ResultOfMethodCallIgnored
             inputFile.delete();
@@ -139,18 +135,6 @@ public class FileUtils {
         } finally {
             Utils.close(outputStream);
         }
-    }
-
-    @NonNull
-    public static String readStringFromStream(@NonNull InputStream inputStream,
-                                              @NonNull String encoding) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, encoding));
-        StringBuilder result = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            result.append(line);
-        }
-        return result.toString();
     }
 
     /**
@@ -206,7 +190,7 @@ public class FileUtils {
      * @param directory the directory to find the first existent parent
      * @return the first existent parent
      */
-    @Nullable
+    @NonNull
     private static String getFirstRealParentDirectory(@Nullable String directory) {
         while (true) {
             if (directory == null || directory.isEmpty()) {

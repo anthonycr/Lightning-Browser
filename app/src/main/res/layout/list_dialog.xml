@@ -21,10 +21,13 @@
         android:paddingTop="@dimen/extra_padding"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dialog_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:listSelector="?attr/listChoiceBackgroundIndicator"/>
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="?attr/listChoiceBackgroundIndicator"
+        android:overScrollMode="ifContentScrolls"/>
 
 </LinearLayout>

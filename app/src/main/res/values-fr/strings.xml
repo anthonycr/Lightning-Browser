@@ -43,9 +43,8 @@
     <string name="block">Bloquer les images</string>
     <string name="window">Autoriser les sites à ouvrir de nouvelles fenêtres</string>
     <string name="cookies">Activer les cookies</string>
-    <string name="importbookmarks">Importer les favoris depuis un navigateur</string>
     <string name="size">Taille du texte</string>
-    <string name="recommended">Recommendé</string>
+    <string name="recommended">Recommandé</string>
     <string name="search">Moteur de recherche</string>
     <string name="search_hint">Rechercher</string>
     <string name="wideViewPort">Utiliser large fenêtre d\'affichage</string>
@@ -175,7 +174,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Réouvrir l\'ancien onglet</string>
+    <string name="reopening_recent_tab">Réouvrir l\'ancien onglet</string>
     <string name="rendering_mode">Mode de rendu</string>
     <string name="name_inverted">Inversé</string>
     <string name="name_grayscale">Niveaux de gris</string>
@@ -217,6 +216,7 @@
     </string-array>
     <string name="invert_color">Inverser les couleurs</string>
     <string name="dark_theme">Thème sombre</string>
+    <string name="settings_black_status_bar">Barre de statut noire</string>
     <string name="tabs">Onglets</string>
     <string name="theme">Thème</string>
     <string name="light_theme">Thème clair</string>

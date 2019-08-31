@@ -42,7 +42,6 @@
     <string name="window">Consenti a siti di aprire nuove finestre</string>
     <string name="version">Versione app</string>
     <string name="cookies">Abilita cookies</string>
-    <string name="importbookmarks">Importa preferiti da browser</string>
     <string name="size">Dimensione dei caratteri</string>
     <string name="recommended">Consigliato</string>
     <string name="search">Motore di ricerca</string>
@@ -174,7 +173,7 @@
     <string name="freeware">Freeware</string>
     <string name="android_open_source_project">Android Open Source Project</string>
     <string name="hphosts_ad_server_list">hpHosts Ad Server List</string>
-    <string name="deleted_tab">Scheda precedente riaperta</string>
+    <string name="reopening_recent_tab">Scheda precedente riaperta</string>
     <string name="rendering_mode">Modalità Rendering</string>
     <string name="name_inverted">Inverso</string>
     <string name="name_grayscale">Scala di grigi</string>

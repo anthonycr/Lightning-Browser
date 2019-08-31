@@ -20,7 +20,6 @@ ehthumbs.db
 
 # Local configuration file (sdk path, etc)
 local.properties
-gradle.properties
 .directory
 
 # Intellij project files
