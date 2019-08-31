@@ -74,6 +74,6 @@ class DefaultBloomFilterTest {
     }
 
     companion object {
-        private const val MAX_TEST_VALUE = Int.MAX_VALUE / 100
+        private const val MAX_TEST_VALUE = Int.MAX_VALUE / 1000
     }
 }
