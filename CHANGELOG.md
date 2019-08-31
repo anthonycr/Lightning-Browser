@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Version 5.0.0 *(2019-07-31)*
+Version 5.0.0 *(2019-08-31)*
 ----------------------------
 - Minimum SDK Version 19
 - Target Android 28
