@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="30dp"
     android:background="@color/black"
-    android:orientation="horizontal"
-    android:weightSum="1">
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabs_list"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="30dp"
         android:fadingEdge="horizontal"
         android:overScrollMode="never"
-        android:scrollbars="none"/>
+        android:scrollbars="none"
+        app:layout_constraintEnd_toStartOf="@+id/new_tab_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/new_tab_button"
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:background="?actionBarItemBackground"
-        app:srcCompat="@drawable/ic_action_plus"/>
-</LinearLayout>
+        android:contentDescription="@string/action_new_tab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_action_plus" />
+</merge>
 

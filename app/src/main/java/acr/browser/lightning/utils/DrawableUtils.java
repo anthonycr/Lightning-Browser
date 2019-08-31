@@ -11,14 +11,11 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.view.View;
 
 import acr.browser.lightning.R;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 public final class DrawableUtils {
@@ -133,10 +130,6 @@ public final class DrawableUtils {
             (startR + (int) (fraction * (endR - startR))) << 16 |
             (startG + (int) (fraction * (endG - startG))) << 8 |
             (startB + (int) (fraction * (endB - startB)));
-    }
-
-    public static void setBackground(@NonNull View view, @Nullable Drawable drawable) {
-        view.setBackground(drawable);
     }
 
 }
