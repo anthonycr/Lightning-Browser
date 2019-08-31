@@ -39,7 +39,7 @@ class BrowserApp : Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT < 21) {
             installMultiDex(context = base)
         }
     }
