@@ -21,7 +21,7 @@
     <ImageView
         android:id="@+id/new_tab_button"
         android:layout_width="30dp"
-        android:layout_height="match_parent"
+        android:layout_height="30dp"
         android:background="?actionBarItemBackground"
         android:contentDescription="@string/action_new_tab"
         app:layout_constraintEnd_toEndOf="parent"
