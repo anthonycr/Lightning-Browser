@@ -1,6 +1,43 @@
 Change Log
 ==========
 
+Version 5.0.0 *(2019-07-31)*
+----------------------------
+- Minimum SDK Version 19
+- Target Android 28
+- Converted project to Kotlin
+- New icon
+- Fixed bugs
+    - Deleting an item from history now reloads the page
+    - Downloads are now ordered by the time they were downloaded
+    - Typing spaces in search suggestions no longer causes problems
+    - Playing a video in full screen will now default to landscape orientation
+    - Adding a shortcut now works on Android O
+    - Search Suggestions no longer allowed in incognito for security
+    - Pasting text into the search bar no longer keeps text styling
+- Ad blocking
+    - Added support for allowing/disallowing ads on per site basis
+    - Ad block support on Lite version
+    - Rewrote ad blocker to support new sources (only available on Plus version)
+        - Default Hosts file
+        - Hosts from URL
+        - Hosts from local file
+    - Improved ad blocker loading performance
+- UI Improvements
+    - Improved button backgrounds and enable/disable buttons when actions are disabled
+    - Improved start up performance
+    - Adding a bookmark now shows a dialog prompt to allow folder selection
+    - Support re-opening tabs via long press on new tab in incognito
+    - History is now opened in a new tab
+    - Adding a bookmark now shows a toast
+    - Added ongoing incognito notification to notify you there is an incognito window open
+- Updated translations
+- Browser now handles web search intents
+- Ignoring an SSL warning now ignores it for the duration of the session
+- Option to send 'save-data' header with requests
+- Support for Naver search engine
+- Support for WebRTC (Added permissions, camera + mic, which are asked for at runtime only when WebRTC is enabled) - by default disabled
+
 Version 4.5.1 *(2017-06-28)*
 ----------------------------
 - Fixed bug with folders disappearing on bookmark homepage
