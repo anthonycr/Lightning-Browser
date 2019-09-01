@@ -218,11 +218,11 @@ class SuggestionsAdapter(
 
         fun input(): Observable<CharSequence> = publishSubject.hide()
 
-        override fun performFiltering(constraint: CharSequence): FilterResults {
-            if (constraint.trim().isEmpty()) {
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            if (constraint?.isBlank() != false) {
                 return FilterResults()
             }
-            publishSubject.onNext(constraint)
+            publishSubject.onNext(constraint.trim())
 
             return FilterResults().apply { count = 1 }
         }
