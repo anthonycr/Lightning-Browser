@@ -1,0 +1,3 @@
+[submodule "i2p.android.base"]
+	path = i2p.android.base
+	url = https://github.com/i2p/i2p.android.base
