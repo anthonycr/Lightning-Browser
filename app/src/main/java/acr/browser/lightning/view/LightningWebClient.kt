@@ -9,6 +9,8 @@ import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.js.InvertPage
+import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SSLState
@@ -30,7 +32,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
-import com.anthonycr.mezzanine.MezzanineGenerator
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream
@@ -54,14 +55,13 @@ class LightningWebClient(
     @Inject internal lateinit var sslWarningPreferences: SslWarningPreferences
     @Inject internal lateinit var whitelistModel: AllowListModel
     @Inject internal lateinit var logger: Logger
+    @Inject internal lateinit var textReflowJs: TextReflow
+    @Inject internal lateinit var invertPageJs: InvertPage
 
     private var adBlock: AdBlocker
 
     @Volatile private var isRunning = false
     private var zoomScale = 0.0f
-
-    private val textReflowJs = MezzanineGenerator.TextReflow()
-    private val invertPageJs = MezzanineGenerator.InvertPage()
 
     private var currentUrl: String = ""
 
