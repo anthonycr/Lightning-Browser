@@ -27,5 +27,5 @@ ext {
 
     versionName = '5.0.1'
     versionCode_lite = 100
-    versionCode_plus = 98
+    versionCode_plus = 99
 }
