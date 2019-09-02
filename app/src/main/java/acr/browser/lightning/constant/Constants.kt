@@ -21,8 +21,6 @@ const val SCHEME_HOMEPAGE = "${ABOUT}home"
 const val SCHEME_BLANK = "${ABOUT}blank"
 const val SCHEME_BOOKMARKS = "${ABOUT}bookmarks"
 
-const val LOAD_READING_URL = "ReadingUrl"
-
 const val NO_PROXY = 0
 const val PROXY_ORBOT = 1
 const val PROXY_I2P = 2

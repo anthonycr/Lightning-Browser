@@ -10,7 +10,6 @@ import acr.browser.lightning.browser.*
 import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
 import acr.browser.lightning.browser.tabs.TabsDesktopView
 import acr.browser.lightning.browser.tabs.TabsDrawerView
-import acr.browser.lightning.constant.LOAD_READING_URL
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -749,9 +748,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
             R.id.action_reading_mode -> {
                 if (currentUrl != null) {
-                    val read = Intent(this, ReadingActivity::class.java)
-                    read.putExtra(LOAD_READING_URL, currentUrl)
-                    startActivity(read)
+                    ReadingActivity.launch(this, currentUrl)
                 }
                 return true
             }
