@@ -1,15 +1,13 @@
 package acr.browser.lightning.preference
 
+import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.constant.DEFAULT_ENCODING
 import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.UserPrefs
-import acr.browser.lightning.preference.delegates.booleanPreference
-import acr.browser.lightning.preference.delegates.intPreference
-import acr.browser.lightning.preference.delegates.nullableStringPreference
-import acr.browser.lightning.preference.delegates.stringPreference
+import acr.browser.lightning.preference.delegates.*
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
@@ -186,7 +184,7 @@ class UserPreferences @Inject constructor(
      *
      * @see SearchBoxModel
      */
-    var urlBoxContentChoice by preferences.intPreference(URL_BOX_CONTENTS, 0)
+    var urlBoxContentChoice by preferences.enumPreference(URL_BOX_CONTENTS, SearchBoxDisplayChoice.DOMAIN)
 
     /**
      * True if the browser should invert the display colors of the web page content, false
