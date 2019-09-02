@@ -13,6 +13,7 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.extensions.copyToClipboard
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.preference.UserPreferences
@@ -181,8 +182,7 @@ class LightningDialogBuilder @Inject constructor(
                         )
                 }
                 editBookmarkDialog.setNegativeButton(R.string.action_cancel) { _, _ -> }
-                val dialog = editBookmarkDialog.show()
-                BrowserDialog.setDialogSize(activity, dialog)
+                editBookmarkDialog.resizeAndShow()
             }
     }
 
@@ -223,8 +223,7 @@ class LightningDialogBuilder @Inject constructor(
                         .observeOn(mainScheduler)
                         .subscribe(uiController::handleBookmarksChange)
                 }
-                val dialog = editBookmarkDialog.show()
-                BrowserDialog.setDialogSize(activity, dialog)
+                editBookmarkDialog.resizeAndShow()
             }
     }
 

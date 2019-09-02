@@ -5,7 +5,7 @@ package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
 import acr.browser.lightning.di.injector
-import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.view.Gravity
@@ -116,9 +116,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                 val seekBar = customView.findViewById<SeekBar>(R.id.text_size_seekbar)
                 userPreferences.textSize = maxValue - seekBar.progress
             }
-        }.show()
-
-        BrowserDialog.setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
@@ -142,9 +140,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                     activity.onBackPressed()
                 }
             }
-        }.show()
-
-        BrowserDialog.setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
 
     private class TextSeekBarListener(

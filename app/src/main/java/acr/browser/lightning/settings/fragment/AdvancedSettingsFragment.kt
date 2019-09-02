@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import androidx.annotation.StringRes
@@ -91,9 +92,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
                     summaryUpdater.updateSummary(getString(renderingModePreferenceToString(which)))
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)
-            }.show()
-
-            BrowserDialog.setDialogSize(it, dialog)
+            }.resizeAndShow()
         }
 
     }
@@ -115,9 +114,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
                     summaryUpdater.updateSummary(TEXT_ENCODINGS[which])
                 }
                 setPositiveButton(resources.getString(R.string.action_ok), null)
-            }.show()
-
-            BrowserDialog.setDialogSize(it, dialog)
+            }.resizeAndShow()
         }
     }
 

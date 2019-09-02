@@ -11,6 +11,7 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.snackbar
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
@@ -223,8 +224,7 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
                     )
             }
         }
-        val dialog = builder.show()
-        BrowserDialog.setDialogSize(activity, dialog)
+        builder.resizeAndShow()
     }
 
     companion object {
