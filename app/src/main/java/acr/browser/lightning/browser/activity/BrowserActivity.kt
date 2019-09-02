@@ -44,7 +44,6 @@ import android.app.NotificationManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -1448,11 +1447,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             putExtra(Intent.EXTRA_TITLE, "Image Chooser")
             putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
         }, FILE_CHOOSER_REQUEST_CODE)
-    }
-
-    override fun onShowCustomView(view: View, callback: CustomViewCallback) {
-        originalOrientation = requestedOrientation
-        onShowCustomView(view, callback, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
     }
 
     override fun onShowCustomView(view: View, callback: CustomViewCallback, requestedOrientation: Int) {
