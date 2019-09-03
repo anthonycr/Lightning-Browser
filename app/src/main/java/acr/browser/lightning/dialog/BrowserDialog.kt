@@ -18,6 +18,7 @@ package acr.browser.lightning.dialog
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.dimen
 import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.list.RecyclerViewDialogItemAdapter
 import acr.browser.lightning.list.RecyclerViewStringAdapter
 import acr.browser.lightning.utils.DeviceUtils
@@ -66,9 +67,7 @@ object BrowserDialog {
 
         builder.setView(layout)
 
-        val dialog = builder.show()
-
-        setDialogSize(context, dialog)
+        val dialog = builder.resizeAndShow()
 
         adapter.onItemClickListener = { item ->
             item.onClick()
@@ -83,7 +82,7 @@ object BrowserDialog {
      * the dialog.
      */
     fun showListChoices(activity: Activity, @StringRes title: Int, vararg items: DialogItem) {
-        val dialog = AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(activity).apply {
             setTitle(title)
 
             val choices = items.map { activity.getString(it.title) }.toTypedArray()
@@ -93,9 +92,7 @@ object BrowserDialog {
                 items[which].onClick()
             }
             setPositiveButton(activity.getString(R.string.action_ok), null)
-        }.show()
-
-        setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
 
     @JvmStatic
@@ -123,9 +120,7 @@ object BrowserDialog {
 
         builder.setView(layout)
 
-        val dialog = builder.show()
-
-        setDialogSize(activity, dialog)
+        val dialog = builder.resizeAndShow()
 
         adapter.onItemClickListener = { item ->
             item.onClick()
@@ -148,15 +143,13 @@ object BrowserDialog {
         } else {
             activity.getString(message)
         }
-        val dialog = AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(activity).apply {
             setTitle(title)
             setMessage(messageValue)
             setOnCancelListener { onCancel() }
             setPositiveButton(positiveButton.title) { _, _ -> positiveButton.onClick() }
             setNegativeButton(negativeButton.title) { _, _ -> negativeButton.onClick() }
-        }.show()
-
-        setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
 
     @JvmStatic
@@ -185,14 +178,12 @@ object BrowserDialog {
             editText.setText(currentText)
         }
 
-        val editorDialog = AlertDialog.Builder(activity)
+        AlertDialog.Builder(activity)
             .setTitle(title)
             .setView(dialogView)
             .setPositiveButton(action
             ) { _, _ -> textInputListener(editText.text.toString()) }
-
-        val dialog = editorDialog.show()
-        setDialogSize(activity, dialog)
+            .resizeAndShow()
     }
 
     @JvmStatic
@@ -213,8 +204,7 @@ object BrowserDialog {
         activity?.let {
             AlertDialog.Builder(activity).apply {
                 block(it)
-                val dialog = show()
-                setDialogSize(it, dialog)
+                resizeAndShow()
             }
         }
     }

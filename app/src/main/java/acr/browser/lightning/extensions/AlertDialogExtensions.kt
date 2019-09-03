@@ -1,6 +1,7 @@
 package acr.browser.lightning.extensions
 
 import acr.browser.lightning.dialog.BrowserDialog
+import android.app.Dialog
 import androidx.appcompat.app.AlertDialog
 
 /**
@@ -26,4 +27,4 @@ fun <T> AlertDialog.Builder.withSingleChoiceItems(
  * Ensures that the dialog is appropriately sized and displays it.
  */
 @Suppress("NOTHING_TO_INLINE")
-inline fun AlertDialog.Builder.resizeAndShow() = BrowserDialog.setDialogSize(context, this.show())
+inline fun AlertDialog.Builder.resizeAndShow(): Dialog = show().also { BrowserDialog.setDialogSize(context, it) }

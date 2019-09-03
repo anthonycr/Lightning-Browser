@@ -930,7 +930,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         mainHandler.postDelayed(drawer_layout::closeDrawers, 200)
     }
 
-    override fun showBlockedLocalFileDialog(onPositiveClick: Function0<Unit>) =
+    override fun showBlockedLocalFileDialog(onPositiveClick: Function0<Unit>) {
         AlertDialog.Builder(this)
             .setCancelable(true)
             .setTitle(R.string.title_warning)
@@ -938,6 +938,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(R.string.action_open) { _, _ -> onPositiveClick.invoke() }
             .resizeAndShow()
+    }
 
     override fun showSnackbar(@StringRes resource: Int) = snackbar(resource)
 

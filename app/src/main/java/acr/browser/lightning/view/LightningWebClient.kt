@@ -146,8 +146,12 @@ class LightningWebClient(
         uiController.tabChanged(lightningView)
     }
 
-    override fun onReceivedHttpAuthRequest(view: WebView, handler: HttpAuthHandler,
-                                           host: String, realm: String) =
+    override fun onReceivedHttpAuthRequest(
+        view: WebView,
+        handler: HttpAuthHandler,
+        host: String,
+        realm: String
+    ) {
         AlertDialog.Builder(activity).apply {
             val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_auth_request, null)
 
@@ -170,6 +174,7 @@ class LightningWebClient(
                 handler.cancel()
             }
         }.resizeAndShow()
+    }
 
     override fun onScaleChanged(view: WebView, oldScale: Float, newScale: Float) {
         if (view.isShown && lightningView.userPreferences.textReflowEnabled) {
@@ -226,7 +231,7 @@ class LightningWebClient(
         }.resizeAndShow()
     }
 
-    override fun onFormResubmission(view: WebView, dontResend: Message, resend: Message) =
+    override fun onFormResubmission(view: WebView, dontResend: Message, resend: Message) {
         AlertDialog.Builder(activity).apply {
             setTitle(activity.getString(R.string.title_form_resubmission))
             setMessage(activity.getString(R.string.message_form_resubmission))
@@ -238,6 +243,7 @@ class LightningWebClient(
                 dontResend.sendToTarget()
             }
         }.resizeAndShow()
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
