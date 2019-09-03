@@ -1,5 +1,6 @@
 package acr.browser.lightning.preference
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.constant.DEFAULT_ENCODING
@@ -201,7 +202,7 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the theme used by the application.
      */
-    var useTheme by preferences.intPreference(THEME, 0)
+    var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
 
     /**
      * The text encoding used by the browser.

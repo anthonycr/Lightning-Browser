@@ -1,5 +1,6 @@
 package acr.browser.lightning.browser.activity
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.preference.UserPreferences
@@ -20,7 +21,7 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     // TODO reduce protected visibility
     @Inject protected lateinit var userPreferences: UserPreferences
 
-    private var themeId: Int = 0
+    private var themeId: AppTheme = AppTheme.LIGHT
     private var showTabsInDrawer: Boolean = false
     private var shouldRunOnResumeActions = false
 
@@ -30,11 +31,11 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         showTabsInDrawer = userPreferences.showTabsInDrawer
 
         // set the theme
-        if (themeId == 1) {
-            setTheme(R.style.Theme_DarkTheme)
-        } else if (themeId == 2) {
-            setTheme(R.style.Theme_BlackTheme)
-        }
+        setTheme(when (userPreferences.useTheme) {
+            AppTheme.LIGHT -> R.style.Theme_LightTheme
+            AppTheme.DARK -> R.style.Theme_DarkTheme
+            AppTheme.BLACK -> R.style.Theme_BlackTheme
+        })
         super.onCreate(savedInstanceState)
 
         resetPreferences()
@@ -81,9 +82,8 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         super.onResume()
         resetPreferences()
         shouldRunOnResumeActions = true
-        val themePreference = userPreferences.useTheme
         val drawerTabs = userPreferences.showTabsInDrawer
-        if (themeId != themePreference || showTabsInDrawer != drawerTabs) {
+        if (themeId != userPreferences.useTheme || showTabsInDrawer != drawerTabs) {
             restart()
         }
     }
