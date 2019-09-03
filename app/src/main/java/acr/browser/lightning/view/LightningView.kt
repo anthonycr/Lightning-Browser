@@ -481,17 +481,17 @@ class LightningView(
     /**
      * Sets the current rendering color of the WebView instance
      * of the current LightningView. The for modes are normal
-     * rendering (0), inverted rendering (1), grayscale rendering (2),
-     * and inverted grayscale rendering (3)
+     * rendering, inverted rendering, grayscale rendering,
+     * and inverted grayscale rendering
      *
      * @param mode the integer mode to set as the rendering mode.
      * see the numbers in documentation above for the
      * values this method accepts.
      */
-    private fun setColorMode(mode: Int) {
+    private fun setColorMode(mode: RenderingMode) {
         invertPage = false
         when (mode) {
-            0 -> {
+            RenderingMode.NORMAL -> {
                 paint.colorFilter = null
                 // setSoftwareRendering(); // Some devices get segfaults
                 // in the WebView with Hardware Acceleration enabled,
@@ -499,7 +499,7 @@ class LightningView(
                 setNormalRendering()
                 invertPage = false
             }
-            1 -> {
+            RenderingMode.INVERTED -> {
                 val filterInvert = ColorMatrixColorFilter(
                     negativeColorArray)
                 paint.colorFilter = filterInvert
@@ -507,14 +507,14 @@ class LightningView(
 
                 invertPage = true
             }
-            2 -> {
+            RenderingMode.GRAYSCALE -> {
                 val cm = ColorMatrix()
                 cm.setSaturation(0f)
                 val filterGray = ColorMatrixColorFilter(cm)
                 paint.colorFilter = filterGray
                 setHardwareRendering()
             }
-            3 -> {
+            RenderingMode.INVERTED_GRAYSCALE -> {
                 val matrix = ColorMatrix()
                 matrix.set(negativeColorArray)
                 val matrixGray = ColorMatrix()
@@ -528,7 +528,7 @@ class LightningView(
                 invertPage = true
             }
 
-            4 -> {
+            RenderingMode.INCREASE_CONTRAST -> {
                 val increaseHighContrast = ColorMatrixColorFilter(increaseContrastColorArray)
                 paint.colorFilter = increaseHighContrast
                 setHardwareRendering()

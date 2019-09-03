@@ -11,6 +11,7 @@ import acr.browser.lightning.preference.delegates.*
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.view.RenderingMode
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -165,7 +166,7 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the rendering mode that should be used by the browser.
      */
-    var renderingMode by preferences.intPreference(RENDERING_MODE, 0)
+    var renderingMode by preferences.enumPreference(RENDERING_MODE, RenderingMode.NORMAL)
 
     /**
      * True if third party cookies should be disallowed by the browser, false if they should be
