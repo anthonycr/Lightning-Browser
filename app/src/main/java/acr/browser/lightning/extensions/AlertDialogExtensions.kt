@@ -10,10 +10,10 @@ import androidx.appcompat.app.AlertDialog
  * @param checkedItem The item that will be checked when the dialog is displayed.
  * @param onClick Called when an item is clicked. The item clicked is provided.
  */
-inline fun <T> AlertDialog.Builder.withSingleChoiceItems(
+fun <T> AlertDialog.Builder.withSingleChoiceItems(
     items: List<Pair<T, String>>,
     checkedItem: T,
-    crossinline onClick: (T) -> Unit
+    onClick: (T) -> Unit
 ) {
     val checkedIndex = items.map(Pair<T, String>::first).indexOf(checkedItem)
     val titles = items.map(Pair<T, String>::second).toTypedArray()

@@ -21,11 +21,6 @@ const val SCHEME_HOMEPAGE = "${ABOUT}home"
 const val SCHEME_BLANK = "${ABOUT}blank"
 const val SCHEME_BOOKMARKS = "${ABOUT}bookmarks"
 
-const val NO_PROXY = 0
-const val PROXY_ORBOT = 1
-const val PROXY_I2P = 2
-const val PROXY_MANUAL = 3
-
 const val UTF8 = "UTF-8"
 
 // Default text encoding we will use

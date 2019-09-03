@@ -1,10 +1,10 @@
 package acr.browser.lightning.preference
 
 import acr.browser.lightning.AppTheme
+import acr.browser.lightning.browser.ProxyChoice
 import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.constant.DEFAULT_ENCODING
-import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.UserPrefs
@@ -253,15 +253,15 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the proxy choice.
      */
-    var proxyChoice by preferences.intPreference(PROXY_CHOICE, NO_PROXY)
+    var proxyChoice by preferences.enumPreference(PROXY_CHOICE, ProxyChoice.NONE)
 
     /**
-     * The proxy host used depending on the [proxyChoice].
+     * The proxy host used when [proxyChoice] is [ProxyChoice.MANUAL].
      */
     var proxyHost by preferences.stringPreference(USE_PROXY_HOST, "localhost")
 
     /**
-     * The proxy port used depending on the [proxyChoice].
+     * The proxy port used when [proxyChoice] is [ProxyChoice.MANUAL].
      */
     var proxyPort by preferences.intPreference(USE_PROXY_PORT, 8118)
 
