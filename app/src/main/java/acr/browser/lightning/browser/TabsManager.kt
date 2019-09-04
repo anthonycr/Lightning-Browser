@@ -359,7 +359,7 @@ class TabsManager @Inject constructor(
         .flattenAsObservable { bundle ->
             bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }
-                .map(bundle::getBundle)
+                .mapNotNull(bundle::getBundle)
         }
         .doOnNext { logger.log(TAG, "Restoring previous WebView state now") }
 

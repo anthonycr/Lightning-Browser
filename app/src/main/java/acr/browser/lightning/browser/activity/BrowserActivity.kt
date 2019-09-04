@@ -41,7 +41,6 @@ import acr.browser.lightning.view.SearchView
 import acr.browser.lightning.view.find.FindResults
 import android.app.Activity
 import android.app.NotificationManager
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.res.Configuration
@@ -720,7 +719,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             }
             R.id.action_copy -> {
                 if (currentUrl != null && !currentUrl.isSpecialUrl()) {
-                    clipboardManager.primaryClip = ClipData.newPlainText("label", currentUrl)
+                    clipboardManager.copyToClipboard(currentUrl)
                     snackbar(R.string.message_link_copied)
                 }
                 return true

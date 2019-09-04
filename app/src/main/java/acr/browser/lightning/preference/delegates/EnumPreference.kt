@@ -18,7 +18,7 @@ class EnumPreference<T>(
     private var backingInt: Int by preferences.intPreference(name, defaultValue.value)
 
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        return clazz.enumConstants.first { it.value == backingInt } ?: defaultValue
+        return clazz.enumConstants!!.first { it.value == backingInt } ?: defaultValue
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
