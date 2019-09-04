@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
+import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
@@ -25,13 +26,20 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     private var showTabsInDrawer: Boolean = false
     private var shouldRunOnResumeActions = false
 
+    /**
+     * Override this to provide an alternate theme that should be set for every instance of this
+     * activity regardless of the user's preference.
+     */
+    @StyleRes
+    protected open fun provideThemeOverride(): Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
         themeId = userPreferences.useTheme
         showTabsInDrawer = userPreferences.showTabsInDrawer
 
         // set the theme
-        setTheme(when (userPreferences.useTheme) {
+        setTheme(provideThemeOverride() ?: when (userPreferences.useTheme) {
             AppTheme.LIGHT -> R.style.Theme_LightTheme
             AppTheme.DARK -> R.style.Theme_DarkTheme
             AppTheme.BLACK -> R.style.Theme_BlackTheme
