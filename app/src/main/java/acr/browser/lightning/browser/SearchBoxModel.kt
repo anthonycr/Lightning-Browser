@@ -5,11 +5,13 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Application
+import dagger.Reusable
 import javax.inject.Inject
 
 /**
  * A UI model for the search box.
  */
+@Reusable
 class SearchBoxModel @Inject constructor(
     private val userPreferences: UserPreferences,
     application: Application

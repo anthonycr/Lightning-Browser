@@ -6,6 +6,7 @@ import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*
 import acr.browser.lightning.search.suggestions.*
 import android.app.Application
+import dagger.Reusable
 import io.reactivex.Single
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -14,6 +15,7 @@ import javax.inject.Inject
  * The model that provides the search engine based
  * on the user's preference.
  */
+@Reusable
 class SearchEngineProvider @Inject constructor(
     private val userPreferences: UserPreferences,
     @SuggestionsClient private val okHttpClient: Single<OkHttpClient>,

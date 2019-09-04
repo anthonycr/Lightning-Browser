@@ -1,12 +1,12 @@
 package acr.browser.lightning.adblock
 
+import dagger.Reusable
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * A no-op ad blocker implementation. Always returns false for [isAd].
  */
-@Singleton
+@Reusable
 class NoOpAdBlocker @Inject constructor() : AdBlocker {
 
     override fun isAd(url: String) = false

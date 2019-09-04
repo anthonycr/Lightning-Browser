@@ -5,6 +5,7 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
 import android.content.res.AssetManager
+import dagger.Reusable
 import io.reactivex.Single
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -12,6 +13,7 @@ import javax.inject.Inject
 /**
  * A [HostsDataSourceProvider] backed by [UserPreferences].
  */
+@Reusable
 class PreferencesHostsDataSourceProvider @Inject constructor(
     private val userPreferences: UserPreferences,
     private val assetManager: AssetManager,

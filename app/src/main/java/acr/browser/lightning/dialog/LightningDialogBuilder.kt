@@ -27,6 +27,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
+import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -34,6 +35,7 @@ import javax.inject.Inject
 /**
  * A builder of various dialogs.
  */
+@Reusable
 class LightningDialogBuilder @Inject constructor(
     private val bookmarkManager: BookmarkRepository,
     private val downloadsModel: DownloadsRepository,

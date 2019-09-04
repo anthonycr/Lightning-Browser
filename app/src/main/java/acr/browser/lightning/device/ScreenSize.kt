@@ -2,6 +2,7 @@ package acr.browser.lightning.device
 
 import android.content.Context
 import android.content.res.Configuration
+import dagger.Reusable
 import javax.inject.Inject
 
 /**
@@ -9,6 +10,7 @@ import javax.inject.Inject
  *
  * Created by anthonycr on 2/19/18.
  */
+@Reusable
 class ScreenSize @Inject constructor(private val context: Context) {
 
     fun isTablet(): Boolean =
