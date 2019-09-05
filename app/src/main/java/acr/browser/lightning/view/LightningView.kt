@@ -261,6 +261,10 @@ class LightningView(
 
         lightningWebClient.updatePreferences()
 
+        val modifiesHeaders = userPreferences.doNotTrackEnabled
+            || userPreferences.saveDataEnabled
+            || userPreferences.removeIdentifyingHeadersEnabled
+
         if (userPreferences.doNotTrackEnabled) {
             requestHeaders[HEADER_DNT] = "1"
         } else {
@@ -317,7 +321,8 @@ class LightningView(
 
         settings.blockNetworkImage = userPreferences.blockImagesEnabled
         if (!isIncognito) {
-            settings.setSupportMultipleWindows(userPreferences.popupsEnabled)
+            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+            settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
         } else {
             settings.setSupportMultipleWindows(false)
         }
