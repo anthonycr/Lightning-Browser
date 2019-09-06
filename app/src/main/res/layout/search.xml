@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="6dp"
     android:layout_marginLeft="2dp"
-    android:layout_marginRight="2dp"
     android:layout_marginTop="6dp"
+    android:layout_marginRight="2dp"
+    android:layout_marginBottom="6dp"
     android:layout_weight="1"
     android:background="?attr/searchBackground"
     android:clipChildren="false"
@@ -19,30 +18,37 @@
     android:gravity="center"
     android:orientation="horizontal">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/search_ssl_status"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <acr.browser.lightning.view.SearchView
         android:id="@+id/search"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:background="@null"
         android:completionThreshold="1"
-        android:drawablePadding="3dp"
         android:dropDownAnchor="@+id/toolbar_layout"
         android:dropDownWidth="match_parent"
-        android:gravity="left|center_vertical"
+        android:gravity="start|center_vertical"
         android:hint="@string/search_hint"
         android:imeOptions="actionGo"
         android:importantForAutofill="no"
         android:inputType="textUri"
         android:maxLines="1"
-        android:paddingLeft="8dp"
-        android:paddingTop="1dp"
         android:selectAllOnFocus="true"
         android:textColor="?attr/autoCompleteTitleColor"
         android:textColorHint="?attr/autoCompleteUrlColor"
         android:textCursorDrawable="@null"
         app:layout_constraintEnd_toStartOf="@+id/search_refresh"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toEndOf="@+id/search_ssl_status"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginLeft="8dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/search_refresh"
@@ -51,6 +57,6 @@
         android:background="?selectableItemBackgroundBorderless"
         android:padding="6dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

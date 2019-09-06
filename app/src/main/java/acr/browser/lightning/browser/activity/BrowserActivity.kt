@@ -163,7 +163,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     // Image
     private var webPageBitmap: Bitmap? = null
     private val backgroundDrawable = ColorDrawable()
-    private var sslDrawable: Drawable? = null
     private var incognitoNotification: IncognitoNotification? = null
 
     private var presenter: BrowserPresenter? = null
@@ -312,7 +311,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
-            setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
+            search_ssl_status.updateVisibilityForContent()
             search_refresh.setImageResource(R.drawable.ic_action_refresh)
 
             val searchListener = SearchListenerClass()
@@ -465,11 +464,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
                 // Hack to make sure the text gets selected
                 (v as SearchView).selectAll()
-                searchView?.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                search_ssl_status.visibility = GONE
                 search_refresh.setImageResource(R.drawable.ic_action_delete)
             }
 
             if (!hasFocus) {
+                search_ssl_status.updateVisibilityForContent()
                 searchView?.let {
                     inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
                 }
@@ -864,7 +864,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     override fun updateSslState(sslState: SSLState) {
-        sslDrawable = when (sslState) {
+        search_ssl_status.setImageDrawable(when (sslState) {
             is SSLState.None -> null
             is SSLState.Valid -> {
                 val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_secured)
@@ -876,9 +876,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 val unsecuredDrawable = BitmapDrawable(resources, bitmap)
                 unsecuredDrawable
             }
-        }
+        })
 
-        searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
+        if (searchView?.hasFocus() == false) {
+            search_ssl_status.updateVisibilityForContent()
+        }
+    }
+
+    private fun ImageView.updateVisibilityForContent() {
+        drawable?.let { visibility = VISIBLE } ?: run { visibility = GONE }
     }
 
     override fun tabChanged(tab: LightningView) {
@@ -1749,7 +1755,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun setIsLoading(isLoading: Boolean) {
         if (searchView?.hasFocus() == false) {
-            searchView?.setCompoundDrawablesWithIntrinsicBounds(sslDrawable, null, null, null)
+            search_ssl_status.updateVisibilityForContent()
             search_refresh.setImageResource(if (isLoading) R.drawable.ic_action_delete else R.drawable.ic_action_refresh)
         }
     }
