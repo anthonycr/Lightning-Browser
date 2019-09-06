@@ -15,12 +15,13 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.userAgent
-import acr.browser.lightning.ssl.SSLState
+import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.find.FindResults
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.*
+import android.net.http.SslCertificate
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -169,6 +170,12 @@ class LightningView(
         get() = titleInfo.getTitle() ?: ""
 
     /**
+     * Get the current [SslCertificate] if there is any associated with the current page.
+     */
+    val sslCertificate: SslCertificate?
+        get() = webView?.certificate
+
+    /**
      * Get the current URL of the WebView, or an empty string if the WebView is null or the URL is
      * null.
      *
@@ -221,9 +228,9 @@ class LightningView(
             .subscribe(::setNetworkAvailable)
     }
 
-    fun currentSslState(): SSLState = lightningWebClient.sslState
+    fun currentSslState(): SslState = lightningWebClient.sslState
 
-    fun sslStateObservable(): Observable<SSLState> = lightningWebClient.sslStateObservable()
+    fun sslStateObservable(): Observable<SslState> = lightningWebClient.sslStateObservable()
 
     /**
      * This method loads the homepage for the browser. Either it loads the URL stored as the

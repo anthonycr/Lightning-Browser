@@ -13,7 +13,7 @@ import acr.browser.lightning.js.InvertPage
 import acr.browser.lightning.js.TextReflow
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.ssl.SSLState
+import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
 import acr.browser.lightning.utils.*
 import android.annotation.TargetApi
@@ -60,18 +60,20 @@ class LightningWebClient(
 
     private var adBlock: AdBlocker
 
+    private var urlWithSslError: String? = null
+
     @Volatile private var isRunning = false
     private var zoomScale = 0.0f
 
     private var currentUrl: String = ""
 
-    var sslState: SSLState = SSLState.None
+    var sslState: SslState = SslState.None
         private set(value) {
             sslStateSubject.onNext(value)
             field = value
         }
 
-    private val sslStateSubject: PublishSubject<SSLState> = PublishSubject.create()
+    private val sslStateSubject: PublishSubject<SslState> = PublishSubject.create()
 
     init {
         activity.injector.inject(this)
@@ -79,7 +81,7 @@ class LightningWebClient(
         adBlock = chooseAdBlocker()
     }
 
-    fun sslStateObservable(): Observable<SSLState> = sslStateSubject.hide()
+    fun sslStateObservable(): Observable<SslState> = sslStateSubject.hide()
 
     fun updatePreferences() {
         adBlock = chooseAdBlocker()
@@ -133,10 +135,13 @@ class LightningWebClient(
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         currentUrl = url
-        sslState = if (URLUtil.isHttpsUrl(url)) {
-            SSLState.Valid
-        } else {
-            SSLState.None
+        // Only set the SSL state if there isn't an error for the current URL.
+        if (urlWithSslError != url) {
+            sslState = if (URLUtil.isHttpsUrl(url)) {
+                SslState.Valid
+            } else {
+                SslState.None
+            }
         }
         lightningView.titleInfo.setFavicon(null)
         if (lightningView.isShown) {
@@ -192,7 +197,8 @@ class LightningWebClient(
     }
 
     override fun onReceivedSslError(webView: WebView, handler: SslErrorHandler, error: SslError) {
-        sslState = SSLState.Invalid(error)
+        urlWithSslError = webView.url
+        sslState = SslState.Invalid(error)
 
         when (sslWarningPreferences.recallBehaviorForDomain(webView.url)) {
             SslWarningPreferences.Behavior.PROCEED -> return handler.proceed()

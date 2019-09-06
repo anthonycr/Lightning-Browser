@@ -34,7 +34,9 @@ import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
-import acr.browser.lightning.ssl.SSLState
+import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.ssl.createSslDrawableForState
+import acr.browser.lightning.ssl.showSslDialog
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
 import acr.browser.lightning.view.SearchView
@@ -47,7 +49,6 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -311,6 +312,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         // create the search EditText in the ToolBar
         searchView = customView.findViewById<SearchView>(R.id.search).apply {
+            search_ssl_status.setOnClickListener {
+                tabsManager.currentTab?.let { tab ->
+                    tab.sslCertificate?.let { showSslDialog(it, tab.currentSslState()) }
+                }
+            }
             search_ssl_status.updateVisibilityForContent()
             search_refresh.setImageResource(R.drawable.ic_action_refresh)
 
@@ -863,20 +869,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         tabsView?.tabsInitialized()
     }
 
-    override fun updateSslState(sslState: SSLState) {
-        search_ssl_status.setImageDrawable(when (sslState) {
-            is SSLState.None -> null
-            is SSLState.Valid -> {
-                val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_secured)
-                val securedDrawable = BitmapDrawable(resources, bitmap)
-                securedDrawable
-            }
-            is SSLState.Invalid -> {
-                val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_unsecured)
-                val unsecuredDrawable = BitmapDrawable(resources, bitmap)
-                unsecuredDrawable
-            }
-        })
+    override fun updateSslState(sslState: SslState) {
+        search_ssl_status.setImageDrawable(createSslDrawableForState(sslState))
 
         if (searchView?.hasFocus() == false) {
             search_ssl_status.updateVisibilityForContent()
