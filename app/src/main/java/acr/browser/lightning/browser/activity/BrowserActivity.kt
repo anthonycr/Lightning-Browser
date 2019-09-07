@@ -523,7 +523,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun setNavigationDrawerWidth() {
-        val width = resources.displayMetrics.widthPixels - Utils.dpToPx(56f)
+        val width = resources.displayMetrics.widthPixels - dimen(R.dimen.navigation_drawer_minimum_space)
         val maxWidth = resources.getDimensionPixelSize(R.dimen.navigation_drawer_max_width)
         if (width < maxWidth) {
             val params = left_drawer.layoutParams as DrawerLayout.LayoutParams
@@ -1040,14 +1040,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         ui_layout.doOnLayout {
             // TODO externalize the dimensions
             val toolbarSize = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                // In portrait toolbar should be 56 dp tall
-                Utils.dpToPx(56f)
+                R.dimen.toolbar_height_portrait
             } else {
-                // In landscape toolbar should be 48 dp tall
-                Utils.dpToPx(52f)
+                R.dimen.toolbar_height_landscape
             }
             toolbar.layoutParams = (toolbar.layoutParams as ConstraintLayout.LayoutParams).apply {
-                height = toolbarSize
+                height = dimen(toolbarSize)
             }
             toolbar.minimumHeight = toolbarSize
             toolbar.doOnLayout { setWebViewTranslation(toolbar_layout.height.toFloat()) }

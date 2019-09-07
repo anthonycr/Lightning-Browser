@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_bar"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/search_bar_height"
+    android:layout_height="@dimen/material_grid_touch_medium"
     android:background="?attr/colorPrimary"
     android:orientation="horizontal"
     android:visibility="gone"
@@ -18,7 +18,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif"
         android:gravity="center_vertical"
-        android:paddingLeft="16dp"
+        android:paddingLeft="@dimen/material_grid_margin"
         android:textAppearance="?android:attr/textAppearanceListItem"
         android:textSize="22sp"/>
 

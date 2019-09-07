@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab_item_background"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="@dimen/material_grid_touch_large"
     android:clickable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
@@ -11,10 +11,10 @@
 
     <ImageView
         android:id="@+id/faviconTab"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="@dimen/material_grid_small_icon"
+        android:layout_height="@dimen/material_grid_small_icon"
+        android:layout_marginLeft="@dimen/material_grid_margin"
+        android:layout_marginRight="@dimen/material_grid_margin"
         android:contentDescription="@null"
         android:gravity="center_vertical" />
 
@@ -22,8 +22,8 @@
         android:id="@+id/textTab"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="@dimen/material_grid_margin"
+        android:layout_marginRight="@dimen/material_grid_margin"
         android:layout_weight="1"
         android:ellipsize="end"
         android:fontFamily="sans-serif"
@@ -35,8 +35,8 @@
 
     <FrameLayout
         android:id="@+id/deleteAction"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/material_grid_touch_medium"
+        android:layout_height="@dimen/material_grid_touch_medium"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="4dp"
         android:background="?attr/selectableItemBackgroundBorderless"

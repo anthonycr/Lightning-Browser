@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab_item_background"
-    android:layout_width="175dp"
+    android:layout_width="@dimen/desktop_tab_width"
     android:layout_height="match_parent"
     android:clickable="false"
     android:gravity="center_vertical"
@@ -35,7 +35,7 @@
 
     <FrameLayout
         android:id="@+id/deleteAction"
-        android:layout_width="36dp"
+        android:layout_width="@dimen/material_grid_touch_small"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:background="?attr/actionBarItemBackground"

@@ -17,15 +17,15 @@
         android:id="@+id/ssl_layout_issue_by"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_padding"
-        android:paddingStart="@dimen/default_padding"
+        android:layout_marginTop="@dimen/material_grid_unit"
+        android:paddingStart="@dimen/material_grid_unit"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         tools:text="Test Cert Authority" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/extra_padding"
+        android:layout_marginTop="@dimen/material_grid_margin"
         android:text="@string/ssl_info_issued_to"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textStyle="bold" />
@@ -34,15 +34,15 @@
         android:id="@+id/ssl_layout_issue_to"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_padding"
-        android:paddingStart="@dimen/default_padding"
+        android:layout_marginTop="@dimen/material_grid_unit"
+        android:paddingStart="@dimen/material_grid_unit"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         tools:text="Test Company" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/extra_padding"
+        android:layout_marginTop="@dimen/material_grid_margin"
         android:text="@string/ssl_info_issued_on"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textStyle="bold" />
@@ -51,15 +51,15 @@
         android:id="@+id/ssl_layout_issue_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_padding"
-        android:paddingStart="@dimen/default_padding"
+        android:layout_marginTop="@dimen/material_grid_unit"
+        android:paddingStart="@dimen/material_grid_unit"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         tools:text="today" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/extra_padding"
+        android:layout_marginTop="@dimen/material_grid_margin"
         android:text="@string/ssl_info_expires_on"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textStyle="bold" />
@@ -68,8 +68,8 @@
         android:id="@+id/ssl_layout_expire_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_padding"
-        android:paddingStart="@dimen/default_padding"
+        android:layout_marginTop="@dimen/material_grid_unit"
+        android:paddingStart="@dimen/material_grid_unit"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         tools:text="tomorrow" />
 </LinearLayout>

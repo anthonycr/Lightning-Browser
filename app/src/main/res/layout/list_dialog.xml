@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:maxHeight="300dp"
+    android:maxHeight="@dimen/dialog_max_size"
     android:orientation="vertical">
 
     <TextView
@@ -13,13 +12,13 @@
         android:ellipsize="end"
         android:gravity="start"
         android:maxLines="2"
-        android:paddingBottom="@dimen/default_padding"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingTop="@dimen/extra_padding"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:paddingTop="@dimen/material_grid_margin"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+        android:paddingBottom="@dimen/material_grid_unit"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dialog_list"
@@ -28,6 +27,6 @@
         android:divider="@null"
         android:dividerHeight="0dp"
         android:listSelector="?attr/listChoiceBackgroundIndicator"
-        android:overScrollMode="ifContentScrolls"/>
+        android:overScrollMode="ifContentScrolls" />
 
 </LinearLayout>

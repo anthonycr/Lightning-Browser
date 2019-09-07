@@ -20,7 +20,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/search_ssl_status"
-        android:layout_width="36dp"
+        android:layout_width="@dimen/material_grid_touch_small"
         android:layout_height="match_parent"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="6dp"
@@ -52,7 +52,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/search_refresh"
-        android:layout_width="36dp"
+        android:layout_width="@dimen/material_grid_touch_small"
         android:layout_height="match_parent"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="6dp"

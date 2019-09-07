@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="@dimen/desktop_tab_height"
     android:background="@color/black"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tabs_list"
         android:layout_width="0dp"
-        android:layout_height="30dp"
+        android:layout_height="@dimen/desktop_tab_height"
         android:fadingEdge="horizontal"
         android:overScrollMode="never"
         android:scrollbars="none"
@@ -20,8 +20,8 @@
 
     <ImageView
         android:id="@+id/new_tab_button"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/desktop_tab_height"
+        android:layout_height="@dimen/desktop_tab_height"
         android:background="?actionBarItemBackground"
         android:contentDescription="@string/action_new_tab"
         app:layout_constraintEnd_toEndOf="parent"
