@@ -22,7 +22,7 @@ fun Context.showSslDialog(sslCertificate: SslCertificate, sslState: SslState) {
 
     val contentView = inflater.inflate(R.layout.dialog_ssl_info, null, false).apply {
         ssl_layout_issue_by.text = by.cName
-        ssl_layout_issue_to.text = to.oName
+        ssl_layout_issue_to.text = to.oName?.takeIf(String::isNotBlank) ?: to.cName
         ssl_layout_issue_date.text = dateFormat.format(issueDate)
         ssl_layout_expire_date.text = dateFormat.format(expireDate)
     }
