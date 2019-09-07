@@ -320,7 +320,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             onFocusChangeListener = searchListener
             setOnEditorActionListener(searchListener)
             onPreFocusListener = searchListener
-            addTextChangedListener(searchListener)
+            addTextChangedListener(StyleRemovingTextWatcher())
 
             initializeSearchSuggestions(this)
         }
@@ -407,19 +407,9 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private inner class SearchListenerClass : OnKeyListener,
         OnEditorActionListener,
         OnFocusChangeListener,
-        SearchView.PreFocusListener,
-        TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-
-        override fun afterTextChanged(e: Editable) {
-            e.getSpans(0, e.length, CharacterStyle::class.java).forEach(e::removeSpan)
-            e.getSpans(0, e.length, ParagraphStyle::class.java).forEach(e::removeSpan)
-        }
+        SearchView.PreFocusListener {
 
         override fun onKey(view: View, keyCode: Int, keyEvent: KeyEvent): Boolean {
-
             when (keyCode) {
                 KeyEvent.KEYCODE_ENTER -> {
                     searchView?.let {
