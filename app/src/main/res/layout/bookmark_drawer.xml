@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="Favicon"
+                android:contentDescription="@string/action_back"
                 app:srcCompat="@drawable/ic_action_star"/>
         </FrameLayout>
 

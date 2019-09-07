@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxLines="3"/>
+        android:maxLines="3" />
 
     <EditText
         android:id="@+id/auth_request_username_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_username"
-        android:maxLines="1"/>
+        android:inputType="textVisiblePassword"
+        android:maxLines="1" />
 
     <EditText
         android:id="@+id/auth_request_password_edittext"
@@ -26,6 +26,6 @@
         android:layout_height="wrap_content"
         android:hint="@string/hint_password"
         android:inputType="textPassword"
-        android:maxLines="1"/>
+        android:maxLines="1" />
 
 </LinearLayout>

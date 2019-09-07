@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/tab_item_background"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tab_item_background"
     android:layout_width="175dp"
     android:layout_height="match_parent"
     android:clickable="false"
@@ -18,8 +17,8 @@
         android:layout_height="20dp"
         android:layout_marginLeft="7dp"
         android:layout_marginRight="7dp"
-        android:contentDescription="Favicon"
-        android:gravity="center_vertical"/>
+        android:contentDescription="@null"
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/textTab"
@@ -32,7 +31,7 @@
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <FrameLayout
         android:id="@+id/deleteAction"
@@ -48,7 +47,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center"
             android:contentDescription="@string/close_tab"
-            app:srcCompat="@drawable/ic_action_delete"/>
+            app:srcCompat="@drawable/ic_action_delete" />
     </FrameLayout>
 
 </LinearLayout>
