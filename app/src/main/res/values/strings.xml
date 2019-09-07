@@ -335,4 +335,7 @@
     <string name="ssl_info_issued_to">Issued to</string>
     <string name="ssl_info_issued_on">Issued on</string>
     <string name="ssl_info_expires_on">Expires on</string>
+    
+    <!-- Search in page -->
+    <string name="search_in_page_query">\'%1$s\'</string>
 </resources>

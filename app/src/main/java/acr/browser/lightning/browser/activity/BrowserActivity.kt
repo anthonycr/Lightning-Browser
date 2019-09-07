@@ -824,7 +824,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     private fun showFindInPageControls(text: String) {
         search_bar.visibility = VISIBLE
 
-        findViewById<TextView>(R.id.search_query).text = "'$text'"
+        findViewById<TextView>(R.id.search_query).text = resources.getString(R.string.search_in_page_query, text)
         findViewById<ImageButton>(R.id.button_next).setOnClickListener(this)
         findViewById<ImageButton>(R.id.button_back).setOnClickListener(this)
         findViewById<ImageButton>(R.id.button_quit).setOnClickListener(this)
