@@ -71,9 +71,8 @@ class BookmarksDrawerView @JvmOverloads constructor(
     private val uiModel = BookmarkUiModel()
 
     private var bookmarkRecyclerView: RecyclerView? = null
-    private var backNavigationImageView: ImageView? = null
-    private var addBookmarkImageView: ImageView? = null
-    private var addBookmarkView: View? = null
+    private var backNavigationView: ImageView? = null
+    private var addBookmarkView: ImageView? = null
 
     init {
         context.inflater.inflate(R.layout.bookmark_drawer, this, true)
@@ -82,10 +81,9 @@ class BookmarksDrawerView @JvmOverloads constructor(
         uiController = context as UIController
 
         bookmarkRecyclerView = findViewById(R.id.bookmark_list_view)
-        backNavigationImageView = findViewById(R.id.bookmark_back_button_image)
-        addBookmarkImageView = findViewById(R.id.action_add_bookmark_image)
+        backNavigationView = findViewById(R.id.bookmark_back_button)
         addBookmarkView = findViewById(R.id.action_add_bookmark)
-        findViewById<View>(R.id.bookmark_back_button).setOnClickListener {
+        backNavigationView?.setOnClickListener {
             if (!uiModel.isCurrentFolderRoot()) {
                 setBookmarksShown(null, true)
                 bookmarkRecyclerView?.layoutManager?.scrollToPosition(scrollIndex)
@@ -134,8 +132,7 @@ class BookmarksDrawerView @JvmOverloads constructor(
             .observeOn(mainScheduler)
             .subscribe { isBookmark ->
                 bookmarkUpdateSubscription = null
-                addBookmarkImageView?.isSelected = isBookmark
-                addBookmarkImageView?.isEnabled = !url.isSpecialUrl()
+                addBookmarkView?.isSelected = isBookmark
                 addBookmarkView?.isEnabled = !url.isSpecialUrl()
             }
     }
@@ -174,12 +171,12 @@ class BookmarksDrawerView @JvmOverloads constructor(
         }
 
         if (animate) {
-            backNavigationImageView?.let {
+            backNavigationView?.let {
                 val transition = AnimationUtils.createRotationTransitionAnimation(it, resource)
                 it.startAnimation(transition)
             }
         } else {
-            backNavigationImageView?.setImageResource(resource)
+            backNavigationView?.setImageResource(resource)
         }
     }
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,21 +13,14 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <FrameLayout
+        <ImageView
             android:id="@+id/bookmark_back_button"
             android:layout_width="?attr/actionBarSize"
             android:layout_height="match_parent"
             android:background="?attr/actionBarItemBackground"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/bookmark_back_button_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_back"
-                app:srcCompat="@drawable/ic_action_star"/>
-        </FrameLayout>
+            android:contentDescription="@string/action_back"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_star" />
 
         <TextView
             android:layout_width="match_parent"
@@ -39,7 +31,7 @@
             android:maxLines="1"
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:text="@string/action_bookmarks"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -48,7 +40,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@null"
-        android:dividerHeight="0dp"/>
+        android:dividerHeight="0dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,70 +50,34 @@
         android:orientation="horizontal"
         android:weightSum="3">
 
-        <FrameLayout
+        <ImageView
             android:id="@+id/action_page_tools"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
+            android:contentDescription="@string/dialog_tools_title"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_page_tools" />
 
-            <ImageView
-                android:id="@+id/action_page_tools_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/dialog_tools_title"
-                android:paddingBottom="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_page_tools"/>
-        </FrameLayout>
-
-        <FrameLayout
+        <ImageView
             android:id="@+id/action_add_bookmark"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
+            android:contentDescription="@string/action_add_bookmark"
+            android:scaleType="center"
+            app:srcCompat="@drawable/state_ic_bookmark" />
 
-            <ImageView
-                android:id="@+id/action_add_bookmark_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_add_bookmark"
-                android:paddingBottom="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="4dp"
-                app:srcCompat="@drawable/state_ic_bookmark"/>
-        </FrameLayout>
-
-        <FrameLayout
+        <ImageView
             android:id="@+id/action_reading"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:id="@+id/action_reading_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/reading_mode"
-                android:paddingBottom="4dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_action_reading"/>
-        </FrameLayout>
+            android:contentDescription="@string/reading_mode"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_reading" />
     </LinearLayout>
 </LinearLayout>
