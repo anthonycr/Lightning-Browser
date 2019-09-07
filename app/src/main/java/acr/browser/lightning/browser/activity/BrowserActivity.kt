@@ -48,7 +48,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -340,7 +339,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         searchBackground = customView.findViewById<View>(R.id.search_container).apply {
             // initialize search background color
-            background.setColorFilter(getSearchBarColor(primaryColor, primaryColor), PorterDuff.Mode.SRC_IN)
+            background.tint(getSearchBarColor(primaryColor, primaryColor))
         }
 
         drawer_layout.setDrawerShadow(R.drawable.drawer_right_shadow, GravityCompat.END)
@@ -1220,12 +1219,13 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                         backgroundDrawable.color = animatedColor
                         mainHandler.post { window.setBackgroundDrawable(backgroundDrawable) }
                     } else {
-                        tabBackground?.setColorFilter(animatedColor, PorterDuff.Mode.SRC_IN)
+                        tabBackground?.tint(animatedColor)
                     }
                     currentUiColor = animatedColor
                     toolbar_layout.setBackgroundColor(animatedColor)
-                    searchBackground?.background?.setColorFilter(DrawableUtils.mixColor(interpolatedTime,
-                        startSearchColor, finalSearchColor), PorterDuff.Mode.SRC_IN)
+                    searchBackground?.background?.tint(
+                        DrawableUtils.mixColor(interpolatedTime, startSearchColor, finalSearchColor)
+                    )
                 }
             }
             animation.duration = 300
