@@ -2,9 +2,9 @@ package acr.browser.lightning.browser.tabs
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.TabsView
-import acr.browser.lightning.list.VerticalItemAnimator
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.list.VerticalItemAnimator
 import acr.browser.lightning.view.LightningView
 import android.content.Context
 import android.util.AttributeSet
@@ -25,10 +25,14 @@ class TabsDrawerView @JvmOverloads constructor(
     private val uiController = context as UIController
     private val tabsAdapter = TabsDrawerAdapter(uiController)
     private val tabList: RecyclerView
+    private val actionBack: View
+    private val actionForward: View
 
     init {
         orientation = VERTICAL
         context.inflater.inflate(R.layout.tab_drawer, this, true)
+        actionBack = findViewById(R.id.action_back)
+        actionForward = findViewById(R.id.action_forward)
 
         val animator = VerticalItemAnimator().apply {
             supportsChangeAnimations = false
@@ -92,13 +96,11 @@ class TabsDrawerView @JvmOverloads constructor(
     }
 
     override fun setGoBackEnabled(isEnabled: Boolean) {
-        findViewById<View>(R.id.action_back).isEnabled = isEnabled
-        findViewById<View>(R.id.icon_back).isEnabled = isEnabled
+        actionBack.isEnabled = isEnabled
     }
 
     override fun setGoForwardEnabled(isEnabled: Boolean) {
-        findViewById<View>(R.id.action_forward).isEnabled = isEnabled
-        findViewById<View>(R.id.icon_forward).isEnabled = isEnabled
+        actionForward.isEnabled = isEnabled
     }
 
 }
