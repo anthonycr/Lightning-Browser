@@ -14,26 +14,19 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <FrameLayout
+        <ImageView
             android:id="@+id/tab_header_button"
             android:layout_width="?attr/actionBarSize"
             android:layout_height="match_parent"
             android:background="?attr/actionBarItemBackground"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/plusIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_new_tab"
-                app:srcCompat="@drawable/ic_action_tabs" />
-        </FrameLayout>
+            android:contentDescription="@string/action_new_tab"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_tabs" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="@dimen/material_grid_margin"
             android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:maxLines="1"
@@ -59,77 +52,45 @@
         android:orientation="horizontal"
         android:weightSum="4">
 
-        <FrameLayout
+        <ImageView
             android:id="@+id/action_back"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
+            android:contentDescription="@string/action_back"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_back" />
 
-            <ImageView
-                android:id="@+id/icon_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_back"
-                app:srcCompat="@drawable/ic_action_back" />
-        </FrameLayout>
-
-        <FrameLayout
+        <ImageView
             android:id="@+id/action_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
+            android:contentDescription="@string/action_homepage"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_home" />
 
-            <ImageView
-                android:id="@+id/icon_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_homepage"
-                app:srcCompat="@drawable/ic_action_home" />
-        </FrameLayout>
-
-        <FrameLayout
+        <ImageView
             android:id="@+id/action_forward"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
+            android:contentDescription="@string/action_forward"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_forward" />
 
-            <ImageView
-                android:id="@+id/icon_forward"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_forward"
-                app:srcCompat="@drawable/ic_action_forward" />
-        </FrameLayout>
-
-        <FrameLayout
+        <ImageView
             android:id="@+id/new_tab_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:id="@+id/icon_plus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/action_new_tab"
-                app:srcCompat="@drawable/ic_action_plus" />
-        </FrameLayout>
+            android:contentDescription="@string/action_new_tab"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_action_plus" />
     </LinearLayout>
 
 </merge>

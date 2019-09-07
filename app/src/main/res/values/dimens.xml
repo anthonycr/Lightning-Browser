@@ -1,16 +1,26 @@
 <resources>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="search_bar_height">48dp</dimen>
+    <dimen name="material_grid_margin">16dp</dimen>
+    <dimen name="material_grid_unit">8dp</dimen>
+
+    <dimen name="material_grid_small_icon">24dp</dimen>
+
+    <dimen name="material_grid_touch_small">36dp</dimen>
+    <dimen name="material_grid_touch_medium">48dp</dimen>
+    <dimen name="material_grid_touch_large">56dp</dimen>
+    <dimen name="material_grid_touch_xlarge">72dp</dimen>
 
     <dimen name="dialog_max_size">350dp</dimen>
     <dimen name="dialog_padding">24dp</dimen>
 
-    <dimen name="default_padding">8dp</dimen>
-    <dimen name="extra_padding">16dp</dimen>
-
-    <dimen name="bookmark_item_icon_size">24dp</dimen>
-
     <dimen name="navigation_drawer_max_width">300dp</dimen>
 
+    <dimen name="toolbar_height_portrait">56dp</dimen>
+    <dimen name="toolbar_height_landscape">52dp</dimen>
+    <dimen name="navigation_drawer_minimum_space">56dp</dimen>
+
+    <dimen name="desktop_tab_width">175dp</dimen>
+    <dimen name="desktop_tab_height">30dp</dimen>
+
+    <dimen name="progress_bar_height">2dp</dimen>
 </resources>

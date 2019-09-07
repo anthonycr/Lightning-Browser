@@ -23,13 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="@dimen/material_grid_margin">
 
             <TextView
                 android:id="@+id/textViewTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="@dimen/material_grid_margin"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceLarge" />

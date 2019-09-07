@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 5.0.2 *(2019-09-07)*
+----------------------------
+- Target Android 10 API 29
+- Update desktop and mobile user agents
+- Fixed segfault that occurred when some URLs were clicked
+- Added dialog to show SSL certificate info when SSL icon is tapped
+
 Version 5.0.1 *(2019-09-01)*
 ----------------------------
 - 64 bit I2P support

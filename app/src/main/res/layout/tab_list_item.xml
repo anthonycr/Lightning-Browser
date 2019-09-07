@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/tab_item_background"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tab_item_background"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="@dimen/material_grid_touch_large"
     android:clickable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
@@ -12,19 +11,19 @@
 
     <ImageView
         android:id="@+id/faviconTab"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:contentDescription="Favicon"
-        android:gravity="center_vertical"/>
+        android:layout_width="@dimen/material_grid_small_icon"
+        android:layout_height="@dimen/material_grid_small_icon"
+        android:layout_marginLeft="@dimen/material_grid_margin"
+        android:layout_marginRight="@dimen/material_grid_margin"
+        android:contentDescription="@null"
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/textTab"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="@dimen/material_grid_margin"
+        android:layout_marginRight="@dimen/material_grid_margin"
         android:layout_weight="1"
         android:ellipsize="end"
         android:fontFamily="sans-serif"
@@ -32,23 +31,15 @@
         android:maxLines="1"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"/>
+        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/deleteAction"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center_vertical"
+        android:layout_width="@dimen/material_grid_touch_medium"
+        android:layout_height="match_parent"
         android:layout_marginRight="4dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:gravity="center">
-
-        <ImageView
-            android:id="@+id/deleteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/close_tab"
-            app:srcCompat="@drawable/ic_action_delete"/>
-    </FrameLayout>
+        android:contentDescription="@string/close_tab"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_action_delete" />
 </LinearLayout>

@@ -3,6 +3,7 @@ package acr.browser.lightning.network
 import acr.browser.lightning.rx.BroadcastReceiverObservable
 import android.app.Application
 import android.net.ConnectivityManager
+import dagger.Reusable
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -10,6 +11,7 @@ import javax.inject.Inject
 /**
  * A model that supplies network connectivity status updates.
  */
+@Reusable
 class NetworkConnectivityModel @Inject constructor(
     private val connectivityManager: ConnectivityManager,
     private val application: Application

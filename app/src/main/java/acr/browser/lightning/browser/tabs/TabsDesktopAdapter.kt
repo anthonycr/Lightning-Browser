@@ -2,9 +2,7 @@ package acr.browser.lightning.browser.tabs
 
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
-import acr.browser.lightning.extensions.desaturate
-import acr.browser.lightning.extensions.drawTrapezoid
-import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.extensions.*
 import acr.browser.lightning.utils.ThemeUtils
 import acr.browser.lightning.utils.Utils
 import android.content.Context
@@ -12,7 +10,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
@@ -35,13 +32,21 @@ class TabsDesktopAdapter(
 
     init {
         val backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f)
-        val backgroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888).also {
+        val backgroundTabBitmap = Bitmap.createBitmap(
+            context.dimen(R.dimen.desktop_tab_width),
+            context.dimen(R.dimen.desktop_tab_height),
+            Bitmap.Config.ARGB_8888
+        ).also {
             Canvas(it).drawTrapezoid(backgroundColor, true)
         }
         backgroundTabDrawable = BitmapDrawable(resources, backgroundTabBitmap)
 
         val foregroundColor = ThemeUtils.getPrimaryColor(context)
-        foregroundTabBitmap = Bitmap.createBitmap(Utils.dpToPx(175f), Utils.dpToPx(30f), Bitmap.Config.ARGB_8888).also {
+        foregroundTabBitmap = Bitmap.createBitmap(
+            context.dimen(R.dimen.desktop_tab_width),
+            context.dimen(R.dimen.desktop_tab_height),
+            Bitmap.Config.ARGB_8888
+        ).also {
             Canvas(it).drawTrapezoid(foregroundColor, false)
         }
     }
@@ -82,7 +87,7 @@ class TabsDesktopAdapter(
         if (isForeground) {
             val foregroundDrawable = BitmapDrawable(resources, foregroundTabBitmap)
             if (uiController.isColorMode()) {
-                foregroundDrawable.setColorFilter(uiController.getUiColor(), PorterDuff.Mode.SRC_IN)
+                foregroundDrawable.tint(uiController.getUiColor())
             }
             TextViewCompat.setTextAppearance(viewHolder.txtTitle, R.style.boldText)
             viewHolder.layout.background = foregroundDrawable

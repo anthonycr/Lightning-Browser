@@ -22,8 +22,8 @@
 
         <acr.browser.lightning.icon.TabCountView
             android:id="@+id/tab_count_view"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/material_grid_small_icon"
+            android:layout_height="@dimen/material_grid_small_icon"
             android:layout_gravity="center"
             app:tabIconBorderRadius="2dp"
             app:tabIconBorderWidth="3dp"

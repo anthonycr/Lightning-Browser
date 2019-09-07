@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/default_padding"
+            android:layout_marginRight="@dimen/material_grid_unit"
             android:text="@string/host"/>
 
         <EditText
@@ -21,7 +21,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:importantForAutofill="no" />
     </LinearLayout>
 
     <LinearLayout
@@ -31,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/default_padding"
+            android:layout_marginRight="@dimen/material_grid_unit"
             android:text="@string/port"/>
 
         <EditText
@@ -39,7 +40,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:importantForAutofill="no" />
     </LinearLayout>
 
 </LinearLayout>

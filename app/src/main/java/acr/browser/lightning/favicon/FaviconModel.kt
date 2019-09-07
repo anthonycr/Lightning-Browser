@@ -31,7 +31,7 @@ class FaviconModel @Inject constructor(
 ) {
 
     private val loaderOptions = BitmapFactory.Options()
-    private val bookmarkIconSize = application.resources.getDimensionPixelSize(R.dimen.bookmark_item_icon_size)
+    private val bookmarkIconSize = application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
     private val faviconCache = object : LruCache<String, Bitmap>(FileUtils.megabytesToBytes(1).toInt()) {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount
     }

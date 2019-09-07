@@ -7,6 +7,7 @@ import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.jsoup.*
 import android.app.Application
+import dagger.Reusable
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.io.File
@@ -16,6 +17,7 @@ import javax.inject.Inject
 /**
  * Factory for the history page.
  */
+@Reusable
 class HistoryPageFactory @Inject constructor(
     private val listPageReader: ListPageReader,
     private val application: Application,

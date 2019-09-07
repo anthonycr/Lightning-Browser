@@ -5,6 +5,9 @@ import acr.browser.lightning.device.BuildType
 import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.bookmark.BookmarkPageReader
 import acr.browser.lightning.html.homepage.HomePageReader
+import acr.browser.lightning.js.InvertPage
+import acr.browser.lightning.js.TextReflow
+import acr.browser.lightning.js.ThemeColor
 import acr.browser.lightning.log.AndroidLogger
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.log.NoOpLogger
@@ -133,13 +136,11 @@ class AppModule {
     fun providesSuggestionsHttpClient(application: Application): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
 
-        val rewriteCacheControlInterceptor = object : Interceptor {
-            override fun intercept(chain: Interceptor.Chain): Response {
-                val originalResponse = chain.proceed(chain.request())
-                return originalResponse.newBuilder()
-                    .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
-                    .build()
-            }
+        val rewriteCacheControlInterceptor = Interceptor { chain ->
+            val originalResponse = chain.proceed(chain.request())
+            originalResponse.newBuilder()
+                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                .build()
         }
 
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
@@ -156,13 +157,11 @@ class AppModule {
     fun providesHostsHttpClient(application: Application): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(365)
 
-        val rewriteCacheControlInterceptor = object : Interceptor {
-            override fun intercept(chain: Interceptor.Chain): Response {
-                val originalResponse = chain.proceed(chain.request())
-                return originalResponse.newBuilder()
-                    .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
-                    .build()
-            }
+        val rewriteCacheControlInterceptor = Interceptor { chain ->
+            val originalResponse = chain.proceed(chain.request())
+            originalResponse.newBuilder()
+                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
+                .build()
         }
 
         val suggestionsCache = File(application.cacheDir, "hosts_cache")
@@ -193,6 +192,15 @@ class AppModule {
 
     @Provides
     fun providesBookmarkPageReader(): BookmarkPageReader = MezzanineGenerator.BookmarkPageReader()
+
+    @Provides
+    fun providesTextReflow(): TextReflow = MezzanineGenerator.TextReflow()
+
+    @Provides
+    fun providesThemeColor(): ThemeColor = MezzanineGenerator.ThemeColor()
+
+    @Provides
+    fun providesInvertPage(): InvertPage = MezzanineGenerator.InvertPage()
 
 }
 

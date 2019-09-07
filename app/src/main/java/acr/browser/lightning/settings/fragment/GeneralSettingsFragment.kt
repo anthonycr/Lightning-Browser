@@ -1,9 +1,13 @@
 package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
-import acr.browser.lightning.constant.*
+import acr.browser.lightning.browser.ProxyChoice
+import acr.browser.lightning.constant.SCHEME_BLANK
+import acr.browser.lightning.constant.SCHEME_BOOKMARKS
+import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.Suggestions
@@ -46,38 +50,38 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
 
         clickableDynamicPreference(
             preference = SETTINGS_PROXY,
-            summary = proxyChoiceToSummary(userPreferences.proxyChoice),
-            onClick = this::showProxyPicker
+            summary = userPreferences.proxyChoice.toSummary(),
+            onClick = ::showProxyPicker
         )
 
         clickableDynamicPreference(
             preference = SETTINGS_USER_AGENT,
             summary = choiceToUserAgent(userPreferences.userAgentChoice),
-            onClick = this::showUserAgentChooserDialog
+            onClick = ::showUserAgentChooserDialog
         )
 
         clickableDynamicPreference(
             preference = SETTINGS_DOWNLOAD,
             summary = userPreferences.downloadDirectory,
-            onClick = this::showDownloadLocationDialog
+            onClick = ::showDownloadLocationDialog
         )
 
         clickableDynamicPreference(
             preference = SETTINGS_HOME,
             summary = homePageUrlToDisplayTitle(userPreferences.homepage),
-            onClick = this::showHomePageDialog
+            onClick = ::showHomePageDialog
         )
 
         clickableDynamicPreference(
             preference = SETTINGS_SEARCH_ENGINE,
             summary = getSearchEngineSummary(searchEngineProvider.provideSearchEngine()),
-            onClick = this::showSearchProviderDialog
+            onClick = ::showSearchProviderDialog
         )
 
         clickableDynamicPreference(
             preference = SETTINGS_SUGGESTIONS,
             summary = searchSuggestionChoiceToTitle(Suggestions.from(userPreferences.searchSuggestionChoice)),
-            onClick = this::showSearchSuggestionsDialog
+            onClick = ::showSearchSuggestionsDialog
         )
 
         checkBoxPreference(
@@ -105,37 +109,43 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
         )
     }
 
-    private fun proxyChoiceToSummary(choice: Int) = when (choice) {
-        PROXY_MANUAL -> "${userPreferences.proxyHost}:${userPreferences.proxyPort}"
-        NO_PROXY,
-        PROXY_ORBOT,
-        PROXY_I2P -> proxyChoices[choice]
-        else -> proxyChoices[NO_PROXY]
+    private fun ProxyChoice.toSummary(): String {
+        val stringArray = resources.getStringArray(R.array.proxy_choices_array)
+        return when (this) {
+            ProxyChoice.NONE -> stringArray[0]
+            ProxyChoice.ORBOT -> stringArray[1]
+            ProxyChoice.I2P -> stringArray[2]
+            ProxyChoice.MANUAL -> "${userPreferences.proxyHost}:${userPreferences.proxyPort}"
+        }
     }
 
     private fun showProxyPicker(summaryUpdater: SummaryUpdater) {
         BrowserDialog.showCustomDialog(activity) {
             setTitle(R.string.http_proxy)
-            setSingleChoiceItems(proxyChoices, userPreferences.proxyChoice) { _, which ->
-                updateProxyChoice(which, it, summaryUpdater)
+            val stringArray = resources.getStringArray(R.array.proxy_choices_array)
+            val values = ProxyChoice.values().map {
+                Pair(it, when (it) {
+                    ProxyChoice.NONE -> stringArray[0]
+                    ProxyChoice.ORBOT -> stringArray[1]
+                    ProxyChoice.I2P -> stringArray[2]
+                    ProxyChoice.MANUAL -> stringArray[3]
+                })
+            }
+            withSingleChoiceItems(values, userPreferences.proxyChoice) {
+                updateProxyChoice(it, activity, summaryUpdater)
             }
             setPositiveButton(R.string.action_ok, null)
         }
     }
 
-    private fun updateProxyChoice(@Proxy choice: Int, activity: Activity, summaryUpdater: SummaryUpdater) {
+    private fun updateProxyChoice(choice: ProxyChoice, activity: Activity, summaryUpdater: SummaryUpdater) {
         val sanitizedChoice = ProxyUtils.sanitizeProxyChoice(choice, activity)
-        when (sanitizedChoice) {
-            PROXY_ORBOT,
-            PROXY_I2P,
-            NO_PROXY -> Unit
-            PROXY_MANUAL -> showManualProxyPicker(activity, summaryUpdater)
+        if (sanitizedChoice == ProxyChoice.MANUAL) {
+            showManualProxyPicker(activity, summaryUpdater)
         }
 
         userPreferences.proxyChoice = sanitizedChoice
-        if (sanitizedChoice < proxyChoices.size) {
-            summaryUpdater.updateSummary(proxyChoices[sanitizedChoice])
-        }
+        summaryUpdater.updateSummary(sanitizedChoice.toSummary())
     }
 
     private fun showManualProxyPicker(activity: Activity, summaryUpdater: SummaryUpdater) {

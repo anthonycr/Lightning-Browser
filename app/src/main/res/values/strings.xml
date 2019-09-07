@@ -329,4 +329,13 @@
     <string name="ad_block_load_failure">Failed to load hosts from ad blocking source.</string>
 
     <string name="infinity">∞</string>
+
+    <!-- SSL -->
+    <string name="ssl_info_issued_by">Issued by</string>
+    <string name="ssl_info_issued_to">Issued to</string>
+    <string name="ssl_info_issued_on">Issued on</string>
+    <string name="ssl_info_expires_on">Expires on</string>
+    
+    <!-- Search in page -->
+    <string name="search_in_page_query">\'%1$s\'</string>
 </resources>

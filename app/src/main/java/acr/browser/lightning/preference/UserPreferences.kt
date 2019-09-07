@@ -1,18 +1,18 @@
 package acr.browser.lightning.preference
 
+import acr.browser.lightning.AppTheme
+import acr.browser.lightning.browser.ProxyChoice
+import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.constant.DEFAULT_ENCODING
-import acr.browser.lightning.constant.NO_PROXY
 import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.di.UserPrefs
-import acr.browser.lightning.preference.delegates.booleanPreference
-import acr.browser.lightning.preference.delegates.intPreference
-import acr.browser.lightning.preference.delegates.nullableStringPreference
-import acr.browser.lightning.preference.delegates.stringPreference
+import acr.browser.lightning.preference.delegates.*
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
+import acr.browser.lightning.view.RenderingMode
 import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -167,7 +167,7 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the rendering mode that should be used by the browser.
      */
-    var renderingMode by preferences.intPreference(RENDERING_MODE, 0)
+    var renderingMode by preferences.enumPreference(RENDERING_MODE, RenderingMode.NORMAL)
 
     /**
      * True if third party cookies should be disallowed by the browser, false if they should be
@@ -186,7 +186,7 @@ class UserPreferences @Inject constructor(
      *
      * @see SearchBoxModel
      */
-    var urlBoxContentChoice by preferences.intPreference(URL_BOX_CONTENTS, 0)
+    var urlBoxContentChoice by preferences.enumPreference(URL_BOX_CONTENTS, SearchBoxDisplayChoice.DOMAIN)
 
     /**
      * True if the browser should invert the display colors of the web page content, false
@@ -202,7 +202,7 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the theme used by the application.
      */
-    var useTheme by preferences.intPreference(THEME, 0)
+    var useTheme by preferences.enumPreference(THEME, AppTheme.LIGHT)
 
     /**
      * The text encoding used by the browser.
@@ -253,15 +253,15 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the proxy choice.
      */
-    var proxyChoice by preferences.intPreference(PROXY_CHOICE, NO_PROXY)
+    var proxyChoice by preferences.enumPreference(PROXY_CHOICE, ProxyChoice.NONE)
 
     /**
-     * The proxy host used depending on the [proxyChoice].
+     * The proxy host used when [proxyChoice] is [ProxyChoice.MANUAL].
      */
     var proxyHost by preferences.stringPreference(USE_PROXY_HOST, "localhost")
 
     /**
-     * The proxy port used depending on the [proxyChoice].
+     * The proxy port used when [proxyChoice] is [ProxyChoice.MANUAL].
      */
     var proxyPort by preferences.intPreference(USE_PROXY_PORT, 8118)
 

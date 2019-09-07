@@ -15,12 +15,13 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.preference.userAgent
-import acr.browser.lightning.ssl.SSLState
+import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.find.FindResults
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.*
+import android.net.http.SslCertificate
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -169,6 +170,12 @@ class LightningView(
         get() = titleInfo.getTitle() ?: ""
 
     /**
+     * Get the current [SslCertificate] if there is any associated with the current page.
+     */
+    val sslCertificate: SslCertificate?
+        get() = webView?.certificate
+
+    /**
      * Get the current URL of the WebView, or an empty string if the WebView is null or the URL is
      * null.
      *
@@ -221,9 +228,9 @@ class LightningView(
             .subscribe(::setNetworkAvailable)
     }
 
-    fun currentSslState(): SSLState = lightningWebClient.sslState
+    fun currentSslState(): SslState = lightningWebClient.sslState
 
-    fun sslStateObservable(): Observable<SSLState> = lightningWebClient.sslStateObservable()
+    fun sslStateObservable(): Observable<SslState> = lightningWebClient.sslStateObservable()
 
     /**
      * This method loads the homepage for the browser. Either it loads the URL stored as the
@@ -260,6 +267,10 @@ class LightningView(
         val settings = webView?.settings ?: return
 
         lightningWebClient.updatePreferences()
+
+        val modifiesHeaders = userPreferences.doNotTrackEnabled
+            || userPreferences.saveDataEnabled
+            || userPreferences.removeIdentifyingHeadersEnabled
 
         if (userPreferences.doNotTrackEnabled) {
             requestHeaders[HEADER_DNT] = "1"
@@ -317,7 +328,8 @@ class LightningView(
 
         settings.blockNetworkImage = userPreferences.blockImagesEnabled
         if (!isIncognito) {
-            settings.setSupportMultipleWindows(userPreferences.popupsEnabled)
+            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+            settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
         } else {
             settings.setSupportMultipleWindows(false)
         }
@@ -481,17 +493,17 @@ class LightningView(
     /**
      * Sets the current rendering color of the WebView instance
      * of the current LightningView. The for modes are normal
-     * rendering (0), inverted rendering (1), grayscale rendering (2),
-     * and inverted grayscale rendering (3)
+     * rendering, inverted rendering, grayscale rendering,
+     * and inverted grayscale rendering
      *
      * @param mode the integer mode to set as the rendering mode.
      * see the numbers in documentation above for the
      * values this method accepts.
      */
-    private fun setColorMode(mode: Int) {
+    private fun setColorMode(mode: RenderingMode) {
         invertPage = false
         when (mode) {
-            0 -> {
+            RenderingMode.NORMAL -> {
                 paint.colorFilter = null
                 // setSoftwareRendering(); // Some devices get segfaults
                 // in the WebView with Hardware Acceleration enabled,
@@ -499,7 +511,7 @@ class LightningView(
                 setNormalRendering()
                 invertPage = false
             }
-            1 -> {
+            RenderingMode.INVERTED -> {
                 val filterInvert = ColorMatrixColorFilter(
                     negativeColorArray)
                 paint.colorFilter = filterInvert
@@ -507,14 +519,14 @@ class LightningView(
 
                 invertPage = true
             }
-            2 -> {
+            RenderingMode.GRAYSCALE -> {
                 val cm = ColorMatrix()
                 cm.setSaturation(0f)
                 val filterGray = ColorMatrixColorFilter(cm)
                 paint.colorFilter = filterGray
                 setHardwareRendering()
             }
-            3 -> {
+            RenderingMode.INVERTED_GRAYSCALE -> {
                 val matrix = ColorMatrix()
                 matrix.set(negativeColorArray)
                 val matrixGray = ColorMatrix()
@@ -528,7 +540,7 @@ class LightningView(
                 invertPage = true
             }
 
-            4 -> {
+            RenderingMode.INCREASE_CONTRAST -> {
                 val increaseHighContrast = ColorMatrixColorFilter(increaseContrastColorArray)
                 paint.colorFilter = increaseHighContrast
                 setHardwareRendering()

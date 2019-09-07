@@ -3,9 +3,11 @@
  */
 package acr.browser.lightning.settings.fragment
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.di.injector
-import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.withSingleChoiceItems
 import acr.browser.lightning.preference.UserPreferences
 import android.os.Bundle
 import android.view.Gravity
@@ -31,17 +33,15 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
         injector.inject(this)
 
         // preferences storage
-        themeOptions = this.resources.getStringArray(R.array.themes)
-
         clickableDynamicPreference(
             preference = SETTINGS_THEME,
-            summary = themeOptions[userPreferences.useTheme],
-            onClick = this::showThemePicker
+            summary = userPreferences.useTheme.toDisplayString(),
+            onClick = ::showThemePicker
         )
 
         clickablePreference(
             preference = SETTINGS_TEXTSIZE,
-            onClick = this::showTextSizePicker
+            onClick = ::showTextSizePicker
         )
 
         checkBoxPreference(
@@ -95,7 +95,7 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
 
     private fun showTextSizePicker() {
         val maxValue = 5
-        val dialog = AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(activity).apply {
             val layoutInflater = activity.layoutInflater
             val customView = (layoutInflater.inflate(R.layout.dialog_seek_bar, null) as LinearLayout).apply {
                 val text = TextView(activity).apply {
@@ -116,21 +116,17 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                 val seekBar = customView.findViewById<SeekBar>(R.id.text_size_seekbar)
                 userPreferences.textSize = maxValue - seekBar.progress
             }
-        }.show()
-
-        BrowserDialog.setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
 
     private fun showThemePicker(summaryUpdater: SummaryUpdater) {
         val currentTheme = userPreferences.useTheme
-
-        val dialog = AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(activity).apply {
             setTitle(resources.getString(R.string.theme))
-            setSingleChoiceItems(themeOptions, currentTheme) { _, which ->
-                userPreferences.useTheme = which
-                if (which < themeOptions.size) {
-                    summaryUpdater.updateSummary(themeOptions[which])
-                }
+            val values = AppTheme.values().map { Pair(it, it.toDisplayString()) }
+            withSingleChoiceItems(values, userPreferences.useTheme) {
+                userPreferences.useTheme = it
+                summaryUpdater.updateSummary(it.toDisplayString())
             }
             setPositiveButton(resources.getString(R.string.action_ok)) { _, _ ->
                 if (currentTheme != userPreferences.useTheme) {
@@ -142,10 +138,14 @@ class DisplaySettingsFragment : AbstractSettingsFragment() {
                     activity.onBackPressed()
                 }
             }
-        }.show()
-
-        BrowserDialog.setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
+
+    private fun AppTheme.toDisplayString(): String = getString(when (this) {
+        AppTheme.LIGHT -> R.string.light_theme
+        AppTheme.DARK -> R.string.dark_theme
+        AppTheme.BLACK -> R.string.black_theme
+    })
 
     private class TextSeekBarListener(
         private val sampleText: TextView

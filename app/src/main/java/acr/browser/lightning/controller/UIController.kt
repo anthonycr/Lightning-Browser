@@ -7,6 +7,7 @@ import acr.browser.lightning.browser.TabsManager
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.view.LightningView
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -83,12 +84,11 @@ interface UIController {
     /**
      * Notify the controller that it should display the custom [view] in full-screen to the user.
      */
-    fun onShowCustomView(view: View, callback: CustomViewCallback)
-
-    /**
-     * Notify the controller that it should display the custom [view] in full-screen to the user.
-     */
-    fun onShowCustomView(view: View, callback: CustomViewCallback, requestedOrientation: Int)
+    fun onShowCustomView(
+        view: View,
+        callback: CustomViewCallback,
+        requestedOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+    )
 
     /**
      * Notify the controller that it should hide the custom view which was previously displayed in

@@ -7,6 +7,7 @@ import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.jsoup.*
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
+import dagger.Reusable
 import io.reactivex.Single
 import java.io.File
 import java.io.FileWriter
@@ -15,6 +16,7 @@ import javax.inject.Inject
 /**
  * A factory for the home page.
  */
+@Reusable
 class HomePageFactory @Inject constructor(
     private val application: Application,
     private val searchEngineProvider: SearchEngineProvider,
