@@ -252,10 +252,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         left_drawer.setLayerType(LAYER_TYPE_NONE, null)
         right_drawer.setLayerType(LAYER_TYPE_NONE, null)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !shouldShowTabsInDrawer) {
-            window.statusBarColor = Color.BLACK
-        }
-
         setNavigationDrawerWidth()
         drawer_layout.addDrawerListener(DrawerLocker())
 
