@@ -3,7 +3,6 @@ package acr.browser.lightning.browser.tabs
 import acr.browser.lightning.R
 import acr.browser.lightning.controller.UIController
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,7 +18,7 @@ class TabViewHolder(
 
     val txtTitle: TextView = view.findViewById(R.id.textTab)
     val favicon: ImageView = view.findViewById(R.id.faviconTab)
-    val exitButton: FrameLayout = view.findViewById(R.id.deleteAction)
+    val exitButton: View = view.findViewById(R.id.deleteAction)
     val layout: LinearLayout = view.findViewById(R.id.tab_item_background)
 
     init {
