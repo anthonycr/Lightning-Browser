@@ -18,7 +18,7 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/search_ssl_status"
         android:layout_width="@dimen/material_grid_touch_small"
         android:layout_height="match_parent"
@@ -50,7 +50,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="8dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/search_refresh"
         android:layout_width="@dimen/material_grid_touch_small"
         android:layout_height="match_parent"
