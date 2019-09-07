@@ -140,7 +140,7 @@ public class DownloadHandler {
             return path;
         }
 
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         for (char c : chars) {
             if (c == '[' || c == ']' || c == '|') {
                 sb.append('%');
