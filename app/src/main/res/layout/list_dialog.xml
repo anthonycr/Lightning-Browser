@@ -13,10 +13,8 @@
         android:gravity="start"
         android:maxLines="2"
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
         android:paddingTop="@dimen/material_grid_margin"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
         android:paddingBottom="@dimen/material_grid_unit"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
