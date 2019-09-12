@@ -444,7 +444,7 @@ class LightningView(
      */
     fun onPause() {
         webView?.onPause()
-        logger.log(TAG, "WebView onPause: " + webView?.id)
+        logger.log(TAG, "WebView onPause: ${webView?.id}")
     }
 
     /**
@@ -452,7 +452,7 @@ class LightningView(
      */
     fun onResume() {
         webView?.onResume()
-        logger.log(TAG, "WebView onResume: " + webView?.id)
+        logger.log(TAG, "WebView onResume: ${webView?.id}")
     }
 
     /**
