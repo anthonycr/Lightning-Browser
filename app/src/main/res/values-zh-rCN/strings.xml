@@ -316,4 +316,10 @@
     <string name="ad_block_load_failure">从广告屏蔽来源加载 Hosts 失败</string>
 
     <string name="infinity">∞</string>
+
+    <!-- SSL -->
+    <string name="ssl_info_issued_by">颁发者</string>
+    <string name="ssl_info_issued_to">颁发给</string>
+    <string name="ssl_info_issued_on">颁发时间</string>
+    <string name="ssl_info_expires_on">过期时间</string>
 </resources>
