@@ -9,6 +9,7 @@ import acr.browser.lightning.html.ListPageReader
 import acr.browser.lightning.html.jsoup.*
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Application
+import dagger.Reusable
 import io.reactivex.Single
 import java.io.File
 import java.io.FileWriter
@@ -17,6 +18,7 @@ import javax.inject.Inject
 /**
  * The factory for the downloads page.
  */
+@Reusable
 class DownloadPageFactory @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences,

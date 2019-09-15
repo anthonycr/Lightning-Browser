@@ -1,27 +1,27 @@
 package acr.browser.lightning.reading;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.jsoup.select.Selector.SelectorParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.Date;
+import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.jsoup.select.Selector.SelectorParseException;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * This class is thread safe.
@@ -36,18 +36,15 @@ public class ArticleTextExtractor {
     // Interessting nodes
     private static final Pattern NODES = Pattern.compile("p|div|td|h1|h2|article|section");
     // Unlikely candidates
-    private String unlikelyStr;
     private Pattern UNLIKELY;
     // Most likely positive candidates
-    private String positiveStr;
     private Pattern POSITIVE;
     // Most likely negative candidates
-    private String negativeStr;
     private Pattern NEGATIVE;
     private static final Pattern NEGATIVE_STYLE =
-            Pattern.compile("hidden|display: ?none|font-size: ?small");
+        Pattern.compile("hidden|display: ?none|font-size: ?small");
     private static final Pattern IGNORE_AUTHOR_PARTS =
-            Pattern.compile("by|name|author|posted|twitter|handle|news", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("by|name|author|posted|twitter|handle|news", Pattern.CASE_INSENSITIVE);
     private static final Set<String> IGNORED_TITLE_PARTS = new LinkedHashSet<String>() {
         {
             add("hacker news");
@@ -57,12 +54,12 @@ public class ArticleTextExtractor {
         }
     };
     private static final OutputFormatter DEFAULT_FORMATTER = new OutputFormatter();
-    private OutputFormatter formatter = DEFAULT_FORMATTER;
+    private final OutputFormatter formatter = DEFAULT_FORMATTER;
 
     private static final int MAX_AUTHOR_NAME_LENGHT = 255;
     private static final int MIN_AUTHOR_NAME_LENGTH = 4;
     private static final List<Pattern> CLEAN_AUTHOR_PATTERNS = Collections.singletonList(
-            Pattern.compile("By\\S*(.*)[\\.,].*")
+        Pattern.compile("By\\S*(.*)[\\.,].*")
     );
     private static final int MAX_AUTHOR_DESC_LENGHT = 1000;
     private static final int MAX_IMAGE_LENGHT = 255;
@@ -73,80 +70,37 @@ public class ArticleTextExtractor {
 
     public ArticleTextExtractor() {
         setUnlikely("com(bx|ment|munity)|dis(qus|cuss)|e(xtra|[-]?mail)|foot|"
-                + "header|menu|re(mark|ply)|rss|sh(are|outbox)|sponsor"
-                + "a(d|ll|gegate|rchive|ttachment)|(pag(er|ination))|popup|print|"
-                + "login|si(debar|gn|ngle)");
+            + "header|menu|re(mark|ply)|rss|sh(are|outbox)|sponsor"
+            + "a(d|ll|gegate|rchive|ttachment)|(pag(er|ination))|popup|print|"
+            + "login|si(debar|gn|ngle)");
         setPositive("(^(body|content|h?entry|main|page|post|text|blog|story|haupt))"
-                + "|arti(cle|kel)|instapaper_body");
+            + "|arti(cle|kel)|instapaper_body");
         setNegative("nav($|igation)|user|com(ment|bx)|(^com-)|contact|"
-                + "foot|masthead|(me(dia|ta))|outbrain|promo|related|scroll|(sho(utbox|pping))|"
-                + "sidebar|sponsor|tags|tool|widget|player|disclaimer|toc|infobox|vcard");
+            + "foot|masthead|(me(dia|ta))|outbrain|promo|related|scroll|(sho(utbox|pping))|"
+            + "sidebar|sponsor|tags|tool|widget|player|disclaimer|toc|infobox|vcard");
     }
 
     @NonNull
     private ArticleTextExtractor setUnlikely(@NonNull String unlikelyStr) {
-        this.unlikelyStr = unlikelyStr;
         UNLIKELY = Pattern.compile(unlikelyStr);
         return this;
     }
 
     @NonNull
-    public ArticleTextExtractor addUnlikely(String unlikelyMatches) {
-        return setUnlikely(unlikelyStr + '|' + unlikelyMatches);
-    }
-
-    @NonNull
     private ArticleTextExtractor setPositive(@NonNull String positiveStr) {
-        this.positiveStr = positiveStr;
         POSITIVE = Pattern.compile(positiveStr);
         return this;
     }
 
     @NonNull
-    public ArticleTextExtractor addPositive(String pos) {
-        return setPositive(positiveStr + '|' + pos);
-    }
-
-    @NonNull
     private ArticleTextExtractor setNegative(@NonNull String negativeStr) {
-        this.negativeStr = negativeStr;
         NEGATIVE = Pattern.compile(negativeStr);
         return this;
     }
 
     @NonNull
-    public ArticleTextExtractor addNegative(String neg) {
-        setNegative(negativeStr + '|' + neg);
-        return this;
-    }
-
-    public void setOutputFormatter(OutputFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    /**
-     * @param html extracts article text from given html string. wasn't tested
-     *             with improper HTML, although jSoup should be able to handle minor stuff.
-     * @returns extracted article, all HTML tags stripped
-     */
-    @NonNull
-    public JResult extractContent(@NonNull String html, int maxContentSize) throws Exception {
-        return extractContent(new JResult(), html, maxContentSize);
-    }
-
-    @NonNull
-    public JResult extractContent(@NonNull String html) throws Exception {
-        return extractContent(new JResult(), html, 0);
-    }
-
-    @NonNull
     public JResult extractContent(@NonNull JResult res, @NonNull String html, int maxContentSize) throws Exception {
         return extractContent(res, html, formatter, true, maxContentSize);
-    }
-
-    @NonNull
-    public JResult extractContent(@NonNull JResult res, @NonNull String html) throws Exception {
-        return extractContent(res, html, formatter, true, 0);
     }
 
     @NonNull
@@ -165,7 +119,6 @@ public class ArticleTextExtractor {
         int maxWeight = -200;        // why -200 now instead of 0?
         Element bestMatchElement = null;
 
-        boolean ignoreMaxWeightLimit = false;
         for (Element entry : nodes) {
 
             int currentWeight = getWeight(entry, false);
@@ -324,7 +277,7 @@ public class ArticleTextExtractor {
         // Sanity checks in author description.
         String authorDescSnippet = getSnippet(res.getAuthorDescription());
         if (getSnippet(res.getText()).equals(authorDescSnippet) ||
-                getSnippet(res.getDescription()).equals(authorDescSnippet)) {
+            getSnippet(res.getDescription()).equals(authorDescSnippet)) {
             res.setAuthorDescription("");
         } else {
             if (res.getAuthorDescription().length() > MAX_AUTHOR_DESC_LENGHT) {
@@ -431,8 +384,7 @@ public class ArticleTextExtractor {
                         dateStr = dateStr.substring(0, dateStr.length() - 1) + "GMT-00:00";
                     } else {
                         dateStr = String.format(dateStr.substring(0, dateStr.length() - 6),
-                                dateStr.substring(dateStr.length() - 6,
-                                        dateStr.length()));
+                            dateStr.substring(dateStr.length() - 6));
                     }
                 } catch (StringIndexOutOfBoundsException ex) {
                     // do nothing
@@ -872,7 +824,7 @@ public class ArticleTextExtractor {
             // instead penalize the grandparent. This is done to try to 
             // avoid giving weigths to navigation nodes, etc.
             if (NEGATIVE.matcher(child2.id()).find() ||
-                    NEGATIVE.matcher(child2.className()).find()) {
+                NEGATIVE.matcher(child2.className()).find()) {
                 grandChildrenWeight -= 30;
                 continue;
             }
@@ -1084,7 +1036,7 @@ public class ArticleTextExtractor {
             String id = child.id().toLowerCase();
 
             if (NEGATIVE.matcher(className).find()
-                    || NEGATIVE.matcher(id).find()) {
+                || NEGATIVE.matcher(id).find()) {
                 child.remove();
             }
         }

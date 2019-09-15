@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
@@ -59,16 +58,13 @@ public class LightningDownloadListener implements DownloadListener {
                         downloadSize = mActivity.getString(R.string.unknown_size);
                     }
 
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    downloadHandler.onDownloadStart(mActivity, userPreferences, url, userAgent, contentDisposition, mimetype, downloadSize);
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    break;
-                            }
+                    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                downloadHandler.onDownloadStart(mActivity, userPreferences, url, userAgent, contentDisposition, mimetype, downloadSize);
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
                         }
                     };
 

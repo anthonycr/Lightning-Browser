@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import io.reactivex.Completable;
-import io.reactivex.functions.Action;
 
 /**
  * A utility class containing helpful methods
@@ -41,24 +40,21 @@ public final class FileUtils {
      * @param name   the name of the file to store the bundle in.
      */
     public static Completable writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() {
-                File outputFile = new File(app.getFilesDir(), name);
-                FileOutputStream outputStream = null;
-                try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
-                    outputStream = new FileOutputStream(outputFile);
-                    Parcel parcel = Parcel.obtain();
-                    parcel.writeBundle(bundle);
-                    outputStream.write(parcel.marshall());
-                    outputStream.flush();
-                    parcel.recycle();
-                } catch (IOException e) {
-                    Log.e(TAG, "Unable to write bundle to storage");
-                } finally {
-                    Utils.close(outputStream);
-                }
+        return Completable.fromAction(() -> {
+            File outputFile = new File(app.getFilesDir(), name);
+            FileOutputStream outputStream = null;
+            try {
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                outputStream = new FileOutputStream(outputFile);
+                Parcel parcel = Parcel.obtain();
+                parcel.writeBundle(bundle);
+                outputStream.write(parcel.marshall());
+                outputStream.flush();
+                parcel.recycle();
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to write bundle to storage");
+            } finally {
+                Utils.close(outputStream);
             }
         });
     }

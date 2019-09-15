@@ -18,6 +18,7 @@ package acr.browser.lightning.dialog
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.dimen
 import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.list.RecyclerViewDialogItemAdapter
 import acr.browser.lightning.list.RecyclerViewStringAdapter
 import acr.browser.lightning.utils.DeviceUtils
@@ -41,11 +42,11 @@ object BrowserDialog {
         @StringRes title: Int,
         vararg items: DialogItem
     ) = show(activity, activity.getString(title), *items)
-    
-    fun showWithIcons(activity: Activity, title: String?, vararg items: DialogItem) {
-        val builder = AlertDialog.Builder(activity)
 
-        val layout = activity.inflater.inflate(R.layout.list_dialog, null)
+    fun showWithIcons(context: Context, title: String?, vararg items: DialogItem) {
+        val builder = AlertDialog.Builder(context)
+
+        val layout = context.inflater.inflate(R.layout.list_dialog, null)
 
         val titleView = layout.findViewById<TextView>(R.id.dialog_title)
         val recyclerView = layout.findViewById<RecyclerView>(R.id.dialog_list)
@@ -66,14 +67,32 @@ object BrowserDialog {
 
         builder.setView(layout)
 
-        val dialog = builder.show()
-
-        setDialogSize(activity, dialog)
+        val dialog = builder.resizeAndShow()
 
         adapter.onItemClickListener = { item ->
             item.onClick()
             dialog.dismiss()
         }
+    }
+
+    /**
+     * Show a singly selectable list of [DialogItem] with the provided [title]. All items will be
+     * shown, and the first [DialogItem] where [DialogItem.isConditionMet] returns `true` will be
+     * the selected item when the dialog is shown. The dialog has an OK button which just dismisses
+     * the dialog.
+     */
+    fun showListChoices(activity: Activity, @StringRes title: Int, vararg items: DialogItem) {
+        AlertDialog.Builder(activity).apply {
+            setTitle(title)
+
+            val choices = items.map { activity.getString(it.title) }.toTypedArray()
+            val currentChoice = items.indexOfFirst(DialogItem::isConditionMet)
+
+            setSingleChoiceItems(choices, currentChoice) { _, which ->
+                items[which].onClick()
+            }
+            setPositiveButton(activity.getString(R.string.action_ok), null)
+        }.resizeAndShow()
     }
 
     @JvmStatic
@@ -101,9 +120,7 @@ object BrowserDialog {
 
         builder.setView(layout)
 
-        val dialog = builder.show()
-
-        setDialogSize(activity, dialog)
+        val dialog = builder.resizeAndShow()
 
         adapter.onItemClickListener = { item ->
             item.onClick()
@@ -126,15 +143,13 @@ object BrowserDialog {
         } else {
             activity.getString(message)
         }
-        val dialog = AlertDialog.Builder(activity).apply {
+        AlertDialog.Builder(activity).apply {
             setTitle(title)
             setMessage(messageValue)
             setOnCancelListener { onCancel() }
             setPositiveButton(positiveButton.title) { _, _ -> positiveButton.onClick() }
             setNegativeButton(negativeButton.title) { _, _ -> negativeButton.onClick() }
-        }.show()
-
-        setDialogSize(activity, dialog)
+        }.resizeAndShow()
     }
 
     @JvmStatic
@@ -163,14 +178,12 @@ object BrowserDialog {
             editText.setText(currentText)
         }
 
-        val editorDialog = AlertDialog.Builder(activity)
+        AlertDialog.Builder(activity)
             .setTitle(title)
             .setView(dialogView)
             .setPositiveButton(action
             ) { _, _ -> textInputListener(editText.text.toString()) }
-
-        val dialog = editorDialog.show()
-        setDialogSize(activity, dialog)
+            .resizeAndShow()
     }
 
     @JvmStatic
@@ -181,8 +194,7 @@ object BrowserDialog {
         if (maxWidth > screenSize - 2 * padding) {
             maxWidth = screenSize - 2 * padding
         }
-        val window = dialog.window
-        window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(maxWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     /**
@@ -192,8 +204,7 @@ object BrowserDialog {
         activity?.let {
             AlertDialog.Builder(activity).apply {
                 block(it)
-                val dialog = show()
-                setDialogSize(it, dialog)
+                resizeAndShow()
             }
         }
     }

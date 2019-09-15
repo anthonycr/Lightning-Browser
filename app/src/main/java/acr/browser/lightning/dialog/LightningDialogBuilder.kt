@@ -13,25 +13,29 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.extensions.copyToClipboard
+import acr.browser.lightning.extensions.resizeAndShow
+import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.IntentUtils
-import acr.browser.lightning.utils.UrlUtils
+import acr.browser.lightning.utils.isBookmarkUrl
 import android.app.Activity
 import android.content.ClipboardManager
-import android.text.TextUtils
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
+import dagger.Reusable
 import io.reactivex.Scheduler
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
  * A builder of various dialogs.
  */
+@Reusable
 class LightningDialogBuilder @Inject constructor(
     private val bookmarkManager: BookmarkRepository,
     private val downloadsModel: DownloadsRepository,
@@ -61,7 +65,7 @@ class LightningDialogBuilder @Inject constructor(
         uiController: UIController,
         url: String
     ) {
-        if (UrlUtils.isBookmarkUrl(url)) {
+        if (url.isBookmarkUrl()) {
             // TODO hacky, make a better bookmark mechanism in the future
             val uri = url.toUri()
             val filename = requireNotNull(uri.lastPathSegment) { "Last segment should always exist for bookmark file" }
@@ -134,6 +138,56 @@ class LightningDialogBuilder @Inject constructor(
                 .subscribe(uiController::handleDownloadDeleted)
         })
 
+    /**
+     * Show the add bookmark dialog. Shows a dialog with the title and URL pre-populated.
+     */
+    fun showAddBookmarkDialog(
+        activity: Activity,
+        uiController: UIController,
+        entry: Bookmark.Entry
+    ) {
+        val editBookmarkDialog = AlertDialog.Builder(activity)
+        editBookmarkDialog.setTitle(R.string.action_add_bookmark)
+        val dialogLayout = View.inflate(activity, R.layout.dialog_edit_bookmark, null)
+        val getTitle = dialogLayout.findViewById<EditText>(R.id.bookmark_title)
+        getTitle.setText(entry.title)
+        val getUrl = dialogLayout.findViewById<EditText>(R.id.bookmark_url)
+        getUrl.setText(entry.url)
+        val getFolder = dialogLayout.findViewById<AutoCompleteTextView>(R.id.bookmark_folder)
+        getFolder.setHint(R.string.folder)
+        getFolder.setText(entry.folder.title)
+
+        val ignored = bookmarkManager.getFolderNames()
+            .subscribeOn(databaseScheduler)
+            .observeOn(mainScheduler)
+            .subscribe { folders ->
+                val suggestionsAdapter = ArrayAdapter(activity,
+                    android.R.layout.simple_dropdown_item_1line, folders)
+                getFolder.threshold = 1
+                getFolder.setAdapter(suggestionsAdapter)
+                editBookmarkDialog.setView(dialogLayout)
+                editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok)) { _, _ ->
+                    val editedItem = Bookmark.Entry(
+                        title = getTitle.text.toString(),
+                        url = getUrl.text.toString(),
+                        folder = getFolder.text.toString().asFolder(),
+                        position = entry.position
+                    )
+                    bookmarkManager.addBookmarkIfNotExists(editedItem)
+                        .subscribeOn(databaseScheduler)
+                        .observeOn(mainScheduler)
+                        .subscribeBy(
+                            onSuccess = {
+                                uiController.handleBookmarksChange()
+                                activity.toast(R.string.message_bookmark_added)
+                            }
+                        )
+                }
+                editBookmarkDialog.setNegativeButton(R.string.action_cancel) { _, _ -> }
+                editBookmarkDialog.resizeAndShow()
+            }
+    }
+
     private fun showEditBookmarkDialog(
         activity: Activity,
         uiController: UIController,
@@ -171,8 +225,7 @@ class LightningDialogBuilder @Inject constructor(
                         .observeOn(mainScheduler)
                         .subscribe(uiController::handleBookmarksChange)
                 }
-                val dialog = editBookmarkDialog.show()
-                BrowserDialog.setDialogSize(activity, dialog)
+                editBookmarkDialog.resizeAndShow()
             }
     }
 
@@ -202,7 +255,7 @@ class LightningDialogBuilder @Inject constructor(
         R.string.hint_title,
         folder.title,
         R.string.action_ok) { text ->
-        if (!TextUtils.isEmpty(text)) {
+        if (text.isNotBlank()) {
             val oldTitle = folder.title
             bookmarkManager.renameFolder(oldTitle, text)
                 .subscribeOn(databaseScheduler)

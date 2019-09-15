@@ -1,1 +1,8 @@
 include ':app'
+
+// TODO: Remove :client and :helper projects when 0.9.41 or later of I2P is available on maven
+include ':client'
+project(':client').projectDir = new File('i2p.android.base/lib/client')
+
+include ':helper'
+project(':helper').projectDir = new File('i2p.android.base/lib/helper')

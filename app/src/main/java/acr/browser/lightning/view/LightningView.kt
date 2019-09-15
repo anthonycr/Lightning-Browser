@@ -5,7 +5,6 @@
 package acr.browser.lightning.view
 
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
-import acr.browser.lightning.constant.MOBILE_USER_AGENT
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
@@ -15,14 +14,14 @@ import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.ssl.SSLState
-import acr.browser.lightning.utils.ProxyUtils
-import acr.browser.lightning.utils.UrlUtils
-import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.preference.userAgent
+import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.find.FindResults
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.*
+import android.net.http.SslCertificate
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -56,6 +55,11 @@ class LightningView(
     private val downloadPageInitializer: DownloadPageInitializer,
     private val logger: Logger
 ) {
+
+    /**
+     * The unique ID of the view.
+     */
+    val id = View.generateViewId()
 
     /**
      * Getter for the [LightningViewTitle] of the current LightningView instance.
@@ -154,8 +158,8 @@ class LightningView(
      *
      * @return a non-null Bitmap with the current favicon.
      */
-    val favicon: Bitmap
-        get() = titleInfo.getFavicon(uiController.getUseDarkTheme())
+    val favicon: Bitmap?
+        get() = titleInfo.getFavicon()
 
     /**
      * Get the current title of the page, retrieved from the title object.
@@ -164,6 +168,12 @@ class LightningView(
      */
     val title: String
         get() = titleInfo.getTitle() ?: ""
+
+    /**
+     * Get the current [SslCertificate] if there is any associated with the current page.
+     */
+    val sslCertificate: SslCertificate?
+        get() = webView?.certificate
 
     /**
      * Get the current URL of the WebView, or an empty string if the WebView is null or the URL is
@@ -185,18 +195,19 @@ class LightningView(
         gestureDetector = GestureDetector(activity, CustomGestureListener())
 
         val tab = WebView(activity).also { webView = it }.apply {
-            id = View.generateViewId()
+            id = this@LightningView.id
 
-            drawingCacheBackgroundColor = Color.WHITE
             isFocusableInTouchMode = true
             isFocusable = true
-            isDrawingCacheEnabled = false
-            setWillNotCacheDrawing(true)
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 isAnimationCacheEnabled = false
                 isAlwaysDrawnWithCacheEnabled = false
             }
             setBackgroundColor(Color.WHITE)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+            }
 
             isScrollbarFadingEnabled = true
             isSaveEnabled = true
@@ -217,9 +228,9 @@ class LightningView(
             .subscribe(::setNetworkAvailable)
     }
 
-    fun currentSslState(): SSLState = lightningWebClient.sslState
+    fun currentSslState(): SslState = lightningWebClient.sslState
 
-    fun sslStateObservable(): Observable<SSLState> = lightningWebClient.sslStateObservable()
+    fun sslStateObservable(): Observable<SslState> = lightningWebClient.sslStateObservable()
 
     /**
      * This method loads the homepage for the browser. Either it loads the URL stored as the
@@ -257,10 +268,20 @@ class LightningView(
 
         lightningWebClient.updatePreferences()
 
+        val modifiesHeaders = userPreferences.doNotTrackEnabled
+            || userPreferences.saveDataEnabled
+            || userPreferences.removeIdentifyingHeadersEnabled
+
         if (userPreferences.doNotTrackEnabled) {
             requestHeaders[HEADER_DNT] = "1"
         } else {
             requestHeaders.remove(HEADER_DNT)
+        }
+
+        if (userPreferences.saveDataEnabled) {
+            requestHeaders[HEADER_SAVEDATA] = "on"
+        } else {
+            requestHeaders.remove(HEADER_SAVEDATA)
         }
 
         if (userPreferences.removeIdentifyingHeadersEnabled) {
@@ -280,7 +301,7 @@ class LightningView(
             settings.setGeolocationEnabled(false)
         }
 
-        setUserAgent(userPreferences.userAgentChoice)
+        setUserAgentForPreference(userPreferences)
 
         settings.saveFormData = userPreferences.savePasswordsEnabled && !isIncognito
 
@@ -307,12 +328,13 @@ class LightningView(
 
         settings.blockNetworkImage = userPreferences.blockImagesEnabled
         if (!isIncognito) {
-            settings.setSupportMultipleWindows(userPreferences.popupsEnabled)
+            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+            settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
         } else {
             settings.setSupportMultipleWindows(false)
         }
 
-        settings.useWideViewPort = userPreferences.useWideViewportEnabled
+        settings.useWideViewPort = userPreferences.useWideViewPortEnabled
         settings.loadWithOverviewMode = userPreferences.overviewModeEnabled
         settings.textZoom = when (userPreferences.textSize) {
             0 -> 200
@@ -397,38 +419,17 @@ class LightningView(
         if (!toggleDesktop) {
             webView?.settings?.userAgentString = DESKTOP_USER_AGENT
         } else {
-            setUserAgent(userPreferences.userAgentChoice)
+            setUserAgentForPreference(userPreferences)
         }
 
         toggleDesktop = !toggleDesktop
     }
 
     /**
-     * This method sets the user agent of the current tab. There are four options, 1, 2, 3, 4.
-     *
-     * 1. use the default user agent
-     * 2. use the desktop user agent
-     * 3. use the mobile user agent
-     * 4. use a custom user agent, or the default user agent if none was set.
-     *
-     * @param choice  the choice of user agent to use, see above comments.
+     * This method sets the user agent of the current tab based on the user's preference
      */
-    @SuppressLint("NewApi")
-    private fun setUserAgent(choice: Int) {
-        val settings = webView?.settings ?: return
-
-        when (choice) {
-            1 -> settings.userAgentString = WebSettings.getDefaultUserAgent(activity)
-            2 -> settings.userAgentString = DESKTOP_USER_AGENT
-            3 -> settings.userAgentString = MOBILE_USER_AGENT
-            4 -> {
-                var ua = userPreferences.userAgentString
-                if (ua.isEmpty()) {
-                    ua = " "
-                }
-                settings.userAgentString = ua
-            }
-        }
+    private fun setUserAgentForPreference(userPreferences: UserPreferences) {
+        webView?.settings?.userAgentString = userPreferences.userAgent(activity.application)
     }
 
     /**
@@ -492,17 +493,17 @@ class LightningView(
     /**
      * Sets the current rendering color of the WebView instance
      * of the current LightningView. The for modes are normal
-     * rendering (0), inverted rendering (1), grayscale rendering (2),
-     * and inverted grayscale rendering (3)
+     * rendering, inverted rendering, grayscale rendering,
+     * and inverted grayscale rendering
      *
      * @param mode the integer mode to set as the rendering mode.
      * see the numbers in documentation above for the
      * values this method accepts.
      */
-    private fun setColorMode(mode: Int) {
+    private fun setColorMode(mode: RenderingMode) {
         invertPage = false
         when (mode) {
-            0 -> {
+            RenderingMode.NORMAL -> {
                 paint.colorFilter = null
                 // setSoftwareRendering(); // Some devices get segfaults
                 // in the WebView with Hardware Acceleration enabled,
@@ -510,7 +511,7 @@ class LightningView(
                 setNormalRendering()
                 invertPage = false
             }
-            1 -> {
+            RenderingMode.INVERTED -> {
                 val filterInvert = ColorMatrixColorFilter(
                     negativeColorArray)
                 paint.colorFilter = filterInvert
@@ -518,14 +519,14 @@ class LightningView(
 
                 invertPage = true
             }
-            2 -> {
+            RenderingMode.GRAYSCALE -> {
                 val cm = ColorMatrix()
                 cm.setSaturation(0f)
                 val filterGray = ColorMatrixColorFilter(cm)
                 paint.colorFilter = filterGray
                 setHardwareRendering()
             }
-            3 -> {
+            RenderingMode.INVERTED_GRAYSCALE -> {
                 val matrix = ColorMatrix()
                 matrix.set(negativeColorArray)
                 val matrixGray = ColorMatrix()
@@ -539,7 +540,7 @@ class LightningView(
                 invertPage = true
             }
 
-            4 -> {
+            RenderingMode.INCREASE_CONTRAST -> {
                 val increaseHighContrast = ColorMatrixColorFilter(increaseContrastColorArray)
                 paint.colorFilter = increaseHighContrast
                 setHardwareRendering()
@@ -701,20 +702,20 @@ class LightningView(
         val currentUrl = webView?.url
         val newUrl = result?.extra
 
-        if (currentUrl != null && UrlUtils.isSpecialUrl(currentUrl)) {
-            if (UrlUtils.isHistoryUrl(currentUrl)) {
+        if (currentUrl != null && currentUrl.isSpecialUrl()) {
+            if (currentUrl.isHistoryUrl()) {
                 if (url != null) {
                     dialogBuilder.showLongPressedHistoryLinkDialog(activity, uiController, url)
                 } else if (newUrl != null) {
                     dialogBuilder.showLongPressedHistoryLinkDialog(activity, uiController, newUrl)
                 }
-            } else if (UrlUtils.isBookmarkUrl(currentUrl)) {
+            } else if (currentUrl.isBookmarkUrl()) {
                 if (url != null) {
                     dialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, url)
                 } else if (newUrl != null) {
                     dialogBuilder.showLongPressedDialogForBookmarkUrl(activity, uiController, newUrl)
                 }
-            } else if (UrlUtils.isDownloadsUrl(currentUrl)) {
+            } else if (currentUrl.isDownloadsUrl()) {
                 if (url != null) {
                     dialogBuilder.showLongPressedDialogForDownloadUrl(activity, uiController, url)
                 } else if (newUrl != null) {
@@ -894,8 +895,9 @@ class LightningView(
         const val HEADER_REQUESTED_WITH = "X-Requested-With"
         const val HEADER_WAP_PROFILE = "X-Wap-Profile"
         private const val HEADER_DNT = "DNT"
+        private const val HEADER_SAVEDATA = "Save-Data"
 
-        private val API = android.os.Build.VERSION.SDK_INT
+        private val API = Build.VERSION.SDK_INT
         private val SCROLL_UP_THRESHOLD = Utils.dpToPx(10f)
 
         private val negativeColorArray = floatArrayOf(

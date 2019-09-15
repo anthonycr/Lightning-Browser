@@ -7,21 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import android.view.View;
 
 import acr.browser.lightning.R;
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 public final class DrawableUtils {
 
@@ -32,12 +27,11 @@ public final class DrawableUtils {
      *
      * @param context     the context needed to work with resources.
      * @param drawableRes the drawable to inset on the rounded drawable.
-     * @param colorRes    the color of the image to draw on the rounded drawable.
      * @return a bitmap with the desired content.
      */
     @NonNull
-    public static Bitmap getImageInsetInRoundedSquare(Context context, @DrawableRes int drawableRes, @ColorRes int colorRes) {
-        final int imageColor = ContextCompat.getColor(context, colorRes);
+    public static Bitmap createImageInsetInRoundedSquare(Context context,
+                                                         @DrawableRes int drawableRes) {
         final Bitmap icon = ThemeUtils.getBitmapFromVectorDrawable(context, drawableRes);
 
         final Bitmap image = Bitmap.createBitmap(icon.getWidth(), icon.getHeight(), Bitmap.Config.ARGB_8888);
@@ -54,50 +48,7 @@ public final class DrawableUtils {
         canvas.drawRoundRect(outer, radius, radius, paint);
 
         final Rect dest = new Rect(Math.round(outer.left + radius), Math.round(outer.top + radius), Math.round(outer.right - radius), Math.round(outer.bottom - radius));
-        paint.setColorFilter(new PorterDuffColorFilter(imageColor, PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(icon, null, dest, paint);
-
-        return image;
-    }
-
-    @NonNull
-    public static Bitmap getRoundedNumberImage(int number, int width, int height, int color, int thickness) {
-        final String text;
-
-        if (number > 99) {
-            text = "\u221E";
-        } else {
-            text = String.valueOf(number);
-        }
-
-        final Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(image);
-        final Paint paint = new Paint();
-        paint.setColor(color);
-        final Typeface boldText = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD);
-        paint.setTypeface(boldText);
-        paint.setTextSize(Utils.dpToPx(14));
-        paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-
-        int radius = Utils.dpToPx(2);
-
-        final RectF outer = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.drawRoundRect(outer, radius, radius, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-
-        radius--;
-        final RectF inner = new RectF(thickness, thickness, canvas.getWidth() - thickness, canvas.getHeight() - thickness);
-        canvas.drawRoundRect(inner, radius, radius, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-
-        final int xPos = (canvas.getWidth() / 2);
-        final int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-
-        canvas.drawText(String.valueOf(text), xPos, yPos, paint);
 
         return image;
     }
@@ -113,7 +64,10 @@ public final class DrawableUtils {
      * @return a valid bitmap of a rounded square with a character on it.
      */
     @NonNull
-    public static Bitmap getRoundedLetterImage(@NonNull Character character, int width, int height, int color) {
+    public static Bitmap createRoundedLetterImage(@NonNull Character character,
+                                                  int width,
+                                                  int height,
+                                                  int color) {
         Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(image);
         Paint paint = new Paint();
@@ -180,10 +134,6 @@ public final class DrawableUtils {
             (startR + (int) (fraction * (endR - startR))) << 16 |
             (startG + (int) (fraction * (endG - startG))) << 8 |
             (startB + (int) (fraction * (endB - startB)));
-    }
-
-    public static void setBackground(@NonNull View view, @Nullable Drawable drawable) {
-        view.setBackground(drawable);
     }
 
 }

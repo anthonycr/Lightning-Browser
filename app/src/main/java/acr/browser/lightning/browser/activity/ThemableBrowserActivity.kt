@@ -1,15 +1,20 @@
 package acr.browser.lightning.browser.activity
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.ThemeUtils
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.withStyledAttributes
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.iterator
 import javax.inject.Inject
 
 abstract class ThemableBrowserActivity : AppCompatActivity() {
@@ -17,9 +22,16 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
     // TODO reduce protected visibility
     @Inject protected lateinit var userPreferences: UserPreferences
 
-    private var themeId: Int = 0
+    private var themeId: AppTheme = AppTheme.LIGHT
     private var showTabsInDrawer: Boolean = false
     private var shouldRunOnResumeActions = false
+
+    /**
+     * Override this to provide an alternate theme that should be set for every instance of this
+     * activity regardless of the user's preference.
+     */
+    @StyleRes
+    protected open fun provideThemeOverride(): Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injector.inject(this)
@@ -27,19 +39,30 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         showTabsInDrawer = userPreferences.showTabsInDrawer
 
         // set the theme
-        if (themeId == 1) {
-            setTheme(R.style.Theme_DarkTheme)
-        } else if (themeId == 2) {
-            setTheme(R.style.Theme_BlackTheme)
-        }
+        setTheme(provideThemeOverride() ?: when (userPreferences.useTheme) {
+            AppTheme.LIGHT -> R.style.Theme_LightTheme
+            AppTheme.DARK -> R.style.Theme_DarkTheme
+            AppTheme.BLACK -> R.style.Theme_BlackTheme
+        })
         super.onCreate(savedInstanceState)
 
         resetPreferences()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        withStyledAttributes(attrs = intArrayOf(R.attr.iconColorState)) {
+            val iconTintList = getColorStateList(0)
+            menu.iterator().forEach { menuItem ->
+                menuItem.icon?.let { DrawableCompat.setTintList(DrawableCompat.wrap(it), iconTintList) }
+            }
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
     private fun resetPreferences() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (userPreferences.useBlackStatusBar) {
+            if (userPreferences.useBlackStatusBar || !userPreferences.showTabsInDrawer) {
                 window.statusBarColor = Color.BLACK
             } else {
                 window.statusBarColor = ThemeUtils.getStatusBarColor(this)
@@ -67,15 +90,11 @@ abstract class ThemableBrowserActivity : AppCompatActivity() {
         super.onResume()
         resetPreferences()
         shouldRunOnResumeActions = true
-        val themePreference = userPreferences.useTheme
         val drawerTabs = userPreferences.showTabsInDrawer
-        if (themeId != themePreference || showTabsInDrawer != drawerTabs) {
+        if (themeId != userPreferences.useTheme || showTabsInDrawer != drawerTabs) {
             restart()
         }
     }
-
-    protected val isTablet: Boolean
-        get() = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_XLARGE
 
     protected fun restart() {
         finish()

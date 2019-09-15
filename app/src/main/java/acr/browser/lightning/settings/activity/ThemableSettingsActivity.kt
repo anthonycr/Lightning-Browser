@@ -1,5 +1,6 @@
 package acr.browser.lightning.settings.activity
 
+import acr.browser.lightning.AppTheme
 import acr.browser.lightning.R
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.preference.UserPreferences
@@ -12,7 +13,7 @@ import javax.inject.Inject
 
 abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
-    private var themeId: Int = 0
+    private var themeId: AppTheme = AppTheme.LIGHT
 
     @Inject internal lateinit var userPreferences: UserPreferences
 
@@ -22,17 +23,17 @@ abstract class ThemableSettingsActivity : AppCompatPreferenceActivity() {
 
         // set the theme
         when (themeId) {
-            0 -> {
+            AppTheme.LIGHT -> {
                 setTheme(R.style.Theme_SettingsTheme)
-                this.window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColor(this)))
+                window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColor(this)))
             }
-            1 -> {
+            AppTheme.DARK -> {
                 setTheme(R.style.Theme_SettingsTheme_Dark)
-                this.window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
+                window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
             }
-            2 -> {
+            AppTheme.BLACK -> {
                 setTheme(R.style.Theme_SettingsTheme_Black)
-                this.window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
+                window.setBackgroundDrawable(ColorDrawable(ThemeUtils.getPrimaryColorDark(this)))
             }
         }
         super.onCreate(savedInstanceState)

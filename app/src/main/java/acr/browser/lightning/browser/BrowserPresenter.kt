@@ -11,7 +11,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.ssl.SSLState
+import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.BundleInitializer
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.TabInitializer
@@ -77,7 +77,7 @@ class BrowserPresenter(
 
     private fun onTabChanged(newTab: LightningView?) {
         logger.log(TAG, "On tab changed")
-        view.updateSslState(newTab?.currentSslState() ?: SSLState.None)
+        view.updateSslState(newTab?.currentSslState() ?: SslState.None)
 
         sslStateSubscription?.dispose()
         sslStateSubscription = newTab
@@ -142,14 +142,10 @@ class BrowserPresenter(
 
     }
 
-    private fun mapHomepageToCurrentUrl(): String {
-        val homepage = userPreferences.homepage
-
-        return when (homepage) {
-            SCHEME_HOMEPAGE -> "$FILE${homePageFactory.createHomePage()}"
-            SCHEME_BOOKMARKS -> "$FILE${bookmarkPageFactory.createBookmarkPage(null)}"
-            else -> homepage
-        }
+    private fun mapHomepageToCurrentUrl(): String = when (val homepage = userPreferences.homepage) {
+        SCHEME_HOMEPAGE -> "$FILE${homePageFactory.createHomePage()}"
+        SCHEME_BOOKMARKS -> "$FILE${bookmarkPageFactory.createBookmarkPage(null)}"
+        else -> homepage
     }
 
     /**

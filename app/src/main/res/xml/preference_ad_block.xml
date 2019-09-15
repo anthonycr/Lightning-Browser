@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_advanced">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="cb_block_ads"
+            android:title="@string/block_ads"/>
+        <Preference
+            android:key="preference_hosts_source"
+            android:summary="@string/block_source_default"
+            android:title="@string/block_ad_source"/>
+        <Preference
+            android:key="preference_hosts_refresh_force"
+            android:summary="@string/block_ad_remote_refresh_frequency_description"
+            android:title="@string/block_ad_refresh_now"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,10 +1,13 @@
 package acr.browser.lightning.search
 
+import acr.browser.lightning.di.SuggestionsClient
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.search.engine.*
 import acr.browser.lightning.search.suggestions.*
 import android.app.Application
+import dagger.Reusable
+import io.reactivex.Single
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -12,9 +15,10 @@ import javax.inject.Inject
  * The model that provides the search engine based
  * on the user's preference.
  */
+@Reusable
 class SearchEngineProvider @Inject constructor(
     private val userPreferences: UserPreferences,
-    private val httpClient: OkHttpClient,
+    @SuggestionsClient private val okHttpClient: Single<OkHttpClient>,
     private val requestFactory: RequestFactory,
     private val application: Application,
     private val logger: Logger
@@ -26,11 +30,11 @@ class SearchEngineProvider @Inject constructor(
     fun provideSearchSuggestions(): SuggestionsRepository =
         when (userPreferences.searchSuggestionChoice) {
             0 -> NoOpSuggestionsRepository()
-            1 -> GoogleSuggestionsModel(httpClient, requestFactory, application, logger)
-            2 -> DuckSuggestionsModel(httpClient, requestFactory, application, logger)
-            3 -> BaiduSuggestionsModel(httpClient, requestFactory, application, logger)
-            4 -> NaverSuggestionsModel(httpClient, requestFactory, application, logger)
-            else -> GoogleSuggestionsModel(httpClient, requestFactory, application, logger)
+            1 -> GoogleSuggestionsModel(okHttpClient, requestFactory, application, logger)
+            2 -> DuckSuggestionsModel(okHttpClient, requestFactory, application, logger)
+            3 -> BaiduSuggestionsModel(okHttpClient, requestFactory, application, logger)
+            4 -> NaverSuggestionsModel(okHttpClient, requestFactory, application, logger)
+            else -> GoogleSuggestionsModel(okHttpClient, requestFactory, application, logger)
         }
 
     /**

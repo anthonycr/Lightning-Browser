@@ -7,6 +7,8 @@ sealed class Option<out T> {
 
     /**
      * A type representing the presences of [some] [T].
+     *
+     * @param some Some [T].
      */
     data class Some<T>(val some: T) : Option<T>()
 
@@ -21,9 +23,9 @@ sealed class Option<out T> {
          */
         fun <T> fromNullable(value: T?): Option<T> =
             if (value != null) {
-                Option.Some(value)
+                Some(value)
             } else {
-                Option.None
+                None
             }
     }
 

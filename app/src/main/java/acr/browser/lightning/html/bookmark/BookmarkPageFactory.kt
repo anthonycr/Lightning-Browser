@@ -15,6 +15,7 @@ import acr.browser.lightning.utils.ThemeUtils
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.core.net.toUri
+import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import java.io.File
@@ -25,6 +26,7 @@ import javax.inject.Inject
 /**
  * Created by anthonycr on 9/23/18.
  */
+@Reusable
 class BookmarkPageFactory @Inject constructor(
     private val application: Application,
     private val bookmarkModel: BookmarkRepository,
@@ -35,8 +37,8 @@ class BookmarkPageFactory @Inject constructor(
 ) : HtmlPageFactory {
 
     private val title = application.getString(R.string.action_bookmarks)
-    private val folderIconFile = File(application.cacheDir, FOLDER_ICON)
-    private val defaultIconFile = File(application.cacheDir, DEFAULT_ICON)
+    private val folderIconFile by lazy { File(application.cacheDir, FOLDER_ICON) }
+    private val defaultIconFile by lazy { File(application.cacheDir, DEFAULT_ICON) }
 
     override fun buildPage(): Single<String> = bookmarkModel
         .getAllBookmarksSorted()
@@ -68,8 +70,8 @@ class BookmarkPageFactory @Inject constructor(
         }
         .ignoreElements()
         .toSingle {
-            cacheIcon(ThemeUtils.getThemedBitmap(application, R.drawable.ic_folder, false), folderIconFile)
-            cacheIcon(faviconModel.getDefaultBitmapForString(null), defaultIconFile)
+            cacheIcon(ThemeUtils.createThemedBitmap(application, R.drawable.ic_folder, false), folderIconFile)
+            cacheIcon(faviconModel.createDefaultBitmapForTitle(null), defaultIconFile)
 
             "$FILE${createBookmarkPage(null)}"
         }
@@ -119,21 +121,21 @@ class BookmarkPageFactory @Inject constructor(
         val iconUrl = if (bookmarkUri != null) {
             val faviconFile = FaviconModel.getFaviconCacheFile(application, bookmarkUri)
             if (!faviconFile.exists()) {
-                val defaultFavicon = faviconModel.getDefaultBitmapForString(entry.title)
+                val defaultFavicon = faviconModel.createDefaultBitmapForTitle(entry.title)
                 faviconModel.cacheFaviconForUrl(defaultFavicon, entry.url)
                     .subscribeOn(diskScheduler)
                     .subscribe()
             }
 
-            "$FILE$faviconFile"
+            faviconFile
         } else {
-            "$FILE$defaultIconFile"
+            defaultIconFile
         }
 
         return BookmarkViewModel(
             title = entry.title,
             url = entry.url,
-            iconUrl = iconUrl
+            iconUrl = iconUrl.toString()
         )
     }
 

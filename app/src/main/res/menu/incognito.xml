@@ -11,6 +11,9 @@
         android:id="@+id/action_find"
         android:title="@string/action_find"/>
     <item
+        android:id="@+id/action_copy"
+        android:title="@string/action_copy"/>
+    <item
         android:id="@+id/action_history"
         android:title="@string/action_history"/>
     <item

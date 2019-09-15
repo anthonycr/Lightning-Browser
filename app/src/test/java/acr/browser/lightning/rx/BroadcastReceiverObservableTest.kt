@@ -1,6 +1,5 @@
 package acr.browser.lightning.rx
 
-import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import android.content.Intent
@@ -16,7 +15,7 @@ import org.robolectric.annotation.Config
  * Created by anthonycr on 4/23/18.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, application = TestApplication::class, sdk = [SDK_VERSION])
+@Config(application = TestApplication::class, sdk = [SDK_VERSION])
 class BroadcastReceiverObservableTest {
 
     @Test

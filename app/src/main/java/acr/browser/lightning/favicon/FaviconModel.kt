@@ -9,7 +9,6 @@ import acr.browser.lightning.utils.FileUtils
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.text.TextUtils
 import android.util.LruCache
 import androidx.annotation.ColorInt
 import androidx.annotation.WorkerThread
@@ -32,7 +31,7 @@ class FaviconModel @Inject constructor(
 ) {
 
     private val loaderOptions = BitmapFactory.Options()
-    private val bookmarkIconSize = application.resources.getDimensionPixelSize(R.dimen.bookmark_item_icon_size)
+    private val bookmarkIconSize = application.resources.getDimensionPixelSize(R.dimen.material_grid_small_icon)
     private val faviconCache = object : LruCache<String, Bitmap>(FileUtils.megabytesToBytes(1).toInt()) {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount
     }
@@ -50,12 +49,12 @@ class FaviconModel @Inject constructor(
         }
     }
 
-    fun getDefaultBitmapForString(title: String?): Bitmap {
-        val firstTitleCharacter = if (!TextUtils.isEmpty(title)) title!![0] else '?'
+    fun createDefaultBitmapForTitle(title: String?): Bitmap {
+        val firstTitleCharacter = title?.takeIf(String::isNotBlank)?.let { it[0] } ?: '?'
 
         @ColorInt val defaultFaviconColor = DrawableUtils.characterToColorHash(firstTitleCharacter, application)
 
-        return DrawableUtils.getRoundedLetterImage(
+        return DrawableUtils.createRoundedLetterImage(
             firstTitleCharacter,
             bookmarkIconSize,
             bookmarkIconSize,
@@ -83,7 +82,7 @@ class FaviconModel @Inject constructor(
      */
     fun faviconForUrl(url: String, title: String): Maybe<Bitmap> = Maybe.create {
         val uri = url.toUri().toValidUri()
-            ?: return@create it.onSuccess(getDefaultBitmapForString(title).pad())
+            ?: return@create it.onSuccess(createDefaultBitmapForTitle(title).pad())
 
         val cachedFavicon = getFaviconFromMemCache(url)
 
@@ -102,7 +101,7 @@ class FaviconModel @Inject constructor(
             }
         }
 
-        return@create it.onSuccess(getDefaultBitmapForString(title).pad())
+        return@create it.onSuccess(createDefaultBitmapForTitle(title).pad())
     }
 
     /**

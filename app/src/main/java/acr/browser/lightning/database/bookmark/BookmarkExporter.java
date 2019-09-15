@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.database.Bookmark;
@@ -28,7 +27,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import io.reactivex.functions.Action;
 
 /**
  * The class responsible for importing and exporting
@@ -102,27 +100,24 @@ public final class BookmarkExporter {
     @NonNull
     public static Completable exportBookmarksToFile(@NonNull final List<Bookmark.Entry> bookmarkList,
                                                     @NonNull final File file) {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Exception {
-                Preconditions.checkNonNull(bookmarkList);
-                BufferedWriter bookmarkWriter = null;
-                try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
-                    bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
+        return Completable.fromAction(() -> {
+            Preconditions.checkNonNull(bookmarkList);
+            BufferedWriter bookmarkWriter = null;
+            try {
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                bookmarkWriter = new BufferedWriter(new FileWriter(file, false));
 
-                    JSONObject object = new JSONObject();
-                    for (Bookmark.Entry item : bookmarkList) {
-                        object.put(KEY_TITLE, item.getTitle());
-                        object.put(KEY_URL, item.getUrl());
-                        object.put(KEY_FOLDER, item.getFolder().getTitle());
-                        object.put(KEY_ORDER, item.getPosition());
-                        bookmarkWriter.write(object.toString());
-                        bookmarkWriter.newLine();
-                    }
-                } finally {
-                    Utils.close(bookmarkWriter);
+                JSONObject object = new JSONObject();
+                for (Bookmark.Entry item : bookmarkList) {
+                    object.put(KEY_TITLE, item.getTitle());
+                    object.put(KEY_URL, item.getUrl());
+                    object.put(KEY_FOLDER, item.getFolder().getTitle());
+                    object.put(KEY_ORDER, item.getPosition());
+                    bookmarkWriter.write(object.toString());
+                    bookmarkWriter.newLine();
                 }
+            } finally {
+                Utils.close(bookmarkWriter);
             }
         });
     }
@@ -139,32 +134,29 @@ public final class BookmarkExporter {
      */
     @NonNull
     public static Single<List<Bookmark.Entry>> importBookmarksFromFile(@NonNull final File file) {
-        return Single.fromCallable(new Callable<List<Bookmark.Entry>>() {
-            @Override
-            public List<Bookmark.Entry> call() throws Exception {
-                BufferedReader bookmarksReader = null;
-                try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
-                    bookmarksReader = new BufferedReader(new FileReader(file));
-                    String line;
+        return Single.fromCallable(() -> {
+            BufferedReader bookmarksReader = null;
+            try {
+                //noinspection IOResourceOpenedButNotSafelyClosed
+                bookmarksReader = new BufferedReader(new FileReader(file));
+                String line;
 
-                    List<Bookmark.Entry> bookmarks = new ArrayList<>();
-                    while ((line = bookmarksReader.readLine()) != null) {
-                        JSONObject object = new JSONObject(line);
-                        final String folderName = object.getString(KEY_FOLDER);
-                        final Bookmark.Entry entry = new Bookmark.Entry(
-                            object.getString(KEY_TITLE),
-                            object.getString(KEY_URL),
-                            object.getInt(KEY_ORDER),
-                            WebPageKt.asFolder(folderName)
-                        );
-                        bookmarks.add(entry);
-                    }
-
-                    return bookmarks;
-                } finally {
-                    Utils.close(bookmarksReader);
+                List<Bookmark.Entry> bookmarks = new ArrayList<>();
+                while ((line = bookmarksReader.readLine()) != null) {
+                    JSONObject object = new JSONObject(line);
+                    final String folderName = object.getString(KEY_FOLDER);
+                    final Bookmark.Entry entry = new Bookmark.Entry(
+                        object.getString(KEY_TITLE),
+                        object.getString(KEY_URL),
+                        object.getInt(KEY_ORDER),
+                        WebPageKt.asFolder(folderName)
+                    );
+                    bookmarks.add(entry);
                 }
+
+                return bookmarks;
+            } finally {
+                Utils.close(bookmarksReader);
             }
         });
     }

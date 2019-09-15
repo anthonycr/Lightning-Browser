@@ -120,7 +120,7 @@ class SHelper {
      * @return the longest substring as str1.substring(result[0], result[1]);
      */
     public static String getLongestSubstring(@NonNull String str1, String str2) {
-        int res[] = longestSubstring(str1, str2);
+        int[] res = longestSubstring(str1, str2);
         if (res == null || res[0] >= res[1])
             return "";
 
@@ -261,7 +261,7 @@ class SHelper {
     public static String getUrlFromUglyGoogleRedirect(@NonNull String url) {
         if (url.startsWith("https://www.google.com/url?")) {
             url = url.substring("https://www.google.com/url?".length());
-            String arr[] = urlDecode(url).split("&");
+            String[] arr = urlDecode(url).split("&");
             for (String str : arr) {
                 if (str.startsWith("q="))
                     return str.substring("q=".length());
@@ -334,7 +334,7 @@ class SHelper {
         int month = -1;
         int monthCounter = -1;
         int day = -1;
-        String strs[] = url.split("/");
+        String[] strs = url.split("/");
         for (int counter = 0; counter < strs.length; counter++) {
             String str = strs[counter];
             if (str.length() == 4) {

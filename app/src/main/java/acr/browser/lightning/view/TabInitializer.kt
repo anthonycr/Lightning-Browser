@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.os.Message
 import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
+import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -48,6 +49,7 @@ class UrlInitializer(private val url: String) : TabInitializer {
 /**
  * An initializer that displays the page set as the user's homepage preference.
  */
+@Reusable
 class HomePageInitializer @Inject constructor(
     private val userPreferences: UserPreferences,
     private val startPageInitializer: StartPageInitializer,
@@ -69,6 +71,7 @@ class HomePageInitializer @Inject constructor(
 /**
  * An initializer that displays the start page.
  */
+@Reusable
 class StartPageInitializer @Inject constructor(
     homePageFactory: HomePageFactory,
     @DiskScheduler diskScheduler: Scheduler,
@@ -78,6 +81,7 @@ class StartPageInitializer @Inject constructor(
 /**
  * An initializer that displays the bookmark page.
  */
+@Reusable
 class BookmarkPageInitializer @Inject constructor(
     bookmarkPageFactory: BookmarkPageFactory,
     @DiskScheduler diskScheduler: Scheduler,
@@ -87,6 +91,7 @@ class BookmarkPageInitializer @Inject constructor(
 /**
  * An initializer that displays the download page.
  */
+@Reusable
 class DownloadPageInitializer @Inject constructor(
     downloadPageFactory: DownloadPageFactory,
     @DiskScheduler diskScheduler: Scheduler,
@@ -96,6 +101,7 @@ class DownloadPageInitializer @Inject constructor(
 /**
  * An initializer that displays the history page.
  */
+@Reusable
 class HistoryPageInitializer @Inject constructor(
     historyPageFactory: HistoryPageFactory,
     @DiskScheduler diskScheduler: Scheduler,

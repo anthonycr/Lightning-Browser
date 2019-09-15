@@ -3,10 +3,8 @@ package acr.browser.lightning.reading.activity;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +20,6 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
-import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.di.MainScheduler;
 import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -40,12 +37,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 public class ReadingActivity extends AppCompatActivity {
+
+    private static final String LOAD_READING_URL = "ReadingUrl";
+
+    /**
+     * Launches this activity with the necessary URL argument.
+     *
+     * @param context The context needed to launch the activity.
+     * @param url     The URL that will be loaded into reading mode.
+     */
+    public static void launch(@NonNull Context context, @NonNull String url) {
+        final Intent intent = new Intent(context, ReadingActivity.class);
+        intent.putExtra(LOAD_READING_URL, url);
+        context.startActivity(intent);
+    }
 
     private static final String TAG = "ReadingActivity";
 
@@ -131,19 +139,6 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.reading, menu);
-        MenuItem invert = menu.findItem(R.id.invert_item);
-        MenuItem textSize = menu.findItem(R.id.text_size_item);
-
-        int iconColor = ThemeUtils.getIconThemeColor(this, mInvert);
-
-        if (invert != null && invert.getIcon() != null) {
-            invert.getIcon().mutate().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
-        }
-
-        if (textSize != null && textSize.getIcon() != null) {
-            textSize.getIcon().mutate().setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
-        }
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -151,7 +146,7 @@ public class ReadingActivity extends AppCompatActivity {
         if (intent == null) {
             return false;
         }
-        mUrl = intent.getStringExtra(Constants.LOAD_READING_URL);
+        mUrl = intent.getStringExtra(LOAD_READING_URL);
         if (mUrl == null) {
             return false;
         }
@@ -170,22 +165,16 @@ public class ReadingActivity extends AppCompatActivity {
         mPageLoaderSubscription = loadPage(mUrl)
             .subscribeOn(mNetworkScheduler)
             .observeOn(mMainScheduler)
-            .subscribe(new Consumer<ReaderInfo>() {
-                @Override
-                public void accept(@NonNull ReaderInfo readerInfo) {
-                    if (readerInfo.getTitle().isEmpty() || readerInfo.getBody().isEmpty()) {
-                        setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                    } else {
-                        setText(readerInfo.getTitle(), readerInfo.getBody());
-                    }
-                    dismissProgressDialog();
-                }
-            }, new Consumer<Throwable>() {
-                @Override
-                public void accept(@NonNull Throwable throwable) {
+            .subscribe(readerInfo -> {
+                if (readerInfo.getTitle().isEmpty() || readerInfo.getBody().isEmpty()) {
                     setText(getString(R.string.untitled), getString(R.string.loading_failed));
-                    dismissProgressDialog();
+                } else {
+                    setText(readerInfo.getTitle(), readerInfo.getBody());
                 }
+                dismissProgressDialog();
+            }, throwable -> {
+                setText(getString(R.string.untitled), getString(R.string.loading_failed));
+                dismissProgressDialog();
             });
         return true;
     }
@@ -199,21 +188,18 @@ public class ReadingActivity extends AppCompatActivity {
 
     @NonNull
     private static Single<ReaderInfo> loadPage(@NonNull final String url) {
-        return Single.create(new SingleOnSubscribe<ReaderInfo>() {
-            @Override
-            public void subscribe(SingleEmitter<ReaderInfo> emitter) {
-                HtmlFetcher fetcher = new HtmlFetcher();
-                try {
-                    JResult result = fetcher.fetchAndExtract(url, 2500, true);
-                    emitter.onSuccess(new ReaderInfo(result.getTitle(), result.getText()));
-                } catch (Exception e) {
-                    emitter.onError(new Throwable("Encountered exception"));
-                    Log.e(TAG, "Error parsing page", e);
-                } catch (OutOfMemoryError e) {
-                    System.gc();
-                    emitter.onError(new Throwable("Out of memory"));
-                    Log.e(TAG, "Out of memory", e);
-                }
+        return Single.create(emitter -> {
+            HtmlFetcher fetcher = new HtmlFetcher();
+            try {
+                JResult result = fetcher.fetchAndExtract(url, 2500, true);
+                emitter.onSuccess(new ReaderInfo(result.getTitle(), result.getText()));
+            } catch (Exception e) {
+                emitter.onError(new Throwable("Encountered exception"));
+                Log.e(TAG, "Error parsing page", e);
+            } catch (OutOfMemoryError e) {
+                System.gc();
+                emitter.onError(new Throwable("Out of memory"));
+                Log.e(TAG, "Out of memory", e);
             }
         });
     }
@@ -288,10 +274,10 @@ public class ReadingActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.invert_item:
                 mUserPreferences.setInvertColors(!mInvert);
-                Intent read = new Intent(this, ReadingActivity.class);
-                read.putExtra(Constants.LOAD_READING_URL, mUrl);
-                startActivity(read);
-                finish();
+                if (mUrl != null) {
+                    ReadingActivity.launch(this, mUrl);
+                    finish();
+                }
                 break;
             case R.id.text_size_item:
 
@@ -319,15 +305,10 @@ public class ReadingActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setView(view)
                     .setTitle(R.string.size)
-                    .setPositiveButton(android.R.string.ok, new OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int arg1) {
-                            mTextSize = bar.getProgress();
-                            mBody.setTextSize(getTextSize(mTextSize));
-                            mUserPreferences.setReadingTextSize(bar.getProgress());
-                        }
-
+                    .setPositiveButton(android.R.string.ok, (dialog, arg1) -> {
+                        mTextSize = bar.getProgress();
+                        mBody.setTextSize(getTextSize(mTextSize));
+                        mUserPreferences.setReadingTextSize(bar.getProgress());
                     });
                 Dialog dialog = builder.show();
                 BrowserDialog.setDialogSize(this, dialog);

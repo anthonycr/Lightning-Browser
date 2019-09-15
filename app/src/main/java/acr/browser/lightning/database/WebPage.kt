@@ -4,6 +4,9 @@ import acr.browser.lightning.constant.FOLDER
 
 /**
  * A data type that represents a page that can be loaded.
+ *
+ * @param url The URL of the web page.
+ * @param title The title of the web page.
  */
 sealed class WebPage(
     open val url: String,
@@ -12,6 +15,8 @@ sealed class WebPage(
 
 /**
  * A data type that represents a page that was visited by the user.
+ *
+ * @param lastTimeVisited The last time the page was visited in milliseconds.
  */
 data class HistoryEntry(
     override val url: String,
@@ -30,6 +35,9 @@ sealed class Bookmark(
 
     /**
      * A data type that has been bookmarked by the user.
+     *
+     * @param position The position of the bookmark in its folder.
+     * @param folder The folder in which the bookmark resides.
      */
     data class Entry(
         override val url: String,
@@ -46,8 +54,14 @@ sealed class Bookmark(
         override val title: String
     ) : Bookmark(url, title) {
 
+        /**
+         * The root folder that contains bookmarks and other folders.
+         */
         object Root : Folder("", "")
 
+        /**
+         * A folder that contains bookmarks.
+         */
         data class Entry(
             override val url: String,
             override val title: String
