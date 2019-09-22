@@ -144,11 +144,8 @@ dependencies {
     implementation 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
-    // TODO: Replace I2P submodule with version 0.9.41 when it is available on maven
-    // implementation 'net.i2p.android:client:0.9.40'
-    // implementation 'net.i2p.android:helper:0.9.5'
-    implementation project(':client')
-    implementation project(':helper')
+    implementation 'net.i2p.android:client:0.9.42'
+    implementation 'net.i2p.android:helper:0.9.5'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.3'
 
