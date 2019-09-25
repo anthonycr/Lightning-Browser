@@ -339,4 +339,7 @@
     
     <!-- Search in page -->
     <string name="search_in_page_query">\'%1$s\'</string>
+
+    <!-- Frozen tabs -->
+    <string name="tab_frozen">Frozen…</string>
 </resources>
