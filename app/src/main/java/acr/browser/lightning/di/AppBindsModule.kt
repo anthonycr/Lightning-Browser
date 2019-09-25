@@ -6,6 +6,8 @@ import acr.browser.lightning.adblock.source.AssetsHostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSourceProvider
 import acr.browser.lightning.adblock.source.PreferencesHostsDataSourceProvider
+import acr.browser.lightning.browser.cleanup.DelegatingExitCleanup
+import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.database.adblock.HostsDatabase
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
@@ -26,6 +28,9 @@ import dagger.Module
  */
 @Module
 interface AppBindsModule {
+
+    @Binds
+    fun providesExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
 
     @Binds
     fun provideBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository

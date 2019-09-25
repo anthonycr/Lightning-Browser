@@ -9,6 +9,7 @@ import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.*
 import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
+import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.browser.tabs.TabsDesktopView
 import acr.browser.lightning.browser.tabs.TabsDrawerView
 import acr.browser.lightning.controller.UIController
@@ -57,10 +58,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
-import android.text.style.CharacterStyle
-import android.text.style.ParagraphStyle
 import android.view.*
 import android.view.View.*
 import android.view.ViewGroup.LayoutParams
@@ -159,6 +156,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     @Inject lateinit var proxyUtils: ProxyUtils
     @Inject lateinit var logger: Logger
     @Inject lateinit var bookmarksDialogBuilder: LightningDialogBuilder
+    @Inject lateinit var exitCleanup: ExitCleanup
 
     // Image
     private var webPageBitmap: Bitmap? = null
@@ -986,25 +984,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     protected fun performExitCleanUp() {
-        val currentTab = tabsManager.currentTab
-        if (userPreferences.clearCacheExit && currentTab != null && !isIncognito()) {
-            WebUtils.clearCache(currentTab.webView)
-            logger.log(TAG, "Cache Cleared")
-        }
-        if (userPreferences.clearHistoryExitEnabled && !isIncognito()) {
-            WebUtils.clearHistory(this, historyModel, databaseScheduler)
-            logger.log(TAG, "History Cleared")
-        }
-        if (userPreferences.clearCookiesExitEnabled && !isIncognito()) {
-            WebUtils.clearCookies(this)
-            logger.log(TAG, "Cookies Cleared")
-        }
-        if (userPreferences.clearWebStorageExitEnabled && !isIncognito()) {
-            WebUtils.clearWebStorage()
-            logger.log(TAG, "WebStorage Cleared")
-        } else if (isIncognito()) {
-            WebUtils.clearWebStorage()     // We want to make sure incognito mode is secure
-        }
+        exitCleanup.cleanUp(tabsManager.currentTab?.webView, this)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
