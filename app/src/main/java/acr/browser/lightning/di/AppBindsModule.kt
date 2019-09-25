@@ -30,32 +30,32 @@ import dagger.Module
 interface AppBindsModule {
 
     @Binds
-    fun providesExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
+    fun bindsExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
 
     @Binds
-    fun provideBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository
+    fun bindsBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository
 
     @Binds
-    fun provideDownloadsModel(downloadsDatabase: DownloadsDatabase): DownloadsRepository
+    fun bindsDownloadsModel(downloadsDatabase: DownloadsDatabase): DownloadsRepository
 
     @Binds
-    fun providesHistoryModel(historyDatabase: HistoryDatabase): HistoryRepository
+    fun bindsHistoryModel(historyDatabase: HistoryDatabase): HistoryRepository
 
     @Binds
-    fun providesAdBlockAllowListModel(adBlockAllowListDatabase: AdBlockAllowListDatabase): AdBlockAllowListRepository
+    fun bindsAdBlockAllowListModel(adBlockAllowListDatabase: AdBlockAllowListDatabase): AdBlockAllowListRepository
 
     @Binds
-    fun providesAllowListModel(sessionAllowListModel: SessionAllowListModel): AllowListModel
+    fun bindsAllowListModel(sessionAllowListModel: SessionAllowListModel): AllowListModel
 
     @Binds
-    fun providesSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences
+    fun bindsSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences
 
     @Binds
-    fun providesHostsDataSource(assetsHostsDataSource: AssetsHostsDataSource): HostsDataSource
+    fun bindsHostsDataSource(assetsHostsDataSource: AssetsHostsDataSource): HostsDataSource
 
     @Binds
-    fun providesHostsRepository(hostsDatabase: HostsDatabase): HostsRepository
+    fun bindsHostsRepository(hostsDatabase: HostsDatabase): HostsRepository
 
     @Binds
-    fun providesHostsDataSourceProvider(preferencesHostsDataSourceProvider: PreferencesHostsDataSourceProvider): HostsDataSourceProvider
+    fun bindsHostsDataSourceProvider(preferencesHostsDataSourceProvider: PreferencesHostsDataSourceProvider): HostsDataSourceProvider
 }
