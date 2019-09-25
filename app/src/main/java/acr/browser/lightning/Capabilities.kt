@@ -6,7 +6,9 @@ import android.os.Build
  * Capabilities that are specific to certain API levels.
  */
 enum class Capabilities {
-    FULL_INCOGNITO
+    FULL_INCOGNITO,
+    WEB_RTC,
+    THIRD_PARTY_COOKIE_BLOCKING
 }
 
 /**
@@ -15,4 +17,6 @@ enum class Capabilities {
 val Capabilities.isSupported: Boolean
     get() = when (this) {
         Capabilities.FULL_INCOGNITO -> Build.VERSION.SDK_INT >= 28
+        Capabilities.WEB_RTC -> Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        Capabilities.THIRD_PARTY_COOKIE_BLOCKING -> Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
     }
