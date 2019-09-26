@@ -1246,6 +1246,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      */
     private fun initializeSearchSuggestions(getUrl: AutoCompleteTextView) {
         suggestionsAdapter = SuggestionsAdapter(this, isIncognito())
+        suggestionsAdapter?.onSuggestionInsertClick = {
+            getUrl.setText(it.title)
+            getUrl.setSelection(it.title.length)
+        }
         getUrl.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             val url = when (val selection = suggestionsAdapter?.getItem(position) as WebPage) {
                 is HistoryEntry,
@@ -1258,7 +1262,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
             inputMethodManager.hideSoftInputFromWindow(getUrl.windowToken, 0)
             presenter?.onAutoCompleteItemPressed()
         }
-
         getUrl.setAdapter(suggestionsAdapter)
     }
 

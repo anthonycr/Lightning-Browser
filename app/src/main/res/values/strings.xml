@@ -342,4 +342,7 @@
 
     <!-- Frozen tabs -->
     <string name="tab_frozen">Frozen…</string>
+
+    <!-- Search -->
+    <string name="search_insert_suggestion">Insert suggestion</string>
 </resources>
