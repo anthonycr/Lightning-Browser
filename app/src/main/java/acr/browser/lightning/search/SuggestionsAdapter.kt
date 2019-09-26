@@ -19,8 +19,6 @@ import acr.browser.lightning.search.suggestions.SuggestionsRepository
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
@@ -57,10 +55,10 @@ class SuggestionsAdapter(
     /**
      * The listener that is fired when the insert button on a [SearchSuggestion] is clicked.
      */
-    var onSuggestionInsertClick: ((SearchSuggestion) -> Unit)? = null
+    var onSuggestionInsertClick: ((WebPage) -> Unit)? = null
 
     private val onClick = View.OnClickListener {
-        onSuggestionInsertClick?.invoke(it.tag as SearchSuggestion)
+        onSuggestionInsertClick?.invoke(it.tag as WebPage)
     }
 
     private val layoutInflater = LayoutInflater.from(context)
@@ -136,11 +134,6 @@ class SuggestionsAdapter(
 
         holder.imageView.setImageDrawable(image)
 
-        holder.insertSuggestion.visibility = if (webPage is SearchSuggestion) {
-            VISIBLE
-        } else {
-            GONE
-        }
         holder.insertSuggestion.tag = webPage
         holder.insertSuggestion.setOnClickListener(onClick)
 
