@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.MainActivity;
 import acr.browser.lightning.R;
@@ -57,16 +56,26 @@ public class DownloadHandler {
 
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
-    @Inject DownloadsRepository downloadsRepository;
-    @Inject DownloadManager downloadManager;
-    @Inject @DatabaseScheduler Scheduler databaseScheduler;
-    @Inject @NetworkScheduler Scheduler networkScheduler;
-    @Inject @MainScheduler Scheduler mainScheduler;
-    @Inject Logger logger;
+    private final DownloadsRepository downloadsRepository;
+    private final DownloadManager downloadManager;
+    private final Scheduler databaseScheduler;
+    private final Scheduler networkScheduler;
+    private final Scheduler mainScheduler;
+    private final Logger logger;
 
     @Inject
-    public DownloadHandler() {
-        BrowserApp.getAppComponent().inject(this);
+    public DownloadHandler(DownloadsRepository downloadsRepository,
+                           DownloadManager downloadManager,
+                           @DatabaseScheduler Scheduler databaseScheduler,
+                           @NetworkScheduler Scheduler networkScheduler,
+                           @MainScheduler Scheduler mainScheduler,
+                           Logger logger) {
+        this.downloadsRepository = downloadsRepository;
+        this.downloadManager = downloadManager;
+        this.databaseScheduler = databaseScheduler;
+        this.networkScheduler = networkScheduler;
+        this.mainScheduler = mainScheduler;
+        this.logger = logger;
     }
 
     /**
@@ -77,15 +86,15 @@ public class DownloadHandler {
      * @param url                The full url to the content that should be downloaded
      * @param userAgent          User agent of the downloading application.
      * @param contentDisposition Content-disposition http header, if present.
-     * @param mimetype           The mimetype of the content reported by the server
+     * @param mimeType           The mimeType of the content reported by the server
      * @param contentSize        The size of the content
      */
     public void onDownloadStart(@NonNull Activity context, @NonNull UserPreferences manager, @NonNull String url, String userAgent,
-                                @Nullable String contentDisposition, String mimetype, @NonNull String contentSize) {
+                                @Nullable String contentDisposition, String mimeType, @NonNull String contentSize) {
 
         logger.log(TAG, "DOWNLOAD: Trying to download from URL: " + url);
         logger.log(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
-        logger.log(TAG, "DOWNLOAD: Mimetype: " + mimetype);
+        logger.log(TAG, "DOWNLOAD: MimeType: " + mimeType);
         logger.log(TAG, "DOWNLOAD: User agent: " + userAgent);
 
         // if we're dealing wih A/V content that's not explicitly marked
@@ -95,7 +104,7 @@ public class DownloadHandler {
             // query the package manager to see if there's a registered handler
             // that matches.
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse(url), mimetype);
+            intent.setDataAndType(Uri.parse(url), mimeType);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_BROWSABLE);
             intent.setComponent(null);
@@ -119,7 +128,7 @@ public class DownloadHandler {
                 }
             }
         }
-        onDownloadStartNoStream(context, manager, url, userAgent, contentDisposition, mimetype, contentSize);
+        onDownloadStartNoStream(context, manager, url, userAgent, contentDisposition, mimeType, contentSize);
     }
 
     // This is to work around the fact that java.net.URI throws Exceptions
@@ -299,7 +308,7 @@ public class DownloadHandler {
     }
 
     private static boolean isWriteAccessAvailable(@NonNull Uri fileUri) {
-        if (fileUri.getPath() == null){
+        if (fileUri.getPath() == null) {
             return false;
         }
         File file = new File(fileUri.getPath());

@@ -35,7 +35,7 @@ class BrowserApp : Application() {
     @Inject internal lateinit var logger: Logger
     @Inject internal lateinit var buildInfo: BuildInfo
 
-    val applicationComponent: AppComponent by lazy { appComponent }
+    lateinit var applicationComponent: AppComponent
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
@@ -84,7 +84,7 @@ class BrowserApp : Application() {
             }
         }
 
-        appComponent = DaggerAppComponent.builder()
+        applicationComponent = DaggerAppComponent.builder()
             .application(this)
             .buildInfo(createBuildInfo())
             .build()
@@ -123,16 +123,11 @@ class BrowserApp : Application() {
     })
 
     companion object {
-
         private const val TAG = "BrowserApp"
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
         }
-
-        @JvmStatic
-        lateinit var appComponent: AppComponent
-
     }
 
 }
