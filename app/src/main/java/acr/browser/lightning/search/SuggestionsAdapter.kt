@@ -163,9 +163,9 @@ class SuggestionsAdapter(
         }
 
     private fun Observable<CharSequence>.results(): Flowable<List<WebPage>> = this
+        .toFlowable(BackpressureStrategy.LATEST)
         .map { it.toString().toLowerCase(Locale.getDefault()).trim() }
         .filter(String::isNotEmpty)
-        .toFlowable(BackpressureStrategy.LATEST)
         .share()
         .compose { upstream ->
             val searchEntries = upstream
