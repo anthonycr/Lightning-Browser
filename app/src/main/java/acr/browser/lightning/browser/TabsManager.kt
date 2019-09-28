@@ -102,7 +102,7 @@ class TabsManager @Inject constructor(
             .subscribeOn(mainScheduler)
             .observeOn(databaseScheduler)
             .flatMapObservable {
-                return@flatMapObservable if (incognito) {
+                if (incognito) {
                     initializeIncognitoMode(it.value())
                 } else {
                     initializeRegularMode(it.value(), activity)
@@ -117,9 +117,7 @@ class TabsManager @Inject constructor(
      * Returns an [Observable] that emits the [TabInitializer] for incognito mode.
      */
     private fun initializeIncognitoMode(initialUrl: String?): Observable<TabInitializer> =
-        Observable.fromCallable {
-            return@fromCallable initialUrl?.let(::UrlInitializer) ?: homePageInitializer
-        }
+        Observable.fromCallable { initialUrl?.let(::UrlInitializer) ?: homePageInitializer }
 
     /**
      * Returns an [Observable] that emits the [TabInitializer] for normal operation mode.
