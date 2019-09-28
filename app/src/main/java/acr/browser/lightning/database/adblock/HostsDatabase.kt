@@ -70,9 +70,10 @@ class HostsDatabase @Inject constructor(
     override fun containsHost(host: Host): Boolean {
         database.query(
             TABLE_HOSTS,
-            null,
+            arrayOf(KEY_ID),
             "$KEY_NAME=?",
             arrayOf(host.name),
+            null,
             null,
             null,
             "1"
