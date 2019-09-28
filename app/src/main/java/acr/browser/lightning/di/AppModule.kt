@@ -120,14 +120,18 @@ class AppModule {
     @Singleton
     @Provides
     fun providesSuggestionsRequestFactory(cacheControl: CacheControl): RequestFactory = object : RequestFactory {
-
         override fun createSuggestionsRequest(httpUrl: HttpUrl, encoding: String): Request {
             return Request.Builder().url(httpUrl)
                 .addHeader("Accept-Charset", encoding)
                 .cacheControl(cacheControl)
                 .build()
         }
+    }
 
+    private fun createInterceptorWithMaxCacheAge(maxCacheAgeSeconds: Long) = Interceptor { chain ->
+        chain.proceed(chain.request()).newBuilder()
+            .header("cache-control", "max-age=$maxCacheAgeSeconds, max-stale=$maxCacheAgeSeconds")
+            .build()
     }
 
     @Singleton
@@ -135,19 +139,11 @@ class AppModule {
     @SuggestionsClient
     fun providesSuggestionsHttpClient(application: Application): Single<OkHttpClient> = Single.fromCallable {
         val intervalDay = TimeUnit.DAYS.toSeconds(1)
-
-        val rewriteCacheControlInterceptor = Interceptor { chain ->
-            val originalResponse = chain.proceed(chain.request())
-            originalResponse.newBuilder()
-                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
-                .build()
-        }
-
         val suggestionsCache = File(application.cacheDir, "suggestion_responses")
 
         return@fromCallable OkHttpClient.Builder()
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(1)))
-            .addNetworkInterceptor(rewriteCacheControlInterceptor)
+            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalDay))
             .build()
     }.cache()
 
@@ -155,20 +151,12 @@ class AppModule {
     @Provides
     @HostsClient
     fun providesHostsHttpClient(application: Application): Single<OkHttpClient> = Single.fromCallable {
-        val intervalDay = TimeUnit.DAYS.toSeconds(365)
-
-        val rewriteCacheControlInterceptor = Interceptor { chain ->
-            val originalResponse = chain.proceed(chain.request())
-            originalResponse.newBuilder()
-                .header("cache-control", "max-age=$intervalDay, max-stale=$intervalDay")
-                .build()
-        }
-
+        val intervalYear = TimeUnit.DAYS.toSeconds(365)
         val suggestionsCache = File(application.cacheDir, "hosts_cache")
 
         return@fromCallable OkHttpClient.Builder()
             .cache(Cache(suggestionsCache, FileUtils.megabytesToBytes(5)))
-            .addNetworkInterceptor(rewriteCacheControlInterceptor)
+            .addNetworkInterceptor(createInterceptorWithMaxCacheAge(intervalYear))
             .build()
     }.cache()
 
