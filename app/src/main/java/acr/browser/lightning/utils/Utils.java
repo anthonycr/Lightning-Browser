@@ -109,7 +109,7 @@ public final class Utils {
      * HTTPS if the URL is an SSL supported URL.
      */
     @NonNull
-    public static String getDomainName(@Nullable String url) {
+    public static String getDisplayDomainName(@Nullable String url) {
         if (url == null || url.isEmpty()) return "";
 
         boolean ssl = URLUtil.isHttpsUrl(url);

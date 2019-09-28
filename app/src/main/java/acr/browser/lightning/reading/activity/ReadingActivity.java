@@ -151,7 +151,7 @@ public class ReadingActivity extends AppCompatActivity {
             return false;
         }
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
+            getSupportActionBar().setTitle(Utils.getDisplayDomainName(mUrl));
         }
 
         mProgressDialog = new ProgressDialog(ReadingActivity.this);
