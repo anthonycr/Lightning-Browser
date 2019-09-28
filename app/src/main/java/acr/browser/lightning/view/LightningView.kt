@@ -4,6 +4,7 @@
 
 package acr.browser.lightning.view
 
+import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.controller.UIController
@@ -13,6 +14,7 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.extensions.drawable
+import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
@@ -348,12 +350,8 @@ class LightningView(
         }
 
         settings.blockNetworkImage = userPreferences.blockImagesEnabled
-        if (!isIncognito) {
-            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
-            settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
-        } else {
-            settings.setSupportMultipleWindows(false)
-        }
+        // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+        settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
 
         settings.useWideViewPort = userPreferences.useWideViewPortEnabled
         settings.loadWithOverviewMode = userPreferences.overviewModeEnabled
@@ -389,11 +387,11 @@ class LightningView(
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
-            if (!isIncognito) {
+            if (!isIncognito || Capabilities.FULL_INCOGNITO.isSupported) {
                 domStorageEnabled = true
                 setAppCacheEnabled(true)
-                cacheMode = WebSettings.LOAD_DEFAULT
                 databaseEnabled = true
+                cacheMode = WebSettings.LOAD_DEFAULT
             } else {
                 domStorageEnabled = false
                 setAppCacheEnabled(false)
