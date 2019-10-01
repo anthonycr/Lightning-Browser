@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 5.1.0 *(2019-10-01)*
+----------------------------
+- Made copy link action is available in incognito mode.
+- Fixed bug with bookmark and tab drawer transparency.
+- Added feature to freeze old tabs until they are accessed if the app restarts.
+- Added button to search suggestions layout that inserts the suggestion rather than searching for it.
+- Added support for full sandboxed incognito mode on Android Pie (API 28) and up.
+
 Version 5.0.2 *(2019-09-07)*
 ----------------------------
 - Target Android 10 API 29
