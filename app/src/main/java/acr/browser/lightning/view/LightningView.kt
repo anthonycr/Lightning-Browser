@@ -4,6 +4,8 @@
 
 package acr.browser.lightning.view
 
+import acr.browser.lightning.Capabilities
+import acr.browser.lightning.R
 import acr.browser.lightning.constant.DESKTOP_USER_AGENT
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.di.DatabaseScheduler
@@ -11,6 +13,8 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.download.LightningDownloadListener
+import acr.browser.lightning.extensions.drawable
+import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.network.NetworkConnectivityModel
 import acr.browser.lightning.preference.UserPreferences
@@ -34,6 +38,7 @@ import android.webkit.WebSettings
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebView
 import androidx.collection.ArrayMap
+import androidx.core.graphics.drawable.toBitmap
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -65,8 +70,14 @@ class LightningView(
      * Getter for the [LightningViewTitle] of the current LightningView instance.
      *
      * @return a NonNull instance of LightningViewTitle
+     * @return a NonNull instance of LightningViewTitle
      */
     val titleInfo: LightningViewTitle
+
+    /**
+     * A tab initializer that should be run when the view is first attached.
+     */
+    private var latentTabInitializer: FreezableBundleInitializer? = null
 
     /**
      * Gets the current WebView instance of the tab.
@@ -91,6 +102,12 @@ class LightningView(
     var isForegroundTab: Boolean = false
         set(isForeground) {
             field = isForeground
+            if (isForeground) {
+                webView?.let {
+                    latentTabInitializer?.initialize(it, requestHeaders)
+                    latentTabInitializer = null
+                }
+            }
             uiController.tabChanged(this)
         }
     /**
@@ -221,7 +238,13 @@ class LightningView(
         }
         initializePreferences()
 
-        tabInitializer.initialize(tab, requestHeaders)
+        if (tabInitializer !is FreezableBundleInitializer) {
+            tabInitializer.initialize(tab, requestHeaders)
+        } else {
+            latentTabInitializer = tabInitializer
+            titleInfo.setTitle(tabInitializer.initialTitle)
+            titleInfo.setFavicon(activity.drawable(R.drawable.ic_frozen).toBitmap())
+        }
 
         networkDisposable = networkConnectivityModel.connectivity()
             .observeOn(mainScheduler)
@@ -327,12 +350,8 @@ class LightningView(
         }
 
         settings.blockNetworkImage = userPreferences.blockImagesEnabled
-        if (!isIncognito) {
-            // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
-            settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
-        } else {
-            settings.setSupportMultipleWindows(false)
-        }
+        // Modifying headers causes SEGFAULTS, so disallow multi window if headers are enabled.
+        settings.setSupportMultipleWindows(userPreferences.popupsEnabled && !modifiesHeaders)
 
         settings.useWideViewPort = userPreferences.useWideViewPortEnabled
         settings.loadWithOverviewMode = userPreferences.overviewModeEnabled
@@ -368,11 +387,11 @@ class LightningView(
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
 
-            if (!isIncognito) {
+            if (!isIncognito || Capabilities.FULL_INCOGNITO.isSupported) {
                 domStorageEnabled = true
                 setAppCacheEnabled(true)
-                cacheMode = WebSettings.LOAD_DEFAULT
                 databaseEnabled = true
+                cacheMode = WebSettings.LOAD_DEFAULT
             } else {
                 domStorageEnabled = false
                 setAppCacheEnabled(false)
@@ -435,16 +454,17 @@ class LightningView(
     /**
      * Save the state of the tab and return it as a [Bundle].
      */
-    fun saveState(): Bundle = Bundle(ClassLoader.getSystemClassLoader()).also {
-        webView?.saveState(it)
-    }
+    fun saveState(): Bundle = latentTabInitializer?.bundle
+        ?: Bundle(ClassLoader.getSystemClassLoader()).also {
+            webView?.saveState(it)
+        }
 
     /**
      * Pause the current WebView instance.
      */
     fun onPause() {
         webView?.onPause()
-        logger.log(TAG, "WebView onPause: " + webView?.id)
+        logger.log(TAG, "WebView onPause: ${webView?.id}")
     }
 
     /**
@@ -452,7 +472,7 @@ class LightningView(
      */
     fun onResume() {
         webView?.onResume()
-        logger.log(TAG, "WebView onResume: " + webView?.id)
+        logger.log(TAG, "WebView onResume: ${webView?.id}")
     }
 
     /**

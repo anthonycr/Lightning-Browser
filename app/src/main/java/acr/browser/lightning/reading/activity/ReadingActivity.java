@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
+import acr.browser.lightning.di.Injector;
 import acr.browser.lightning.di.MainScheduler;
 import acr.browser.lightning.di.NetworkScheduler;
 import acr.browser.lightning.dialog.BrowserDialog;
@@ -79,7 +79,7 @@ public class ReadingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        BrowserApp.getAppComponent().inject(this);
+        Injector.getInjector(this).inject(this);
 
         overridePendingTransition(R.anim.slide_in_from_right, R.anim.fade_out_scale);
         mInvert = mUserPreferences.getInvertColors();
@@ -151,7 +151,7 @@ public class ReadingActivity extends AppCompatActivity {
             return false;
         }
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Utils.getDomainName(mUrl));
+            getSupportActionBar().setTitle(Utils.getDisplayDomainName(mUrl));
         }
 
         mProgressDialog = new ProgressDialog(ReadingActivity.this);

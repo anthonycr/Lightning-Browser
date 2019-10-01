@@ -96,6 +96,7 @@
     <string name="download_sdcard_busy_dlg_title">USB storage unavailable</string>
     <string name="download_sdcard_busy_dlg_msg">The storage is busy. To allow downloads, touch \'Turn Off USB Storage\' in the notification.</string>
     <string name="incognito_cookies">Enable cookies in incognito mode</string>
+    <string name="incognito_cookies_pie">Incognito mode runs in a separate process that is reset after each session. Incognito cookie preferences are now controlled by the regular cookie preferences.</string>
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
     <string name="action_auto">Auto</string>
@@ -338,4 +339,10 @@
     
     <!-- Search in page -->
     <string name="search_in_page_query">\'%1$s\'</string>
+
+    <!-- Frozen tabs -->
+    <string name="tab_frozen">Frozen…</string>
+
+    <!-- Search -->
+    <string name="search_insert_suggestion">Insert suggestion</string>
 </resources>

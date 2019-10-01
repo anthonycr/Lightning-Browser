@@ -1,11 +1,13 @@
 package acr.browser.lightning.settings.fragment
 
+import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.SearchBoxDisplayChoice
 import acr.browser.lightning.constant.TEXT_ENCODINGS
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.extensions.resizeAndShow
 import acr.browser.lightning.extensions.withSingleChoiceItems
+import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.view.RenderingMode
 import android.os.Bundle
@@ -50,16 +52,31 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
             onCheckChange = { userPreferences.popupsEnabled = it }
         )
 
-        checkBoxPreference(
-            preference = SETTINGS_ENABLE_COOKIES,
-            isChecked = userPreferences.cookiesEnabled,
-            onCheckChange = { userPreferences.cookiesEnabled = it }
+        val incognitoCheckboxPreference = checkBoxPreference(
+            preference = SETTINGS_COOKIES_INCOGNITO,
+            isEnabled = !Capabilities.FULL_INCOGNITO.isSupported,
+            isChecked = if (Capabilities.FULL_INCOGNITO.isSupported) {
+                userPreferences.cookiesEnabled
+            } else {
+                userPreferences.incognitoCookiesEnabled
+            },
+            summary = if (Capabilities.FULL_INCOGNITO.isSupported) {
+                getString(R.string.incognito_cookies_pie)
+            } else {
+                null
+            },
+            onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
         )
 
         checkBoxPreference(
-            preference = SETTINGS_COOKIES_INCOGNITO,
-            isChecked = userPreferences.incognitoCookiesEnabled,
-            onCheckChange = { userPreferences.incognitoCookiesEnabled = it }
+            preference = SETTINGS_ENABLE_COOKIES,
+            isChecked = userPreferences.cookiesEnabled,
+            onCheckChange = {
+                userPreferences.cookiesEnabled = it
+                if (Capabilities.FULL_INCOGNITO.isSupported) {
+                    incognitoCheckboxPreference.isChecked = it
+                }
+            }
         )
 
         checkBoxPreference(

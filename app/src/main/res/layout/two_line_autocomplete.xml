@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="false"
@@ -8,7 +9,8 @@
     android:paddingStart="@dimen/material_grid_margin"
     android:paddingTop="3dp"
     android:paddingEnd="@dimen/material_grid_margin"
-    android:paddingBottom="3dp">
+    android:paddingBottom="3dp"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/suggestionIcon"
@@ -17,8 +19,9 @@
         android:contentDescription="@null" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:paddingLeft="@dimen/material_grid_margin"
         android:paddingRight="@dimen/material_grid_margin">
@@ -42,5 +45,14 @@
             android:maxLines="1"
             android:textColor="?attr/autoCompleteUrlColor" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/complete_search"
+        android:layout_width="@dimen/material_grid_touch_small"
+        android:layout_height="@dimen/material_grid_touch_small"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/search_insert_suggestion"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_insert" />
 
 </LinearLayout>

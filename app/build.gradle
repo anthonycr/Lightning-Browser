@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionName "5.0.2"
+        versionName "5.1.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -60,14 +60,14 @@ android {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             applicationId "acr.browser.lightning"
-            versionCode 100
+            versionCode 101
         }
 
         lightningLite {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
             applicationId "acr.browser.barebones"
-            versionCode 101
+            versionCode 102
         }
     }
 
@@ -144,11 +144,8 @@ dependencies {
     implementation 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
-    // TODO: Replace I2P submodule with version 0.9.41 when it is available on maven
-    // implementation 'net.i2p.android:client:0.9.40'
-    // implementation 'net.i2p.android:helper:0.9.5'
-    implementation project(':client')
-    implementation project(':helper')
+    implementation 'net.i2p.android:client:0.9.42'
+    implementation 'net.i2p.android:helper:0.9.5'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.3'
 

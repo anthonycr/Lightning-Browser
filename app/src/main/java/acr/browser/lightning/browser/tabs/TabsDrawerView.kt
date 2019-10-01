@@ -30,6 +30,8 @@ class TabsDrawerView @JvmOverloads constructor(
 
     init {
         orientation = VERTICAL
+        isClickable = true
+        isFocusable = true
         context.inflater.inflate(R.layout.tab_drawer, this, true)
         actionBack = findViewById(R.id.action_back)
         actionForward = findViewById(R.id.action_forward)

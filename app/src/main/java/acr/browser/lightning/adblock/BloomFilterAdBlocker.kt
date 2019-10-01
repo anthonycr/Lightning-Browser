@@ -130,51 +130,34 @@ class BloomFilterAdBlocker @Inject constructor(
     }
 
     override fun isAd(url: String): Boolean {
-        val domain = try {
-            getDomainName(url)
-        } catch (exception: URISyntaxException) {
-            logger.log(TAG, "URL '$url' is invalid", exception)
-            return false
-        }
+        val domain = url.host() ?: return false
 
         val mightBeOnBlockList = bloomFilter.mightContain(domain)
 
-        return if (mightBeOnBlockList) {
-            val isOnBlockList = hostsRepository.containsHost(domain)
-            if (isOnBlockList) {
-                logger.log(TAG, "URL '$url' is an ad")
-            } else {
-                logger.log(TAG, "False positive for $url")
-            }
+        return when {
+            mightBeOnBlockList -> {
+                val isOnBlockList = hostsRepository.containsHost(domain)
+                if (isOnBlockList) {
+                    logger.log(TAG, "URL '$url' is an ad")
+                } else {
+                    logger.log(TAG, "False positive for $url")
+                }
 
-            isOnBlockList
-        } else {
-            false
+                isOnBlockList
+            }
+            domain.name.startsWith("www.") -> isAd(domain.name.substring(4))
+            else -> false
         }
     }
 
     /**
-     * Returns the probable domain name for a given URL
-     *
-     * @param url the url to parse
-     * @return returns the domain
-     * @throws URISyntaxException throws an exception if the string cannot form a URI
+     * Extract the [Host] from a [String] representing a URL. Returns null if no host was extracted.
      */
-    @Throws(URISyntaxException::class)
-    private fun getDomainName(url: String): Host {
-        val host = url.indexOf('/', 8)
-            .takeIf { it != -1 }
-            ?.let(url::take)
-            ?: url
-
-        val uri = URI(host)
-        val domain = uri.host ?: return Host(host)
-
-        return Host(if (domain.startsWith("www.")) {
-            domain.substring(4)
-        } else {
-            domain
-        })
+    private fun String.host(): Host? = try {
+        URI(this).host?.let(::Host)
+    } catch (exception: URISyntaxException) {
+        logger.log(TAG, "Invalid URL: $this", exception)
+        null
     }
 
     companion object {

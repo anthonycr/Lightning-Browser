@@ -1,5 +1,6 @@
 package acr.browser.lightning.settings.fragment
 
+import acr.browser.lightning.Capabilities
 import acr.browser.lightning.R
 import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.DatabaseScheduler
@@ -8,8 +9,8 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.isSupported
 import acr.browser.lightning.preference.UserPreferences
-import acr.browser.lightning.utils.ApiUtils
 import acr.browser.lightning.utils.WebUtils
 import acr.browser.lightning.view.LightningView
 import android.os.Bundle
@@ -45,7 +46,7 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
         checkBoxPreference(
             preference = SETTINGS_THIRDPCOOKIES,
             isChecked = userPreferences.blockThirdPartyCookiesEnabled,
-            isEnabled = ApiUtils.doesSupportThirdPartyCookieBlocking(),
+            isEnabled = Capabilities.THIRD_PARTY_COOKIE_BLOCKING.isSupported,
             onCheckChange = { userPreferences.blockThirdPartyCookiesEnabled = it }
         )
 
@@ -81,22 +82,20 @@ class PrivacySettingsFragment : AbstractSettingsFragment() {
 
         checkBoxPreference(
             preference = SETTINGS_DONOTTRACK,
-            isChecked = userPreferences.doNotTrackEnabled && ApiUtils.doesSupportWebViewHeaders(),
-            isEnabled = ApiUtils.doesSupportWebViewHeaders(),
+            isChecked = userPreferences.doNotTrackEnabled,
             onCheckChange = { userPreferences.doNotTrackEnabled = it }
         )
 
         checkBoxPreference(
             preference = SETTINGS_WEBRTC,
-            isChecked = userPreferences.webRtcEnabled && ApiUtils.doesSupportWebRtc(),
-            isEnabled = ApiUtils.doesSupportWebRtc(),
+            isChecked = userPreferences.webRtcEnabled && Capabilities.WEB_RTC.isSupported,
+            isEnabled = Capabilities.WEB_RTC.isSupported,
             onCheckChange = { userPreferences.webRtcEnabled = it }
         )
 
         checkBoxPreference(
             preference = SETTINGS_IDENTIFYINGHEADERS,
-            isChecked = userPreferences.removeIdentifyingHeadersEnabled && ApiUtils.doesSupportWebViewHeaders(),
-            isEnabled = ApiUtils.doesSupportWebViewHeaders(),
+            isChecked = userPreferences.removeIdentifyingHeadersEnabled,
             summary = "${LightningView.HEADER_REQUESTED_WITH}, ${LightningView.HEADER_WAP_PROFILE}",
             onCheckChange = { userPreferences.removeIdentifyingHeadersEnabled = it }
         )

@@ -61,7 +61,7 @@ class TabCountView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        val text: String = if (count > 99) {
+        val text: String = if (count > MAX_DISPLAYABLE_NUMBER) {
             context.getString(R.string.infinity)
         } else {
             numberFormat.format(count)
@@ -86,6 +86,10 @@ class TabCountView @JvmOverloads constructor(
         canvas.drawText(text, xPos, yPos, paint)
 
         super.onDraw(canvas)
+    }
+
+    companion object {
+        private const val MAX_DISPLAYABLE_NUMBER = 99
     }
 
 }

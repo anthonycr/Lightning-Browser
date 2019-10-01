@@ -70,7 +70,7 @@ class HistoryDatabase @Inject constructor(
         database.query(
             false,
             TABLE_HISTORY,
-            arrayOf(KEY_URL),
+            arrayOf(KEY_ID),
             "$KEY_URL = ?",
             arrayOf(url),
             null,

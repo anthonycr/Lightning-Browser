@@ -9,14 +9,12 @@ import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.browser.bookmarks.BookmarksDrawerView
 import acr.browser.lightning.device.BuildInfo
 import acr.browser.lightning.dialog.LightningDialogBuilder
-import acr.browser.lightning.download.DownloadHandler
 import acr.browser.lightning.download.LightningDownloadListener
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.settings.activity.ThemableSettingsActivity
 import acr.browser.lightning.settings.fragment.*
-import acr.browser.lightning.utils.ProxyUtils
 import acr.browser.lightning.view.LightningChromeClient
 import acr.browser.lightning.view.LightningView
 import acr.browser.lightning.view.LightningWebClient
@@ -55,8 +53,6 @@ interface AppComponent {
 
     fun inject(app: BrowserApp)
 
-    fun inject(proxyUtils: ProxyUtils)
-
     fun inject(activity: ReadingActivity)
 
     fun inject(webClient: LightningWebClient)
@@ -74,8 +70,6 @@ interface AppComponent {
     fun inject(suggestionsAdapter: SuggestionsAdapter)
 
     fun inject(chromeClient: LightningChromeClient)
-
-    fun inject(downloadHandler: DownloadHandler)
 
     fun inject(searchBoxModel: SearchBoxModel)
 

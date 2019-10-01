@@ -6,6 +6,8 @@ import acr.browser.lightning.adblock.source.AssetsHostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSource
 import acr.browser.lightning.adblock.source.HostsDataSourceProvider
 import acr.browser.lightning.adblock.source.PreferencesHostsDataSourceProvider
+import acr.browser.lightning.browser.cleanup.DelegatingExitCleanup
+import acr.browser.lightning.browser.cleanup.ExitCleanup
 import acr.browser.lightning.database.adblock.HostsDatabase
 import acr.browser.lightning.database.adblock.HostsRepository
 import acr.browser.lightning.database.allowlist.AdBlockAllowListDatabase
@@ -28,29 +30,32 @@ import dagger.Module
 interface AppBindsModule {
 
     @Binds
-    fun provideBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository
+    fun bindsExitCleanup(delegatingExitCleanup: DelegatingExitCleanup): ExitCleanup
 
     @Binds
-    fun provideDownloadsModel(downloadsDatabase: DownloadsDatabase): DownloadsRepository
+    fun bindsBookmarkModel(bookmarkDatabase: BookmarkDatabase): BookmarkRepository
 
     @Binds
-    fun providesHistoryModel(historyDatabase: HistoryDatabase): HistoryRepository
+    fun bindsDownloadsModel(downloadsDatabase: DownloadsDatabase): DownloadsRepository
 
     @Binds
-    fun providesAdBlockAllowListModel(adBlockAllowListDatabase: AdBlockAllowListDatabase): AdBlockAllowListRepository
+    fun bindsHistoryModel(historyDatabase: HistoryDatabase): HistoryRepository
 
     @Binds
-    fun providesAllowListModel(sessionAllowListModel: SessionAllowListModel): AllowListModel
+    fun bindsAdBlockAllowListModel(adBlockAllowListDatabase: AdBlockAllowListDatabase): AdBlockAllowListRepository
 
     @Binds
-    fun providesSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences
+    fun bindsAllowListModel(sessionAllowListModel: SessionAllowListModel): AllowListModel
 
     @Binds
-    fun providesHostsDataSource(assetsHostsDataSource: AssetsHostsDataSource): HostsDataSource
+    fun bindsSslWarningPreferences(sessionSslWarningPreferences: SessionSslWarningPreferences): SslWarningPreferences
 
     @Binds
-    fun providesHostsRepository(hostsDatabase: HostsDatabase): HostsRepository
+    fun bindsHostsDataSource(assetsHostsDataSource: AssetsHostsDataSource): HostsDataSource
 
     @Binds
-    fun providesHostsDataSourceProvider(preferencesHostsDataSourceProvider: PreferencesHostsDataSourceProvider): HostsDataSourceProvider
+    fun bindsHostsRepository(hostsDatabase: HostsDatabase): HostsRepository
+
+    @Binds
+    fun bindsHostsDataSourceProvider(preferencesHostsDataSourceProvider: PreferencesHostsDataSourceProvider): HostsDataSourceProvider
 }

@@ -15,7 +15,10 @@ import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.ssl.SslWarningPreferences
-import acr.browser.lightning.utils.*
+import acr.browser.lightning.utils.IntentUtils
+import acr.browser.lightning.utils.ProxyUtils
+import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.isSpecialUrl
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -297,11 +300,10 @@ class LightningWebClient(
         }
         return when {
             headers.isEmpty() -> false
-            ApiUtils.doesSupportWebViewHeaders() -> {
+            else -> {
                 webView.loadUrl(url, headers)
                 true
             }
-            else -> false
         }
     }
 
