@@ -23,21 +23,23 @@ public final class DrawableUtils {
     private DrawableUtils() {}
 
     /**
-     * Creates a white rounded drawable with an inset image of a different color.
+     * Creates a rounded drawable witch chosen color with an inset image of a different color.
      *
      * @param context     the context needed to work with resources.
      * @param drawableRes the drawable to inset on the rounded drawable.
+     * @param color       the color of rounded drawable
      * @return a bitmap with the desired content.
      */
     @NonNull
     public static Bitmap createImageInsetInRoundedSquare(Context context,
-                                                         @DrawableRes int drawableRes) {
+                                                         @DrawableRes int drawableRes,
+                                                         @ColorInt int color) {
         final Bitmap icon = ThemeUtils.getBitmapFromVectorDrawable(context, drawableRes);
 
         final Bitmap image = Bitmap.createBitmap(icon.getWidth(), icon.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(image);
         final Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
+        paint.setColor(color);
         paint.setAntiAlias(true);
         paint.setFilterBitmap(true);
         paint.setDither(true);
