@@ -13,13 +13,13 @@ import android.graphics.drawable.Drawable
 fun Context.createSslDrawableForState(sslState: SslState): Drawable? = when (sslState) {
     is SslState.None -> null
     is SslState.Valid -> {
-        val drawableBackgroundColor = ThemeUtils.getPrimaryColor(this)
+        val drawableBackgroundColor = ThemeUtils.getColor(this, R.attr.drawerBackground)
         val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_secured, drawableBackgroundColor)
         val securedDrawable = BitmapDrawable(resources, bitmap)
         securedDrawable
     }
     is SslState.Invalid -> {
-        val drawableBackgroundColor = ThemeUtils.getPrimaryColor(this)
+        val drawableBackgroundColor = ThemeUtils.getColor(this, R.attr.drawerBackground)
         val bitmap = DrawableUtils.createImageInsetInRoundedSquare(this, R.drawable.ic_unsecured, drawableBackgroundColor)
         val unsecuredDrawable = BitmapDrawable(resources, bitmap)
         unsecuredDrawable
