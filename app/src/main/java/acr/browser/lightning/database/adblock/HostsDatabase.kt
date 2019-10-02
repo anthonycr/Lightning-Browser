@@ -27,8 +27,7 @@ class HostsDatabase @Inject constructor(
     // Creating Tables
     override fun onCreate(db: SQLiteDatabase) {
         val createHostsTable = "CREATE TABLE ${DatabaseUtils.sqlEscapeString(TABLE_HOSTS)}(" +
-            "${DatabaseUtils.sqlEscapeString(KEY_ID)} INTEGER PRIMARY KEY," +
-            "${DatabaseUtils.sqlEscapeString(KEY_NAME)} TEXT" +
+            "${DatabaseUtils.sqlEscapeString(KEY_NAME)} TEXT PRIMARY KEY" +
             ')'
         db.execSQL(createHostsTable)
     }
@@ -70,7 +69,7 @@ class HostsDatabase @Inject constructor(
     override fun containsHost(host: Host): Boolean {
         database.query(
             TABLE_HOSTS,
-            arrayOf(KEY_ID),
+            arrayOf(KEY_NAME),
             "$KEY_NAME=?",
             arrayOf(host.name),
             null,
@@ -94,7 +93,7 @@ class HostsDatabase @Inject constructor(
             null,
             null,
             null,
-            "$KEY_ID DESC"
+            null
         ).useMap { it.bindToHost() }
     }
 
@@ -115,7 +114,7 @@ class HostsDatabase @Inject constructor(
     companion object {
 
         // Database version
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         // Database name
         private const val DATABASE_NAME = "hostsDatabase"
@@ -124,7 +123,6 @@ class HostsDatabase @Inject constructor(
         private const val TABLE_HOSTS = "hosts"
 
         // Host table columns names
-        private const val KEY_ID = "id"
         private const val KEY_NAME = "url"
     }
 
