@@ -84,6 +84,7 @@ class BloomFilterAdBlocker @Inject constructor(
                             }
                         }
                         .flatMapSingleElement {
+                            logger.log(TAG, "Loaded ${it.size} hosts")
                             // Clear out the old hosts and bloom filter now that we have the new hosts.
                             hostsRepository.removeAllHosts()
                                 .andThen(hostsRepository.addHosts(it))
