@@ -18,13 +18,13 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.extensions.toast
 import acr.browser.lightning.log.Logger
 import android.app.Application
+import android.net.Uri
 import io.reactivex.Maybe
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import java.net.URI
 import java.net.URISyntaxException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -155,7 +155,7 @@ class BloomFilterAdBlocker @Inject constructor(
      * Extract the [Host] from a [String] representing a URL. Returns null if no host was extracted.
      */
     private fun String.host(): Host? = try {
-        URI(this).host?.let(::Host)
+        Uri.parse(this).host?.let(::Host)
     } catch (exception: URISyntaxException) {
         logger.log(TAG, "Invalid URL: $this", exception)
         null
