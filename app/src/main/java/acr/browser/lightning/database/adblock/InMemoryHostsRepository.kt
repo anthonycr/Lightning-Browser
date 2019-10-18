@@ -11,17 +11,19 @@ import javax.inject.Singleton
 @Singleton
 class InMemoryHostsRepository @Inject constructor() : HostsRepository {
 
-    private val mutableHostsSet: MutableSet<Host> = hashSetOf()
+    private var mutableHostsSet: Set<Host> = emptySet()
 
     override fun addHosts(hosts: List<Host>): Completable = Completable.fromAction {
-        mutableHostsSet.addAll(hosts)
+        mutableHostsSet = hosts.toSet()
     }
 
-    override fun removeAllHosts(): Completable = Completable.fromAction(mutableHostsSet::clear)
+    override fun removeAllHosts(): Completable = Completable.fromAction {
+        mutableHostsSet = emptySet()
+    }
 
     override fun containsHost(host: Host): Boolean = mutableHostsSet.contains(host)
 
-    override fun hasHosts(): Boolean = mutableHostsSet.size > 0
+    override fun hasHosts(): Boolean = mutableHostsSet.isNotEmpty()
 
     override fun allHosts(): Single<List<Host>> = Single.just(mutableHostsSet.toList())
 }
