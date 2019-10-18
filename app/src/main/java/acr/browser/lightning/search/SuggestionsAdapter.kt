@@ -44,7 +44,7 @@ class SuggestionsAdapter(
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var searchEngineProvider: SearchEngineProvider
 
-    private val allBookmarks = arrayListOf<Bookmark.Entry>()
+    private var allBookmarks: List<Bookmark.Entry> = emptyList()
     private val searchFilter = SearchFilter(this)
 
     private val searchIcon = context.drawable(R.drawable.ic_search)
@@ -92,8 +92,7 @@ class SuggestionsAdapter(
         bookmarkRepository.getAllBookmarksSorted()
             .subscribeOn(databaseScheduler)
             .subscribe { list ->
-                allBookmarks.clear()
-                allBookmarks.addAll(list)
+                allBookmarks = list
             }
     }
 
