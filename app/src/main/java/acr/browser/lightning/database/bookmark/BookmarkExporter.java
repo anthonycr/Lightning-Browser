@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +25,6 @@ import acr.browser.lightning.utils.Utils;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import io.reactivex.Completable;
-import io.reactivex.Single;
 
 /**
  * The class responsible for importing and exporting
@@ -127,38 +125,34 @@ public final class BookmarkExporter {
      * given file. If the file is not in a
      * supported format, it will fail.
      *
-     * @param file the file to import from.
-     * @return an observable that emits the
-     * imported bookmarks, or an error if the
-     * file cannot be imported.
+     * @param inputStream The stream to import from.
+     * @return A list of bookmarks, or throws an exception if the bookmarks cannot be imported.
      */
     @NonNull
-    public static Single<List<Bookmark.Entry>> importBookmarksFromFile(@NonNull final File file) {
-        return Single.fromCallable(() -> {
-            BufferedReader bookmarksReader = null;
-            try {
-                //noinspection IOResourceOpenedButNotSafelyClosed
-                bookmarksReader = new BufferedReader(new FileReader(file));
-                String line;
+    public static List<Bookmark.Entry> importBookmarksFromFileStream(@NonNull InputStream inputStream) throws Exception {
+        BufferedReader bookmarksReader = null;
+        try {
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            bookmarksReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
 
-                List<Bookmark.Entry> bookmarks = new ArrayList<>();
-                while ((line = bookmarksReader.readLine()) != null) {
-                    JSONObject object = new JSONObject(line);
-                    final String folderName = object.getString(KEY_FOLDER);
-                    final Bookmark.Entry entry = new Bookmark.Entry(
-                        object.getString(KEY_TITLE),
-                        object.getString(KEY_URL),
-                        object.getInt(KEY_ORDER),
-                        WebPageKt.asFolder(folderName)
-                    );
-                    bookmarks.add(entry);
-                }
-
-                return bookmarks;
-            } finally {
-                Utils.close(bookmarksReader);
+            List<Bookmark.Entry> bookmarks = new ArrayList<>();
+            while ((line = bookmarksReader.readLine()) != null) {
+                JSONObject object = new JSONObject(line);
+                final String folderName = object.getString(KEY_FOLDER);
+                final Bookmark.Entry entry = new Bookmark.Entry(
+                    object.getString(KEY_TITLE),
+                    object.getString(KEY_URL),
+                    object.getInt(KEY_ORDER),
+                    WebPageKt.asFolder(folderName)
+                );
+                bookmarks.add(entry);
             }
-        });
+
+            return bookmarks;
+        } finally {
+            Utils.close(bookmarksReader);
+        }
     }
 
     /**

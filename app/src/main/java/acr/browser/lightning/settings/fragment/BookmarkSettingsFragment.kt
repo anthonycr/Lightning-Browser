@@ -4,6 +4,8 @@
 package acr.browser.lightning.settings.fragment
 
 import acr.browser.lightning.R
+import acr.browser.lightning.bookmark.LegacyBookmarkImporter
+import acr.browser.lightning.bookmark.NetscapeBookmarkFormatImporter
 import acr.browser.lightning.database.bookmark.BookmarkExporter
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
@@ -24,6 +26,7 @@ import androidx.appcompat.app.AlertDialog
 import com.anthonycr.grant.PermissionsManager
 import com.anthonycr.grant.PermissionsResultAction
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import java.io.File
@@ -34,6 +37,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
 
     @Inject internal lateinit var bookmarkRepository: BookmarkRepository
     @Inject internal lateinit var application: Application
+    @Inject internal lateinit var netscapeBookmarkFormatImporter: NetscapeBookmarkFormatImporter
+    @Inject internal lateinit var legacyBookmarkImporter: LegacyBookmarkImporter
     @Inject @field:DatabaseScheduler internal lateinit var databaseScheduler: Scheduler
     @Inject @field:MainScheduler internal lateinit var mainScheduler: Scheduler
     @Inject internal lateinit var logger: Logger
@@ -197,23 +202,27 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
             if (fileList[which].isDirectory) {
                 showImportBookmarkDialog(fileList[which])
             } else {
-                importSubscription = BookmarkExporter
-                    .importBookmarksFromFile(fileList[which])
+                Single.fromCallable(fileList[which]::inputStream)
+                    .map {
+                        if (fileList[which].extension == EXTENSION_HTML) {
+                            netscapeBookmarkFormatImporter.importBookmarks(it)
+                        } else {
+                            legacyBookmarkImporter.importBookmarks(it)
+                        }
+                    }
+                    .flatMap {
+                        bookmarkRepository.addBookmarkList(it).andThen(Single.just(it.size))
+                    }
                     .subscribeOn(databaseScheduler)
                     .observeOn(mainScheduler)
                     .subscribeBy(
-                        onSuccess = { importList ->
-                            bookmarkRepository.addBookmarkList(importList)
-                                .subscribeOn(databaseScheduler)
-                                .observeOn(mainScheduler)
-                                .subscribe {
-                                    activity?.apply {
-                                        snackbar("${importList.size} ${getString(R.string.message_import)}")
-                                    }
-                                }
+                        onSuccess = { count ->
+                            activity?.apply {
+                                snackbar("$count ${getString(R.string.message_import)}")
+                            }
                         },
-                        onError = { throwable ->
-                            logger.log(TAG, "onError: importing bookmarks", throwable)
+                        onError = {
+                            logger.log(TAG, "onError: importing bookmarks", it)
                             val activity = activity
                             if (activity != null && !activity.isFinishing && isAdded) {
                                 Utils.createInformativeDialog(activity, R.string.title_error, R.string.import_bookmark_error)
@@ -230,6 +239,8 @@ class BookmarkSettingsFragment : AbstractSettingsFragment() {
     companion object {
 
         private const val TAG = "BookmarkSettingsFrag"
+
+        private const val EXTENSION_HTML = "html"
 
         private const val SETTINGS_EXPORT = "export_bookmark"
         private const val SETTINGS_IMPORT = "import_bookmark"
