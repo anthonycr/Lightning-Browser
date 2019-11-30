@@ -141,8 +141,8 @@ public final class BookmarkExporter {
                 JSONObject object = new JSONObject(line);
                 final String folderName = object.getString(KEY_FOLDER);
                 final Bookmark.Entry entry = new Bookmark.Entry(
-                    object.getString(KEY_TITLE),
                     object.getString(KEY_URL),
+                    object.getString(KEY_TITLE),
                     object.getInt(KEY_ORDER),
                     WebPageKt.asFolder(folderName)
                 );
