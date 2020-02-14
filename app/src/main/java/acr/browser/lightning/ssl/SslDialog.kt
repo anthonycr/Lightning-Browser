@@ -8,7 +8,6 @@ import android.net.http.SslCertificate
 import android.text.format.DateFormat
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.dialog_ssl_info.view.*
 
 /**
  * Shows an informative dialog with the provided [SslCertificate] information.

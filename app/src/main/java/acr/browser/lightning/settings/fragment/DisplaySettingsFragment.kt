@@ -21,8 +21,6 @@ import javax.inject.Inject
 
 class DisplaySettingsFragment : AbstractSettingsFragment() {
 
-    private lateinit var themeOptions: Array<String>
-
     @Inject internal lateinit var userPreferences: UserPreferences
 
     override fun providePreferencesXmlResource() = R.xml.preference_display

@@ -2,6 +2,7 @@ package acr.browser.lightning.adblock.util.hash
 
 import java.io.InputStream
 import java.security.MessageDigest
+import java.util.*
 
 /**
  * Compute and return the MD5 hash of the [InputStream].
@@ -28,5 +29,5 @@ fun InputStream.computeMD5(): String {
         t.printStackTrace()
     }
 
-    return returnVal.toUpperCase()
+    return returnVal.toUpperCase(Locale.ROOT)
 }
