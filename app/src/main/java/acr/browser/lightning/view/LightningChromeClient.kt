@@ -81,7 +81,7 @@ class LightningChromeClient(
         }
         uiController.tabChanged(lightningView)
         if (view != null && view.url != null) {
-            uiController.updateHistory(title, view.url)
+            uiController.updateHistory(title, view.url.orEmpty())
         }
     }
 
