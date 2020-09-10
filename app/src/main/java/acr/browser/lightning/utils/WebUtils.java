@@ -2,8 +2,6 @@ package acr.browser.lightning.utils;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebStorage;
@@ -11,6 +9,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewDatabase;
 
 import acr.browser.lightning.database.history.HistoryRepository;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.reactivex.Scheduler;
 
 /**
@@ -27,7 +27,6 @@ public final class WebUtils {
         } else {
             //noinspection deprecation
             CookieSyncManager.createInstance(context);
-            //noinspection deprecation
             c.removeAllCookie();
         }
     }

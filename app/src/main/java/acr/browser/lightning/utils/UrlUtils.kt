@@ -24,6 +24,7 @@ import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
 import android.util.Patterns
 import android.webkit.URLUtil
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -43,8 +44,8 @@ fun smartUrlFilter(url: String, canBeSearch: Boolean, searchUrl: String): String
     val matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl)
     if (matcher.matches()) {
         // force scheme to lowercase
-        val scheme = matcher.group(1)
-        val lcScheme = scheme.toLowerCase()
+        val scheme = requireNotNull(matcher.group(1)) { "matches() implies this is non null" }
+        val lcScheme = scheme.toLowerCase(Locale.getDefault())
         if (lcScheme != scheme) {
             inUrl = lcScheme + matcher.group(2)
         }
