@@ -30,7 +30,6 @@
     <string name="location">Accéder à ma position</string>
     <string name="password">Enregistrer les mots de passe</string>
     <string name="agent">Agent utilisateur</string>
-    <string name="flash">Activer Adobe Flash</string>
     <string name="home">Page d\'accueil</string>
     <string name="fullscreen">Mode plein écran</string>
     <string name="java">Activer JavaScript</string>
@@ -111,7 +110,6 @@
     <string name="download_sdcard_busy_dlg_title">Stockage USB indisponible</string>
     <string name="download_sdcard_busy_dlg_msg">Le stockage est occupé. Pour autoriser les téléchargements, appuyez sur Désactiver le stockage USB dans la notification.</string>
     <string name="incognito_cookies">Activer les cookies en mode incognito</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuel</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contact</string>

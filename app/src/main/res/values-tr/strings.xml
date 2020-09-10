@@ -14,7 +14,6 @@
     <string name="location">Konum erişimi</string>
     <string name="password">Şifrelerinizi kaydedin</string>
     <string name="agent">Tarayıcı kimliği</string>
-    <string name="flash">Adobe Flash\'ı etkinleştir</string>
     <string name="home">Ana sayfa</string>
     <string name="fullscreen">Tam ekran modu</string>
     <string name="java">Javascript\'i etkinleştir</string>
@@ -96,7 +95,6 @@
     <string name="download_sdcard_busy_dlg_title">USB depolamasına erişilemez</string>
     <string name="download_sdcard_busy_dlg_msg">Depolama meşgul. İndirmeleri aktif etmek için bildirimler ekranından USB depolamasını kapatın.</string>
     <string name="incognito_cookies">Gizli modda çerezleri etkinleştir</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">El ile</string>
     <string name="action_auto">Otomatik</string>
     <string name="action_follow_me">Benimle iletişim kurun</string>
@@ -270,7 +268,6 @@
     <string name="message_added_to_homescreen">Ana ekrana kısayol eklendi</string>
     <string name="shortcut_message_failed_to_add">Üzgünüz, başlatıcınız kısayolları desteklemiyor.</string>
     <string name="action_delete_all_bookmarks">Tüm yer işaretlerini sil</string>
-    <string name="flash_not_supported">Flash Player, sisteminiz tarafından desteklenmiyor</string>
     <string name="upsell_plus_version">Reklamları engellemek için Lightning Plus\'a geçin</string>
     <string name="message_open_download_fail">Bu dosya artık mevcut değil</string>
 

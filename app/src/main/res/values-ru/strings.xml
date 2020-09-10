@@ -12,7 +12,6 @@
     <string name="location">Местоположение</string>
     <string name="password">Сохранять пароли</string>
     <string name="agent">User Agent</string>
-    <string name="flash">Включить Adobe Flash</string>
     <string name="home">Новая вкладка</string>
     <string name="fullscreen">Во весь экран</string>
     <string name="java">Включить JavaScript</string>
@@ -93,7 +92,6 @@
     <string name="download_sdcard_busy_dlg_title">Карта памяти недоступна</string>
     <string name="download_sdcard_busy_dlg_msg">Карта памяти подключена к ПК. Для начала загрузки отключите её от ПК, нажав на уведомление.</string>
     <string name="incognito_cookies">Включить куки в режиме инкогнито</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Вручную</string>
     <string name="action_auto">Автоматически</string>
     <string name="action_follow_me">Связаться с разработчиками</string>
@@ -238,7 +236,6 @@
     <string name="dialog_remove_from_history">Удалить из истории</string>
     <string name="dialog_rename_folder">Переименовать папку</string>
     <string name="dialog_title_close_browser">Закрыть браузер</string>
-    <string name="flash_not_supported">Flash Player не поддерживается системой</string>
     <string name="hosts_source">Файл списка заблокированной рекламы</string>
     <string name="label_realm">Серверное сообщение: %s</string>
     <string name="message_bookmark_added">Закладка добавлена</string>

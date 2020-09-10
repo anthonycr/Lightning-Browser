@@ -14,7 +14,6 @@
     <string name="location">Location access</string>
     <string name="password">Save your passwords</string>
     <string name="agent">User agent</string>
-    <string name="flash">Enable Adobe Flash</string>
     <string name="home">Homepage</string>
     <string name="fullscreen">Full-screen mode</string>
     <string name="java">Enable JavaScript</string>
@@ -97,7 +96,6 @@
     <string name="download_sdcard_busy_dlg_msg">The storage is busy. To allow downloads, touch \'Turn Off USB Storage\' in the notification.</string>
     <string name="incognito_cookies">Enable cookies in incognito mode</string>
     <string name="incognito_cookies_pie">Incognito mode runs in a separate process that is reset after each session. Incognito cookie preferences are now controlled by the regular cookie preferences.</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contact me</string>
@@ -271,7 +269,6 @@
     <string name="message_added_to_homescreen">Shortcut added to home screen</string>
     <string name="shortcut_message_failed_to_add">Sorry, your launcher does not support shortcuts.</string>
     <string name="action_delete_all_bookmarks">Delete all bookmarks</string>
-    <string name="flash_not_supported">Flash Player is not supported by your system</string>
     <string name="upsell_plus_version">Upgrade to Lightning Plus to block ads</string>
     <string name="message_open_download_fail">This file doesn\'t exist anymore</string>
 

@@ -29,7 +29,6 @@
     <string name="location">Hely hozzáférés</string>
     <string name="password">Jelszavak mentése</string>
     <string name="agent">Felhasználó Ügynök</string>
-    <string name="flash">Adobe Flash bekapcsolása</string>
     <string name="home">Főoldal</string>
     <string name="fullscreen">Teljes képernyős mód</string>
     <string name="java">JavaScript bekapcsolása</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">USB-tár nem elérhető</string>
     <string name="download_sdcard_busy_dlg_msg" >A tároló dolgozik.Hogy engedélyezze a letöltéseket , érintse meg az USB-tár kikapcsolását az értesítésnél.</string>
     <string name="incognito_cookies">Cookie-k engedélyezése inkognitó módban</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Kézi</string>
     <string name="action_auto">Automata</string>
     <string name="action_follow_me">Vedd fel velem a kapcsolatot</string>

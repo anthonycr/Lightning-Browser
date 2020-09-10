@@ -29,7 +29,6 @@
     <string name="location">Приступ локацији</string>
     <string name="password">Сачувај лозинке</string>
     <string name="agent">Идентификација</string>
-    <string name="flash">Адобов Флеш</string>
     <string name="home">Почетна страница</string>
     <string name="fullscreen">Цео екран</string>
     <string name="java">Омогући јаваскрипте</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">УСБ складиште није доступно</string>
     <string name="download_sdcard_busy_dlg_msg">Складиште је заузето. Да дозволите преузимања, додирните „Искључи УСБ складиште“ у обавештењу.</string>
     <string name="incognito_cookies">Омогући колачиће у приватном режиму</string>
-    <string name="title_flash">Адобов Флеш</string>
     <string name="action_manual">Ручно</string>
     <string name="action_auto">Аутоматски</string>
     <string name="action_follow_me">Контактирајте ме</string>

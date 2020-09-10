@@ -28,7 +28,6 @@
     <string name="location">Acesso de localização</string>
     <string name="password">Salvar senhas</string>
     <string name="agent">Agente</string>
-    <string name="flash">Ativar Adobe Flash</string>
     <string name="home">Página inicial</string>
     <string name="fullscreen">Modo de tela completa</string>
     <string name="java">Ativar JavaScript</string>
@@ -104,7 +103,6 @@
     <string name="download_sdcard_busy_dlg_title">Cartão SD não disponível</string>
     <string name="download_sdcard_busy_dlg_msg">O cartão SD está ocupado. Para poder transferir arquivos, desative a opção Desativar armazenamento USB na notificação.</string>
     <string name="incognito_cookies">Permitir cookies no modo anônimo</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
     <string name="action_auto">Automático</string>
     <string name="action_follow_me">Contato</string>

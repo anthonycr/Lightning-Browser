@@ -14,7 +14,6 @@
     <string name="location">Standortzugriff erlauben</string>
     <string name="password">Passwörter speichern</string>
     <string name="agent">User-Agent</string>
-    <string name="flash">Adobe Flash aktivieren</string>
     <string name="home">Startseite</string>
     <string name="fullscreen">Vollbildmodus aktivieren</string>
     <string name="java">JavaScript aktivieren</string>
@@ -97,7 +96,6 @@
     <string name="download_sdcard_busy_dlg_title">USB-Speicher nicht verfügbar</string>
     <string name="download_sdcard_busy_dlg_msg">Speicher in Benutzung. Um das Herunterladen zu ermöglichen, schalten Sie den USB-Speicher in der Benachrichtigung aus.</string>
     <string name="incognito_cookies">Cookies im Inkognito-Modus aktivieren</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manuell</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Kontakt</string>
@@ -236,7 +234,6 @@
     <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
     <string name="shortcut_message_failed_to_add">Ihr Launcher unterstützt keine Verknüpfungen!</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="flash_not_supported">Flash Player wird von Ihrem System nicht unterstützt!</string>
     <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren!</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
 	

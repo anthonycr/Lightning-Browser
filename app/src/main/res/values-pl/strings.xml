@@ -33,8 +33,7 @@
 	<string name="faq">FAQ</string>
 	<string name="message_open_download_fail">Ten plik już nie istnieje</string>
 	<string name="upsell_plus_version">Przejdź na Lightning Plus, aby blokować reklamy</string>
-	<string name="flash_not_supported">Twój system nie obsługuje Flash Playera</string>
-	<string name="action_delete_all_bookmarks">Usuń wszystkie zakładki</string>
+    <string name="action_delete_all_bookmarks">Usuń wszystkie zakładki</string>
 	<string name="shortcut_message_failed_to_add">Twój launcher nie obsługuje skrótów.</string>
 	<string name="message_added_to_homescreen">Dodano skrót do ekranu głównego</string>
 	<string name="action_add_to_homescreen">Dodaj do ekranu głównego</string>
@@ -154,8 +153,7 @@
 	<string name="action_follow_me">Skontaktuj się z autorem</string>
 	<string name="action_auto">Automatycznie</string>
 	<string name="action_manual">Ręcznie</string>
-	<string name="title_flash">Adobe Flash</string>
-	<string name="incognito_cookies">Włącz ciasteczka w trybie Incognito</string>
+    <string name="incognito_cookies">Włącz ciasteczka w trybie Incognito</string>
 	<string name="download_sdcard_busy_dlg_msg">Pamięć USB jest zablokowana. By umożliwić pobieranie plików, dotknij \"Wyłącz pamięć USB\" w powiadomieniu.</string>
 	<string name="download_sdcard_busy_dlg_title">Pamięć USB niedostępna</string>
 	<string name="download_no_sdcard_dlg_msg">Pamięć USB jest wymagana do pobrania tego pliku.</string>
@@ -236,8 +234,7 @@
 	<string name="java">Włącz Javascript</string>
 	<string name="fullscreen">Tryb pełnoekranowy</string>
 	<string name="home">Strona domowa</string>
-	<string name="flash">Włącz Adobe Flash</string>
-	<string name="agent">Przedstawiaj się jako</string>
+    <string name="agent">Przedstawiaj się jako</string>
 	<string name="password">Zapisuj hasła</string>
 	<string name="location">Dostęp do geolokalizacji</string>
 	<string name="settings">Ustawienia</string>

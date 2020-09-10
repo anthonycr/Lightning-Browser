@@ -29,7 +29,6 @@
     <string name="location">Posizione</string>
     <string name="password">Salva password</string>
     <string name="agent">User Agent</string>
-    <string name="flash">Abilita Adobe Flash</string>
     <string name="home">Pagina iniziale</string>
     <string name="fullscreen">Schermo intero</string>
     <string name="java">Abilita JavaScript</string>
@@ -110,7 +109,6 @@
     <string name="download_sdcard_busy_dlg_title">Nessuna unità USB disponibile</string>
     <string name="download_sdcard_busy_dlg_msg">Unità USB occupata. Per continuare il download, spegnere l\'unità USB dalla notifica.</string>
     <string name="incognito_cookies">Abilita i cookie nella modalità incognito</string>
-    <string name="title_flash">Adobe Flash Player</string>
     <string name="action_manual">Manuale</string>
     <string name="action_auto">Automatica</string>
     <string name="action_follow_me">Contattami</string>
@@ -236,7 +234,6 @@
     <string name="message_added_to_homescreen">Scorciatoia aggiunta</string>
     <string name="action_delete_all_bookmarks">Cancella tutti i segnalibri</string>
     <string name="swap_bookmarks_and_tabs">Inverti pannello segnalibri con schede</string>
-    <string name="flash_not_supported">Flash Player non è supportato dal tuo sistema</string>
 
     <string name="faq">FAQ</string>
     <string name="faq_description">Domande più frequenti</string>

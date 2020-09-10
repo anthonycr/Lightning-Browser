@@ -11,7 +11,6 @@
     <string name="location">Permitir acceso a tu ubicación</string>
     <string name="password">Almacenar tus contraseñas</string>
     <string name="agent">Agente de usuario</string>
-    <string name="flash">Habilitar Adobe Flash</string>
     <string name="home">Página de inicio</string>
     <string name="fullscreen">Modo de pantalla completa</string>
     <string name="java">Habilitar JavaScript</string>
@@ -89,7 +88,6 @@
     <string name="download_sdcard_busy_dlg_title">Almacenamiento USB no disponible</string>
     <string name="download_sdcard_busy_dlg_msg">El almacenamiento está ocupado. Para permitir las descargar, desactiva el almacenamiento USB desde el área de notificación.</string>
     <string name="incognito_cookies">Habilitar cookies en el modo incógnito</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">Manual</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contáctame</string>

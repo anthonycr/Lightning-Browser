@@ -14,7 +14,6 @@
     <string name="location">位置信息访问</string>
     <string name="password">保存密码</string>
     <string name="agent">用户代理</string>
-    <string name="flash">启用 Adobe Flash</string>
     <string name="home">主页</string>
     <string name="fullscreen">全屏模式</string>
     <string name="java">启用 JavaScript</string>
@@ -96,7 +95,6 @@
     <string name="download_sdcard_busy_dlg_msg">存储设备正忙。要允许下载，请轻触通知中的“关闭 USB 存储”</string>
     <string name="incognito_cookies">在无痕模式下启用 Cookie</string>
     <string name="incognito_cookies_pie">无痕模式运行于单独的进程，并在会话结束后重置。无痕模式下的 Cookie 设置由常规的 Cookie 选项控制。</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">手动</string>
     <string name="action_auto">自动</string>
     <string name="action_follow_me">联系我</string>
@@ -260,7 +258,6 @@
     <string name="message_added_to_homescreen">快捷方式已添加到桌面</string>
     <string name="shortcut_message_failed_to_add">抱歉，你的桌面应用不支持快捷方式</string>
     <string name="action_delete_all_bookmarks">删除所有书签</string>
-    <string name="flash_not_supported">你的系统不支持 Flash Player</string>
     <string name="upsell_plus_version">升级到 Lightning Plus 以屏蔽广告</string>
     <string name="message_open_download_fail">文件不存在</string>
 

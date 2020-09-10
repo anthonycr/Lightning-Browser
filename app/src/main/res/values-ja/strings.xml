@@ -14,7 +14,6 @@
     <string name="location">位置情報の使用を許可する</string>
     <string name="password">パスワードを記憶する</string>
     <string name="agent">ユーザーエージェント</string>
-    <string name="flash">Adobe Flash を有効にする</string>
     <string name="home">ホームページ</string>
     <string name="fullscreen">全画面モード</string>
     <string name="java">JavaScript を有効にする</string>
@@ -96,7 +95,6 @@
     <string name="download_sdcard_busy_dlg_title">USB ストレージが使用できません</string>
     <string name="download_sdcard_busy_dlg_msg">ストレージがビジー状態です。ダウンロードするには、ステータスバーの \"USB ストレージをオフにする\" をタップしてください</string>
     <string name="incognito_cookies">シークレットタブで Cookie を有効にする</string>
-    <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">手動</string>
     <string name="action_auto">自動</string>
     <string name="action_follow_me">問い合わせ先</string>
@@ -226,7 +224,6 @@
     <string name="action_add_to_homescreen">ホーム画面に追加</string>
     <string name="message_added_to_homescreen">ホーム画面にショートカットを追加しました</string>
     <string name="action_delete_all_bookmarks">すべてのブックマークを削除する</string>
-    <string name="flash_not_supported">このシステムは Flash Player をサポートしていません</string>
     <string name="upsell_plus_version">広告をブロックするには Lightning Plus へアップグレードしてください</string>
     <string name="message_open_download_fail">このファイルは存在しません</string>
 
