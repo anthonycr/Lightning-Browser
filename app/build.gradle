@@ -102,12 +102,12 @@ dependencies {
 
     // test dependencies
     testImplementation 'junit:junit:4.13'
-    testImplementation 'org.assertj:assertj-core:3.15.0'
-    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation 'org.assertj:assertj-core:3.17.2'
+    testImplementation 'org.mockito:mockito-core:3.5.10'
     testImplementation 'com.nhaarman:mockito-kotlin:1.6.0', {
         exclude group: 'org.jetbrains.kotlin'
     }
-    testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation 'org.robolectric:robolectric:4.4'
 
     // support libraries
     implementation "androidx.palette:palette:1.0.0"
@@ -130,7 +130,7 @@ dependencies {
     kapt "com.anthonycr.mezzanine:mezzanine-compiler:$mezzanineVersion"
 
     // dependency injection
-    final def daggerVersion = '2.28.3'
+    final def daggerVersion = '2.29'
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     compileOnly 'javax.annotation:jsr250-api:1.0'
@@ -144,14 +144,14 @@ dependencies {
     implementation 'com.anthonycr.grant:permissions:1.1.2'
 
     // proxy support
-    implementation 'net.i2p.android:client:0.9.42'
+    implementation 'net.i2p.android:client:0.9.45'
     implementation 'net.i2p.android:helper:0.9.5'
 
     implementation 'com.squareup.okhttp3:okhttp:3.14.9'
 
     // rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 
     // tor proxy
