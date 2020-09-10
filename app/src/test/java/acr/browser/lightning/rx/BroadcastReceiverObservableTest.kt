@@ -3,10 +3,12 @@ package acr.browser.lightning.rx
 import acr.browser.lightning.SDK_VERSION
 import acr.browser.lightning.TestApplication
 import android.content.Intent
+import android.os.Looper.getMainLooper
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 /**
@@ -34,6 +36,7 @@ class BroadcastReceiverObservableTest {
 
         intentList.forEach(application::sendBroadcast)
 
+        shadowOf(getMainLooper()).idle()
         broadcastObservable.assertValues(*intentList.toTypedArray())
     }
 
@@ -72,6 +75,7 @@ class BroadcastReceiverObservableTest {
         broadcastObservable.dispose()
         application.sendBroadcast(postDisposeIntent)
 
+        shadowOf(getMainLooper()).idle()
         broadcastObservable.assertValue(intent)
     }
 }
