@@ -124,7 +124,7 @@ class TabsManager @Inject constructor(
      */
     private fun initializeRegularMode(initialUrl: String?, activity: Activity): Observable<TabInitializer> =
         restorePreviousTabs()
-            .concatWith(Maybe.fromCallable<TabInitializer> {
+            .concatWith(Maybe.fromCallable {
                 return@fromCallable initialUrl?.let {
                     if (URLUtil.isFileUrl(it)) {
                         PermissionInitializer(it, activity, homePageInitializer)

@@ -23,7 +23,7 @@ inline fun <T, R, Selector_T, Selector_R, S> Flowable<T>.join(
     crossinline join: (T, R) -> S
 ): Flowable<S> = join<R, Selector_T, Selector_R, S>(
     other,
-    io.reactivex.functions.Function { selectorLeft(it) },
-    io.reactivex.functions.Function { selectorRight(it) },
-    BiFunction { t1, t2 -> join(t1, t2) }
+    { selectorLeft(it) },
+    { selectorRight(it) },
+    { t1, t2 -> join(t1, t2) }
 )

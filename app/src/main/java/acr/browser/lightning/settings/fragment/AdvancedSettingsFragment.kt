@@ -92,7 +92,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
      * @param summaryUpdater the command which allows the summary to be updated.
      */
     private fun showRenderingDialogPicker(summaryUpdater: SummaryUpdater) {
-        activity?.let { AlertDialog.Builder(it) }?.apply {
+        activity?.let(AlertDialog::Builder)?.apply {
             setTitle(resources.getString(R.string.rendering_mode))
 
             val values = RenderingMode.values().map { Pair(it, it.toDisplayString()) }
@@ -133,7 +133,7 @@ class AdvancedSettingsFragment : AbstractSettingsFragment() {
      * @param summaryUpdater the command which allows the summary to be updated.
      */
     private fun showUrlBoxDialogPicker(summaryUpdater: SummaryUpdater) {
-        activity?.let { AlertDialog.Builder(it) }?.apply {
+        activity?.let(AlertDialog::Builder)?.apply {
             setTitle(resources.getString(R.string.url_contents))
 
             val items = SearchBoxDisplayChoice.values().map { Pair(it, it.toDisplayString()) }

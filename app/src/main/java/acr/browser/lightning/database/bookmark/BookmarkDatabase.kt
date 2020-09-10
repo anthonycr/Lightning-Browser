@@ -171,9 +171,8 @@ class BookmarkDatabase @Inject constructor(
         database.update(TABLE_BOOKMARK, contentValues, "$KEY_FOLDER=?", arrayOf(oldName))
     }
 
-    override fun deleteFolder(folderToDelete: String): Completable = Completable.fromAction {
-        renameFolder(folderToDelete, "").subscribe()
-    }
+    override fun deleteFolder(folderToDelete: String): Completable =
+        Completable.fromAction(renameFolder(folderToDelete, "")::subscribe)
 
     override fun deleteAllBookmarks(): Completable = Completable.fromAction {
         database.run {

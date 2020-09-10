@@ -110,6 +110,7 @@ class LightningView(
             }
             uiController.tabChanged(this)
         }
+
     /**
      * Gets whether or not the page rendering is inverted or not. The main purpose of this is to
      * indicate that JavaScript should be run at the end of a page load to invert only the images
@@ -804,9 +805,9 @@ class LightningView(
      */
     private inner class TouchListener : OnTouchListener {
 
-        internal var location: Float = 0f
-        internal var y: Float = 0f
-        internal var action: Int = 0
+        var location: Float = 0f
+        var y: Float = 0f
+        var action: Int = 0
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onTouch(view: View?, arg1: MotionEvent): Boolean {

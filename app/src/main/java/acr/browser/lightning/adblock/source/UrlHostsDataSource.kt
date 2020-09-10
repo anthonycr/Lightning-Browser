@@ -50,7 +50,7 @@ class UrlHostsDataSource(
                         emitter.onSuccess(HostsResult.Success(domains))
                     }
                 })
-            }.onIOExceptionResumeNext { HostsResult.Failure(it) }
+            }.onIOExceptionResumeNext(HostsResult::Failure)
         }
 
     override fun identifier(): String = url.toString()

@@ -251,8 +251,7 @@ class GeneralSettingsFragment : AbstractSettingsFragment() {
             val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null)
             val getDownload = dialogView.findViewById<EditText>(R.id.dialog_edit_text)
 
-            val errorColor = ContextCompat.getColor(activity
-                , R.color.error_red)
+            val errorColor = ContextCompat.getColor(activity, R.color.error_red)
             val regularColor = ThemeUtils.getTextColor(activity)
             getDownload.setTextColor(regularColor)
             getDownload.addTextChangedListener(DownloadLocationTextWatcher(getDownload, errorColor, regularColor))

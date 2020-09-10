@@ -36,7 +36,7 @@ class FileHostsDataSource constructor(
 
         logger.log(TAG, "Loaded ${domains.size} domains")
         emitter.onSuccess(HostsResult.Success(domains))
-    }.onIOExceptionResumeNext { HostsResult.Failure(it) }
+    }.onIOExceptionResumeNext(HostsResult::Failure)
 
     override fun identifier(): String = file.inputStream().computeMD5()
 
