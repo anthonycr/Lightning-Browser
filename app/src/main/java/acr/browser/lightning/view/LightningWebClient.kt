@@ -215,7 +215,7 @@ class LightningWebClient(
         for (messageCode in errorCodeMessageCodes) {
             stringBuilder.append(" - ").append(activity.getString(messageCode)).append('\n')
         }
-        val alertMessage = activity.getString(R.string.message_insecure_connection, stringBuilder.toString())
+        val alertMessage = activity.getString(R.string.message_insecure_connection, stringBuilder.toString(), webView.url)
 
         AlertDialog.Builder(activity).apply {
             val view = LayoutInflater.from(activity).inflate(R.layout.dialog_ssl_warning, null)
