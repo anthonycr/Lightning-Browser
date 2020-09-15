@@ -60,6 +60,9 @@ class BrowserPresenter @Inject constructor(
     private var canGoBackDisposable: Disposable? = null
     private var canGoForwardDisposable: Disposable? = null
 
+    /**
+     * TODO
+     */
     fun onViewAttached(view: BrowserContract.View) {
         this.view = view
         view.updateState(viewState)
@@ -190,6 +193,9 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * TODO
+     */
     fun onViewDetached() {
         view = null
         compositeDisposable.dispose()
@@ -202,6 +208,9 @@ class BrowserPresenter @Inject constructor(
         canGoForwardDisposable?.dispose()
     }
 
+    /**
+     * TODO
+     */
     fun onTabClick(index: Int) {
         selectTab(model.selectTab(viewState.tabs[index].id))
     }
@@ -219,6 +228,9 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * TODO
+     */
     fun onTabClose(index: Int) {
         val nextTab = viewState.tabs.nextSelected(index)
 
@@ -235,22 +247,34 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * TODO
+     */
     fun onBackClick() {
         if (currentTab?.canGoBack() == true) {
             currentTab?.goBack()
         }
     }
 
+    /**
+     * TODO
+     */
     fun onForwardClick() {
         if (currentTab?.canGoForward() == true) {
             currentTab?.goForward()
         }
     }
 
+    /**
+     * TODO
+     */
     fun onHomeClick() {
         currentTab?.loadUrl("https://google.com")
     }
 
+    /**
+     * TODO
+     */
     fun onNewTabClick() {
         compositeDisposable += model.createTab(homePageInitializer)
             .observeOn(mainScheduler)
@@ -259,6 +283,9 @@ class BrowserPresenter @Inject constructor(
             }
     }
 
+    /**
+     * TODO
+     */
     fun onRefreshOrStopClick() {
         if (currentTab?.loadingProgress != 100) {
             currentTab?.stopLoading()
@@ -267,6 +294,9 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    /**
+     * TODO
+     */
     fun onSearch(query: String) {
         currentTab?.stopLoading()
         val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
@@ -281,6 +311,9 @@ class BrowserPresenter @Inject constructor(
         currentTab?.loadUrl(url)
     }
 
+    /**
+     * TODO
+     */
     fun onSearchSuggestionClicked(webPage: WebPage) {
         val url = when (webPage) {
             is HistoryEntry,
@@ -292,10 +325,16 @@ class BrowserPresenter @Inject constructor(
         onSearch(url)
     }
 
+    /**
+     * TODO
+     */
     fun onSslIconClick() {
-
+        // TODO
     }
 
+    /**
+     * TODO
+     */
     fun onBookmarkClick(index: Int) {
         when (val bookmark = viewState.bookmarks[index]) {
             is Bookmark.Entry -> currentTab?.loadUrl(bookmark.url)
@@ -314,26 +353,44 @@ class BrowserPresenter @Inject constructor(
 
     }
 
+    /**
+     * TODO
+     */
     fun onBookmarkLongClick(index: Int) {
 
     }
 
+    /**
+     * TODO
+     */
     fun onToolsClick() {
 
     }
 
+    /**
+     * TODO
+     */
     fun onStarClick() {
 
     }
 
+    /**
+     * TODO
+     */
     fun onReadingModeClick() {
 
     }
 
+    /**
+     * TODO
+     */
     fun onTabMenuClick() {
 
     }
 
+    /**
+     * TODO
+     */
     fun onBookmarkMenuClick() {
         if (currentFolder != Bookmark.Folder.Root) {
             compositeDisposable += bookmarkRepository
