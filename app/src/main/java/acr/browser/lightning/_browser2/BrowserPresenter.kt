@@ -11,7 +11,9 @@ import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
 import acr.browser.lightning.view.HomePageInitializer
@@ -31,7 +33,8 @@ class BrowserPresenter @Inject constructor(
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     private val historyRecord: HistoryRecord,
     private val homePageInitializer: HomePageInitializer,
-    private val searchBoxModel: SearchBoxModel
+    private val searchBoxModel: SearchBoxModel,
+    private val searchEngineProvider: SearchEngineProvider
 ) {
 
     private var view: BrowserContract.View? = null
@@ -266,7 +269,8 @@ class BrowserPresenter @Inject constructor(
 
     fun onSearch(query: String) {
         currentTab?.stopLoading()
-        val url = smartUrlFilter(query, true, SEARCH)
+        val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
+        val url = smartUrlFilter(query, true, searchUrl)
         view?.updateState(viewState.copy(
             displayUrl = searchBoxModel.getDisplayContent(
                 url = currentTab?.url.orEmpty(),
@@ -345,9 +349,5 @@ class BrowserPresenter @Inject constructor(
     private fun BrowserContract.View?.updateState(state: BrowserViewState) {
         viewState = state
         this?.renderState(viewState)
-    }
-
-    private companion object {
-        private const val SEARCH = "https://www.google.com/search?client=lightning&ie=UTF-8&oe=UTF-8&q=%s"
     }
 }
