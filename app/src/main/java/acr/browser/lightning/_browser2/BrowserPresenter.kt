@@ -13,20 +13,23 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
+import acr.browser.lightning.view.HomePageInitializer
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
+import javax.inject.Inject
 
 /**
  * Created by anthonycr on 9/11/20.
  */
-class BrowserPresenter(
+class BrowserPresenter @Inject constructor(
     private val model: BrowserContract.Model,
     private val bookmarkRepository: BookmarkRepository,
     @MainScheduler private val mainScheduler: Scheduler,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
-    private val historyRecord: HistoryRecord
+    private val historyRecord: HistoryRecord,
+    private val homePageInitializer: HomePageInitializer
 ) {
 
     private var view: BrowserContract.View? = null
@@ -66,7 +69,7 @@ class BrowserPresenter(
         compositeDisposable += model.initializeTabs()
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
-            .switchIfEmpty(model.createTab(initialUrl = null).map(::listOf))
+            .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
             .subscribe { list ->
                 this.view.updateState(viewState.copy(tabs = list.map { it.asViewState() }))
                 selectTab(model.selectTab(list.last().id))
@@ -234,7 +237,7 @@ class BrowserPresenter(
     }
 
     fun onNewTabClick() {
-        compositeDisposable += model.createTab(initialUrl = null)
+        compositeDisposable += model.createTab(homePageInitializer)
             .observeOn(mainScheduler)
             .subscribe { tab ->
                 selectTab(model.selectTab(tab.id))

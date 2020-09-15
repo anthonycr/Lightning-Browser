@@ -2,23 +2,13 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
-import acr.browser.lightning._browser2.history.DefaultHistoryRecord
 import acr.browser.lightning._browser2.search.SearchListener
-import acr.browser.lightning._browser2.tab.TabPager
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
-import acr.browser.lightning._browser2.tab.TabsRepository
-import acr.browser.lightning._browser2.tab.WebViewFactory
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
-import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
-import acr.browser.lightning.database.bookmark.BookmarkDatabase
-import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.databinding.BrowserActivityBinding
-import acr.browser.lightning.device.ScreenSize
-import acr.browser.lightning.log.AndroidLogger
-import acr.browser.lightning.preference.UserPreferences
+import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.os.Bundle
@@ -28,8 +18,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
 /**
  * Created by anthonycr on 9/11/20.
@@ -37,9 +26,11 @@ import io.reactivex.schedulers.Schedulers
 class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
 
     private lateinit var binding: BrowserActivityBinding
-    private lateinit var presenter: BrowserPresenter
     private lateinit var tabsAdapter: TabRecyclerViewAdapter
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
+
+    @Inject
+    internal lateinit var presenter: BrowserPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,26 +39,11 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        presenter = BrowserPresenter(
-            bookmarkRepository = BookmarkDatabase(application),
-            model = TabsRepository(
-                webViewFactory = WebViewFactory(
-                    activity = this,
-                    logger = AndroidLogger(),
-                    userPreferences = UserPreferences(
-                        preferences = application.getSharedPreferences("settings", 0),
-                        screenSize = ScreenSize(this)
-                    )
-                ),
-                tabPager = TabPager(binding.contentFrame)
-            ),
-            mainScheduler = AndroidSchedulers.mainThread(),
-            databaseScheduler = Schedulers.single(),
-            historyRecord = DefaultHistoryRecord(
-                historyRepository = HistoryDatabase(application),
-                databaseScheduler = Schedulers.single()
-            )
-        )
+        injector.browser2ComponentBuilder()
+            .activity(this)
+            .browserFrame(binding.contentFrame)
+            .build()
+            .inject(this)
 
         tabsAdapter = TabRecyclerViewAdapter(
             onClick = presenter::onTabClick,

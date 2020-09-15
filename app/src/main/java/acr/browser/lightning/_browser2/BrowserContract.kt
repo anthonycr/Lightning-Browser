@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning.view.TabInitializer
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -23,7 +24,7 @@ interface BrowserContract {
 
         fun deleteTab(id: Int): Completable
 
-        fun createTab(initialUrl: String?): Single<TabModel>
+        fun createTab(tabInitializer: TabInitializer): Single<TabModel>
 
         fun selectTab(id: Int): TabModel
 

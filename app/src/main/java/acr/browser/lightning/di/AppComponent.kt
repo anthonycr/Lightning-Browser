@@ -1,6 +1,7 @@
 package acr.browser.lightning.di
 
 import acr.browser.lightning.BrowserApp
+import acr.browser.lightning._browser2.di.Browser2Component
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.browser.SearchBoxModel
@@ -21,10 +22,11 @@ import acr.browser.lightning.view.LightningWebClient
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import dagger.Module
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [(AppModule::class), (AppBindsModule::class)])
+@Component(modules = [AppModule::class, AppBindsModule::class, Submodules::class])
 interface AppComponent {
 
     @Component.Builder
@@ -85,4 +87,10 @@ interface AppComponent {
 
     fun provideNoOpAdBlocker(): NoOpAdBlocker
 
+    fun browser2ComponentBuilder(): Browser2Component.Builder
+
 }
+
+
+@Module(subcomponents = [Browser2Component::class])
+internal class Submodules

@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.view.FreezableBundleInitializer
 import acr.browser.lightning.view.TabInitializer
 import android.webkit.WebView
 import io.reactivex.Observable
@@ -10,7 +11,7 @@ import io.reactivex.subjects.PublishSubject
  * Created by anthonycr on 9/12/20.
  */
 class TabAdapter(
-    private val tabInitializer: TabInitializer,
+    tabInitializer: TabInitializer,
     private val webView: WebView,
 ) : TabModel {
 
@@ -26,6 +27,7 @@ class TabAdapter(
         goBackObservable = goBackObservable,
         goForwardObservable = goForwardObservable
     )
+    private var latentInitializer: TabInitializer? = null
 
     init {
         webView.webViewClient = tabWebViewClient
@@ -33,7 +35,11 @@ class TabAdapter(
             progressObservable = progressObservable,
             titleObservable = titleObservable
         )
-        tabInitializer.initialize(webView, emptyMap())
+        if (tabInitializer is FreezableBundleInitializer) {
+            latentInitializer = tabInitializer
+        } else {
+            tabInitializer.initialize(webView, emptyMap())
+        }
     }
 
     override val id: Int = webView.id
@@ -91,6 +97,8 @@ class TabAdapter(
             field = value
             if (field) {
                 webView.onResume()
+                latentInitializer?.initialize(webView, emptyMap())
+                latentInitializer = null
             } else {
                 webView.onPause()
             }

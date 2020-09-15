@@ -1,17 +1,19 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.BrowserContract
+import acr.browser.lightning.view.TabInitializer
 import acr.browser.lightning.view.UrlInitializer
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
 /**
  * Created by anthonycr on 9/12/20.
  */
-class TabsRepository(
+class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
     private val tabPager: TabPager
 ) : BrowserContract.Model {
@@ -30,10 +32,10 @@ class TabsRepository(
         tabsListObservable.onNext(tabsList)
     }
 
-    override fun createTab(initialUrl: String?): Single<TabModel> = Single.fromCallable<TabModel> {
+    override fun createTab(tabInitializer: TabInitializer): Single<TabModel> = Single.fromCallable<TabModel> {
         val webView = webViewFactory.createWebView(isIncognito = false)
         tabPager.addTab(webView)
-        val tabAdapter = TabAdapter(UrlInitializer(initialUrl ?: "https://google.com"), webView)
+        val tabAdapter = TabAdapter(tabInitializer, webView)
 
         tabsList += tabAdapter
 

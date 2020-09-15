@@ -3,11 +3,12 @@ package acr.browser.lightning._browser2.tab
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
+import javax.inject.Inject
 
 /**
  * Created by anthonycr on 9/12/20.
  */
-class TabPager(private val container: FrameLayout) {
+class TabPager @Inject constructor(private val container: FrameLayout) {
 
     private val webViews: MutableList<WebView> = mutableListOf()
 

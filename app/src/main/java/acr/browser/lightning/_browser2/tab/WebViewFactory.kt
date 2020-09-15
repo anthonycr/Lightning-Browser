@@ -14,11 +14,12 @@ import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebView
+import javax.inject.Inject
 
 /**
  * Created by anthonycr on 9/12/20.
  */
-class WebViewFactory(
+class WebViewFactory @Inject constructor(
     private val activity: Activity,
     private val logger: Logger,
     private val userPreferences: UserPreferences
