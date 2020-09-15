@@ -22,6 +22,10 @@ android {
         lightningLite.setRoot('src/LightningLite')
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         debug {
             multiDexEnabled true

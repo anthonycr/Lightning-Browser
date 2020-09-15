@@ -1,0 +1,415 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".browser.activity.BrowserActivity">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:id="@+id/ui_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:elevation="3dp"
+                android:fitsSystemWindows="true">
+
+                <FrameLayout
+                    android:id="@+id/tabs_toolbar_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingBottom="0dp"
+                    app:contentInsetEnd="0dp"
+                    app:contentInsetStart="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tabs_toolbar_container">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+
+                        <FrameLayout
+                            android:id="@+id/home_button"
+                            android:layout_width="?attr/actionBarSize"
+                            android:layout_height="match_parent"
+                            android:background="?attr/actionBarItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/home_image_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:contentDescription="@string/home"
+                                android:visibility="gone"
+                                app:srcCompat="@drawable/ic_action_home" />
+
+                            <acr.browser.lightning.icon.TabCountView
+                                android:id="@+id/tab_count_view"
+                                android:layout_width="@dimen/material_grid_small_icon"
+                                android:layout_height="@dimen/material_grid_small_icon"
+                                android:layout_gravity="center"
+                                app:tabIconBorderRadius="2dp"
+                                app:tabIconBorderWidth="3dp"
+                                app:tabIconColor="?attr/iconColor"
+                                app:tabIconTextSize="14dp" />
+                        </FrameLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/search_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginRight="2dp"
+                            android:layout_marginBottom="6dp"
+                            android:layout_weight="1"
+                            android:background="?attr/searchBackground"
+                            android:clipChildren="false"
+                            android:clipToPadding="false"
+                            android:descendantFocusability="beforeDescendants"
+                            android:elevation="2dp"
+                            android:focusableInTouchMode="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/search_ssl_status"
+                                android:layout_width="@dimen/material_grid_touch_small"
+                                android:layout_height="match_parent"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:padding="6dp"
+                                android:visibility="gone"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <acr.browser.lightning.view.SearchView
+                                android:id="@+id/search"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:background="@null"
+                                android:completionThreshold="1"
+                                android:dropDownAnchor="@+id/toolbar_layout"
+                                android:dropDownWidth="match_parent"
+                                android:gravity="start|center_vertical"
+                                android:hint="@string/search_hint"
+                                android:imeOptions="actionGo"
+                                android:importantForAutofill="no"
+                                android:inputType="textUri"
+                                android:maxLines="1"
+                                android:selectAllOnFocus="true"
+                                android:textColor="?attr/autoCompleteTitleColor"
+                                android:textColorHint="?attr/autoCompleteUrlColor"
+                                android:textCursorDrawable="@null"
+                                app:layout_constraintEnd_toStartOf="@+id/search_refresh"
+                                app:layout_constraintStart_toEndOf="@+id/search_ssl_status"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_goneMarginLeft="8dp" />
+
+                            <ImageView
+                                android:id="@+id/search_refresh"
+                                android:layout_width="@dimen/material_grid_touch_small"
+                                android:layout_height="match_parent"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="6dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/ic_action_refresh" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
+                </androidx.appcompat.widget.Toolbar>
+
+                <com.anthonycr.progress.AnimatedProgressBar
+                    android:id="@+id/progress_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/progress_bar_height"
+                    android:background="@color/transparent"
+                    app:bidirectionalAnimate="false"
+                    app:layout_constraintBottom_toBottomOf="@id/toolbar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:progressColor="?attr/colorAccent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/primary_color"
+                android:clipChildren="true" />
+
+            <LinearLayout
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/material_grid_touch_medium"
+                android:background="?attr/colorPrimary"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/search_query"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/material_grid_margin"
+                    android:textAppearance="?android:attr/textAppearanceListItem"
+                    android:textSize="22sp" />
+
+                <ImageButton
+                    android:id="@+id/button_back"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:tint="?attr/iconColor"
+                    app:srcCompat="@drawable/ic_action_collapse" />
+
+                <ImageButton
+                    android:id="@+id/button_next"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:tint="?attr/iconColor"
+                    app:srcCompat="@drawable/ic_action_expand" />
+
+                <ImageButton
+                    android:id="@+id/button_quit"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"
+                    android:tint="?attr/iconColor"
+                    app:srcCompat="@drawable/ic_action_delete" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/left_drawer"
+            android:layout_width="@dimen/navigation_drawer_max_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="?attr/drawerBackground"
+            android:clickable="true"
+            android:fitsSystemWindows="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/dividerColor"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/tab_header_button"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="match_parent"
+                    android:background="?attr/actionBarItemBackground"
+                    android:contentDescription="@string/action_new_tab"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_tabs" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/material_grid_margin"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:minHeight="?android:attr/listPreferredItemHeight"
+                    android:text="@string/tabs"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tabs_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:overScrollMode="ifContentScrolls" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/dividerColor"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <ImageView
+                    android:id="@+id/action_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_back"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_back" />
+
+                <ImageView
+                    android:id="@+id/action_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_homepage"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_home" />
+
+                <ImageView
+                    android:id="@+id/action_forward"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_forward"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_forward" />
+
+                <ImageView
+                    android:id="@+id/new_tab_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_new_tab"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_plus" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/right_drawer"
+            android:layout_width="@dimen/navigation_drawer_max_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="?attr/drawerBackground"
+            android:clickable="true"
+            android:fitsSystemWindows="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:id="@+id/bookmark_title_layout"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/dividerColor"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/bookmark_back_button"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="match_parent"
+                    android:background="?attr/actionBarItemBackground"
+                    android:contentDescription="@string/action_back"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_star" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/material_grid_margin"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:minHeight="?android:attr/listPreferredItemHeight"
+                    android:text="@string/action_bookmarks"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bookmark_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:divider="@null"
+                android:dividerHeight="0dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/dividerColor"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <ImageView
+                    android:id="@+id/action_page_tools"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/dialog_tools_title"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_page_tools" />
+
+                <ImageView
+                    android:id="@+id/action_add_bookmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_add_bookmark"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/state_ic_bookmark" />
+
+                <ImageView
+                    android:id="@+id/action_reading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/reading_mode"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_action_reading" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

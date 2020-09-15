@@ -48,7 +48,7 @@
             android:value="2.1"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name="._browser2.BrowserActivity"
             android:alwaysRetainTaskState="true"
             android:clearTaskOnLaunch="false"
             android:colorMode="wideColorGamut"
