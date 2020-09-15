@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.tab.Tab
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning.database.Bookmark
@@ -10,6 +11,7 @@ import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -23,7 +25,8 @@ class BrowserPresenter(
     private val model: BrowserContract.Model,
     private val bookmarkRepository: BookmarkRepository,
     @MainScheduler private val mainScheduler: Scheduler,
-    @DatabaseScheduler private val databaseScheduler: Scheduler
+    @DatabaseScheduler private val databaseScheduler: Scheduler,
+    private val historyRecord: HistoryRecord
 ) {
 
     private var view: BrowserContract.View? = null
@@ -130,6 +133,10 @@ class BrowserPresenter(
                 view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
                     it.copy(title = title)
                 }))
+
+                currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
+                    historyRecord.recordVisit(title, it)
+                }
             }
 
         urlDisposable?.dispose()

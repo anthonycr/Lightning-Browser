@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
+import acr.browser.lightning._browser2.history.DefaultHistoryRecord
 import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabPager
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
@@ -13,6 +14,7 @@ import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.database.bookmark.BookmarkDatabase
+import acr.browser.lightning.database.history.HistoryDatabase
 import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.log.AndroidLogger
@@ -60,7 +62,11 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
                 tabPager = TabPager(binding.contentFrame)
             ),
             mainScheduler = AndroidSchedulers.mainThread(),
-            databaseScheduler = Schedulers.single()
+            databaseScheduler = Schedulers.single(),
+            historyRecord = DefaultHistoryRecord(
+                historyRepository = HistoryDatabase(application),
+                databaseScheduler = Schedulers.single()
+            )
         )
 
         tabsAdapter = TabRecyclerViewAdapter(
