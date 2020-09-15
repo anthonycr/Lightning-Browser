@@ -303,8 +303,8 @@ class BrowserPresenter @Inject constructor(
         val url = smartUrlFilter(query, true, searchUrl)
         view?.updateState(viewState.copy(
             displayUrl = searchBoxModel.getDisplayContent(
-                url = currentTab?.url.orEmpty(),
-                title = currentTab?.url,
+                url = url,
+                title = currentTab?.title,
                 isLoading = (currentTab?.loadingProgress ?: 0) < 100
             )
         ))
