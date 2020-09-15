@@ -3,6 +3,7 @@ package acr.browser.lightning._browser2
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.tab.Tab
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.SearchSuggestion
@@ -29,7 +30,8 @@ class BrowserPresenter @Inject constructor(
     @MainScheduler private val mainScheduler: Scheduler,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     private val historyRecord: HistoryRecord,
-    private val homePageInitializer: HomePageInitializer
+    private val homePageInitializer: HomePageInitializer,
+    private val searchBoxModel: SearchBoxModel
 ) {
 
     private var view: BrowserContract.View? = null
@@ -106,7 +108,11 @@ class BrowserPresenter @Inject constructor(
         currentTab?.isForeground = true
 
         view.updateState(viewState.copy(
-            displayUrl = tabModel?.url.orEmpty(),
+            displayUrl = searchBoxModel.getDisplayContent(
+                url = tabModel?.url.orEmpty(),
+                title = tabModel?.title,
+                isLoading = (tabModel?.loadingProgress ?: 0) < 100
+            ),
             isForwardEnabled = tabModel?.canGoForward() ?: false,
             isBackEnabled = tabModel?.canGoBack() ?: false,
             sslState = tabModel?.sslState ?: SslState.None,
@@ -147,7 +153,13 @@ class BrowserPresenter @Inject constructor(
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
             ?.subscribe {
-                view.updateState(viewState.copy(displayUrl = it))
+                view.updateState(viewState.copy(
+                    displayUrl = searchBoxModel.getDisplayContent(
+                        url = tabModel.url,
+                        title = tabModel.title,
+                        isLoading = (tabModel.loadingProgress ?: 0) < 100
+                    )
+                ))
             }
 
         loadingDisposable?.dispose()
@@ -255,7 +267,13 @@ class BrowserPresenter @Inject constructor(
     fun onSearch(query: String) {
         currentTab?.stopLoading()
         val url = smartUrlFilter(query, true, SEARCH)
-        view?.updateState(viewState.copy(displayUrl = url))
+        view?.updateState(viewState.copy(
+            displayUrl = searchBoxModel.getDisplayContent(
+                url = currentTab?.url.orEmpty(),
+                title = currentTab?.url,
+                isLoading = (currentTab?.loadingProgress ?: 0) < 100
+            )
+        ))
         currentTab?.loadUrl(url)
     }
 

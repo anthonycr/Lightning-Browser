@@ -118,10 +118,10 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
     }
 
     private fun ImageView.updateVisibilityForDrawable() {
-        if (drawable == null) {
-            visibility = View.GONE
+        visibility = if (drawable == null) {
+            View.GONE
         } else {
-            visibility = View.VISIBLE
+            View.VISIBLE
         }
     }
 }
