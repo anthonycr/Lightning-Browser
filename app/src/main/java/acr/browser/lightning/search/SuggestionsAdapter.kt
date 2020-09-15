@@ -192,15 +192,15 @@ class SuggestionsAdapter(
 
             bookmarksEntries
                 .join(
-                    historyEntries,
-                    { bookmarksEntries },
-                    { historyEntries }
+                    other = historyEntries,
+                    selectorLeft = { bookmarksEntries },
+                    selectorRight = { historyEntries }
                 ) { t1, t2 -> Pair(t1, t2) }
                 .compose { bookmarksAndHistory ->
                     bookmarksAndHistory.join(
-                        searchEntries,
-                        { bookmarksAndHistory },
-                        { searchEntries }
+                        other = searchEntries,
+                        selectorLeft = { bookmarksAndHistory },
+                        selectorRight = { searchEntries }
                     ) { (bookmarks, history), t2 ->
                         Triple(bookmarks, history, t2)
                     }
