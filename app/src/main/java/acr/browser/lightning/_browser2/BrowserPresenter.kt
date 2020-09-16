@@ -16,6 +16,8 @@ import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
+import acr.browser.lightning.view.DownloadPageInitializer
+import acr.browser.lightning.view.HistoryPageInitializer
 import acr.browser.lightning.view.HomePageInitializer
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -28,11 +30,14 @@ import javax.inject.Inject
  */
 class BrowserPresenter @Inject constructor(
     private val model: BrowserContract.Model,
+    private val navigator: BrowserContract.Navigator,
     private val bookmarkRepository: BookmarkRepository,
     @MainScheduler private val mainScheduler: Scheduler,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     private val historyRecord: HistoryRecord,
     private val homePageInitializer: HomePageInitializer,
+    private val historyPageInitializer: HistoryPageInitializer,
+    private val downloadPageInitializer: DownloadPageInitializer,
     private val searchBoxModel: SearchBoxModel,
     private val searchEngineProvider: SearchEngineProvider
 ) {
@@ -89,6 +94,22 @@ class BrowserPresenter @Inject constructor(
             .subscribe { list ->
                 this.view.updateState(viewState.copy(tabs = list.map { it.asViewState() }))
             }
+    }
+
+    /**
+     * TODO
+     */
+    fun onViewDetached() {
+        view = null
+        compositeDisposable.dispose()
+
+        sslDisposable?.dispose()
+        titleDisposable?.dispose()
+        faviconDisposable?.dispose()
+        urlDisposable?.dispose()
+        loadingDisposable?.dispose()
+        canGoBackDisposable?.dispose()
+        canGoForwardDisposable?.dispose()
     }
 
     private fun TabModel.asViewState(): Tab = Tab(
@@ -207,17 +228,32 @@ class BrowserPresenter @Inject constructor(
     /**
      * TODO
      */
-    fun onViewDetached() {
-        view = null
-        compositeDisposable.dispose()
-
-        sslDisposable?.dispose()
-        titleDisposable?.dispose()
-        faviconDisposable?.dispose()
-        urlDisposable?.dispose()
-        loadingDisposable?.dispose()
-        canGoBackDisposable?.dispose()
-        canGoForwardDisposable?.dispose()
+    fun onMenuClick(menuOption: BrowserContract.Menu) {
+        when (menuOption) {
+            BrowserContract.Menu.NEW_TAB -> onNewTabClick()
+            BrowserContract.Menu.NEW_INCOGNITO_TAB -> TODO()
+            BrowserContract.Menu.SHARE -> TODO()
+            BrowserContract.Menu.HISTORY ->
+                compositeDisposable += model.createTab(historyPageInitializer)
+                    .observeOn(mainScheduler)
+                    .subscribe { tab ->
+                        selectTab(model.selectTab(tab.id))
+                    }
+            BrowserContract.Menu.DOWNLOADS ->
+                compositeDisposable += model.createTab(downloadPageInitializer)
+                    .observeOn(mainScheduler)
+                    .subscribe { tab ->
+                        selectTab(model.selectTab(tab.id))
+                    }
+            BrowserContract.Menu.FIND -> TODO()
+            BrowserContract.Menu.COPY_LINK -> TODO()
+            BrowserContract.Menu.ADD_TO_HOME -> TODO()
+            BrowserContract.Menu.BOOKMARKS -> TODO()
+            BrowserContract.Menu.ADD_BOOKMARK -> TODO()
+            BrowserContract.Menu.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
+                ?.let(navigator::openReaderMode)
+            BrowserContract.Menu.SETTINGS -> navigator.openSettings()
+        }
     }
 
     /**

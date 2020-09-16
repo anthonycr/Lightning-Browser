@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning._browser2.BrowserContract
+import acr.browser.lightning._browser2.BrowserNavigator
 import acr.browser.lightning._browser2.history.DefaultHistoryRecord
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.image.FaviconImageLoader
@@ -23,4 +24,7 @@ interface Browser2Module {
 
     @Binds
     fun bindsFaviconImageLoader(faviconImageLoader: FaviconImageLoader): ImageLoader
+
+    @Binds
+    fun bindsBrowserNavigator(browserNavigator: BrowserNavigator): BrowserContract.Navigator
 }

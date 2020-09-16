@@ -36,4 +36,27 @@ interface BrowserContract {
 
     }
 
+    interface Navigator {
+
+        fun openSettings()
+
+        fun openReaderMode(url: String)
+
+    }
+
+    enum class Menu {
+        NEW_TAB,
+        NEW_INCOGNITO_TAB,
+        SHARE,
+        HISTORY,
+        DOWNLOADS,
+        FIND,
+        COPY_LINK,
+        ADD_TO_HOME,
+        BOOKMARKS,
+        ADD_BOOKMARK,
+        READER,
+        SETTINGS
+    }
+
 }

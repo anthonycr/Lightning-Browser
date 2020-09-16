@@ -15,6 +15,7 @@ import acr.browser.lightning.ssl.createSslDrawableForState
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageView
@@ -103,6 +104,30 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val menu = when (item.itemId) {
+            android.R.id.home -> TODO()
+            R.id.action_back -> TODO()
+            R.id.action_forward -> TODO()
+            R.id.action_add_to_homescreen -> BrowserContract.Menu.ADD_TO_HOME
+            R.id.action_new_tab -> BrowserContract.Menu.NEW_TAB
+            R.id.action_incognito -> BrowserContract.Menu.NEW_INCOGNITO_TAB
+            R.id.action_share -> BrowserContract.Menu.SHARE
+            R.id.action_bookmarks -> BrowserContract.Menu.BOOKMARKS
+            R.id.action_copy -> BrowserContract.Menu.COPY_LINK
+            R.id.action_settings -> BrowserContract.Menu.SETTINGS
+            R.id.action_history -> BrowserContract.Menu.HISTORY
+            R.id.action_downloads -> BrowserContract.Menu.DOWNLOADS
+            R.id.action_add_bookmark -> BrowserContract.Menu.ADD_BOOKMARK
+            R.id.action_find -> BrowserContract.Menu.FIND
+            R.id.action_reading_mode -> BrowserContract.Menu.READER
+            else -> null
+        }
+
+        return menu?.let(presenter::onMenuClick)?.let { true }
+            ?: super.onOptionsItemSelected(item)
     }
 
     override fun renderState(viewState: BrowserViewState) {
