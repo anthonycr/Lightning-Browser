@@ -5,6 +5,7 @@ import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
+import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
@@ -88,6 +89,7 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
         })
         binding.search.setOnEditorActionListener(searchListener)
         binding.search.setOnKeyListener(searchListener)
+        binding.search.addTextChangedListener(StyleRemovingTextWatcher())
 
         binding.actionBack.setOnClickListener { presenter.onBackClick() }
         binding.actionForward.setOnClickListener { presenter.onForwardClick() }
