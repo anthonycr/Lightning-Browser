@@ -35,12 +35,12 @@ class TabRecyclerViewAdapter(
     override fun onBindViewHolder(holder: TabViewHolder, position: Int) {
         holder.exitButton.tag = position
 
-        val web = getItem(position)
+        val tab = getItem(position)
 
-        holder.txtTitle.text = web.title
-        updateViewHolderAppearance(holder, null, web.isSelected)
-        updateViewHolderFavicon(holder, null, web.isSelected)
-        updateViewHolderBackground(holder, web.isSelected)
+        holder.txtTitle.text = tab.title
+        updateViewHolderAppearance(holder, null, tab.isSelected)
+        updateViewHolderFavicon(holder, tab.icon, tab.isSelected)
+        updateViewHolderBackground(holder, tab.isSelected)
     }
 
     private fun updateViewHolderFavicon(viewHolder: TabViewHolder, favicon: Bitmap?, isForeground: Boolean) {

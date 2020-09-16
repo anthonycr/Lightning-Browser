@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.ssl.SslState
+import android.graphics.Bitmap
 import io.reactivex.Observable
 
 interface TabModel {
@@ -28,6 +29,10 @@ interface TabModel {
     fun stopLoading()
 
     // Data
+
+    val favicon: Bitmap?
+
+    fun faviconChanges(): Observable<Bitmap>
 
     val url: String
 

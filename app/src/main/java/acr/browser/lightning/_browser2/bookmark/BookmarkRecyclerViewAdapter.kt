@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.bookmark
 
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning.database.Bookmark
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,7 +13,8 @@ import androidx.recyclerview.widget.ListAdapter
  */
 class BookmarkRecyclerViewAdapter(
     private val onClick: (Int) -> Unit,
-    private val onLongClick: (Int) -> Unit
+    private val onLongClick: (Int) -> Unit,
+    private val imageLoader: ImageLoader
 ) : ListAdapter<Bookmark, BookmarkViewHolder>(
     object : DiffUtil.ItemCallback<Bookmark>() {
         override fun areItemsTheSame(oldItem: Bookmark, newItem: Bookmark): Boolean =
@@ -37,7 +39,6 @@ class BookmarkRecyclerViewAdapter(
         val viewModel = getItem(position)
         holder.binding.textBookmark.text = viewModel.title
 
-        val url = viewModel.url
-        holder.binding.faviconBookmark.tag = url
+        imageLoader.loadImage(holder.binding.faviconBookmark, viewModel)
     }
 }

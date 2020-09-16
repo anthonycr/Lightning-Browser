@@ -3,6 +3,8 @@ package acr.browser.lightning._browser2.di
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.history.DefaultHistoryRecord
 import acr.browser.lightning._browser2.history.HistoryRecord
+import acr.browser.lightning._browser2.image.FaviconImageLoader
+import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning._browser2.tab.TabsRepository
 import dagger.Binds
 import dagger.Module
@@ -19,5 +21,6 @@ interface Browser2Module {
     @Binds
     fun bindsHistoryRecord(defaultHistoryRecord: DefaultHistoryRecord): HistoryRecord
 
-
+    @Binds
+    fun bindsFaviconImageLoader(faviconImageLoader: FaviconImageLoader): ImageLoader
 }

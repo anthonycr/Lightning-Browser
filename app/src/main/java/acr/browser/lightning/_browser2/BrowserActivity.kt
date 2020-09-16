@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
+import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
@@ -30,6 +31,9 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
 
     @Inject
+    internal lateinit var imageLoader: ImageLoader
+
+    @Inject
     internal lateinit var presenter: BrowserPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +59,8 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
 
         bookmarksAdapter = BookmarkRecyclerViewAdapter(
             onClick = presenter::onBookmarkClick,
-            onLongClick = presenter::onBookmarkLongClick
+            onLongClick = presenter::onBookmarkLongClick,
+            imageLoader = imageLoader
         )
         binding.bookmarkListView.adapter = bookmarksAdapter
         binding.bookmarkListView.layoutManager = LinearLayoutManager(this)

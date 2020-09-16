@@ -3,6 +3,7 @@ package acr.browser.lightning._browser2.tab
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.FreezableBundleInitializer
 import acr.browser.lightning.view.TabInitializer
+import android.graphics.Bitmap
 import android.webkit.WebView
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -15,6 +16,7 @@ class TabAdapter(
     private val webView: WebView,
 ) : TabModel {
 
+    private val faviconObservable = PublishSubject.create<Bitmap>()
     private val urlObservable = PublishSubject.create<String>()
     private val sslStateObservable = PublishSubject.create<SslState>()
     private val progressObservable = PublishSubject.create<Int>()
@@ -33,7 +35,8 @@ class TabAdapter(
         webView.webViewClient = tabWebViewClient
         webView.webChromeClient = TabWebChromeClient(
             progressObservable = progressObservable,
-            titleObservable = titleObservable
+            titleObservable = titleObservable,
+            faviconObservable = faviconObservable
         )
         if (tabInitializer is FreezableBundleInitializer) {
             latentInitializer = tabInitializer
@@ -72,6 +75,12 @@ class TabAdapter(
         webView.stopLoading()
     }
 
+    override val favicon: Bitmap?
+        get() = webView.favicon
+
+    override fun faviconChanges(): Observable<Bitmap> = faviconObservable.hide()
+
+    // TODO do we show "new tab"
     override val url: String
         get() = webView.url.orEmpty()
 

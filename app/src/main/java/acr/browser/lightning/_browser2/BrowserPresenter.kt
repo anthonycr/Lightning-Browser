@@ -55,6 +55,7 @@ class BrowserPresenter @Inject constructor(
     private val compositeDisposable = CompositeDisposable()
     private var sslDisposable: Disposable? = null
     private var titleDisposable: Disposable? = null
+    private var faviconDisposable: Disposable? = null
     private var urlDisposable: Disposable? = null
     private var loadingDisposable: Disposable? = null
     private var canGoBackDisposable: Disposable? = null
@@ -92,7 +93,7 @@ class BrowserPresenter @Inject constructor(
 
     private fun TabModel.asViewState(): Tab = Tab(
         id = id,
-        icon = "",
+        icon = null,
         title = title,
         isSelected = isForeground
     )
@@ -154,6 +155,16 @@ class BrowserPresenter @Inject constructor(
                 }
             }
 
+        faviconDisposable?.dispose()
+        faviconDisposable = tabModel?.faviconChanges()
+            ?.observeOn(mainScheduler)
+            ?.subscribe { favicon ->
+                view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
+                    it.copy(icon = favicon)
+                }))
+            }
+
+
         urlDisposable?.dispose()
         urlDisposable = tabModel?.urlChanges()
             ?.distinctUntilChanged()
@@ -202,6 +213,7 @@ class BrowserPresenter @Inject constructor(
 
         sslDisposable?.dispose()
         titleDisposable?.dispose()
+        faviconDisposable?.dispose()
         urlDisposable?.dispose()
         loadingDisposable?.dispose()
         canGoBackDisposable?.dispose()
