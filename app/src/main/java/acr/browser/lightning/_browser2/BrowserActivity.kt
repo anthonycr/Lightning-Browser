@@ -3,6 +3,8 @@ package acr.browser.lightning._browser2
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning._browser2.image.ImageLoader
+import acr.browser.lightning._browser2.keys.KeyEventAdapter
+import acr.browser.lightning._browser2.menu.MenuItemAdapter
 import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
@@ -14,10 +16,7 @@ import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +33,12 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
 
     @Inject
     internal lateinit var imageLoader: ImageLoader
+
+    @Inject
+    internal lateinit var keyEventAdapter: KeyEventAdapter
+
+    @Inject
+    internal lateinit var menuItemAdapter: MenuItemAdapter
 
     @Inject
     internal lateinit var presenter: BrowserPresenter
@@ -109,27 +114,13 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val menu = when (item.itemId) {
-            android.R.id.home -> TODO()
-            R.id.action_back -> TODO()
-            R.id.action_forward -> TODO()
-            R.id.action_add_to_homescreen -> BrowserContract.Menu.ADD_TO_HOME
-            R.id.action_new_tab -> BrowserContract.Menu.NEW_TAB
-            R.id.action_incognito -> BrowserContract.Menu.NEW_INCOGNITO_TAB
-            R.id.action_share -> BrowserContract.Menu.SHARE
-            R.id.action_bookmarks -> BrowserContract.Menu.BOOKMARKS
-            R.id.action_copy -> BrowserContract.Menu.COPY_LINK
-            R.id.action_settings -> BrowserContract.Menu.SETTINGS
-            R.id.action_history -> BrowserContract.Menu.HISTORY
-            R.id.action_downloads -> BrowserContract.Menu.DOWNLOADS
-            R.id.action_add_bookmark -> BrowserContract.Menu.ADD_BOOKMARK
-            R.id.action_find -> BrowserContract.Menu.FIND
-            R.id.action_reading_mode -> BrowserContract.Menu.READER
-            else -> null
-        }
-
-        return menu?.let(presenter::onMenuClick)?.let { true }
+        return menuItemAdapter.adaptMenuItem(item)?.let(presenter::onMenuClick)?.let { true }
             ?: super.onOptionsItemSelected(item)
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
+            ?: super.dispatchKeyEvent(event)
     }
 
     override fun renderState(viewState: BrowserViewState) {

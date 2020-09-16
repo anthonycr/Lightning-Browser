@@ -1,6 +1,8 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.history.HistoryRecord
+import acr.browser.lightning._browser2.keys.KeyCombo
+import acr.browser.lightning._browser2.menu.MenuSelection
 import acr.browser.lightning._browser2.tab.Tab
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning.browser.SearchBoxModel
@@ -228,31 +230,57 @@ class BrowserPresenter @Inject constructor(
     /**
      * TODO
      */
-    fun onMenuClick(menuOption: BrowserContract.Menu) {
-        when (menuOption) {
-            BrowserContract.Menu.NEW_TAB -> onNewTabClick()
-            BrowserContract.Menu.NEW_INCOGNITO_TAB -> TODO()
-            BrowserContract.Menu.SHARE -> TODO()
-            BrowserContract.Menu.HISTORY ->
+    fun onMenuClick(menuSelection: MenuSelection) {
+        when (menuSelection) {
+            MenuSelection.NEW_TAB -> onNewTabClick()
+            MenuSelection.NEW_INCOGNITO_TAB -> TODO()
+            MenuSelection.SHARE -> TODO()
+            MenuSelection.HISTORY ->
                 compositeDisposable += model.createTab(historyPageInitializer)
                     .observeOn(mainScheduler)
                     .subscribe { tab ->
                         selectTab(model.selectTab(tab.id))
                     }
-            BrowserContract.Menu.DOWNLOADS ->
+            MenuSelection.DOWNLOADS ->
                 compositeDisposable += model.createTab(downloadPageInitializer)
                     .observeOn(mainScheduler)
                     .subscribe { tab ->
                         selectTab(model.selectTab(tab.id))
                     }
-            BrowserContract.Menu.FIND -> TODO()
-            BrowserContract.Menu.COPY_LINK -> TODO()
-            BrowserContract.Menu.ADD_TO_HOME -> TODO()
-            BrowserContract.Menu.BOOKMARKS -> TODO()
-            BrowserContract.Menu.ADD_BOOKMARK -> TODO()
-            BrowserContract.Menu.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
+            MenuSelection.FIND -> TODO()
+            MenuSelection.COPY_LINK -> TODO()
+            MenuSelection.ADD_TO_HOME -> TODO()
+            MenuSelection.BOOKMARKS -> TODO()
+            MenuSelection.ADD_BOOKMARK -> TODO()
+            MenuSelection.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::openReaderMode)
-            BrowserContract.Menu.SETTINGS -> navigator.openSettings()
+            MenuSelection.SETTINGS -> navigator.openSettings()
+        }
+    }
+
+    /**
+     * TODO
+     */
+    fun onKeyComboClick(keyCombo: KeyCombo) {
+        when (keyCombo) {
+            KeyCombo.CTRL_F -> TODO()
+            KeyCombo.CTRL_T -> onNewTabClick()
+            KeyCombo.CTRL_W -> TODO()
+            KeyCombo.CTRL_Q -> TODO()
+            KeyCombo.CTRL_R -> onRefreshOrStopClick()
+            KeyCombo.CTRL_TAB -> TODO()
+            KeyCombo.CTRL_SHIFT_TAB -> TODO()
+            KeyCombo.SEARCH -> TODO()
+            KeyCombo.ALT_0 -> TODO()
+            KeyCombo.ALT_1 -> TODO()
+            KeyCombo.ALT_2 -> TODO()
+            KeyCombo.ALT_3 -> TODO()
+            KeyCombo.ALT_4 -> TODO()
+            KeyCombo.ALT_5 -> TODO()
+            KeyCombo.ALT_6 -> TODO()
+            KeyCombo.ALT_7 -> TODO()
+            KeyCombo.ALT_8 -> TODO()
+            KeyCombo.ALT_9 -> TODO()
         }
     }
 
