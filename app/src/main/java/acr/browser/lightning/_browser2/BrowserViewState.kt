@@ -1,6 +1,6 @@
 package acr.browser.lightning._browser2
 
-import acr.browser.lightning._browser2.tab.Tab
+import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.ssl.SslState
 
@@ -15,7 +15,7 @@ data class BrowserViewState(
     val progress: Int,
 
     // Tabs
-    val tabs: List<Tab>,
+    val tabs: List<TabViewState>,
     val isForwardEnabled: Boolean,
     val isBackEnabled: Boolean,
 

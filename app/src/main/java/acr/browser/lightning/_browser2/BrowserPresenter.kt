@@ -3,7 +3,7 @@ package acr.browser.lightning._browser2
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
-import acr.browser.lightning._browser2.tab.Tab
+import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.Bookmark
@@ -114,14 +114,14 @@ class BrowserPresenter @Inject constructor(
         canGoForwardDisposable?.dispose()
     }
 
-    private fun TabModel.asViewState(): Tab = Tab(
+    private fun TabModel.asViewState(): TabViewState = TabViewState(
         id = id,
-        icon = null,
+        icon = favicon,
         title = title,
         isSelected = isForeground
     )
 
-    private fun List<Tab>.updateId(id: Int, map: (Tab) -> Tab): List<Tab> = map {
+    private fun List<TabViewState>.updateId(id: Int, map: (TabViewState) -> TabViewState): List<TabViewState> = map {
         if (it.id == id) {
             map(it)
         } else {

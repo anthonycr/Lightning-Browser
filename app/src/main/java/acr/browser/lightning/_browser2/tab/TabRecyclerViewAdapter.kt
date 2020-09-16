@@ -17,12 +17,12 @@ class TabRecyclerViewAdapter(
     private val onClick: (Int) -> Unit,
     private val onLongClick: (Int) -> Unit,
     private val onCloseClick: (Int) -> Unit,
-) : ListAdapter<Tab, TabViewHolder>(
-    object : DiffUtil.ItemCallback<Tab>() {
-        override fun areItemsTheSame(oldItem: Tab, newItem: Tab): Boolean =
+) : ListAdapter<TabViewState, TabViewHolder>(
+    object : DiffUtil.ItemCallback<TabViewState>() {
+        override fun areItemsTheSame(oldItem: TabViewState, newItem: TabViewState): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Tab, newItem: Tab): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: TabViewState, newItem: TabViewState): Boolean = oldItem == newItem
     }
 ) {
 
