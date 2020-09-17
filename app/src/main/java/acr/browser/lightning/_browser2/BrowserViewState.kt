@@ -23,3 +23,20 @@ data class BrowserViewState(
     val bookmarks: List<Bookmark>,
     val isBookmarked: Boolean
 )
+
+data class PartialBrowserViewState(
+    // search bar
+    val displayUrl: String?,
+    val sslState: SslState?,
+    val isRefresh: Boolean?,
+    val progress: Int?,
+
+    // Tabs
+    val tabs: List<TabViewState>?,
+    val isForwardEnabled: Boolean?,
+    val isBackEnabled: Boolean?,
+
+    // Bookmarks
+    val bookmarks: List<Bookmark>?,
+    val isBookmarked: Boolean?
+)

@@ -26,7 +26,7 @@ import javax.inject.Inject
 /**
  * Created by anthonycr on 9/11/20.
  */
-class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
+class BrowserActivity : ThemableBrowserActivity() {
 
     private lateinit var binding: BrowserActivityBinding
     private lateinit var tabsAdapter: TabRecyclerViewAdapter
@@ -76,7 +76,7 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
         binding.bookmarkListView.adapter = bookmarksAdapter
         binding.bookmarkListView.layoutManager = LinearLayoutManager(this)
 
-        presenter.onViewAttached(this)
+        presenter.onViewAttached(BrowserStateAdapter(this))
 
         val suggestionsAdapter = SuggestionsAdapter(this, isIncognito = false).apply {
             onSuggestionInsertClick = {
@@ -128,21 +128,26 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
             ?: super.dispatchKeyEvent(event)
     }
 
-    override fun renderState(viewState: BrowserViewState) {
-        binding.actionBack.isEnabled = viewState.isBackEnabled
-        binding.actionForward.isEnabled = viewState.isForwardEnabled
-        binding.search.setText(viewState.displayUrl)
-        binding.searchSslStatus.setImageDrawable(createSslDrawableForState(viewState.sslState))
-        binding.searchSslStatus.updateVisibilityForDrawable()
-        binding.tabCountView.updateCount(viewState.tabs.size)
-        binding.progressView.progress = viewState.progress
-        binding.searchRefresh.setImageResource(if (viewState.isRefresh) {
-            R.drawable.ic_action_refresh
-        } else {
-            R.drawable.ic_action_delete
-        })
-        tabsAdapter.submitList(viewState.tabs)
-        bookmarksAdapter.submitList(viewState.bookmarks)
+    fun renderState(viewState: PartialBrowserViewState) {
+        viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
+        viewState.isForwardEnabled?.let { binding.actionForward.isEnabled = it }
+        viewState.displayUrl?.let(binding.search::setText)
+        viewState.sslState?.let {
+            binding.searchSslStatus.setImageDrawable(createSslDrawableForState(it))
+            binding.searchSslStatus.updateVisibilityForDrawable()
+        }
+        viewState.tabs?.let { binding.tabCountView.updateCount(viewState.tabs.size) }
+        viewState.progress?.let { binding.progressView.progress = it }
+        viewState.isRefresh?.let {
+            binding.searchRefresh.setImageResource(if (viewState.isRefresh) {
+                R.drawable.ic_action_refresh
+            } else {
+                R.drawable.ic_action_delete
+            })
+        }
+        viewState.tabs?.let { tabsAdapter.submitList(viewState.tabs) }
+        viewState.bookmarks?.let { bookmarksAdapter.submitList(viewState.bookmarks) }
+
     }
 
     private fun ImageView.updateVisibilityForDrawable() {
