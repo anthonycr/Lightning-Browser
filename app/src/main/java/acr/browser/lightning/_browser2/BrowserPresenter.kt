@@ -58,6 +58,7 @@ class BrowserPresenter @Inject constructor(
     )
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
+    private var isSearchViewFocused = false
 
     private val compositeDisposable = CompositeDisposable()
     private var sslDisposable: Disposable? = null
@@ -161,7 +162,13 @@ class BrowserPresenter @Inject constructor(
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
             ?.subscribe {
-                view.updateState(viewState.copy(sslState = it))
+                view.updateState(viewState.copy(
+                    sslState = if (isSearchViewFocused) {
+                        SslState.None
+                    } else {
+                        it
+                    }
+                ))
             }
 
         titleDisposable?.dispose()
@@ -193,13 +200,15 @@ class BrowserPresenter @Inject constructor(
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
             ?.subscribe {
-                view.updateState(viewState.copy(
-                    displayUrl = searchBoxModel.getDisplayContent(
-                        url = tabModel.url,
-                        title = tabModel.title,
-                        isLoading = (tabModel.loadingProgress ?: 0) < 100
-                    )
-                ))
+                if (isSearchViewFocused) {
+                    view.updateState(viewState.copy(
+                        displayUrl = searchBoxModel.getDisplayContent(
+                            url = tabModel.url,
+                            title = tabModel.title,
+                            isLoading = tabModel.loadingProgress < 100
+                        )
+                    ))
+                }
             }
 
         loadingDisposable?.dispose()
@@ -207,7 +216,10 @@ class BrowserPresenter @Inject constructor(
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
             ?.subscribe {
-                view.updateState(viewState.copy(progress = it, isRefresh = it == 100))
+                view.updateState(viewState.copy(
+                    progress = it,
+                    isRefresh = it == 100 && !isSearchViewFocused
+                ))
             }
 
         canGoBackDisposable?.dispose()
@@ -366,10 +378,34 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onRefreshOrStopClick() {
+        if (isSearchViewFocused) {
+            view?.renderState(viewState.copy(displayUrl = ""))
+            return
+        }
         if (currentTab?.loadingProgress != 100) {
             currentTab?.stopLoading()
         } else {
             currentTab?.reload()
+        }
+    }
+
+    /**
+     * TODO
+     */
+    fun onSearchFocusChanged(isFocused: Boolean) {
+        isSearchViewFocused = isFocused
+        if (isFocused) {
+            view?.updateState(viewState.copy(sslState = SslState.None, isRefresh = false))
+        } else {
+            view?.updateState(viewState.copy(
+                sslState = currentTab?.sslState ?: SslState.None,
+                isRefresh = (currentTab?.loadingProgress ?: 0) == 100,
+                displayUrl = searchBoxModel.getDisplayContent(
+                    url = currentTab?.url.orEmpty(),
+                    title = currentTab?.title.orEmpty(),
+                    isLoading = (currentTab?.loadingProgress ?: 0) < 100
+                )
+            ))
         }
     }
 

@@ -17,6 +17,7 @@ import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +40,9 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
 
     @Inject
     internal lateinit var menuItemAdapter: MenuItemAdapter
+
+    @Inject
+    internal lateinit var inputMethodManager: InputMethodManager
 
     @Inject
     internal lateinit var presenter: BrowserPresenter
@@ -91,10 +95,11 @@ class BrowserActivity : ThemableBrowserActivity(), BrowserContract.View {
         binding.search.setAdapter(suggestionsAdapter)
         val searchListener = SearchListener(onConfirm = {
             presenter.onSearch(binding.search.text.toString())
-        })
+        }, inputMethodManager)
         binding.search.setOnEditorActionListener(searchListener)
         binding.search.setOnKeyListener(searchListener)
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
+        binding.search.setOnFocusChangeListener { _, hasFocus -> presenter.onSearchFocusChanged(hasFocus) }
 
         binding.actionBack.setOnClickListener { presenter.onBackClick() }
         binding.actionForward.setOnClickListener { presenter.onForwardClick() }

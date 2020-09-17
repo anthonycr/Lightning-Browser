@@ -22,6 +22,10 @@ class SearchView @JvmOverloads constructor(
     private var isBeingClicked: Boolean = false
     private var timePressedNs: Long = 0
 
+    init {
+        setSelectAllOnFocus(true)
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
