@@ -42,6 +42,9 @@ interface BrowserContract {
 
         fun openReaderMode(url: String)
 
+        fun sharePage(url: String, title: String?)
+
+        fun copyPageLink(url: String)
     }
 
 

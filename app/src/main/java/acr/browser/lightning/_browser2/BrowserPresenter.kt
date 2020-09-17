@@ -234,7 +234,9 @@ class BrowserPresenter @Inject constructor(
         when (menuSelection) {
             MenuSelection.NEW_TAB -> onNewTabClick()
             MenuSelection.NEW_INCOGNITO_TAB -> TODO()
-            MenuSelection.SHARE -> TODO()
+            MenuSelection.SHARE -> currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
+                navigator.sharePage(url = it, title = currentTab?.title)
+            }
             MenuSelection.HISTORY ->
                 compositeDisposable += model.createTab(historyPageInitializer)
                     .observeOn(mainScheduler)
@@ -248,7 +250,8 @@ class BrowserPresenter @Inject constructor(
                         selectTab(model.selectTab(tab.id))
                     }
             MenuSelection.FIND -> TODO()
-            MenuSelection.COPY_LINK -> TODO()
+            MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
+                ?.let(navigator::copyPageLink)
             MenuSelection.ADD_TO_HOME -> TODO()
             MenuSelection.BOOKMARKS -> TODO()
             MenuSelection.ADD_BOOKMARK -> TODO()
