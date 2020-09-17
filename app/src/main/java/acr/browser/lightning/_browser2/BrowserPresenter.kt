@@ -200,7 +200,7 @@ class BrowserPresenter @Inject constructor(
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
             ?.subscribe {
-                if (isSearchViewFocused) {
+                if (!isSearchViewFocused) {
                     view.updateState(viewState.copy(
                         displayUrl = searchBoxModel.getDisplayContent(
                             url = tabModel.url,
