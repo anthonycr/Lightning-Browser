@@ -107,6 +107,11 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.newTabButton.setOnClickListener { presenter.onNewTabClick() }
         binding.searchRefresh.setOnClickListener { presenter.onRefreshOrStopClick() }
         binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
+        binding.actionPageTools.setOnClickListener { presenter.onToolsClick() }
+        binding.tabHeaderButton.setOnClickListener { presenter.onTabMenuClick() }
+        binding.actionReading.setOnClickListener { presenter.onReadingModeClick() }
+        binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
+        binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
     }
 
     override fun onDestroy() {
@@ -129,6 +134,9 @@ class BrowserActivity : ThemableBrowserActivity() {
             ?: super.dispatchKeyEvent(event)
     }
 
+    /**
+     * TODO
+     */
     fun renderState(viewState: PartialBrowserViewState) {
         viewState.isBackEnabled?.let { binding.actionBack.isEnabled = it }
         viewState.isForwardEnabled?.let { binding.actionForward.isEnabled = it }
