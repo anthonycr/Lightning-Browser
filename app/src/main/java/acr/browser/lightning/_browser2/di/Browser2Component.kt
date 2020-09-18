@@ -9,7 +9,7 @@ import dagger.Subcomponent
 /**
  * Created by anthonycr on 9/15/20.
  */
-@Subcomponent(modules = [Browser2Module::class])
+@Subcomponent(modules = [Browser2Module::class, Browser2BindsModule::class])
 interface Browser2Component {
 
     @Subcomponent.Builder

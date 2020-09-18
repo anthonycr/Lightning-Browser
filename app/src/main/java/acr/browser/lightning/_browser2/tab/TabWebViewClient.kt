@@ -1,29 +1,41 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning.adblock.AdBlocker
+import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.ssl.SslState
+import android.annotation.TargetApi
 import android.graphics.Bitmap
 import android.net.http.SslError
-import android.webkit.SslErrorHandler
-import android.webkit.URLUtil
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.os.Build
+import android.webkit.*
 import io.reactivex.subjects.PublishSubject
+import java.io.ByteArrayInputStream
 
 /**
  * Created by anthonycr on 9/12/20.
  */
 class TabWebViewClient(
-    private val urlObservable: PublishSubject<String>,
-    private val sslStateObservable: PublishSubject<SslState>,
-    private val goBackObservable: PublishSubject<Boolean>,
-    private val goForwardObservable: PublishSubject<Boolean>
+    private val adBlocker: AdBlocker,
+    private val allowListModel: AllowListModel
 ) : WebViewClient() {
+
+    val urlObservable: PublishSubject<String> = PublishSubject.create()
+    val sslStateObservable: PublishSubject<SslState> = PublishSubject.create()
+    val goBackObservable: PublishSubject<Boolean> = PublishSubject.create()
+    val goForwardObservable: PublishSubject<Boolean> = PublishSubject.create()
 
     var sslState: SslState = SslState.None
         private set
 
+    private var currentUrl: String = ""
+
+    private fun shouldBlockRequest(pageUrl: String, requestUrl: String) =
+        !allowListModel.isUrlAllowedAds(pageUrl) &&
+            adBlocker.isAd(requestUrl)
+
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
+        currentUrl = url
         urlObservable.onNext(url)
         sslState = if (URLUtil.isHttpsUrl(url)) {
             SslState.Valid
@@ -44,5 +56,30 @@ class TabWebViewClient(
         super.onReceivedSslError(view, handler, error)
         sslState = SslState.Invalid(error)
         sslStateObservable.onNext(sslState)
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+        if (shouldBlockRequest(currentUrl, request.url.toString())) {
+            val empty = ByteArrayInputStream(emptyResponseByteArray)
+            return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
+        }
+        return null
+    }
+
+    @Suppress("OverridingDeprecatedMember")
+    override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
+        if (shouldBlockRequest(currentUrl, url)) {
+            val empty = ByteArrayInputStream(emptyResponseByteArray)
+            return WebResourceResponse(BLOCKED_RESPONSE_MIME_TYPE, BLOCKED_RESPONSE_ENCODING, empty)
+        }
+        return null
+    }
+
+    companion object {
+        private val emptyResponseByteArray: ByteArray = byteArrayOf()
+
+        private const val BLOCKED_RESPONSE_MIME_TYPE = "text/plain"
+        private const val BLOCKED_RESPONSE_ENCODING = "utf-8"
     }
 }

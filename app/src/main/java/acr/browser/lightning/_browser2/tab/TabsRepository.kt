@@ -1,8 +1,9 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.BrowserContract
+import acr.browser.lightning.adblock.AdBlocker
+import acr.browser.lightning.adblock.allowlist.AllowListModel
 import acr.browser.lightning.view.TabInitializer
-import acr.browser.lightning.view.UrlInitializer
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -15,7 +16,9 @@ import javax.inject.Inject
  */
 class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
-    private val tabPager: TabPager
+    private val tabPager: TabPager,
+    private val adBlocker: AdBlocker,
+    private val allowListModel: AllowListModel
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -35,7 +38,12 @@ class TabsRepository @Inject constructor(
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> = Single.fromCallable<TabModel> {
         val webView = webViewFactory.createWebView(isIncognito = false)
         tabPager.addTab(webView)
-        val tabAdapter = TabAdapter(tabInitializer, webView)
+        val tabAdapter = TabAdapter(
+            tabInitializer,
+            webView,
+            TabWebViewClient(adBlocker, allowListModel),
+            TabWebChromeClient()
+        )
 
         tabsList += tabAdapter
 

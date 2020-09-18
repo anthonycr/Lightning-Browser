@@ -6,7 +6,6 @@ import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
 import android.webkit.WebView
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by anthonycr on 9/12/20.
@@ -14,30 +13,15 @@ import io.reactivex.subjects.PublishSubject
 class TabAdapter(
     tabInitializer: TabInitializer,
     private val webView: WebView,
+    private val tabWebViewClient: TabWebViewClient,
+    private val tabWebChromeClient: TabWebChromeClient
 ) : TabModel {
 
-    private val faviconObservable = PublishSubject.create<Bitmap>()
-    private val urlObservable = PublishSubject.create<String>()
-    private val sslStateObservable = PublishSubject.create<SslState>()
-    private val progressObservable = PublishSubject.create<Int>()
-    private val titleObservable = PublishSubject.create<String>()
-    private val goBackObservable = PublishSubject.create<Boolean>()
-    private val goForwardObservable = PublishSubject.create<Boolean>()
-    private val tabWebViewClient = TabWebViewClient(
-        urlObservable = urlObservable,
-        sslStateObservable = sslStateObservable,
-        goBackObservable = goBackObservable,
-        goForwardObservable = goForwardObservable
-    )
     private var latentInitializer: TabInitializer? = null
 
     init {
         webView.webViewClient = tabWebViewClient
-        webView.webChromeClient = TabWebChromeClient(
-            progressObservable = progressObservable,
-            titleObservable = titleObservable,
-            faviconObservable = faviconObservable
-        )
+        webView.webChromeClient = tabWebChromeClient
         if (tabInitializer is FreezableBundleInitializer) {
             latentInitializer = tabInitializer
         } else {
@@ -57,7 +41,7 @@ class TabAdapter(
 
     override fun canGoBack(): Boolean = webView.canGoBack()
 
-    override fun canGoBackChanges(): Observable<Boolean> = goBackObservable.hide()
+    override fun canGoBackChanges(): Observable<Boolean> = tabWebViewClient.goBackObservable.hide()
 
     override fun goForward() {
         webView.goForward()
@@ -65,7 +49,7 @@ class TabAdapter(
 
     override fun canGoForward(): Boolean = webView.canGoForward()
 
-    override fun canGoForwardChanges(): Observable<Boolean> = goForwardObservable.hide()
+    override fun canGoForwardChanges(): Observable<Boolean> = tabWebViewClient.goForwardObservable.hide()
 
     override fun reload() {
         webView.reload()
@@ -78,28 +62,28 @@ class TabAdapter(
     override val favicon: Bitmap?
         get() = webView.favicon
 
-    override fun faviconChanges(): Observable<Bitmap> = faviconObservable.hide()
+    override fun faviconChanges(): Observable<Bitmap> = tabWebChromeClient.faviconObservable.hide()
 
     // TODO do we show "new tab"
     override val url: String
         get() = webView.url.orEmpty()
 
-    override fun urlChanges(): Observable<String> = urlObservable.hide()
+    override fun urlChanges(): Observable<String> = tabWebViewClient.urlObservable.hide()
 
     override val title: String
         get() = webView.title.orEmpty()
 
-    override fun titleChanges(): Observable<String> = titleObservable.hide()
+    override fun titleChanges(): Observable<String> = tabWebChromeClient.titleObservable.hide()
 
     override val sslState: SslState
         get() = tabWebViewClient.sslState
 
-    override fun sslChanges(): Observable<SslState> = sslStateObservable.hide()
+    override fun sslChanges(): Observable<SslState> = tabWebViewClient.sslStateObservable.hide()
 
     override val loadingProgress: Int
         get() = webView.progress
 
-    override fun loadingProgress(): Observable<Int> = progressObservable.hide()
+    override fun loadingProgress(): Observable<Int> = tabWebChromeClient.progressObservable.hide()
 
     override var isForeground: Boolean = false
         set(value) {
