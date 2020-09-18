@@ -106,6 +106,7 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.actionHome.setOnClickListener { presenter.onHomeClick() }
         binding.newTabButton.setOnClickListener { presenter.onNewTabClick() }
         binding.searchRefresh.setOnClickListener { presenter.onRefreshOrStopClick() }
+        binding.actionAddBookmark.setOnClickListener { presenter.onStarClick() }
     }
 
     override fun onDestroy() {
@@ -147,7 +148,8 @@ class BrowserActivity : ThemableBrowserActivity() {
         }
         viewState.tabs?.let { tabsAdapter.submitList(viewState.tabs) }
         viewState.bookmarks?.let { bookmarksAdapter.submitList(viewState.bookmarks) }
-
+        viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
+        viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

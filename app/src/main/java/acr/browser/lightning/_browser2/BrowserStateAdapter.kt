@@ -18,7 +18,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
             isForwardEnabled,
             isBackEnabled,
             bookmarks,
-            isBookmarked
+            isBookmarked,
+            isBookmarkEnabled
         ) = viewState
 
         browserActivity.renderState(
@@ -31,7 +32,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
                 isForwardEnabled = isForwardEnabled.takeIf { it != currentState?.isForwardEnabled },
                 isBackEnabled = isBackEnabled.takeIf { it != currentState?.isBackEnabled },
                 bookmarks = bookmarks.takeIf { it != currentState?.bookmarks },
-                isBookmarked = isBookmarked.takeIf { it != currentState?.isBookmarked }
+                isBookmarked = isBookmarked.takeIf { it != currentState?.isBookmarked },
+                isBookmarkEnabled = isBookmarkEnabled.takeIf { it != currentState?.isBookmarkEnabled }
             )
         )
 

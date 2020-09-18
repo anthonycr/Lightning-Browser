@@ -54,7 +54,8 @@ class BrowserPresenter @Inject constructor(
         isForwardEnabled = false,
         isBackEnabled = false,
         bookmarks = emptyList(),
-        isBookmarked = false
+        isBookmarked = false,
+        isBookmarkEnabled = true
     )
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
@@ -197,16 +198,19 @@ class BrowserPresenter @Inject constructor(
 
         urlDisposable?.dispose()
         urlDisposable = tabModel?.urlChanges()
+            ?.flatMapSingle { url -> bookmarkRepository.isBookmark(url).map { Pair(url, it) } }
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
-            ?.subscribe {
+            ?.subscribe { (url, isBookmark) ->
                 if (!isSearchViewFocused) {
                     view.updateState(viewState.copy(
                         displayUrl = searchBoxModel.getDisplayContent(
                             url = tabModel.url,
                             title = tabModel.title,
                             isLoading = tabModel.loadingProgress < 100
-                        )
+                        ),
+                        isBookmarked = isBookmark,
+                        isBookmarkEnabled = !url.isSpecialUrl()
                     ))
                 }
             }
@@ -489,7 +493,35 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onStarClick() {
-
+        val url = currentTab?.url ?: return
+        val title = currentTab?.title.orEmpty()
+        if (url.isSpecialUrl()) {
+            return
+        }
+        compositeDisposable += bookmarkRepository.isBookmark(url)
+            .flatMap {
+                if (it) {
+                    bookmarkRepository.deleteBookmark(Bookmark.Entry(
+                        url = url,
+                        title = title,
+                        position = 0,
+                        folder = Bookmark.Folder.Root
+                    ))
+                } else {
+                    bookmarkRepository.addBookmarkIfNotExists(Bookmark.Entry(
+                        url = url,
+                        title = title,
+                        position = 0,
+                        folder = Bookmark.Folder.Root
+                    ))
+                }
+            }
+            .flatMap { bookmarkRepository.getBookmarksFromFolderSorted(folder = currentFolder.title) }
+            .subscribeOn(databaseScheduler)
+            .observeOn(mainScheduler)
+            .subscribe { list ->
+                this.view?.updateState(viewState.copy(bookmarks = list))
+            }
     }
 
     /**

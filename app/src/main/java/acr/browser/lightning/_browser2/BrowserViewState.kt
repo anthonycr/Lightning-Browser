@@ -21,7 +21,8 @@ data class BrowserViewState(
 
     // Bookmarks
     val bookmarks: List<Bookmark>,
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
+    val isBookmarkEnabled: Boolean
 )
 
 data class PartialBrowserViewState(
@@ -38,5 +39,6 @@ data class PartialBrowserViewState(
 
     // Bookmarks
     val bookmarks: List<Bookmark>?,
-    val isBookmarked: Boolean?
+    val isBookmarked: Boolean?,
+    val isBookmarkEnabled: Boolean?
 )
