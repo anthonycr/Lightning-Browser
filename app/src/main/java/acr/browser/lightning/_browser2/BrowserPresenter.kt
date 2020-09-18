@@ -413,9 +413,12 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onSearch(query: String) {
+        if (query.isEmpty()) {
+            return
+        }
         currentTab?.stopLoading()
         val searchUrl = searchEngineProvider.provideSearchEngine().queryUrl + QUERY_PLACE_HOLDER
-        val url = smartUrlFilter(query, true, searchUrl)
+        val url = smartUrlFilter(query.trim(), true, searchUrl)
         view?.updateState(viewState.copy(
             displayUrl = searchBoxModel.getDisplayContent(
                 url = url,

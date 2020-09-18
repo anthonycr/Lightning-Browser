@@ -20,9 +20,9 @@ class SearchListener(
         }
         return when (keyCode) {
             KeyEvent.KEYCODE_ENTER -> {
+                onConfirm()
                 view.clearFocus()
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-                onConfirm()
                 true
             }
             else -> false
@@ -36,9 +36,9 @@ class SearchListener(
             || actionId == EditorInfo.IME_ACTION_SEND
             || actionId == EditorInfo.IME_ACTION_SEARCH
             || event?.action == KeyEvent.KEYCODE_ENTER) {
+            onConfirm()
             view.clearFocus()
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-            onConfirm()
             return true
         }
         return false
