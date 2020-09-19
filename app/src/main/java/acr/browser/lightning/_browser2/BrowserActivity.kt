@@ -129,9 +129,9 @@ class BrowserActivity : ThemableBrowserActivity() {
             ?: super.onOptionsItemSelected(item)
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return keyEventAdapter.adaptKeyEvent(event)?.let(presenter::onKeyComboClick)?.let { true }
-            ?: super.dispatchKeyEvent(event)
+            ?: super.onKeyUp(keyCode, event)
     }
 
     /**

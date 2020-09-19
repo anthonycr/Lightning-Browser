@@ -9,9 +9,6 @@ import javax.inject.Inject
 class KeyEventAdapter @Inject constructor() {
 
     fun adaptKeyEvent(event: KeyEvent): KeyCombo? {
-        if (event.action != KeyEvent.ACTION_UP) {
-            return null
-        }
         when {
             event.isCtrlPressed -> when (event.keyCode) {
                 KeyEvent.KEYCODE_F -> {
