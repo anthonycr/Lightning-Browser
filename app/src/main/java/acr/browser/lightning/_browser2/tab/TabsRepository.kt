@@ -3,6 +3,7 @@ package acr.browser.lightning._browser2.tab
 import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
+import acr.browser.lightning.view.HomePageInitializer
 import acr.browser.lightning.view.TabInitializer
 import io.reactivex.Completable
 import io.reactivex.Maybe

@@ -29,7 +29,7 @@ class FaviconImageLoader @Inject constructor(
 
     private val lruCache: LruCache<String, Any> = LruCache(1 * 1000 * 1000)
     private val folderIcon = application.drawable(R.drawable.ic_folder)
-    private val webpageIcon = application.drawable(R.drawable.ic_webpage)
+    private val webPageIcon = application.drawable(R.drawable.ic_webpage)
     private val compositeDisposable = CompositeDisposable()
 
     override fun loadImage(imageView: ImageView, bookmark: Bookmark) {
@@ -47,8 +47,8 @@ class FaviconImageLoader @Inject constructor(
                     imageView.setImageDrawable(folderIcon)
                 }
                 is Bookmark.Entry -> {
-                    lruCache.put(bookmark.url, webpageIcon)
-                    imageView.setImageDrawable(webpageIcon)
+                    lruCache.put(bookmark.url, webPageIcon)
+                    imageView.setImageDrawable(webPageIcon)
                     compositeDisposable += faviconModel
                         .faviconForUrl(bookmark.url, bookmark.title)
                         .subscribeOn(networkScheduler)

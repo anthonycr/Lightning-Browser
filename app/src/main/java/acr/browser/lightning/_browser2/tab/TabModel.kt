@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.ssl.SslState
+import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
 import io.reactivex.Observable
 
@@ -11,6 +12,8 @@ interface TabModel {
     // Navigation
 
     fun loadUrl(url: String)
+
+    fun loadFromInitializer(tabInitializer: TabInitializer)
 
     fun goBack()
 

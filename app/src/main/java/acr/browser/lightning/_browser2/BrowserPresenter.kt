@@ -364,7 +364,7 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onHomeClick() {
-        currentTab?.loadUrl("https://google.com")
+        currentTab?.loadFromInitializer(homePageInitializer)
     }
 
     /**

@@ -25,7 +25,7 @@ class TabAdapter(
         if (tabInitializer is FreezableBundleInitializer) {
             latentInitializer = tabInitializer
         } else {
-            tabInitializer.initialize(webView, emptyMap())
+            loadFromInitializer(tabInitializer)
         }
     }
 
@@ -33,6 +33,10 @@ class TabAdapter(
 
     override fun loadUrl(url: String) {
         webView.loadUrl(url)
+    }
+
+    override fun loadFromInitializer(tabInitializer: TabInitializer) {
+        tabInitializer.initialize(webView, emptyMap())
     }
 
     override fun goBack() {
@@ -90,7 +94,7 @@ class TabAdapter(
             field = value
             if (field) {
                 webView.onResume()
-                latentInitializer?.initialize(webView, emptyMap())
+                latentInitializer?.let(::loadFromInitializer)
                 latentInitializer = null
             } else {
                 webView.onPause()
