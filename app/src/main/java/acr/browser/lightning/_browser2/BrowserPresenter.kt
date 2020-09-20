@@ -62,6 +62,7 @@ class BrowserPresenter @Inject constructor(
     private var isSearchViewFocused = false
 
     private val compositeDisposable = CompositeDisposable()
+    private val allTabsDisposable = CompositeDisposable()
     private var sslDisposable: Disposable? = null
     private var titleDisposable: Disposable? = null
     private var faviconDisposable: Disposable? = null
@@ -96,6 +97,9 @@ class BrowserPresenter @Inject constructor(
             .observeOn(mainScheduler)
             .subscribe { list ->
                 this.view.updateState(viewState.copy(tabs = list.map { it.asViewState() }))
+
+                allTabsDisposable.clear()
+                list.subscribeToUpdates(allTabsDisposable)
             }
     }
 
@@ -179,24 +183,16 @@ class BrowserPresenter @Inject constructor(
             ?.distinctUntilChanged()
             ?.observeOn(mainScheduler)
             ?.subscribe { title ->
-                view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
-                    it.copy(title = title)
-                }))
-
-                currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
-                    historyRecord.recordVisit(title, it)
+                if (!isSearchViewFocused) {
+                    view.updateState(viewState.copy(
+                        displayUrl = searchBoxModel.getDisplayContent(
+                            url = tabModel.url,
+                            title = title,
+                            isLoading = tabModel.loadingProgress < 100
+                        )
+                    ))
                 }
             }
-
-        faviconDisposable?.dispose()
-        faviconDisposable = tabModel?.faviconChanges()
-            ?.observeOn(mainScheduler)
-            ?.subscribe { favicon ->
-                view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
-                    it.copy(icon = favicon)
-                }))
-            }
-
 
         urlDisposable?.dispose()
         urlDisposable = tabModel?.urlChanges()
@@ -207,7 +203,7 @@ class BrowserPresenter @Inject constructor(
                 if (!isSearchViewFocused) {
                     view.updateState(viewState.copy(
                         displayUrl = searchBoxModel.getDisplayContent(
-                            url = tabModel.url,
+                            url = url,
                             title = tabModel.title,
                             isLoading = tabModel.loadingProgress < 100
                         ),
@@ -243,6 +239,31 @@ class BrowserPresenter @Inject constructor(
             ?.subscribe {
                 view.updateState(viewState.copy(isForwardEnabled = it))
             }
+    }
+
+    private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
+        forEach { tabModel ->
+            compositeDisposable += tabModel.titleChanges()
+                .distinctUntilChanged()
+                .observeOn(mainScheduler)
+                .subscribe { title ->
+                    view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
+                        it.copy(title = title)
+                    }))
+
+                    currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
+                        historyRecord.recordVisit(title, it)
+                    }
+                }
+
+            compositeDisposable += tabModel.faviconChanges()
+                .observeOn(mainScheduler)
+                .subscribe { favicon ->
+                    view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
+                        it.copy(icon = favicon)
+                    }))
+                }
+        }
     }
 
     /**
