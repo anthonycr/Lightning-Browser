@@ -89,7 +89,6 @@ class BrowserPresenter @Inject constructor(
             .observeOn(mainScheduler)
             .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
             .subscribe { list ->
-                this.view.updateState(viewState.copy(tabs = list.map { it.asViewState() }))
                 selectTab(model.selectTab(list.last().id))
             }
 
