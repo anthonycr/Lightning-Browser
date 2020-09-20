@@ -30,6 +30,8 @@ interface BrowserContract {
 
         fun initializeTabs(): Maybe<List<TabModel>>
 
+        fun freeze()
+
         val tabsList: List<TabModel>
 
         fun tabsListChanges(): Observable<List<TabModel>>

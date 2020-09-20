@@ -4,6 +4,7 @@ import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.FreezableBundleInitializer
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.webkit.WebView
 import io.reactivex.Observable
 
@@ -17,7 +18,7 @@ class TabAdapter(
     private val tabWebChromeClient: TabWebChromeClient
 ) : TabModel {
 
-    private var latentInitializer: TabInitializer? = null
+    private var latentInitializer: FreezableBundleInitializer? = null
 
     init {
         webView.webViewClient = tabWebViewClient
@@ -75,7 +76,7 @@ class TabAdapter(
     override fun urlChanges(): Observable<String> = tabWebViewClient.urlObservable.hide()
 
     override val title: String
-        get() = webView.title.orEmpty()
+        get() = latentInitializer?.initialTitle ?: webView.title.orEmpty()
 
     override fun titleChanges(): Observable<String> = tabWebChromeClient.titleObservable.hide()
 
@@ -108,4 +109,9 @@ class TabAdapter(
         webView.removeAllViews()
         webView.destroy()
     }
+
+    override fun freeze(): Bundle = latentInitializer?.bundle
+        ?: Bundle(ClassLoader.getSystemClassLoader()).also {
+            webView.saveState(it)
+        }
 }

@@ -85,7 +85,6 @@ class BrowserPresenter @Inject constructor(
             }
 
         compositeDisposable += model.initializeTabs()
-            .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
             .subscribe { list ->
@@ -105,6 +104,9 @@ class BrowserPresenter @Inject constructor(
      */
     fun onViewDetached() {
         view = null
+
+        model.freeze()
+
         compositeDisposable.dispose()
 
         sslDisposable?.dispose()

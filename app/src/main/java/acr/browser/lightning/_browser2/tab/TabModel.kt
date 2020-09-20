@@ -3,6 +3,7 @@ package acr.browser.lightning._browser2.tab
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
+import android.os.Bundle
 import io.reactivex.Observable
 
 interface TabModel {
@@ -58,5 +59,7 @@ interface TabModel {
     var isForeground: Boolean
 
     fun destroy()
+
+    fun freeze(): Bundle
 
 }

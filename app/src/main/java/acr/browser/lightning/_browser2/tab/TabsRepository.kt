@@ -1,14 +1,13 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.BrowserContract
+import acr.browser.lightning._browser2.tab.bundle.BundleStore
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.allowlist.AllowListModel
-import acr.browser.lightning.view.HomePageInitializer
-import acr.browser.lightning.view.TabInitializer
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
+import acr.browser.lightning.di.DiskScheduler
+import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.view.*
+import io.reactivex.*
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
@@ -19,7 +18,10 @@ class TabsRepository @Inject constructor(
     private val webViewFactory: WebViewFactory,
     private val tabPager: TabPager,
     private val adBlocker: AdBlocker,
-    private val allowListModel: AllowListModel
+    private val allowListModel: AllowListModel,
+    @DiskScheduler private val diskScheduler: Scheduler,
+    @MainScheduler private val mainScheduler: Scheduler,
+    private val bundleStore: BundleStore
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -66,9 +68,17 @@ class TabsRepository @Inject constructor(
 
     override fun tabsListChanges(): Observable<List<TabModel>> = tabsListObservable.hide()
 
-    override fun initializeTabs(): Maybe<List<TabModel>> = Maybe.empty()
+    override fun initializeTabs(): Maybe<List<TabModel>> = Single.fromCallable(bundleStore::retrieve)
+        .flatMapObservable { Observable.fromIterable(it) }
+        .subscribeOn(diskScheduler)
+        .observeOn(mainScheduler)
+        .flatMapSingle(::createTab)
+        .toList()
+        .filter { it.isNotEmpty() }
+
+    override fun freeze() {
+        bundleStore.save(tabsList)
+    }
 
     private fun List<TabModel>.forId(id: Int): TabModel = requireNotNull(find { it.id == id })
-
-
 }
