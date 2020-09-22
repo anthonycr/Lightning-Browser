@@ -57,6 +57,7 @@ class BrowserActivity : ThemableBrowserActivity() {
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(binding.contentFrame)
+            .initialIntent(intent)
             .build()
             .inject(this)
 

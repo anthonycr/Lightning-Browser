@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
@@ -21,6 +22,8 @@ import acr.browser.lightning.utils.smartUrlFilter
 import acr.browser.lightning.view.DownloadPageInitializer
 import acr.browser.lightning.view.HistoryPageInitializer
 import acr.browser.lightning.view.HomePageInitializer
+import acr.browser.lightning.view.UrlInitializer
+import io.reactivex.Maybe
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -41,7 +44,8 @@ class BrowserPresenter @Inject constructor(
     private val historyPageInitializer: HistoryPageInitializer,
     private val downloadPageInitializer: DownloadPageInitializer,
     private val searchBoxModel: SearchBoxModel,
-    private val searchEngineProvider: SearchEngineProvider
+    private val searchEngineProvider: SearchEngineProvider,
+    @InitialUrl private val initialUrl: String?
 ) {
 
     private var view: BrowserContract.View? = null
@@ -85,13 +89,6 @@ class BrowserPresenter @Inject constructor(
                 this.view?.updateState(viewState.copy(bookmarks = list))
             }
 
-        compositeDisposable += model.initializeTabs()
-            .observeOn(mainScheduler)
-            .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
-            .subscribe { list ->
-                selectTab(model.selectTab(list.last().id))
-            }
-
         compositeDisposable += model.tabsListChanges()
             .observeOn(mainScheduler)
             .subscribe { list ->
@@ -99,6 +96,21 @@ class BrowserPresenter @Inject constructor(
 
                 allTabsDisposable.clear()
                 list.subscribeToUpdates(allTabsDisposable)
+            }
+
+        compositeDisposable += model.initializeTabs()
+            .observeOn(mainScheduler)
+            .mergeWith(
+                Maybe.fromCallable { initialUrl }
+                    .flatMapSingleElement { model.createTab(UrlInitializer(it)) }
+                    .map { listOf(it) }
+            )
+            .toList()
+            .map { it.flatten() }
+            .filter { it.isNotEmpty() }
+            .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
+            .subscribe { list ->
+                selectTab(model.selectTab(list.last().id))
             }
     }
 

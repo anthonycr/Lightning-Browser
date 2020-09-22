@@ -1,9 +1,11 @@
 package acr.browser.lightning._browser2.di
 
+import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
 import acr.browser.lightning.preference.UserPreferences
+import android.content.Intent
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -24,5 +26,12 @@ class Browser2Module {
     } else {
         noOpAdBlocker
     }
+
+    @Provides
+    @InitialUrl
+    fun providesInitialUrl(
+        @InitialIntent initialIntent: Intent,
+        intentExtractor: IntentExtractor
+    ): String? = intentExtractor.extractUrlFromIntent(initialIntent)
 
 }
