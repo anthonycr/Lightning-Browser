@@ -280,6 +280,17 @@ class BrowserPresenter @Inject constructor(
     /**
      * TODO
      */
+    fun onNewDeepLink(url: String) {
+        compositeDisposable += model.createTab(UrlInitializer(url))
+            .observeOn(mainScheduler)
+            .subscribe { tab ->
+                selectTab(model.selectTab(tab.id))
+            }
+    }
+
+    /**
+     * TODO
+     */
     fun onMenuClick(menuSelection: MenuSelection) {
         when (menuSelection) {
             MenuSelection.NEW_TAB -> onNewTabClick()

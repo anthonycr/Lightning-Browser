@@ -5,6 +5,7 @@ import acr.browser.lightning._browser2.bookmark.BookmarkRecyclerViewAdapter
 import acr.browser.lightning._browser2.image.ImageLoader
 import acr.browser.lightning._browser2.keys.KeyEventAdapter
 import acr.browser.lightning._browser2.menu.MenuItemAdapter
+import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
@@ -15,6 +16,7 @@ import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -46,6 +48,9 @@ class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var presenter: BrowserPresenter
+
+    @Inject
+    internal lateinit var intentExtractor: IntentExtractor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +118,12 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.actionReading.setOnClickListener { presenter.onReadingModeClick() }
         binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
         binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        intent?.let(intentExtractor::extractUrlFromIntent)?.let(presenter::onNewDeepLink)
+        super.onNewIntent(intent)
+
     }
 
     override fun onDestroy() {
