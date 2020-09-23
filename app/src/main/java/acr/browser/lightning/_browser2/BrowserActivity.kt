@@ -96,6 +96,7 @@ class BrowserActivity : ThemableBrowserActivity() {
             }
         }
         binding.search.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            binding.search.clearFocus()
             presenter.onSearchSuggestionClicked(suggestionsAdapter.getItem(position) as WebPage)
         }
         binding.search.setAdapter(suggestionsAdapter)
