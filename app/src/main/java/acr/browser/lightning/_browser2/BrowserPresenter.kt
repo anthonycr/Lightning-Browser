@@ -181,13 +181,7 @@ class BrowserPresenter @Inject constructor(
                 isBackEnabled = canGoBack,
                 sslState = sslState,
                 progress = progress,
-                tabs = viewState.tabs.map {
-                    if (it.id == tabModel.id) {
-                        it.copy(isSelected = true)
-                    } else {
-                        it.copy(isSelected = false)
-                    }
-                }
+                tabs = viewState.tabs.map { it.copy(isSelected = it.id == tabModel.id) }
             )
         }.subscribeOn(mainScheduler)
             .subscribe { view.updateState(it) }
