@@ -16,18 +16,21 @@ import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
-import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
-import acr.browser.lightning.utils.isSpecialUrl
-import acr.browser.lightning.utils.smartUrlFilter
+import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.DownloadPageInitializer
 import acr.browser.lightning.view.HistoryPageInitializer
 import acr.browser.lightning.view.HomePageInitializer
 import acr.browser.lightning.view.UrlInitializer
+import android.graphics.Bitmap
 import io.reactivex.Maybe
+import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -67,13 +70,7 @@ class BrowserPresenter @Inject constructor(
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
-    private var sslDisposable: Disposable? = null
-    private var titleDisposable: Disposable? = null
-    private var faviconDisposable: Disposable? = null
-    private var urlDisposable: Disposable? = null
-    private var loadingDisposable: Disposable? = null
-    private var canGoBackDisposable: Disposable? = null
-    private var canGoForwardDisposable: Disposable? = null
+    private var tabDisposable: Disposable? = null
 
     /**
      * TODO
@@ -123,14 +120,7 @@ class BrowserPresenter @Inject constructor(
         model.freeze()
 
         compositeDisposable.dispose()
-
-        sslDisposable?.dispose()
-        titleDisposable?.dispose()
-        faviconDisposable?.dispose()
-        urlDisposable?.dispose()
-        loadingDisposable?.dispose()
-        canGoBackDisposable?.dispose()
-        canGoForwardDisposable?.dispose()
+        tabDisposable?.dispose()
     }
 
     private fun TabModel.asViewState(): TabViewState = TabViewState(
@@ -156,126 +146,73 @@ class BrowserPresenter @Inject constructor(
         currentTab = tabModel
         currentTab?.isForeground = true
 
-        view.updateState(viewState.copy(
+        val tab = tabModel ?: return view.updateState(viewState.copy(
             displayUrl = searchBoxModel.getDisplayContent(
-                url = tabModel?.url.orEmpty(),
-                title = tabModel?.title,
-                isLoading = (tabModel?.loadingProgress ?: 0) < 100
+                url = "",
+                title = null,
+                isLoading = false
             ),
-            isForwardEnabled = tabModel?.canGoForward() ?: false,
-            isBackEnabled = tabModel?.canGoBack() ?: false,
-            sslState = tabModel?.sslState ?: SslState.None,
-            progress = tabModel?.loadingProgress ?: 100,
+            isForwardEnabled = false,
+            isBackEnabled = false,
+            sslState = SslState.None,
+            progress = 100,
             tabs = viewState.tabs.map {
-                if (it.id == tabModel?.id) {
-                    it.copy(isSelected = true)
-                } else {
-                    it.copy(isSelected = false)
-                }
+                it.copy(isSelected = false)
             }
         ))
 
-        sslDisposable?.dispose()
-        sslDisposable = tabModel?.sslChanges()
-            ?.distinctUntilChanged()
-            ?.observeOn(mainScheduler)
-            ?.subscribe {
-                view.updateState(viewState.copy(
-                    sslState = if (isSearchViewFocused) {
-                        SslState.None
+        tabDisposable?.dispose()
+        tabDisposable = Observables.combineLatest(
+            tab.sslChanges().startWith(tab.sslState),
+            tab.titleChanges().startWith(tab.title),
+            tab.urlChanges().startWith(tab.url),
+            tab.loadingProgress().startWith(tab.loadingProgress),
+            tab.canGoBackChanges().startWith(tab.canGoBack()),
+            tab.canGoForwardChanges().startWith(tab.canGoForward())
+        ) { sslState, title, url, progress, canGoBack, canGoForward ->
+            viewState.copy(
+                displayUrl = searchBoxModel.getDisplayContent(
+                    url = url,
+                    title = title,
+                    isLoading = progress < 100
+                ),
+                isRefresh = progress == 100,
+                isForwardEnabled = canGoForward,
+                isBackEnabled = canGoBack,
+                sslState = sslState,
+                progress = progress,
+                tabs = viewState.tabs.map {
+                    if (it.id == tabModel.id) {
+                        it.copy(isSelected = true)
                     } else {
-                        it
+                        it.copy(isSelected = false)
                     }
-                ))
-            }
-
-        titleDisposable?.dispose()
-        titleDisposable = tabModel?.titleChanges()
-            ?.distinctUntilChanged()
-            ?.observeOn(mainScheduler)
-            ?.subscribe { title ->
-                if (!isSearchViewFocused) {
-                    view.updateState(viewState.copy(
-                        displayUrl = searchBoxModel.getDisplayContent(
-                            url = tabModel.url,
-                            title = title,
-                            isLoading = tabModel.loadingProgress < 100
-                        )
-                    ))
                 }
-            }
-
-        urlDisposable?.dispose()
-        urlDisposable = tabModel?.urlChanges()
-            ?.flatMapSingle { url -> bookmarkRepository.isBookmark(url).map { Pair(url, it) } }
-            ?.distinctUntilChanged()
-            ?.observeOn(mainScheduler)
-            ?.subscribe { (url, isBookmark) ->
-                if (!isSearchViewFocused) {
-                    view.updateState(viewState.copy(
-                        displayUrl = searchBoxModel.getDisplayContent(
-                            url = url,
-                            title = tabModel.title,
-                            isLoading = tabModel.loadingProgress < 100
-                        ),
-                        isBookmarked = isBookmark,
-                        isBookmarkEnabled = !url.isSpecialUrl()
-                    ))
-                }
-            }
-
-        loadingDisposable?.dispose()
-        loadingDisposable = tabModel?.loadingProgress()
-            ?.distinctUntilChanged()
-            ?.observeOn(mainScheduler)
-            ?.subscribe {
-                view.updateState(viewState.copy(
-                    progress = it,
-                    isRefresh = it == 100 && !isSearchViewFocused
-                ))
-            }
-
-        canGoBackDisposable?.dispose()
-        canGoBackDisposable = tabModel?.canGoBackChanges()
-            ?.distinctUntilChanged()
-            ?.observeOn(mainScheduler)
-            ?.subscribe {
-                view.updateState(viewState.copy(isBackEnabled = it))
-            }
-
-        canGoForwardDisposable?.dispose()
-        canGoForwardDisposable = tabModel?.canGoForwardChanges()
-            ?.distinctUntilChanged()
-            ?.observeOn(mainScheduler)
-            ?.subscribe {
-                view.updateState(viewState.copy(isForwardEnabled = it))
-            }
+            )
+        }.subscribeOn(mainScheduler)
+            .subscribe { view.updateState(it) }
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
         forEach { tabModel ->
-            compositeDisposable += tabModel.titleChanges()
-                .distinctUntilChanged()
-                .observeOn(mainScheduler)
-                .subscribe { title ->
+            compositeDisposable += Observables.combineLatest(
+                tabModel.titleChanges().startWith(tabModel.title),
+                tabModel.faviconChanges().optional().startWith(Option.fromNullable(tabModel.favicon))
+            ).distinctUntilChanged()
+                .subscribeOn(mainScheduler)
+                .subscribeBy { (title, bitmap) ->
                     view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
-                        it.copy(title = title)
+                        it.copy(title = title, icon = bitmap.value())
                     }))
 
-                    currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
+                    tabModel.url.takeIf { !it.isSpecialUrl() }?.let {
                         historyRecord.recordVisit(title, it)
                     }
                 }
-
-            compositeDisposable += tabModel.faviconChanges()
-                .observeOn(mainScheduler)
-                .subscribe { favicon ->
-                    view.updateState(viewState.copy(tabs = viewState.tabs.updateId(tabModel.id) {
-                        it.copy(icon = favicon)
-                    }))
-                }
         }
     }
+
+    private fun <T> Observable<T>.optional(): Observable<Option<T>> = map { Option.Some(it) }
 
     /**
      * TODO
@@ -517,7 +454,6 @@ class BrowserPresenter @Inject constructor(
                     }
             }
         }
-
     }
 
     /**
