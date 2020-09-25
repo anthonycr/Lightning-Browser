@@ -25,6 +25,31 @@ class WebViewFactory @Inject constructor(
     private val userPreferences: UserPreferences
 ) {
 
+    fun createRequestHeaders(): Map<String, String> {
+        val requestHeaders = mutableMapOf<String, String>()
+        if (userPreferences.doNotTrackEnabled) {
+            requestHeaders[HEADER_DNT] = "1"
+        } else {
+            requestHeaders.remove(HEADER_DNT)
+        }
+
+        if (userPreferences.saveDataEnabled) {
+            requestHeaders[HEADER_SAVEDATA] = "on"
+        } else {
+            requestHeaders.remove(HEADER_SAVEDATA)
+        }
+
+        if (userPreferences.removeIdentifyingHeadersEnabled) {
+            requestHeaders[HEADER_REQUESTED_WITH] = ""
+            requestHeaders[HEADER_WAP_PROFILE] = ""
+        } else {
+            requestHeaders.remove(HEADER_REQUESTED_WITH)
+            requestHeaders.remove(HEADER_WAP_PROFILE)
+        }
+
+        return requestHeaders
+    }
+
     fun createWebView(isIncognito: Boolean): WebView = WebView(activity).apply {
         id = View.generateViewId()
         isFocusableInTouchMode = true
@@ -91,26 +116,6 @@ class WebViewFactory @Inject constructor(
         val modifiesHeaders = userPreferences.doNotTrackEnabled
             || userPreferences.saveDataEnabled
             || userPreferences.removeIdentifyingHeadersEnabled
-//
-//        if (userPreferences.doNotTrackEnabled) {
-//            requestHeaders[LightningView.HEADER_DNT] = "1"
-//        } else {
-//            requestHeaders.remove(LightningView.HEADER_DNT)
-//        }
-//
-//        if (userPreferences.saveDataEnabled) {
-//            requestHeaders[LightningView.HEADER_SAVEDATA] = "on"
-//        } else {
-//            requestHeaders.remove(LightningView.HEADER_SAVEDATA)
-//        }
-//
-//        if (userPreferences.removeIdentifyingHeadersEnabled) {
-//            requestHeaders[LightningView.HEADER_REQUESTED_WITH] = ""
-//            requestHeaders[LightningView.HEADER_WAP_PROFILE] = ""
-//        } else {
-//            requestHeaders.remove(LightningView.HEADER_REQUESTED_WITH)
-//            requestHeaders.remove(LightningView.HEADER_WAP_PROFILE)
-//        }
 
         settings.defaultTextEncodingName = userPreferences.textEncoding
 //        setColorMode(userPreferences.renderingMode)

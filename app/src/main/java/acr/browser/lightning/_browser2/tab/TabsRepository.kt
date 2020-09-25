@@ -44,6 +44,7 @@ class TabsRepository @Inject constructor(
         val tabAdapter = TabAdapter(
             tabInitializer,
             webView,
+            webViewFactory.createRequestHeaders(),
             TabWebViewClient(adBlocker, allowListModel),
             TabWebChromeClient()
         )

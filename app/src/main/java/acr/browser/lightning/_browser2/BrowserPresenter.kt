@@ -130,7 +130,10 @@ class BrowserPresenter @Inject constructor(
         isSelected = isForeground
     )
 
-    private fun List<TabViewState>.updateId(id: Int, map: (TabViewState) -> TabViewState): List<TabViewState> = map {
+    private fun List<TabViewState>.updateId(
+        id: Int,
+        map: (TabViewState) -> TabViewState
+    ): List<TabViewState> = map {
         if (it.id == id) {
             map(it)
         } else {

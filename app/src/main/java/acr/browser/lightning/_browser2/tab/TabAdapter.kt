@@ -14,6 +14,7 @@ import io.reactivex.Observable
 class TabAdapter(
     tabInitializer: TabInitializer,
     private val webView: WebView,
+    private val requestHeaders: Map<String, String>,
     private val tabWebViewClient: TabWebViewClient,
     private val tabWebChromeClient: TabWebChromeClient
 ) : TabModel {
@@ -33,11 +34,11 @@ class TabAdapter(
     override val id: Int = webView.id
 
     override fun loadUrl(url: String) {
-        webView.loadUrl(url)
+        webView.loadUrl(url, requestHeaders)
     }
 
     override fun loadFromInitializer(tabInitializer: TabInitializer) {
-        tabInitializer.initialize(webView, emptyMap())
+        tabInitializer.initialize(webView, requestHeaders)
     }
 
     override fun goBack() {
