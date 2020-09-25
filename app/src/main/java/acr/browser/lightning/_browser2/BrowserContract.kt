@@ -47,6 +47,10 @@ interface BrowserContract {
         fun sharePage(url: String, title: String?)
 
         fun copyPageLink(url: String)
+
+        fun closeBrowser()
+
+        fun backgroundBrowser()
     }
 
 

@@ -36,4 +36,12 @@ class BrowserNavigator @Inject constructor(
         activity.snackbar(R.string.message_link_copied)
     }
 
+    override fun closeBrowser() {
+        activity.finish()
+    }
+
+    override fun backgroundBrowser() {
+        activity.moveTaskToBack(true)
+    }
+
 }

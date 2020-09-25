@@ -325,8 +325,10 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onBackClick() {
-        if (currentTab?.canGoBack() == true) {
-            currentTab?.goBack()
+        when {
+            currentTab?.canGoBack() == true -> currentTab?.goBack()
+            currentTab == null -> navigator.closeBrowser()
+            else -> navigator.backgroundBrowser()
         }
     }
 

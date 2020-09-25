@@ -132,6 +132,10 @@ class BrowserActivity : ThemableBrowserActivity() {
         presenter.onViewDetached()
     }
 
+    override fun onBackPressed() {
+        presenter.onBackClick()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return super.onCreateOptionsMenu(menu)
