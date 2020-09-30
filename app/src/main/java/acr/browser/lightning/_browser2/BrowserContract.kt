@@ -18,6 +18,8 @@ interface BrowserContract {
 
         fun renderState(viewState: BrowserViewState)
 
+        fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
+
     }
 
     interface Model {

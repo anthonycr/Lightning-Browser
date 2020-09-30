@@ -14,6 +14,7 @@ import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.di.injector
+import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.content.Intent
@@ -51,6 +52,9 @@ class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var intentExtractor: IntentExtractor
+
+    @Inject
+    internal lateinit var lightningDialogBuilder: LightningDialogBuilder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,6 +179,16 @@ class BrowserActivity : ThemableBrowserActivity() {
         viewState.bookmarks?.let { bookmarksAdapter.submitList(viewState.bookmarks) }
         viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
         viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
+    }
+
+    fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
+        lightningDialogBuilder.showAddBookmarkDialog(
+            activity = this,
+            currentTitle = title,
+            currentUrl = url,
+            folders = folders,
+            onSave = presenter::onBookmarkConfirmed
+        )
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

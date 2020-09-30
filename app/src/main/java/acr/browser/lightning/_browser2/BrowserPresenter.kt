@@ -4,13 +4,10 @@ import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
-import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning.browser.SearchBoxModel
-import acr.browser.lightning.database.Bookmark
-import acr.browser.lightning.database.HistoryEntry
-import acr.browser.lightning.database.SearchSuggestion
-import acr.browser.lightning.database.WebPage
+import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
@@ -21,16 +18,15 @@ import acr.browser.lightning.view.DownloadPageInitializer
 import acr.browser.lightning.view.HistoryPageInitializer
 import acr.browser.lightning.view.HomePageInitializer
 import acr.browser.lightning.view.UrlInitializer
-import android.graphics.Bitmap
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -79,7 +75,7 @@ class BrowserPresenter @Inject constructor(
         this.view = view
         view.updateState(viewState)
 
-        compositeDisposable += bookmarkRepository.getBookmarksFromFolderSorted(folder = null)
+        compositeDisposable += bookmarkRepository.bookmarksAndFolders(folder = null)
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { list ->
@@ -171,8 +167,10 @@ class BrowserPresenter @Inject constructor(
             tab.urlChanges().startWith(tab.url),
             tab.loadingProgress().startWith(tab.loadingProgress),
             tab.canGoBackChanges().startWith(tab.canGoBack()),
-            tab.canGoForwardChanges().startWith(tab.canGoForward())
-        ) { sslState, title, url, progress, canGoBack, canGoForward ->
+            tab.canGoForwardChanges().startWith(tab.canGoForward()),
+            tab.urlChanges().startWith(tab.url).flatMapSingle(bookmarkRepository::isBookmark),
+            tab.urlChanges().startWith(tab.url).map(String::isSpecialUrl)
+        ) { sslState, title, url, progress, canGoBack, canGoForward, isBookmark, isSpecialUrl ->
             viewState.copy(
                 displayUrl = searchBoxModel.getDisplayContent(
                     url = url,
@@ -184,7 +182,9 @@ class BrowserPresenter @Inject constructor(
                 isBackEnabled = canGoBack,
                 sslState = sslState,
                 progress = progress,
-                tabs = viewState.tabs.map { it.copy(isSelected = it.id == tabModel.id) }
+                tabs = viewState.tabs.map { it.copy(isSelected = it.id == tabModel.id) },
+                isBookmarked = isBookmark,
+                isBookmarkEnabled = !isSpecialUrl
             )
         }.subscribeOn(mainScheduler)
             .subscribe { view.updateState(it) }
@@ -249,7 +249,8 @@ class BrowserPresenter @Inject constructor(
                 ?.let(navigator::copyPageLink)
             MenuSelection.ADD_TO_HOME -> TODO()
             MenuSelection.BOOKMARKS -> TODO()
-            MenuSelection.ADD_BOOKMARK -> TODO()
+            MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
+                ?.let { showBookmarkDialog() }
             MenuSelection.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::openReaderMode)
             MenuSelection.SETTINGS -> navigator.openSettings()
@@ -445,7 +446,7 @@ class BrowserPresenter @Inject constructor(
             is Bookmark.Folder.Entry -> {
                 currentFolder = bookmark
                 compositeDisposable += bookmarkRepository
-                    .getBookmarksFromFolderSorted(folder = bookmark.title)
+                    .bookmarksAndFolders(folder = bookmark)
                     .subscribeOn(databaseScheduler)
                     .observeOn(mainScheduler)
                     .subscribe { list ->
@@ -454,6 +455,18 @@ class BrowserPresenter @Inject constructor(
             }
         }
     }
+
+    private fun BookmarkRepository.bookmarksAndFolders(folder: Bookmark.Folder?): Single<List<Bookmark>> =
+        getBookmarksFromFolderSorted(folder = folder?.title)
+            .concatWith(Single.defer {
+                if (folder == null) {
+                    getFoldersSorted()
+                } else {
+                    Single.just(emptyList())
+                }
+            })
+            .toList()
+            .map { it.flatten() }
 
     /**
      * TODO
@@ -479,24 +492,47 @@ class BrowserPresenter @Inject constructor(
             return
         }
         compositeDisposable += bookmarkRepository.isBookmark(url)
-            .flatMap {
+            .flatMapMaybe {
                 if (it) {
                     bookmarkRepository.deleteBookmark(Bookmark.Entry(
                         url = url,
                         title = title,
                         position = 0,
                         folder = Bookmark.Folder.Root
-                    ))
+                    )).toMaybe()
                 } else {
-                    bookmarkRepository.addBookmarkIfNotExists(Bookmark.Entry(
-                        url = url,
-                        title = title,
-                        position = 0,
-                        folder = Bookmark.Folder.Root
-                    ))
+                    Maybe.empty()
                 }
             }
-            .flatMap { bookmarkRepository.getBookmarksFromFolderSorted(folder = currentFolder.title) }
+            .doOnComplete(::showBookmarkDialog)
+            .flatMapSingleElement { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
+            .subscribeOn(databaseScheduler)
+            .observeOn(mainScheduler)
+            .subscribeBy { list ->
+                this.view?.updateState(viewState.copy(bookmarks = list))
+            }
+    }
+
+    private fun showBookmarkDialog() {
+        compositeDisposable += bookmarkRepository.getFolderNames()
+            .subscribeOn(databaseScheduler)
+            .observeOn(mainScheduler)
+            .subscribeBy {
+                view?.showAddBookmarkDialog(
+                    title = currentTab?.title.orEmpty(),
+                    url = currentTab?.url.orEmpty(),
+                    folders = it
+                )
+            }
+    }
+
+    fun onBookmarkConfirmed(title: String, url: String, folder: String) {
+        compositeDisposable += bookmarkRepository.addBookmarkIfNotExists(Bookmark.Entry(
+            url = url,
+            title = title,
+            position = 0,
+            folder = folder.asFolder()
+        )).flatMap { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { list ->
@@ -523,8 +559,9 @@ class BrowserPresenter @Inject constructor(
      */
     fun onBookmarkMenuClick() {
         if (currentFolder != Bookmark.Folder.Root) {
+            currentFolder = Bookmark.Folder.Root
             compositeDisposable += bookmarkRepository
-                .getBookmarksFromFolderSorted(folder = null)
+                .bookmarksAndFolders(folder = null)
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
                 .subscribe { list ->

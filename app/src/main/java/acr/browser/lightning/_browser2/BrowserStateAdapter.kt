@@ -1,6 +1,5 @@
 package acr.browser.lightning._browser2
 
-
 /**
  * Created by anthonycr on 9/16/20.
  */
@@ -38,6 +37,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         )
 
         currentState = viewState
+    }
+
+    override fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
+        browserActivity.showAddBookmarkDialog(title, url, folders)
     }
 
 }
