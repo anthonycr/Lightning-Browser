@@ -328,6 +328,7 @@ class BrowserPresenter @Inject constructor(
      */
     fun onBackClick() {
         when {
+            currentFolder != Bookmark.Folder.Root -> onBookmarkMenuClick()
             currentTab?.canGoBack() == true -> currentTab?.goBack()
             currentTab == null -> navigator.closeBrowser()
             else -> navigator.backgroundBrowser()
