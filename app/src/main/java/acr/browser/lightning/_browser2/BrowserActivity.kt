@@ -10,7 +10,6 @@ import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
-import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.databinding.BrowserActivityBinding
@@ -74,7 +73,7 @@ class BrowserActivity : ThemableBrowserActivity() {
         tabsAdapter = TabRecyclerViewAdapter(
             onClick = presenter::onTabClick,
             onCloseClick = presenter::onTabClose,
-            onLongClick = {}
+            onLongClick = presenter::onTabLongClick
         )
         binding.tabsList.adapter = tabsAdapter
         binding.tabsList.layoutManager = LinearLayoutManager(this)

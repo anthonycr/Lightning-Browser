@@ -292,6 +292,13 @@ class BrowserPresenter @Inject constructor(
         selectTab(model.selectTab(viewState.tabs[index].id))
     }
 
+    /**
+     * TODO
+     */
+    fun onTabLongClick(index: Int) {
+        // TODO
+    }
+
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
         val nextIndex = when {
             removedIndex > 0 -> removedIndex - 1
