@@ -10,6 +10,7 @@ import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.databinding.BrowserActivityBinding
@@ -188,6 +189,25 @@ class BrowserActivity : ThemableBrowserActivity() {
             currentUrl = url,
             folders = folders,
             onSave = presenter::onBookmarkConfirmed
+        )
+    }
+
+    fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
+        lightningDialogBuilder.showEditBookmarkDialog(
+            activity = this,
+            currentTitle = title,
+            currentUrl = url,
+            currentFolder = folder,
+            folders = folders,
+            onSave = presenter::onBookmarkEditConfirmed
+        )
+    }
+
+    fun showEditFolderDialog(oldTitle: String) {
+        lightningDialogBuilder.showRenameFolderDialog(
+            activity = this,
+            oldTitle = oldTitle,
+            onSave = presenter::onBookmarkFolderRenameConfirmed
         )
     }
 
