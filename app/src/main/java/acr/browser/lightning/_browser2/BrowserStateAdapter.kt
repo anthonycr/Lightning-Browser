@@ -18,7 +18,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
             isBackEnabled,
             bookmarks,
             isBookmarked,
-            isBookmarkEnabled
+            isBookmarkEnabled,
+            isRootFolder
         ) = viewState
 
         browserActivity.renderState(
@@ -32,7 +33,8 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
                 isBackEnabled = isBackEnabled.takeIf { it != currentState?.isBackEnabled },
                 bookmarks = bookmarks.takeIf { it != currentState?.bookmarks },
                 isBookmarked = isBookmarked.takeIf { it != currentState?.isBookmarked },
-                isBookmarkEnabled = isBookmarkEnabled.takeIf { it != currentState?.isBookmarkEnabled }
+                isBookmarkEnabled = isBookmarkEnabled.takeIf { it != currentState?.isBookmarkEnabled },
+                isRootFolder = isRootFolder.takeIf { it != currentState?.isRootFolder }
             )
         )
 

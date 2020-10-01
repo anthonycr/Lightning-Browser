@@ -167,19 +167,26 @@ class BrowserActivity : ThemableBrowserActivity() {
             binding.searchSslStatus.setImageDrawable(createSslDrawableForState(it))
             binding.searchSslStatus.updateVisibilityForDrawable()
         }
-        viewState.tabs?.let { binding.tabCountView.updateCount(viewState.tabs.size) }
+        viewState.tabs?.let { binding.tabCountView.updateCount(it.size) }
         viewState.progress?.let { binding.progressView.progress = it }
         viewState.isRefresh?.let {
-            binding.searchRefresh.setImageResource(if (viewState.isRefresh) {
+            binding.searchRefresh.setImageResource(if (it) {
                 R.drawable.ic_action_refresh
             } else {
                 R.drawable.ic_action_delete
             })
         }
-        viewState.tabs?.let { tabsAdapter.submitList(viewState.tabs) }
-        viewState.bookmarks?.let { bookmarksAdapter.submitList(viewState.bookmarks) }
+        viewState.tabs?.let(tabsAdapter::submitList)
+        viewState.bookmarks?.let(bookmarksAdapter::submitList)
         viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
         viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
+        viewState.isRootFolder?.let {
+            binding.bookmarkBackButton.setImageResource(if (it) {
+                R.drawable.ic_action_star
+            } else {
+                R.drawable.ic_action_back
+            })
+        }
     }
 
     fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {

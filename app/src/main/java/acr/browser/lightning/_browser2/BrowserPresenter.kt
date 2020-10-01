@@ -58,7 +58,8 @@ class BrowserPresenter @Inject constructor(
         isBackEnabled = false,
         bookmarks = emptyList(),
         isBookmarked = false,
-        isBookmarkEnabled = true
+        isBookmarkEnabled = true,
+        isRootFolder = true
     )
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
@@ -80,7 +81,7 @@ class BrowserPresenter @Inject constructor(
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { list ->
-                this.view?.updateState(viewState.copy(bookmarks = list))
+                this.view?.updateState(viewState.copy(bookmarks = list, isRootFolder = true))
             }
 
         compositeDisposable += model.tabsListChanges()
@@ -452,7 +453,7 @@ class BrowserPresenter @Inject constructor(
                     .subscribeOn(databaseScheduler)
                     .observeOn(mainScheduler)
                     .subscribe { list ->
-                        view?.updateState(viewState.copy(bookmarks = list))
+                        view?.updateState(viewState.copy(bookmarks = list, isRootFolder = false))
                     }
             }
         }
@@ -606,7 +607,7 @@ class BrowserPresenter @Inject constructor(
                 .subscribeOn(databaseScheduler)
                 .observeOn(mainScheduler)
                 .subscribe { list ->
-                    view?.updateState(viewState.copy(bookmarks = list))
+                    view?.updateState(viewState.copy(bookmarks = list, isRootFolder = true))
                 }
         }
     }
