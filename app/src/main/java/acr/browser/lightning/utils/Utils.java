@@ -12,6 +12,7 @@ import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
@@ -38,6 +39,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableKt;
 
 public final class Utils {
 
@@ -228,17 +231,31 @@ public final class Utils {
      * browser. The icon, URL, and title are used in
      * the creation of the shortcut.
      *
-     * @param activity the activity needed to create
-     *                 the intent and show a snackbar message
-     * @param historyEntry     the HistoryEntity to create the shortcut from
+     * @param activity     the activity needed to create
+     *                     the intent and show a snackbar message
+     * @param historyEntry the HistoryEntity to create the shortcut from
      */
     public static void createShortcut(@NonNull Activity activity,
                                       @NonNull HistoryEntry historyEntry,
                                       @NonNull Bitmap favicon) {
-        Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
-        shortcutIntent.setData(Uri.parse(historyEntry.getUrl()));
+        createShortcut(activity, historyEntry.getUrl(), historyEntry.getTitle(), favicon);
+    }
 
-        final String title = TextUtils.isEmpty(historyEntry.getTitle()) ? activity.getString(R.string.untitled) : historyEntry.getTitle();
+    public static void createShortcut(@NonNull Activity activity,
+                                      @NonNull String url,
+                                      @NonNull String unsafeTitle,
+                                      @Nullable Bitmap unsafeFavicon) {
+        Intent shortcutIntent = new Intent(Intent.ACTION_VIEW);
+        shortcutIntent.setData(Uri.parse(url));
+
+        final String title = TextUtils.isEmpty(unsafeTitle) ? activity.getString(R.string.untitled) : unsafeTitle;
+        final Drawable webPageDrawable = ContextCompat.getDrawable(activity, R.drawable.ic_webpage);
+        Preconditions.checkNonNull(webPageDrawable);
+        final Bitmap webPageBitmap = DrawableKt.toBitmap(webPageDrawable,
+            webPageDrawable.getIntrinsicWidth(),
+            webPageDrawable.getIntrinsicHeight(), null);
+
+        final Bitmap favicon = unsafeFavicon != null ? unsafeFavicon : webPageBitmap;
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             Intent addIntent = new Intent();
@@ -252,7 +269,7 @@ public final class Utils {
             ShortcutManager shortcutManager = activity.getSystemService(ShortcutManager.class);
             if (shortcutManager.isRequestPinShortcutSupported()) {
                 ShortcutInfo pinShortcutInfo =
-                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + historyEntry.getUrl().hashCode())
+                    new ShortcutInfo.Builder(activity, "browser-shortcut-" + url.hashCode())
                         .setIntent(shortcutIntent)
                         .setIcon(Icon.createWithBitmap(favicon))
                         .setShortLabel(title)

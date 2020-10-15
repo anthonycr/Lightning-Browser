@@ -1,14 +1,20 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning.R
+import acr.browser.lightning.browser.activity.BrowserActivity
+import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.extensions.copyToClipboard
 import acr.browser.lightning.extensions.snackbar
+import acr.browser.lightning.log.Logger
 import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.settings.activity.SettingsActivity
 import acr.browser.lightning.utils.IntentUtils
+import acr.browser.lightning.utils.Utils
+import acr.browser.lightning.utils.isSpecialUrl
 import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
+import android.graphics.Bitmap
 import javax.inject.Inject
 
 /**
@@ -16,7 +22,8 @@ import javax.inject.Inject
  */
 class BrowserNavigator @Inject constructor(
     private val activity: Activity,
-    private val clipboardManager: ClipboardManager
+    private val clipboardManager: ClipboardManager,
+    private val logger: Logger
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -40,8 +47,17 @@ class BrowserNavigator @Inject constructor(
         activity.finish()
     }
 
+    override fun addToHomeScreen(url: String, title: String, favicon: Bitmap?) {
+        Utils.createShortcut(activity, url, title, favicon)
+        logger.log(TAG, "Creating shortcut: $title $url")
+    }
+
     override fun backgroundBrowser() {
         activity.moveTaskToBack(true)
+    }
+
+    companion object {
+        private const val TAG = "BrowserNavigator"
     }
 
 }

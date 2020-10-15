@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning.view.TabInitializer
+import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -54,6 +55,8 @@ interface BrowserContract {
         fun copyPageLink(url: String)
 
         fun closeBrowser()
+
+        fun addToHomeScreen(url: String, title: String, favicon: Bitmap?)
 
         fun backgroundBrowser()
     }

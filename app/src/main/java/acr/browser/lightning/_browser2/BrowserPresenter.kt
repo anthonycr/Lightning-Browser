@@ -249,13 +249,20 @@ class BrowserPresenter @Inject constructor(
             MenuSelection.FIND -> TODO()
             MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::copyPageLink)
-            MenuSelection.ADD_TO_HOME -> TODO()
+            MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
+                ?.let { addToHomeScreen() }
             MenuSelection.BOOKMARKS -> TODO()
             MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { showAddBookmarkDialog() }
             MenuSelection.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::openReaderMode)
             MenuSelection.SETTINGS -> navigator.openSettings()
+        }
+    }
+
+    private fun addToHomeScreen() {
+        currentTab?.let {
+            navigator.addToHomeScreen(it.url, it.title, it.favicon)
         }
     }
 
