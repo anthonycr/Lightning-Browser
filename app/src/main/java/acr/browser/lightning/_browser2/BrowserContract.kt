@@ -24,6 +24,10 @@ interface BrowserContract {
         fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>)
 
         fun showEditFolderDialog(title: String)
+
+        fun openBookmarkDrawer()
+
+        fun openTabDrawer()
     }
 
     interface Model {

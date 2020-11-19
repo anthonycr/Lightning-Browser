@@ -1,6 +1,9 @@
 package acr.browser.lightning._browser2.di
 
 import acr.browser.lightning._browser2.search.IntentExtractor
+import acr.browser.lightning._browser2.ui.BookmarkConfiguration
+import acr.browser.lightning._browser2.ui.TabConfiguration
+import acr.browser.lightning._browser2.ui.UiConfiguration
 import acr.browser.lightning.adblock.AdBlocker
 import acr.browser.lightning.adblock.BloomFilterAdBlocker
 import acr.browser.lightning.adblock.NoOpAdBlocker
@@ -33,5 +36,17 @@ class Browser2Module {
         @InitialIntent initialIntent: Intent,
         intentExtractor: IntentExtractor
     ): String? = intentExtractor.extractUrlFromIntent(initialIntent)
+
+    @Provides
+    fun providesUiConfiguration(
+        userPreferences: UserPreferences
+    ): UiConfiguration = UiConfiguration(
+        tabConfiguration = TabConfiguration.DRAWER,
+        bookmarkConfiguration = if (userPreferences.bookmarksAndTabsSwapped) {
+            BookmarkConfiguration.LEFT
+        } else {
+            BookmarkConfiguration.RIGHT
+        }
+    )
 
 }

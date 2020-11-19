@@ -53,4 +53,12 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showEditFolderDialog(title)
     }
 
+    override fun openBookmarkDrawer() {
+        browserActivity.openBookmarkDrawer()
+    }
+
+    override fun openTabDrawer() {
+        browserActivity.openTabDrawer()
+    }
+
 }

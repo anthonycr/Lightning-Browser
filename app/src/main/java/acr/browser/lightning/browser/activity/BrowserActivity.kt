@@ -247,8 +247,8 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         backgroundDrawable.color = primaryColor
 
         // Drawer stutters otherwise
-        left_drawer.setLayerType(LAYER_TYPE_NONE, null)
-        right_drawer.setLayerType(LAYER_TYPE_NONE, null)
+        tab_drawer.setLayerType(LAYER_TYPE_NONE, null)
+        bookmark_drawer.setLayerType(LAYER_TYPE_NONE, null)
 
         setNavigationDrawerWidth()
         drawer_layout.addDrawerListener(DrawerLocker())
@@ -361,31 +361,31 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
     }
 
     private fun getBookmarksContainerId(): Int = if (swapBookmarksAndTabs) {
-        R.id.left_drawer
+        R.id.tab_drawer
     } else {
-        R.id.right_drawer
+        R.id.bookmark_drawer
     }
 
     private fun getTabsContainerId(): Int = if (shouldShowTabsInDrawer) {
         if (swapBookmarksAndTabs) {
-            R.id.right_drawer
+            R.id.bookmark_drawer
         } else {
-            R.id.left_drawer
+            R.id.tab_drawer
         }
     } else {
         R.id.tabs_toolbar_container
     }
 
     private fun getBookmarkDrawer(): View = if (swapBookmarksAndTabs) {
-        left_drawer
+        tab_drawer
     } else {
-        right_drawer
+        bookmark_drawer
     }
 
     private fun getTabDrawer(): View = if (swapBookmarksAndTabs) {
-        right_drawer
+        bookmark_drawer
     } else {
-        left_drawer
+        tab_drawer
     }
 
     protected fun panicClean() {
@@ -510,14 +510,14 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         val width = resources.displayMetrics.widthPixels - dimen(R.dimen.navigation_drawer_minimum_space)
         val maxWidth = resources.getDimensionPixelSize(R.dimen.navigation_drawer_max_width)
         if (width < maxWidth) {
-            val params = left_drawer.layoutParams as DrawerLayout.LayoutParams
+            val params = tab_drawer.layoutParams as DrawerLayout.LayoutParams
             params.width = width
-            left_drawer.layoutParams = params
-            left_drawer.requestLayout()
-            val paramsRight = right_drawer.layoutParams as DrawerLayout.LayoutParams
+            tab_drawer.layoutParams = params
+            tab_drawer.requestLayout()
+            val paramsRight = bookmark_drawer.layoutParams as DrawerLayout.LayoutParams
             paramsRight.width = width
-            right_drawer.layoutParams = paramsRight
-            right_drawer.requestLayout()
+            bookmark_drawer.layoutParams = paramsRight
+            bookmark_drawer.requestLayout()
         }
     }
 
@@ -1303,7 +1303,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * @param runnable an optional runnable to run after the drawers are closed.
      */
     protected fun closeDrawers(runnable: (() -> Unit)?) {
-        if (!drawer_layout.isDrawerOpen(left_drawer) && !drawer_layout.isDrawerOpen(right_drawer)) {
+        if (!drawer_layout.isDrawerOpen(tab_drawer) && !drawer_layout.isDrawerOpen(bookmark_drawer)) {
             if (runnable != null) {
                 runnable()
                 return

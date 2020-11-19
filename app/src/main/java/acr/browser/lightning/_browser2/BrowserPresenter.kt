@@ -6,6 +6,8 @@ import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning._browser2.tab.TabViewState
+import acr.browser.lightning._browser2.ui.TabConfiguration
+import acr.browser.lightning._browser2.ui.UiConfiguration
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -44,7 +46,8 @@ class BrowserPresenter @Inject constructor(
     private val downloadPageInitializer: DownloadPageInitializer,
     private val searchBoxModel: SearchBoxModel,
     private val searchEngineProvider: SearchEngineProvider,
-    @InitialUrl private val initialUrl: String?
+    @InitialUrl private val initialUrl: String?,
+    private val uiConfiguration: UiConfiguration
 ) {
 
     private var view: BrowserContract.View? = null
@@ -251,12 +254,14 @@ class BrowserPresenter @Inject constructor(
                 ?.let(navigator::copyPageLink)
             MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { addToHomeScreen() }
-            MenuSelection.BOOKMARKS -> TODO()
+            MenuSelection.BOOKMARKS -> view?.openBookmarkDrawer()
             MenuSelection.ADD_BOOKMARK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let { showAddBookmarkDialog() }
             MenuSelection.READER -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::openReaderMode)
             MenuSelection.SETTINGS -> navigator.openSettings()
+            MenuSelection.BACK -> onBackClick()
+            MenuSelection.FORWARD -> onForwardClick()
         }
     }
 
@@ -432,6 +437,10 @@ class BrowserPresenter @Inject constructor(
         currentTab?.loadUrl(url)
     }
 
+    fun onFindInPage(query: String) {
+        TODO()
+    }
+
     /**
      * TODO
      */
@@ -459,7 +468,7 @@ class BrowserPresenter @Inject constructor(
     fun onBookmarkClick(index: Int) {
         when (val bookmark = viewState.bookmarks[index]) {
             is Bookmark.Entry -> currentTab?.loadUrl(bookmark.url)
-            Bookmark.Folder.Root -> TODO()
+            Bookmark.Folder.Root -> error("Cannot click on root folder")
             is Bookmark.Folder.Entry -> {
                 currentFolder = bookmark
                 compositeDisposable += bookmarkRepository
@@ -568,10 +577,10 @@ class BrowserPresenter @Inject constructor(
     fun onBookmarkEditConfirmed(title: String, url: String, folder: String) {
         compositeDisposable += bookmarkRepository.editBookmark(
             oldBookmark = Bookmark.Entry(
-                url,
-                "",
-                0,
-                Bookmark.Folder.Root
+                url = url,
+                title = "",
+                position = 0,
+                folder = Bookmark.Folder.Root
             ),
             newBookmark = Bookmark.Entry(
                 url = url,
@@ -601,6 +610,15 @@ class BrowserPresenter @Inject constructor(
      */
     fun onReadingModeClick() {
 
+    }
+
+    /**
+     * TODO
+     */
+    fun onTabCountViewClick() {
+        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
+            view?.openTabDrawer()
+        }
     }
 
     /**

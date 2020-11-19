@@ -225,7 +225,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/left_drawer"
+            android:id="@+id/tab_drawer"
             android:layout_width="@dimen/navigation_drawer_max_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
@@ -324,7 +324,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/right_drawer"
+            android:id="@+id/bookmark_drawer"
             android:layout_width="@dimen/navigation_drawer_max_width"
             android:layout_height="match_parent"
             android:layout_gravity="end"

@@ -8,12 +8,16 @@ import acr.browser.lightning._browser2.menu.MenuItemAdapter
 import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.search.SearchListener
 import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
+import acr.browser.lightning._browser2.ui.BookmarkConfiguration
+import acr.browser.lightning._browser2.ui.TabConfiguration
+import acr.browser.lightning._browser2.ui.UiConfiguration
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.di.injector
+import acr.browser.lightning.dialog.BrowserDialog
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
@@ -23,6 +27,8 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
+import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import javax.inject.Inject
 
@@ -56,6 +62,9 @@ class BrowserActivity : ThemableBrowserActivity() {
     @Inject
     internal lateinit var lightningDialogBuilder: LightningDialogBuilder
 
+    @Inject
+    internal lateinit var uiConfiguration: UiConfiguration
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = BrowserActivityBinding.inflate(LayoutInflater.from(this))
@@ -69,6 +78,27 @@ class BrowserActivity : ThemableBrowserActivity() {
             .initialIntent(intent)
             .build()
             .inject(this)
+
+        binding.bookmarkDrawer.layoutParams = (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
+            gravity = when (uiConfiguration.bookmarkConfiguration) {
+                BookmarkConfiguration.LEFT -> Gravity.START
+                BookmarkConfiguration.RIGHT -> Gravity.END
+            }
+        }
+
+        binding.tabDrawer.layoutParams = (binding.tabDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
+            gravity = when (uiConfiguration.bookmarkConfiguration) {
+                BookmarkConfiguration.LEFT -> Gravity.END
+                BookmarkConfiguration.RIGHT -> Gravity.START
+            }
+        }
+
+        binding.homeImageView.isVisible = uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP
+        binding.tabCountView.isVisible = uiConfiguration.tabConfiguration == TabConfiguration.DRAWER
+
+        if (uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP) {
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, binding.tabDrawer)
+        }
 
         tabsAdapter = TabRecyclerViewAdapter(
             onClick = presenter::onTabClick,
@@ -112,6 +142,7 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
         binding.search.setOnFocusChangeListener { _, hasFocus -> presenter.onSearchFocusChanged(hasFocus) }
 
+        binding.homeButton.setOnClickListener { presenter.onTabCountViewClick() }
         binding.actionBack.setOnClickListener { presenter.onBackClick() }
         binding.actionForward.setOnClickListener { presenter.onForwardClick() }
         binding.actionHome.setOnClickListener { presenter.onHomeClick() }
@@ -215,6 +246,16 @@ class BrowserActivity : ThemableBrowserActivity() {
             oldTitle = oldTitle,
             onSave = presenter::onBookmarkFolderRenameConfirmed
         )
+    }
+
+    fun openBookmarkDrawer() {
+        binding.drawerLayout.closeDrawer(binding.tabDrawer)
+        binding.drawerLayout.openDrawer(binding.bookmarkDrawer)
+    }
+
+    fun openTabDrawer() {
+        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
+        binding.drawerLayout.openDrawer(binding.tabDrawer)
     }
 
     private fun ImageView.updateVisibilityForDrawable() {
