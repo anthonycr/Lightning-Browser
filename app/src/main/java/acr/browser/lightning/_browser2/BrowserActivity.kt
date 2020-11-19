@@ -134,9 +134,12 @@ class BrowserActivity : ThemableBrowserActivity() {
             presenter.onSearchSuggestionClicked(suggestionsAdapter.getItem(position) as WebPage)
         }
         binding.search.setAdapter(suggestionsAdapter)
-        val searchListener = SearchListener(onConfirm = {
-            presenter.onSearch(binding.search.text.toString())
-        }, inputMethodManager)
+        val searchListener = SearchListener(
+            onConfirm = {
+                presenter.onSearch(binding.search.text.toString())
+            },
+            inputMethodManager = inputMethodManager
+        )
         binding.search.setOnEditorActionListener(searchListener)
         binding.search.setOnKeyListener(searchListener)
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
