@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
     <string name="app_name">Lightning</string>
     <string name="action_new_tab">新建标签页</string>
@@ -19,6 +19,7 @@
     <string name="java">启用 JavaScript</string>
     <string name="download">下载位置</string>
     <string name="settings_advanced">高级设置</string>
+    <string name="apache">Apache License 2.0</string>
     <string name="version">应用版本</string>
     <string name="cache">退出时清除缓存</string>
     <string name="reflow">启用文本重排</string>
@@ -28,7 +29,7 @@
     <string name="size">文本大小</string>
     <string name="recommended">推荐</string>
     <string name="search">搜索引擎</string>
-    <string name="search_hint">搜索</string>
+    <string name="search_hint">搜索提示</string>
     <string name="wideViewPort">使用宽视口</string>
     <string name="overViewMode">以概览模式加载页面</string>
     <string name="restore">启动时恢复未关闭的标签页</string>
@@ -97,12 +98,13 @@
     <string name="incognito_cookies_pie">无痕模式运行于单独的进程，并在会话结束后重置。无痕模式下的 Cookie 设置由常规的 Cookie 选项控制。</string>
     <string name="action_manual">手动</string>
     <string name="action_auto">自动</string>
-    <string name="action_follow_me">联系我</string>
+    <string name="action_follow_me">关注我</string>
+    <string name="url_twitter">twitter.com/RestainoAnthony</string>
     <string name="clear_cache">清除缓存</string>
     <string name="message_cache_cleared">缓存已清除</string>
     <string name="message_import">书签已经导入</string>
     <string name="message_clear_history">历史记录已清除</string>
-    <string name="message_cookies_cleared">Cookie 已清除</string>
+    <string name="message_cookies_cleared">Cookies 已清除</string>
     <string name="max_tabs">达到了最大标签页数量</string>
     <string name="message_text_copied">文本已复制到剪切板</string>
     <string name="message_link_copied">链接已复制到剪切板</string>
@@ -114,7 +116,7 @@
     <string name="block_ads">屏蔽广告</string>
     <string name="block_ad_source">Hosts 文件来源</string>
     <string name="block_ad_remote_refresh_frequency_description">对于远程 Hosts 文件</string>
-    <string name="block_ad_refresh_now">立即更新 Hosts</string>
+    <string name="block_ad_refresh_now">现在刷新Hosts</string>
 
     <string name="block_ads_upsell_source">升级到 Lightning Plus 以选择</string>
 
@@ -194,6 +196,8 @@
     <string name="folder_default">默认</string>
     <string name="folder_custom">自定义</string>
     <string name="untitled">未命名</string>
+    <string name="mpl_license">Mozilla Public License v. 2.0</string>
+    <string name="freeware">自由软件</string>
     <string name="reopening_recent_tab">重新打开了之前的标签页</string>
     <string name="rendering_mode">渲染模式</string>
     <string name="name_inverted">反色</string>
@@ -226,6 +230,15 @@
     <string name="loading_failed">无法从页面中加载任何内容</string>
     <string name="url_contents">地址栏内容</string>
     <string name="text_encoding">文字编码</string>
+    <string name="color_mode">启用色彩模式</string>
+    <string name="reading_mode">阅读器模式</string>
+    <string name="loading">正在加载&#8230;</string>
+    <string name="loading_failed">Couldn\'t load anything from the page.</string>
+    <string name="snacktory">Snacktory</string>
+    <string name="jsoup">jsoup: Java HTML 解析器</string>
+    <string name="mit_license">MIT 许可证</string>
+    <string name="url_contents">URL 框内容</string>
+    <string name="text_encoding">文本编码</string>
     <string-array name="url_content_array">
         <item>域名（默认）</item>
         <item>URL</item>
@@ -237,7 +250,7 @@
     <string name="tabs">标签页</string>
     <string name="theme">应用主题</string>
     <string name="light_theme">亮色</string>
-    <string name="black_theme">黑色 (AMOLED)</string>
+    <string name="black_theme">黑色主题 (AMOLED)</string>
     <string name="folder">文件夹名称</string>
     <string name="action_folder">文件夹</string>
     <string name="action_rename">重命名</string>
@@ -266,8 +279,8 @@
 
     <!-- debug strings -->
     <string name="debug_title">调试设置</string>
+    <string name="debug_leak_canary">LeakCanary 内存泄露检测工具</string>
     <string name="app_restart">重新启动应用以使更改生效</string>
-
     <!-- Dialogs -->
     <string name="dialog_open_new_tab">在新标签页中打开</string>
     <string name="dialog_open_background_tab">在后台标签页中打开</string>
@@ -305,6 +318,7 @@
 
     <!-- Notifications -->
     <plurals name="notification_incognito_running_title">
+        <item quantity="one">打开了 1 个无痕标签页</item>
         <item quantity="other">打开了 %1$d 个无痕标签页</item>
     </plurals>
     <string name="notification_incognito_running_message">轻触以打开</string>
@@ -312,6 +326,7 @@
 
     <!--Ad block -->
     <string name="ad_block_load_failure">从广告屏蔽来源加载 Hosts 失败</string>
+    <string name="infinity">∞</string>
 
     <!-- SSL -->
     <string name="ssl_info_issued_by">颁发者</string>
@@ -319,6 +334,9 @@
     <string name="ssl_info_issued_on">颁发时间</string>
     <string name="ssl_info_expires_on">过期时间</string>
 
+    <!-- Search in page -->
+    <string name="search_in_page_query">\'%1$s\'</string>
+    
     <!-- Frozen tabs -->
     <string name="tab_frozen">已冻结…</string>
 
