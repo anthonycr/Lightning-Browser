@@ -2,9 +2,18 @@ package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.R
 import acr.browser.lightning.extensions.desaturate
+import acr.browser.lightning.extensions.dimen
+import acr.browser.lightning.extensions.drawTrapezoid
 import acr.browser.lightning.extensions.inflater
+import acr.browser.lightning.utils.ThemeUtils
+import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.view.BackgroundDrawable
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -13,7 +22,8 @@ import androidx.recyclerview.widget.ListAdapter
 /**
  * Created by anthonycr on 9/12/20.
  */
-class TabRecyclerViewAdapter(
+class DesktopTabRecyclerViewAdapter(
+    context: Context,
     private val onClick: (Int) -> Unit,
     private val onLongClick: (Int) -> Unit,
     private val onCloseClick: (Int) -> Unit,
@@ -25,10 +35,33 @@ class TabRecyclerViewAdapter(
         override fun areContentsTheSame(oldItem: TabViewState, newItem: TabViewState): Boolean = oldItem == newItem
     }
 ) {
+    private val backgroundTabDrawable: Drawable?
+    private val foregroundTabDrawable: Drawable?
+
+    init {
+        val backgroundColor = Utils.mixTwoColors(ThemeUtils.getPrimaryColor(context), Color.BLACK, 0.75f)
+        val backgroundTabBitmap = Bitmap.createBitmap(
+            context.dimen(R.dimen.desktop_tab_width),
+            context.dimen(R.dimen.desktop_tab_height),
+            Bitmap.Config.ARGB_8888
+        ).also {
+            Canvas(it).drawTrapezoid(backgroundColor, true)
+        }
+        backgroundTabDrawable = BitmapDrawable(context.resources, backgroundTabBitmap)
+
+        val foregroundColor = ThemeUtils.getPrimaryColor(context)
+        val foregroundTabBitmap = Bitmap.createBitmap(
+            context.dimen(R.dimen.desktop_tab_width),
+            context.dimen(R.dimen.desktop_tab_height),
+            Bitmap.Config.ARGB_8888
+        ).also {
+            Canvas(it).drawTrapezoid(foregroundColor, false)
+        }
+        foregroundTabDrawable = BitmapDrawable(context.resources, foregroundTabBitmap)
+    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): TabViewHolder {
-        val view = viewGroup.context.inflater.inflate(R.layout.tab_list_item, viewGroup, false)
-        view.background = BackgroundDrawable(view.context)
+        val view = viewGroup.context.inflater.inflate(R.layout.tab_list_item_horizontal, viewGroup, false)
         return TabViewHolder(view, onClick = onClick, onLongClick = onLongClick, onCloseClick = onCloseClick)
     }
 
@@ -54,12 +87,10 @@ class TabRecyclerViewAdapter(
     }
 
     private fun updateViewHolderBackground(viewHolder: TabViewHolder, isForeground: Boolean) {
-        val verticalBackground = viewHolder.layout.background as BackgroundDrawable
-        verticalBackground.isCrossFadeEnabled = false
         if (isForeground) {
-            verticalBackground.startTransition(200)
+            viewHolder.layout.background = foregroundTabDrawable
         } else {
-            verticalBackground.reverseTransition(200)
+            viewHolder.layout.background = backgroundTabDrawable
         }
     }
 

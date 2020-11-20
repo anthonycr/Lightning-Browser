@@ -7,7 +7,10 @@ import acr.browser.lightning._browser2.keys.KeyEventAdapter
 import acr.browser.lightning._browser2.menu.MenuItemAdapter
 import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.search.SearchListener
-import acr.browser.lightning._browser2.tab.TabRecyclerViewAdapter
+import acr.browser.lightning._browser2.tab.DrawerTabRecyclerViewAdapter
+import acr.browser.lightning._browser2.tab.DesktopTabRecyclerViewAdapter
+import acr.browser.lightning._browser2.tab.TabViewHolder
+import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
@@ -30,6 +33,8 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import javax.inject.Inject
 
 /**
@@ -38,7 +43,7 @@ import javax.inject.Inject
 class BrowserActivity : ThemableBrowserActivity() {
 
     private lateinit var binding: BrowserActivityBinding
-    private lateinit var tabsAdapter: TabRecyclerViewAdapter
+    private lateinit var tabsAdapter: ListAdapter<TabViewState, TabViewHolder>
     private lateinit var bookmarksAdapter: BookmarkRecyclerViewAdapter
 
     @Inject
@@ -100,13 +105,28 @@ class BrowserActivity : ThemableBrowserActivity() {
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, binding.tabDrawer)
         }
 
-        tabsAdapter = TabRecyclerViewAdapter(
-            onClick = presenter::onTabClick,
-            onCloseClick = presenter::onTabClose,
-            onLongClick = presenter::onTabLongClick
-        )
-        binding.tabsList.adapter = tabsAdapter
-        binding.tabsList.layoutManager = LinearLayoutManager(this)
+        if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
+            tabsAdapter = DrawerTabRecyclerViewAdapter(
+                onClick = presenter::onTabClick,
+                onCloseClick = presenter::onTabClose,
+                onLongClick = presenter::onTabLongClick
+            )
+            binding.drawerTabsList.isVisible = true
+            binding.drawerTabsList.adapter = tabsAdapter
+            binding.drawerTabsList.layoutManager = LinearLayoutManager(this)
+            binding.desktopTabsList.isVisible = false
+        } else {
+            tabsAdapter = DesktopTabRecyclerViewAdapter(
+                context = this,
+                onClick = presenter::onTabClick,
+                onCloseClick = presenter::onTabClose,
+                onLongClick = presenter::onTabLongClick
+            )
+            binding.desktopTabsList.isVisible = true
+            binding.desktopTabsList.adapter = tabsAdapter
+            binding.desktopTabsList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+            binding.drawerTabsList.isVisible = false
+        }
 
         bookmarksAdapter = BookmarkRecyclerViewAdapter(
             onClick = presenter::onBookmarkClick,

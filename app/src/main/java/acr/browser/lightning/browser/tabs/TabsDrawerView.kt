@@ -44,7 +44,7 @@ class TabsDrawerView @JvmOverloads constructor(
             moveDuration = 200
         }
 
-        tabList = findViewById<RecyclerView>(R.id.tabs_list).apply {
+        tabList = findViewById<RecyclerView>(R.id.drawer_tabs_list).apply {
             setLayerType(View.LAYER_TYPE_NONE, null)
             itemAnimator = animator
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)

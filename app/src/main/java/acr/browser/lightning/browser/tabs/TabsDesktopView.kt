@@ -54,7 +54,7 @@ class TabsDesktopView @JvmOverloads constructor(
 
         tabsAdapter = TabsDesktopAdapter(context, context.resources, uiController = uiController)
 
-        tabList = findViewById<RecyclerView>(R.id.tabs_list).apply {
+        tabList = findViewById<RecyclerView>(R.id.drawer_tabs_list).apply {
             setLayerType(View.LAYER_TYPE_NONE, null)
             itemAnimator = animator
             this.layoutManager = layoutManager

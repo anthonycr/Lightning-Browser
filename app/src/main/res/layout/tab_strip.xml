@@ -8,7 +8,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tabs_list"
+        android:id="@+id/drawer_tabs_list"
         android:layout_width="0dp"
         android:layout_height="@dimen/desktop_tab_height"
         android:fadingEdge="horizontal"

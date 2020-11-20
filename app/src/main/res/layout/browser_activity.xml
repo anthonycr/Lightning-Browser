@@ -28,10 +28,15 @@
                 android:elevation="3dp"
                 android:fitsSystemWindows="true">
 
-                <FrameLayout
-                    android:id="@+id/tabs_toolbar_container"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/desktop_tabs_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/desktop_tab_height"
+                    android:layout_weight="1"
+                    android:background="@color/black"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:overScrollMode="ifContentScrolls"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -47,13 +52,13 @@
                     app:contentInsetStart="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tabs_toolbar_container">
+                    app:layout_constraintTop_toBottomOf="@id/desktop_tabs_list">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:baselineAligned="false">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <FrameLayout
                             android:id="@+id/home_button"
@@ -265,7 +270,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tabs_list"
+                android:id="@+id/drawer_tabs_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
