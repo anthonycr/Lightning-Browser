@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
 import io.reactivex.Completable
@@ -26,6 +27,8 @@ interface BrowserContract {
         fun showEditFolderDialog(title: String)
 
         fun showFindInPageDialog()
+
+        fun showSslDialog(sslCertificateInfo: SslCertificateInfo)
 
         fun openBookmarkDrawer()
 

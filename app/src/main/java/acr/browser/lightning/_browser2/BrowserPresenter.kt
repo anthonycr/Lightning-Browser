@@ -488,7 +488,9 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onSslIconClick() {
-        // TODO
+        currentTab?.sslCertificateInfo?.let {
+            view?.showSslDialog(it)
+        }
     }
 
     /**

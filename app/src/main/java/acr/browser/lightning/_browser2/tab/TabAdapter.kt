@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.FreezableBundleInitializer
 import acr.browser.lightning.view.TabInitializer
@@ -103,6 +104,18 @@ class TabAdapter(
         get() = latentInitializer?.initialTitle ?: webView.title.orEmpty()
 
     override fun titleChanges(): Observable<String> = tabWebChromeClient.titleObservable.hide()
+
+    override val sslCertificateInfo: SslCertificateInfo?
+        get() = webView.certificate?.let {
+            SslCertificateInfo(
+                issuedByCommonName = it.issuedBy.cName,
+                issuedToCommonName = it.issuedTo.cName,
+                issuedToOrganizationName = it.issuedTo.oName,
+                issueDate = it.validNotBeforeDate,
+                expireDate = it.validNotAfterDate,
+                sslState = sslState
+            )
+        }
 
     override val sslState: SslState
         get() = tabWebViewClient.sslState

@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
@@ -55,6 +56,8 @@ interface TabModel {
     val title: String
 
     fun titleChanges(): Observable<String>
+
+    val sslCertificateInfo: SslCertificateInfo?
 
     val sslState: SslState
 

@@ -1,5 +1,8 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning.ssl.SslCertificateInfo
+import acr.browser.lightning.ssl.showSslDialog
+
 /**
  * Created by anthonycr on 9/16/20.
  */
@@ -57,6 +60,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showFindInPageDialog() {
         browserActivity.showFindInPageDialog()
+    }
+
+    override fun showSslDialog(sslCertificateInfo: SslCertificateInfo) {
+        browserActivity.showSslDialog(sslCertificateInfo)
     }
 
     override fun openBookmarkDrawer() {
