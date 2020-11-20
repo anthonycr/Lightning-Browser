@@ -23,7 +23,10 @@ data class BrowserViewState(
     val bookmarks: List<Bookmark>,
     val isBookmarked: Boolean,
     val isBookmarkEnabled: Boolean,
-    val isRootFolder: Boolean
+    val isRootFolder: Boolean,
+
+    // find
+    val findInPage: String
 )
 
 data class PartialBrowserViewState(
@@ -42,5 +45,8 @@ data class PartialBrowserViewState(
     val bookmarks: List<Bookmark>?,
     val isBookmarked: Boolean?,
     val isBookmarkEnabled: Boolean?,
-    val isRootFolder: Boolean?
+    val isRootFolder: Boolean?,
+
+    // find
+    val findInPage: String?
 )

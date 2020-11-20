@@ -172,7 +172,7 @@
                 android:clipChildren="true" />
 
             <LinearLayout
-                android:id="@+id/search_bar"
+                android:id="@+id/find_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/material_grid_touch_medium"
                 android:background="?attr/colorPrimary"
@@ -181,7 +181,7 @@
                 android:weightSum="1">
 
                 <TextView
-                    android:id="@+id/search_query"
+                    android:id="@+id/find_query"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -193,7 +193,7 @@
                     android:textSize="22sp" />
 
                 <ImageButton
-                    android:id="@+id/button_back"
+                    android:id="@+id/find_previous"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -203,7 +203,7 @@
                     app:srcCompat="@drawable/ic_action_collapse" />
 
                 <ImageButton
-                    android:id="@+id/button_next"
+                    android:id="@+id/find_next"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -213,7 +213,7 @@
                     app:srcCompat="@drawable/ic_action_expand" />
 
                 <ImageButton
-                    android:id="@+id/button_quit"
+                    android:id="@+id/find_quit"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

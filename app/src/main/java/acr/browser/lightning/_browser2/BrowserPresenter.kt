@@ -62,7 +62,8 @@ class BrowserPresenter @Inject constructor(
         bookmarks = emptyList(),
         isBookmarked = false,
         isBookmarkEnabled = true,
-        isRootFolder = true
+        isRootFolder = true,
+        findInPage = ""
     )
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
@@ -162,7 +163,8 @@ class BrowserPresenter @Inject constructor(
             progress = 100,
             tabs = viewState.tabs.map {
                 it.copy(isSelected = false)
-            }
+            },
+            findInPage = ""
         ))
 
         tabDisposable?.dispose()
@@ -187,9 +189,10 @@ class BrowserPresenter @Inject constructor(
                 isBackEnabled = canGoBack,
                 sslState = sslState,
                 progress = progress,
-                tabs = viewState.tabs.map { it.copy(isSelected = it.id == tabModel.id) },
+                tabs = viewState.tabs.map { it.copy(isSelected = it.id == tab.id) },
                 isBookmarked = isBookmark,
-                isBookmarkEnabled = !isSpecialUrl
+                isBookmarkEnabled = !isSpecialUrl,
+                findInPage = tab.findQuery.orEmpty()
             )
         }.subscribeOn(mainScheduler)
             .subscribe { view.updateState(it) }
@@ -249,7 +252,7 @@ class BrowserPresenter @Inject constructor(
                     .subscribe { tab ->
                         selectTab(model.selectTab(tab.id))
                     }
-            MenuSelection.FIND -> TODO()
+            MenuSelection.FIND -> view?.showFindInPageDialog()
             MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::copyPageLink)
             MenuSelection.ADD_TO_HOME -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
@@ -437,8 +440,34 @@ class BrowserPresenter @Inject constructor(
         currentTab?.loadUrl(url)
     }
 
+    /**
+     * TODO
+     */
     fun onFindInPage(query: String) {
-        TODO()
+        currentTab?.find(query)
+        view?.updateState(viewState.copy(findInPage = query))
+    }
+
+    /**
+     * TODO
+     */
+    fun onFindNext() {
+        currentTab?.findNext()
+    }
+
+    /**
+     * TODO
+     */
+    fun onFindPrevious() {
+        currentTab?.findPrevious()
+    }
+
+    /**
+     * TODO
+     */
+    fun onFindDismiss() {
+        currentTab?.clearFindMatches()
+        view?.updateState(viewState.copy(findInPage = ""))
     }
 
     /**

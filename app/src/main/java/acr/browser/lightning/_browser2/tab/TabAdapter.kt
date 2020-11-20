@@ -21,6 +21,8 @@ class TabAdapter(
 
     private var latentInitializer: FreezableBundleInitializer? = null
 
+    private var findInPageQuery: String? = null
+
     init {
         webView.webViewClient = tabWebViewClient
         webView.webChromeClient = tabWebChromeClient
@@ -64,6 +66,27 @@ class TabAdapter(
     override fun stopLoading() {
         webView.stopLoading()
     }
+
+    override fun find(query: String) {
+        webView.findAllAsync(query)
+        findInPageQuery = query
+    }
+
+    override fun findNext() {
+        webView.findNext(true)
+    }
+
+    override fun findPrevious() {
+        webView.findNext(false)
+    }
+
+    override fun clearFindMatches() {
+        webView.clearMatches()
+        findInPageQuery = null
+    }
+
+    override val findQuery: String?
+        get() = findInPageQuery
 
     override val favicon: Bitmap?
         get() = webView.favicon

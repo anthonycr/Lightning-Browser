@@ -25,6 +25,8 @@ interface BrowserContract {
 
         fun showEditFolderDialog(title: String)
 
+        fun showFindInPageDialog()
+
         fun openBookmarkDrawer()
 
         fun openTabDrawer()

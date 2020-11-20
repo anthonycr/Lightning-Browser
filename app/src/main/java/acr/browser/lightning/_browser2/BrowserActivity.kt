@@ -145,6 +145,10 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
         binding.search.setOnFocusChangeListener { _, hasFocus -> presenter.onSearchFocusChanged(hasFocus) }
 
+        binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
+        binding.findNext.setOnClickListener { presenter.onFindNext() }
+        binding.findQuit.setOnClickListener { presenter.onFindDismiss() }
+
         binding.homeButton.setOnClickListener { presenter.onTabCountViewClick() }
         binding.actionBack.setOnClickListener { presenter.onBackClick() }
         binding.actionForward.setOnClickListener { presenter.onForwardClick() }
@@ -220,6 +224,14 @@ class BrowserActivity : ThemableBrowserActivity() {
                 R.drawable.ic_action_back
             })
         }
+        viewState.findInPage?.let {
+            if (it.isEmpty()) {
+                binding.findBar.isVisible = false
+            } else {
+                binding.findBar.isVisible = true
+                binding.findQuery.text = it
+            }
+        }
     }
 
     fun showAddBookmarkDialog(title: String, url: String, folders: List<String>) {
@@ -248,6 +260,16 @@ class BrowserActivity : ThemableBrowserActivity() {
             activity = this,
             oldTitle = oldTitle,
             onSave = presenter::onBookmarkFolderRenameConfirmed
+        )
+    }
+
+    fun showFindInPageDialog() {
+        BrowserDialog.showEditText(
+            this,
+            R.string.action_find,
+            R.string.search_hint,
+            R.string.search_hint,
+            presenter::onFindInPage
         )
     }
 

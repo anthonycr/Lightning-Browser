@@ -32,6 +32,16 @@ interface TabModel {
 
     fun stopLoading()
 
+    fun find(query: String)
+
+    fun findNext()
+
+    fun findPrevious()
+
+    fun clearFindMatches()
+
+    val findQuery: String?
+
     // Data
 
     val favicon: Bitmap?
