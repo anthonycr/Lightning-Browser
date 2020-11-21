@@ -14,6 +14,7 @@ import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
+import acr.browser.lightning._browser2.view.WebViewScrollCoordinator
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.database.SearchSuggestion
@@ -80,6 +81,8 @@ class BrowserActivity : ThemableBrowserActivity() {
         injector.browser2ComponentBuilder()
             .activity(this)
             .browserFrame(binding.contentFrame)
+            .toolbarRoot(binding.uiLayout)
+            .toolbar(binding.toolbarLayout)
             .initialIntent(intent)
             .build()
             .inject(this)

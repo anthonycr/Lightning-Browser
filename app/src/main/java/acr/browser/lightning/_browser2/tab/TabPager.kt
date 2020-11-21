@@ -1,24 +1,35 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning._browser2.view.WebViewScrollCoordinator
+import acr.browser.lightning.preference.UserPreferences
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import javax.inject.Inject
 
 /**
  * Created by anthonycr on 9/12/20.
  */
-class TabPager @Inject constructor(private val container: FrameLayout) {
+class TabPager @Inject constructor(
+    private val container: FrameLayout,
+    private val webViewScrollCoordinator: WebViewScrollCoordinator
+) {
 
     private val webViews: MutableList<WebView> = mutableListOf()
 
     fun selectTab(id: Int) {
         container.removeAllViews()
+        val webView = webViews.forId(id)
         container.addView(
-            webViews.forId(id),
+            webView,
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
+
+        // TODO: coordinator adds views to the container, which can result in UI flashes.
+        webViewScrollCoordinator.configure(webView)
     }
 
     fun clearTab() {
