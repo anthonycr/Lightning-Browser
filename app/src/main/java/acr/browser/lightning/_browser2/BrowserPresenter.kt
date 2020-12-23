@@ -104,11 +104,11 @@ class BrowserPresenter @Inject constructor(
             .mergeWith(
                 Maybe.fromCallable { initialUrl }
                     .flatMapSingleElement { model.createTab(UrlInitializer(it)) }
-                    .map { listOf(it) }
+                    .map(::listOf)
             )
             .toList()
-            .map { it.flatten() }
-            .filter { it.isNotEmpty() }
+            .map(MutableList<List<TabModel>>::flatten)
+            .filter(List<TabModel>::isNotEmpty)
             .switchIfEmpty(model.createTab(homePageInitializer).map(::listOf))
             .subscribe { list ->
                 selectTab(model.selectTab(list.last().id))
@@ -525,7 +525,7 @@ class BrowserPresenter @Inject constructor(
                 }
             })
             .toList()
-            .map { it.flatten() }
+            .map(MutableList<List<Bookmark>>::flatten)
 
     /**
      * TODO
