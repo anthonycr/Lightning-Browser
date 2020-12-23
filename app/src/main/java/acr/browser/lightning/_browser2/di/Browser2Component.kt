@@ -13,6 +13,7 @@ import javax.inject.Qualifier
 /**
  * Created by anthonycr on 9/15/20.
  */
+@Browser2Scope
 @Subcomponent(modules = [Browser2Module::class, Browser2BindsModule::class])
 interface Browser2Component {
 

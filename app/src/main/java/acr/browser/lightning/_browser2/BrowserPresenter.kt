@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning._browser2.di.Browser2Scope
 import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
@@ -34,6 +35,7 @@ import javax.inject.Inject
 /**
  * Created by anthonycr on 9/11/20.
  */
+@Browser2Scope
 class BrowserPresenter @Inject constructor(
     private val model: BrowserContract.Model,
     private val navigator: BrowserContract.Navigator,
