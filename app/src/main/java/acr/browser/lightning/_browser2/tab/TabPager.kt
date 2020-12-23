@@ -1,12 +1,9 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning._browser2.view.WebViewScrollCoordinator
-import acr.browser.lightning.preference.UserPreferences
-import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import javax.inject.Inject
 
 /**
