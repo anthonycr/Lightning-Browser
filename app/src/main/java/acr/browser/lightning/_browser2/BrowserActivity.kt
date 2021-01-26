@@ -7,14 +7,10 @@ import acr.browser.lightning._browser2.keys.KeyEventAdapter
 import acr.browser.lightning._browser2.menu.MenuItemAdapter
 import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.search.SearchListener
-import acr.browser.lightning._browser2.tab.DrawerTabRecyclerViewAdapter
-import acr.browser.lightning._browser2.tab.DesktopTabRecyclerViewAdapter
-import acr.browser.lightning._browser2.tab.TabViewHolder
-import acr.browser.lightning._browser2.tab.TabViewState
+import acr.browser.lightning._browser2.tab.*
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
-import acr.browser.lightning._browser2.view.WebViewScrollCoordinator
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.database.SearchSuggestion
@@ -61,6 +57,9 @@ class BrowserActivity : ThemableBrowserActivity() {
 
     @Inject
     internal lateinit var presenter: BrowserPresenter
+
+    @Inject
+    internal lateinit var tabPager: TabPager
 
     @Inject
     internal lateinit var intentExtractor: IntentExtractor
@@ -184,6 +183,8 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.actionReading.setOnClickListener { presenter.onReadingModeClick() }
         binding.bookmarkBackButton.setOnClickListener { presenter.onBookmarkMenuClick() }
         binding.searchSslStatus.setOnClickListener { presenter.onSslIconClick() }
+
+        tabPager.longPressListener = presenter::onPageLongPress
     }
 
     override fun onNewIntent(intent: Intent?) {

@@ -5,6 +5,7 @@ import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
+import targetUrl.LongPress
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.TabConfiguration
@@ -675,6 +676,13 @@ class BrowserPresenter @Inject constructor(
                     view?.updateState(viewState.copy(bookmarks = list, isRootFolder = true))
                 }
         }
+    }
+
+    /**
+     * TODO
+     */
+    fun onPageLongPress(id: Int, longPress: LongPress) {
+        
     }
 
     private fun BrowserContract.View?.updateState(state: BrowserViewState) {

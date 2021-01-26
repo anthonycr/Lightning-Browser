@@ -52,9 +52,8 @@ class WebViewScrollCoordinator @Inject constructor(
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun coordinate(toolbar: View, webView: WebView) {
-        webView.setOnTouchListener(touchListener)
+        webView.setCompositeTouchListener("scroll", touchListener)
 
         val toggleListener = object : ToggleListener {
             override fun hideToolbar() {

@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2.tab
 
 import acr.browser.lightning.Capabilities
+import acr.browser.lightning._browser2.view.CompositeTouchListener
 import acr.browser.lightning.isSupported
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.preference.UserPreferences
@@ -52,6 +53,7 @@ class WebViewFactory @Inject constructor(
 
     fun createWebView(isIncognito: Boolean): WebView = WebView(activity).apply {
         id = View.generateViewId()
+        tag = CompositeTouchListener().also(::setOnTouchListener)
         isFocusableInTouchMode = true
         isFocusable = true
         if (VERSION.SDK_INT < VERSION_CODES.M) {
