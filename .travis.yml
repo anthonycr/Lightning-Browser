@@ -1,5 +1,8 @@
 language: android
 sudo: false
+cache:
+  directories:
+    - $HOME/.gradle
 jdk:
   - oraclejdk8
 android:
