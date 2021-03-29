@@ -33,7 +33,7 @@ class TabsRepository @Inject constructor(
         }
         val tab = tabsList.forId(id)
         tab.destroy()
-        tabsList -= tab
+        tabsList = tabsList - tab
     }.doOnComplete {
         tabsListObservable.onNext(tabsList)
     }
@@ -49,7 +49,7 @@ class TabsRepository @Inject constructor(
             TabWebChromeClient()
         )
 
-        tabsList += tabAdapter
+        tabsList = tabsList + tabAdapter
 
         return@fromCallable tabAdapter
     }.doOnSuccess {
@@ -75,7 +75,7 @@ class TabsRepository @Inject constructor(
         .observeOn(mainScheduler)
         .flatMapSingle(::createTab)
         .toList()
-        .filter { it.isNotEmpty() }
+        .filter(MutableList<TabModel>::isNotEmpty)
 
     override fun freeze() {
         bundleStore.save(tabsList)
