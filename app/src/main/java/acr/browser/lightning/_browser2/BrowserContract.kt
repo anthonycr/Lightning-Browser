@@ -8,6 +8,7 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
+import targetUrl.LongPress
 
 /**
  * Created by anthonycr on 9/11/20.
@@ -27,6 +28,10 @@ interface BrowserContract {
         fun showEditFolderDialog(title: String)
 
         fun showFindInPageDialog()
+
+        fun showLinkLongPressDialog(longPress: LongPress)
+
+        fun showImageLongPressDialog(longPress: LongPress)
 
         fun showSslDialog(sslCertificateInfo: SslCertificateInfo)
 

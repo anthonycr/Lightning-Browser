@@ -3,6 +3,7 @@ package acr.browser.lightning.browser
 import acr.browser.lightning.ssl.SslState
 import android.view.View
 import androidx.annotation.StringRes
+import targetUrl.LongPress
 
 interface BrowserView {
 
@@ -37,5 +38,22 @@ interface BrowserView {
     fun notifyTabViewChanged(position: Int)
 
     fun notifyTabViewInitialized()
+
+    enum class LinkLongPressEvent {
+        NEW_TAB,
+        BACKGROUND_TAB,
+        INCOGNITO_TAB,
+        SHARE,
+        COPY_LINK
+    }
+
+    enum class ImageLongPressEvent {
+        NEW_TAB,
+        BACKGROUND_TAB,
+        INCOGNITO_TAB,
+        SHARE,
+        COPY_LINK,
+        DOWNLOAD
+    }
 
 }

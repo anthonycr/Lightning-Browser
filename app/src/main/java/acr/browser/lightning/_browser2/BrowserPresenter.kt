@@ -10,6 +10,7 @@ import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
+import acr.browser.lightning.browser.BrowserView
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -18,10 +19,7 @@ import acr.browser.lightning.di.MainScheduler
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
-import acr.browser.lightning.view.DownloadPageInitializer
-import acr.browser.lightning.view.HistoryPageInitializer
-import acr.browser.lightning.view.HomePageInitializer
-import acr.browser.lightning.view.UrlInitializer
+import acr.browser.lightning.view.*
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -71,6 +69,7 @@ class BrowserPresenter @Inject constructor(
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var isSearchViewFocused = false
+    private var pendingLongPressTabId: Int? = null
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
@@ -226,11 +225,7 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onNewDeepLink(url: String) {
-        compositeDisposable += model.createTab(UrlInitializer(url))
-            .observeOn(mainScheduler)
-            .subscribe { tab ->
-                selectTab(model.selectTab(tab.id))
-            }
+        createNewTabAndSelect(UrlInitializer(url), shouldSelect = true)
     }
 
     /**
@@ -243,18 +238,8 @@ class BrowserPresenter @Inject constructor(
             MenuSelection.SHARE -> currentTab?.url?.takeIf { !it.isSpecialUrl() }?.let {
                 navigator.sharePage(url = it, title = currentTab?.title)
             }
-            MenuSelection.HISTORY ->
-                compositeDisposable += model.createTab(historyPageInitializer)
-                    .observeOn(mainScheduler)
-                    .subscribe { tab ->
-                        selectTab(model.selectTab(tab.id))
-                    }
-            MenuSelection.DOWNLOADS ->
-                compositeDisposable += model.createTab(downloadPageInitializer)
-                    .observeOn(mainScheduler)
-                    .subscribe { tab ->
-                        selectTab(model.selectTab(tab.id))
-                    }
+            MenuSelection.HISTORY -> createNewTabAndSelect(historyPageInitializer, shouldSelect = true)
+            MenuSelection.DOWNLOADS -> createNewTabAndSelect(downloadPageInitializer, shouldSelect = true)
             MenuSelection.FIND -> view?.showFindInPageDialog()
             MenuSelection.COPY_LINK -> currentTab?.url?.takeIf { !it.isSpecialUrl() }
                 ?.let(navigator::copyPageLink)
@@ -275,6 +260,16 @@ class BrowserPresenter @Inject constructor(
         currentTab?.let {
             navigator.addToHomeScreen(it.url, it.title, it.favicon)
         }
+    }
+
+    private fun createNewTabAndSelect(tabInitializer: TabInitializer, shouldSelect: Boolean) {
+        compositeDisposable += model.createTab(tabInitializer)
+            .observeOn(mainScheduler)
+            .subscribe { tab ->
+                if (shouldSelect) {
+                    selectTab(model.selectTab(tab.id))
+                }
+            }
     }
 
     /**
@@ -381,11 +376,7 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onNewTabClick() {
-        compositeDisposable += model.createTab(homePageInitializer)
-            .observeOn(mainScheduler)
-            .subscribe { tab ->
-                selectTab(model.selectTab(tab.id))
-            }
+        createNewTabAndSelect(homePageInitializer, shouldSelect = true)
     }
 
     /**
@@ -682,7 +673,41 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onPageLongPress(id: Int, longPress: LongPress) {
-        
+        pendingLongPressTabId = id
+        when (longPress.hitCategory) {
+            LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
+            LongPress.Category.LINK -> view?.showLinkLongPressDialog(longPress)
+            LongPress.Category.UNKNOWN -> Unit // Do nothing
+        }
+    }
+
+    fun onLinkLongPressEvent(longPress: LongPress, linkLongPressEvent: BrowserView.LinkLongPressEvent) {
+        when (linkLongPressEvent) {
+            BrowserView.LinkLongPressEvent.NEW_TAB ->
+                longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = true) }
+            BrowserView.LinkLongPressEvent.BACKGROUND_TAB ->
+                longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = false) }
+            BrowserView.LinkLongPressEvent.INCOGNITO_TAB -> TODO()
+            BrowserView.LinkLongPressEvent.SHARE ->
+                longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
+            BrowserView.LinkLongPressEvent.COPY_LINK ->
+                longPress.targetUrl?.let(navigator::copyPageLink)
+        }
+    }
+
+    fun onImageLongPressEvent(longPress: LongPress, imageLongPressEvent: BrowserView.ImageLongPressEvent) {
+        when (imageLongPressEvent) {
+            BrowserView.ImageLongPressEvent.NEW_TAB ->
+                longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = true) }
+            BrowserView.ImageLongPressEvent.BACKGROUND_TAB ->
+                longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = false) }
+            BrowserView.ImageLongPressEvent.INCOGNITO_TAB -> TODO()
+            BrowserView.ImageLongPressEvent.SHARE ->
+                longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
+            BrowserView.ImageLongPressEvent.COPY_LINK ->
+                longPress.targetUrl?.let(navigator::copyPageLink)
+            BrowserView.ImageLongPressEvent.DOWNLOAD -> TODO()
+        }
     }
 
     private fun BrowserContract.View?.updateState(state: BrowserViewState) {

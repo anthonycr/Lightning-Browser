@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
+import targetUrl.LongPress
 
 /**
  * Created by anthonycr on 9/16/20.
@@ -60,6 +61,14 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showFindInPageDialog() {
         browserActivity.showFindInPageDialog()
+    }
+
+    override fun showLinkLongPressDialog(longPress: LongPress) {
+        browserActivity.showLinkLongPressDialog(longPress)
+    }
+
+    override fun showImageLongPressDialog(longPress: LongPress) {
+        browserActivity.showImageLongPressDialog(longPress)
     }
 
     override fun showSslDialog(sslCertificateInfo: SslCertificateInfo) {

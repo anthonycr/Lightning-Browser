@@ -11,13 +11,16 @@ import acr.browser.lightning._browser2.tab.*
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
+import acr.browser.lightning.browser.BrowserView
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
+import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
+import acr.browser.lightning.dialog.DialogItem
 import acr.browser.lightning.dialog.LightningDialogBuilder
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
@@ -32,6 +35,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import targetUrl.LongPress
 import javax.inject.Inject
 
 /**
@@ -295,6 +299,53 @@ class BrowserActivity : ThemableBrowserActivity() {
             R.string.search_hint,
             presenter::onFindInPage
         )
+    }
+
+    fun showLinkLongPressDialog(longPress: LongPress) {
+        BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.NEW_TAB)
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.BACKGROUND_TAB)
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = this is BrowserActivity // TODO: Change for incognito
+            ) {
+                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.INCOGNITO_TAB)
+            },
+            DialogItem(title = R.string.action_share) {
+                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.COPY_LINK)
+            })
+    }
+
+    fun showImageLongPressDialog(longPress: LongPress) {
+        BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
+            DialogItem(title = R.string.dialog_open_new_tab) {
+                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.NEW_TAB)
+            },
+            DialogItem(title = R.string.dialog_open_background_tab) {
+                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.BACKGROUND_TAB)
+            },
+            DialogItem(
+                title = R.string.dialog_open_incognito_tab,
+                isConditionMet = this is BrowserActivity // TODO: Change for incognito
+            ) {
+                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.INCOGNITO_TAB)
+            },
+            DialogItem(title = R.string.action_share) {
+                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.SHARE)
+            },
+            DialogItem(title = R.string.dialog_copy_link) {
+                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.COPY_LINK)
+            },
+            DialogItem(title = R.string.dialog_download_image) {
+                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.DOWNLOAD)
+            })
     }
 
     fun openBookmarkDrawer() {
