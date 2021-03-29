@@ -69,7 +69,6 @@ class BrowserPresenter @Inject constructor(
     private var currentTab: TabModel? = null
     private var currentFolder: Bookmark.Folder = Bookmark.Folder.Root
     private var isSearchViewFocused = false
-    private var pendingLongPressTabId: Int? = null
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
@@ -673,7 +672,10 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onPageLongPress(id: Int, longPress: LongPress) {
-        pendingLongPressTabId = id
+        if (model.tabsList.find { it.id == id }?.url?.isSpecialUrl() == true) {
+            // TODO handle differently
+            return
+        }
         when (longPress.hitCategory) {
             LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
             LongPress.Category.LINK -> view?.showLinkLongPressDialog(longPress)
