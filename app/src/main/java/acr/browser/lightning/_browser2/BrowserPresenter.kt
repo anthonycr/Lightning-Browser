@@ -120,10 +120,15 @@ class BrowserPresenter @Inject constructor(
     fun onViewDetached() {
         view = null
 
-        model.freeze()
-
         compositeDisposable.dispose()
         tabDisposable?.dispose()
+    }
+
+    /**
+     * TODO
+     */
+    fun onViewHidden() {
+        model.freeze()
     }
 
     private fun TabModel.asViewState(): TabViewState = TabViewState(

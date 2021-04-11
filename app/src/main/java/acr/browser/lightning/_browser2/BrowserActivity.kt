@@ -202,6 +202,11 @@ class BrowserActivity : ThemableBrowserActivity() {
         presenter.onViewDetached()
     }
 
+    override fun onPause() {
+        super.onPause()
+        presenter.onViewHidden()
+    }
+
     override fun onBackPressed() {
         presenter.onBackClick()
     }
