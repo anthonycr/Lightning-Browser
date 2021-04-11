@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.net.http.SslError
 import android.os.Build
 import android.webkit.*
+import androidx.annotation.RequiresApi
 import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayInputStream
 
@@ -16,7 +17,9 @@ import java.io.ByteArrayInputStream
  */
 class TabWebViewClient(
     private val adBlocker: AdBlocker,
-    private val allowListModel: AllowListModel
+    private val allowListModel: AllowListModel,
+    private val urlHandler: UrlHandler,
+    private val headers: Map<String, String>
 ) : WebViewClient() {
 
     val urlObservable: PublishSubject<String> = PublishSubject.create()
@@ -56,6 +59,17 @@ class TabWebViewClient(
         super.onReceivedSslError(view, handler, error)
         sslState = SslState.Invalid(error)
         sslStateObservable.onNext(sslState)
+    }
+
+    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+        return urlHandler.shouldOverrideLoading(view, url, headers) ||
+            super.shouldOverrideUrlLoading(view, url)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        return urlHandler.shouldOverrideLoading(view, request.url.toString(), headers) ||
+            super.shouldOverrideUrlLoading(view, request)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

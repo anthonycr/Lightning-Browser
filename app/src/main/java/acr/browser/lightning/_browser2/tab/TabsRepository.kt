@@ -21,7 +21,8 @@ class TabsRepository @Inject constructor(
     private val allowListModel: AllowListModel,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
-    private val bundleStore: BundleStore
+    private val bundleStore: BundleStore,
+    private val urlHandler: UrlHandler
 ) : BrowserContract.Model {
 
     private var selectedTab: TabModel? = null
@@ -49,12 +50,13 @@ class TabsRepository @Inject constructor(
 
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> = Single.fromCallable<TabModel> {
         val webView = webViewFactory.createWebView(isIncognito = false)
+        val headers = webViewFactory.createRequestHeaders()
         tabPager.addTab(webView)
         val tabAdapter = TabAdapter(
             tabInitializer,
             webView,
-            webViewFactory.createRequestHeaders(),
-            TabWebViewClient(adBlocker, allowListModel),
+            headers,
+            TabWebViewClient(adBlocker, allowListModel, urlHandler, headers),
             TabWebChromeClient()
         )
 
