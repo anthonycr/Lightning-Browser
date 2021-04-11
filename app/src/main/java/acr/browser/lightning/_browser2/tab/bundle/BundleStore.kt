@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2.tab.bundle
 
 import acr.browser.lightning.R
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning.browser.TabsManager
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
@@ -71,6 +72,13 @@ class BundleStore @Inject constructor(
             } ?: FreezableBundleInitializer(bundle, title
                 ?: application.getString(R.string.tab_frozen))
         } ?: emptyList()
+
+    /**
+     * Synchronously delete all stored tabs.
+     */
+    fun deleteAll() {
+        FileUtils.deleteBundleInStorage(application, BUNDLE_STORAGE)
+    }
 
     private fun String.extractNumberFromEnd(): String {
         val underScore = lastIndexOf('_')

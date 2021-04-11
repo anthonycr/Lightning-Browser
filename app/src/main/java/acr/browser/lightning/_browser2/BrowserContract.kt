@@ -44,6 +44,8 @@ interface BrowserContract {
 
         fun deleteTab(id: Int): Completable
 
+        fun deleteAllTabs(): Completable
+
         fun createTab(tabInitializer: TabInitializer): Single<TabModel>
 
         fun selectTab(id: Int): TabModel
@@ -51,6 +53,8 @@ interface BrowserContract {
         fun initializeTabs(): Maybe<List<TabModel>>
 
         fun freeze()
+
+        fun clean()
 
         val tabsList: List<TabModel>
 

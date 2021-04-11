@@ -56,4 +56,10 @@ interface BrowserView {
         DOWNLOAD
     }
 
+    sealed class Action {
+        data class LoadUrl(val url: String) : Action()
+
+        object Panic : Action()
+    }
+
 }

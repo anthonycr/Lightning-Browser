@@ -192,7 +192,7 @@ class BrowserActivity : ThemableBrowserActivity() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        intent?.let(intentExtractor::extractUrlFromIntent)?.let(presenter::onNewDeepLink)
+        intent?.let(intentExtractor::extractUrlFromIntent)?.let(presenter::onNewAction)
         super.onNewIntent(intent)
 
     }

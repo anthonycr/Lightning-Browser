@@ -16,6 +16,7 @@ import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
@@ -30,6 +31,7 @@ import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 /**
  * Created by anthonycr on 9/11/20.
@@ -48,7 +50,8 @@ class BrowserPresenter @Inject constructor(
     private val searchBoxModel: SearchBoxModel,
     private val searchEngineProvider: SearchEngineProvider,
     @InitialUrl private val initialUrl: String?,
-    private val uiConfiguration: UiConfiguration
+    private val uiConfiguration: UiConfiguration,
+    private val historyPageFactory: HistoryPageFactory
 ) {
 
     private var view: BrowserContract.View? = null
@@ -228,8 +231,28 @@ class BrowserPresenter @Inject constructor(
     /**
      * TODO
      */
-    fun onNewDeepLink(url: String) {
-        createNewTabAndSelect(UrlInitializer(url), shouldSelect = true)
+    fun onNewAction(action: BrowserView.Action) {
+        when (action) {
+            is BrowserView.Action.LoadUrl -> createNewTabAndSelect(
+                tabInitializer = UrlInitializer(action.url),
+                shouldSelect = true
+            )
+            BrowserView.Action.Panic -> panicClean()
+        }
+    }
+
+    private fun panicClean() {
+        createNewTabAndSelect(tabInitializer = NoOpInitializer(), shouldSelect = true)
+        model.clean()
+
+        historyPageFactory.deleteHistoryPage().subscribe()
+        model.deleteAllTabs().subscribe()
+        navigator.closeBrowser()
+
+        // System exit needed in the case of receiving
+        // the panic intent since finish() isn't completely
+        // closing the browser
+        exitProcess(1)
     }
 
     /**

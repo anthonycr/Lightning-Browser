@@ -38,6 +38,15 @@ class TabsRepository @Inject constructor(
         tabsListObservable.onNext(tabsList)
     }
 
+    override fun deleteAllTabs(): Completable = Completable.fromAction {
+        tabPager.clearTab()
+
+        tabsList.forEach(TabModel::destroy)
+        tabsList = emptyList()
+    }.doOnComplete {
+        tabsListObservable.onNext(tabsList)
+    }
+
     override fun createTab(tabInitializer: TabInitializer): Single<TabModel> = Single.fromCallable<TabModel> {
         val webView = webViewFactory.createWebView(isIncognito = false)
         tabPager.addTab(webView)
@@ -79,6 +88,10 @@ class TabsRepository @Inject constructor(
 
     override fun freeze() {
         bundleStore.save(tabsList)
+    }
+
+    override fun clean() {
+        bundleStore.deleteAll()
     }
 
     private fun List<TabModel>.forId(id: Int): TabModel = requireNotNull(find { it.id == id })
