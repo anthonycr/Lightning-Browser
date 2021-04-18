@@ -30,6 +30,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toObservable
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -336,7 +337,7 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onTabLongClick(index: Int) {
-        // TODO
+        view?.showCloseBrowserDialog(viewState.tabs[index].id)
     }
 
     private fun <T> List<T>.nextSelected(removedIndex: Int): T? {
@@ -677,7 +678,9 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onTabMenuClick() {
-
+        currentTab?.let {
+            view?.showCloseBrowserDialog(it.id)
+        }
     }
 
     /**
@@ -708,6 +711,23 @@ class BrowserPresenter @Inject constructor(
             LongPress.Category.IMAGE -> view?.showImageLongPressDialog(longPress)
             LongPress.Category.LINK -> view?.showLinkLongPressDialog(longPress)
             LongPress.Category.UNKNOWN -> Unit // Do nothing
+        }
+    }
+
+    fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserView.CloseTabEvent) {
+        when (closeTabEvent) {
+            BrowserView.CloseTabEvent.CLOSE_CURRENT ->
+                onTabClose(viewState.tabs.indexOfFirst { it.id == id })
+            BrowserView.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
+                .filter { it.id != id }
+                .toObservable()
+                .flatMapCompletable { model.deleteTab(it.id) }
+                .subscribeOn(mainScheduler)
+                .subscribe()
+            BrowserView.CloseTabEvent.CLOSE_ALL -> {
+                model.deleteAllTabs().subscribeOn(mainScheduler)
+                    .subscribeBy(onComplete = navigator::closeBrowser)
+            }
         }
     }
 

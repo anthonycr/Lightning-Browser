@@ -26,6 +26,7 @@ import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
@@ -351,6 +352,19 @@ class BrowserActivity : ThemableBrowserActivity() {
             DialogItem(title = R.string.dialog_download_image) {
                 presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.DOWNLOAD)
             })
+    }
+
+    fun showCloseBrowserDialog(id: Int) {
+        BrowserDialog.show(this, R.string.dialog_title_close_browser,
+            DialogItem(title = R.string.close_tab) {
+                presenter.onCloseBrowserEvent(id, BrowserView.CloseTabEvent.CLOSE_CURRENT)
+            },
+            DialogItem(title = R.string.close_other_tabs) {
+                presenter.onCloseBrowserEvent(id, BrowserView.CloseTabEvent.CLOSE_OTHERS)
+            },
+            DialogItem(title = R.string.close_all_tabs, onClick = {
+                presenter.onCloseBrowserEvent(id, BrowserView.CloseTabEvent.CLOSE_ALL)
+            }))
     }
 
     fun openBookmarkDrawer() {

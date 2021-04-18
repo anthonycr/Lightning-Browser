@@ -35,6 +35,8 @@ interface BrowserContract {
 
         fun showSslDialog(sslCertificateInfo: SslCertificateInfo)
 
+        fun showCloseBrowserDialog(id: Int)
+
         fun openBookmarkDrawer()
 
         fun openTabDrawer()

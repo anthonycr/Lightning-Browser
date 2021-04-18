@@ -75,6 +75,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showSslDialog(sslCertificateInfo)
     }
 
+    override fun showCloseBrowserDialog(id: Int) {
+        browserActivity.showCloseBrowserDialog(id)
+    }
+
     override fun openBookmarkDrawer() {
         browserActivity.openBookmarkDrawer()
     }

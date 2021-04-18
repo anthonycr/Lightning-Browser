@@ -39,6 +39,12 @@ interface BrowserView {
 
     fun notifyTabViewInitialized()
 
+    enum class CloseTabEvent {
+        CLOSE_CURRENT,
+        CLOSE_OTHERS,
+        CLOSE_ALL
+    }
+
     enum class LinkLongPressEvent {
         NEW_TAB,
         BACKGROUND_TAB,
