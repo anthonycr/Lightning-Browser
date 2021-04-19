@@ -39,33 +39,4 @@ interface BrowserView {
 
     fun notifyTabViewInitialized()
 
-    enum class CloseTabEvent {
-        CLOSE_CURRENT,
-        CLOSE_OTHERS,
-        CLOSE_ALL
-    }
-
-    enum class LinkLongPressEvent {
-        NEW_TAB,
-        BACKGROUND_TAB,
-        INCOGNITO_TAB,
-        SHARE,
-        COPY_LINK
-    }
-
-    enum class ImageLongPressEvent {
-        NEW_TAB,
-        BACKGROUND_TAB,
-        INCOGNITO_TAB,
-        SHARE,
-        COPY_LINK,
-        DOWNLOAD
-    }
-
-    sealed class Action {
-        data class LoadUrl(val url: String) : Action()
-
-        object Panic : Action()
-    }
-
 }

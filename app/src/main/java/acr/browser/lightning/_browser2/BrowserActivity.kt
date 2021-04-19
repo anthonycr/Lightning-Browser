@@ -310,60 +310,60 @@ class BrowserActivity : ThemableBrowserActivity() {
     fun showLinkLongPressDialog(longPress: LongPress) {
         BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.NEW_TAB)
+                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.NEW_TAB)
             },
             DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.BACKGROUND_TAB)
+                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.BACKGROUND_TAB)
             },
             DialogItem(
                 title = R.string.dialog_open_incognito_tab,
                 isConditionMet = this is BrowserActivity // TODO: Change for incognito
             ) {
-                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.INCOGNITO_TAB)
+                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.INCOGNITO_TAB)
             },
             DialogItem(title = R.string.action_share) {
-                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.SHARE)
+                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
             },
             DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onLinkLongPressEvent(longPress, BrowserView.LinkLongPressEvent.COPY_LINK)
+                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.COPY_LINK)
             })
     }
 
     fun showImageLongPressDialog(longPress: LongPress) {
         BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.NEW_TAB)
+                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.NEW_TAB)
             },
             DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.BACKGROUND_TAB)
+                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.BACKGROUND_TAB)
             },
             DialogItem(
                 title = R.string.dialog_open_incognito_tab,
                 isConditionMet = this is BrowserActivity // TODO: Change for incognito
             ) {
-                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.INCOGNITO_TAB)
+                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.INCOGNITO_TAB)
             },
             DialogItem(title = R.string.action_share) {
-                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.SHARE)
+                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.SHARE)
             },
             DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.COPY_LINK)
+                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.COPY_LINK)
             },
             DialogItem(title = R.string.dialog_download_image) {
-                presenter.onImageLongPressEvent(longPress, BrowserView.ImageLongPressEvent.DOWNLOAD)
+                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.DOWNLOAD)
             })
     }
 
     fun showCloseBrowserDialog(id: Int) {
         BrowserDialog.show(this, R.string.dialog_title_close_browser,
             DialogItem(title = R.string.close_tab) {
-                presenter.onCloseBrowserEvent(id, BrowserView.CloseTabEvent.CLOSE_CURRENT)
+                presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_CURRENT)
             },
             DialogItem(title = R.string.close_other_tabs) {
-                presenter.onCloseBrowserEvent(id, BrowserView.CloseTabEvent.CLOSE_OTHERS)
+                presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_OTHERS)
             },
             DialogItem(title = R.string.close_all_tabs, onClick = {
-                presenter.onCloseBrowserEvent(id, BrowserView.CloseTabEvent.CLOSE_ALL)
+                presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_ALL)
             }))
     }
 

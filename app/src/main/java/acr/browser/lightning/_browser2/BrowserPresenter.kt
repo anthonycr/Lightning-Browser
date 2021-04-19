@@ -232,13 +232,13 @@ class BrowserPresenter @Inject constructor(
     /**
      * TODO
      */
-    fun onNewAction(action: BrowserView.Action) {
+    fun onNewAction(action: BrowserContract.Action) {
         when (action) {
-            is BrowserView.Action.LoadUrl -> createNewTabAndSelect(
+            is BrowserContract.Action.LoadUrl -> createNewTabAndSelect(
                 tabInitializer = UrlInitializer(action.url),
                 shouldSelect = true
             )
-            BrowserView.Action.Panic -> panicClean()
+            BrowserContract.Action.Panic -> panicClean()
         }
     }
 
@@ -714,49 +714,49 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
-    fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserView.CloseTabEvent) {
+    fun onCloseBrowserEvent(id: Int, closeTabEvent: BrowserContract.CloseTabEvent) {
         when (closeTabEvent) {
-            BrowserView.CloseTabEvent.CLOSE_CURRENT ->
+            BrowserContract.CloseTabEvent.CLOSE_CURRENT ->
                 onTabClose(viewState.tabs.indexOfFirst { it.id == id })
-            BrowserView.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
+            BrowserContract.CloseTabEvent.CLOSE_OTHERS -> model.tabsList
                 .filter { it.id != id }
                 .toObservable()
                 .flatMapCompletable { model.deleteTab(it.id) }
                 .subscribeOn(mainScheduler)
                 .subscribe()
-            BrowserView.CloseTabEvent.CLOSE_ALL -> {
+            BrowserContract.CloseTabEvent.CLOSE_ALL -> {
                 model.deleteAllTabs().subscribeOn(mainScheduler)
                     .subscribeBy(onComplete = navigator::closeBrowser)
             }
         }
     }
 
-    fun onLinkLongPressEvent(longPress: LongPress, linkLongPressEvent: BrowserView.LinkLongPressEvent) {
+    fun onLinkLongPressEvent(longPress: LongPress, linkLongPressEvent: BrowserContract.LinkLongPressEvent) {
         when (linkLongPressEvent) {
-            BrowserView.LinkLongPressEvent.NEW_TAB ->
+            BrowserContract.LinkLongPressEvent.NEW_TAB ->
                 longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = true) }
-            BrowserView.LinkLongPressEvent.BACKGROUND_TAB ->
+            BrowserContract.LinkLongPressEvent.BACKGROUND_TAB ->
                 longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = false) }
-            BrowserView.LinkLongPressEvent.INCOGNITO_TAB -> TODO()
-            BrowserView.LinkLongPressEvent.SHARE ->
+            BrowserContract.LinkLongPressEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.LinkLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
-            BrowserView.LinkLongPressEvent.COPY_LINK ->
+            BrowserContract.LinkLongPressEvent.COPY_LINK ->
                 longPress.targetUrl?.let(navigator::copyPageLink)
         }
     }
 
-    fun onImageLongPressEvent(longPress: LongPress, imageLongPressEvent: BrowserView.ImageLongPressEvent) {
+    fun onImageLongPressEvent(longPress: LongPress, imageLongPressEvent: BrowserContract.ImageLongPressEvent) {
         when (imageLongPressEvent) {
-            BrowserView.ImageLongPressEvent.NEW_TAB ->
+            BrowserContract.ImageLongPressEvent.NEW_TAB ->
                 longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = true) }
-            BrowserView.ImageLongPressEvent.BACKGROUND_TAB ->
+            BrowserContract.ImageLongPressEvent.BACKGROUND_TAB ->
                 longPress.targetUrl?.let { createNewTabAndSelect(UrlInitializer(it), shouldSelect = false) }
-            BrowserView.ImageLongPressEvent.INCOGNITO_TAB -> TODO()
-            BrowserView.ImageLongPressEvent.SHARE ->
+            BrowserContract.ImageLongPressEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.ImageLongPressEvent.SHARE ->
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
-            BrowserView.ImageLongPressEvent.COPY_LINK ->
+            BrowserContract.ImageLongPressEvent.COPY_LINK ->
                 longPress.targetUrl?.let(navigator::copyPageLink)
-            BrowserView.ImageLongPressEvent.DOWNLOAD -> TODO()
+            BrowserContract.ImageLongPressEvent.DOWNLOAD -> TODO()
         }
     }
 

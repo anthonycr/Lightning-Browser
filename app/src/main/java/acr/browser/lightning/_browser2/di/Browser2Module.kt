@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2.di
 
+import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning._browser2.search.IntentExtractor
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
@@ -39,7 +40,7 @@ class Browser2Module {
     fun providesInitialUrl(
         @InitialIntent initialIntent: Intent,
         intentExtractor: IntentExtractor
-    ): String? = (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserView.Action.LoadUrl)?.url
+    ): String? = (intentExtractor.extractUrlFromIntent(initialIntent) as? BrowserContract.Action.LoadUrl)?.url
 
     // TODO: auto inject intent utils
     @Provides

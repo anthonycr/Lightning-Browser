@@ -1,6 +1,6 @@
 package acr.browser.lightning._browser2.search
 
-import acr.browser.lightning.browser.BrowserView
+import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
 import acr.browser.lightning.utils.smartUrlFilter
@@ -16,12 +16,12 @@ class IntentExtractor @Inject constructor(private val searchEngineProvider: Sear
     /**
      * TODO
      */
-    fun extractUrlFromIntent(intent: Intent): BrowserView.Action? {
+    fun extractUrlFromIntent(intent: Intent): BrowserContract.Action? {
         return when (intent.action) {
-            INTENT_PANIC_TRIGGER -> BrowserView.Action.Panic
+            INTENT_PANIC_TRIGGER -> BrowserContract.Action.Panic
             Intent.ACTION_WEB_SEARCH ->
-                extractSearchFromIntent(intent)?.let(BrowserView.Action::LoadUrl)
-            else -> intent.dataString?.let(BrowserView.Action::LoadUrl)
+                extractSearchFromIntent(intent)?.let(BrowserContract.Action::LoadUrl)
+            else -> intent.dataString?.let(BrowserContract.Action::LoadUrl)
         }
     }
 
