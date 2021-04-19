@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.tab.TabModel
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.view.TabInitializer
 import android.graphics.Bitmap
@@ -23,7 +24,11 @@ interface BrowserContract {
 
         fun showAddBookmarkDialog(title: String, url: String, folders: List<String>)
 
+        fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry)
+
         fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>)
+
+        fun showFolderOptionsDialog(folder: Bookmark.Folder)
 
         fun showEditFolderDialog(title: String)
 
@@ -85,6 +90,21 @@ interface BrowserContract {
         CLOSE_CURRENT,
         CLOSE_OTHERS,
         CLOSE_ALL
+    }
+
+    enum class BookmarkOptionEvent {
+        NEW_TAB,
+        BACKGROUND_TAB,
+        INCOGNITO_TAB,
+        SHARE,
+        COPY_LINK,
+        REMOVE,
+        EDIT
+    }
+
+    enum class FolderOptionEvent {
+        RENAME,
+        REMOVE
     }
 
     enum class LinkLongPressEvent {

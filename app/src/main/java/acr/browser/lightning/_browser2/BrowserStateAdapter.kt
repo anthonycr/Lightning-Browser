@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
 import targetUrl.LongPress
@@ -51,8 +52,16 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showAddBookmarkDialog(title, url, folders)
     }
 
+    override fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry) {
+        browserActivity.showBookmarkOptionsDialog(bookmark)
+    }
+
     override fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
         browserActivity.showEditBookmarkDialog(title, url, folder, folders)
+    }
+
+    override fun showFolderOptionsDialog(folder: Bookmark.Folder) {
+        browserActivity.showFolderOptionsDialog(folder)
     }
 
     override fun showEditFolderDialog(title: String) {

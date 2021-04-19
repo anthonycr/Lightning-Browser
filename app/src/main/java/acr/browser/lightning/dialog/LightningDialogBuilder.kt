@@ -2,6 +2,7 @@ package acr.browser.lightning.dialog
 
 import acr.browser.lightning.MainActivity
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.BrowserContract
 import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.controller.UIController
 import acr.browser.lightning.database.Bookmark
@@ -118,6 +119,35 @@ class LightningDialogBuilder @Inject constructor(
         },
         DialogItem(title = R.string.dialog_edit_bookmark) {
             showEditBookmarkDialog(activity, uiController, entry)
+        })
+
+    fun showLongPressedDialogForBookmarkUrl(
+        activity: Activity,
+        onClick: (BrowserContract.BookmarkOptionEvent) -> Unit
+    ) = BrowserDialog.show(activity, R.string.action_bookmarks,
+        DialogItem(title = R.string.dialog_open_new_tab) {
+            onClick(BrowserContract.BookmarkOptionEvent.NEW_TAB)
+        },
+        DialogItem(title = R.string.dialog_open_background_tab) {
+            onClick(BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB)
+        },
+        DialogItem(
+            title = R.string.dialog_open_incognito_tab,
+            isConditionMet = activity is MainActivity
+        ) {
+            onClick(BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB)
+        },
+        DialogItem(title = R.string.action_share) {
+            onClick(BrowserContract.BookmarkOptionEvent.SHARE)
+        },
+        DialogItem(title = R.string.dialog_copy_link) {
+            onClick(BrowserContract.BookmarkOptionEvent.COPY_LINK)
+        },
+        DialogItem(title = R.string.dialog_remove_bookmark) {
+            onClick(BrowserContract.BookmarkOptionEvent.REMOVE)
+        },
+        DialogItem(title = R.string.dialog_edit_bookmark) {
+            onClick(BrowserContract.BookmarkOptionEvent.EDIT)
         })
 
     /**
@@ -305,6 +335,17 @@ class LightningDialogBuilder @Inject constructor(
                 .subscribe {
                     uiController.handleBookmarkDeleted(folder)
                 }
+        })
+
+    fun showBookmarkFolderLongPressedDialog(
+        activity: Activity,
+        onClick: (BrowserContract.FolderOptionEvent) -> Unit
+    ) = BrowserDialog.show(activity, R.string.action_folder,
+        DialogItem(title = R.string.dialog_rename_folder) {
+            onClick(BrowserContract.FolderOptionEvent.RENAME)
+        },
+        DialogItem(title = R.string.dialog_remove_folder) {
+            onClick(BrowserContract.FolderOptionEvent.REMOVE)
         })
 
     private fun showRenameFolderDialog(

@@ -11,10 +11,10 @@ import acr.browser.lightning._browser2.tab.*
 import acr.browser.lightning._browser2.ui.BookmarkConfiguration
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
-import acr.browser.lightning.browser.BrowserView
 import acr.browser.lightning.browser.activity.StyleRemovingTextWatcher
 import acr.browser.lightning.browser.activity.ThemableBrowserActivity
 import acr.browser.lightning.constant.HTTP
+import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
 import acr.browser.lightning.databinding.BrowserActivityBinding
@@ -26,7 +26,6 @@ import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.ssl.createSslDrawableForState
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
@@ -278,6 +277,15 @@ class BrowserActivity : ThemableBrowserActivity() {
         )
     }
 
+    fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry) {
+        lightningDialogBuilder.showLongPressedDialogForBookmarkUrl(
+            activity = this,
+            onClick = {
+                presenter.onBookmarkOptionClick(bookmark, it)
+            }
+        )
+    }
+
     fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
         lightningDialogBuilder.showEditBookmarkDialog(
             activity = this,
@@ -286,6 +294,15 @@ class BrowserActivity : ThemableBrowserActivity() {
             currentFolder = folder,
             folders = folders,
             onSave = presenter::onBookmarkEditConfirmed
+        )
+    }
+
+    fun showFolderOptionsDialog(folder: Bookmark.Folder) {
+        lightningDialogBuilder.showBookmarkFolderLongPressedDialog(
+            activity = this,
+            onClick = {
+                presenter.onFolderOptionClick(folder, it)
+            }
         )
     }
 

@@ -5,12 +5,10 @@ import acr.browser.lightning._browser2.di.InitialUrl
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
-import targetUrl.LongPress
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning._browser2.tab.TabViewState
 import acr.browser.lightning._browser2.ui.TabConfiguration
 import acr.browser.lightning._browser2.ui.UiConfiguration
-import acr.browser.lightning.browser.BrowserView
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
@@ -31,6 +29,7 @@ import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
+import targetUrl.LongPress
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -551,15 +550,10 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onBookmarkLongClick(index: Int) {
-        compositeDisposable += bookmarkRepository.getFolderNames()
-            .subscribeOn(databaseScheduler)
-            .observeOn(mainScheduler)
-            .subscribeBy { folders ->
-                when (val item = viewState.bookmarks[index]) {
-                    is Bookmark.Entry -> view?.showEditBookmarkDialog(item.title, item.url, item.folder.title, folders)
-                    is Bookmark.Folder.Entry -> view?.showEditFolderDialog(item.title)
-                }
-            }
+        when (val item = viewState.bookmarks[index]) {
+            is Bookmark.Entry -> view?.showBookmarkOptionsDialog(item)
+            is Bookmark.Folder.Entry -> view?.showFolderOptionsDialog(item)
+        }
     }
 
     /**
@@ -656,6 +650,52 @@ class BrowserPresenter @Inject constructor(
             .subscribe { list ->
                 this.view?.updateState(viewState.copy(bookmarks = list))
             }
+    }
+
+    /**
+     * TODO
+     */
+    fun onBookmarkOptionClick(bookmark: Bookmark.Entry, option: BrowserContract.BookmarkOptionEvent) {
+        when (option) {
+            BrowserContract.BookmarkOptionEvent.NEW_TAB ->
+                createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = true)
+            BrowserContract.BookmarkOptionEvent.BACKGROUND_TAB ->
+                createNewTabAndSelect(UrlInitializer(bookmark.url), shouldSelect = false)
+            BrowserContract.BookmarkOptionEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.BookmarkOptionEvent.SHARE ->
+                navigator.sharePage(url = bookmark.url, title = bookmark.title)
+            BrowserContract.BookmarkOptionEvent.COPY_LINK ->
+                navigator.copyPageLink(bookmark.url)
+            BrowserContract.BookmarkOptionEvent.REMOVE ->
+                compositeDisposable += bookmarkRepository.deleteBookmark(bookmark)
+                    .flatMap { bookmarkRepository.bookmarksAndFolders(folder = currentFolder) }
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribe { list ->
+                        view?.updateState(viewState.copy(bookmarks = list))
+                    }
+            BrowserContract.BookmarkOptionEvent.EDIT ->
+                compositeDisposable += bookmarkRepository.getFolderNames()
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy { folders ->
+                        view?.showEditBookmarkDialog(bookmark.title, bookmark.url, bookmark.folder.title, folders)
+                    }
+        }
+    }
+
+    fun onFolderOptionClick(folder: Bookmark.Folder, option: BrowserContract.FolderOptionEvent) {
+        when (option) {
+            BrowserContract.FolderOptionEvent.RENAME -> view?.showEditFolderDialog(folder.title)
+            BrowserContract.FolderOptionEvent.REMOVE ->
+                compositeDisposable += bookmarkRepository.deleteFolder(folder.title)
+                    .andThen(bookmarkRepository.bookmarksAndFolders(folder = currentFolder))
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribe { list ->
+                        view?.updateState(viewState.copy(bookmarks = list))
+                    }
+        }
     }
 
     /**
