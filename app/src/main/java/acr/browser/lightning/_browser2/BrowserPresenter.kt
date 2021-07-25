@@ -12,6 +12,8 @@ import acr.browser.lightning._browser2.ui.UiConfiguration
 import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
+import acr.browser.lightning.database.downloads.DownloadEntry
+import acr.browser.lightning.database.downloads.DownloadsRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
@@ -44,6 +46,7 @@ class BrowserPresenter @Inject constructor(
     private val model: BrowserContract.Model,
     private val navigator: BrowserContract.Navigator,
     private val bookmarkRepository: BookmarkRepository,
+    private val downloadsRepository: DownloadsRepository,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
@@ -761,6 +764,32 @@ class BrowserPresenter @Inject constructor(
         }
     }
 
+    fun onDownloadOptionClick(
+        download: DownloadEntry,
+        option: BrowserContract.DownloadOptionEvent
+    ) {
+        when (option) {
+            BrowserContract.DownloadOptionEvent.DELETE ->
+                compositeDisposable += downloadsRepository.deleteAllDownloads()
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy {
+                        if (currentTab?.url?.isDownloadsUrl() == true) {
+                            reload()
+                        }
+                    }
+            BrowserContract.DownloadOptionEvent.DELETE_ALL ->
+                compositeDisposable += downloadsRepository.deleteDownload(download.url)
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy {
+                        if (currentTab?.url?.isDownloadsUrl() == true) {
+                            reload()
+                        }
+                    }
+        }
+    }
+
     /**
      * TODO
      */
@@ -808,8 +837,8 @@ class BrowserPresenter @Inject constructor(
     fun onPageLongPress(id: Int, longPress: LongPress) {
         val pageUrl = model.tabsList.find { it.id == id }?.url
         if (pageUrl?.isSpecialUrl() == true) {
+            val url = longPress.targetUrl ?: return
             if (pageUrl.isBookmarkUrl()) {
-                val url = longPress.targetUrl ?: return
                 if (url.isBookmarkUrl()) {
                     val filename = requireNotNull(longPress.targetUrl.toUri().lastPathSegment) {
                         "Last segment should always exist for bookmark file"
@@ -823,12 +852,17 @@ class BrowserPresenter @Inject constructor(
                     compositeDisposable += bookmarkRepository.findBookmarkForUrl(url)
                         .subscribeOn(databaseScheduler)
                         .observeOn(mainScheduler)
-                        .subscribe { bookmarkEntry ->
-                            view?.showBookmarkOptionsDialog(bookmarkEntry)
+                        .subscribeBy {
+                            view?.showBookmarkOptionsDialog(it)
                         }
                 }
             } else if (pageUrl.isDownloadsUrl()) {
-                // TODO
+                compositeDisposable += downloadsRepository.findDownloadForUrl(url)
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy {
+                        view?.showDownloadOptionsDialog(it)
+                    }
             } else if (pageUrl.isHistoryUrl()) {
                 // TODO
             }

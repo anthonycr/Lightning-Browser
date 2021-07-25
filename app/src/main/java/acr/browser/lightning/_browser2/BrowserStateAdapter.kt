@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
 import targetUrl.LongPress
@@ -71,6 +72,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showEditFolderDialog(title: String) {
         browserActivity.showEditFolderDialog(title)
+    }
+
+    override fun showDownloadOptionsDialog(download: DownloadEntry) {
+        browserActivity.showDownloadOptionsDialog(download)
     }
 
     override fun showFindInPageDialog() {

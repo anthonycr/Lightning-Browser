@@ -70,8 +70,10 @@ class LightningDialogBuilder @Inject constructor(
         if (url.isBookmarkUrl()) {
             // TODO hacky, make a better bookmark mechanism in the future
             val uri = url.toUri()
-            val filename = requireNotNull(uri.lastPathSegment) { "Last segment should always exist for bookmark file" }
-            val folderTitle = filename.substring(0, filename.length - BookmarkPageFactory.FILENAME.length - 1)
+            val filename =
+                requireNotNull(uri.lastPathSegment) { "Last segment should always exist for bookmark file" }
+            val folderTitle =
+                filename.substring(0, filename.length - BookmarkPageFactory.FILENAME.length - 1)
             showBookmarkFolderLongPressedDialog(activity, uiController, folderTitle.asFolder())
         } else {
             bookmarkManager.findBookmarkForUrl(url)
@@ -169,6 +171,18 @@ class LightningDialogBuilder @Inject constructor(
                 .subscribe(uiController::handleDownloadDeleted)
         })
 
+    fun showLongPressedDialogForDownloadUrl(
+        activity: Activity,
+        onClick: (BrowserContract.DownloadOptionEvent) -> Unit
+    ) = BrowserDialog.show(activity, R.string.action_downloads,
+        DialogItem(title = R.string.dialog_delete_all_downloads) {
+            onClick(BrowserContract.DownloadOptionEvent.DELETE_ALL)
+        },
+        DialogItem(title = R.string.dialog_delete_all_downloads) {
+            onClick(BrowserContract.DownloadOptionEvent.DELETE)
+        }
+    )
+
     /**
      * Show the add bookmark dialog. Shows a dialog with the title and URL pre-populated.
      */
@@ -192,8 +206,10 @@ class LightningDialogBuilder @Inject constructor(
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { folders ->
-                val suggestionsAdapter = ArrayAdapter(activity,
-                    android.R.layout.simple_dropdown_item_1line, folders)
+                val suggestionsAdapter = ArrayAdapter(
+                    activity,
+                    android.R.layout.simple_dropdown_item_1line, folders
+                )
                 getFolder.threshold = 1
                 getFolder.setAdapter(suggestionsAdapter)
                 editBookmarkDialog.setView(dialogLayout)
@@ -234,8 +250,10 @@ class LightningDialogBuilder @Inject constructor(
         binding.bookmarkUrl.setText(currentUrl)
         binding.bookmarkFolder.setText("")
 
-        val suggestionsAdapter = ArrayAdapter(activity,
-            android.R.layout.simple_dropdown_item_1line, folders)
+        val suggestionsAdapter = ArrayAdapter(
+            activity,
+            android.R.layout.simple_dropdown_item_1line, folders
+        )
         binding.bookmarkFolder.setAdapter(suggestionsAdapter)
         editBookmarkDialog.setView(dialogLayout)
         editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok)) { _, _ ->
@@ -269,8 +287,10 @@ class LightningDialogBuilder @Inject constructor(
             .subscribeOn(databaseScheduler)
             .observeOn(mainScheduler)
             .subscribe { folders ->
-                val suggestionsAdapter = ArrayAdapter(activity,
-                    android.R.layout.simple_dropdown_item_1line, folders)
+                val suggestionsAdapter = ArrayAdapter(
+                    activity,
+                    android.R.layout.simple_dropdown_item_1line, folders
+                )
                 getFolder.threshold = 1
                 getFolder.setAdapter(suggestionsAdapter)
                 editBookmarkDialog.setView(dialogLayout)
@@ -306,8 +326,10 @@ class LightningDialogBuilder @Inject constructor(
         binding.bookmarkUrl.setText(currentUrl)
         binding.bookmarkFolder.setText(currentFolder)
 
-        val suggestionsAdapter = ArrayAdapter(activity,
-            android.R.layout.simple_dropdown_item_1line, folders)
+        val suggestionsAdapter = ArrayAdapter(
+            activity,
+            android.R.layout.simple_dropdown_item_1line, folders
+        )
         binding.bookmarkFolder.setAdapter(suggestionsAdapter)
         editBookmarkDialog.setView(dialogLayout)
         editBookmarkDialog.setPositiveButton(activity.getString(R.string.action_ok)) { _, _ ->
@@ -352,11 +374,13 @@ class LightningDialogBuilder @Inject constructor(
         activity: Activity,
         uiController: UIController,
         folder: Bookmark.Folder
-    ) = BrowserDialog.showEditText(activity,
+    ) = BrowserDialog.showEditText(
+        activity,
         R.string.title_rename_folder,
         R.string.hint_title,
         folder.title,
-        R.string.action_ok) { text ->
+        R.string.action_ok
+    ) { text ->
         if (text.isNotBlank()) {
             val oldTitle = folder.title
             bookmarkManager.renameFolder(oldTitle, text)
@@ -438,7 +462,15 @@ class LightningDialogBuilder @Inject constructor(
             clipboardManager.copyToClipboard(url)
         },
         DialogItem(title = R.string.dialog_download_image) {
-            downloadHandler.onDownloadStart(activity, userPreferences, url, userAgent, "attachment", null, "")
+            downloadHandler.onDownloadStart(
+                activity,
+                userPreferences,
+                url,
+                userAgent,
+                "attachment",
+                null,
+                ""
+            )
         })
 
     fun showLongPressLinkDialog(

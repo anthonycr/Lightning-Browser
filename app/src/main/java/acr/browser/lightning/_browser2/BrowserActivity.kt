@@ -17,6 +17,7 @@ import acr.browser.lightning.constant.HTTP
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.SearchSuggestion
 import acr.browser.lightning.database.WebPage
+import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.databinding.BrowserActivityBinding
 import acr.browser.lightning.di.injector
 import acr.browser.lightning.dialog.BrowserDialog
@@ -326,6 +327,15 @@ class BrowserActivity : ThemableBrowserActivity() {
             activity = this,
             oldTitle = oldTitle,
             onSave = presenter::onBookmarkFolderRenameConfirmed
+        )
+    }
+
+    fun showDownloadOptionsDialog(download: DownloadEntry) {
+        lightningDialogBuilder.showLongPressedDialogForDownloadUrl(
+            activity = this,
+            onClick = {
+                presenter.onDownloadOptionClick(download, it)
+            }
         )
     }
 
