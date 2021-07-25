@@ -417,7 +417,8 @@ class BrowserActivity : ThemableBrowserActivity() {
     }
 
     fun showCloseBrowserDialog(id: Int) {
-        BrowserDialog.show(this, R.string.dialog_title_close_browser,
+        BrowserDialog.show(
+            this, R.string.dialog_title_close_browser,
             DialogItem(title = R.string.close_tab) {
                 presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_CURRENT)
             },
@@ -435,9 +436,17 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.drawerLayout.openDrawer(binding.bookmarkDrawer)
     }
 
+    fun closeBookmarkDrawer() {
+        binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
+    }
+
     fun openTabDrawer() {
         binding.drawerLayout.closeDrawer(binding.bookmarkDrawer)
         binding.drawerLayout.openDrawer(binding.tabDrawer)
+    }
+
+    fun closeTabDrawer() {
+        binding.drawerLayout.closeDrawer(binding.tabDrawer)
     }
 
     private fun ImageView.updateVisibilityForDrawable() {

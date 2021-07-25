@@ -56,7 +56,12 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.showBookmarkOptionsDialog(bookmark)
     }
 
-    override fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>) {
+    override fun showEditBookmarkDialog(
+        title: String,
+        url: String,
+        folder: String,
+        folders: List<String>
+    ) {
         browserActivity.showEditBookmarkDialog(title, url, folder, folders)
     }
 
@@ -92,8 +97,16 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
         browserActivity.openBookmarkDrawer()
     }
 
+    override fun closeBookmarkDrawer() {
+        browserActivity.closeBookmarkDrawer()
+    }
+
     override fun openTabDrawer() {
         browserActivity.openTabDrawer()
+    }
+
+    override fun closeTabDrawer() {
+        browserActivity.closeTabDrawer()
     }
 
 }

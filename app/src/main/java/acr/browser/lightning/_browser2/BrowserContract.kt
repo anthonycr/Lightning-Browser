@@ -26,7 +26,12 @@ interface BrowserContract {
 
         fun showBookmarkOptionsDialog(bookmark: Bookmark.Entry)
 
-        fun showEditBookmarkDialog(title: String, url: String, folder: String, folders: List<String>)
+        fun showEditBookmarkDialog(
+            title: String,
+            url: String,
+            folder: String,
+            folders: List<String>
+        )
 
         fun showFolderOptionsDialog(folder: Bookmark.Folder)
 
@@ -44,7 +49,11 @@ interface BrowserContract {
 
         fun openBookmarkDrawer()
 
+        fun closeBookmarkDrawer()
+
         fun openTabDrawer()
+
+        fun closeTabDrawer()
     }
 
     interface Model {
