@@ -1,6 +1,7 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.showSslDialog
@@ -76,6 +77,10 @@ class BrowserStateAdapter(private val browserActivity: BrowserActivity) : Browse
 
     override fun showDownloadOptionsDialog(download: DownloadEntry) {
         browserActivity.showDownloadOptionsDialog(download)
+    }
+
+    override fun showHistoryOptionsDialog(historyEntry: HistoryEntry) {
+        browserActivity.showHistoryOptionsDialog(historyEntry)
     }
 
     override fun showFindInPageDialog() {

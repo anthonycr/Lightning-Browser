@@ -14,6 +14,7 @@ import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.database.downloads.DownloadsRepository
+import acr.browser.lightning.database.history.HistoryRepository
 import acr.browser.lightning.di.DatabaseScheduler
 import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
@@ -47,6 +48,7 @@ class BrowserPresenter @Inject constructor(
     private val navigator: BrowserContract.Navigator,
     private val bookmarkRepository: BookmarkRepository,
     private val downloadsRepository: DownloadsRepository,
+    private val historyRepository: HistoryRepository,
     @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
@@ -734,6 +736,9 @@ class BrowserPresenter @Inject constructor(
                     .observeOn(mainScheduler)
                     .subscribe { list ->
                         view?.updateState(viewState.copy(bookmarks = list))
+                        if (currentTab?.url?.isBookmarkUrl() == true) {
+                            reload()
+                        }
                     }
             BrowserContract.BookmarkOptionEvent.EDIT ->
                 compositeDisposable += bookmarkRepository.getFolderNames()
@@ -760,6 +765,9 @@ class BrowserPresenter @Inject constructor(
                     .observeOn(mainScheduler)
                     .subscribe { list ->
                         view?.updateState(viewState.copy(bookmarks = list))
+                        if (currentTab?.url?.isBookmarkUrl() == true) {
+                            reload()
+                        }
                     }
         }
     }
@@ -784,6 +792,31 @@ class BrowserPresenter @Inject constructor(
                     .observeOn(mainScheduler)
                     .subscribeBy {
                         if (currentTab?.url?.isDownloadsUrl() == true) {
+                            reload()
+                        }
+                    }
+        }
+    }
+
+    fun onHistoryOptionClick(
+        historyEntry: HistoryEntry,
+        option: BrowserContract.HistoryOptionEvent
+    ) {
+        when (option) {
+            BrowserContract.HistoryOptionEvent.NEW_TAB ->
+                createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = true)
+            BrowserContract.HistoryOptionEvent.BACKGROUND_TAB ->
+                createNewTabAndSelect(UrlInitializer(historyEntry.url), shouldSelect = false)
+            BrowserContract.HistoryOptionEvent.INCOGNITO_TAB -> TODO()
+            BrowserContract.HistoryOptionEvent.SHARE ->
+                navigator.sharePage(url = historyEntry.url, title = historyEntry.title)
+            BrowserContract.HistoryOptionEvent.COPY_LINK -> navigator.copyPageLink(historyEntry.url)
+            BrowserContract.HistoryOptionEvent.REMOVE ->
+                compositeDisposable += historyRepository.deleteHistoryEntry(historyEntry.url)
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy {
+                        if (currentTab?.url?.isHistoryUrl() == true) {
                             reload()
                         }
                     }
@@ -864,7 +897,15 @@ class BrowserPresenter @Inject constructor(
                         view?.showDownloadOptionsDialog(it)
                     }
             } else if (pageUrl.isHistoryUrl()) {
-                // TODO
+                compositeDisposable += historyRepository.findHistoryEntriesContaining(url)
+                    .subscribeOn(databaseScheduler)
+                    .observeOn(mainScheduler)
+                    .subscribeBy { entries ->
+                        entries.firstOrNull()?.let {
+                            view?.showHistoryOptionsDialog(it)
+                        } ?: view?.showHistoryOptionsDialog(HistoryEntry(url = url, title = ""))
+                    }
+
             }
             return
         }

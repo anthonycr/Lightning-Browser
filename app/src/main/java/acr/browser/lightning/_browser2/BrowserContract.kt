@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning.database.Bookmark
+import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.database.downloads.DownloadEntry
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.view.TabInitializer
@@ -39,6 +40,8 @@ interface BrowserContract {
         fun showEditFolderDialog(title: String)
 
         fun showDownloadOptionsDialog(download: DownloadEntry)
+
+        fun showHistoryOptionsDialog(historyEntry: HistoryEntry)
 
         fun showFindInPageDialog()
 
@@ -112,6 +115,15 @@ interface BrowserContract {
         COPY_LINK,
         REMOVE,
         EDIT
+    }
+
+    enum class HistoryOptionEvent {
+        NEW_TAB,
+        BACKGROUND_TAB,
+        INCOGNITO_TAB,
+        SHARE,
+        COPY_LINK,
+        REMOVE,
     }
 
     enum class DownloadOptionEvent {
