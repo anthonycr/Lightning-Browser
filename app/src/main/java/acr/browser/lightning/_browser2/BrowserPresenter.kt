@@ -13,12 +13,15 @@ import acr.browser.lightning.browser.SearchBoxModel
 import acr.browser.lightning.database.*
 import acr.browser.lightning.database.bookmark.BookmarkRepository
 import acr.browser.lightning.di.DatabaseScheduler
+import acr.browser.lightning.di.DiskScheduler
 import acr.browser.lightning.di.MainScheduler
+import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.utils.*
 import acr.browser.lightning.view.*
+import androidx.core.net.toUri
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Scheduler
@@ -41,9 +44,11 @@ class BrowserPresenter @Inject constructor(
     private val model: BrowserContract.Model,
     private val navigator: BrowserContract.Navigator,
     private val bookmarkRepository: BookmarkRepository,
+    @DiskScheduler private val diskScheduler: Scheduler,
     @MainScheduler private val mainScheduler: Scheduler,
     @DatabaseScheduler private val databaseScheduler: Scheduler,
     private val historyRecord: HistoryRecord,
+    private val bookmarkPageFactory: BookmarkPageFactory,
     private val homePageInitializer: HomePageInitializer,
     private val historyPageInitializer: HistoryPageInitializer,
     private val downloadPageInitializer: DownloadPageInitializer,
@@ -427,6 +432,28 @@ class BrowserPresenter @Inject constructor(
         if (currentTab?.loadingProgress != 100) {
             currentTab?.stopLoading()
         } else {
+            reload()
+        }
+    }
+
+    private fun reload() {
+        val currentUrl = currentTab?.url
+        if (currentUrl?.isSpecialUrl() == true) {
+            when {
+                currentUrl.isBookmarkUrl() ->
+                    compositeDisposable += bookmarkPageFactory.buildPage()
+                        .subscribeOn(diskScheduler)
+                        .observeOn(mainScheduler)
+                        .subscribeBy {
+                            currentTab?.reload()
+                        }
+                currentUrl.isDownloadsUrl() ->
+                    currentTab?.loadFromInitializer(downloadPageInitializer)
+                currentUrl.isHistoryUrl() ->
+                    currentTab?.loadFromInitializer(historyPageInitializer)
+                else -> currentTab?.reload()
+            }
+        } else {
             currentTab?.reload()
         }
     }
@@ -661,6 +688,9 @@ class BrowserPresenter @Inject constructor(
             .observeOn(mainScheduler)
             .subscribe { list ->
                 this.view?.updateState(viewState.copy(bookmarks = list))
+                if (currentTab?.url?.isBookmarkUrl() == true) {
+                    reload()
+                }
             }
     }
 
@@ -671,6 +701,9 @@ class BrowserPresenter @Inject constructor(
             .observeOn(mainScheduler)
             .subscribe { list ->
                 this.view?.updateState(viewState.copy(bookmarks = list))
+                if (currentTab?.url?.isBookmarkUrl() == true) {
+                    reload()
+                }
             }
     }
 
@@ -773,8 +806,32 @@ class BrowserPresenter @Inject constructor(
      * TODO
      */
     fun onPageLongPress(id: Int, longPress: LongPress) {
-        if (model.tabsList.find { it.id == id }?.url?.isSpecialUrl() == true) {
-            // TODO handle differently
+        val pageUrl = model.tabsList.find { it.id == id }?.url
+        if (pageUrl?.isSpecialUrl() == true) {
+            if (pageUrl.isBookmarkUrl()) {
+                val url = longPress.targetUrl ?: return
+                if (url.isBookmarkUrl()) {
+                    val filename = requireNotNull(longPress.targetUrl.toUri().lastPathSegment) {
+                        "Last segment should always exist for bookmark file"
+                    }
+                    val folderTitle = filename.substring(
+                        0,
+                        filename.length - BookmarkPageFactory.FILENAME.length - 1
+                    )
+                    view?.showFolderOptionsDialog(folderTitle.asFolder())
+                } else {
+                    compositeDisposable += bookmarkRepository.findBookmarkForUrl(url)
+                        .subscribeOn(databaseScheduler)
+                        .observeOn(mainScheduler)
+                        .subscribe { bookmarkEntry ->
+                            view?.showBookmarkOptionsDialog(bookmarkEntry)
+                        }
+                }
+            } else if (pageUrl.isDownloadsUrl()) {
+                // TODO
+            } else if (pageUrl.isHistoryUrl()) {
+                // TODO
+            }
             return
         }
         when (longPress.hitCategory) {
