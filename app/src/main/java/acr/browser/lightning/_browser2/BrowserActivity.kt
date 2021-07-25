@@ -90,25 +90,31 @@ class BrowserActivity : ThemableBrowserActivity() {
             .build()
             .inject(this)
 
-        binding.bookmarkDrawer.layoutParams = (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
-            gravity = when (uiConfiguration.bookmarkConfiguration) {
-                BookmarkConfiguration.LEFT -> Gravity.START
-                BookmarkConfiguration.RIGHT -> Gravity.END
+        binding.bookmarkDrawer.layoutParams =
+            (binding.bookmarkDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
+                gravity = when (uiConfiguration.bookmarkConfiguration) {
+                    BookmarkConfiguration.LEFT -> Gravity.START
+                    BookmarkConfiguration.RIGHT -> Gravity.END
+                }
             }
-        }
 
-        binding.tabDrawer.layoutParams = (binding.tabDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
-            gravity = when (uiConfiguration.bookmarkConfiguration) {
-                BookmarkConfiguration.LEFT -> Gravity.END
-                BookmarkConfiguration.RIGHT -> Gravity.START
+        binding.tabDrawer.layoutParams =
+            (binding.tabDrawer.layoutParams as DrawerLayout.LayoutParams).apply {
+                gravity = when (uiConfiguration.bookmarkConfiguration) {
+                    BookmarkConfiguration.LEFT -> Gravity.END
+                    BookmarkConfiguration.RIGHT -> Gravity.START
+                }
             }
-        }
 
-        binding.homeImageView.isVisible = uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP
+        binding.homeImageView.isVisible =
+            uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP
         binding.tabCountView.isVisible = uiConfiguration.tabConfiguration == TabConfiguration.DRAWER
 
         if (uiConfiguration.tabConfiguration == TabConfiguration.DESKTOP) {
-            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, binding.tabDrawer)
+            binding.drawerLayout.setDrawerLockMode(
+                DrawerLayout.LOCK_MODE_LOCKED_CLOSED,
+                binding.tabDrawer
+            )
         }
 
         if (uiConfiguration.tabConfiguration == TabConfiguration.DRAWER) {
@@ -130,7 +136,8 @@ class BrowserActivity : ThemableBrowserActivity() {
             )
             binding.desktopTabsList.isVisible = true
             binding.desktopTabsList.adapter = tabsAdapter
-            binding.desktopTabsList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+            binding.desktopTabsList.layoutManager =
+                LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
             binding.drawerTabsList.isVisible = false
         }
 
@@ -169,7 +176,11 @@ class BrowserActivity : ThemableBrowserActivity() {
         binding.search.setOnEditorActionListener(searchListener)
         binding.search.setOnKeyListener(searchListener)
         binding.search.addTextChangedListener(StyleRemovingTextWatcher())
-        binding.search.setOnFocusChangeListener { _, hasFocus -> presenter.onSearchFocusChanged(hasFocus) }
+        binding.search.setOnFocusChangeListener { _, hasFocus ->
+            presenter.onSearchFocusChanged(
+                hasFocus
+            )
+        }
 
         binding.findPrevious.setOnClickListener { presenter.onFindPrevious() }
         binding.findNext.setOnClickListener { presenter.onFindNext() }
@@ -240,22 +251,26 @@ class BrowserActivity : ThemableBrowserActivity() {
         viewState.tabs?.let { binding.tabCountView.updateCount(it.size) }
         viewState.progress?.let { binding.progressView.progress = it }
         viewState.isRefresh?.let {
-            binding.searchRefresh.setImageResource(if (it) {
-                R.drawable.ic_action_refresh
-            } else {
-                R.drawable.ic_action_delete
-            })
+            binding.searchRefresh.setImageResource(
+                if (it) {
+                    R.drawable.ic_action_refresh
+                } else {
+                    R.drawable.ic_action_delete
+                }
+            )
         }
         viewState.tabs?.let(tabsAdapter::submitList)
         viewState.bookmarks?.let(bookmarksAdapter::submitList)
         viewState.isBookmarked?.let { binding.actionAddBookmark.isSelected = it }
         viewState.isBookmarkEnabled?.let { binding.actionAddBookmark.isEnabled = it }
         viewState.isRootFolder?.let {
-            binding.bookmarkBackButton.setImageResource(if (it) {
-                R.drawable.ic_action_star
-            } else {
-                R.drawable.ic_action_back
-            })
+            binding.bookmarkBackButton.setImageResource(
+                if (it) {
+                    R.drawable.ic_action_star
+                } else {
+                    R.drawable.ic_action_back
+                }
+            )
         }
         viewState.findInPage?.let {
             if (it.isEmpty()) {
@@ -327,47 +342,77 @@ class BrowserActivity : ThemableBrowserActivity() {
     fun showLinkLongPressDialog(longPress: LongPress) {
         BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.NEW_TAB)
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.NEW_TAB
+                )
             },
             DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.BACKGROUND_TAB)
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.BACKGROUND_TAB
+                )
             },
             DialogItem(
                 title = R.string.dialog_open_incognito_tab,
                 isConditionMet = this is BrowserActivity // TODO: Change for incognito
             ) {
-                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.INCOGNITO_TAB)
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.INCOGNITO_TAB
+                )
             },
             DialogItem(title = R.string.action_share) {
                 presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.SHARE)
             },
             DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onLinkLongPressEvent(longPress, BrowserContract.LinkLongPressEvent.COPY_LINK)
+                presenter.onLinkLongPressEvent(
+                    longPress,
+                    BrowserContract.LinkLongPressEvent.COPY_LINK
+                )
             })
     }
 
     fun showImageLongPressDialog(longPress: LongPress) {
         BrowserDialog.show(this, longPress.targetUrl?.replace(HTTP, ""),
             DialogItem(title = R.string.dialog_open_new_tab) {
-                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.NEW_TAB)
+                presenter.onImageLongPressEvent(
+                    longPress,
+                    BrowserContract.ImageLongPressEvent.NEW_TAB
+                )
             },
             DialogItem(title = R.string.dialog_open_background_tab) {
-                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.BACKGROUND_TAB)
+                presenter.onImageLongPressEvent(
+                    longPress,
+                    BrowserContract.ImageLongPressEvent.BACKGROUND_TAB
+                )
             },
             DialogItem(
                 title = R.string.dialog_open_incognito_tab,
                 isConditionMet = this is BrowserActivity // TODO: Change for incognito
             ) {
-                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.INCOGNITO_TAB)
+                presenter.onImageLongPressEvent(
+                    longPress,
+                    BrowserContract.ImageLongPressEvent.INCOGNITO_TAB
+                )
             },
             DialogItem(title = R.string.action_share) {
-                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.SHARE)
+                presenter.onImageLongPressEvent(
+                    longPress,
+                    BrowserContract.ImageLongPressEvent.SHARE
+                )
             },
             DialogItem(title = R.string.dialog_copy_link) {
-                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.COPY_LINK)
+                presenter.onImageLongPressEvent(
+                    longPress,
+                    BrowserContract.ImageLongPressEvent.COPY_LINK
+                )
             },
             DialogItem(title = R.string.dialog_download_image) {
-                presenter.onImageLongPressEvent(longPress, BrowserContract.ImageLongPressEvent.DOWNLOAD)
+                presenter.onImageLongPressEvent(
+                    longPress,
+                    BrowserContract.ImageLongPressEvent.DOWNLOAD
+                )
             })
     }
 
@@ -381,7 +426,8 @@ class BrowserActivity : ThemableBrowserActivity() {
             },
             DialogItem(title = R.string.close_all_tabs, onClick = {
                 presenter.onCloseBrowserEvent(id, BrowserContract.CloseTabEvent.CLOSE_ALL)
-            }))
+            })
+        )
     }
 
     fun openBookmarkDrawer() {
