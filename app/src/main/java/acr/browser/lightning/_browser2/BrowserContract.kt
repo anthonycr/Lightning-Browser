@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2
 
+import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning._browser2.tab.TabModel
 import acr.browser.lightning.database.Bookmark
 import acr.browser.lightning.database.HistoryEntry
@@ -97,6 +98,8 @@ interface BrowserContract {
         fun closeBrowser()
 
         fun addToHomeScreen(url: String, title: String, favicon: Bitmap?)
+
+        fun download(pendingDownload: PendingDownload)
 
         fun backgroundBrowser()
     }

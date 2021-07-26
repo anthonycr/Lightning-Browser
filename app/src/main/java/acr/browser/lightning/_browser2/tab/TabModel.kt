@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.TabInitializer
@@ -67,6 +68,8 @@ interface TabModel {
 
     fun loadingProgress(): Observable<Int>
 
+    fun downloadRequests(): Observable<PendingDownload>
+
     // Lifecycle
 
     var isForeground: Boolean
@@ -74,5 +77,6 @@ interface TabModel {
     fun destroy()
 
     fun freeze(): Bundle
+
 
 }

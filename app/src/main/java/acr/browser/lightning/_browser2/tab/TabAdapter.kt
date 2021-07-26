@@ -1,5 +1,6 @@
 package acr.browser.lightning._browser2.tab
 
+import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning.ssl.SslCertificateInfo
 import acr.browser.lightning.ssl.SslState
 import acr.browser.lightning.view.FreezableBundleInitializer
@@ -8,6 +9,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.webkit.WebView
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 /**
  * Created by anthonycr on 9/12/20.
@@ -23,10 +25,22 @@ class TabAdapter(
     private var latentInitializer: FreezableBundleInitializer? = null
 
     private var findInPageQuery: String? = null
+    private val downloadsSubject = PublishSubject.create<PendingDownload>()
 
     init {
         webView.webViewClient = tabWebViewClient
         webView.webChromeClient = tabWebChromeClient
+        webView.setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
+            downloadsSubject.onNext(
+                PendingDownload(
+                    url = url,
+                    userAgent = userAgent,
+                    contentDisposition = contentDisposition,
+                    mimeType = mimetype,
+                    contentLength = contentLength
+                )
+            )
+        }
         if (tabInitializer is FreezableBundleInitializer) {
             latentInitializer = tabInitializer
         } else {
@@ -58,7 +72,8 @@ class TabAdapter(
 
     override fun canGoForward(): Boolean = webView.canGoForward()
 
-    override fun canGoForwardChanges(): Observable<Boolean> = tabWebViewClient.goForwardObservable.hide()
+    override fun canGoForwardChanges(): Observable<Boolean> =
+        tabWebViewClient.goForwardObservable.hide()
 
     override fun reload() {
         webView.reload()
@@ -127,6 +142,8 @@ class TabAdapter(
 
     override fun loadingProgress(): Observable<Int> = tabWebChromeClient.progressObservable.hide()
 
+    override fun downloadRequests(): Observable<PendingDownload> = downloadsSubject.hide()
+
     override var isForeground: Boolean = false
         set(value) {
             field = value
@@ -148,7 +165,5 @@ class TabAdapter(
     }
 
     override fun freeze(): Bundle = latentInitializer?.bundle
-        ?: Bundle(ClassLoader.getSystemClassLoader()).also {
-            webView.saveState(it)
-        }
+        ?: Bundle(ClassLoader.getSystemClassLoader()).also(webView::saveState)
 }

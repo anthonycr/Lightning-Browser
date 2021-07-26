@@ -89,8 +89,12 @@ public class DownloadHandler {
      * @param mimeType           The mimeType of the content reported by the server
      * @param contentSize        The size of the content
      */
-    public void onDownloadStart(@NonNull Activity context, @NonNull UserPreferences manager, @NonNull String url, String userAgent,
-                                @Nullable String contentDisposition, String mimeType, @NonNull String contentSize) {
+    public void onDownloadStart(@NonNull Activity context,
+                                @NonNull UserPreferences manager,
+                                @NonNull String url, String userAgent,
+                                @Nullable String contentDisposition,
+                                @Nullable String mimeType,
+                                @NonNull String contentSize) {
 
         logger.log(TAG, "DOWNLOAD: Trying to download from URL: " + url);
         logger.log(TAG, "DOWNLOAD: Content disposition: " + contentDisposition);
@@ -174,9 +178,12 @@ public class DownloadHandler {
      * @param contentSize        The size of the content
      */
     /* package */
-    private void onDownloadStartNoStream(@NonNull final Activity context, @NonNull UserPreferences preferences,
+    private void onDownloadStartNoStream(@NonNull final Activity context,
+                                         @NonNull UserPreferences preferences,
                                          @NonNull String url, String userAgent,
-                                         String contentDisposition, @Nullable String mimetype, @NonNull String contentSize) {
+                                         @Nullable String contentDisposition,
+                                         @Nullable String mimetype,
+                                         @NonNull String contentSize) {
         final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
 
         // Check to see if we have an SDCard
@@ -293,17 +300,19 @@ public class DownloadHandler {
         }
 
         // save download in database
-        UIController browserActivity = (UIController) context;
-        LightningView view = browserActivity.getTabModel().getCurrentTab();
+        if (context instanceof UIController) {
+            UIController browserActivity = (UIController) context;
+            LightningView view = browserActivity.getTabModel().getCurrentTab();
 
-        if (view != null && !view.isIncognito()) {
-            downloadsRepository.addDownloadIfNotExists(new DownloadEntry(url, filename, contentSize))
-                .subscribeOn(databaseScheduler)
-                .subscribe(aBoolean -> {
-                    if (!aBoolean) {
-                        logger.log(TAG, "error saving download to database");
-                    }
-                });
+            if (view != null && !view.isIncognito()) {
+                downloadsRepository.addDownloadIfNotExists(new DownloadEntry(url, filename, contentSize))
+                    .subscribeOn(databaseScheduler)
+                    .subscribe(aBoolean -> {
+                        if (!aBoolean) {
+                            logger.log(TAG, "error saving download to database");
+                        }
+                    });
+            }
         }
     }
 

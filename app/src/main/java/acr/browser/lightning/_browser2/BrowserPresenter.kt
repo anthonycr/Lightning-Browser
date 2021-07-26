@@ -2,6 +2,7 @@ package acr.browser.lightning._browser2
 
 import acr.browser.lightning._browser2.di.Browser2Scope
 import acr.browser.lightning._browser2.di.InitialUrl
+import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning._browser2.history.HistoryRecord
 import acr.browser.lightning._browser2.keys.KeyCombo
 import acr.browser.lightning._browser2.menu.MenuSelection
@@ -85,7 +86,7 @@ class BrowserPresenter @Inject constructor(
 
     private val compositeDisposable = CompositeDisposable()
     private val allTabsDisposable = CompositeDisposable()
-    private var tabDisposable: Disposable? = null
+    private var tabDisposable: CompositeDisposable = CompositeDisposable()
 
     /**
      * TODO
@@ -188,8 +189,9 @@ class BrowserPresenter @Inject constructor(
             )
         )
 
-        tabDisposable?.dispose()
-        tabDisposable = Observables.combineLatest(
+        tabDisposable.dispose()
+        tabDisposable = CompositeDisposable()
+        tabDisposable += Observables.combineLatest(
             tab.sslChanges().startWith(tab.sslState),
             tab.titleChanges().startWith(tab.title),
             tab.urlChanges().startWith(tab.url),
@@ -217,6 +219,9 @@ class BrowserPresenter @Inject constructor(
             )
         }.subscribeOn(mainScheduler)
             .subscribe { view.updateState(it) }
+        tabDisposable += tab.downloadRequests()
+            .subscribeOn(mainScheduler)
+            .subscribeBy(onNext = navigator::download)
     }
 
     private fun List<TabModel>.subscribeToUpdates(compositeDisposable: CompositeDisposable) {
@@ -984,7 +989,15 @@ class BrowserPresenter @Inject constructor(
                 longPress.targetUrl?.let { navigator.sharePage(url = it, title = null) }
             BrowserContract.ImageLongPressEvent.COPY_LINK ->
                 longPress.targetUrl?.let(navigator::copyPageLink)
-            BrowserContract.ImageLongPressEvent.DOWNLOAD -> TODO()
+            BrowserContract.ImageLongPressEvent.DOWNLOAD -> navigator.download(
+                PendingDownload(
+                    url = longPress.targetUrl.orEmpty(),
+                    userAgent = null,
+                    contentDisposition = "attachment",
+                    mimeType = null,
+                    contentLength = 0
+                )
+            )
         }
     }
 

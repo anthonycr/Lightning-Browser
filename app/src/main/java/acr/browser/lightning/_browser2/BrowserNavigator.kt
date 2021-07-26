@@ -1,6 +1,8 @@
 package acr.browser.lightning._browser2
 
 import acr.browser.lightning.R
+import acr.browser.lightning._browser2.download.DownloadPermissionsHelper
+import acr.browser.lightning._browser2.download.PendingDownload
 import acr.browser.lightning.browser.activity.BrowserActivity
 import acr.browser.lightning.database.HistoryEntry
 import acr.browser.lightning.extensions.copyToClipboard
@@ -23,7 +25,8 @@ import javax.inject.Inject
 class BrowserNavigator @Inject constructor(
     private val activity: Activity,
     private val clipboardManager: ClipboardManager,
-    private val logger: Logger
+    private val logger: Logger,
+    private val downloadPermissionsHelper: DownloadPermissionsHelper
 ) : BrowserContract.Navigator {
 
     override fun openSettings() {
@@ -50,6 +53,17 @@ class BrowserNavigator @Inject constructor(
     override fun addToHomeScreen(url: String, title: String, favicon: Bitmap?) {
         Utils.createShortcut(activity, url, title, favicon)
         logger.log(TAG, "Creating shortcut: $title $url")
+    }
+
+    override fun download(pendingDownload: PendingDownload) {
+        downloadPermissionsHelper.download(
+            activity = activity,
+            url = pendingDownload.url,
+            userAgent = pendingDownload.userAgent,
+            contentDisposition = pendingDownload.contentDisposition,
+            mimeType = pendingDownload.mimeType,
+            contentLength = pendingDownload.contentLength
+        )
     }
 
     override fun backgroundBrowser() {
